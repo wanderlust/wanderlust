@@ -193,8 +193,8 @@ update overview when message is fetched."
 
 (defun elmo-shimbun-get-headers (folder)
   (let* ((shimbun (elmo-shimbun-folder-shimbun-internal folder))
-	 (key (concat (shimbun-server-internal shimbun)
-		      "." (shimbun-current-group-internal shimbun)))
+	 (key (concat (shimbun-server shimbun)
+		      "." (shimbun-current-group shimbun)))
 	 (elmo-hash-minimum-size 63)
 	 headers)
     ;; new headers.
@@ -284,30 +284,30 @@ update overview when message is fetched."
   (elmo-plugged-p
    "shimbun"
    (and (elmo-shimbun-folder-shimbun-internal folder)
-	(shimbun-server-internal (elmo-shimbun-folder-shimbun-internal folder)))
+	(shimbun-server (elmo-shimbun-folder-shimbun-internal folder)))
    nil nil
    (and (elmo-shimbun-folder-shimbun-internal folder)
-	(shimbun-server-internal (elmo-shimbun-folder-shimbun-internal folder)))))
+	(shimbun-server (elmo-shimbun-folder-shimbun-internal folder)))))
 
 (luna-define-method elmo-folder-set-plugged ((folder elmo-shimbun-folder)
 					     plugged &optional add)
   (elmo-set-plugged plugged
 		    "shimbun"
-		    (shimbun-server-internal
+		    (shimbun-server
 		     (elmo-shimbun-folder-shimbun-internal folder))
 		    nil nil nil
-		    (shimbun-server-internal
+		    (shimbun-server
 		     (elmo-shimbun-folder-shimbun-internal folder))
 		    add))
 
 (luna-define-method elmo-net-port-info ((folder elmo-shimbun-folder))
   (list "shimbun"
-	(shimbun-server-internal
+	(shimbun-server
 	 (elmo-shimbun-folder-shimbun-internal folder))
 	nil))
 
 (luna-define-method elmo-folder-check :around ((folder elmo-shimbun-folder))
-  (when (shimbun-current-group-internal
+  (when (shimbun-current-group
 	 (elmo-shimbun-folder-shimbun-internal folder))
     (when (and (elmo-folder-plugged-p folder)
 	       (elmo-shimbun-headers-check-p folder))
@@ -325,7 +325,7 @@ update overview when message is fetched."
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-shimbun-folder))
   (expand-file-name
-   (concat (shimbun-server-internal
+   (concat (shimbun-server
 	    (elmo-shimbun-folder-shimbun-internal folder))
 	   "/"
 	   (elmo-shimbun-folder-group-internal folder))
@@ -498,7 +498,7 @@ update overview when message is fetched."
 	     (mapcar
 	      (lambda (fld)
 		(concat prefix
-			(shimbun-server-internal
+			(shimbun-server
 			 (elmo-shimbun-folder-shimbun-internal folder))
 			"." fld))
 	      (shimbun-groups (elmo-shimbun-folder-shimbun-internal folder)))))

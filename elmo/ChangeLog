@@ -1,3 +1,63 @@
+2003-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-multi.el (elmo-folder-process-crosspost): Follow the change in
+	API.
+	* elmo-nntp.el (elmo-folder-process-crosspost): Ditto.
+
+
+	* elmo.el (elmo-folder-process-crosspost): Remove optional argument.
+	(elmo-folder-list-message-entities): Added argument in-msgdb and
+	numbers.
+	(elmo-folder-synchronize): Define as a method.
+
+	* elmo-nntp.el (elmo-folder-initialize): Don't use
+	elmo-nntp-default-user if zero-length username is specified
+	explicitly.
+
+2003-07-06  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-nntp.el (elmo-nntp-folder-list-subfolders): Don't omit
+	server name in case with username.
+	(XXX: this is ad-hoc fix against username includes "@", it
+	should be solved fundamentally)
+
+2003-07-05  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-nntp.el (elmo-nntp-debug): New function.
+	(elmo-nntp-send-command, elmo-nntp-process-filter): Call it.
+	(elmo-network-authenticate-session): Hide auth-info from the log.
+
+	* elmo-nntp.el (elmo-nntp-folder-list-subfolders): Don't append
+	user name if it is equal to elmo-nntp-default-user.
+
+2003-06-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-shimbun-get-headers): Use shimbun-server
+	instead of shimbun-server-internal;
+	Use shimbun-current-group instead of shimbun-current-group-internal.
+	(elmo-folder-plugged-p): Use shimbun-server instead of
+	shimbun-server-internal.
+	(elmo-folder-set-plugged): Ditto.
+	(elmo-net-port-info): Ditto.
+	(elmo-folder-check): Ditto.
+	(elmo-folder-expand-msgdb-path): Ditto.
+	(elmo-folder-list-subfolders): Ditto.
+
+2003-05-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-msgdb.el (elmo-msgdb-overview-entity-get-extra-field):
+	Convert field-name to lower case.
+	(elmo-msgdb-overview-entity-set-extra-field): Ditto.
+
+2003-05-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* acap.el, elmo-imap4.el, elmo-nntp.el, elmo-util.el, pldap.el:
+	`message' and `error' take format string.
+
+2003-04-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-pipe.el (elmo-folder-clear): Implemented clear copied-list.
+
 2003-04-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-msgdb.el (elmo-msgdb-message-entity-field): Don't use self

@@ -154,7 +154,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 	     (cmd (if (featurep 'xemacs)
 		      (event-to-character last-command-event)
 		    (string-to-char (format "%s" (this-command-keys))))))
-    (message mes-string)
+    (message "%s" mes-string)
     (setq key (car (setq keve (wl-read-event-char))))
     (if (or (equal key ?\ )
 	    (and cmd
@@ -283,16 +283,20 @@ even when invalid character is contained."
 (put 'wl-as-mime-charset 'lisp-indent-function 1)
 
 (eval-and-compile
-  (if wl-on-mule3
-      (defmacro wl-as-coding-system (coding-system &rest body)
-	(` (let ((coding-system-for-read (, coding-system))
-		 (coding-system-for-write (, coding-system)))
-	     (,@ body))))
-    (if wl-on-mule
-	(defmacro wl-as-coding-system (coding-system &rest body)
-	  (` (let ((file-coding-system-for-read (, coding-system))
-		   (file-coding-system (, coding-system)))
-	       (,@ body)))))))
+  (cond
+   (wl-on-mule3
+    (defmacro wl-as-coding-system (coding-system &rest body)
+      (` (let ((coding-system-for-read (, coding-system))
+	       (coding-system-for-write (, coding-system)))
+	   (,@ body)))))
+   (wl-on-mule
+    (defmacro wl-as-coding-system (coding-system &rest body)
+      (` (let ((file-coding-system-for-read (, coding-system))
+	       (file-coding-system (, coding-system)))
+	   (,@ body)))))
+   (t
+    (defmacro wl-as-coding-system (coding-system &rest body)
+      (` (progn (,@ body)))))))
 
 (defmacro wl-as-mime-charset (mime-charset &rest body)
   (` (wl-as-coding-system (mime-charset-to-coding-system (, mime-charset))

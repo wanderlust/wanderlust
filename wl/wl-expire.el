@@ -103,20 +103,20 @@
 	  (wl-expire-delete-reserve-marked-msgs-from-list
 	   delete-list (elmo-msgdb-get-mark-alist msgdb))))
   (when delete-list
-   (let ((mess
-	 (format "Expiring (delete) %s msgs..."
-		 (length delete-list))))
-    (message "%s" mess)
-    (if (elmo-folder-delete-messages folder
-				     delete-list)
-	(progn
-	  (elmo-msgdb-delete-msgs (elmo-folder-msgdb folder)
-				  delete-list)
-	  (wl-expire-append-log
-	   (elmo-folder-name-internal folder)
-	   delete-list nil 'delete)
-	  (message "%s" (concat mess "done")))
-      (error (concat mess "failed!")))))
+    (let ((mess
+	   (format "Expiring (delete) %s msgs..."
+		   (length delete-list))))
+      (message "%s" mess)
+      (if (elmo-folder-delete-messages folder
+				       delete-list)
+	  (progn
+	    (elmo-msgdb-delete-msgs (elmo-folder-msgdb folder)
+				    delete-list)
+	    (wl-expire-append-log
+	     (elmo-folder-name-internal folder)
+	     delete-list nil 'delete)
+	    (message "%sdone" mess))
+	(error "%sfailed!" mess))))
   (cons delete-list (length delete-list)))
 
 (defun wl-expire-refile (folder refile-list msgdb dst-folder
@@ -156,8 +156,8 @@
 		 refile-list
 		 (elmo-folder-name-internal dst-folder)
 		 (if copy 'copy 'move))
-		(message "%s" (concat mess "done")))
-	    (error (concat mess "failed!"))))))
+		(message "%sdone" mess))
+	    (error "%sfailed!" mess)))))
     (cons refile-list (length refile-list))))
 
 (defun wl-expire-refile-with-copy-reserve-msg
@@ -231,8 +231,8 @@ If REFILE-LIST includes reserve mark message, so copy."
 			   (elmo-folder-name-internal dst-folder)
 			   (length refile-list))))
 	  (if ret-val
-	      (message (concat mes "done"))
-	    (error (concat mes "failed!")))))
+	      (message "%sdone" mes)
+	    (error "%sfailed!" mes))))
       (cons refile-list copy-len))))
 
 (defun wl-expire-archive-get-folder (src-folder &optional fmt dst-folder-arg)
@@ -589,11 +589,11 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 	  (wl-expire-delete-reserve-marked-msgs-from-list
 	   hide-list (elmo-msgdb-get-mark-alist msgdb))))
   (let ((mess (format "Hiding %s msgs..." (length hide-list))))
-    (message mess)
+    (message "%s" mess)
     (elmo-msgdb-delete-msgs (elmo-folder-msgdb folder) hide-list)
     (elmo-msgdb-append-to-killed-list folder hide-list)
     (elmo-folder-commit folder)
-    (message (concat mess "done"))
+    (message "%sdone" mess)
     (cons hide-list (length hide-list))))
 
 (defsubst wl-expire-folder-p (entity)

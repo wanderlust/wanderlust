@@ -140,7 +140,7 @@ If optional argument NON-PERSISTENT is non-nil, the folder msgdb is not saved."
     (setq class (format "elmo-%s" (symbol-name type)))
     (require (intern class))
     (setq folder (luna-make-entity (intern (concat class "-folder"))
-				   :type   type
+				   :type type
 				   :prefix prefix
 				   :name original
 				   :persistent (not non-persistent)))
@@ -159,7 +159,7 @@ If optional argument NON-PERSISTENT is non-nil, the folder msgdb is not saved."
 (luna-define-generic elmo-folder-open (folder &optional load-msgdb)
   "Open and setup (load saved status) FOLDER.
 If optional LOAD-MSGDB is non-nil, msgdb is loaded.
-(otherwise, msgdb is loaded on-demand)")
+\(otherwise, msgdb is loaded on-demand)")
 
 (luna-define-generic elmo-folder-open-internal (folder)
   "Open FOLDER (without loading saved folder status).")
@@ -618,9 +618,7 @@ FIELD is a symbol of the field name.")
 (luna-define-generic elmo-message-folder (folder number)
   "Get primitive folder of the message.")
 
-(luna-define-generic elmo-folder-process-crosspost (folder
-						    &optional
-						    number-alist)
+(luna-define-generic elmo-folder-process-crosspost (folder)
   "Process crosspost for FOLDER.
 If NUMBER-ALIST is set, it is used as number-alist.
 Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
@@ -1142,12 +1140,21 @@ If CACHED is t, message is set as cached."
 			       (elmo-message-use-cache-p folder number))
     (elmo-folder-set-mark-modified-internal folder t)))
 
-;;; APIs for message-entity 
-(luna-define-generic elmo-folder-list-message-entities (folder)
-  "Return the all list of message-entity structure of FOLDER.")
+(luna-define-generic elmo-folder-list-message-entities (folder
+							&optional numbers
+							in-msgdb)
+  "List message-entity structure of FOLDER.
+If optional NUMBERS is specified, only the corresponding entities are
+retrieved.
+If second optional IN-MSGDB is specified, only entities in the msgdb are
+retreived (don't retrieve entities from folder).")
 
-(luna-define-method elmo-folder-list-message-entities ((folder elmo-folder))
-  (elmo-msgdb-get-overview (elmo-folder-msgdb folder)))
+(luna-define-method elmo-folder-list-message-entities ((folder elmo-folder)
+						       &optional numbers
+						       in-msgdb)
+  (if numbers
+      (mapcar (lambda (x) (elmo-message-entity folder x)) numbers)
+    (elmo-msgdb-get-overview (elmo-folder-msgdb folder))))
 
 (luna-define-generic elmo-message-entity (folder key)
   "Return the message-entity structure which matches to the KEY.
@@ -1311,11 +1318,14 @@ FIELD is a symbol of the field."
 			   number
 			   'answered))))
 
-(luna-define-method elmo-folder-process-crosspost ((folder elmo-folder)
-						   &optional
-						   number-alist)
+(luna-define-method elmo-folder-process-crosspost ((folder elmo-folder))
   ;; Do nothing.
   )
+
+;;(luna-define-generic elmo-folder-append-message-entity (folder entity
+;;							       &optional
+;;							       flag-table)
+;;  "Append ENTITY to the folder.")
 
 (defun elmo-generic-folder-append-msgdb (folder append-msgdb)
   (if append-msgdb
@@ -1448,30 +1458,30 @@ FIELD is a symbol of the field."
     (elmo-folder-set-killed-list-internal folder nil))
   (elmo-folder-set-msgdb-internal folder (elmo-msgdb-clear)))
 
-(defun elmo-folder-synchronize (folder
-				&optional ignore-msgdb
-				no-check)
+(luna-define-generic elmo-folder-synchronize (folder
+					      &optional ignore-msgdb
+					      no-check)
   "Synchronize the folder data to the newest status.
 FOLDER is the ELMO folder structure.
+
 If optional IGNORE-MSGDB is non-nil, current msgdb is thrown away except
 flag status. If IGNORE-MSGDB is 'visible-only, only visible messages
 \(the messages which are not in the killed-list\) are thrown away and
 synchronized.
 If NO-CHECK is non-nil, rechecking folder is skipped.
-
 Return a list of a cross-posted message number.
-If update process is interrupted, return nil."
+If update process is interrupted, return nil.")
+					      
+(luna-define-method elmo-folder-synchronize ((folder elmo-folder)
+					     &optional ignore-msgdb no-check)
   (let ((killed-list (elmo-folder-killed-list-internal folder))
 	(before-append t)
-	number-alist mark-alist
+	number-alist
 	old-msgdb diff diff-2 delete-list new-list new-msgdb mark
-	flag-table crossed after-append)
+	flag-table crossed after-append numbers)
     (setq old-msgdb (elmo-folder-msgdb folder))
     (setq flag-table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
-    (setq number-alist (elmo-msgdb-get-number-alist
-			(elmo-folder-msgdb folder)))
-    (setq mark-alist (elmo-msgdb-get-mark-alist
-		      (elmo-folder-msgdb folder)))
+    (setq numbers (sort (elmo-folder-list-messages folder nil t) '<))
     (when ignore-msgdb
       (elmo-msgdb-flag-table (elmo-folder-msgdb folder) flag-table)
       (elmo-folder-clear folder (eq ignore-msgdb 'visible-only)))
@@ -1484,11 +1494,7 @@ If update process is interrupted, return nil."
 	  (setq diff (elmo-list-diff (elmo-folder-list-messages
 				      folder
 				      (eq 'visible-only ignore-msgdb))
-				     (unless ignore-msgdb
-				       (sort (mapcar
-					      'car
-					      number-alist)
-					     '<))))
+				     numbers))
 	  (message "Checking folder diff...done")
 	  (setq new-list (elmo-folder-confirm-appends (car diff)))
 	  ;; Set killed list.
@@ -1509,11 +1515,11 @@ If update process is interrupted, return nil."
 	    (if delete-list (elmo-msgdb-delete-msgs
 			     (elmo-folder-msgdb folder) delete-list))
 	    (when new-list
-	      (setq new-msgdb (elmo-folder-msgdb-create
-			       folder new-list flag-table))
 	      (elmo-msgdb-change-mark (elmo-folder-msgdb folder)
 				      elmo-msgdb-new-mark
 				      elmo-msgdb-unread-uncached-mark)
+	      (setq new-msgdb (elmo-folder-msgdb-create
+			       folder new-list flag-table))
 	      ;; Clear flag-table
 	      (if (elmo-folder-persistent-p folder)
 		  (elmo-flag-table-save (elmo-folder-msgdb-path folder)

@@ -509,12 +509,12 @@ DN is the distinguished name of the entry to delete."
 		       nil (current-buffer) t
 		       (append arglist
 			       (list dn))))
-      (if (integerp ret)
-	  (if (not (zerop ret))
-	      (error (car (split-string (buffer-string) "\n"))))
-	(if (and (setq ret (buffer-string)); Nemacs
-		 (string-match "ldap_delete:" ret))
-	    (error (car (split-string ret "\n"))))))))
+      (cond ((integerp ret)
+	     (or (zerop ret)
+		 (error "%s" (car (split-string (buffer-string) "\n")))))
+	    ((and (setq ret (buffer-string)); Nemacs
+		  (string-match "ldap_delete:" ret))
+	     (error "%s" (car (split-string ret "\n"))))))))
 
 (defmacro ldap/ldif-insert-field (attr value)
   (` (if (not (ldap/ldif-safe-string-p (, value)))
@@ -567,12 +567,12 @@ or `replace'.  ATTR is the LDAP attribute type to modify."
 		       ldap-modify-program
 		       t t nil
 		       arglist))
-      (if (integerp ret)
-	  (if (not (zerop ret))
-	      (error (car (split-string (buffer-string) "\n"))))
-	(if (and (setq ret (buffer-string)); Nemacs
-		 (string-match "ldap_modify:" ret))
-	    (error (car (split-string ret "\n"))))))))
+      (cond ((integerp ret)
+	     (or (zerop ret)
+		 (error "%s" (car (split-string (buffer-string) "\n")))))
+	    ((and (setq ret (buffer-string)); Nemacs
+		  (string-match "ldap_modify:" ret))
+	     (error "%s" (car (split-string ret "\n"))))))))
 
 (defun ldap-add (ldap dn entry)
   "Add an entry to an LDAP directory.
@@ -607,12 +607,12 @@ containing attribute/value string pairs."
 		       ldap-add-program
 		       t t nil
 		       arglist))
-      (if (integerp ret)
-	  (if (not (zerop ret))
-	      (error (car (split-string (buffer-string) "\n"))))
-	(if (and (setq ret (buffer-string)) ; Nemacs
-		 (string-match "ldap_add:" ret))
-	    (error (car (split-string ret "\n"))))))))
+      (cond ((integerp ret)
+	     (or (zerop ret)
+		 (error "%s" (car (split-string (buffer-string) "\n")))))
+	    ((and (setq ret (buffer-string)) ; Nemacs
+		  (string-match "ldap_add:" ret))
+	     (error "%s" (car (split-string ret "\n"))))))))
 
 (defun ldap-search-basic (ldap filter base scope
 			       &optional attrs attrsonly withdn verbose)

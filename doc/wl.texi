@@ -254,7 +254,7 @@ may help you.}.
 Recommended combination of APEL, FLIM and SEMI are following:
 
 @itemize @minus
-@item APEL 10.4, FLIM 1.14.5 and SEMI 1.14.5
+@item APEL 10.5, FLIM 1.14.5 and SEMI 1.14.5
 @end itemize
 
 You can also use many other FLIM/SEMI variants. Combination of the
@@ -262,8 +262,8 @@ latest versions should work.  For example, the following combination are
 confirmed to work.
 
 @itemize @minus
-@item APEL 10.4, SLIM 1.14.9, SEMI 1.14.5
-@item APEL 10.4, CLIME 1.14.5, EMIKO 1.14.1
+@item APEL 10.5, SLIM 1.14.9, SEMI 1.14.5
+@item APEL 10.5, CLIME 1.14.5, EMIKO 1.14.1
 @end itemize
 
 You have to re-install Wanderlust if you upgraded APEL, FLIM or SEMI.
@@ -7469,8 +7469,9 @@ The initial setting is the alist shown below:
 @noindent
 This is an associative list of regular expressions of folder names and
 update range of the summary.  Update range is one of the @samp{all},
-@samp{update}, @samp{rescan}, @samp{rescan-noscore}, @samp{first} and
-@samp{last}. If a folder do not match, @samp{update} is used.
+@samp{update}, @samp{rescan}, @samp{rescan-noscore}, @samp{first},
+@samp{last} and @samp{no-sync}. If a folder do not match, @samp{update}
+is used.
 
 @item wl-ask-range
 @vindex wl-ask-range
@@ -7827,6 +7828,7 @@ valuable advice and many pieces of code they contributed.
 2001  7/04    Released 2.6.0 stable.
       8/21    wl-addrmgr by Kitamoto-san.
      12/27    Released 2.8.1 stable.
+2002 12/11    Released 2.10.0 stable.
 @end example
 
 See @file{ChangeLog} for details.

@@ -1,3 +1,81 @@
+2003-07-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-vars.el (wl-thread-indent-level, wl-thread-*-str): Choose
+	default values along the value of wl-on-mule.
+	(from Tatsuya Kinoshita <tats@vega.ocn.ne.jp> [wl-en:421])
+	* wl-vars.el (wl-highlight-thread-indent-string-regexp): Remove.
+	It is not used anywhere.
+
+2003-06-16  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-print-destination): Keep position.
+	(wl-summary-cursor-move-surface): Keep horizontal position.
+
+2003-05-30  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-draft-send-mail-with-smtp): Catch quitting and
+	write sendlog.
+
+2003-05-28  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-goto-folder-subr): Don't restrict
+	`wl-summary-highlight'.
+
+2003-05-26  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-highlight.el (wl-highlight-summary-current-line): Remove
+	trivial condition for temp-mark.
+
+2003-05-24  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-message.el (wl-message-buffer-cache-add): Create new buffer
+	when it hits killed buffer.
+
+2003-05-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el, wl-expire.el, wl-mime.el, wl-summary.el, wl-util.el
+	* wl-news.el.in: `message' and `error' take format string.
+
+2003-05-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-folder (wl-folder-insert-entity): Display a message,
+	`...done', when the work finish.
+	(from Tatsuya Kinoshita <tats@vega.ocn.ne.jp> [wl:10866])
+
+2003-05-04  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-message.el (wl-message-redisplay): Remove unused local
+	variables (Reported by NAKAJIMA Mikio <minakaji@namazu.org>).
+
+2003-04-30  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-replace-status-marks): Disable
+	interactive use.
+	(wl-summary-reedit): Check message existence at first.
+	(wl-summary-mark-line): Fix doc, return value is indefinite.
+
+	* wl-highlight.el (wl-highlight-message): Arranged.
+
+	* wl-highlight.el (wl-highlight-summary-current-line): Abolish
+	unused 1st and 2nd arguments. Abolish 3rd argument `temp-too' and
+	check temp-mark by wl-summary-temp-mark always.
+	(wl-highlight-summary): Change accordingly.
+	* wl-summary.el (wl-summary-mark-as-read-all)
+	(wl-summary-delete-cache, wl-summary-set-score-mark)
+	(wl-summary-mark-as-unread, wl-summary-unmark)
+	(wl-summary-mark-line, wl-summary-mark-as-read)
+	(wl-summary-mark-as-important): Ditto.
+
+	* wl-highlight.el (wl-highlight-summary-window): Re-calculate the
+	end of the window if possible.
+	* wl-summary.el (wl-summary-sync-update): Support lazy
+	highlighting.
+	(wl-summary-toggle-disp-msg): Ditto.
+
+2003-04-09  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-util.el (wl-as-coding-system): Define for non-mule too.
+
 2003-04-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-mark-as-important): Fixed the last

@@ -64,6 +64,22 @@
       (decode-coding-string string elmo-nntp-group-coding-system)
     string))
 
+;; For debugging.
+(defvar elmo-nntp-debug nil
+  "Non-nil forces NNTP folder as debug mode.
+Debug information is inserted in the buffer \"*NNTP DEBUG*\"")
+
+;;; Debug
+(defsubst elmo-nntp-debug (message &rest args)
+  (if elmo-nntp-debug
+      (let ((biff (string-match "BIFF-" (buffer-name)))
+	    pos)
+	(with-current-buffer (get-buffer-create (concat "*NNTP DEBUG*"
+							(if biff "BIFF")))
+	  (goto-char (point-max))
+	  (setq pos (point))
+	  (insert (apply 'format message args) "\n")))))
+
 ;;; ELMO NNTP folder
 (eval-and-compile
   (luna-define-class elmo-nntp-folder (elmo-net-folder)
@@ -79,16 +95,18 @@
 		   (append elmo-nntp-stream-type-alist
 			   elmo-network-stream-type-alist))
 	   elmo-network-stream-type-alist))
-	parse)
+	explicit-user parse)
     (setq name (luna-call-next-method))
     (setq parse (elmo-parse-token name ":"))
     (elmo-nntp-folder-set-group-internal folder
 					 (elmo-nntp-encode-group-string
 					  (car parse)))
+    (setq explicit-user (eq ?: (string-to-char (cdr parse))))
     (setq parse (elmo-parse-prefixed-element ?: (cdr parse)))
     (elmo-net-folder-set-user-internal folder
 				       (if (eq (length (car parse)) 0)
-					   elmo-nntp-default-user
+					   (unless explicit-user
+					     elmo-nntp-default-user)
 					 (car parse)))
     (unless (elmo-net-folder-server-internal folder)
       (elmo-net-folder-set-server-internal folder
@@ -287,13 +305,17 @@ Don't cache if nil.")
       (elmo-nntp-send-command session
 			      (format "authinfo user %s"
 				      (elmo-network-session-user-internal
-				       session)))
+				       session))
+			      nil
+			      'no-log)
       (or (elmo-nntp-read-response session)
 	  (signal 'elmo-authenticate-error '(authinfo)))
       (elmo-nntp-send-command
        session
        (format "authinfo pass %s"
-	       (elmo-get-passwd (elmo-network-session-password-key session))))
+	       (elmo-get-passwd (elmo-network-session-password-key session)))
+       nil
+       'no-log)
       (or (elmo-nntp-read-response session)
 	  (signal 'elmo-authenticate-error '(authinfo))))))
 
@@ -305,19 +327,21 @@ Don't cache if nil.")
   (when (buffer-live-p (process-buffer process))
     (with-current-buffer (process-buffer process)
       (goto-char (point-max))
-      (insert output))))
+      (insert output)
+      (elmo-nntp-debug "RECEIVED: %s\n" output))))
 
 (defun elmo-nntp-send-mode-reader (session)
   (elmo-nntp-send-command session "mode reader")
   (if (null (elmo-nntp-read-response session t))
       (message "Mode reader failed")))
 
-(defun elmo-nntp-send-command (session command &optional noerase)
+(defun elmo-nntp-send-command (session command &optional noerase no-log)
   (with-current-buffer (elmo-network-session-buffer session)
     (unless noerase
       (erase-buffer)
       (goto-char (point-min)))
     (setq elmo-nntp-read-point (point))
+    (elmo-nntp-debug "SEND: %s\n" (if no-log "<NO LOGGING>" command))
     (process-send-string (elmo-network-session-process-internal
 			  session) command)
     (process-send-string (elmo-network-session-process-internal
@@ -457,7 +481,7 @@ Don't cache if nil.")
 (defun elmo-nntp-folder-list-subfolders (folder one-level)
   (let ((session (elmo-nntp-get-session folder))
 	(case-fold-search nil)
-	response ret-val top-ng append-serv use-list-active start)
+	response ret-val top-ng username append-serv use-list-active start)
     (with-temp-buffer
       (set-buffer-multibyte nil)
       (if (and (elmo-nntp-folder-group-internal folder)
@@ -557,8 +581,16 @@ Don't cache if nil.")
 	(when (> len elmo-display-progress-threshold)
 	  (elmo-display-progress
 	   'elmo-nntp-list-folders "Parsing active..." 100))))
-    (unless (string= (elmo-net-folder-server-internal folder)
-		     elmo-nntp-default-server)
+
+    (setq username (elmo-net-folder-user-internal folder))
+    (when (and username
+	       elmo-nntp-default-user
+	       (string= username elmo-nntp-default-user))
+      (setq username nil))
+
+    (when (or username ; XXX: ad-hoc fix against username includes "@"
+	      (not (string= (elmo-net-folder-server-internal folder)
+			    elmo-nntp-default-server)))
       (setq append-serv (concat "@" (elmo-net-folder-server-internal
 				     folder))))
     (unless (eq (elmo-net-folder-port-internal folder) elmo-nntp-default-port)
@@ -575,16 +607,15 @@ Don't cache if nil.")
     (mapcar '(lambda (fld)
 	       (if (consp fld)
 		   (list (concat "-" (elmo-nntp-decode-group-string (car fld))
-				 (and (elmo-net-folder-user-internal folder)
+				 (and username
 				      (concat
 				       ":"
-				       (elmo-net-folder-user-internal folder)))
+				       username))
 				 (and append-serv
 				      (concat append-serv))))
 		 (concat "-" (elmo-nntp-decode-group-string fld)
-			 (and (elmo-net-folder-user-internal folder)
-			      (concat ":" (elmo-net-folder-user-internal
-					   folder)))
+			 (and username
+			      (concat ":" username))
 			 (and append-serv
 			      (concat append-serv)))))
 	    ret-val)))
@@ -1022,7 +1053,7 @@ Don't cache if nil.")
       (if (not (string-match
 		"^2" (setq response (elmo-nntp-read-raw-response
 				     session))))
-	  (error (concat "NNTP error: " response))))))
+	  (error "NNTP error: %s" response)))))
 
 (defsubst elmo-nntp-send-data-line (session line)
   "Send LINE to SESSION."
@@ -1515,26 +1546,15 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 						      &optional ignore-flags)
   (elmo-nntp-folder-update-crosspost-message-alist folder numbers))
 
-(luna-define-method elmo-folder-process-crosspost ((folder elmo-nntp-folder)
-						   &optional
-						   number-alist)
-  (elmo-nntp-folder-process-crosspost folder number-alist))
-
-(defun elmo-nntp-folder-process-crosspost (folder number-alist)
+(defsubst elmo-nntp-folder-process-crosspost (folder)
 ;;    2.1. At elmo-folder-process-crosspost, setup `reads' slot from
 ;;         `elmo-crosspost-message-alist'.
 ;;    2.2. remove crosspost entry for current newsgroup from
 ;;         `elmo-crosspost-message-alist'.
   (let (cross-deletes reads entity ngs)
     (dolist (cross elmo-crosspost-message-alist)
-      (if number-alist
-	  (when (setq entity (rassoc (nth 0 cross) number-alist))
-	    (setq reads (cons (car entity) reads)))
-	(when (setq entity (elmo-msgdb-overview-get-entity
-			    (nth 0 cross)
-			    (elmo-folder-msgdb folder)))
-	  (setq reads (cons (elmo-msgdb-overview-entity-get-number entity)
-			    reads))))
+      (when (setq entity (elmo-message-entity folder (nth 0 cross)))
+	(setq reads (cons (elmo-message-entity-number entity) reads)))
       (when entity
 	(if (setq ngs (delete (elmo-nntp-folder-group-internal folder)
 			      (nth 1 cross)))
@@ -1546,6 +1566,9 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 					  dele
 					  elmo-crosspost-message-alist)))
     (elmo-nntp-folder-set-reads-internal folder reads)))
+
+(luna-define-method elmo-folder-process-crosspost ((folder elmo-nntp-folder))
+  (elmo-nntp-folder-process-crosspost folder))
 
 (luna-define-method elmo-folder-list-unreads :around ((folder
 						       elmo-nntp-folder))

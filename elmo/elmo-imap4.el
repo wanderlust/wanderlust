@@ -354,7 +354,7 @@ TAG is the tag of the command"
 		    (elmo-imap4-response-bye-p elmo-imap4-current-response)
 		    (when (elmo-imap4-response-garbage-p
 			   elmo-imap4-current-response)
-		      (message "Garbage response: %s" 
+		      (message "Garbage response: %s"
 			       (elmo-imap4-response-value
 				elmo-imap4-current-response
 				'garbage))
@@ -696,9 +696,9 @@ Returns response value if selecting folder succeed. "
 		   (elmo-imap4-response-bye-p response))
 	      (elmo-imap4-process-bye session)
 	    (unless no-error
-	      (error (or
-		      (elmo-imap4-response-error-text response)
-		      (format "Select %s failed" mailbox)))))))
+	      (error "%s"
+		     (or (elmo-imap4-response-error-text response)
+			 (format "Select %s failed" mailbox)))))))
       (and result response))))
 
 (defun elmo-imap4-check-validity (spec validity-file)
@@ -1806,7 +1806,8 @@ Return nil if no complete line has arrived."
 	 (setq mailbox "inbox"))
      (if (eq (string-to-char mailbox) ?/)
 	 (setq mailbox (substring mailbox 1 (length mailbox))))
-     (concat ; don't use expand-file-name (e.g. %~/something)
+     ;; don't use expand-file-name (e.g. %~/something)
+     (concat
       (expand-file-name
        (or (elmo-net-folder-user-internal folder) "nobody")
        (expand-file-name (or (elmo-net-folder-server-internal folder)
@@ -2417,9 +2418,9 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		(elmo-imap4-session-set-current-mailbox-internal session nil)
 		(if (elmo-imap4-response-bye-p response)
 		    (elmo-imap4-process-bye session)
-		  (error (or
-			  (elmo-imap4-response-error-text response)
-			  (format "Select %s failed" mailbox)))))
+		  (error "%s"
+			 (or (elmo-imap4-response-error-text response)
+			     (format "Select %s failed" mailbox)))))
 	      (message "Selecting %s...done"
 		       (elmo-folder-name-internal folder))
 	      (elmo-folder-set-msgdb-internal

@@ -603,15 +603,18 @@ If optional USE-CACHE is non-nil, use cache if exists."
 If ARG is non-nil, Supersedes message"
   (interactive "P")
   (wl-summary-toggle-disp-msg 'off)
-  (if arg
-      (wl-summary-supersedes-message)
-    (if (string= (wl-summary-buffer-folder-name) wl-draft-folder)
-	(when (wl-summary-message-number)
-	  (wl-draft-reedit (wl-summary-message-number))
-	  (if (wl-message-news-p)
-	      (mail-position-on-field "Newsgroups")
-	    (mail-position-on-field "To")))
-      (wl-draft-edit-string (wl-summary-message-string)))))
+  (cond
+   ((not (wl-summary-message-number))
+    (message "No message."))
+   (arg
+    (wl-summary-supersedes-message))
+   ((string= (wl-summary-buffer-folder-name) wl-draft-folder)
+    (wl-draft-reedit (wl-summary-message-number))
+    (if (wl-message-news-p)
+	(mail-position-on-field "Newsgroups")
+      (mail-position-on-field "To")))
+   (t
+    (wl-draft-edit-string (wl-summary-message-string)))))
 
 (defun wl-summary-resend-bounced-mail ()
   "Re-mail the current message.
@@ -1650,7 +1653,7 @@ If ARG is non-nil, checking is omitted."
 	      ;; New mark and unread-uncached mark
 	      (insert new-mark)
 	      (if wl-summary-highlight
-		  (wl-highlight-summary-current-line nil nil t)))
+		  (wl-highlight-summary-current-line)))
 	    (forward-line 1)))
 	(wl-folder-update-unread (wl-summary-buffer-folder-name) 0)
 	(setq wl-summary-buffer-unread-count 0)
@@ -1683,7 +1686,7 @@ If ARG is non-nil, checking is omitted."
 			      number
 			      'message-id)))
 	(if wl-summary-highlight
-	    (wl-highlight-summary-current-line nil nil t))
+	    (wl-highlight-summary-current-line))
 	(set-buffer-modified-p nil)))))
 
 (defun wl-summary-resume-cache-status ()
@@ -1764,7 +1767,6 @@ If ARG is non-nil, checking is omitted."
 
 (defun wl-summary-replace-status-marks (before after)
   "Replace the status marks on buffer."
-  (interactive)
   (save-excursion
     (goto-char (point-min))
     (let ((inhibit-read-only t)
@@ -1886,7 +1888,7 @@ If ARG is non-nil, checking is omitted."
       (while diffs
 	(wl-summary-mark-as-unread (car diffs) 'no-folder 'no-modeline)
 	(setq diffs (cdr diffs)))
-      (if (interactive-p) (message mes)))))
+      (if (interactive-p) (message "%s" mes)))))
 
 (defun wl-summary-sync-update (&optional unset-cursor sync-all no-check)
   "Update the summary view to the newest folder status."
@@ -2029,6 +2031,7 @@ If ARG is non-nil, checking is omitted."
 	      (goto-char (point-max))
 	      (forward-line -1))
 	  (if (and wl-summary-highlight
+		   (not wl-summary-lazy-highlight)
 		   (not (get-text-property (point) 'face)))
 	      (save-excursion
 		(forward-line (- 0
@@ -2056,7 +2059,7 @@ If ARG is non-nil, checking is omitted."
 	(delete-backward-char 1)
 	(insert mark)
 	(if wl-summary-highlight
-	    (wl-highlight-summary-current-line nil nil t))
+	    (wl-highlight-summary-current-line))
 	(set-buffer-modified-p nil)))))
 
 (defun wl-summary-get-score-mark (msg-num)
@@ -2412,10 +2415,8 @@ If ARG, without confirm."
 	(wl-summary-rescan))
       (wl-summary-toggle-disp-msg (if wl-summary-buffer-disp-msg 'on 'off))
       (unless (and reuse-buf keep-cursor)
-	;(setq hilit wl-summary-highlight)
 	(unwind-protect
-	    (let ((wl-summary-highlight (if reuse-buf wl-summary-highlight))
-		  (wl-use-scoring
+	    (let ((wl-use-scoring
 		   (if (or scoring interactive) wl-use-scoring)))
 	      (if (and (not scan-type)
 		       interactive
@@ -2462,7 +2463,6 @@ If ARG, without confirm."
 		(forward-line -1)
 	      (wl-summary-prev))
 	    (setq retval 'more-next))
-	  ;(setq wl-summary-highlight hilit)
 	  (if (and wl-summary-highlight
 		   (not wl-summary-lazy-highlight)
 		   (not reuse-buf))
@@ -2582,7 +2582,7 @@ If ARG, without confirm."
 			wl-summary-alike-hashtb)))
 
 (defun wl-summary-insert-headers (folder func mime-decode)
-  (let ((entities (elmo-folder-list-message-entities folder))
+  (let ((entities (elmo-folder-list-message-entities folder nil t))
 	ov this last alike)
     (buffer-disable-undo (current-buffer))
     (make-local-variable 'wl-summary-alike-hashtb)
@@ -2979,14 +2979,13 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	  (wl-summary-toggle-disp-msg 'off)
 	  (setq wl-message-buffer nil))
 	(set-buffer-modified-p nil)
-	(message (concat "Executing...done"
-			 (if (> refile-failures 0)
-			     (format " (%d refiling failed)" refile-failures)
-			   "")
-			 (if (> copy-failures 0)
-			     (format " (%d copying failed)" copy-failures)
-			   "")
-			 "."))))))
+	(message "Executing...done%s%s"
+		 (if (> refile-failures 0)
+		     (format " (%d refiling failed)" refile-failures)
+		   "")
+		 (if (> copy-failures 0)
+		     (format " (%d copying failed)" copy-failures)
+		   ""))))))
 
 (defun wl-summary-erase (&optional number)
   "Erase message actually, without moving it to trash."
@@ -3059,30 +3058,31 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 (defun wl-summary-print-destination (msg-num folder)
   "Print refile destination on line."
   (wl-summary-remove-destination)
-  (let ((inhibit-read-only t)
-	(folder (copy-sequence folder))
-	(buffer-read-only nil)
-	len rs re c)
-    (setq len (string-width folder))
-    (if (< len 1) ()
-      ;;(end-of-line)
-      (beginning-of-line)
-      (search-forward "\r")
-      (forward-char -1)
-      (setq re (point))
-      (setq c 0)
-      (while (< c len)
+  (save-excursion
+    (let ((inhibit-read-only t)
+	  (folder (copy-sequence folder))
+	  (buffer-read-only nil)
+	  len rs re c)
+      (setq len (string-width folder))
+      (if (< len 1) ()
+	;;(end-of-line)
+	(beginning-of-line)
+	(search-forward "\r")
 	(forward-char -1)
-	(setq c (+ c (char-width (following-char)))))
-      (and (> c len) (setq folder (concat " " folder)))
-      (setq rs (point))
-      (when wl-summary-width
+	(setq re (point))
+	(setq c 0)
+	(while (< c len)
+	  (forward-char -1)
+	  (setq c (+ c (char-width (following-char)))))
+	(and (> c len) (setq folder (concat " " folder)))
+	(setq rs (point))
+	(when wl-summary-width
 	  (put-text-property rs re 'invisible t))
-      (put-text-property rs re 'wl-summary-destination t)
-      (goto-char re)
-      (wl-highlight-refile-destination-string folder)
-      (insert folder)
-      (set-buffer-modified-p nil))))
+	(put-text-property rs re 'wl-summary-destination t)
+	(goto-char re)
+	(wl-highlight-refile-destination-string folder)
+	(insert folder)
+	(set-buffer-modified-p nil)))))
 
 (defsubst wl-summary-get-mark (number)
   "Return a temporal mark of message specified by NUMBER."
@@ -3275,27 +3275,24 @@ If optional argument NUMBER is specified, unmark message specified by NUMBER."
 	  (buffer-read-only nil)
 	  visible
 	  msg-num
-	  cur-mark
-	  score-mark)
+	  cur-mark)
       (if number
 	  (setq visible (wl-summary-jump-to-msg number))
 	(setq visible t))
       ;; Delete mark on buffer.
       (when visible
 	(setq cur-mark (wl-summary-temp-mark))
-	(if (string= cur-mark " ")
-	    ()
+	(unless (string= cur-mark " ")
 	  (delete-backward-char 1)
 	  (or number
 	      (setq number (wl-summary-message-number)))
-	  (if (setq score-mark (wl-summary-get-score-mark number))
-	      (insert score-mark)
-	    (insert " ")))
+	  (insert (or (wl-summary-get-score-mark number)
+		      " ")))
 	(if (or (string= cur-mark "o")
 		(string= cur-mark "O"))
 	    (wl-summary-remove-destination))
 	(if wl-summary-highlight
-	    (wl-highlight-summary-current-line nil nil score-mark))
+	    (wl-highlight-summary-current-line))
 	(set-buffer-modified-p nil))
       ;; Remove from temporal mark structure.
       (and number
@@ -3598,7 +3595,7 @@ If ARG, exit virtual folder."
   (buffer-substring (- (point) 1) (point)))
 
 (defun wl-summary-mark-line (mark)
-  "Put MARK on current line.  Return message number."
+  "Put MARK on current line."
   (save-excursion
     (beginning-of-line)
     (let ((inhibit-read-only t)
@@ -3607,7 +3604,7 @@ If ARG, exit virtual folder."
       (delete-backward-char 1)
       (insert mark)
       (if wl-summary-highlight
-	  (wl-highlight-summary-current-line nil nil t))
+	  (wl-highlight-summary-current-line))
       (set-buffer-modified-p nil))))
 
 (defun wl-summary-target-mark-delete ()
@@ -3854,7 +3851,7 @@ If ARG, exit virtual folder."
 	(delete-backward-char 1)
 	(insert (or cur-mark " ")))
       (when wl-summary-highlight
-	(wl-highlight-summary-current-line nil nil t))
+	(wl-highlight-summary-current-line))
       (set-buffer-modified-p nil))))
 
 (defsubst wl-summary-mark-as-read-internal (inverse
@@ -3886,7 +3883,7 @@ If ARG, exit virtual folder."
 	      (delete-backward-char 1)
 	      (insert (or new-mark " ")))
 	    (if (and visible wl-summary-highlight)
-		(wl-highlight-summary-current-line nil nil t))
+		(wl-highlight-summary-current-line))
 	    (set-buffer-modified-p nil))
 	  (unless inverse
 	    (if (member (elmo-message-mark folder number)
@@ -3990,7 +3987,7 @@ If ARG, exit virtual folder."
 		(elmo-msgdb-global-mark-set message-id
 					    elmo-msgdb-important-mark)))))
       (if (and visible wl-summary-highlight)
-	  (wl-highlight-summary-current-line nil nil t))))
+	  (wl-highlight-summary-current-line))))
   (set-buffer-modified-p nil)
   number)
 
@@ -4437,7 +4434,9 @@ If ARG, exit virtual folder."
 	  (select-window (get-buffer-window cur-buf))
 	  (run-hooks 'wl-summary-toggle-disp-off-hook))
 ;;;	(switch-to-buffer cur-buf)
-	)))))
+	)))
+    (when wl-summary-lazy-highlight
+      (wl-highlight-summary-window))))
 
 (defun wl-summary-next-line-content ()
   "Show next line of the message."
@@ -4602,7 +4601,7 @@ Return t if message exists."
 		       msgid
 		       (read-from-minibuffer "NNTP Server: ")))
 		     (t
-		      (message errmsg)
+		      (message "%s" errmsg)
 		      nil)))
 	      ((or (eq wl-summary-search-via-nntp 'force)
 		   (and
@@ -4611,7 +4610,7 @@ Return t if message exists."
 		    wl-summary-search-via-nntp))
 	       (wl-summary-jump-to-msg-by-message-id-via-nntp msgid))
 	      (t
-	       (message errmsg)
+	       (message "%s" errmsg)
 	       nil))))))
 
 (defun wl-summary-jump-to-msg-by-message-id-via-nntp (&optional id server-spec)
@@ -4874,6 +4873,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
   (let ((start (point))
 	(skip-tmark-regexp (wl-regexp-opt wl-summary-skip-mark-list))
 	(skip t)
+	(column (current-column))
 	skip-pmark-regexp goto-next next-entity finfo)
     (if (elmo-folder-plugged-p wl-summary-buffer-elmo-folder)
 	()
@@ -4881,6 +4881,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	    (wl-regexp-opt (list " "
 				 elmo-msgdb-unread-cached-mark
 				 elmo-msgdb-important-mark))))
+    (beginning-of-line)
     (while (and skip
 		(not (if downward (eobp) (bobp))))
       (if downward
@@ -4898,8 +4899,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
     (if (if downward (eobp) (and (bobp) skip)) (setq goto-next t))
     (if (or (eobp) (and (bobp) skip))
 	(goto-char start))
-
-    (beginning-of-line)
+    (move-to-column column)
 
     (if (not goto-next)
 	(if wl-summary-buffer-disp-msg

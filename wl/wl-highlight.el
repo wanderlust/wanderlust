@@ -816,33 +816,30 @@
   (if wl-use-highlight-mouse-line
       (put-text-property 0 (length line) 'mouse-face 'highlight line)))
 
-(defun wl-highlight-summary-current-line (&optional smark regexp temp-too)
+(defun wl-highlight-summary-current-line ()
   (interactive)
   (save-excursion
     (let ((inhibit-read-only t)
 	  (case-fold-search nil) temp-mark status-mark
 	  (deactivate-mark nil)
-	  fregexp fsymbol bol eol matched thread-top looked-at dest ds)
+	  fsymbol bol eol matched thread-top looked-at dest ds)
       (end-of-line)
       (setq eol (point))
       (beginning-of-line)
       (setq bol (point))
-      (if smark
-	  (setq status-mark smark)
-	(setq status-mark (wl-summary-persistent-mark)))
-      (when temp-too
-	(setq temp-mark (wl-summary-temp-mark))
-	(cond
-	 ((string= temp-mark "*")
-	  (setq fsymbol 'wl-highlight-summary-temp-face))
-	 ((string= temp-mark "D")
-	  (setq fsymbol 'wl-highlight-summary-deleted-face))
-	 ((string= temp-mark "O")
-	  (setq fsymbol 'wl-highlight-summary-copied-face
-		dest t))
-	 ((string= temp-mark "o")
-	  (setq fsymbol 'wl-highlight-summary-refiled-face
-		dest t))))
+      (setq status-mark (wl-summary-persistent-mark))
+      (setq temp-mark (wl-summary-temp-mark))
+      (cond
+       ((string= temp-mark "*")
+	(setq fsymbol 'wl-highlight-summary-temp-face))
+       ((string= temp-mark "D")
+	(setq fsymbol 'wl-highlight-summary-deleted-face))
+       ((string= temp-mark "O")
+	(setq fsymbol 'wl-highlight-summary-copied-face
+	      dest t))
+       ((string= temp-mark "o")
+	(setq fsymbol 'wl-highlight-summary-refiled-face
+	      dest t)))
       (if (not fsymbol)
 	  (cond
 	   ((and (string= temp-mark wl-summary-score-over-mark)
@@ -984,9 +981,7 @@ Faces used:
 		  (< (point) end))
 	(when (or (not lazy)
 		  (null (get-text-property (point) 'face)))
-	  (wl-highlight-summary-current-line nil nil
-					     (or wl-summary-lazy-highlight
-						 wl-summary-scored)))
+	  (wl-highlight-summary-current-line))
 	(forward-line 1))
       (unless wl-summary-lazy-highlight
 	(message "Highlighting...done")))))
@@ -994,13 +989,17 @@ Faces used:
 (defun wl-highlight-summary-window (&optional win beg)
   "Highlight summary window.
 This function is defined for `window-scroll-functions'"
-  (if wl-summary-highlight
-      (with-current-buffer (window-buffer win)
-	(when (eq major-mode 'wl-summary-mode)
-	  (wl-highlight-summary (window-start win)
-				(window-end win)
-				'lazy)
-	  (set-buffer-modified-p nil)))))
+  (when wl-summary-highlight
+    (with-current-buffer (window-buffer win)
+      (when (eq major-mode 'wl-summary-mode)
+	(let ((start (window-start win))
+	      (end (condition-case nil
+		       (window-end win t) ;; old emacsen doesn't support 2nd arg.
+		     (error (window-end win)))))
+	  (wl-highlight-summary start
+				end
+				'lazy))
+	(set-buffer-modified-p nil)))))
 
 (defun wl-highlight-headers (&optional for-draft)
   (let ((beg (point-min))
@@ -1101,8 +1100,7 @@ interpreted as cited text.)"
 	(real-end end)
 	current  beg
 	e p hend)
-    (if too-big
-	nil
+    (unless too-big
       (save-excursion
 	(save-restriction
 	  (widen)
@@ -1131,29 +1129,27 @@ interpreted as cited text.)"
 	      (goto-char start)
 	      (while (and (not body-only)
 			  (not (eobp)))
-		(cond
-		 ((looking-at "^[^ \t\n:]+[ \t]*:")
-		  (put-text-property (match-beginning 0) (match-end 0)
-				     'face 'wl-highlight-message-headers)
-		  (setq p (match-end 0))
-		  (setq hend (save-excursion (std11-field-end end)))
-		  (cond
-		   ((catch 'match
-		      (let ((regexp-alist wl-highlight-message-header-alist))
-			(while regexp-alist
-			  (when (save-match-data
-				  (looking-at (caar regexp-alist)))
-			    (put-text-property p hend 'face
-					       (cdar regexp-alist))
-			    (throw 'match t))
-			  (setq regexp-alist (cdr regexp-alist)))
-			(throw 'match nil))))
-		   (t
-		    (put-text-property
-		     p hend 'face 'wl-highlight-message-header-contents)))
-		  (goto-char hend))
-		 ;; ignore non-header field name lines
-		 (t (forward-line 1))))))
+		(if (looking-at "^[^ \t\n:]+[ \t]*:")
+		    (progn
+		      (put-text-property (match-beginning 0) (match-end 0)
+					 'face 'wl-highlight-message-headers)
+		      (setq p (match-end 0))
+		      (setq hend (save-excursion (std11-field-end end)))
+		      (or (catch 'match
+			    (let ((regexp-alist wl-highlight-message-header-alist))
+			      (while regexp-alist
+				(when (save-match-data
+					(looking-at (caar regexp-alist)))
+				  (put-text-property p hend 'face
+						     (cdar regexp-alist))
+				  (throw 'match t))
+				(setq regexp-alist (cdr regexp-alist)))
+			      (throw 'match nil)))
+			  (put-text-property
+			   p hend 'face 'wl-highlight-message-header-contents))
+		      (goto-char hend))
+		  ;; ignore non-header field name lines
+		  (forward-line 1)))))
 	  (let (prefix prefix-face-alist pair end)
 	    (while (not (eobp))
 	      (cond

@@ -100,10 +100,8 @@
 ;; elmo-flag-table-get
 ;; elmo-flag-table-save
 
-;; elmo-msgdb-append-entity-from-buffer
-;; msgdb number flag-table &optional buffer
-
-;; 
+;; elmo-msgdb-append-entity
+;; msgdb entity flag-table
 
 ;; ENTITY elmo-msgdb-make-entity ARGS
 ;; VALUE elmo-msgdb-entity-field ENTITY
@@ -936,12 +934,14 @@ Return CONDITION itself if no entity exists in msgdb."
   (and entity (car entity)))
 
 (defsubst elmo-msgdb-overview-entity-get-extra-field (entity field-name)
-  (let ((extra (and entity (aref (cdr entity) 8))))
+  (let ((field-name (downcase field-name))
+	(extra (and entity (aref (cdr entity) 8))))
     (and extra
 	 (cdr (assoc field-name extra)))))
 
 (defsubst elmo-msgdb-overview-entity-set-extra-field (entity field-name value)
-  (let ((extras (and entity (aref (cdr entity) 8)))
+  (let ((field-name (downcase field-name))
+	(extras (and entity (aref (cdr entity) 8)))
 	extra)
     (if (setq extra (assoc field-name extras))
 	(setcdr extra value)

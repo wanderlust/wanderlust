@@ -2555,21 +2555,18 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (defvar wl-modeline-biff-state-off wl-biff-state-indicator-off)
 
 ;; Advanced thread view.
-(defvar wl-thread-indent-level 1
+(defvar wl-thread-indent-level (if wl-on-mule 1 2)
   "*Indent level for thread.")
-(defvar wl-thread-have-younger-brother-str "┣"
+(defvar wl-thread-have-younger-brother-str (if wl-on-mule "┣" "+")
   "*A string for thread branch line.  It should contain one character.")
-(defvar wl-thread-youngest-child-str       "┗"
+(defvar wl-thread-youngest-child-str       (if wl-on-mule "┗" "+")
   "*A string for thread branch line.  It should contain one character.")
-(defvar wl-thread-vertical-str             "┃"
+(defvar wl-thread-vertical-str             (if wl-on-mule "┃" "|")
   "*A string for thread branch line.  It should contain one character.")
-(defvar wl-thread-horizontal-str           "━"
+(defvar wl-thread-horizontal-str           (if wl-on-mule "━" "-")
   "*A string for thread branch line.  It should contain one character.")
-(defvar wl-thread-space-str                "　"
+(defvar wl-thread-space-str                (if wl-on-mule "　" " ")
   "*A string for thread branch line.  It should contain one character.")
-
-(defvar wl-highlight-thread-indent-string-regexp "[^[<]*"
-  "* A regexp string for thread indent...for highlight.")
 
 ;; folder icons. filename relative to wl-icon-directory
 (defvar wl-opened-group-folder-icon "opened.xpm"

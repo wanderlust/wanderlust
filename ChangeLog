@@ -1,3 +1,11 @@
+2003-06-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* WL-MK: Remove comment out code.  Fix indent.
+
+2003-04-08  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* WL-MK: Nil for wl-info-lang means do nothing on info.
+
 2003-02-05  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* WL-MK (make-wl-news): Replace "^(" by "\\\\(" to avoid font-lock

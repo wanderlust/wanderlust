@@ -16,7 +16,7 @@
 ;(setq wl-info-lang "en")
 
 ;; Set language for news file ("ja" or "en", both in default).
-;(setq wl-news-lang '("ja" "en"))
+;(setq wl-news-lang '("ja" "en")) ; order sensitive
 
 ;; if you want to install wl modules to the subdirectory other than "wl"
 ;; under LISPDIR, set following variables.

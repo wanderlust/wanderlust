@@ -33,23 +33,23 @@ MIME用モジュールの選択
 
   (a) XEmacs 21.1 以降
 
-	APEL 10.4, FLIM 1.14.5, SEMI 1.14.5
+	APEL 10.5, FLIM 1.14.5, SEMI 1.14.5
 
     可能ならば XEmacs のパッケージとしてインストールすることをお勧めします。
 
   (b) Emacs 20.4 以降
 
-	APEL 10.4, FLIM 1.14.5, SEMI 1.14.5
+	APEL 10.5, FLIM 1.14.5, SEMI 1.14.5
 
   (c) Emacs 20.1〜20.3
 
-	APEL 10.4, CLIME 1.14.5, SEMI 1.14.5
+	APEL 10.5, CLIME 1.14.5, SEMI 1.14.5
 
     FLIM が動きませんので、代わりに CLIME をインストールしてください。
 
   (d) Emacs 19.34 (Mule 2.3)
 
-	APEL 10.4, CLIME 1.14.5, SEMI 1.14.5
+	APEL 10.5, CLIME 1.14.5, SEMI 1.14.5
 
     Emacs 19.34 ベースの Mule では SEMI を動作させることが可能です。下記
     のページが参考になります。
@@ -79,23 +79,33 @@ MIME用モジュールのインストール
 
   例えば、以下の組合せの動作が確認されています。
 
-	APEL 10.4, SLIM 1.14.9, SEMI 1.14.5
-	APEL 10.4, CLIME 1.14.5, EMIKO 1.14.1
+	APEL 10.5, SLIM 1.14.9, SEMI 1.14.5
+	APEL 10.5, CLIME 1.14.5, EMIKO 1.14.1
 
   APEL, FLIM, SEMI のバージョンアップを行った場合は、Wanderlust をインス
   トールし直してください。
 
-  以下を実行することにより、APEL, FLIM, SEMI のチェックを含んだ環境テス
-  トが行えます。EMACS で emacs のコマンド名を指定することができます。
+
+環境の確認
+==========
+
+  Wanderlust のインストールの前に環境の確認をすることを推奨します。
 
 	% make check
+  または
 	% make EMACS=xemacs check
+
+  で APEL, FLIM, SEMI のチェックを含んだ環境テストが行えます。
+
+  新しい APEL, FLIM, SEMI がインストールされていても、load-path 上に古い
+  ものが残っている場合にはトラブルの原因となります。load-path 上で重複し
+  たファイルを探すには M-x list-load-path-shadows が便利です。
 
 
 通常のインストール
 ==================
 
-(a)Makefile の編集
+(a)Makefile, WL-CFG の編集
 
   Makefile は、EMACS, LISPDIR の部分を編集してください。
 
@@ -104,6 +114,8 @@ MIME用モジュールのインストール
 
   LISPDIR は特に指定しなくても (NONE のままでも) 自動的にインストール
   先を検出します。
+
+  必要なら WL-CFG を編集してください。 INFO の言語の指定などができます。
 
 (b)バイトコンパイル・インストール
 
@@ -131,7 +143,7 @@ XEmacs のパッケージとしてインストール
   の設定、アイコンのパス設定を個人の .emacs に記述しなくても 
   Wanderlust を正常に起動できるようになります。
 
-(a)Makefile の編集
+(a)Makefile, WL-CFG の編集
 
   Makefile は、XEMACS, PACKAGEDIR の部分を編集してください。
 
@@ -141,6 +153,7 @@ XEmacs のパッケージとしてインストール
   PACKAGEDIR は特に指定しなくても (NONE のままでも)、SEMI がインストー
   ルされていれば自動的に検出されます。
 
+  必要なら WL-CFG を編集してください。 INFO の言語の指定などができます。
 
 (b)バイトコンパイル・インストール
 

@@ -179,18 +179,9 @@
       (setq cur-number (1+ cur-number)))
     (elmo-msgdb-sort-by-date msgdb)))
 
-(luna-define-method elmo-folder-process-crosspost ((folder elmo-multi-folder)
-						   &optional
-						   number-alist)
-  (let ((number-alists (elmo-multi-split-number-alist
-			folder
-			(elmo-msgdb-get-number-alist
-			 (elmo-folder-msgdb folder))))
-	(cur-number 1))
-    (dolist (child (elmo-multi-folder-children-internal folder))
-      (elmo-folder-process-crosspost child (car number-alists))
-      (setq cur-number (+ 1 cur-number)
-	    number-alists (cdr number-alists)))))
+(luna-define-method elmo-folder-process-crosspost ((folder elmo-multi-folder))
+  (dolist (child (elmo-multi-folder-children-internal folder))
+    (elmo-folder-process-crosspost child)))
 
 (defsubst elmo-multi-folder-append-msgdb (folder append-msgdb)
   (if append-msgdb

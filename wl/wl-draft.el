@@ -1090,6 +1090,10 @@ non-nil."
 			   smtp-sasl-user-name
 			   (car smtp-sasl-mechanisms)
 			   smtp-server)))
+		     (signal (car err) (cdr err)))
+		    (quit
+		     (wl-draft-write-sendlog 'uncertain 'smtp smtp-server
+					     recipients id)
 		     (signal (car err) (cdr err)))))
 		 (wl-draft-set-sent-message 'mail 'sent)
 		 (wl-draft-write-sendlog
@@ -1167,7 +1171,7 @@ If FORCE-MSGID, insert message-id regardless of `wl-insert-message-id'."
   "Send the message in the current buffer.  Not modified the header fields."
   (let (delimline mime-bcc)
     (if (and wl-draft-verbose-send mes-string)
-	(message mes-string))
+	(message "%s" mes-string))
     ;; get fcc folders.
     (setq delimline (wl-draft-get-header-delimiter t))
     (unless wl-draft-fcc-list
@@ -1225,10 +1229,11 @@ If FORCE-MSGID, insert message-id regardless of `wl-insert-message-id'."
 		(setq wl-draft-verbose-msg
 		      (format "Sending%s and Queuing%s..."
 			      sent-via unplugged-via))
-		(message (concat wl-draft-verbose-msg "done")))
+		(message "%sdone" wl-draft-verbose-msg))
 	    (if mes-string
-		(message (concat mes-string
-				 (if sent-via "done" "failed")))))))))
+		(message "%s%s"
+			 mes-string
+			 (if sent-via "done" "failed"))))))))
   (not wl-sent-message-modified)) ;; return value
 
 (defun wl-draft-raw-send (&optional kill-when-done force-pre-hook mes-string)
@@ -1316,11 +1321,12 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	  (wl-draft-verbose-msg nil)
 	  err)
       (unwind-protect
-	  (save-excursion (set-buffer sending-buffer)
+	  (save-excursion
+	    (set-buffer sending-buffer)
 	    (if (and (not (wl-message-mail-p))
 		     (not (wl-message-news-p)))
 		(error "No recipient is specified"))
-	    (expand-abbrev) ; for mail-abbrevs
+	    (expand-abbrev)		; for mail-abbrevs
 	    (let ((mime-header-encode-method-alist
 		   (append
 		    '((wl-draft-eword-encode-address-list
@@ -1331,7 +1337,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	      )
 	    ;;
 	    (if wl-draft-verbose-send
-		(message (or mes-string "Sending...")))
+		(message "%s" (or mes-string "Sending...")))
 	    (funcall wl-draft-send-function editing-buffer kill-when-done)
 	    ;; Now perform actions on successful sending.
 	    (while mail-send-actions
@@ -1341,9 +1347,10 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		(error))
 	      (setq mail-send-actions (cdr mail-send-actions)))
 	    (if wl-draft-verbose-send
-		(message (concat (or wl-draft-verbose-msg
-				     mes-string "Sending...")
-				 "done"))))
+		(message "%sdone"
+			 (or wl-draft-verbose-msg
+			     mes-string
+			     "Sending..."))))
 	;; kill sending buffer, anyway.
 	(and (buffer-live-p sending-buffer)
 	     (kill-buffer sending-buffer))))))

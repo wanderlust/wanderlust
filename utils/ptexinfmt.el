@@ -7,6 +7,7 @@
 
 ;; Author: TAKAHASHI Kaoru <kaoru@kaisei.org>
 ;;	Yoshiki Hayashi <yoshiki@xemacs.org>
+;;	Katsumi Yamaoka <yamaoka@jpl.org>
 ;; Maintainer: TAKAHASHI Kaoru <kaoru@kaisei.org>
 ;; Created: 7 Jul 2000
 ;; Keywords: maint, tex, docs, emulation, compatibility
@@ -33,29 +34,81 @@
 
 ;; Support texinfmt.el 2.32 or later.
 
+;; Modified by Yamaoka not to use APEL functions.
+
 ;;; Code:
+
+(require 'backquote)
 (require 'texinfmt)
-(require 'poe)
-(require 'broken)
 
 ;;; Broken
 (defvar ptexinfmt-disable-broken-notice-flag t
-  "If non-nil disable notice, when call `broken-facility'.
-This is NO-NOTICE argument in `broken-facility'.")
+  "If non-nil disable notice, when call `ptexinfmt-broken-facility'.
+This is last argument in `ptexinfmt-broken-facility'.")
+
+(put 'ptexinfmt-broken-facility 'lisp-indent-function 'defun)
+(defmacro ptexinfmt-broken-facility (facility docstring assertion
+					      &optional dummy)
+  "Declare a symbol FACILITY is broken if ASSERTION is nil.
+DOCSTRING will be printed if ASSERTION is nil and
+`ptexinfmt-disable-broken-notice-flag' is nil."
+  (` (let ((facility '(, facility))
+	   (docstring (, docstring))
+	   (assertion (eval '(, assertion))))
+       (put facility 'broken (not assertion))
+       (if assertion
+	   nil
+	 (put facility 'broken-docstring docstring)
+	 (if ptexinfmt-disable-broken-notice-flag
+	     nil
+	   (message "BROKEN FACILITY DETECTED: %s" docstring))))))
+
+(put 'ptexinfmt-defun-if-broken 'lisp-indent-function 'defun)
+(defmacro ptexinfmt-defun-if-broken (&rest args)
+  "Redefine a function just like `defun' if it is considered broken."
+  (let ((name (list 'quote (car args))))
+    (setq args (cdr args))
+    (` (prog1
+	   (, name)
+	 (if (get (, name) 'broken)
+	     (defalias (, name)
+	       (function (lambda (,@ args)))))))))
+
+(put 'ptexinfmt-defun-if-void 'lisp-indent-function 'defun)
+(defmacro ptexinfmt-defun-if-void (&rest args)
+  "Define a function just like `defun' unless it is already defined."
+  (let ((name (list 'quote (car args))))
+    (setq args (cdr args))
+    (` (prog1
+	   (, name)
+	 (if (fboundp (, name))
+	     nil
+	   (defalias (, name)
+	     (function (lambda (,@ args)))))))))
+
+(put 'ptexinfmt-defvar-if-void 'lisp-indent-function 'defun)
+(defmacro ptexinfmt-defvar-if-void (&rest args)
+  "Define a variable just like `defvar' unless it is already defined."
+  (let ((name (car args)))
+    (setq args (cdr args))
+    (` (prog1
+	   (defvar (, name))
+	 (if (boundp '(, name))
+	     nil
+	   (defvar (, name) (,@ args)))))))
 
 ;; sort -fd
-(broken-facility texinfo-format-printindex
+(ptexinfmt-broken-facility texinfo-format-printindex
   "Can't sort on Mule for Windows."
   (if (and (memq system-type '(windows-nt ms-dos))
 ;;; I don't know version threshold.
 ;;;	   (string< texinfmt-version "2.37 of 24 May 1997")
 	   (boundp 'MULE) (not (featurep 'meadow))) ; Mule for Windows
       nil
-    t)
-  ptexinfmt-disable-broken-notice-flag)
+    t))
 
 ;; @var
-(broken-facility texinfo-format-var
+(ptexinfmt-broken-facility texinfo-format-var
   "Don't perse @var argument."
   (condition-case nil
       (with-temp-buffer
@@ -64,11 +117,10 @@ This is NO-NOTICE argument in `broken-facility'.")
 	  (insert "@var{@asis{foo}}\n")
 	  (texinfo-format-expand-region (point-min) (point-max))
 	  t))
-    (error nil))
-  ptexinfmt-disable-broken-notice-flag)
+    (error nil)))
 
 ;; @xref
-(broken-facility texinfo-format-xref
+(ptexinfmt-broken-facility texinfo-format-xref
   "Can't format @xref, 1st argument is empty."
   (condition-case nil
       (with-temp-buffer
@@ -77,24 +129,22 @@ This is NO-NOTICE argument in `broken-facility'.")
 	  (insert "@xref{, xref, , file}\n")
 	  (texinfo-format-expand-region (point-min) (point-max))
 	  t))
-    (error nil))
-  ptexinfmt-disable-broken-notice-flag)
+    (error nil)))
 
 ;; @uref
-(broken-facility texinfo-format-uref
+(ptexinfmt-broken-facility texinfo-format-uref
   "Parse twice @uref argument."
   (condition-case nil
       (with-temp-buffer
 	(let (texinfo-enclosure-list texinfo-alias-list)
 	  (texinfo-mode)
-	  (insert "@uref{mailto:foo@@bar.com}\n")
+	  (insert "@uref{mailto:foo@@noncommand.example.com}\n")
 	  (texinfo-format-expand-region (point-min) (point-max))
 	  t))
-    (error nil))
-  ptexinfmt-disable-broken-notice-flag)
+    (error nil)))
 
 ;; @multitable
-(broken-facility texinfo-multitable-widths
+(ptexinfmt-broken-facility texinfo-multitable-widths
   "`texinfo-multitable-widths' unsupport wide-char."
   (if (fboundp 'texinfo-multitable-widths)
       (with-temp-buffer
@@ -106,13 +156,11 @@ This is NO-NOTICE argument in `broken-facility'.")
 	      nil
 	    t)))
     ;; function definition is void
-    t)
-  ptexinfmt-disable-broken-notice-flag)
+    t))
 
-(broken-facility texinfo-multitable-item
+(ptexinfmt-broken-facility texinfo-multitable-item
   "`texinfo-multitable-item' unsupport wide-char."
-  (if-broken texinfo-multitable-widths nil t)
-  ptexinfmt-disable-broken-notice-flag)
+  (not (get 'texinfo-multitable-widths 'broken)))
 
 
 ;;; Hardcopy and HTML (discard)
@@ -152,12 +200,17 @@ This is NO-NOTICE argument in `broken-facility'.")
 (put 'page 'texinfo-format 'texinfo-discard-line)
 (put 'hyphenation 'texinfo-format 'texinfo-discard-command-and-arg)
 
+;; @tie{} (makeinfo 4.3 or later)
+(put 'tie 'texinfo-format 'texinfo-format-tie)
+(ptexinfmt-defun-if-void texinfo-format-tie ()
+  (texinfo-parse-arg-discard)
+  (insert " "))
 
 
 ;;; Directory File
 ;; @direcategory
 (put 'dircategory 'texinfo-format 'texinfo-format-dircategory)
-(defun-maybe texinfo-format-dircategory ()
+(ptexinfmt-defun-if-void texinfo-format-dircategory ()
   (let ((str (texinfo-parse-arg-discard)))
     (delete-region (point)
 		   (progn
@@ -167,13 +220,13 @@ This is NO-NOTICE argument in `broken-facility'.")
 
 ;; @direntry
 (put 'direntry 'texinfo-format 'texinfo-format-direntry)
-(defun-maybe texinfo-format-direntry ()
+(ptexinfmt-defun-if-void texinfo-format-direntry ()
   (texinfo-push-stack 'direntry nil)
   (texinfo-discard-line)
   (insert "START-INFO-DIR-ENTRY\n"))
 
 (put 'direntry 'texinfo-end 'texinfo-end-direntry)
-(defun-maybe texinfo-end-direntry ()
+(ptexinfmt-defun-if-void texinfo-end-direntry ()
   (texinfo-discard-command)
   (insert "END-INFO-DIR-ENTRY\n\n")
   (texinfo-pop-stack 'direntry))
@@ -213,14 +266,14 @@ This is NO-NOTICE argument in `broken-facility'.")
 
 ;; @ifnotinfo ... @end ifnotinfo (makeinfo 3.11 or later)
 (put 'ifnotinfo 'texinfo-format 'texinfo-format-ifnotinfo)
-(defun-maybe texinfo-format-ifnotinfo ()
+(ptexinfmt-defun-if-void texinfo-format-ifnotinfo ()
   (delete-region texinfo-command-start
 		 (progn (re-search-forward "@end ifnotinfo[ \t]*\n")
 			(point))))
 
 ;; @html ... @end html (makeinfo 3.11 or later)
 (put 'html 'texinfo-format 'texinfo-format-html)
-(defun-maybe texinfo-format-html ()
+(ptexinfmt-defun-if-void texinfo-format-html ()
   (delete-region texinfo-command-start
 		 (progn (re-search-forward "@end html[ \t]*\n")
 			(point))))
@@ -234,7 +287,7 @@ This is NO-NOTICE argument in `broken-facility'.")
 
 ;; @ifplaintext ... @end ifplaintext (makeinfo 4.2 or later)
 (put 'ifplaintext 'texinfo-format 'texinfo-format-ifplaintext)
-(defun-maybe texinfo-format-ifplaintext ()
+(ptexinfmt-defun-if-void texinfo-format-ifplaintext ()
   (delete-region texinfo-command-start
 		 (progn (re-search-forward "@end ifplaintext[ \t]*\n")
 			(point))))
@@ -250,22 +303,20 @@ This is NO-NOTICE argument in `broken-facility'.")
 ;; @acronym
 (put 'acronym 'texinfo-format 'texinfo-format-var)
 
-(when-broken texinfo-format-var
-  (fmakunbound 'texinfo-format-var))
-(defun-maybe texinfo-format-var ()
+(ptexinfmt-defun-if-broken texinfo-format-var ()
   (let ((arg (texinfo-parse-expanded-arg)))
     (texinfo-discard-command)
     (insert (upcase arg))))
 
 ;; @key
 (put 'key 'texinfo-format 'texinfo-format-key)
-(defun-maybe texinfo-format-key ()
+(ptexinfmt-defun-if-void texinfo-format-key ()
   (insert (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @email{EMAIL-ADDRESS[, DISPLAYED-TEXT]}
 (put 'email 'texinfo-format 'texinfo-format-email)
-(defun-maybe texinfo-format-email ()
+(ptexinfmt-defun-if-void texinfo-format-email ()
   "Format EMAIL-ADDRESS and optional DISPLAYED-TXT.
 Insert < ... > around EMAIL-ADDRESS."
   (let ((args (texinfo-format-parse-args)))
@@ -277,7 +328,7 @@ Insert < ... > around EMAIL-ADDRESS."
 
 ;; @option
 (put 'option 'texinfo-format 'texinfo-format-option)
-(defun texinfo-format-option ()
+(ptexinfmt-defun-if-void texinfo-format-option ()
   "Insert ` ... ' around arg unless inside a table; in that case, no quotes."
   ;; `looking-at-backward' not available in v. 18.57, 20.2
   ;; searched-for character is a control-H
@@ -288,168 +339,193 @@ Insert < ... > around EMAIL-ADDRESS."
     (insert (texinfo-parse-arg-discard)))
   (goto-char texinfo-command-start))
 
+;; @verb{<char>TEXT<char>}  (makeinfo 4.1 or later)
+(put 'verb 'texinfo-format 'texinfo-format-verb)
+(ptexinfmt-defun-if-void texinfo-format-verb ()
+  "Format text between non-quoted unique delimiter characters verbatim.
+Enclose the verbatim text, including the delimiters, in braces.  Print
+text exactly as written (but not the delimiters) in a fixed-width.
+
+For example, @verb\{|@|\} results in @ and
+@verb\{+@'e?`!`+} results in @'e?`!`."
+
+  (let ((delimiter (buffer-substring-no-properties
+		    (1+ texinfo-command-end) (+ 2 texinfo-command-end))))
+    (unless (looking-at "{")
+      (error "Not found: @verb start brace"))
+    (delete-region texinfo-command-start (+ 2 texinfo-command-end))
+    (search-forward  delimiter))
+  (delete-backward-char 1)
+  (unless (looking-at "}")
+    (error "Not found: @verb end brace"))
+  (delete-char 1))
 
 
 ;;; Accents and Special characters
 ;; @pounds{}	==>	#	Pounds Sterling
 (put 'pounds 'texinfo-format 'texinfo-format-pounds)
-(defun-maybe texinfo-format-pounds ()
+(ptexinfmt-defun-if-void texinfo-format-pounds ()
   (texinfo-parse-arg-discard)
   (insert "#"))
 
 ;; @OE{}	==>	OE	French-OE-ligature
 (put 'OE 'texinfo-format 'texinfo-format-French-OE-ligature)
-(defun-maybe texinfo-format-French-OE-ligature ()
+(ptexinfmt-defun-if-void texinfo-format-French-OE-ligature ()
   (insert "OE" (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @oe{}	==>	oe
 (put 'oe 'texinfo-format 'texinfo-format-French-oe-ligature)
-(defun-maybe texinfo-format-French-oe-ligature () ; lower case
+(ptexinfmt-defun-if-void texinfo-format-French-oe-ligature () ; lower case
   (insert "oe" (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @AA{}	==>	AA	Scandinavian-A-with-circle
 (put 'AA 'texinfo-format 'texinfo-format-Scandinavian-A-with-circle)
-(defun-maybe texinfo-format-Scandinavian-A-with-circle ()
+(ptexinfmt-defun-if-void texinfo-format-Scandinavian-A-with-circle ()
   (insert "AA" (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @aa{}	==>	aa
 (put 'aa 'texinfo-format 'texinfo-format-Scandinavian-a-with-circle)
-(defun-maybe texinfo-format-Scandinavian-a-with-circle () ; lower case
+(ptexinfmt-defun-if-void texinfo-format-Scandinavian-a-with-circle () ; lower case
   (insert "aa" (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @AE{}	==>	AE	Latin-Scandinavian-AE
 (put 'AE 'texinfo-format 'texinfo-format-Latin-Scandinavian-AE)
-(defun-maybe texinfo-format-Latin-Scandinavian-AE ()
+(ptexinfmt-defun-if-void texinfo-format-Latin-Scandinavian-AE ()
   (insert "AE" (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @ae{}	==>	ae
 (put 'ae 'texinfo-format 'texinfo-format-Latin-Scandinavian-ae)
-(defun-maybe texinfo-format-Latin-Scandinavian-ae () ; lower case
+(ptexinfmt-defun-if-void texinfo-format-Latin-Scandinavian-ae () ; lower case
   (insert "ae" (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @ss{}	==>	ss	German-sharp-S
 (put 'ss 'texinfo-format 'texinfo-format-German-sharp-S)
-(defun-maybe texinfo-format-German-sharp-S ()
+(ptexinfmt-defun-if-void texinfo-format-German-sharp-S ()
   (insert "ss" (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @questiondown{}	==>	?	upside-down-question-mark
 (put 'questiondown 'texinfo-format 'texinfo-format-upside-down-question-mark)
-(defun-maybe texinfo-format-upside-down-question-mark ()
+(ptexinfmt-defun-if-void texinfo-format-upside-down-question-mark ()
   (insert "?" (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @exclamdown{}	==>	!	upside-down-exclamation-mark
 (put 'exclamdown 'texinfo-format 'texinfo-format-upside-down-exclamation-mark)
-(defun-maybe texinfo-format-upside-down-exclamation-mark ()
+(ptexinfmt-defun-if-void texinfo-format-upside-down-exclamation-mark ()
   (insert "!" (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @L{}		==>	L/	Polish suppressed-L (Lslash)
 (put 'L 'texinfo-format 'texinfo-format-Polish-suppressed-L)
-(defun-maybe texinfo-format-Polish-suppressed-L ()
+(ptexinfmt-defun-if-void texinfo-format-Polish-suppressed-L ()
   (insert (texinfo-parse-arg-discard) "/L")
   (goto-char texinfo-command-start))
 
 ;; @l{}		==>	l/	Polish suppressed-L (Lslash) (lower case)
 (put 'l 'texinfo-format 'texinfo-format-Polish-suppressed-l-lower-case)
-(defun-maybe texinfo-format-Polish-suppressed-l-lower-case ()
+(ptexinfmt-defun-if-void texinfo-format-Polish-suppressed-l-lower-case ()
   (insert (texinfo-parse-arg-discard) "/l")
   (goto-char texinfo-command-start))
 
 ;; @O{}		==>	O/	Scandinavian O-with-slash
 (put 'O 'texinfo-format 'texinfo-format-Scandinavian-O-with-slash)
-(defun-maybe texinfo-format-Scandinavian-O-with-slash ()
+(ptexinfmt-defun-if-void texinfo-format-Scandinavian-O-with-slash ()
   (insert (texinfo-parse-arg-discard) "O/")
   (goto-char texinfo-command-start))
 
 ;; @o{}		==>	o/	Scandinavian O-with-slash (lower case)
 (put 'o 'texinfo-format 'texinfo-format-Scandinavian-o-with-slash-lower-case)
-(defun-maybe texinfo-format-Scandinavian-o-with-slash-lower-case ()
+(ptexinfmt-defun-if-void texinfo-format-Scandinavian-o-with-slash-lower-case ()
   (insert (texinfo-parse-arg-discard) "o/")
   (goto-char texinfo-command-start))
 
 ;; @,{c}	==>	c,	cedilla accent
 (put ', 'texinfo-format 'texinfo-format-cedilla-accent)
-(defun-maybe texinfo-format-cedilla-accent ()
+(ptexinfmt-defun-if-void texinfo-format-cedilla-accent ()
   (insert (texinfo-parse-arg-discard) ",")
   (goto-char texinfo-command-start))
 
 
 ;; @dotaccent{o}	==>	.o	overdot-accent
 (put 'dotaccent 'texinfo-format 'texinfo-format-overdot-accent)
-(defun-maybe texinfo-format-overdot-accent ()
+(ptexinfmt-defun-if-void texinfo-format-overdot-accent ()
   (insert "." (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @ubaraccent{o}	==>	_o	underbar-accent
 (put 'ubaraccent 'texinfo-format 'texinfo-format-underbar-accent)
-(defun-maybe texinfo-format-underbar-accent ()
+(ptexinfmt-defun-if-void texinfo-format-underbar-accent ()
   (insert "_" (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @udotaccent{o}	==>	o-.	underdot-accent
 (put 'udotaccent 'texinfo-format 'texinfo-format-underdot-accent)
-(defun-maybe texinfo-format-underdot-accent ()
+(ptexinfmt-defun-if-void texinfo-format-underdot-accent ()
   (insert (texinfo-parse-arg-discard) "-.")
   (goto-char texinfo-command-start))
 
 ;; @H{o}	==>	""o	long Hungarian umlaut
 (put 'H 'texinfo-format 'texinfo-format-long-Hungarian-umlaut)
-(defun-maybe texinfo-format-long-Hungarian-umlaut ()
+(ptexinfmt-defun-if-void texinfo-format-long-Hungarian-umlaut ()
   (insert "\"\"" (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @ringaccent{o}	==>	*o	ring accent
 (put 'ringaccent 'texinfo-format 'texinfo-format-ring-accent)
-(defun-maybe texinfo-format-ring-accent ()
+(ptexinfmt-defun-if-void texinfo-format-ring-accent ()
   (insert "*" (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @tieaccent{oo}	==>	[oo	tie after accent
 (put 'tieaccent 'texinfo-format 'texinfo-format-tie-after-accent)
-(defun-maybe texinfo-format-tie-after-accent ()
+(ptexinfmt-defun-if-void texinfo-format-tie-after-accent ()
   (insert "[" (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @u{o}	==>	(o	breve accent
 (put 'u 'texinfo-format 'texinfo-format-breve-accent)
-(defun-maybe texinfo-format-breve-accent ()
+(ptexinfmt-defun-if-void texinfo-format-breve-accent ()
   (insert "(" (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @v{o}	==>	<o	hacek accent
 (put 'v 'texinfo-format 'texinfo-format-hacek-accent)
-(defun-maybe texinfo-format-hacek-accent ()
+(ptexinfmt-defun-if-void texinfo-format-hacek-accent ()
   (insert "<" (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @dotless{i}	==>	i	dotless i and dotless j
 (put 'dotless 'texinfo-format 'texinfo-format-dotless)
-(defun-maybe texinfo-format-dotless ()
+(ptexinfmt-defun-if-void texinfo-format-dotless ()
   (insert (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
 ;; @.
 (put '\. 'texinfo-format 'texinfo-format-\.)
-(defun-maybe texinfo-format-\. ()
+(ptexinfmt-defun-if-void texinfo-format-\. ()
   (texinfo-discard-command)
   (insert "."))
 
 ;; @:
 (put '\: 'texinfo-format 'texinfo-format-\:)
-(defun-maybe texinfo-format-\: ()
+(ptexinfmt-defun-if-void texinfo-format-\: ()
   (texinfo-discard-command))
 
 ;; @-
 (put '\- 'texinfo-format 'texinfo-format-soft-hyphen)
-(defun-maybe texinfo-format-soft-hyphen ()
+(ptexinfmt-defun-if-void texinfo-format-soft-hyphen ()
+  (texinfo-discard-command))
+
+;; @/
+(put '\/ 'texinfo-format 'texinfo-format-\/)
+(ptexinfmt-defun-if-void texinfo-format-\/ ()
   (texinfo-discard-command))
 
 
@@ -457,9 +533,7 @@ Insert < ... > around EMAIL-ADDRESS."
 ;; @ref, @xref
 (put 'ref 'texinfo-format 'texinfo-format-xref)
 
-(when-broken texinfo-format-xref
-  (fmakunbound 'texinfo-format-xref))
-(defun-maybe texinfo-format-xref ()
+(ptexinfmt-defun-if-broken texinfo-format-xref ()
   (let ((args (texinfo-format-parse-args)))
     (texinfo-discard-command)
     (insert "*Note ")
@@ -472,11 +546,9 @@ Insert < ... > around EMAIL-ADDRESS."
 	(unless (null (nth 0 args))
 	  (insert (nth 0 args)))))))
 
-;; @uref
+;; @uref{URL [,TEXT] [,REPLACEMENT]}
 (put 'uref 'texinfo-format 'texinfo-format-uref)
-(when-broken texinfo-format-uref
-  (fmakunbound 'texinfo-format-uref))
-(defun-maybe texinfo-format-uref ()
+(ptexinfmt-defun-if-broken texinfo-format-uref ()
   "Format URL and optional URL-TITLE.
 Insert ` ... ' around URL if no URL-TITLE argument;
 otherwise, insert URL-TITLE followed by URL in parentheses."
@@ -489,7 +561,7 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
 
 ;; @inforef
 (put 'inforef 'texinfo-format 'texinfo-format-inforef)
-(defun-maybe texinfo-format-inforef ()
+(ptexinfmt-defun-if-void texinfo-format-inforef ()
   (let ((args (texinfo-format-parse-args)))
     (texinfo-discard-command)
     (if (nth 1 args)
@@ -510,7 +582,7 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
 ;;; New command definition
 ;; @alias NEW=EXISTING
 (put 'alias 'texinfo-format 'texinfo-alias)
-(defun-maybe texinfo-alias ()
+(ptexinfmt-defun-if-void texinfo-alias ()
   (let ((start (1- (point)))
 	args)
     (skip-chars-forward " ")
@@ -526,10 +598,21 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
       (texinfo-discard-command))))
 
 
+;;; Indent
+;; @exampleindent INDENT  (makeinfo 4.0 or later)
+
+;; @paragraphindent INDENT  (makeinfo 4.0 or later)
+;; INDENT: asis, 0, n
+
+;; @firstparagraphindent WORD   (makeinfo 4.6 or later)
+;; WORD: none, insert
+
+
+
 ;;; Special
-;; @image{FILENAME, [WIDTH], [HEIGHT]}
+;; @image{FILENAME [, WIDTH] [, HEIGHT]}
 (put 'image 'texinfo-format 'texinfo-format-image)
-(defun-maybe texinfo-format-image ()
+(ptexinfmt-defun-if-void texinfo-format-image ()
   ;; I don't know makeinfo parse FILENAME.
   (let ((args (texinfo-format-parse-args))
 	filename)
@@ -544,16 +627,15 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
     (message "Reading included file: %s...done" filename)))
 
 
-;; @exampleindent
-
-
 
 ;;; @multitable ... @end multitable
-(defvar-maybe texinfo-extra-inter-column-width 0
+(ptexinfmt-defvar-if-void texinfo-extra-inter-column-width 0
   "*Number of extra spaces between entries (columns) in @multitable.")
 
-(defvar-maybe texinfo-multitable-buffer-name "*multitable-temporary-buffer*")
-(defvar-maybe texinfo-multitable-rectangle-name "texinfo-multitable-temp-")
+(ptexinfmt-defvar-if-void texinfo-multitable-buffer-name
+  "*multitable-temporary-buffer*")
+(ptexinfmt-defvar-if-void texinfo-multitable-rectangle-name
+  "texinfo-multitable-temp-")
 
 ;; These commands are defined in texinfo.tex for printed output.
 (put 'multitableparskip 'texinfo-format 'texinfo-discard-line-with-args)
@@ -563,7 +645,7 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
 
 (put 'multitable 'texinfo-format 'texinfo-multitable)
 
-(defun-maybe texinfo-multitable ()
+(ptexinfmt-defun-if-void texinfo-multitable ()
   "Produce multi-column tables."
 
 ;; This function pushes information onto the `texinfo-stack'.
@@ -580,15 +662,12 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
   (texinfo-discard-line-with-args))
 
 (put 'multitable 'texinfo-end 'texinfo-end-multitable)
-(defun-maybe texinfo-end-multitable ()
+(ptexinfmt-defun-if-void texinfo-end-multitable ()
   "Discard the @end multitable line and pop the stack of multitable."
   (texinfo-discard-command)
   (texinfo-pop-stack 'multitable))
 
-(when-broken texinfo-multitable-widths
-  (fmakunbound 'texinfo-multitable-widths))
-
-(defun-maybe texinfo-multitable-widths ()
+(ptexinfmt-defun-if-broken texinfo-multitable-widths ()
   "Return list of widths of each column in a multi-column table."
   (let (texinfo-multitable-width-list)
     ;; Fractions format:
@@ -606,107 +685,106 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
      ((looking-at "@columnfractions")
       (forward-word 1)
       (while (not (eolp))
-        (setq texinfo-multitable-width-list
-              (cons
-               (truncate
-                (1-
-                 (* fill-column (read (get-buffer (current-buffer))))))
-               texinfo-multitable-width-list))))
+	(setq texinfo-multitable-width-list
+	      (cons
+	       (truncate
+		(1-
+		 (* fill-column (read (get-buffer (current-buffer))))))
+	       texinfo-multitable-width-list))))
      ;;
      ;; Case 2: {Column 1 template} {Column 2} {Column 3 example}
      ((looking-at "{")
       (let ((start-of-templates (point)))
-        (while (not (eolp))
-          (skip-chars-forward " \t")
-          (let* ((start-of-template (1+ (point)))
-                 (end-of-template
-                 ;; forward-sexp works with braces in Texinfo mode
-                  (progn (forward-sexp 1) (1- (point)))))
-            (setq texinfo-multitable-width-list
-		  (cons (- (progn (goto-char end-of-template) (current-column))
-			   (progn (goto-char start-of-template) (current-column)))
-                        texinfo-multitable-width-list))
-            ;; Remove carriage return from within a template, if any.
-            ;; This helps those those who want to use more than
-            ;; one line's worth of words in @multitable line.
-            (narrow-to-region start-of-template end-of-template)
-            (goto-char (point-min))
-            (while (search-forward "
-" nil t)
-              (delete-char -1))
-            (goto-char (point-max))
-            (widen)
-            (forward-char 1)))))
+	(while (not (eolp))
+	  (skip-chars-forward " \t")
+	  (let* ((start-of-template (1+ (point)))
+		 (end-of-template
+		  ;; forward-sexp works with braces in Texinfo mode
+		  (progn (forward-sexp 1) (1- (point)))))
+	    (setq texinfo-multitable-width-list
+		  (cons (- (progn
+			     (goto-char end-of-template)
+			     (current-column))
+			   (progn
+			     (goto-char start-of-template)
+			     (current-column)))
+			texinfo-multitable-width-list))
+	    ;; Remove carriage return from within a template, if any.
+	    ;; This helps those those who want to use more than
+	    ;; one line's worth of words in @multitable line.
+	    (narrow-to-region start-of-template end-of-template)
+	    (goto-char (point-min))
+	    (while (search-forward "\n" nil t)
+	      (delete-char -1))
+	    (goto-char (point-max))
+	    (widen)
+	    (forward-char 1)))))
      ;;
      ;; Case 3: Trouble
      (t
-      (error
-       "You probably need to specify column widths for @multitable correctly")))
+      (error "\
+You probably need to specify column widths for @multitable correctly")))
     ;; Check whether columns fit on page.
     (let ((desired-columns
-           (+
-            ;; between column spaces
-            (length texinfo-multitable-width-list)
-            ;; additional between column spaces, if any
-            texinfo-extra-inter-column-width
-            ;; sum of spaces for each entry
-            (apply '+ texinfo-multitable-width-list))))
+	   (+
+	    ;; between column spaces
+	    (length texinfo-multitable-width-list)
+	    ;; additional between column spaces, if any
+	    texinfo-extra-inter-column-width
+	    ;; sum of spaces for each entry
+	    (apply '+ texinfo-multitable-width-list))))
       (if (> desired-columns fill-column)
-          (error
-           (format
-            "Multi-column table width, %d chars, is greater than page width, %d chars."
-            desired-columns fill-column))))
+	  (error (format "\
+Multi-column table width, %d chars, is greater than page width, %d chars."
+			 desired-columns fill-column))))
     texinfo-multitable-width-list))
 
 ;; @item  A1  @tab  A2  @tab  A3
-(defun-maybe texinfo-multitable-extract-row ()
+(ptexinfmt-defun-if-void texinfo-multitable-extract-row ()
   "Return multitable row, as a string.
 End of row is beginning of next @item or beginning of @end.
 Cells within rows are separated by @tab."
   (skip-chars-forward " \t")
   (let* ((start (point))
-         (end (progn
-                (re-search-forward "@item\\|@end")
-                (match-beginning 0)))
-         (row (progn (goto-char end)
-                     (skip-chars-backward " ")
-                     ;; remove whitespace at end of argument
-                     (delete-region (point) end)
-                     (buffer-substring start (point)))))
+	 (end (progn
+		(re-search-forward "@item\\|@end")
+		(match-beginning 0)))
+	 (row (progn (goto-char end)
+		     (skip-chars-backward " ")
+		     ;; remove whitespace at end of argument
+		     (delete-region (point) end)
+		     (buffer-substring start (point)))))
     (delete-region texinfo-command-start end)
     row))
 
-(when-broken texinfo-multitable-item
-  (fmakunbound 'texinfo-multitable-item))
-
 (put 'multitable 'texinfo-item 'texinfo-multitable-item)
-(defun-maybe texinfo-multitable-item ()
+(ptexinfmt-defun-if-void texinfo-multitable-item ()
   "Format a row within a multicolumn table.
 Cells in row are separated by @tab.
 Widths of cells are specified by the arguments in the @multitable line.
 All cells are made to be the same height.
 This command is executed when texinfmt sees @item inside @multitable."
   (let ((original-buffer (current-buffer))
-        (table-widths (reverse (car (cdr (car texinfo-stack)))))
-        (existing-fill-column fill-column)
-        start
-        end
-        (table-column       0)
-        (table-entry-height 0)
-        ;; unformatted row looks like:  A1  @tab  A2  @tab  A3
-        ;; extract-row command deletes the source line in the table.
-        (unformated-row (texinfo-multitable-extract-row)))
+	(table-widths (reverse (car (cdr (car texinfo-stack)))))
+	(existing-fill-column fill-column)
+	start
+	end
+	(table-column       0)
+	(table-entry-height 0)
+	;; unformatted row looks like:  A1  @tab  A2  @tab  A3
+	;; extract-row command deletes the source line in the table.
+	(unformated-row (texinfo-multitable-extract-row)))
     ;; Use a temporary buffer
     (set-buffer (get-buffer-create texinfo-multitable-buffer-name))
     (delete-region (point-min) (point-max))
     (insert unformated-row)
     (goto-char (point-min))
 ;; 1. Check for correct number of @tab in line.
-    (let ((tab-number 1))                       ; one @tab between two columns
+    (let ((tab-number 1)) ;; one @tab between two columns
       (while (search-forward "@tab" nil t)
-        (setq tab-number (1+ tab-number)))
+	(setq tab-number (1+ tab-number)))
       (if (/= tab-number (length table-widths))
-          (error "Wrong number of @tab's in a @multitable row")))
+	  (error "Wrong number of @tab's in a @multitable row")))
     (goto-char (point-min))
 ;; 2. Format each cell, and copy to a rectangle
     ;; buffer looks like this:    A1  @tab  A2  @tab  A3
@@ -716,16 +794,16 @@ This command is executed when texinfmt sees @item inside @multitable."
     (while (not (eobp))
       (setq start (point))
       (setq end (save-excursion
-                  (if (search-forward "@tab" nil 'move)
-                      ;; Delete the @tab command, including the @-sign
-                      (delete-region
-                       (point)
-                       (progn (forward-word -1) (1- (point)))))
-                  (point)))
+		  (if (search-forward "@tab" nil 'move)
+		      ;; Delete the @tab command, including the @-sign
+		      (delete-region
+		       (point)
+		       (progn (forward-word -1) (1- (point)))))
+		  (point)))
       ;; Set fill-column *wider* than needed to produce inter-column space
       (setq fill-column (+ 1
-                           texinfo-extra-inter-column-width
-                           (nth table-column table-widths)))
+			   texinfo-extra-inter-column-width
+			   (nth table-column table-widths)))
       (narrow-to-region start end)
       ;; Remove whitespace before and after entry.
       (skip-chars-forward " ")
@@ -735,71 +813,70 @@ This command is executed when texinfmt sees @item inside @multitable."
       (delete-region (point) (save-excursion (end-of-line) (point)))
       ;; Temorarily set texinfo-stack to nil so texinfo-format-scan
       ;; does not see an unterminated @multitable.
-      (let (texinfo-stack)                      ; nil
-        (texinfo-format-scan))
-      (let (fill-prefix)                        ; no fill prefix
-        (fill-region (point-min) (point-max)))
+      (let (texinfo-stack) ;; nil
+	(texinfo-format-scan))
+      (let (fill-prefix) ;; no fill prefix
+	(fill-region (point-min) (point-max)))
       (setq table-entry-height
-            (max table-entry-height (count-lines (point-min) (point-max))))
+	    (max table-entry-height (count-lines (point-min) (point-max))))
 ;; 3. Move point to end of bottom line, and pad that line to fill column.
       (goto-char (point-min))
       (forward-line (1- table-entry-height))
-      (let* ((beg (point))                      ; beginning of line
-             ;; add one more space for inter-column spacing
-             (needed-whitespace
-              (1+
+      (let* ((beg (point)) ;; beginning of line
+	     ;; add one more space for inter-column spacing
+	     (needed-whitespace
+	      (1+
 	       (- fill-column
-		  (progn (end-of-line) (current-column)))))) ; end of existing line
-        (insert (make-string
-                 (if (> needed-whitespace 0) needed-whitespace 1)
-                 ? )))
+		  (progn
+		    (end-of-line)
+		    (current-column)))))) ;; end of existing line
+	(insert (make-string
+		 (if (> needed-whitespace 0) needed-whitespace 1)
+		 ? )))
       ;; now, put formatted cell into a rectangle
       (set (intern (concat texinfo-multitable-rectangle-name
-                           (int-to-string table-column)))
-           (extract-rectangle (point-min) (point)))
+			   (int-to-string table-column)))
+	   (extract-rectangle (point-min) (point)))
       (delete-region (point-min) (point))
       (goto-char (point-max))
       (setq table-column (1+ table-column))
       (widen))
 ;; 4. Add extra lines to rectangles so all are of same height
     (let ((total-number-of-columns table-column)
-          (column-number 0)
-          here)
+	  (column-number 0)
+	  here)
       (while (> table-column 0)
-        (let ((this-rectangle (int-to-string table-column)))
-          (while (< (length this-rectangle) table-entry-height)
-            (setq this-rectangle (append this-rectangle '("")))))
-        (setq table-column (1- table-column)))
+	(let ((this-rectangle (int-to-string table-column)))
+	  (while (< (length this-rectangle) table-entry-height)
+	    (setq this-rectangle (append this-rectangle '("")))))
+	(setq table-column (1- table-column)))
 ;; 5. Insert formatted rectangles in original buffer
       (switch-to-buffer original-buffer)
       (open-line table-entry-height)
       (while (< column-number total-number-of-columns)
-        (setq here (point))
-        (insert-rectangle
-         (eval (intern
-                (concat texinfo-multitable-rectangle-name
-                        (int-to-string column-number)))))
-        (goto-char here)
-        (end-of-line)
-        (setq column-number (1+ column-number))))
+	(setq here (point))
+	(insert-rectangle
+	 (eval (intern
+		(concat texinfo-multitable-rectangle-name
+			(int-to-string column-number)))))
+	(goto-char here)
+	(end-of-line)
+	(setq column-number (1+ column-number))))
     (kill-buffer texinfo-multitable-buffer-name)
     (setq fill-column existing-fill-column)))
 
 
-(when-broken texinfo-format-printindex
-  (fmakunbound 'texinfo-format-printindex))
-
-(defun-maybe texinfo-format-printindex ()
+(ptexinfmt-defun-if-broken texinfo-format-printindex ()
   (let ((indexelts (symbol-value
-                    (cdr (assoc (texinfo-parse-arg-discard)
-                                texinfo-indexvar-alist))))
-        opoint)
+		    (cdr (assoc (texinfo-parse-arg-discard)
+				texinfo-indexvar-alist))))
+	opoint)
     (insert "\n* Menu:\n\n")
     (setq opoint (point))
     (texinfo-print-index nil indexelts)
 
     (if (memq system-type '(vax-vms windows-nt ms-dos))
-        (texinfo-sort-region opoint (point))
+	(texinfo-sort-region opoint (point))
       (shell-command-on-region opoint (point) "sort -fd" 1))))
 
 (provide 'ptexinfmt)

@@ -278,7 +278,7 @@ APEL, FLIM, SEMI の順にインストールしてください。
 推奨される APEL, FLIM, SEMI のバージョンの組合せは、以下の通りです。
 
 @itemize @minus
-@item APEL 10.4, FLIM 1.14.5, SEMI 1.14.5
+@item APEL 10.5, FLIM 1.14.5, SEMI 1.14.5
 @end itemize
 
 その他、FLIM, SEMI にはいろいろな変形バージョンが存在しますが、
@@ -287,8 +287,8 @@ APEL, FLIM, SEMI の順にインストールしてください。
 例えば、以下の組合せで動作することが確認されています。
 
 @itemize @minus
-@item APEL 10.4, SLIM 1.14.9, SEMI 1.14.5
-@item APEL 10.4, CLIME 1.14.5, EMIKO 1.14.1
+@item APEL 10.5, SLIM 1.14.9, SEMI 1.14.5
+@item APEL 10.5, CLIME 1.14.5, EMIKO 1.14.1
 @end itemize
 
 APEL, FLIM もしくは SEMI のバージョンアップを行った場合は、Wanderlust を
@@ -7382,7 +7382,7 @@ Non-nil ならば、メール送信時に本当に送信して良いかを確認します。
 フォルダ名の正規表現とフォルダ移動時のサマリ更新レンジとの連想リストです。
 更新レンジには @code{wl-summary-sync} で入力できる値のいずれか
 (@samp{all}, @samp{update}, @samp{rescan}, @samp{rescan-noscore},
-@samp{first}, @samp{last}) を指定します。マッチしなかった場合は、
+@samp{first}, @samp{last}, @samp{no-sync}) を指定します。マッチしなかった場合は、
 @samp{update} となります。
 
 @item wl-ask-range
@@ -7744,6 +7744,7 @@ Wanderlust List in English @t{<wl-en@@lists.airs.net>}
 2001  7/04    2.6.0 stable リリース。
       8/21    wl-addrmgr by 北本さん。
      12/27    2.8.1 stable リリース。
+2002 12/11    2.10.0 stable リリース。
 @end example
 
 詳しい変遷は @file{ChangeLog} を御覧ください。
