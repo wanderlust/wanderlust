@@ -4704,11 +4704,25 @@ The initial setting is 7.
 If @code{wl-template-visible-select} is non-nil, this variable specifies
 the size of the preview window.
 
+@item wl-draft-buffer-style
+@vindex wl-draft-buffer-style
+The initial setting is @code{full}.
+Style of draft buffer window (except for replying and forwarding).
+@code{keep} is to use current window,
+@code{full} is to use full frame window,
+@code{split} is to split current window and use it.
+If some function is specified, it is called with the draft buffer
+as an argument.
+
 @item wl-draft-reply-buffer-style
 @vindex wl-draft-reply-buffer-style
-The initial setting is @code{split}.  @code{split} or @code{full} can be
-specified.  In the case of @code{full}, the whole frame will be used for
-a reply draft buffer when it is prepared.
+The initial setting is @code{split}.
+Style of draft buffer for replying and forwarding.
+@code{keep} is to use message buffer window,
+@code{full} is to use full frame window,
+@code{split} is to split message buffer window and use it.
+If some function is specified, it is called with the draft buffer
+as an argument.
 
 @item wl-draft-use-frame
 @vindex wl-draft-use-frame

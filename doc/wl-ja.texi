@@ -4653,12 +4653,23 @@ Non-nil ならウィンドウを表示しながらテンプレートを選択する場合、リターン
 @code{wl-template-visible-select}が non-nil の場合、
 適用後の状態を表示するウィンドウの大きさを指定します。
 
+@item wl-draft-buffer-style
+@vindex wl-draft-buffer-style
+初期設定は @code{full}。
+(返信と転送の場合以外の)ドラフトバッファのウインドウの形態を指定します。
+@code{keep} とすると現在のウィンドウを使い、
+@code{full} とするとフレーム全体のウインドウを使います。
+@code{split} とすると現在のウィンドウを分割して使います。
+関数が指定された場合、ドラフトバッファを引数としてそれ呼び出します。
+
 @item wl-draft-reply-buffer-style
 @vindex wl-draft-reply-buffer-style
 初期設定は @code{split}。
-@code{split} と @code{full} が指定できます。
-@code{full} なら返事を書くときにフレーム全体を使ったドラフトバッファが
-用意されます。
+返信と転送の場合のドラフトバッファのウインドウの形態を指定します。
+@code{keep} とするとメッセージバッファのウィンドウを使い、
+@code{full} とするとフレーム全体のウインドウを使います。
+@code{split} とするとメッセージバッファのウィンドウを分割して使います。
+関数が指定された場合、ドラフトバッファを引数としてそれ呼び出します。
 
 @item wl-draft-use-frame
 @vindex wl-draft-use-frame
