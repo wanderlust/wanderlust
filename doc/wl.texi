@@ -1651,7 +1651,7 @@ Format:
 
 @example
 @group
-@samp{'flag/} @var{global-flag}
+@samp{'flag} [@samp{/} @var{global-flag}]
 @samp{'sendlog}
 @samp{'cache/00} - @samp{'cache/1F}
 @end group
