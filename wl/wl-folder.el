@@ -1839,37 +1839,35 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	      (wl-folder-update-line value))))))))
 
 (defun wl-folder-update-unread (folder unread)
-;  (save-window-excursion
-    (let ((buf (get-buffer wl-folder-buffer-name))
-	  cur-unread
-	  (unread-diff 0)
-	  ;;(fld (elmo-string folder))
-	  value newvalue entity-list)
+  (let ((buf (get-buffer wl-folder-buffer-name))
+	cur-unread
+	(unread-diff 0)
+	value newvalue entity-list)
 ;;; Update folder-info
 ;;;    (elmo-folder-set-info-hashtb fld nil nil nil unread)
-      (setq cur-unread (or (nth 1 (wl-folder-get-entity-info folder)) 0))
-      (setq unread-diff (- (or unread 0) cur-unread))
-      (setq value (wl-folder-get-entity-info folder))
-      (setq newvalue (list (nth 0 value)
-			   unread
-			   (nth 2 value)))
-      (wl-folder-set-entity-info folder newvalue)
-      (setq wl-folder-info-alist-modified t)
-      (when (and buf
-		 (not (eq unread-diff 0)))
-	(save-match-data
-	  (with-current-buffer buf
-	    (save-excursion
-	      (setq entity-list (wl-folder-search-entity-list-by-name
-				 folder wl-folder-entity))
-	      (while entity-list
-		(wl-folder-update-group (car entity-list) (list 0
-								unread-diff
-								0))
-		(setq entity-list (cdr entity-list)))
-	      (goto-char (point-min))
-	      (while (wl-folder-buffer-search-entity folder)
-		(wl-folder-update-line newvalue))))))));)
+    (setq cur-unread (or (nth 1 (wl-folder-get-entity-info folder)) 0))
+    (setq unread-diff (- (or unread 0) cur-unread))
+    (setq value (wl-folder-get-entity-info folder))
+    (setq newvalue (list (nth 0 value)
+			 unread
+			 (nth 2 value)))
+    (wl-folder-set-entity-info folder newvalue)
+    (setq wl-folder-info-alist-modified t)
+    (when (and buf
+	       (not (eq unread-diff 0)))
+      (save-match-data
+	(with-current-buffer buf
+	  (save-excursion
+	    (setq entity-list (wl-folder-search-entity-list-by-name
+			       folder wl-folder-entity))
+	    (while entity-list
+	      (wl-folder-update-group (car entity-list) (list 0
+							      unread-diff
+							      0))
+	      (setq entity-list (cdr entity-list)))
+	    (goto-char (point-min))
+	    (while (wl-folder-buffer-search-entity folder)
+	      (wl-folder-update-line newvalue))))))))
 
 (defun wl-folder-create-entity-hashtb (entity &optional hashtb reconst)
   (let ((hashtb (or hashtb (elmo-make-hash wl-folder-entity-id)))
