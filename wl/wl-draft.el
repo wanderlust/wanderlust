@@ -44,6 +44,7 @@
 (defvar mail-from-style)
 
 (eval-when-compile
+  (require 'cl)
   (require 'static)
   (require 'elmo-pop3)
   (defalias-maybe 'x-face-insert 'ignore)
@@ -1443,8 +1444,13 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		(goto-char (point-max))
 		(insert (if (eq (char-before) ?\n) "" "\n")
 			mail-header-separator "\n")))
-	    (let ((mime-header-encode-method-alist
-		   '((eword-encode-unstructured-field-body))))
+	    (let* ((mime-header-encode-method-alist
+		    (copy-sequence mime-header-encode-method-alist))
+		   (key
+		    (assq 'eword-encode-address-list
+			  mime-header-encode-method-alist)))
+	      (setq mime-header-encode-method-alist
+		    (delq key mime-header-encode-method-alist))
 	      (mime-edit-translate-buffer))
 	    (wl-draft-get-header-delimiter t)
 	    (setq next-number

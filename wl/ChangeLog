@@ -1,6 +1,9 @@
 2004-08-05  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
-	* wl-draft.el (toplevel): Require eword-encode.
+	* wl-draft.el (wl-draft-save): Disable only
+	`eword-encode-address-list' in `mime-header-encode-method-alist'.
+
+	* wl-draft.el (toplevel): Require eword-encode, cl (at compile).
 
 2004-08-01  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
