@@ -29,7 +29,6 @@
 ;;; Code:
 ;;
 (require 'elmo-vars)
-(require 'elmo-msgdb)
 
 (defvar elmo-database-msgid nil)
 (defvar elmo-database-msgid-filename "msgid")
