@@ -25,12 +25,12 @@
 
 ;;; Commentary:
 ;; 
-
 (require 'elmo-vars)
 (require 'elmo-util)
 (require 'elmo-msgdb)
 (require 'elmo-date)
 (require 'elmo-cache)
+(require 'elmo-net)
 (require 'utf7)
 
 ;;; Code:
@@ -60,8 +60,6 @@
 ;;
 (defvar elmo-imap4-seq-prefix "elmo-imap4")
 (defvar elmo-imap4-seqno 0)
-(defvar elmo-imap4-connection-cache nil
-  "Cache of imap connection.")
 (defvar elmo-imap4-use-uid t
   "Use UID as message number.")
 
@@ -70,6 +68,11 @@
     (cram-md5	elmo-imap4-auth-cram-md5)
     (digest-md5 elmo-imap4-auth-digest-md5))
   "Definition of authenticators.")
+
+(eval-and-compile
+  (luna-define-class elmo-imap4-session (elmo-network-session)
+		     (capability current-mailbox))
+  (luna-define-internal-accessors 'elmo-imap4-session))
 
 (defconst elmo-imap4-quoted-specials-list '(?\\ ?\"))
 
@@ -92,8 +95,6 @@
 (defvar elmo-imap4-extra-namespace-alist
   '(("^{.*/nntp}.*$" . ".")) ; Default is for UW's remote nntp mailbox...
   "Extra namespace alist. A list of cons cell like: (REGEXP . DELIMITER) ")
-
-(defvar elmo-imap4-password-key nil)
 
 ;; buffer local variable
 (defvar elmo-imap4-server-capability nil)
@@ -238,21 +239,6 @@ BUFFER must be a single-byte buffer."
 	  (std11-wrap-as-quoted-pairs string elmo-imap4-quoted-specials-list)
 	  "\""))
 
-(defun elmo-imap4-flush-connection ()
-  (interactive)
-  (let ((cache elmo-imap4-connection-cache)
-	buffer process)
-    (while cache
-      (setq buffer (car (cdr (car cache))))
-      (if buffer (kill-buffer buffer))
-      (setq process (car (cdr (cdr (car cache)))))
-      (if process (delete-process process))
-      (setq cache (cdr cache)))
-    (setq elmo-imap4-connection-cache nil)))
-
-(defsubst elmo-imap4-get-process (spec)
-  (elmo-imap4-connection-get-process (elmo-imap4-get-connection spec)))
-
 (defun elmo-imap4-process-folder-list (string)
   (with-temp-buffer
     (let ((case-fold-search t)
@@ -294,11 +280,9 @@ BUFFER must be a single-byte buffer."
 					  "\\'")
 				  root)))
 	  (setq root (concat root delim)))
-      (elmo-imap4-send-command (process-buffer process) 
-			       process
+      (elmo-imap4-send-command process
 			       (list "list " (elmo-imap4-mailbox root) " *"))
-      (setq response (elmo-imap4-read-response (process-buffer process)
-					       process))
+      (setq response (elmo-imap4-read-response process))
       (setq result (elmo-imap4-process-folder-list response))
       (unless (string= (elmo-imap4-spec-username spec)
 		       elmo-default-imap4-user)
@@ -325,14 +309,18 @@ BUFFER must be a single-byte buffer."
 			     (eval append-serv))))
 	      result))))
 
+(defun elmo-imap4-get-process (spec)
+  (elmo-network-session-process-internal
+   (elmo-imap4-get-session spec)))
+
 (defun elmo-imap4-folder-exists-p (spec)
   (let ((process (elmo-imap4-get-process spec)))
-    (elmo-imap4-send-command (process-buffer process)
-			     process
+    (elmo-imap4-send-command process
 			     (list "status "
-				   (elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
+				   (elmo-imap4-mailbox
+				    (elmo-imap4-spec-mailbox spec))
 				   " (messages)"))
-    (elmo-imap4-read-response (process-buffer process) process)))
+    (elmo-imap4-read-response process)))
 
 (defun elmo-imap4-folder-creatable-p (spec)
   t)
@@ -349,11 +337,9 @@ BUFFER must be a single-byte buffer."
 ;;;     For UW imapd 4.6, this workaround is needed to create #mh mailbox.
 ;;;      (if (string-match "^\\(#mh/\\).*[^/]$" folder)
 ;;;	  (setq folder (concat folder "/"))) ;; make directory
-      (elmo-imap4-send-command (process-buffer process)
-			       process
+      (elmo-imap4-send-command process
 			       (list "create " (elmo-imap4-mailbox folder)))
-      (if (null (elmo-imap4-read-response (process-buffer process)
-					  process))
+      (if (null (elmo-imap4-read-response process))
 	  (error "Create folder %s failed" folder)
 	t))))
 
@@ -363,25 +349,22 @@ BUFFER must be a single-byte buffer."
     (when (elmo-imap4-spec-mailbox spec)
       (when (setq msgs (elmo-imap4-list-folder spec))
 	(elmo-imap4-delete-msgs spec msgs))
-      (elmo-imap4-send-command (process-buffer process) process "close")
-      (elmo-imap4-read-response (process-buffer process) process)
-      (elmo-imap4-send-command (process-buffer process)
-			       process
+      (elmo-imap4-send-command process "close")
+      (elmo-imap4-read-response process)
+      (elmo-imap4-send-command process
 			       (list "delete "
 				     (elmo-imap4-mailbox
 				      (elmo-imap4-spec-mailbox spec))))
-      (if (null (elmo-imap4-read-response (process-buffer process)
-					  process))
+      (if (null (elmo-imap4-read-response process))
 	  (error "Delete folder %s failed" (elmo-imap4-spec-mailbox spec))
 	t))))
 
 (defun elmo-imap4-rename-folder (old-spec new-spec)
   (let ((process (elmo-imap4-get-process old-spec)))
     (when (elmo-imap4-spec-mailbox old-spec)
-      (elmo-imap4-send-command (process-buffer process) process "close")
-      (elmo-imap4-read-response (process-buffer process) process)
-      (elmo-imap4-send-command (process-buffer process)
-			       process
+      (elmo-imap4-send-command process "close")
+      (elmo-imap4-read-response process)
+      (elmo-imap4-send-command process
 			       (list "rename "
 				     (elmo-imap4-mailbox
 				      (elmo-imap4-spec-mailbox old-spec))
@@ -389,7 +372,7 @@ BUFFER must be a single-byte buffer."
 				     (elmo-imap4-mailbox
 				      (elmo-imap4-spec-mailbox new-spec))
 				     ))
-      (if (null (elmo-imap4-read-response (process-buffer process) process))
+      (if (null (elmo-imap4-read-response process))
 	  (error "Rename folder from %s to %s failed"
 		 (elmo-imap4-spec-mailbox old-spec)
 		 (elmo-imap4-spec-mailbox new-spec))
@@ -399,60 +382,27 @@ BUFFER must be a single-byte buffer."
   (save-excursion
     (let* ((process (elmo-imap4-get-process spec))
 	   response)
-      (elmo-imap4-send-command (process-buffer process)
-			       process
+      (elmo-imap4-send-command process
 			       (list "status "
 				     (elmo-imap4-mailbox
 				      (elmo-imap4-spec-mailbox spec))
 				     " (uidnext messages)"))
-      (setq response (elmo-imap4-read-response (process-buffer process)
-					       process))
+      (setq response (elmo-imap4-read-response process))
       (when (and response (string-match 
 			   "\\* STATUS [^(]* \\(([^)]*)\\)" response))
 	(setq response (read (downcase (elmo-match-string 1 response))))
 	(cons (- (cadr (memq 'uidnext response)) 1)
 	      (cadr (memq 'messages response)))))))
 
-(defun elmo-imap4-get-connection (spec)
-  "Return opened IMAP connection for SPEC."
-  (let* ((user   (elmo-imap4-spec-username spec))
-	 (host   (elmo-imap4-spec-hostname spec))
-	 (port   (elmo-imap4-spec-port spec))
-	 (auth   (elmo-imap4-spec-auth spec))
-	 (type   (elmo-imap4-spec-stream-type spec))
-	 entry connection process
-	 user-at-host-on-port)
-    (if (not (elmo-plugged-p host port))
-	(error "Unplugged"))
-    (setq user-at-host-on-port
-	  (format "%s@%s:%d%s" user host port
-		  (if type
-		      (elmo-network-stream-type-spec-string type)
-		    "")))
-    (setq entry (assoc user-at-host-on-port elmo-imap4-connection-cache))
-    (if (and entry
-	     (memq (process-status (cadr (cdr entry)))
-		   '(closed exit)))
-	;; connection is closed...
-	(let ((buffer (car (cdr entry))))
-	  (setq elmo-imap4-connection-cache 
-		(delq entry elmo-imap4-connection-cache))
-	  (if buffer (kill-buffer buffer))
-	  (setq entry nil)))
-    (if entry
-	(cdr entry)			; connection cache exists.
-      (setq process
-	    (elmo-imap4-open-connection host port user auth type))
-      (elmo-imap4-debug "Connected to %s" user-at-host-on-port)
-      ;; add a new entry to the top of the cache.
-      (setq elmo-imap4-connection-cache
-	    (cons
-	     (cons user-at-host-on-port
-		   (setq connection (list (process-buffer process) process
-					  "" ; current-folder..
-					  )))
-	     elmo-imap4-connection-cache))
-      connection)))
+(defun elmo-imap4-get-session (spec)
+  (elmo-network-get-session
+   'elmo-imap4-session
+   "IMAP4"
+   (elmo-imap4-spec-hostname spec)
+   (elmo-imap4-spec-port spec)
+   (elmo-imap4-spec-username spec)
+   (elmo-imap4-spec-auth spec)
+   (elmo-imap4-spec-stream-type spec)))
 
 (defun elmo-imap4-process-filter (process output)
   (save-match-data 
@@ -472,9 +422,9 @@ BUFFER must be a single-byte buffer."
 	(elmo-imap4-debug "continue(%d) %s" elmo-imap4-seqno output))
       (goto-char (point-max)))))
 
-(defun elmo-imap4-read-response (buffer process &optional not-command)
-  (save-excursion
-    (set-buffer buffer)
+(defun elmo-imap4-read-response (process &optional not-command)
+  "Read response from PROCESS"
+  (with-current-buffer (process-buffer process)
     (let ((case-fold-search nil)
 	  (response-string nil)
 	  (response-continue t)
@@ -514,10 +464,9 @@ BUFFER must be a single-byte buffer."
 	  (setq elmo-imap4-read-point match-end)))
       return-value)))
 
-(defun elmo-imap4-read-contents (buffer process)
+(defun elmo-imap4-read-contents (process)
   "Read OK response"
-  (save-excursion
-    (set-buffer buffer)
+  (with-current-buffer (process-buffer process)
     (let ((case-fold-search nil)
 	  (response-string nil)
 	  match-end)
@@ -537,8 +486,7 @@ BUFFER must be a single-byte buffer."
 	response-string))))
 
 (defun elmo-imap4-read-bytes (buffer process bytes)
-  (save-excursion
-    (set-buffer buffer)
+  (with-current-buffer buffer
     (let ((case-fold-search nil)
 	  start gc-message return-value)
       (setq start elmo-imap4-read-point) ; starting point
@@ -563,83 +511,62 @@ BUFFER must be a single-byte buffer."
       (setq elmo-imap4-read-point (+ start bytes))
       ret-val)))
 
-(defun elmo-imap4-send-string (buffer process string)
+(defun elmo-imap4-send-string (process string)
   "Send STRING to server."
-  (save-excursion
-    (set-buffer buffer)
+  (with-current-buffer (process-buffer process)
     (erase-buffer)
     (goto-char (point-min))
     (setq elmo-imap4-read-point (point))
     (process-send-string process string)
     (process-send-string process "\r\n")))
   
-(defun elmo-imap4-noop (connection)
-  (let ((buffer (car connection))
-	(process (cadr connection)))
-    (save-excursion
-      (elmo-imap4-send-command buffer 
-			       process "noop")
-      (elmo-imap4-read-response buffer process))))
-
 (defun elmo-imap4-commit (spec)
   (if (elmo-imap4-plugged-p spec)
-      (save-excursion
-	(let ((connection (elmo-imap4-get-connection spec))
-	      response ret-val beg end)
-	  (and (not (null (elmo-imap4-spec-mailbox spec)))
-	       (if (not (string= (elmo-imap4-connection-get-cwf connection) 
-				 (elmo-imap4-spec-mailbox spec)))
-		   (if (null (setq response 
-				   (elmo-imap4-select-folder 
-				    (elmo-imap4-spec-mailbox spec)
-				    connection)))
-		       (error "Select folder %s failed"
-			      (elmo-imap4-spec-mailbox spec)))
-		 (if elmo-imap4-use-select-to-update-status
-		     (elmo-imap4-select-folder
-		      (elmo-imap4-spec-mailbox spec)
-		      connection) 
-		   (elmo-imap4-check connection))))))))
+      (let ((session (elmo-imap4-get-session spec)))
+	(if elmo-imap4-use-select-to-update-status
+	    (elmo-imap4-select-mailbox session
+				       (elmo-imap4-spec-mailbox spec)
+				       'force)
+	  (elmo-imap4-select-mailbox session
+				     (elmo-imap4-spec-mailbox spec))
+	  (elmo-imap4-check session)))))
 
-(defun elmo-imap4-check (connection)
-  (let ((process (elmo-imap4-connection-get-process connection)))
-    (save-excursion
-      (elmo-imap4-send-command (process-buffer process) 
-			       process "check")
-      (elmo-imap4-read-response (process-buffer process) process))))
+(defun elmo-imap4-check (session)
+  (let ((process (elmo-network-session-process-internal session)))
+    (elmo-imap4-send-command process "check")
+    (elmo-imap4-read-response process)))
 
-(defun elmo-imap4-select-folder (folder connection)
-  (let ((process (elmo-imap4-connection-get-process connection))
-	response)
-    (save-excursion
+(defun elmo-imap4-select-mailbox (session mailbox &optional force)
+  (when (or force
+	    (not (string=
+		  (elmo-imap4-session-current-mailbox-internal session)
+		  mailbox)))
+    (let ((process (elmo-network-session-process-internal session))
+	  response)
       (unwind-protect
 	  (progn
-	    (elmo-imap4-send-command (process-buffer process)
-				     process
-				     (list "select "
-					   (elmo-imap4-mailbox folder)))
-	    (setq response (elmo-imap4-read-response 
-			    (process-buffer process) process)))
-	(if (null response)
-	    (progn
-	      (setcar (cddr connection) nil)
-	      (error "Select folder %s failed" folder))
-	  (setcar (cddr connection) folder))))
-    response))
+	    (elmo-imap4-send-command process
+				     (list
+				      "select "
+				      (elmo-imap4-mailbox mailbox)))
+	    (setq response (elmo-imap4-read-response process)))
+	(if response
+	    (elmo-imap4-session-set-current-mailbox-internal
+	     session mailbox)
+	  (elmo-imap4-session-set-current-mailbox-internal session nil)
+	  (error "Select mailbox %s failed" mailbox))))))
 
 (defun elmo-imap4-check-validity (spec validity-file)
   "get uidvalidity value from server and compare it with validity-file."
   (let* ((process (elmo-imap4-get-process spec))
 	 response)
     (save-excursion
-      (elmo-imap4-send-command (process-buffer process)
-			       process
+      (elmo-imap4-send-command process
 			       (list "status "
 				     (elmo-imap4-mailbox
 				      (elmo-imap4-spec-mailbox spec))
 				     " (uidvalidity)"))
-      (setq response (elmo-imap4-read-response 
-		      (process-buffer process) process))
+      (setq response (elmo-imap4-read-response process))
       (if (string-match "UIDVALIDITY \\([0-9]+\\)" response)
 	  (string= (elmo-get-file-string validity-file)
 		   (elmo-match-string 1 response))
@@ -650,14 +577,12 @@ BUFFER must be a single-byte buffer."
   (let* ((process (elmo-imap4-get-process spec))
 	 response)
     (save-excursion
-      (elmo-imap4-send-command (process-buffer process)
-			       process
+      (elmo-imap4-send-command process
 			       (list "status "
 				     (elmo-imap4-mailbox
 				      (elmo-imap4-spec-mailbox spec))
 				     " (uidvalidity)"))
-      (setq response (elmo-imap4-read-response 
-		      (process-buffer process) process))
+      (setq response (elmo-imap4-read-response process))
       (if (string-match "UIDVALIDITY \\([0-9]+\\)" response)
 	  (progn
 	    (elmo-save-string
@@ -668,33 +593,15 @@ BUFFER must be a single-byte buffer."
 
 (defun elmo-imap4-list (spec str)
   (save-excursion
-    (let* ((connection (elmo-imap4-get-connection spec))
-	   (process (elmo-imap4-connection-get-process connection))
+    (let* ((session (elmo-imap4-get-session spec))
+	   (process (elmo-network-session-process-internal session))
 	   response ret-val beg end)
-      (and (elmo-imap4-spec-mailbox spec)
-	   (if (not (string= (elmo-imap4-connection-get-cwf connection)
-			     (elmo-imap4-spec-mailbox spec)))
-	       (if (null (setq response 
-			       (elmo-imap4-select-folder 
-				(elmo-imap4-spec-mailbox spec)
-				connection)))
-		   (error "Select folder %s failed"
-			  (elmo-imap4-spec-mailbox spec)))
-	     ;; for status update.
-	     (if elmo-imap4-use-select-to-update-status
-		 (elmo-imap4-select-folder (elmo-imap4-spec-mailbox spec) 
-					   connection)
-	       (unless (elmo-imap4-check connection)
-		 ;; Check failed...not selected??
-		 (elmo-imap4-select-folder (elmo-imap4-spec-mailbox spec) 
-					   connection)))))
-      (elmo-imap4-send-command (process-buffer process)
-			       process
+      (elmo-imap4-commit spec)
+      (elmo-imap4-send-command process
 			       (format (if elmo-imap4-use-uid 
 					   "uid search %s"
 					 "search %s") str))
-      (setq response (elmo-imap4-read-response (process-buffer process)
-					       process))
+      (setq response (elmo-imap4-read-response process))
       (if (and response (string-match "\\* SEARCH" response))
 	  (progn
 	    (setq response (substring response (match-end 0)))
@@ -729,14 +636,14 @@ BUFFER must be a single-byte buffer."
   (and (elmo-imap4-use-flag-p spec)
        (elmo-imap4-list spec "flagged")))
 
-(defun elmo-imap4-search-internal (process buffer filter)
+(defun elmo-imap4-search-internal (process filter)
   (let ((search-key (elmo-filter-key filter))
 	word response)
     (cond
      ((or (string= "since" search-key)
 	  (string= "before" search-key))
       (setq search-key (concat "sent" search-key))
-      (elmo-imap4-send-command buffer process
+      (elmo-imap4-send-command process
 			       (format 
 				(if elmo-imap4-use-uid
 				    "uid search %s %s" 
@@ -748,7 +655,7 @@ BUFFER must be a single-byte buffer."
      (t
       (setq word (encode-mime-charset-string (elmo-filter-value filter) 
 					     elmo-search-mime-charset))
-      (elmo-imap4-send-command buffer process
+      (elmo-imap4-send-command process
 			       (list
 				(if elmo-imap4-use-uid
 				    "uid search CHARSET "
@@ -760,7 +667,7 @@ BUFFER must be a single-byte buffer."
 				(format "%s "
 					(elmo-filter-key filter))
 				(elmo-imap4-astring word)))))
-    (if (null (setq response (elmo-imap4-read-response buffer process)))
+    (if (null (setq response (elmo-imap4-read-response process)))
 	(error "Search failed for %s" (elmo-filter-key filter)))
     (if (string-match "^\\* SEARCH\\([^\n]*\\)$" response)
 	(read (concat "(" (elmo-match-string 1 response) ")"))
@@ -768,18 +675,13 @@ BUFFER must be a single-byte buffer."
 
 (defun elmo-imap4-search (spec condition &optional from-msgs)
   (save-excursion
-    (let* ((connection (elmo-imap4-get-connection spec))
-	   (process (elmo-imap4-connection-get-process connection))
+    (let* ((session (elmo-imap4-get-session spec))
+	   (process (elmo-network-session-process-internal session))
 	   response ret-val len word)
-      (if (and (elmo-imap4-spec-mailbox spec)
-	       (not (string= (elmo-imap4-connection-get-cwf connection)
-			     (elmo-imap4-spec-mailbox spec)))
-	       (null (elmo-imap4-select-folder 
-		      (elmo-imap4-spec-mailbox spec) connection)))
-	  (error "Select folder %s failed" (elmo-imap4-spec-mailbox spec)))
+      (elmo-imap4-select-mailbox session 
+				 (elmo-imap4-spec-mailbox spec))
       (while condition
 	(setq response (elmo-imap4-search-internal process
-						   (process-buffer process)
 						   (car condition)))
 	(setq ret-val (nconc ret-val response))
 	(setq condition (cdr condition)))
@@ -1072,20 +974,15 @@ If CHOP-LENGTH is not specified, message set is not chopped."
   "SET flag of MSGS as MARK.
 If optional argument UNMARK is non-nil, unmark."
   (save-excursion
-    (let* ((connection (elmo-imap4-get-connection spec))
-	   (process (elmo-imap4-connection-get-process connection))
+    (let* ((session (elmo-imap4-get-session spec))
+	   (process (elmo-network-session-process-internal session))
 	   (msg-list (copy-sequence msgs))
 	   set-list ent)
-      (if (and (elmo-imap4-spec-mailbox spec)
-	       (not (string= (elmo-imap4-connection-get-cwf connection)
-			     (elmo-imap4-spec-mailbox spec)))
-	       (null (elmo-imap4-select-folder 
-		      (elmo-imap4-spec-mailbox spec) connection)))
-	  (error "Select folder %s failed" (elmo-imap4-spec-mailbox spec)))
+      (elmo-imap4-select-mailbox session 
+				 (elmo-imap4-spec-mailbox spec))
       (setq set-list (elmo-imap4-make-number-set-list msg-list))
       (when set-list
-	(elmo-imap4-send-command (process-buffer process)
-				 process
+	(elmo-imap4-send-command process
 				 (format 
 				  (if elmo-imap4-use-uid 
 				      "uid store %s %sflags.silent (%s)"
@@ -1093,12 +990,11 @@ If optional argument UNMARK is non-nil, unmark."
 				  (cdr (car set-list))
 				  (if unmark "-" "+")
 				  mark))
-	(unless (elmo-imap4-read-response (process-buffer process) process)
+	(unless (elmo-imap4-read-response process)
 	  (error "Store %s flag failed" mark))
 	(unless no-expunge
-	  (elmo-imap4-send-command 
-	   (process-buffer process) process "expunge")
-	  (unless (elmo-imap4-read-response (process-buffer process) process)
+	  (elmo-imap4-send-command process "expunge")
+	  (unless (elmo-imap4-read-response process)
 	    (error "Expunge failed"))))
       t)))
 
@@ -1137,8 +1033,8 @@ If optional argument UNMARK is non-nil, unmark."
   "Create msgdb for SPEC."
   (when numlist
     (save-excursion
-      (let* ((connection (elmo-imap4-get-connection spec))
-	     (process    (elmo-imap4-connection-get-process connection))
+      (let* ((session (elmo-imap4-get-session spec))
+	     (process    (elmo-network-session-process-internal session))
 	     (filter     (and as-num numlist))
 	     (case-fold-search t)
 	     (extra-fields (if elmo-msgdb-extra-fields
@@ -1148,9 +1044,13 @@ If optional argument UNMARK is non-nil, unmark."
 			     ""))
 	     rfc2060 count ret-val set-list ov-str length)
 	(setq rfc2060 (with-current-buffer (process-buffer process)
-			(if (memq 'imap4rev1 elmo-imap4-server-capability)
+			(if (memq 'imap4rev1
+				  (elmo-imap4-session-capability-internal
+				   session))
 			    t
-			  (if (memq 'imap4 elmo-imap4-server-capability)
+			  (if (memq 'imap4
+				    (elmo-imap4-session-capability-internal
+				     session))
 			      nil
 			    (error "No IMAP4 capability!!")))))
 	(setq count 0)
@@ -1159,16 +1059,10 @@ If optional argument UNMARK is non-nil, unmark."
 			numlist
 			elmo-imap4-overview-fetch-chop-length))
 	(message "Getting overview...")
-	(if (and (elmo-imap4-spec-mailbox spec)
-		 (not (string= (elmo-imap4-connection-get-cwf connection)
-			       (elmo-imap4-spec-mailbox spec)))
-		 (null (elmo-imap4-select-folder 
-			(elmo-imap4-spec-mailbox spec) connection)))
-	    (error "Select IMAP folder %s failed" 
-		   (elmo-imap4-spec-mailbox spec)))
+	(elmo-imap4-select-mailbox session 
+				   (elmo-imap4-spec-mailbox spec))
 	(while set-list
 	  (elmo-imap4-send-command 
-	   (process-buffer process)
 	   process
 	   ;; get overview entity from IMAP4
 	   (format 
@@ -1194,8 +1088,7 @@ If optional argument UNMARK is non-nil, unmark."
 			new-mark already-mark seen-mark important-mark
 			seen-list filter)))))
 	  (setq count (+ count (car (car set-list))))
-	  (setq ov-str (elmo-imap4-read-contents (process-buffer process)
-						 process))
+	  (setq ov-str (elmo-imap4-read-contents process))
 	  (when (> length elmo-display-progress-threshold)
 	    (elmo-display-progress
 	     'elmo-imap4-msgdb-create "Getting overview..." 
@@ -1255,171 +1148,176 @@ If optional argument UNMARK is non-nil, unmark."
 	      (> (length (car x))
 		 (length (car y)))))))))
 
-(defun elmo-imap4-auth-login (buffer process name)
-  (with-current-buffer buffer
-    (elmo-imap4-send-command
-     (current-buffer) process "authenticate login" 'no-lock)
-    (or (elmo-imap4-read-response (current-buffer) process t)
+;; Current buffer is process buffer.
+(defun elmo-imap4-auth-login (session)
+  (elmo-imap4-send-command
+   (elmo-network-session-process-internal session)
+   "authenticate login" 'no-lock)
+  (or (elmo-imap4-read-response
+       (elmo-network-session-process-internal session)
+       t)
+      (signal 'elmo-authenticate-error
+	      '(elmo-imap4-auth-login)))
+  (elmo-imap4-send-string
+   (elmo-network-session-process-internal session)
+   (elmo-base64-encode-string
+    (elmo-network-session-user-internal session)))
+  (or (elmo-imap4-read-response
+       (elmo-network-session-process-internal session)
+       t)
 	(signal 'elmo-authenticate-error
 		'(elmo-imap4-auth-login)))
-    (elmo-imap4-send-string
-     (current-buffer) process (elmo-base64-encode-string name))
-    (or (elmo-imap4-read-response (current-buffer) process t)
-	(signal 'elmo-authenticate-error
-		'(elmo-imap4-auth-login)))
-    (elmo-imap4-send-string
-     (current-buffer) process (elmo-base64-encode-string
-			       (elmo-get-passwd elmo-imap4-password-key)))
-    (or (elmo-imap4-read-response (current-buffer) process)
-	(signal 'elmo-authenticate-error
-		'(elmo-imap4-auth-login)))))
+  (elmo-imap4-send-string
+   (elmo-network-session-process-internal session)
+   (elmo-base64-encode-string
+    (elmo-get-passwd (elmo-network-session-password-key session))))
+  (or (elmo-imap4-read-response 
+       (elmo-network-session-process-internal session))
+      (signal 'elmo-authenticate-error
+	      '(elmo-imap4-auth-login))))
 
-(defun elmo-imap4-auth-cram-md5 (buffer process name)
-  (save-excursion
-    (set-buffer buffer)
-    (let (response)
-      (elmo-imap4-send-command 
-       (current-buffer) process "authenticate cram-md5" 'no-lock)
-      (setq response (elmo-imap4-read-response (current-buffer) process t))
-      (or response
+(defun elmo-imap4-auth-cram-md5 (session)
+  (let ((process (elmo-network-session-process-internal session)) response)
+    (elmo-imap4-send-command 
+     process
+     "authenticate cram-md5" 'no-lock)
+    (or (setq response (elmo-imap4-read-response process t))
 	(signal 'elmo-authenticate-error
-		'(elmo-imap4-auth-cram-md5)))
-      (setq response (cadr (split-string response " ")))
-      (elmo-imap4-send-string
-       (current-buffer) process
-       (elmo-base64-encode-string
-	(sasl-cram-md5 name (elmo-get-passwd elmo-imap4-password-key)
-		       (elmo-base64-decode-string response))))
-      (or (elmo-imap4-read-response (current-buffer) process)
+		'(elmo-imap4-auth-cram-md5)))      
+    (setq response (cadr (split-string response " ")))
+    (elmo-imap4-send-string
+     process
+     (elmo-base64-encode-string
+      (sasl-cram-md5 (elmo-network-session-user-internal session)
+		     (elmo-get-passwd
+		      (elmo-network-session-password-key session))
+		     (elmo-base64-decode-string response))))
+    (or (elmo-imap4-read-response process)
 	(signal 'elmo-authenticate-error
-		'(elmo-imap4-auth-cram-md5))))))
+		'(elmo-imap4-auth-cram-md5)))))
 
-(defun elmo-imap4-auth-digest-md5 (buffer process name)
-  (save-excursion
-    (set-buffer buffer)
-    (let (response)
+(defun elmo-imap4-auth-digest-md5 (session)
+  (let ((process (elmo-network-session-process-internal session))
+	response)
       (elmo-imap4-send-command 
-       (current-buffer) process "authenticate digest-md5" 'no-lock)
-      (setq response (elmo-imap4-read-response (current-buffer) process t))
+       process "authenticate digest-md5" 'no-lock)
+      (setq response (elmo-imap4-read-response process t))
       (or response
 	(signal 'elmo-authenticate-error
 		'(elmo-imap4-auth-digest-md5)))
       (setq response (cadr (split-string response " ")))
       (elmo-imap4-send-string
-       (current-buffer) process
+       process
        (elmo-base64-encode-string
 	(sasl-digest-md5-digest-response
 	 (elmo-base64-decode-string response)
-	 name (elmo-get-passwd elmo-imap4-password-key)
-	 "imap" elmo-imap4-password-key);; XXX
+	 (elmo-network-session-user-internal session)
+	 (elmo-get-passwd (elmo-network-session-password-key session))
+	 "imap"
+	 (elmo-network-session-password-key session))
 	'no-line-break))
-      (or (elmo-imap4-read-response (current-buffer) process t)
-	(signal 'elmo-authenticate-error
-		'(elmo-imap4-auth-digest-md5)))
-      (elmo-imap4-send-string (current-buffer) process "")
-      (or (elmo-imap4-read-response (current-buffer) process)
+      (or (elmo-imap4-read-response process t)
 	  (signal 'elmo-authenticate-error
-		  '(elmo-imap4-auth-digest-md5))))))
+		  '(elmo-imap4-auth-digest-md5)))
+      (elmo-imap4-send-string process "")
+      (or (elmo-imap4-read-response process)
+	  (signal 'elmo-authenticate-error
+		  '(elmo-imap4-auth-digest-md5)))))
 
-(defun elmo-imap4-login (buffer process name)
-  (save-excursion
-    (set-buffer buffer)
-    (elmo-imap4-send-command
-     (current-buffer) process
-     (list "login " (elmo-imap4-userid name) " "
-	   (elmo-imap4-password
-	    (elmo-get-passwd elmo-imap4-password-key)))
-     nil 'no-log)
-    (or (elmo-imap4-read-response (current-buffer) process)
-	(signal 'elmo-authenticate-error
-		'(elmo-imap4-login)))))
+(defun elmo-imap4-login (session)
+  (elmo-imap4-send-command
+   (elmo-network-session-process-internal session)
+   (list "login " (elmo-imap4-userid 
+		   (elmo-network-session-user-internal session))
+	 " "
+	 (elmo-imap4-password
+	  (elmo-get-passwd (elmo-network-session-password-key session))))
+   nil 'no-log)
+  (or (elmo-imap4-read-response
+       (elmo-network-session-process-internal session))
+      (signal 'elmo-authenticate-error
+	      '(elmo-imap4-auth-digest-md5))))
 
-(defun elmo-imap4-open-connection (host port user auth type)
-  "Open IMAP connection to HOST on PORT for USER.
-Return nil if connection failed."
-  (let (process)
-    (condition-case error
-	(save-excursion
-	  (as-binary-process
-	   (setq process
-		 (elmo-open-network-stream
-		  "IMAP" (format " *IMAP session to %s:%d" host port)
-		  host port type)))
-	  (elmo-imap4-open-connection-1 process host port user auth type))
-      (error
-       (when (eq (car error) 'elmo-authenticate-error)
-	 (with-current-buffer (process-buffer process)
-	   (elmo-remove-passwd elmo-imap4-password-key)))
-       (when (and process
-		  (memq (process-status process) '(open run)))
-	 (delete-process process))
-       (signal (car error)(cdr error))))
-    process))
-
-(defun elmo-imap4-open-connection-1 (process host port user auth type)
-  (let (response capability mechanism)
-    (set-buffer (process-buffer process))
-    (elmo-set-buffer-multibyte nil)
-    (buffer-disable-undo)
-    (erase-buffer)
-    (make-variable-buffer-local 'elmo-imap4-server-capability)
-    (make-variable-buffer-local 'elmo-imap4-lock)
-    (make-local-variable 'elmo-imap4-read-point)
-    (setq elmo-imap4-read-point (point-min))
-    (make-local-variable 'elmo-imap4-password-key)
-    (set-process-filter process 'elmo-imap4-process-filter)
-    ;; flush connections when exiting...
-    (setq response
-	  (elmo-imap4-read-response (current-buffer) process t))
-    (unless (string-match "^\\* PREAUTH" response)
-      (elmo-imap4-send-command (current-buffer) process "capability")
-      (setq elmo-imap4-server-capability
-	    (elmo-imap4-parse-capability
-	     (elmo-imap4-read-response (current-buffer) process))
-	    capability elmo-imap4-server-capability)
-      (when (eq (elmo-network-stream-type-symbol type) 'starttls)
+(luna-define-method elmo-network-initialize-session ((session 
+						      elmo-imap4-session))
+  (let ((process (elmo-network-session-process-internal session))
+	response greeting capability mechanism)
+    (with-current-buffer (process-buffer process)
+      (elmo-set-buffer-multibyte nil)
+      (buffer-disable-undo)
+      (make-variable-buffer-local 'elmo-imap4-lock)
+      (make-local-variable 'elmo-imap4-read-point)
+      (setq elmo-imap4-read-point (point-min))
+      (set-process-filter process 'elmo-imap4-process-filter)
+      ;; greeting
+      (elmo-network-session-set-greeting-internal
+       session
+       (elmo-imap4-read-response process t))
+      (unless (elmo-network-session-greeting-internal session)
+	(signal 'elmo-open-error
+		'(elmo-network-initialize-session)))
+      (elmo-imap4-send-command process "capability")
+      (elmo-imap4-session-set-capability-internal
+       session
+       (elmo-imap4-parse-capability
+	(elmo-imap4-read-response process)))
+      (when (eq (elmo-network-stream-type-symbol
+		 (elmo-network-session-stream-type-internal session))
+		'starttls)
 	(or (memq 'starttls capability)
 	    (signal 'elmo-open-error
-		    '("There's no STARTTLS support in server")))
-	(elmo-imap4-send-command (current-buffer) process "starttls")
+		    '(elmo-network-initialize-session)))
+	(elmo-imap4-send-command process "starttls")
 	(setq response
-	      (elmo-imap4-read-response (current-buffer) process))
+	      (elmo-imap4-read-response process))
 	(if (string-match 
 	     (concat "^\\(" elmo-imap4-seq-prefix 
 		     (int-to-string elmo-imap4-seqno)
 		     "\\|\\*\\) OK")
 	     response)
-	    (starttls-negotiate process)))
-      (unless (or (not auth)
-		  (and (memq (intern (format "auth=%s" auth))
-			     capability)
-		       (setq mechanism
-			     (assq auth elmo-imap4-authenticator-alist))))
-	(if (or elmo-imap4-force-login
-		(y-or-n-p
-		 (format 
-		  "There's no %s capability in server. continue?"
-		  auth)))
-	    (setq auth nil)
-	  (signal 'elmo-authenticate-error
-		  '("There's no AUTHENTICATE mechanism")))
-	(setq elmo-imap4-password-key
-	      (format "IMAP4:%s/%s@%s:%d"
-		      user (or auth 'plain) host port
-		      (elmo-network-stream-type-spec-string
-		       type))))
-      (if auth
-	  (funcall (nth 1 mechanism) (current-buffer) process user)
-	(elmo-imap4-login (current-buffer) process user)));; try login
-    ;; get namespace of server if possible.
-    (when (memq 'namespace elmo-imap4-server-capability)
-      (elmo-imap4-send-command (current-buffer) process "namespace")
-      (setq elmo-imap4-server-namespace
-	    (elmo-imap4-parse-namespace
-	     (elmo-imap4-parse-response
-	      (elmo-imap4-read-response (current-buffer) process)))))
-    process))
-	    
+	    (starttls-negotiate process))))))
+
+(luna-define-method elmo-network-authenticate-session ((session 
+							elmo-imap4-session))
+  (unless (string-match "^\\* PREAUTH"
+			(elmo-network-session-greeting-internal session))
+    (unless (or (not (elmo-network-session-auth-internal session))
+		(and (memq (intern
+			    (format "auth=%s"
+				    (elmo-network-session-auth-internal
+				     session)))
+			   (elmo-imap4-session-capability-internal session))
+		     (assq
+		      (elmo-network-session-auth-internal session)
+		      elmo-imap4-authenticator-alist)))
+      (if (or elmo-imap4-force-login
+	      (y-or-n-p
+	       (format
+		"There's no %s capability in server. continue?"
+		(elmo-network-session-auth-internal session))))
+	  (elmo-network-session-set-auth-internal session nil)
+	(signal 'elmo-open-error
+		'(elmo-network-initialize-session))))
+    (let ((authenticator
+	   (if (elmo-network-session-auth-internal session)
+	       (nth 1 (assq
+		       (elmo-network-session-auth-internal session)
+		       elmo-imap4-authenticator-alist))
+	     'elmo-imap4-login)))
+      (funcall authenticator session))))
+
+(luna-define-method elmo-network-setup-session ((session 
+						 elmo-imap4-session))
+  (let ((process (elmo-network-session-process-internal session)))
+    (with-current-buffer (process-buffer process)
+      ;; get namespace of server if possible.
+      (when (memq 'namespace (elmo-imap4-session-capability-internal session))
+	(elmo-imap4-send-command process "namespace")
+	(setq elmo-imap4-server-namespace
+	      (elmo-imap4-parse-namespace
+	       (elmo-imap4-parse-response
+		(elmo-imap4-read-response process))))))))
+
 (defun elmo-imap4-get-seqno ()
   (setq elmo-imap4-seqno (+ 1 elmo-imap4-seqno)))
 
@@ -1440,11 +1338,9 @@ Return nil if connection failed."
 	  (replace-match "\r\n"))))
     tmp-buf))
 
-(defun elmo-imap4-send-command (buffer process command &optional no-lock
-				       no-log)
-  "Send COMMAND to server with sequence number."
-  (save-excursion
-    (set-buffer buffer)
+(defun elmo-imap4-send-command (process command &optional no-lock no-log)
+  "Send COMMAND to the PROCESS."
+  (with-current-buffer (process-buffer process)
     (when (and elmo-imap4-use-lock
 	       elmo-imap4-lock)
       (elmo-imap4-debug "send: (%d) is still locking." elmo-imap4-seqno)
@@ -1480,7 +1376,7 @@ Return nil if connection failed."
 		      (process-send-string process cmdstr)
 		      (process-send-string process "\r\n")
 		      (setq cmdstr nil)
-		      (if (null (elmo-imap4-read-response buffer process t))
+		      (if (null (elmo-imap4-read-response process t))
 			  (error "No response from server"))
 		      (cond ((stringp (nth 1 token))
 			     (setq cmdstr (nth 1 token)))
@@ -1506,99 +1402,77 @@ Return nil if connection failed."
       ))
 
 (defun elmo-imap4-read-part (folder msg part)
-  (save-excursion
-    (let* ((spec (elmo-folder-get-spec folder))
-	   (connection (elmo-imap4-get-connection spec))
-	   (process (elmo-imap4-connection-get-process connection))
-	   response ret-val bytes)
-      (when (elmo-imap4-spec-mailbox spec)
-	(when (not (string= (elmo-imap4-connection-get-cwf connection)
-			    (elmo-imap4-spec-mailbox spec)))
-	  (if (null (setq response 
-			  (elmo-imap4-select-folder 
-			   (elmo-imap4-spec-mailbox spec) connection)))
-	      (error "Select folder %s failed" (elmo-imap4-spec-mailbox spec))))
-	(elmo-imap4-send-command (process-buffer process)
-				 process
-				 (format 
-				  (if elmo-imap4-use-uid 
-				      "uid fetch %s body.peek[%s]"
-				    "fetch %s body.peek[%s]")
-				  msg part))
+  (let* ((spec (elmo-folder-get-spec folder))
+	 (session (elmo-imap4-get-session spec))
+	 (process (elmo-network-session-process-internal session))
+	 response ret-val bytes)
+    (elmo-imap4-select-mailbox session 
+			       (elmo-imap4-spec-mailbox spec))
+    (elmo-imap4-send-command process
+			     (format 
+			      (if elmo-imap4-use-uid 
+				  "uid fetch %s body.peek[%s]"
+				"fetch %s body.peek[%s]")
+			      msg part))
+    (if (null (setq response (elmo-imap4-read-response 
+			      process t)))
+	(error "Fetch failed"))
+    (save-match-data
+      (while (string-match "^\\* OK" response)
 	(if (null (setq response (elmo-imap4-read-response 
-				  (process-buffer process) 
 				  process t)))
-	    (error "Fetch failed"))
-	(save-match-data
-	  (while (string-match "^\\* OK" response)
-	    (if (null (setq response (elmo-imap4-read-response 
-				      (process-buffer process) 
-				      process t)))
-		(error "Fetch failed"))))
-	(save-match-data
-	  (if (string-match ".*{\\([0-9]+\\)}" response)
-	      (setq bytes
-		    (string-to-int
-		     (elmo-match-string 1 response)))
-	    (error "Fetch failed")))
-	(if (null (setq response (elmo-imap4-read-bytes 
-				  (process-buffer process) process bytes)))
-	    (error "Fetch message failed"))
-	(setq ret-val response)
-	(elmo-imap4-read-response (process-buffer process)
-				  process)) ;; ignore remaining..
-      ret-val)))
+	    (error "Fetch failed"))))
+    (save-match-data
+      (if (string-match ".*{\\([0-9]+\\)}" response)
+	  (setq bytes
+		(string-to-int
+		 (elmo-match-string 1 response)))
+	(error "Fetch failed")))
+    (if (null (setq response (elmo-imap4-read-bytes 
+			      (process-buffer process) process bytes)))
+	(error "Fetch message failed"))
+    (setq ret-val response)
+    (elmo-imap4-read-response process) ;; ignore remaining..
+    ret-val))
 
 (defun elmo-imap4-prefetch-msg (spec msg outbuf)
   (elmo-imap4-read-msg spec msg outbuf 'unseen))
 
 (defun elmo-imap4-read-msg (spec msg outbuf 
 				 &optional leave-seen-flag-untouched)
-  (save-excursion
-    (let* ((connection (elmo-imap4-get-connection spec))
-	   (process (elmo-imap4-connection-get-process connection))
-	   response ret-val bytes)
-      (as-binary-process
-       (when (elmo-imap4-spec-mailbox spec)
-	 (when (not (string= (elmo-imap4-connection-get-cwf connection)
-			     (elmo-imap4-spec-mailbox spec)))
-	   (if (null (setq response 
-			   (elmo-imap4-select-folder 
-			    (elmo-imap4-spec-mailbox spec) 
-			    connection)))
-	       (error "Select folder %s failed" (elmo-imap4-spec-mailbox spec))))
-	 (elmo-imap4-send-command (process-buffer process)
-				  process
-				  (format 
-				   (if elmo-imap4-use-uid 
-				       "uid fetch %s body%s[]" 
-				     "fetch %s body%s[]")
-				   msg
-				   (if leave-seen-flag-untouched
-				       ".peek" "")))
+  (let* ((session (elmo-imap4-get-session spec))
+	 (process (elmo-network-session-process-internal session))
+	 response ret-val bytes)
+    (as-binary-process
+     (elmo-imap4-select-mailbox session 
+				(elmo-imap4-spec-mailbox spec))
+     (elmo-imap4-send-command process
+			      (format 
+			       (if elmo-imap4-use-uid 
+				   "uid fetch %s body%s[]" 
+				 "fetch %s body%s[]")
+			       msg
+			       (if leave-seen-flag-untouched
+				   ".peek" "")))
+     (if (null (setq response (elmo-imap4-read-response 
+			       process t)))
+	 (error "Fetch failed"))
+     (save-match-data
+       (while (string-match "^\\* OK" response)
 	 (if (null (setq response (elmo-imap4-read-response 
-				   (process-buffer process)
 				   process t)))
-	     (error "Fetch failed"))
-	 (save-match-data
-	   (while (string-match "^\\* OK" response)
-	     (if (null (setq response (elmo-imap4-read-response 
-				       (process-buffer process) 
-				       process t)))
-		 (error "Fetch failed"))))
-	 (save-match-data
-	   (if (string-match ".*{\\([0-9]+\\)}" response)
-	       (setq bytes
-		     (string-to-int
-		      (elmo-match-string 1 response)))
-	     (error "Fetch failed")))
-	 (setq ret-val (elmo-imap4-read-body 
-			(process-buffer process) 
-			process bytes outbuf))
-	 (elmo-imap4-read-response (process-buffer process) 
-				   process)) ;; ignore remaining..
-       )
-      ret-val)))
+	     (error "Fetch failed"))))
+     (save-match-data
+       (if (string-match ".*{\\([0-9]+\\)}" response)
+	   (setq bytes
+		 (string-to-int
+		  (elmo-match-string 1 response)))
+	 (error "Fetch failed")))
+     (setq ret-val (elmo-imap4-read-body 
+		    (process-buffer process) 
+		    process bytes outbuf))
+     (elmo-imap4-read-response process)) ;; ignore remaining..
+    ret-val))
 
 (defun elmo-imap4-setup-send-buffer-from-file (file)
   (let ((tmp-buf (get-buffer-create 
@@ -1628,154 +1502,117 @@ Return nil if connection failed."
       (message "Deleting message...%d/%d" i num)
       (elmo-imap4-delete-msg-by-id spec (car message-ids))
       (setq message-ids (cdr message-ids)))
-    (let* ((connection (elmo-imap4-get-connection spec))
-	   (process (elmo-imap4-connection-get-process connection)))
-      (elmo-imap4-send-command (process-buffer process) 
-			       process "expunge")
-      (if (null (elmo-imap4-read-response (process-buffer process)
-					  process))
+    (let* ((session (elmo-imap4-get-session spec))
+	   (process (elmo-network-session-process-internal session)))
+      (elmo-imap4-send-command process "expunge")
+      (if (null (elmo-imap4-read-response process))
 	  (error "Expunge failed")))))
 
 (defun elmo-imap4-delete-msg-by-id (spec msgid)
-  (save-excursion
-    (let* ((connection (elmo-imap4-get-connection spec))
-	   (process (elmo-imap4-connection-get-process connection))
-	   ;;(size (length string))
-	   response msgs)
-      (if (and (elmo-imap4-spec-mailbox spec)
-	       (not (string= (elmo-imap4-connection-get-cwf connection)
-			     (elmo-imap4-spec-mailbox spec)))
-	       (null (elmo-imap4-select-folder 
-		      (elmo-imap4-spec-mailbox spec) 
-		      connection)))
-	  (error "Select folder %s failed" (elmo-imap4-spec-mailbox spec)))
-      (save-excursion
-	(elmo-imap4-send-command (process-buffer process)
-				 process
-				 (list
-				  (if elmo-imap4-use-uid 
-				      "uid search header message-id "
- 				    "search header message-id ")
-				  (elmo-imap4-field-body msgid)))
-	(setq response (elmo-imap4-read-response 
-			(process-buffer process) process))
-	(if (and response 
-		 (string-match "^\\* SEARCH\\([^\n]*\\)$" response))
-	    (setq msgs (read (concat "(" (elmo-match-string 1 response) ")")))
-	  (error "SEARCH failed"))
-	(elmo-imap4-delete-msgs-no-expunge spec msgs)))))
+  (let* ((session (elmo-imap4-get-session spec))
+	 (process (elmo-network-session-process-internal session))
+	 response msgs)
+    (elmo-imap4-select-mailbox session 
+			       (elmo-imap4-spec-mailbox spec))
+    (elmo-imap4-send-command process
+			     (list
+			      (if elmo-imap4-use-uid 
+				  "uid search header message-id "
+				"search header message-id ")
+			      (elmo-imap4-field-body msgid)))
+    (setq response (elmo-imap4-read-response process))
+    (if (and response 
+	     (string-match "^\\* SEARCH\\([^\n]*\\)$" response))
+	(setq msgs (read (concat "(" (elmo-match-string 1 response) ")")))
+      (error "SEARCH failed"))
+    (elmo-imap4-delete-msgs-no-expunge spec msgs)))
 
 (defun elmo-imap4-append-msg-by-id (spec msgid)
-  (save-excursion
-    (let* ((connection (elmo-imap4-get-connection spec))
-	   (process (elmo-imap4-connection-get-process connection))
-	   send-buf)
-      (if (and (elmo-imap4-spec-mailbox spec)
-	       (not (string= (elmo-imap4-connection-get-cwf connection)
-			     (elmo-imap4-spec-mailbox spec)))
-	       (null (elmo-imap4-select-folder 
-		      (elmo-imap4-spec-mailbox spec) connection)))
-	  (error "Select folder %s failed" (elmo-imap4-spec-mailbox spec)))
-      (setq send-buf (elmo-imap4-setup-send-buffer-from-file 
-		      (elmo-cache-get-path msgid)))
-      (elmo-imap4-send-command (process-buffer process)
-			       process
-			       (list
-				"append "
-				(elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
-				" (\\Seen) "
-				(elmo-imap4-buffer-literal send-buf)))
-      (kill-buffer send-buf)
-      (if (null (elmo-imap4-read-response (process-buffer process)
-					  process))
-	  (error "Append failed")))
-    t))
+  (let* ((session (elmo-imap4-get-session spec))
+	 (process (elmo-network-session-process-internal session))
+	 send-buf)
+    (elmo-imap4-select-mailbox session 
+			       (elmo-imap4-spec-mailbox spec))
+    (setq send-buf (elmo-imap4-setup-send-buffer-from-file 
+		    (elmo-cache-get-path msgid)))
+    (elmo-imap4-send-command
+     process
+     (list
+      "append "
+      (elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
+      " (\\Seen) "
+      (elmo-imap4-buffer-literal send-buf)))
+    (kill-buffer send-buf)
+    (if (null (elmo-imap4-read-response process))
+	(error "Append failed")))
+  t)
 
 (defun elmo-imap4-append-msg (spec string &optional msg no-see)
-  (save-excursion
-    (let* ((connection (elmo-imap4-get-connection spec))
-	   (process (elmo-imap4-connection-get-process connection))
-	   send-buf)
-      (if (and (elmo-imap4-spec-mailbox spec)
-	       (not (string= (elmo-imap4-connection-get-cwf connection)
-			     (elmo-imap4-spec-mailbox spec)))
-	       (null (elmo-imap4-select-folder (elmo-imap4-spec-mailbox spec)
-					       connection)))
-	  (error "Select folder %s failed" (elmo-imap4-spec-mailbox spec)))
-      (setq send-buf (elmo-imap4-setup-send-buffer string))
-      (elmo-imap4-send-command (process-buffer process)
-			       process
-			       (list
-				"append "
-				(elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
-				(if no-see " " " (\\Seen) ")
-				(elmo-imap4-buffer-literal send-buf)))
-      (kill-buffer send-buf)
-      ;;(current-buffer)
-      (if (null (elmo-imap4-read-response (process-buffer process)
-					  process))
-	  (error "Append failed")))
-    t))
+  (let* ((session (elmo-imap4-get-session spec))
+	 (process (elmo-network-session-process-internal session))
+	 send-buf)
+    (elmo-imap4-select-mailbox session 
+			       (elmo-imap4-spec-mailbox spec))
+    (setq send-buf (elmo-imap4-setup-send-buffer string))
+    (elmo-imap4-send-command
+     process
+     (list
+      "append "
+      (elmo-imap4-mailbox (elmo-imap4-spec-mailbox spec))
+      (if no-see " " " (\\Seen) ")
+      (elmo-imap4-buffer-literal send-buf)))
+    (kill-buffer send-buf)
+    ;;(current-buffer)
+    (if (null (elmo-imap4-read-response process))
+	(error "Append failed")))
+  t)
 
-(defun elmo-imap4-copy-msgs (dst-spec msgs src-spec &optional expunge-it same-number)
+(defun elmo-imap4-copy-msgs (dst-spec
+			     msgs src-spec &optional expunge-it same-number)
   "Equivalence of hostname, username is assumed."
-  (save-excursion
-    (let* ((src-folder (elmo-imap4-spec-mailbox src-spec))
-	   (dst-folder (elmo-imap4-spec-mailbox dst-spec))
-	   (connection (elmo-imap4-get-connection src-spec))
-	   (process (elmo-imap4-connection-get-process connection))
-	   (mlist msgs))
-      (if (and src-folder
-	       (not (string= (elmo-imap4-connection-get-cwf connection)
-			     src-folder))
-	       (null (elmo-imap4-select-folder
-		      src-folder connection)))
-	  (error "Select folder %s failed" src-folder))
-      (while mlist
-	(elmo-imap4-send-command (process-buffer process)
-				 process
-				 (list
-				  (format
-				   (if elmo-imap4-use-uid 
- 				      "uid copy %s " 
- 				    "copy %s ")
-				   (car mlist))
- 				  (elmo-imap4-mailbox dst-folder)))
-	(if (null (elmo-imap4-read-response (process-buffer process)
-					    process))
-	    (error "Copy failed")
-	  (setq mlist (cdr mlist))))
-      (when expunge-it
-	(elmo-imap4-send-command (process-buffer process) 
-				 process "expunge")
-	(if (null (elmo-imap4-read-response (process-buffer process)
-					    process))
-	    (error "Expunge failed")))
-      t)))
+  (let* ((src-folder (elmo-imap4-spec-mailbox src-spec))
+	 (dst-folder (elmo-imap4-spec-mailbox dst-spec))
+	 (session (elmo-imap4-get-session src-spec))
+	 (process (elmo-network-session-process-internal session))
+	 (mlist msgs))
+    (elmo-imap4-select-mailbox session 
+			       (elmo-imap4-spec-mailbox src-spec))
+    (while mlist
+      (elmo-imap4-send-command process
+			       (list
+				(format
+				 (if elmo-imap4-use-uid 
+				     "uid copy %s " 
+				   "copy %s ")
+				 (car mlist))
+				(elmo-imap4-mailbox dst-folder)))
+      (if (null (elmo-imap4-read-response process))
+	  (error "Copy failed")
+	(setq mlist (cdr mlist))))
+    (when expunge-it
+      (elmo-imap4-send-command process "expunge")
+      (if (null (elmo-imap4-read-response process))
+	  (error "Expunge failed")))
+    t))
 
 (defun elmo-imap4-server-diff (spec)
   "get server status"
-  (save-excursion
-    (let* ((connection (elmo-imap4-get-connection spec))
-	   (process (elmo-imap4-connection-get-process connection))
-	   response)
-      ;; commit when same folder.
-      (if (string= (elmo-imap4-connection-get-cwf connection)
-		   (elmo-imap4-spec-mailbox spec))
-	  (elmo-imap4-commit spec))
-      (elmo-imap4-send-command (process-buffer process)
-			       process
-			       (list 
-				"status "
-				(elmo-imap4-mailbox
-				 (elmo-imap4-spec-mailbox spec))
-				" (unseen messages)"))
-      (setq response (elmo-imap4-read-response 
-		      (process-buffer process) process))
-      (when (string-match "\\* STATUS [^(]* \\(([^)]*)\\)" response)
-	(setq response (read (downcase (elmo-match-string 1 response))))
-	(cons (cadr (memq 'unseen response))
-	      (cadr (memq 'messages response)))))))
+  (let* ((session (elmo-imap4-get-session spec))
+	 (process (elmo-network-session-process-internal session))
+	 response)
+    ;; commit.
+    (elmo-imap4-commit spec)
+    (elmo-imap4-send-command process
+			     (list 
+			      "status "
+			      (elmo-imap4-mailbox
+			       (elmo-imap4-spec-mailbox spec))
+			      " (unseen messages)"))
+    (setq response (elmo-imap4-read-response process))
+    (when (string-match "\\* STATUS [^(]* \\(([^)]*)\\)" response)
+      (setq response (read (downcase (elmo-match-string 1 response))))
+      (cons (cadr (memq 'unseen response))
+	    (cadr (memq 'messages response))))))
 
 (defun elmo-imap4-use-cache-p (spec number)
   elmo-imap4-use-cache)

@@ -1,3 +1,73 @@
+2000-08-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-vars.el (elmo-default-pop3-authenticate-type):
+	Set default as 'user.
+
+	* mmelmo-imap4-2.el (mmelmo-imap4-get-mime-entity): Rewrite.
+
+	* elmo2.el (elmo-quit): Don't use `elmo-pop3-flush-connection'
+	and `elmo-imap4-flush-connection'.
+
+	* elmo-util.el (toplevel): Removed workaround for timezone y2k.
+	(elmo-pop3-get-spec): Assume auth as symbol.
+	(elmo-open-network-stream): Moved to `elmo-net'.
+
+	* elmo-pop3.el (toplevel): Require 'elmo-net.
+	Define `sasl-cram-md5' to silence byte compilier.
+	(elmo-pop3-connection-cache) Abolished.
+	(elmo-pop3-authenticator-alist) New variable.
+	(elmo-pop3-session): Define.
+	(elmo-pop3-connection-get-process): Abolished.
+	(elmo-pop3-connection-get-buffer): Ditto.
+	(elmo-pop3-close-connection): Ditto.
+	(elmo-pop3-flush-connection): Ditto.
+	(elmo-pop3-get-connection): Ditto.
+	(elmo-pop3-get-session): New function.
+	(Replacement for `elmo-pop3-get-connection').
+	All other related modules are changed.
+	(elmo-network-close-session): Define.
+	(elmo-pop3-send-command): Abolished argument `buffer'.
+	All other related modules are changed.
+	(elmo-pop3-read-response): Likewise.
+	(elmo-pop3-open-connection): Abolished.
+	(elmo-pop3-auth-user): New function.
+	(elmo-pop3-auth-apop): Ditto.
+	(elmo-pop3-auth-cram-md5): Ditto.
+	(elmo-pop3-auth-scram-md5): Ditto.
+	(elmo-pop3-auth-digest-md5): Ditto.
+	(elmo-network-initialize-session): Define.
+	(elmo-network-authenticate-session): Ditto.
+	(elmo-network-setup-session): Ditto.
+
+	* elmo-imap4.el (toplevel): Require 'elmo-net.
+	(elmo-imap4-session): Define.
+	(elmo-imap4-connection-cache): Abolished.
+	(elmo-imap4-password-key): Ditto.
+	(elmo-imap4-flush-connection): Ditto.
+	(elmo-imap4-get-connection): Ditto.
+	All other related modules are changed.
+	(elmo-imap4-get-session): New function
+	(Replacement for `elmo-imap4-get-connection').
+	(elmo-imap4-read-response): Abolished argument `buffer'.
+	All other related modules are changed.
+	(elmo-imap4-send-command): Likewise.
+	(elmo-imap4-select-folder): Abolished.
+	All other related modules are changed.
+	(elmo-imap4-select-mailbox): New function.
+	(Replacement for `elmo-imap4-select-folder').
+	(elmo-imap4-auth-login): Simplify.
+	(Assume current buffer as process buffer)
+	(elmo-imap4-auth-cram-md5): Ditto.
+	(elmo-imap4-auth-digest-md5): Ditto.
+	(elmo-imap4-login): Ditto.
+	(elmo-imap4-open-connection): Abolished.
+	(elmo-imap4-open-connection-1): Abolished.
+	(elmo-network-initialize-sessoin): Define.
+	(elmo-network-authenticate-session): Ditto.
+	(elmo-network-setup-session): Ditto.
+
+	* elmo-net.el: New module.
+
 2000-08-22   Daiki Ueno  <ueno@unixuser.org>
 
 	* elmo-util.el (elmo-define-error): New function.

@@ -72,109 +72,6 @@
     (filename newname &optional ok-if-already-exists)
     (copy-file filename newname ok-if-already-exists t)))
 
-(require 'broken)
-(broken-facility timezone-y2k
-  "timezone.el does not clear Y2K."
-  (or (not (featurep 'timezone))
-      (string= (aref (timezone-parse-date "Sat, 1 Jan 00 07:00:00 JST") 0) 
-	       "2000")))
-
-(when-broken timezone-y2k
-  (defun timezone-parse-date (date)
-    "Parse DATE and return a vector [YEAR MONTH DAY TIME TIMEZONE].
-19 is prepended to year if necessary.  Timezone may be nil if nothing.
-Understands the following styles:
- (1) 14 Apr 89 03:20[:12] [GMT]
- (2) Fri, 17 Mar 89 4:01[:33] [GMT]
- (3) Mon Jan 16 16:12[:37] [GMT] 1989
- (4) 6 May 1992 1641-JST (Wednesday)
- (5) 22-AUG-1993 10:59:12.82
- (6) Thu, 11 Apr 16:17:12 91 [MET]
- (7) Mon, 6  Jul 16:47:20 T 1992 [MET]"
-    (condition-case nil
-	(progn
-	  ;; Get rid of any text properties.
-	  (and (stringp date)
-	       (or (text-properties-at 0 date)
-		   (next-property-change 0 date))
-	       (setq date (copy-sequence date))
-	       (set-text-properties 0 (length date) nil date))
-	  (let ((date (or date ""))
-		(year nil)
-		(month nil)
-		(day nil)
-		(time nil)
-		(zone nil))			;This may be nil.
-	    (cond ((string-match
-		    "\\([^ \t,]+\\),[ \t]+\\([0-9]+\\)[ \t]+\\([^ \t,]+\\)[ \t]+\\([0-9]+:[0-9:]+\\)[ \t]+\\(T[ \t]+\\|\\)\\([0-9]+\\)[ \t]*\\'" date)
-		   ;; Styles: (6) and (7) without timezone
-		   (setq year 6 month 3 day 2 time 4 zone nil))
-		  ((string-match
-		    "\\([^ \t,]+\\),[ \t]+\\([0-9]+\\)[ \t]+\\([^ \t,]+\\)[ \t]+\\([0-9]+:[0-9:]+\\)[ \t]+\\(T[ \t]+\\|\\)\\([0-9]+\\)[ \t]*\\([-+a-zA-Z0-9]+\\)" date)
-		   ;; Styles: (6) and (7) with timezone and buggy timezone
-		   (setq year 6 month 3 day 2 time 4 zone 7))
-		  ((string-match
-		    "\\([0-9]+\\)[ \t]+\\([^ \t,]+\\)[ \t]+\\([0-9]+\\)[ \t]+\\([0-9]+:[0-9:]+\\)[ \t]*\\'" date)
-		   ;; Styles: (1) and (2) without timezone
-		   (setq year 3 month 2 day 1 time 4 zone nil))
-		  ((string-match
-		    "\\([0-9]+\\)[ \t]+\\([^ \t,]+\\)[ \t]+\\([0-9]+\\)[ \t]+\\([0-9]+:[0-9:]+\\)[ \t]*\\([-+a-zA-Z0-9]+\\)" date)
-		   ;; Styles: (1) and (2) with timezone and buggy timezone
-		   (setq year 3 month 2 day 1 time 4 zone 5))
-		  ((string-match
-		    "\\([^ \t,]+\\)[ \t]+\\([0-9]+\\)[ \t]+\\([0-9]+:[0-9:]+\\)[ \t]+\\([0-9]+\\)" date)
-		   ;; Styles: (3) without timezone
-		   (setq year 4 month 1 day 2 time 3 zone nil))
-		  ((string-match
-		    "\\([^ \t,]+\\)[ \t]+\\([0-9]+\\)[ \t]+\\([0-9]+:[0-9:]+\\)[ \t]+\\([-+a-zA-Z0-9]+\\)[ \t]+\\([0-9]+\\)" date)
-		   ;; Styles: (3) with timezone
-		   (setq year 5 month 1 day 2 time 3 zone 4))
-		  ((string-match
-		    "\\([0-9]+\\)[ \t]+\\([^ \t,]+\\)[ \t]+\\([0-9]+\\)[ \t]+\\([0-9]+\\)[ \t]*\\([-+a-zA-Z0-9]+\\)" date)
-		   ;; Styles: (4) with timezone
-		   (setq year 3 month 2 day 1 time 4 zone 5))
-		  ((string-match
-		    "\\([0-9]+\\)-\\([A-Za-z]+\\)-\\([0-9]+\\)[ \t]+\\([0-9]+:[0-9]+:[0-9]+\\)\\.[0-9]+" date)
-		   ;; Styles: (5) without timezone.
-		   (setq year 3 month 2 day 1 time 4 zone nil))
-		  )
-	    (if year
-		(progn
-		  (setq year
-			(substring date (match-beginning year) 
-				   (match-end year)))
-		  (if (< (length year) 4)
-		      (let ((yr (string-to-int year)))
-			(when (>= yr 100)
-			  (setq yr (- yr 100)))
-			(setq year (format "%d%02d"
-					   (if (< yr 70)
-					       20
-					     19)
-					   yr))))
-		  (let ((string (substring date
-					   (match-beginning month)
-					   (+ (match-beginning month) 3))))
-		    (setq month
-			  (int-to-string
-			   (cdr (assoc (upcase string) 
-				       timezone-months-assoc)))))
-		  (setq day
-			(substring date (match-beginning day) (match-end day)))
-		  (setq time
-			(substring date (match-beginning time) 
-				   (match-end time)))))
-	    (if zone
-		(setq zone
-		      (substring date (match-beginning zone) 
-				 (match-end zone))))
-	    (if year
-		(vector year month day time zone)
-	      (vector "0" "0" "0" "0" nil))
-	    )
-	  )
-      (t (signal 'invalid-date (list date))))))
-
 (defsubst elmo-call-func (folder func-name &rest args)
   (let* ((spec (if (stringp folder)
 		   (elmo-folder-get-spec folder)
@@ -276,6 +173,16 @@ File content is encoded with MIME-CHARSET."
   (if elmo-imap4-use-modified-utf7
       (utf7-encode-string string 'imap)
     string))
+
+(defun elmo-get-network-stream-type (stream-type)
+  (let ((ali elmo-network-stream-type-alist)
+	entry)
+    (while ali
+      (when (eq (car (cdr (car ali))) stream-type)
+	(setq entry (car ali)
+	      ali nil))
+      (setq ali (cdr ali)))
+    entry))
 
 (defun elmo-network-get-spec (folder default-server default-port
 				     default-stream-type)
@@ -497,7 +404,7 @@ File content is encoded with MIME-CHARSET."
       (if (eq (length user) 0)
 	  (setq user elmo-default-pop3-user))
       (setq auth (if (match-beginning 3)
-		     (elmo-match-substring 3 folder 1)
+		     (intern (elmo-match-substring 3 folder 1))
 		   elmo-default-pop3-authenticate-type))
       (append (list 'pop3 user auth)
 	      (cdr spec)))))
@@ -1518,55 +1425,6 @@ Otherwise treat \\ in NEWTEXT string as special:
 		(- (+ (or rest 0) (nth 1 current)) (nth 1 before-time))))
     (and (eq (car diff) 0)
 	 (< diff-time (nth 1 diff)))))
-
-
-(defun elmo-get-network-stream-type (stream-type)
-  (let ((ali elmo-network-stream-type-alist)
-	entry)
-    (while ali
-      (when (eq (car (cdr (car ali))) stream-type)
-	(setq entry (car ali)
-	      ali nil))
-      (setq ali (cdr ali)))
-    entry))
-
-(defmacro elmo-network-stream-type-spec-string (stream-type)
-  (` (nth 0 (, stream-type))))
-
-(defmacro elmo-network-stream-type-symbol (stream-type)
-  (` (nth 1 (, stream-type))))
-
-(defmacro elmo-network-stream-type-feature (stream-type)
-  (` (nth 2 (, stream-type))))
-
-(defmacro elmo-network-stream-type-function (stream-type)
-  (` (nth 3 (, stream-type))))
-
-(defun elmo-open-network-stream (name buffer host service stream-type)
-  (let ((auto-plugged (and elmo-auto-change-plugged
-			   (> elmo-auto-change-plugged 0)))
-	process)
-    (if (and stream-type
-	     (elmo-network-stream-type-feature stream-type))
-	(require (elmo-network-stream-type-feature stream-type)))
-    (condition-case err
- 	(let (process-connection-type)
-	  (setq process
-		(if stream-type
-		    (funcall (elmo-network-stream-type-function stream-type)
-			     name buffer host service)
-		  (open-network-stream name buffer host service))))
-      (error
-       (when auto-plugged
-	 (elmo-set-plugged nil host service (current-time))
-	 (message "Auto plugged off at %s:%d" host service)
-	 (sit-for 1))
-       (signal (car err) (cdr err))))
-    (when process
-      (process-kill-without-query process)
-      (when auto-plugged
-	(elmo-set-plugged t host service))
-      process)))
 
 (if (fboundp 'std11-fetch-field)
     (defalias 'elmo-field-body 'std11-fetch-field) ;;no narrow-to-region

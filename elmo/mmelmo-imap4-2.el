@@ -159,34 +159,24 @@
   (eq (cdr (assq 'type (mime-entity-content-type entity))) 'text))
       
 (defun mmelmo-imap4-get-mime-entity (folder number msgdb)
-  (save-excursion
-    (let* ((spec (elmo-folder-get-spec folder))
-	   (connection (elmo-imap4-get-connection spec))
-	   (mailbox (elmo-imap4-spec-mailbox spec))
-	   response)
-      (when mailbox
-	(save-excursion
-	  (when (not (string= (elmo-imap4-connection-get-cwf connection)
-			      mailbox))
-	    (if (null (elmo-imap4-select-folder mailbox connection))
-		(error "Select folder failed")))
-	  (elmo-imap4-send-command (elmo-imap4-connection-get-buffer
-				    connection)
-				   (elmo-imap4-connection-get-process
-				    connection)
-				   (format 
-				    (if elmo-imap4-use-uid
-					"uid fetch %s bodystructure"
-				      "fetch %s bodystructure")
-				    number))
-	  (if (null (setq response (elmo-imap4-read-contents
-				    (elmo-imap4-connection-get-buffer
-				     connection)
-				    (elmo-imap4-connection-get-process
-				     connection))))
-	      (error "Fetching body structure failed")))
-	(mmelmo-imap4-parse-bodystructure-string folder number msgdb
-						 response)))))
+  (let* ((spec (elmo-folder-get-spec folder))
+	 (session (elmo-imap4-get-session spec))
+	 (mailbox (elmo-imap4-spec-mailbox spec))
+	 response)
+    (when mailbox
+      (elmo-imap4-select-mailbox session mailbox)
+      (elmo-imap4-send-command
+       (elmo-network-session-process-internal session)
+       (format 
+	(if elmo-imap4-use-uid
+	    "uid fetch %s bodystructure"
+	  "fetch %s bodystructure")
+	number))
+      (or (setq response (elmo-imap4-read-contents
+			  (elmo-network-session-process-internal session)))
+	  (error "Fetching body structure failed"))
+      (mmelmo-imap4-parse-bodystructure-string folder number msgdb
+					       response))))
 
 (defun mmelmo-imap4-read-part (entity)
   (if (or (not mmelmo-imap4-threshold)

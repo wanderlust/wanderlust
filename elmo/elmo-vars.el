@@ -66,8 +66,8 @@ Any symbol value of `elmo-network-stream-type-alist'.")
   "*Default username for POP3.")
 (defvar elmo-default-pop3-server  "localhost"
   "*Default POP3 server.")
-(defvar elmo-default-pop3-authenticate-type "user"
-  "*Default Authentication type for POP3.") ; "apop" or "user"
+(defvar elmo-default-pop3-authenticate-type 'user
+  "*Default Authentication type for POP3.")
 (defvar elmo-default-pop3-port 110
   "*Default POP3 port.")
 (defvar elmo-default-pop3-stream-type nil
