@@ -1,3 +1,8 @@
+2000-04-07  A. SAGATA <sagata@nttvdt.hil.ntt.co.jp>
+
+	* wl-address.el (wl-address-petname-add-or-change): Use e-mail address
+	as petname when there's no candidate.
+
 2000-04-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-fldmgr-add-complete-with-current-folder-list):

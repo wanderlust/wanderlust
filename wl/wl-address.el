@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-03-03 00:59:01 teranisi>
+;; Time-stamp: <2000-04-10 09:29:44 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -340,7 +340,7 @@ If already registerd, change it."
     (setq the-petname
 	  (read-from-minibuffer (format "Petname: ") default-petname))
     (if (string= the-petname "")
-	(setq the-petname default-petname))
+	(setq the-petname (or default-petname the-email)))
 
     ;; setup output "realname"
     (setq the-realname
