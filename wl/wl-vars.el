@@ -1990,21 +1990,28 @@ Attributes specified in the `wl-draft-preview-attributes-list' are displayed."
   :type 'boolean
   :group 'wl-draft)
 
-(defcustom wl-draft-preview-attributes-list '(recipients
-					      envelope-from
-					      smtp-posting-server
-					      smtp-posting-port)
+(defcustom wl-draft-preview-attributes-list '((mail recipients
+						    envelope-from
+						    smtp-posting-server
+						    smtp-posting-port)
+					      (news newsgroups
+						    nntp-posting-server
+						    nntp-posting-port))
   "*Attribute symbols to display in the draft preview.
 Candidates are following:
 `recipients'
 `envelope-from'
 `smtp-posting-server'
 `smtp-posting-port'
+`newsgroups'
 `nntp-posting-server'
 `nntp-posting-port'
 Also variables which begin with `wl-' can be specified
 \(`wl-' have to be removed\)"
-  :type '(repeat symbol)
+  :type '(choice (repeat (cons (choice (const :tag "Mail" mail)
+				       (const :tag "News" news))
+			       (repeat symbol)))
+		 (repeat symbol))
   :group 'wl-draft)
 
 (defcustom wl-draft-preview-attributes-buffer-lines 5

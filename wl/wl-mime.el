@@ -176,6 +176,51 @@ It calls following-method selected from variable
 
 (defalias 'wl-draft-enclose-digest-region 'mime-edit-enclose-digest-region)
 
+(defun wl-draft-preview-attributes-list ()
+  (if (listp (car wl-draft-preview-attributes-list))
+      (elmo-uniq-list
+       (append (and (wl-message-mail-p)
+		    (cdr (assq 'mail wl-draft-preview-attributes-list)))
+	       (and (wl-message-news-p)
+		    (cdr (assq 'news wl-draft-preview-attributes-list)))))
+    wl-draft-preview-attributes-list))
+
+(defun wl-draft-show-attributes-buffer (attribute-values)
+  (let* ((cur-win (selected-window))
+	 (size (min
+		(- (window-height cur-win)
+		   window-min-height 1)
+		(- (window-height cur-win)
+		   (max
+		    window-min-height
+		    (1+ wl-draft-preview-attributes-buffer-lines))))))
+    (split-window cur-win (if (> size 0) size window-min-height))
+    (select-window (next-window))
+    (let ((pop-up-windows nil))
+      (switch-to-buffer (get-buffer-create
+			 wl-draft-preview-attributes-buffer-name)))
+    (with-current-buffer
+	(get-buffer wl-draft-preview-attributes-buffer-name)
+      (setq buffer-read-only t)
+      (let (buffer-read-only)
+	(erase-buffer)
+	(dolist (pair attribute-values)
+	  (insert (capitalize (symbol-name (car pair))) ": "
+		  (format "%s" (or (cdr pair) ""))
+		  "\n"))
+	(goto-char (point-min))
+	(wl-highlight-headers)))
+    (select-window cur-win)))
+
+(defun wl-draft-hide-attributes-buffer ()
+  (let (window buffer)
+    (when (setq window (get-buffer-window
+			wl-draft-preview-attributes-buffer-name))
+      (select-window window)
+      (delete-window))
+    (when (setq buffer (get-buffer wl-draft-preview-attributes-buffer-name))
+      (kill-buffer buffer))))
+
 (defun wl-draft-attribute-recipients ()
   (concat (mapconcat
 	   'identity
@@ -206,6 +251,15 @@ It calls following-method selected from variable
   (or wl-smtp-posting-port
       (progn (require 'smtp) smtp-service)))
 
+(defun wl-draft-attribute-newsgroups ()
+  (std11-field-body "Newsgroups"))
+
+(defun wl-draft-attribute-nntp-posting-server ()
+  (or wl-nntp-posting-server elmo-nntp-default-server))
+
+(defun wl-draft-attribute-nntp-posting-port ()
+  (or wl-nntp-posting-port elmo-nntp-default-port))
+
 (defun wl-draft-attribute-value (attr)
   (let ((name (symbol-name attr))
 	fsymbol symbol)
@@ -235,7 +289,7 @@ It calls following-method selected from variable
 (defun wl-draft-preview-message ()
   "Preview editing message."
   (interactive)
-  (let* (attribute-list
+  (let* (attribute-values
 	 (orig-buffer (current-buffer))
 	 (current-point (point))
 	 (config-exec-flag wl-draft-config-exec-flag)
@@ -249,29 +303,30 @@ It calls following-method selected from variable
 	       (symbol-value 'mime-header-encode-method-alist))))
 	 mime-view-ignored-field-list	; all header.
 	 (mime-edit-translate-buffer-hook
-	  (append
-	   (list
-	    (lambda ()
-	      (let ((wl-draft-config-exec-flag config-exec-flag)
-		    (wl-draft-parent-folder parent-folder)
-		    (copy-buffer (current-buffer)))
+	  (cons
+	   (lambda ()
+	     (let ((wl-draft-config-exec-flag config-exec-flag)
+		   (wl-draft-parent-folder parent-folder)
+		   (copy-buffer (current-buffer)))
+	       (wl-copy-local-variables
+		orig-buffer
+		copy-buffer
 		(with-current-buffer orig-buffer
-		  (wl-copy-local-variables
-		   orig-buffer
-		   copy-buffer
-		   (append wl-draft-config-variables
-			   (wl-draft-clone-local-variables))))
-		(goto-char current-point)
-		(run-hooks 'wl-draft-send-hook)
-		(condition-case err
-		    (setq attribute-list
-			  (mapcar
-			   (lambda (attr)
-			     (cons attr (wl-draft-attribute-value attr)))
-			   wl-draft-preview-attributes-list))
-		  (error
-		   (kill-buffer (current-buffer))
-		   (signal (car err) (cdr err)))))))
+		  (append wl-draft-config-variables
+			  (wl-draft-clone-local-variables))))
+	       (goto-char current-point)
+	       (run-hooks 'wl-draft-send-hook)
+	       (condition-case err
+		   (setq attribute-values
+			 (mapcar
+			  (lambda (attr)
+			    (cons attr (wl-draft-attribute-value attr)))
+			  (if wl-draft-preview-attributes
+			      (wl-draft-preview-attributes-list)
+			    '(recipients))))
+		 (error
+		  (kill-buffer (current-buffer))
+		  (signal (car err) (cdr err))))))
 	   mime-edit-translate-buffer-hook)))
     (mime-edit-preview-message)
     (make-local-variable 'mime-preview-quitting-method-alist)
@@ -282,46 +337,12 @@ It calls following-method selected from variable
 	(wl-highlight-body))
       (run-hooks 'wl-draft-preview-message-hook))
     (make-local-hook 'kill-buffer-hook)
-    (add-hook 'kill-buffer-hook
-	      (lambda ()
-		(when (get-buffer-window
-		       wl-draft-preview-attributes-buffer-name)
-		  (select-window (get-buffer-window
-				  wl-draft-preview-attributes-buffer-name))
-		  (delete-window))
-		(when (get-buffer wl-draft-preview-attributes-buffer-name)
-		  (kill-buffer (get-buffer
-				wl-draft-preview-attributes-buffer-name))))
-	      nil t)
-    (if (not wl-draft-preview-attributes)
-	(message (concat "Recipients: "
-			 (cdr (assq 'recipients attribute-list))))
-      (ignore-errors ; in case when the window is too small
-	(let* ((cur-win (selected-window))
-	       (size (min
-		      (- (window-height cur-win)
-			 window-min-height 1)
-		      (- (window-height cur-win)
-			 (max
-			  window-min-height
-			  (1+ wl-draft-preview-attributes-buffer-lines))))))
-	  (split-window cur-win (if (> size 0) size window-min-height))
-	  (select-window (next-window))
-	  (let ((pop-up-windows nil))
-	    (switch-to-buffer (get-buffer-create
-			       wl-draft-preview-attributes-buffer-name)))
-	  (with-current-buffer
-	      (get-buffer wl-draft-preview-attributes-buffer-name)
-	    (setq buffer-read-only t)
-	    (let (buffer-read-only)
-	      (erase-buffer)
-	      (dolist (pair attribute-list)
-		(insert (capitalize (symbol-name (car pair))) ": "
-			(format "%s" (or (cdr pair) ""))
-			"\n"))
-	      (goto-char (point-min))
-	      (wl-highlight-headers)))
-	  (select-window cur-win))))))
+    (add-hook 'kill-buffer-hook #'wl-draft-hide-attributes-buffer nil t)
+    (if wl-draft-preview-attributes
+	(ignore-errors ; in case when the window is too small
+	 (wl-draft-show-attributes-buffer attribute-values))
+      (message (concat "Recipients: "
+		       (cdr (assq 'recipients attribute-values)))))))
 
 (defalias 'wl-draft-caesar-region  'mule-caesar-region)
 
