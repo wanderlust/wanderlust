@@ -1,3 +1,146 @@
+2001-12-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* WL-MK (toplevel): Use = instead of `eq' for numeric value.
+	(config-wl-package-subr, config-wl-package-xmas): Removed last
+	period from error messages.
+
+2001-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* NEWS, NEWS.ja: Changed order.
+
+2001-12-12  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* WL-MK (install-wl-icons): Install *.img files for Emacs 21.
+
+2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* NEWS.ja: Added description about xxx-directory, elmo-cache-dirname.
+
+2001-12-11  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* WL-MK (config-wl-package-subr): Don't set `wl-icon-dir'.
+
+2001-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* NEWS.ja: Fixed indent;
+	Added description about obsolete variable warnings
+	and `elmo-obsolete-variable-show-warnings'.
+
+2001-12-11  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* WL-MK (install-wl-icons): Don't install *.img files for Emacs 21.
+
+2001-12-11  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* WL-MK (config-wl-pixmap-dir): Set a value to `PIXMAPDIR' even if
+	Emacs version is less than 21.
+	(install-wl-icons): Install icon files which might be used for the
+	running version of Emacs.
+
+	* etc/icons/*.xbm: Replaced "-" with "_" to make them can be
+	handled by Emacs 21.
+
+2001-12-10  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* etc/icons/wl-alpha-logo.img: New file.
+	* etc/icons/wl-alpha-xmas-logo.img: New file.
+	* etc/icons/wl-beta-logo.img: New file.
+	* etc/icons/wl-beta-xmas-logo.img: New file.
+	* etc/icons/wl-stable-logo.img: New file.
+	* etc/icons/wl-stable-xmas-logo.img: New file.
+
+2001-12-10  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* etc/icons/wl-alpha-xmas-logo.xbm: New file.
+	* etc/icons/wl-beta-xmas-logo.xbm: New file.
+	* etc/icons/wl-stable-xmas-logo.xbm: New file.
+
+2001-12-07  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* etc/icons/wl-alpha-xmas-logo.xpm: New file.
+	* etc/icons/wl-beta-xmas-logo.xpm: New file.
+	* etc/icons/wl-stable-xmas-logo.xpm: New file.
+
+2001-12-02  Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* doc/wl-refcard.tex: New file.
+
+2001-12-02  Kenichi OKADA  <okada@opaopa.org>
+
+	* WL-ELS (ELMO-MODULES): Added 'elmo-sendlog'
+
+2001-10-23  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* WL-MK (wl-info-lang): Change default value to ("ja" "en").
+	* WL-CFG: Ditto.
+
+	* INSTALL: Remove note on how to install English manual.
+
+2001-10-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* NEWS.ja: Added ACAP description.
+
+2001-09-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* WL-MK (toplevel): Ignore Nemacs.
+	(compile-wl-package, wl-detect-info-directory): Ditto.
+
+	* WL-MK (config-wl-package-subr): Fixed error message.  Ignore tm.
+	Add refer to INSTALL and INSTALL.ja.
+	* WL-ELS (toplevel): Likewise.
+
+	* WL-MK (test-wl, check-wl): Add docstring.
+
+2001-09-03  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* INSTALL.ja (Sample configration file): Added comment
+	~/.addresses was optional.
+	* INSTALL: Ditto.
+
+2001-08-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-MK (test-wl): Renamed from check-wl.
+	(check-wl): New function.
+
+	* Makefile (check): Don't use `-q -no-site-file'.
+	(BATCHFLAG): New variable.
+	(check): Use it.
+	(test): New rule.
+
+2001-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-ELS (WL-MODULES): Added wl-acap.
+
+2001-08-28  Katsumi Yamaoka   <yamaoka@jpl.org>
+
+	* WL-MK: Byte-optimize the function `char-after' for old Emacsen.
+
+2001-08-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* Makefile (check): New rule
+	* WL-MK (check-wl): New function.
+	* tests: New directory.
+	* tests/ChangeLog: New file.
+
+	* utils/ChangeLog: New file.
+
+2001-08-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-ELS (ELMO-MODULES): Added `acap' and `slp'.
+
+2001-08-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-CFG: Removed nemacs setting example.
+
+	* WL-MK (config-wl-package-subr): Ignore nemacs.
+
+	* WL-ELS: Ignore tm and nemacs.
+	(WL-MODULES): Added wl-addrmgr.
+
+2001-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* WL-MK (config-wl-package-subr): Check smtp.el version.
+
 2001-05-24  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* WL-MK (wl-detect-info-directory): Call `info-initialize' for

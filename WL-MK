@@ -20,7 +20,7 @@
 (defvar COMPRESS-SUFFIX-LIST '("" ".gz" ".Z" ".bz2"))
 
 (defvar wl-install-utils nil
-  "if Non-nil, install `wl-utils-modules'.")
+  "If Non-nil, install `wl-utils-modules'.")
 
 ;;; INFO
 (defconst wl-ja-info "wl-ja.info")
@@ -28,12 +28,8 @@
 (defconst wl-en-info "wl.info")
 (defconst wl-en-texi "wl.texi")
 
-(defvar wl-info-lang "ja"
+(defvar wl-info-lang '("ja" "en")
   "The language of info file (\"ja\" or \"en\").")
-
-;; for Nemacs (dirty!)
-(if (not (fboundp 'file-executable-p))
-    (fset 'file-executable-p 'file-exists-p))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -47,7 +43,7 @@
 	     ;; ignore broken module
 	     (not (featurep 'tinycustom)))
   (when (and (boundp 'emacs-major-version)
-	     (eq emacs-major-version 19)
+	     (= emacs-major-version 19)
 	     (>= emacs-minor-version 29))
     (message "%s" "
   Warning: You don't seem to have \"new custom\" package installed.
@@ -60,6 +56,7 @@
       (` (defvar (, symbol) (, value) (, doc))))))
 
 (load "bytecomp" nil t)
+
 (unless (fboundp 'byte-compile-file-form-custom-declare-variable)
   ;; Bind defcustom'ed variables.
   (put 'custom-declare-variable 'byte-hunk-handler
@@ -70,11 +67,20 @@
 	      (cons (nth 1 (nth 1 form)) byte-compile-bound-variables)))
     form))
 
+(condition-case nil
+    (char-after)
+  (wrong-number-of-arguments
+   ;; Optimize byte code for `char-after'.
+   (put 'char-after 'byte-optimizer 'byte-optimize-char-after)
+   (defun byte-optimize-char-after (form)
+     (if (null (cdr form))
+	 '(char-after (point))
+       form))))
+
 (setq byte-compile-warnings '(free-vars unresolved callargs redefine))
 
 ;; v18, v19
-(if (or (boundp 'MULE)
-	(fboundp 'nemacs-version))
+(if (boundp 'MULE)
     (setq max-lisp-eval-depth 400))
 
 ;; FIXME: it is currently needed to byte-compile with Emacs 21.
@@ -90,7 +96,6 @@
     (setq load-path (cons (expand-file-name ".") load-path))
     (setq load-path (cons (expand-file-name WLDIR)
 			  (cons (expand-file-name ELMODIR) load-path)))
-    (setq wl-icon-dir (expand-file-name ICONDIR))
     ;; load custom file if exists.  `WL-CFG.el' override for committer.
     (load "./WL-CFG" t nil nil)
     ;; load-path
@@ -100,8 +105,11 @@
     (load "./WL-ELS" nil nil t)
     (condition-case ()
 	(require 'mime-setup)
-      (error (error "No MIME module was detected. Please install SEMI or tm.")))
-    (princ (concat "\nMIME module is " (if wl-use-semi "SEMI" "tm-8") ".\n"))))
+      (error (error "No MIME module was detected.  Please install SEMI")))
+    ;; smtp.el version check.
+    (require 'smtp)
+    (if (not (fboundp 'smtp-send-buffer))
+	(error "Please install new FLIM.  See INSTALL or INSTALL.ja"))))
 
 (defun config-wl-pixmap-dir (&optional packagedir)
   "Examine pixmap directory where icon files should go."
@@ -110,10 +118,7 @@
       (if (string= pixmap-dir "NONE")
 	  (if packagedir
 	      (expand-file-name "etc/wl/" packagedir)
-	    (if (or (featurep 'xemacs)
-		    (and (boundp 'emacs-major-version)
-			 (>= emacs-major-version 21)))
-		(expand-file-name "wl/icons/" data-directory)))
+	    (expand-file-name "wl/icons/" data-directory))
 	pixmap-dir)))
   (if PIXMAPDIR
       (princ (format "PIXMAPDIR is %s\n" PIXMAPDIR)))
@@ -132,6 +137,39 @@
   (config-wl-pixmap-dir)
   (princ "\n"))
 
+(defun test-wl ()
+  "Run test suite for developer."
+  (config-wl-package)
+  (require 'lunit)
+  (let ((files (directory-files "tests" t "^test-.*\\.el$"))
+	(suite (lunit-make-test-suite)))
+    (while files
+      (if (file-regular-p (car files))
+	  (progn
+	    (load-file (car files))
+	    (lunit-test-suite-add-test
+	     suite (lunit-make-test-suite-from-class
+		    (intern (file-name-sans-extension
+			     (file-name-nondirectory (car files))))))))
+      (setq files (cdr files)))
+    (lunit suite)))
+
+(defun check-wl ()
+  "Check user environment.  Not for developer."
+  (config-wl-package)
+  (require 'lunit)
+  (let ((files (directory-files "tests" t "^check-.*\\.el$"))
+	(suite (lunit-make-test-suite)))
+    (while files
+      (if (file-regular-p (car files))
+	  (progn
+	    (load-file (car files))
+	    (lunit-test-suite-add-test
+	     suite (lunit-make-test-suite-from-class
+		    (intern (file-name-sans-extension
+			     (file-name-nondirectory (car files))))))))
+      (setq files (cdr files)))
+    (lunit suite)))
 
 (defun wl-scan-source (path)
   (let (ret)
@@ -158,10 +196,7 @@
 
 
 (defun compile-wl-package ()
-  ;; For nemacs byte compiler's strange behavior(?).
   (config-wl-package)
-  (if (fboundp 'nemacs-version)
-      (load (expand-file-name "wl.el" WLDIR)))
   (mapcar
    '(lambda (x)
       (compile-elisp-modules (cdr x) (car x)))
@@ -171,7 +206,14 @@
   (if (not (file-directory-p PIXMAPDIR))
       (make-directory PIXMAPDIR t))
   (let* ((case-fold-search t)
-	 (icons (directory-files ICONDIR t "\\.x[bp]m$"))
+	 (icons (directory-files ICONDIR t
+				 (cond ((featurep 'xemacs)
+					"\\.x[bp]m$")
+				       ((and (boundp 'emacs-major-version)
+					     (>= emacs-major-version 21))
+					"\\.img$\\|\\.x[bp]m$")
+				       ((featurep 'mule)
+					"\\.img$\\|\\.xbm$"))))
 	 icon dest)
     (while icons
       (setq icon (car icons)
@@ -221,7 +263,7 @@
 
 (defun config-wl-package-xmas ()
   (if (not (featurep 'xemacs))
-      (error "This directive is only for XEmacs."))
+      (error "This directive is only for XEmacs"))
   (config-wl-package-subr)
   ;; PACKAGEDIR check.
   (let (package-dir)
@@ -279,8 +321,8 @@
     (install-wl-icons)
 
     (mapcar '(lambda (x)
-             (install-elisp-modules (cdr x) (car x) LISPDIR))
-                  modules-alist)
+	       (install-elisp-modules (cdr x) (car x) LISPDIR))
+	    modules-alist)
     ;; WL-AUTOLOAD-MODULES
     (install-elisp-modules WL-AUTOLOAD-MODULES WLDIR LISPDIR)
     ;;
@@ -341,8 +383,6 @@
 
 (defun wl-detect-info-directory ()
   (config-wl-package-subr)
-  (if (fboundp 'nemacs-version)
-      (error "Cannot format info on Nemacs. Please use another formatter."))
   ;; INFODIR check.
   (require 'info)
   (if (fboundp 'info-initialize)
