@@ -6297,17 +6297,18 @@ pop3                    ×    △    △    △
 規則の基本単位は
 
 @lisp
-(@samp{条件} @samp{フォルダ} [@code{continue}])
+(@samp{CONDITION} @samp{ACTION} [@code{continue}])
 @end lisp
 
-という一組です。
-第一の要素 @samp{条件} は S 式です。書式についてはすぐ後で説明します。
-第二の要素 @samp{フォルダ} はメッセージの振り分け先のフォルダ名です。
-もし第三の要素 @code{continue} がシンボルとして与えられると、
-その条件が満たされたとしても振り分け規則の評価を続けます。
+という一組で、@samp{CONDITION} が真の場合に @samp{ACTION} を実行します。
+第一の要素 @samp{CONDITION} には条件を S 式で記述します。書式については
+すぐ後で説明します。第二の要素 @samp{ACTION} にはメッセージの振り分け先
+のフォルダ名、もしくはシンボルを指定します。
+第三の要素 @code{continue} をシンボルとして与えると、@samp{CONDITION} が
+満たされた場合にも振り分け規則の評価を継続します。
 
-@samp{条件} の記法は以下のようになります。実際の書き方は上で挙げた例を
-参考にして下さい。
+@samp{CONDITION} の記法は以下のようになります。実際の書き方は上で挙げた
+例を参考にして下さい。
 
 @enumerate
 @item
@@ -6348,6 +6349,37 @@ pop3                    ×    △    △    △
 
 シンボルが指定されると、それを評価します。
 @end enumerate
+
+@samp{ACTION} の値として指定できるのは以下のいずれかです。
+
+@enumerate
+@item
+フォルダ名
+
+文字列が指定されるとそれを振り分け先のフォルダ名とみなして、そのフォルダ
+へメッセージを追加します。
+
+@item
+@samp{delete}
+
+シンボル @samp{delete} が指定されると @code{elmo-split-folder} 内にある
+メッセージの実体を削除します。
+
+@item
+@samp{noop}
+
+シンボル @samp{noop} が指定された場合、そのメッセージに対しては何もせず、
+そのままの状態に保ちます。
+
+@item
+関数
+
+関数が指定された場合、それを実行します。
+@end enumerate
+
+全ての振り分け規則を通過したメッセージは、変数
+@code{elmo-split-default-action} で指定した @samp{ACTION} に沿って処理さ
+れます。
 
 
 @node Address Book, Customization, Split messages, Top
