@@ -2550,46 +2550,38 @@ specified size by the order of last accessed time.
 
 @subsection Buffer Cache and Prefetching
 
-If the value of @code{elmo-use-buffer-cache} is non-nil, the messages
-that are read are kept in the cache buffer.  It is called `buffer
-cache'. The number of cache buffer is specified by
-@code{elmo-buffer-cache-size}.
+The messages that are read are kept in the cache buffer.  It is called
+`buffer cache'. The number of cache buffer is specified by
+@code{wl-message-buffer-cache-size}.
 
 There are message prefetching mechanism in the Wanderlust that
-prefetches next message while you are reading.  This function requires
-that the value of @code{elmo-use-buffer-cache} is non-nil.
+prefetches next message while you are reading.
 
 You can control the message prefetching mechanism by these two
 variables.
 
 @table @code
-@item wl-cache-prefetch-folder-type-list
-@vindex wl-cache-prefetch-folder-type-list
-The initial setting is the list shown below:
-@lisp
-@group
-(nntp imap4)
-@end group
-@end lisp
-
-@noindent
-It specifies the folder types in which message prefetching is enabled.
-In the initial setting, multi folder that contains localdir and imap4
-prefetches only imap4 messages.  This variable precedes the value of
-@code{wl-cache-prefetch-folder-list}.
-
-If you want to prefetch localdir and localnews also, following setting
-is needed.
+@item wl-message-buffer-prefetch-folder-type-list
+@vindex wl-message-buffer-prefetch-folder-type-list
+The initial setting is @code{t}. In this case, prefetch messages in all
+folders.
+If it is a list of folder types, it specifies the folder types in which
+message prefetching is enabled.
+Following is an example (prefetch messages in nntp and imap4 folders)
 
 @lisp
 @group
-(setq wl-cache-prefetch-folder-type-list
-      '(nntp imap4 localdir localnews))
+(setq wl-message-buffer-prefetch-folder-type-list
+      '(nntp imap4))
 @end group
 @end lisp
 
-@item wl-cache-prefetch-folder-list
-@vindex wl-cache-prefetch-folder-list
+In this case, multi folder that contains localdir and imap4 prefetches
+only imap4 messages.  This variable precedes the value of
+@code{wl-message-buffer-prefetch-folder-list}.
+
+@item wl-message-buffer-prefetch-folder-list
+@vindex wl-message-buffer-prefetch-folder-list
 The initial setting is @code{nil}.
 A list of regexp of folders to enable message prefetching.
 @end table

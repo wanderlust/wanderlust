@@ -2551,43 +2551,37 @@ prefix argument $B$D$-$G(B @kbd{/} $B$r2!$9$H!"A4$F$N;R%9%l%C%I$r3+$-$^$9!#(
 
 @subsection $B%P%C%U%!%-%c%C%7%e$H@hFI$_5!G=(B
 
-@code{elmo-use-buffer-cache} $B$,(B non-nil $B$G$"$l$P!"0lEYFI$s$@%a%C%;!<%8$,(B
-$B0lDj?t%P%C%U%!$KJ];}$5$l$^$9!#J];}$9$k%P%C%U%!$N?t$O(B 
-@code{elmo-buffer-cache-size} $B$G;XDj$7$^$9!#(B
+$B0lEYFI$s$@%a%C%;!<%8$O0lDj?t%P%C%U%!$KJ];}$5$l$^$9!#(B
+$BJ];}$9$k%P%C%U%!$N?t$O(B 
+@code{wl-message-buffer-cache-size} $B$G;XDj$7$^$9!#(B
 
 $B$^$?!"%a%C%;!<%8$rFI$s$G$$$k4V$K<!$N%a%C%;!<%8$r<hF@$7$F$*$/@hFI$_5!G=$,(B
-$B$"$j$^$9!#$3$l$O@hFI$_$7$?%a%C%;!<%8$r%P%C%U%!%-%c%C%7%e$KN/$a$F$*$/$?$a!"(B
-@code{elmo-use-buffer-cache} $B$,(B non-nil $B$G$"$k$3$H$,I,MW$G$9!#(B
+$B$"$j$^$9!#(B
 
 $B$3$N@hFI$_$9$k%U%)%k%@$O<!$N(B2$B$D$NJQ?t$K$h$j;XDj$G$-$^$9!#(B
 
 @table @code
-@item wl-cache-prefetch-folder-type-list
-@vindex wl-cache-prefetch-folder-type-list
-$B=i4|@_Dj$O0J2<$N%j%9%H!#(B
-@lisp
-@group
-(nntp imap4)
-@end group
-@end lisp
-
-@noindent
-$B@hFI$_5!G=$rM-8z$K$9$k%U%)%k%@$r<oJL$N%j%9%H$G;XDj$7$^$9!#=i4|@_Dj$N>l9g!"(B
-$B$b$7(B localdir $B$H(B IMAP $B%U%)%k%@$,:.:_$7$?%^%k%A%U%)%k%@$G$O(B IMAP $B$N%a%C%;!<(B
-$B%8$@$1$,@hFI$_$5$l$^$9!#$3$NJQ?t$O(B @code{wl-cache-prefetch-folder-list} 
-$B$h$j$bM%@h$5$l$^$9!#(B
-
-$B$b$7!"(Blocaldir $B$H(B localnews $B%U%)%k%@$b@hFI$_$9$k>l9g$O<!$N$h$&$K;XDj$7$^$9!#(B
+@item wl-message-buffer-prefetch-folder-type-list
+@vindex wl-message-buffer-prefetch-folder-type-list
+$B=i4|@_Dj$O(B @code{t}$B!#$3$N>l9g!"A4$F$N%U%)%k%@$G@hFI$_5!G=$,M-8z$K$J$j$^(B
+$B$9!#FCDj$N%U%)%k%@<oJL$N>l9g$K$@$1@hFI$_5!G=$rM-8z$K$7$?$$>l9g$K$O!"%U%)(B
+$B%k%@<oJL$N%j%9%H$r;XDj$7$^$9!#(B
+$BNc$($P0J2<$N$h$&$K@_Dj$7$^$9!#(B(NNTP $B%U%)%k%@$H(B IMAP $B%U%)%k%@$G$@$1@hFI$_(B
+$B$7$?$$>l9g(B)
 
 @lisp
 @group
-(setq wl-cache-prefetch-folder-type-list
-      '(nntp imap4 localdir localnews))
+(setq wl-message-buffer-prefetch-folder-type-list
+      '(nntp imap4))
 @end group
 @end lisp
 
-@item wl-cache-prefetch-folder-list
-@vindex wl-cache-prefetch-folder-list
+$B$3$N>l9g!"$b$7(B localdir $B$H(B IMAP $B%U%)%k%@$,:.:_$7$?%^%k%A%U%)%k%@$G$O(B 
+IMAP $B$N%a%C%;!<%8$@$1$,@hFI$_$5$l$^$9!#$3$NJQ?t$O(B 
+@code{wl-message-buffer-prefetch-folder-list} $B$h$j$bM%@h$5$l$^$9!#(B
+
+@item wl-message-buffer-prefetch-folder-list
+@vindex wl-message-buffer-prefetch-folder-list
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 $B@hFI$_5!G=$rM-8z$K$9$k%U%)%k%@$r%U%)%k%@L>(B($B@55,I=8=(B)$B$N%j%9%H$G;XDj$7$^$9!#(B
 @end table
