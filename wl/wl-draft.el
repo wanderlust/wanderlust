@@ -918,6 +918,27 @@ non-nil."
 	  (setq fields (cdr fields)))
 	recipients))))
 
+(static-if (fboundp 'smtp-send-buffer)
+(defun wl-draft-smtp-send-buffer (sender recipients buffer id)
+  (wl-smtp-extension-bind
+   (condition-case err
+       (smtp-send-buffer sender recipients (current-buffer))
+     (error
+      (wl-draft-write-sendlog 'failed 'smtp smtp-server
+			      recipients id)
+      (signal (car err) (cdr err))))))
+(defun wl-draft-smtp-send-buffer (sender recipients buffer id)
+  (as-binary-process
+   (wl-smtp-extension-bind
+    (let ((err (smtp-via-smtp sender recipients
+			      (current-buffer))))
+      (when (not (eq err t))
+	(wl-draft-write-sendlog 'failed 'smtp smtp-server
+				recipients id)
+	(error "Sending failed; SMTP protocol error:%s" err))))))
+;; end of static-if
+)
+
 ;;
 ;; from Semi-gnus
 ;;
@@ -976,18 +997,12 @@ non-nil."
 	    (wl-draft-delete-field "bcc" delimline)
 	    (wl-draft-delete-field "resent-bcc" delimline)
 	    (let (process-connection-type)
-	      (as-binary-process
-	       (when recipients
-		 (wl-smtp-extension-bind
-		  (let ((err (smtp-via-smtp sender recipients
-					    (current-buffer))))
-		    (when (not (eq err t))
-		      (wl-draft-write-sendlog 'failed 'smtp smtp-server
-					      recipients id)
-		      (error "Sending failed; SMTP protocol error:%s" err))))
-		 (wl-draft-set-sent-message 'mail 'sent)
-		 (wl-draft-write-sendlog
-		  'ok 'smtp smtp-server recipients id)))))
+	      (when recipients
+		(wl-draft-smtp-send-buffer sender recipients (current-buffer)
+					   id)
+		(wl-draft-set-sent-message 'mail 'sent)
+		(wl-draft-write-sendlog
+		 'ok 'smtp smtp-server recipients id))))
 	(if (bufferp errbuf)
 	    (kill-buffer errbuf))))))
 
