@@ -1,5 +1,13 @@
 2005-03-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo-pipe.el (elmo-folder-close): Define.
+
+	* elmo-multi.el (elmo-folder-close): Call `elmo-folder-close' with
+	children folders.
+
+	* elmo-filter.el (elmo-folder-close): Call `elmo-folder-close'
+	with target folder.
+
 	* modb-entity.el (elmo-msgdb-message-entity-set-number): Return
 	`number'.
 

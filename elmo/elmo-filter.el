@@ -155,11 +155,11 @@
 (luna-define-method elmo-folder-close-internal ((folder elmo-filter-folder))
   (elmo-folder-close-internal (elmo-filter-folder-target-internal folder)))
 
-(luna-define-method elmo-folder-close :after ((folder elmo-filter-folder))
+(luna-define-method elmo-folder-close ((folder elmo-filter-folder))
+  (elmo-generic-folder-close folder)
   (elmo-filter-folder-set-number-list-internal folder nil)
   (elmo-filter-folder-set-flag-count-internal folder nil)
-  (elmo-folder-set-msgdb-internal
-   (elmo-filter-folder-target-internal folder) nil))
+  (elmo-folder-close (elmo-filter-folder-target-internal folder)))
 
 (luna-define-method elmo-folder-commit ((folder elmo-filter-folder))
   (elmo-folder-commit (elmo-filter-folder-target-internal folder))
