@@ -1,3 +1,8 @@
+2005-01-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-reedit): Call
+	`wl-summary-message-string' with argument `use-cache' as `'maybe'.
+
 2005-01-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-mime.el (toplevel): Require wl-vars.

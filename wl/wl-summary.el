@@ -765,7 +765,7 @@ If ARG is non-nil, Supersedes message"
   (interactive "P")
   (wl-summary-toggle-disp-msg 'off)
   (cond
-   ((not (wl-summary-message-number))
+   ((null (wl-summary-message-number))
     (message "No message."))
    (arg
     (wl-summary-supersedes-message))
@@ -775,7 +775,7 @@ If ARG is non-nil, Supersedes message"
 	(mail-position-on-field "Newsgroups")
       (mail-position-on-field "To")))
    (t
-    (wl-draft-edit-string (wl-summary-message-string)))))
+    (wl-draft-edit-string (wl-summary-message-string 'maybe)))))
 
 (defun wl-summary-resend-bounced-mail ()
   "Re-mail the current message.
