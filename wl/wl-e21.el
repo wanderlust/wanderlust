@@ -25,6 +25,25 @@
 
 ;;; Commentary:
 ;;
+;; This module uses `before-string' overlay property to show icon
+;; images instead of `insert-image', so don't delete such overlays
+;; sloppily.  Here is a sample code to show incons in the buffer.
+;;
+;;(let* ((load-path (cons wl-icon-dir load-path))
+;;       (image (find-image `((:type xpm :file ,wl-nntp-folder-icon
+;;				   :ascent center))))
+;;       (icon (copy-sequence wl-nntp-folder-icon))
+;;       (folder "-fj.wanderlust:0/0/0")
+;;       overlay)
+;;  (put-text-property 0 (length icon) 'display image icon)
+;;  (pop-to-buffer (get-buffer-create "*wl-e21-demo*"))
+;;  (erase-buffer)
+;;  (insert "   ")
+;;  (setq overlay (make-overlay (point) (progn (insert folder) (point))))
+;;  (overlay-put overlay 'before-string icon)
+;;  (overlay-put overlay 'wl-e21-icon t)
+;;  (overlay-put overlay 'evaporate t)
+;;  (insert "\n"))
 
 ;;; Code:
 ;;
@@ -46,8 +65,7 @@
 
 (add-hook 'wl-summary-mode-hook 'wl-setup-summary)
 
-(defvar wl-use-toolbar (and (display-graphic-p)
-			    (image-type-available-p 'xpm)))
+(defvar wl-use-toolbar (image-type-available-p 'xpm))
 (defvar wl-plugged-image nil)
 (defvar wl-unplugged-image nil)
 (defvar wl-biff-mail-image nil)
@@ -138,50 +156,23 @@
 	(success t)
 	icon up down disabled name success)
     (while bar
-      (setq icon (aref (car bar) 0)
-	    bar (cdr bar))
+      (setq icon (aref (pop bar) 0))
       (unless (boundp icon)
 	(setq name (symbol-name icon)
 	      up (find-image `((:type xpm :file ,(concat name "-up.xpm")
-				      :ascent center)
-			       (:type xbm :file ,(concat name "-up.xbm")
 				      :ascent center))))
 	(if up
 	    (progn
 	      (setq down (find-image
 			  `((:type xpm :file ,(concat name "-down.xpm")
-				   :ascent center)
-			    (:type xbm :file ,(concat name "-down.xbm")
 				   :ascent center)))
 		    disabled (find-image
 			      `((:type xpm :file ,(concat name "-disabled.xpm")
-				       :ascent center)
-				(:type xbm :file ,(concat name "-disabled.xbm")
 				       :ascent center))))
 	      (set icon (vector down up disabled disabled)))
 	  (setq bar nil
 		success nil))))
     success))
-
-(defun wl-e21-make-icon-image (icon-text icon-file)
-  (if wl-highlight-folder-with-icon
-      (let ((load-path (cons wl-icon-dir load-path)))
-	(cond ((let (case-fold-search)
-		 ;; It may be a default value.
-		 (string-match "\\.xpm$" icon-file))
-	       (find-image
-		`((:type xpm :file ,icon-file :ascent center)
-		  (:type xbm
-			 :file ,(concat
-				 (substring icon-file 0 (match-beginning 0))
-				 ".xbm")
-			 :ascent center))))
-	      ((let ((case-fold-search t))
-		 (string-match "\\.\\(x[bp]m\\|png\\|gif\\)$" icon-file))
-	       (find-image
-		`((:type ,(intern (downcase (match-string 1 icon-file)))
-			 :file ,icon-file :ascent center))))))
-    icon-text))
 
 (defvar wl-e21-toolbar-configurations
   '((auto-resize-tool-bar        . t)
@@ -196,15 +187,15 @@
 	 (old (frame-parameter frame 'tool-bar-lines))
 	 (new (or wl-e21-tool-bar-lines
 		  (cdr (assq 'tool-bar-lines default-frame-alist)))))
-    (unless (eq (and old t) (and new t))
+    (unless (eq old new)
       (modify-frame-parameters frame (list (cons 'tool-bar-lines new))))))
 (add-hook 'post-command-hook 'wl-e21-switch-toolbar)
-(defun wl-e21-force-switch-toolbar (frame)
-  (let ((lines (frame-parameter frame 'tool-bar-lines)))
-    (unless (and lines (> lines 0))
-      (modify-frame-parameters frame (list (cons 'tool-bar-lines
-						 wl-e21-tool-bar-lines))))))
-(add-hook 'after-make-frame-functions 'wl-e21-force-switch-toolbar)
+(defun wl-e21-switch-toolbar-after-make-frame (frame)
+  (modify-frame-parameters
+   frame (list (cons 'tool-bar-lines (or wl-e21-tool-bar-lines
+					 (frame-parameter frame
+							  'tool-bar-lines))))))
+(add-hook 'after-make-frame-functions 'wl-e21-switch-toolbar-after-make-frame)
 
 (defun wl-e21-make-toolbar-buttons (keymap defs)
   (let ((configs wl-e21-toolbar-configurations)
@@ -212,7 +203,8 @@
     (while (setq config (pop configs))
       (set (make-local-variable (car config)) (cdr config))))
   (modify-frame-parameters (selected-frame) '((tool-bar-lines . 1)))
-  (set (make-local-variable 'wl-e21-tool-bar-lines) 1)
+  (set (make-local-variable 'wl-e21-tool-bar-lines)
+       (frame-parameter (selected-frame) 'tool-bar-lines))
   (let ((n (1- (length defs)))
 	def)
     (while (>= n 0)
@@ -225,193 +217,212 @@
 
 (defun wl-e21-setup-folder-toolbar ()
   (and wl-use-toolbar
+       (display-graphic-p)
        (wl-e21-setup-toolbar wl-folder-toolbar)
        (wl-e21-make-toolbar-buttons wl-folder-mode-map wl-folder-toolbar)))
 
 (defun wl-e21-setup-summary-toolbar ()
   (and wl-use-toolbar
+       (display-graphic-p)
        (wl-e21-setup-toolbar wl-summary-toolbar)
        (wl-e21-make-toolbar-buttons wl-summary-mode-map wl-summary-toolbar)))
 
 (eval-when-compile
   (defsubst wl-e21-setup-message-toolbar ()
     (and wl-use-toolbar
+	 (display-graphic-p)
 	 (wl-e21-setup-toolbar wl-message-toolbar)
 	 (wl-e21-make-toolbar-buttons (current-local-map) wl-message-toolbar)))
 
   (defsubst wl-e21-setup-draft-toolbar ()
     (and wl-use-toolbar
+	 (display-graphic-p)
 	 (wl-e21-setup-toolbar wl-draft-toolbar)
 	 (wl-e21-make-toolbar-buttons wl-draft-mode-map wl-draft-toolbar))))
-
-(defun wl-e21-insert-image (image &optional text)
-  (unless text
-    (setq text " "))
-  (let* ((start (point))
-	 (end (+ start (length text))))
-    (if (stringp image)
-	(progn
-	  (insert text)
-	  (let ((ovl (make-overlay start end)))
-	    (overlay-put ovl 'before-string image)
-	    (overlay-put ovl 'evaporate t)
-	    (add-text-properties start end
-				 '(invisible t intangible t
-					     rear-nonsticky t))))
-      (insert-image image text))
-    (put-text-property start end 'wl-e21-icon t)))
 
 (defvar wl-folder-toggle-icon-list
   '((wl-folder-opened-image       . wl-opened-group-folder-icon)
     (wl-folder-closed-image       . wl-closed-group-folder-icon)))
 
 (eval-when-compile
-  (defsubst wl-e21-highlight-folder-group-line (image text-face numbers)
-    (let ((start (goto-char (match-beginning 1)))
-	  (inhibit-read-only t))
-      (let ((text (match-string-no-properties 1)))
-	(delete-region start (match-end 1))
-	(wl-e21-insert-image
-	 (or (get image 'image)
-	     (put image 'image
-		  (wl-e21-make-icon-image
-		   text (symbol-value
-			 (cdr (assq image wl-folder-toggle-icon-list))))))
-	 text))
-      (when wl-use-highlight-mouse-line
-	(put-text-property start (line-end-position) 'mouse-face 'highlight))
-      (setq start (point))
-      (if (and wl-highlight-folder-by-numbers
-	       numbers (nth 0 numbers) (nth 1 numbers)
-	       (re-search-forward "[0-9-]+/[0-9-]+/[0-9-]+" (line-end-position)
-				  t))
-	  (let* ((unsync (nth 0 numbers))
-		 (unread (nth 1 numbers))
-		 (face (cond ((and unsync (zerop unsync))
-			      (if (and unread (zerop unread))
-				  'wl-highlight-folder-zero-face
-				'wl-highlight-folder-unread-face))
-			     ((and unsync
-				   (>= unsync wl-folder-many-unsync-threshold))
-			      'wl-highlight-folder-many-face)
-			     (t
-			      'wl-highlight-folder-few-face))))
-	    (if (numberp wl-highlight-folder-by-numbers)
-		(progn
-		  (put-text-property start (match-beginning 0) 'face text-face)
-		  (put-text-property (match-beginning 0) (point) 'face face))
-	      (put-text-property start (point) 'face face)))
-	(put-text-property start (line-end-position) 'face text-face)))))
+  (defsubst wl-e21-highlight-folder-group-line (start end icon numbers)
+    (when (display-graphic-p)
+      (let (overlay)
+	(let ((overlays (overlays-in start end)))
+	  (while (and (setq overlay (pop overlays))
+		      (not (overlay-get overlay 'wl-e21-icon)))))
+	(unless overlay
+	  (setq overlay (make-overlay start end))
+	  (overlay-put overlay 'wl-e21-icon t)
+	  (overlay-put overlay 'evaporate t))
+	(let ((image (get icon 'image)))
+	  (unless image
+	    (let ((name (copy-sequence
+			 (symbol-value
+			  (cdr (assq icon wl-folder-toggle-icon-list)))))
+		  (load-path (cons wl-icon-dir load-path)))
+	      (when (setq image (find-image `((:type xpm :file ,name
+						     :ascent center))))
+		(put-text-property 0 (length name) 'display image name)
+		(setq image (put icon 'image name)))))
+	  (overlay-put overlay 'before-string image)
+	  (overlay-put overlay 'invisible (and image t))
+	  (when (and wl-use-highlight-mouse-line (display-mouse-p))
+	    (let ((inhibit-read-only t))
+	      (put-text-property (if image
+				     (max (1- start) (line-beginning-position))
+				   start)
+				 (line-end-position)
+				 'mouse-face 'highlight)))))))
+
+  (defsubst wl-e21-highlight-folder-by-numbers (start end text-face numbers)
+    (when (display-color-p)
+      (let ((inhibit-read-only t))
+	(if (and wl-highlight-folder-by-numbers
+		 numbers (nth 0 numbers) (nth 1 numbers)
+		 (re-search-forward "[0-9-]+/[0-9-]+/[0-9-]+"
+				    (line-end-position) t))
+	    (let* ((unsync (nth 0 numbers))
+		   (unread (nth 1 numbers))
+		   (face (cond ((and unsync (zerop unsync))
+				(if (and unread (zerop unread))
+				    'wl-highlight-folder-zero-face
+				  'wl-highlight-folder-unread-face))
+			       ((and unsync
+				     (>= unsync
+					 wl-folder-many-unsync-threshold))
+				'wl-highlight-folder-many-face)
+			       (t
+				'wl-highlight-folder-few-face))))
+	      (if (numberp wl-highlight-folder-by-numbers)
+		  (progn
+		    (put-text-property start (match-beginning 0)
+				       'face text-face)
+		    (put-text-property (match-beginning 0) (match-end 0)
+				       'face face))
+		(put-text-property start (match-end 0) 'face face)))
+	  (put-text-property start (line-end-position) 'face text-face))))))
 
 (defun wl-highlight-folder-current-line (&optional numbers)
   (interactive)
   (save-excursion
     (beginning-of-line)
-    (let (fld-name)
+    (let (fld-name start end)
       (cond
        (;; opened folder group
 	(looking-at wl-highlight-folder-opened-regexp)
-	(wl-e21-highlight-folder-group-line 'wl-folder-opened-image
+	(setq start (match-beginning 1)
+	      end (match-end 1))
+	(wl-e21-highlight-folder-group-line start end
+					    'wl-folder-opened-image
+					    numbers)
+	(wl-e21-highlight-folder-by-numbers start end
 					    'wl-highlight-folder-opened-face
 					    numbers))
        (;; closed folder group
 	(looking-at wl-highlight-folder-closed-regexp)
-	(wl-e21-highlight-folder-group-line 'wl-folder-closed-image
+	(setq start (match-beginning 1)
+	      end (match-end 1))
+	(wl-e21-highlight-folder-group-line start end
+					    'wl-folder-closed-image
+					    numbers)
+	(wl-e21-highlight-folder-by-numbers start end
 					    'wl-highlight-folder-closed-face
 					    numbers))
        (;; basic folder
 	(and (setq fld-name (wl-folder-get-folder-name-by-id
 			     (get-text-property (point) 'wl-folder-entity-id)))
-	     (looking-at "[ \t]+\\([^ \t]+\\)"))
-	(goto-char (1- (match-beginning 1)))
-	(let ((inhibit-read-only t))
-	  (if (get-text-property (point) 'wl-e21-icon)
-	      (delete-char 1)
-	    (forward-char 1))
-	  (let ((start (point)))
-	    (let (type)
-	      (wl-e21-insert-image
-	       (cond
-		((string= fld-name wl-trash-folder);; trash folder
-		 (let ((num (nth 2 numbers)));; number of messages
-		   (get (if (or (not num) (zerop num))
-			    'wl-folder-trash-empty-image
-			  'wl-folder-trash-image)
-			'image)))
-		((string= fld-name wl-draft-folder);; draft folder
-		 (get 'wl-folder-draft-image 'image))
-		((string= fld-name wl-queue-folder);; queue folder
-		 (get 'wl-folder-queue-image 'image))
-		(;; and one of many other folders
-		 (setq type (elmo-folder-get-type fld-name))
-		 (get (intern (format "wl-folder-%s-image" type)) 'image)))))
-	    (let ((end (line-end-position)))
-	      (when wl-use-highlight-mouse-line
-		(put-text-property start end 'mouse-face 'highlight))
-	      (setq start (point))
-	      (beginning-of-line)
-	      (let ((text-face
-		     (if (looking-at (format "^[ \t]*\\(%s\\|%s\\)"
-					     wl-folder-unsubscribe-mark
-					     wl-folder-removed-mark))
-			 'wl-highlight-folder-killed-face
-		       'wl-highlight-folder-unknown-face)))
-		(if (and wl-highlight-folder-by-numbers
-			 numbers (nth 0 numbers) (nth 1 numbers)
-			 (re-search-forward "[0-9-]+/[0-9-]+/[0-9-]+" end t))
-		    (let* ((unsync (nth 0 numbers))
-			   (unread (nth 1 numbers))
-			   (face (cond
-				  ((and unsync (zerop unsync))
-				   (if (and unread (zerop unread))
-				       'wl-highlight-folder-zero-face
-				     'wl-highlight-folder-unread-face))
-				  ((and unsync
-					(>= unsync
-					    wl-folder-many-unsync-threshold))
-				   'wl-highlight-folder-many-face)
-				  (t
-				   'wl-highlight-folder-few-face))))
-		      (if (numberp wl-highlight-folder-by-numbers)
-			  (progn
-			    (put-text-property start (match-beginning 0)
-					       'face text-face)
-			    (put-text-property (match-beginning 0)
-					       (match-end 0)
-					       'face face))
-			(put-text-property start (match-end 0) 'face face)))
-		  (put-text-property start end 'face text-face)))))))))))
+	     (looking-at "[\t ]+\\([^\t\n ]+\\)"))
+	(setq start (match-beginning 1)
+	      end (match-end 1))
+	(let (image)
+	  (when (display-graphic-p)
+	    (let (overlay)
+	      (let ((overlays (overlays-in start end)))
+		(while (and (setq overlay (pop overlays))
+			    (not (overlay-get overlay 'wl-e21-icon)))))
+	      (unless overlay
+		(setq overlay (make-overlay start end))
+		(overlay-put overlay 'wl-e21-icon t)
+		(overlay-put overlay 'evaporate t))
+	      (let (type)
+		(setq image
+		      (cond ((string= fld-name wl-trash-folder);; trash folder
+			     (let ((num (nth 2 numbers)));; number of messages
+			       (get (if (or (not num) (zerop num))
+					'wl-folder-trash-empty-image
+				      'wl-folder-trash-image)
+				    'image)))
+			    ((string= fld-name wl-draft-folder);; draft folder
+			     (get 'wl-folder-draft-image 'image))
+			    ((string= fld-name wl-queue-folder);; queue folder
+			     (get 'wl-folder-queue-image 'image))
+			    (;; and one of many other folders
+			     (setq type (elmo-folder-get-type fld-name))
+			     (get (intern (format "wl-folder-%s-image" type))
+				  'image)))))
+	      (overlay-put overlay 'before-string image)))
+	  (when (and wl-use-highlight-mouse-line (display-mouse-p))
+	    (let ((inhibit-read-only t))
+	      (put-text-property (if image
+				     (max (1- start)
+					  (line-beginning-position))
+				   start)
+				 (line-end-position)
+				 'mouse-face 'highlight))))
+	(when (display-color-p)
+	  (wl-e21-highlight-folder-by-numbers
+	   start end
+	   (if (looking-at (format "^[\t ]*\\(%s\\|%s\\)"
+				   wl-folder-unsubscribe-mark
+				   wl-folder-removed-mark))
+	       'wl-highlight-folder-killed-face
+	     'wl-highlight-folder-unknown-face)
+	   numbers)))))))
 
 (defun wl-highlight-plugged-current-line ()
   (interactive)
-  (save-excursion
-    (beginning-of-line)
-    (when (looking-at "[ \t]*\\(\\[\\([^]]+\\)\\]\\)")
-      (let ((inhibit-read-only t))
-	(add-text-properties (match-beginning 1) (goto-char (match-end 1))
-			     '(invisible t intangible t rear-nonsticky t))
-	(when (get-text-property (point) 'wl-e21-icon)
-	  (delete-char 1))
-	(wl-e21-insert-image
-	 (if (string= wl-plugged-plug-on (elmo-match-buffer 2))
-	     wl-plugged-image
-	   wl-unplugged-image))))))
+  (when (display-graphic-p)
+    (save-excursion
+      (beginning-of-line)
+      (when (looking-at "[\t ]*\\(\\[\\([^]]+\\)\\]\\)")
+	(let* ((start (match-beginning 1))
+	       (end (match-end 1))
+	       (status (match-string-no-properties 2))
+	       (image (if (string-equal wl-plugged-plug-on status)
+			  wl-plugged-image
+			wl-unplugged-image)))
+	  (when image
+	    (let (overlay)
+	      (let ((overlays (overlays-in start end)))
+		(while (and (setq overlay (pop overlays))
+			    (not (overlay-get overlay 'wl-e21-icon)))))
+	      (unless overlay
+		(setq overlay (make-overlay start end))
+		(overlay-put overlay 'wl-e21-icon t)
+		(overlay-put overlay 'evaporate t))
+	      (put-text-property 0 (length status) 'display image status)
+	      (overlay-put overlay 'before-string status)
+	      (overlay-put overlay 'invisible t))))))))
 
 (defun wl-plugged-set-folder-icon (folder string)
-  (let ((istring (concat " " string))
-	type)
-    (cond ((string= folder wl-queue-folder)
-	   (put-text-property 0 1 'display
-			      (get 'wl-folder-queue-image 'image) istring)
-	   istring)
-	  ((setq type (elmo-folder-get-type folder))
-	   (put-text-property 0 1 'display
-			      (get (intern (format "wl-folder-%s-image" type))
-				   'image)
-			      istring)
-	   istring)
-	  (t
-	   string))))
+  (if (display-graphic-p)
+      (let ((istring (concat " " string))
+	    type)
+	(cond ((string= folder wl-queue-folder)
+	       (put-text-property 0 1 'display
+				  (get 'wl-folder-queue-image 'image) istring)
+	       istring)
+	      ((setq type (elmo-folder-get-type folder))
+	       (put-text-property 0 1 'display
+				  (get (intern (format "wl-folder-%s-image"
+						       type))
+				       'image)
+				  istring)
+	       istring)
+	      (t
+	       string)))
+    string))
 
 (defvar wl-folder-internal-icon-list
   ;; alist of (image . icon-file)
@@ -434,76 +445,70 @@
 (defun wl-folder-init-icons ()
   (let ((load-path (cons wl-icon-dir load-path))
 	(icons wl-folder-internal-icon-list)
-	icon name case-fold-search)
+	icon name image)
     (while (setq icon (pop icons))
       (unless (get (car icon) 'image)
-	(setq name (symbol-value (cdr icon)))
-	(put (car icon) 'image
-	     (cond ((let (case-fold-search)
-		      ;; It may be a default value.
-		      (string-match "\\.xpm$" name))
-		    (find-image
-		     `((:type xpm :file ,name :ascent center)
-		       (:type xbm
-			      :file ,(concat
-				      (substring name 0 (match-beginning 0))
-				      ".xbm")
-			      :ascent center))))
-		   ((let ((case-fold-search t))
-		      (string-match "\\.\\(x[bp]m\\|png\\|gif\\)$" name))
-		    (find-image
-		     `((:type ,(intern (downcase (match-string 1 name)))
-			      :file ,name :ascent center))))))))))
+	(setq name (symbol-value (cdr icon))
+	      image (find-image `((:type xpm :file ,name :ascent center))))
+	(when image
+	  (let* ((str (copy-sequence name))
+		 (len (length str)))
+	    (put-text-property 0 len 'display image str)
+	    (put (car icon) 'image str)))))))
 
 (defun wl-plugged-init-icons ()
   (unless wl-plugged-image
-    (setq wl-plugged-image (wl-e21-make-icon-image
-			    wl-plug-state-indicator-on wl-plugged-icon)
-	  wl-unplugged-image (wl-e21-make-icon-image
-			      wl-plug-state-indicator-off wl-unplugged-icon))
-    (let ((props (list 'local-map (purecopy (make-mode-line-mouse2-map
+    (let ((load-path (cons wl-icon-dir load-path)))
+      (setq wl-plugged-image (find-image `((:type xpm
+						  :file ,wl-plugged-icon
+						  :ascent center)))
+	    wl-unplugged-image (find-image `((:type xpm
+						    :file ,wl-unplugged-icon
+						    :ascent center)))))
+    (setq wl-modeline-plug-state-on (copy-sequence
+				     wl-plug-state-indicator-on)
+	  wl-modeline-plug-state-off (copy-sequence
+				      wl-plug-state-indicator-off)))
+  (let ((props (when (display-mouse-p)
+		 (list 'local-map (purecopy (make-mode-line-mouse2-map
 					     #'wl-toggle-plugged))
-		       'help-echo "mouse-2 toggles plugged status")))
-      (setq wl-modeline-plug-state-on (copy-sequence
-				       wl-plug-state-indicator-on)
-	    wl-modeline-plug-state-off (copy-sequence
-					wl-plug-state-indicator-off))
-      (add-text-properties 0 (length wl-modeline-plug-state-on)
-			   (nconc props (unless (stringp wl-plugged-image)
-					  (list 'display wl-plugged-image)))
-			   wl-modeline-plug-state-on)
-      (add-text-properties 0 (length wl-modeline-plug-state-off)
-			   (nconc props (unless (stringp wl-unplugged-image)
-					  (list 'display wl-unplugged-image)))
-			   wl-modeline-plug-state-off))))
+		       'help-echo "mouse-2 toggles plugged status"))))
+    (add-text-properties 0 (length wl-modeline-plug-state-on)
+			 (nconc props (when (display-graphic-p)
+					(list 'display wl-plugged-image)))
+			 wl-modeline-plug-state-on)
+    (add-text-properties 0 (length wl-modeline-plug-state-off)
+			 (nconc props (when (display-graphic-p)
+					(list 'display wl-unplugged-image)))
+			 wl-modeline-plug-state-off)))
 
 (defun wl-biff-init-icons ()
   (unless wl-biff-mail-image
-    (setq wl-biff-mail-image (wl-e21-make-icon-image
-			      wl-biff-state-indicator-on
-			      wl-biff-mail-icon)
-	  wl-biff-nomail-image (wl-e21-make-icon-image
-				wl-biff-state-indicator-off
-				wl-biff-nomail-icon))
-    (let ((props (list 'local-map (purecopy (make-mode-line-mouse2-map
+    (let ((load-path (cons wl-icon-dir load-path)))
+      (setq wl-biff-mail-image (find-image
+				`((:type xpm :file ,wl-biff-mail-icon
+					 :ascent center)))
+	    wl-biff-nomail-image (find-image
+				  `((:type xpm :file ,wl-biff-nomail-icon
+					   :ascent center)))))
+    (setq wl-modeline-biff-state-on (copy-sequence
+				     wl-biff-state-indicator-on)
+	  wl-modeline-biff-state-off (copy-sequence
+				      wl-biff-state-indicator-off)))
+  (let ((props (when (display-mouse-p)
+		 (list 'local-map (purecopy (make-mode-line-mouse2-map
 					     (lambda nil
 					       (call-interactively
 						'wl-biff-check-folders))))
-		       'help-echo "mouse-2 checks new mails")))
-      (setq wl-modeline-biff-state-on (copy-sequence
-				       wl-biff-state-indicator-on)
-	    wl-modeline-biff-state-off (copy-sequence
-					wl-biff-state-indicator-off))
-      (add-text-properties 0 (length wl-modeline-biff-state-on)
-			   (nconc props (unless (stringp wl-biff-mail-image)
-					  (list 'display
-						wl-biff-mail-image)))
-			   wl-modeline-biff-state-on)
-      (add-text-properties 0 (length wl-modeline-biff-state-off)
-			   (nconc props (unless (stringp wl-biff-nomail-image)
-					  (list 'display
-						wl-biff-nomail-image)))
-			   wl-modeline-biff-state-off))))
+		       'help-echo "mouse-2 checks new mails"))))
+    (add-text-properties 0 (length wl-modeline-biff-state-on)
+			 (nconc props (when (display-graphic-p)
+					(list 'display wl-biff-mail-image)))
+			 wl-modeline-biff-state-on)
+    (add-text-properties 0 (length wl-modeline-biff-state-off)
+			 (nconc props (when (display-graphic-p)
+					(list 'display wl-biff-nomail-image)))
+			 wl-modeline-biff-state-off)))
 
 (defun wl-make-date-string ()
   (format-time-string "%a, %d %b %Y %T %z"))
