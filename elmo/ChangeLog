@@ -75,6 +75,8 @@
 	(elmo-maildir-delete-mark): Ditto.
 	(These changes are based on Hiroya Murata's patch [wl: 13437])
 
+2005-02-06  Yuuichi Teranishi  <teranisi@gohome.org>
+	
 	* elmo-version.el (elmo-version): Up to 2.12.1.
 
 2005-02-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

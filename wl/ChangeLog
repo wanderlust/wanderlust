@@ -1,3 +1,9 @@
+2005-02-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.12.1 is released.
+	
+	* wl-version.el (wl-version): Changed codename.
+
 2005-02-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-util.el (wl-read-search-condition-internal): Fixed the last
@@ -17,6 +23,10 @@
 
 	* wl-template.el (wl-template-select): Cause error if
 	`wl-template-alist' is nil.
+
+2005-02-06  Yuuichi Teranishi  <teranisi@gohome.org>
+	
+	* Version number is increased to 2.12.1.
 
 2005-02-06  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
@@ -137,8 +147,6 @@
 	(wl-message-display-internal): Rewrite.
 	(wl-message-buffer-prefetch-subr): Not save return value of
 	`wl-message-buffer-display'.
-
-	* Version number is increased to 2.13.1.
 
 2005-01-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 

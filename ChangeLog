@@ -1,3 +1,7 @@
+2005-02-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.12.1 - "99 Luftballons"
+
 2005-01-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* Makefile (compile-strict): New target.
