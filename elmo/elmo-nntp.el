@@ -335,8 +335,9 @@ Don't cache if nil.")
 	  (erase-buffer)
 	  (insert (nth 2 elmo-nntp-list-folders-cache))
 	  (goto-char (point-min))
-	  (and folder
-	       (keep-lines (concat "^" (regexp-quote folder) "\\.")))
+	  (or (string= folder "")
+	      (and folder
+		   (keep-lines (concat "^" (regexp-quote folder) "\\."))))
 	  t
 	  )))))
 
@@ -407,7 +408,9 @@ Don't cache if nil.")
 	    (progn
 	      (setq regexp
 		    (format "^\\(%s[^. ]+\\)\\([. ]\\).*\n"
-			    (if folder (concat folder "\\.") "")))
+			    (if (and folder
+				     (null (string= folder "")))
+				(concat folder "\\.") "")))
 	      (while (looking-at regexp)
 		(setq top-ng (elmo-match-buffer 1))
 		(if (string= (elmo-match-buffer 2) " ")

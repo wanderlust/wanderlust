@@ -1,3 +1,8 @@
+2000-10-06  Kenichi OKADA <okada@opaopa.org>
+
+	* elmo-nntp.el (elmo-nntp-list-folders): Fix for `-'
+	(elmo-nntp-list-folders-get-cache): Ditto.
+
 2000-10-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-search-internal-primitive): Added space
