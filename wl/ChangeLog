@@ -1,14 +1,3 @@
-2002-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-draft.el (wl-draft-reply): Avoid error when buf and summary-buf
-	is nil.
-
-2002-09-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
-
-	* wl-mime.el (wl-mime-decrypt-application/pgp-encrypted): New
-	function, a wrapper for `mime-decrypt-application/pgp-encrypted'.
-	(wl-mime-setup): Add its entry.
-
 2002-09-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-prefetch-msg): Use elmo-message-set-cached.
@@ -77,7 +66,7 @@
 
 2002-09-13  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
-	* wl-mime.el (wl-draft-preview-message): Restore the position
+	* wl-mime.el (wl-draft-preview-message): Revive the position
 	before evaluating wl-draft-send-hook in preview buffer.
 
 2002-09-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>

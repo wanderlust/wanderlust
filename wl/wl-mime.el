@@ -309,14 +309,6 @@ By setting following-method as yank-content."
     (elmo-mime-insert-header entity situation)
     (wl-highlight-headers)))
 
-(defun wl-mime-decrypt-application/pgp-encrypted (entity situation)
-  (let ((summary-buffer wl-message-buffer-cur-summary-buffer)
-	(original-buffer wl-message-buffer-original-buffer))
-    (mime-decrypt-application/pgp-encrypted entity situation)
-    (setq wl-message-buffer-cur-summary-buffer summary-buffer)
-    (setq wl-message-buffer-original-buffer original-buffer)))
-   
-
 ;;; Setup methods.
 (defun wl-mime-setup ()
   (set-alist 'mime-preview-quitting-method-alist
@@ -344,12 +336,6 @@ By setting following-method as yank-content."
    '((type . message) (subtype . partial)
      (method .  wl-mime-combine-message/partial-pieces)
      (request-partial-message-method . wl-message-request-partial)
-     (major-mode . wl-original-message-mode)))
-
-  (ctree-set-calist-strictly
-   'mime-acting-condition
-   '((type . application) (subtype . pgp-encrypted)
-     (method . wl-mime-decrypt-application/pgp-encrypted)
      (major-mode . wl-original-message-mode)))
 
   (ctree-set-calist-strictly

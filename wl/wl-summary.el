@@ -3946,10 +3946,6 @@ If ARG, exit virtual folder."
       ;;
       (wl-summary-count-unread)
       (wl-summary-update-modeline)
-      (wl-folder-update-unread
-       (wl-summary-buffer-folder-name)
-       	 (+ wl-summary-buffer-unread-count
-	    wl-summary-buffer-new-count))
       ;; set mark on buffer
       (when visible
 	(unless (string= (wl-summary-persistent-mark) new-mark)
