@@ -2822,10 +2822,6 @@ If ARG, exit virtual folder."
 				 'update nil nil t)
     (run-hooks 'wl-summary-virtual-hook)))
 
-(defun wl-summary-delete-all-target-marks ()
-  (let (wl-summary-buffer-temp-mark-list)
-    (wl-summary-delete-all-temp-marks)))
-
 (defun wl-summary-delete-all-temp-marks (&optional no-msg force)
   "Erase all temp marks from buffer."
   (interactive)
