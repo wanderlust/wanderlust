@@ -1,3 +1,7 @@
+2001-12-27  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-nntp.el (elmo-network-initialize-session): Fixed for Response '400'
+
 2001-12-27  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-nmz.el (elmo-nmz-use-drive-letter): New variable.
