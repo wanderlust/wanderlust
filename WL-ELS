@@ -21,7 +21,7 @@
    elmo-multi elmo-filter
    elmo-archive elmo-pipe elmo-cache
    elmo-internal elmo-mark elmo-sendlog
-   elmo-dop elmo-nmz
+   elmo-dop elmo-nmz elmo-split
    ))
 
 
