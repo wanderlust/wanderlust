@@ -2,6 +2,7 @@
 
 	* wl-version.el (wl-version-status-alist): Use `zerop' instead of
 	(eq x 0).
+	(wl-generate-user-agent-string-1): Fix conditional statement.
 
 2000-11-27  Kenichi OKADA  <okada@opaopa.org>
 
