@@ -681,12 +681,12 @@ you."
 						       (elmo-imap4-mailbox
 							mailbox))))
 	      (setq msgdb (elmo-msgdb-load (elmo-string folder)))
-	      (if (elmo-imap4-read-response session tag)
-		  (elmo-imap4-session-set-current-mailbox-internal
-		   session mailbox)))
-	  (and session
-	       (elmo-imap4-session-set-current-mailbox-internal session nil))
-	  (message "Select mailbox %s failed" mailbox))
+	      (setq response (elmo-imap4-read-response session tag)))
+	  (if response
+	      (elmo-imap4-session-set-current-mailbox-internal session mailbox)
+	    (and session
+		 (elmo-imap4-session-set-current-mailbox-internal session nil))
+	    (message "Select mailbox %s failed" mailbox)))
 	msgdb)
     (elmo-msgdb-load (elmo-string folder))))
 
