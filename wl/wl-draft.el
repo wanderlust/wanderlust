@@ -1338,9 +1338,10 @@ If optional argument is non-nil, current draft buffer is killed"
     (setq wl-draft-buffer-file-name file-name)
     (if mail-default-reply-to
 	(insert "Reply-To: " mail-default-reply-to "\n"))
-    (wl-draft-insert-ccs "Bcc: " (or wl-bcc
-			       (and mail-self-blind (user-login-name))))
-    (wl-draft-insert-ccs "FCC: " wl-fcc)
+    (if (or wl-bcc mail-self-blind)
+	(insert "Bcc: " (or wl-bcc (user-login-name)) "\n"))
+    (if wl-fcc
+	(insert "FCC: " (if (functionp wl-fcc) (funcall wl-fcc) wl-fcc) "\n"))
     (if wl-organization
 	(insert "Organization: " wl-organization "\n"))
     (and wl-auto-insert-x-face
@@ -1356,7 +1357,7 @@ If optional argument is non-nil, current draft buffer is killed"
 	  (when content-type
 	    (insert "Content-type: " content-type "\n"))
 	  (when content-transfer-encoding
-	    (insert "Content-Transfer-Encoding: " content-transfer-encoding "\n"))
+	    (insert "Content-Transfer-encoding: " content-transfer-encoding "\n"))
 	  (if (or content-type content-transfer-encoding)
 	      (insert "\n"))
 	  (and body (insert body))
@@ -1401,21 +1402,6 @@ If optional argument is non-nil, current draft buffer is killed"
 						 (get-buffer
 						  wl-summary-buffer-name)))
     buf-name))
-
-(defsubst wl-draft-insert-ccs (str cc)
-  (let ((field
-	 (if (functionp cc)
-	     (funcall cc)
-	   cc)))
-    (if (and field
-	     (null (and wl-draft-delete-myself-from-bcc-fcc
-			(elmo-list-member
-			 (mapcar 'wl-address-header-extract-address
-				 (append
-				  (wl-parse-addresses (std11-field-body "To"))
-				  (wl-parse-addresses (std11-field-body "Cc"))))
-			 (mapcar 'downcase wl-subscribed-mailing-list)))))
-	(insert str field "\n"))))
 
 (defun wl-draft-elmo-nntp-send ()
   (let ((elmo-nntp-post-pre-hook wl-news-send-pre-hook)
