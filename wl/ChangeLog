@@ -1,10 +1,5 @@
 2001-01-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
-	* wl-vars.el (wl-save-hook): New hook.
-	* wl.el (wl-save): Call `wl-save-hook'.
-
-2001-01-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
 	* wl-draft.el (wl-draft-reply-list-symbol): Remove FROM argument.
 	Argument WITH-ARG instead of NO-ARG (negative mean).
 	(wl-draft-reply): WITH-ARG instead of NO-ARG.

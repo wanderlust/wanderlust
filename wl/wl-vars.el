@@ -462,8 +462,6 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when header is highlighted.")
 (defvar wl-highlight-message-hook nil
   "A hook called when message is highlighted.")
-(defvar wl-save-hook nil
-  "A hook called when save summary and folder status.")
 (defvar wl-exit-hook nil
   "A hook called when exit wanderlust.")
 (defvar wl-folder-suspend-hook nil
