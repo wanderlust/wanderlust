@@ -133,15 +133,15 @@ This function is for internal use only."
   (&define (arg [&rest arg])
 	   def-body))
 
-(defun elmo-connect-signal (source signal-name listener function
+(defun elmo-connect-signal (source signal-name listener handler
 				   &optional filter handback)
-  "Add FUNCTION as a listener of a signal identified by SIGNAL-NAME.
-If SOURCE has non-nil value, FUNCTION will be invoked only if SOURCE is same as
+  "Add HANDLER as a callback function for signal identified by SIGNAL-NAME.
+If SOURCE has non-nil value, HANDLER will be invoked only if SOURCE is same as
 source argument of `elmo-emit-signal'. Comparison is done with `eq'. If SOURCE
 is nil, react on signals from any sources.
 You can specify further filter function by FILTER."
   (let ((symbol (intern (symbol-name signal-name) elmo-signal-slot-obarray)))
-    (set symbol (cons (elmo-make-slot source listener function filter handback)
+    (set symbol (cons (elmo-make-slot source listener handler filter handback)
 		      (if (boundp symbol)
 			  (symbol-value symbol))))))
 
