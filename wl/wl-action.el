@@ -784,8 +784,9 @@ Return number if put mark succeed"
 (defun wl-summary-refile-prev-destination ()
   "Refile message to previously refiled destination."
   (interactive)
-  (wl-summary-refile (wl-summary-message-number)
-		     wl-summary-buffer-prev-refile-destination)
+  (funcall (symbol-function 'wl-summary-refile)
+	   (wl-summary-message-number)
+	   wl-summary-buffer-prev-refile-destination)
   (if (and (interactive-p)
 	   (eq wl-summary-move-direction-downward nil))
       (wl-summary-prev)
