@@ -264,8 +264,18 @@ TYPE specifies the archiver's symbol."
 (defun elmo-archive-list-folder (spec)
   (let* ((type (nth 2 spec))
 	 (prefix (nth 3 spec))
-	 (arc (elmo-archive-get-archive-name (nth 1 spec) type spec)))
-    (elmo-archive-list-folder-subr arc type prefix)))
+	 (arc (elmo-archive-get-archive-name (nth 1 spec) type spec))
+	 (killed (and elmo-use-killed-list
+		      (elmo-msgdb-killed-list-load
+		       (elmo-msgdb-expand-path nil spec))))
+	 numbers)
+    (setq numbers (elmo-archive-list-folder-subr arc type prefix))
+    (if killed
+	(delq nil
+	      (mapcar (lambda (number)
+			(unless (memq number killed) number))
+		      numbers))
+      numbers)))
 
 (defun elmo-archive-max-of-folder (spec)
   (let* ((type (nth 2 spec))
@@ -1053,7 +1063,6 @@ TYPE specifies the archiver's symbol."
 (defalias 'elmo-archive-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-archive-commit 'elmo-generic-commit)
-(defalias 'elmo-archive-clear-killed 'elmo-generic-clear-killed)
 
 ;;; End
 (run-hooks 'elmo-archive-load-hook)

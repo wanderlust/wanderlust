@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/07/10 17:52:16 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -546,7 +545,17 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
       ret-val)))
 
 (defun elmo-imap4-list-folder (spec)
-  (elmo-imap4-list spec "all"))
+  (let ((killed (and elmo-use-killed-list
+		     (elmo-msgdb-killed-list-load
+		      (elmo-msgdb-expand-path nil spec))))
+	numbers)
+    (setq numbers (elmo-imap4-list spec "all"))
+    (if killed
+	(delq nil
+	      (mapcar (lambda (number)
+			(unless (memq number killed) number))
+		      numbers))
+      numbers)))
 
 (defun elmo-imap4-list-folder-unread (spec mark-alist unread-marks)
   (if (elmo-imap4-use-flag-p spec)
@@ -1583,8 +1592,6 @@ Return nil if connection failed."
 		 (list nil nil (quote (elmo-imap4-port-label spec)) add))))
 
 (defalias 'elmo-imap4-sync-number-alist 'elmo-generic-sync-number-alist)
-
-(defalias 'elmo-imap4-clear-killed 'elmo-generic-clear-killed)
 
 (provide 'elmo-imap4)
 

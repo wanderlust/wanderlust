@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/06/22 09:54:34 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 

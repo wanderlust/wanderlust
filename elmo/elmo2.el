@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/07/10 20:24:29 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -86,7 +85,6 @@
     (elmo-dop-list-folder folder)))
 
 ;;  list elmo-list-folders (folder)
-
 (defun elmo-list-folders (folder &optional hierarchy)
   (elmo-call-func folder "list-folders" hierarchy))
 
@@ -585,9 +583,6 @@ without cacheing."
 		    (car x))))
     mark-alist)))
 
-(defun elmo-generic-clear-killed (spec)
-  nil)
-
 (defun elmo-generic-list-folder-important (spec overview)
   nil)
 
@@ -665,7 +660,7 @@ without cacheing."
   (elmo-call-func folder "commit"))
 
 (defun elmo-clear-killed (folder)
-  (elmo-call-func folder "clear-killed"))
+  (elmo-msgdb-killed-list-save (elmo-msgdb-expand-path folder) nil))
 
 ;; returns cons cell of (unsync . number-of-messages-in-folder)
 (defun elmo-folder-diff (fld &optional number-alist)

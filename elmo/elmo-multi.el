@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/07/10 17:54:06 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -225,11 +224,14 @@
 (defun elmo-multi-list-folder (spec)
   (let* ((flds (cdr spec))
 	 (cur-number 0)
-	 ret-val)
+	 (killed (and elmo-use-killed-list
+		      (elmo-msgdb-killed-list-load
+		       (elmo-msgdb-expand-path nil spec))))
+	 numbers)
     (while flds
       (setq cur-number (+ cur-number 1))
-      (setq ret-val (append 
-		     ret-val
+      (setq numbers (append 
+		     numbers
 		     (mapcar 
 		      (function
 		       (lambda (x)
@@ -237,7 +239,12 @@
 			  (* elmo-multi-divide-number cur-number) x)))
 		      (elmo-list-folder (car flds)))))
       (setq flds (cdr flds)))
-    ret-val))
+    (if killed
+	(delq nil
+	      (mapcar (lambda (number)
+			(unless (memq number killed) number))
+		      numbers))
+      numbers)))
 
 (defun elmo-multi-folder-exists-p (spec)
   (let* ((flds (cdr spec)))
@@ -315,9 +322,6 @@
 
 (defun elmo-multi-commit (spec)
   (mapcar 'elmo-commit (cdr spec)))
-
-(defun elmo-multi-clear-killed (spec)
-  (mapcar 'elmo-clear-killed (cdr spec)))
 
 (defun elmo-multi-plugged-p (spec)
   (let* ((flds (cdr spec)))

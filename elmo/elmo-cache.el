@@ -6,7 +6,6 @@
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;;         Kenichi OKADA <okada@opaopa.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/01 09:57:55 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -656,7 +655,17 @@ Returning its cache buffer."
 		       msgs)))))
 
 (defun elmo-cache-list-folder (spec); called by elmo-cache-search()
-  (elmo-cache-list-folder-subr spec))
+  (let ((killed (and elmo-use-killed-list
+		     (elmo-msgdb-killed-list-load
+		      (elmo-msgdb-expand-path nil spec))))
+	numbers)
+    (setq numbers (elmo-cache-list-folder-subr spec))
+    (if killed
+	(delq nil
+	      (mapcar (lambda (number)
+			(unless (memq number killed) number))
+		      numbers))
+      numbers)))
 
 (defun elmo-cache-max-of-folder (spec)
   (elmo-cache-list-folder-subr spec t))
@@ -739,7 +748,6 @@ Returning its cache buffer."
 (defalias 'elmo-cache-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-cache-commit 'elmo-generic-commit)
-(defalias 'elmo-cache-clear-killed 'elmo-generic-clear-killed)
 
 (provide 'elmo-cache)
 

@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/07/10 17:58:38 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -76,7 +75,17 @@
 (defun elmo-pipe-list-folder (spec)
   (elmo-pipe-drain (elmo-pipe-spec-src spec)
 		   (elmo-pipe-spec-dst spec))
-  (elmo-list-folder (elmo-pipe-spec-dst spec)))
+  (let ((killed (and elmo-use-killed-list
+		     (elmo-msgdb-killed-list-load
+		      (elmo-msgdb-expand-path nil spec))))
+	numbers)
+    (setq numbers (elmo-list-folder (elmo-pipe-spec-dst spec)))
+    (if killed
+	(delq nil
+	      (mapcar (lambda (number)
+			(unless (memq number killed) number))
+		      numbers))
+      numbers)))
 
 (defun elmo-pipe-list-folder-unread (spec mark-alist unread-marks)
   (elmo-list-folder-unread (elmo-pipe-spec-dst spec) mark-alist unread-marks))
@@ -115,9 +124,6 @@
 (defun elmo-pipe-commit (spec)
   (elmo-commit (elmo-pipe-spec-src spec))
   (elmo-commit (elmo-pipe-spec-dst spec)))
-
-(defun elmo-pipe-clear-killed (spec)
-  (elmo-clear-killed (elmo-pipe-spec-src spec)))
 
 (defun elmo-pipe-plugged-p (spec)
   (and (elmo-folder-plugged-p (elmo-pipe-spec-src spec))

@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/07/10 17:57:16 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -43,7 +42,17 @@
       (sort flist '<))))
 
 (defun elmo-internal-list-folder (spec)
-  (elmo-internal-list-folder-subr spec))
+    (let ((killed (and elmo-use-killed-list
+		     (elmo-msgdb-killed-list-load
+		      (elmo-msgdb-expand-path nil spec))))
+	numbers)
+    (setq numbers (elmo-internal-list-folder-subr spec))
+    (if killed
+	(delq nil
+	      (mapcar (lambda (number)
+			(unless (memq number killed) number))
+		      numbers))
+      numbers)))
 
 (defun elmo-internal-list-folder-by-location (spec location &optional msgdb)
   (let* ((path (elmo-msgdb-expand-path nil spec))
@@ -258,7 +267,6 @@
 (defalias 'elmo-internal-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-internal-commit 'elmo-generic-commit)
-(defalias 'elmo-internal-clear-killed 'elmo-generic-clear-killed)
 
 (provide 'elmo-internal)
 

@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/04/28 10:28:08 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -395,19 +394,31 @@
 	(nreverse ret-val)))))
 
 (defun elmo-pop3-list-folder (spec)
-  (save-excursion
-    (elmo-pop3-flush-connection)
-    (let* ((connection (elmo-pop3-get-connection spec))
-	   (buffer  (nth 0 connection))
-	   (process (nth 1 connection))
-	   response errmsg ret-val)
-      (elmo-pop3-send-command buffer process "list")
-      (if (null (elmo-pop3-read-response buffer process))
-	  (error "POP List folder failed"))
-      (if (null (setq response (elmo-pop3-read-contents buffer process)))
-	  (error "POP List folder failed"))
-      ;; POP server always returns a sequence of serial numbers.
-      (elmo-pop3-parse-list-response response))))
+  (let ((killed (and elmo-use-killed-list
+		     (elmo-msgdb-killed-list-load
+		      (elmo-msgdb-expand-path nil spec))))
+	numbers)
+    (setq numbers
+	  (save-excursion
+	    (elmo-pop3-flush-connection)
+	    (let* ((connection (elmo-pop3-get-connection spec))
+		   (buffer  (nth 0 connection))
+		   (process (nth 1 connection))
+		   response errmsg ret-val)
+	      (elmo-pop3-send-command buffer process "list")
+	      (if (null (elmo-pop3-read-response buffer process))
+		  (error "POP List folder failed"))
+	      (if (null (setq response
+			      (elmo-pop3-read-contents buffer process)))
+		  (error "POP List folder failed"))
+	      ;; POP server always returns a sequence of serial numbers.
+	      (elmo-pop3-parse-list-response response))))
+    (if killed
+	(delq nil
+	      (mapcar (lambda (number)
+			(unless (memq number killed) number))
+		      numbers))
+      numbers)))
 
 (defun elmo-pop3-max-of-folder (spec)
   (save-excursion
@@ -666,7 +677,6 @@
 (defalias 'elmo-pop3-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-pop3-commit 'elmo-generic-commit)
-(defalias 'elmo-pop3-clear-killed 'elmo-generic-clear-killed)
 
 (provide 'elmo-pop3)
 

@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/07/10 17:57:40 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -360,7 +359,17 @@ file name for maildir directories."
 
 (defun elmo-maildir-list-folder (spec)
   (elmo-maildir-update-current spec)
-  (elmo-maildir-list-folder-subr spec))
+  (let ((killed (and elmo-use-killed-list
+		     (elmo-msgdb-killed-list-load
+		      (elmo-msgdb-expand-path nil spec))))
+	numbers)
+    (setq numbers (elmo-maildir-list-folder-subr spec))
+    (if killed
+	(delq nil
+	      (mapcar (lambda (number)
+			(unless (memq number killed) number))
+		      numbers))
+      numbers)))
 
 (defun elmo-maildir-max-of-folder (spec)
   (elmo-maildir-list-folder-subr spec t))
@@ -474,7 +483,6 @@ file name for maildir directories."
   'elmo-generic-list-folder-unread)
 (defalias 'elmo-maildir-list-folder-important
   'elmo-generic-list-folder-important)
-(defalias 'elmo-maildir-clear-killed 'elmo-generic-clear-killed)
 
 (provide 'elmo-maildir)
 

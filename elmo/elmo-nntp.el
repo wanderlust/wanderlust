@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/07/11 18:02:53 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -470,7 +469,7 @@ Don't cache if nil.")
 (defun elmo-nntp-list-folder (spec)
   (elmo-nntp-setting spec
     (let* ((server (format "%s" server)) ;; delete text property
-	   (killed (and elmo-nntp-use-killed-list
+	   (killed (and elmo-use-killed-list
 			(elmo-msgdb-killed-list-load
 			 (elmo-msgdb-expand-path nil spec))))
 	   response numbers use-listgroup)
@@ -501,11 +500,12 @@ Don't cache if nil.")
 	      (setq numbers (elmo-nntp-make-msglist
 			     (elmo-match-string 2 response)
 			     (elmo-match-string 3 response)))))
-	(delq nil
-	      (mapcar (lambda (number)
-			(unless (memq number killed)
-			  number))
-		      numbers))))))
+	(if killed
+	    (delq nil
+		  (mapcar (lambda (number)
+			    (unless (memq number killed) number))
+			  numbers))
+	  numbers)))))
 
 (defun elmo-nntp-max-of-folder (spec)
   (let* ((port (elmo-nntp-spec-port spec))
@@ -514,7 +514,7 @@ Don't cache if nil.")
 	 (ssl (elmo-nntp-spec-ssl spec))
 	 (folder (elmo-nntp-spec-group spec))
 	 (dir (elmo-msgdb-expand-path nil spec))
-	 (killed-list (and elmo-nntp-use-killed-list
+	 (killed-list (and elmo-use-killed-list
 			   (elmo-msgdb-killed-list-load dir)))
 	 number-alist end-num)
     (if elmo-nntp-groups-async
@@ -524,7 +524,7 @@ Don't cache if nil.")
 	  (if entry
 	      (progn
 		(setq end-num (nth 2 entry))
-		(when (and killed-list elmo-nntp-use-killed-list)
+		(when (and killed-list elmo-use-killed-list)
 		  (setq killed-list (nreverse (sort killed-list '<)))
 		  (cond
 		   ;; XXX biggest number in server is killed,
@@ -560,7 +560,7 @@ Don't cache if nil.")
 			       (elmo-match-string 3 response)))
 		(setq e-num (string-to-int
 			     (elmo-match-string 1 response)))
-		(when (and killed-list elmo-nntp-use-killed-list)
+		(when (and killed-list elmo-use-killed-list)
 		  (setq killed-list (nreverse (sort killed-list '<)))
 		  (cond
 		   ;; XXX biggest number in server is killed,
@@ -681,7 +681,8 @@ Don't cache if nil.")
     (save-excursion
      (elmo-nntp-setting spec
       (let* ((cwf     (caddr connection))
-	     (filter  (and as-num numlist))
+	     (filter  numlist)
+	     ;(filter  (and as-num numlist))
 	     beg-num end-num cur length
 	     ret-val ov-str use-xover dir)
 	(if (and folder
@@ -751,7 +752,7 @@ Don't cache if nil.")
 			important-mark
 			seen-list
 			filter))))))
-	(when elmo-nntp-use-killed-list
+	(when elmo-use-killed-list
 	  (setq dir (elmo-msgdb-expand-path nil spec))
 	  (elmo-msgdb-killed-list-save
 	   dir
@@ -1095,12 +1096,9 @@ Return nil if connection failed."
 
       (elmo-nntp-send-data-line process sending-data))))
 
-(defun elmo-nntp-clear-killed (spec)
-  (elmo-msgdb-killed-list-save (elmo-msgdb-expand-path nil spec) nil))
-
 (defun elmo-nntp-delete-msgs (spec msgs)
   "MSGS on FOLDER at SERVER pretended as Deleted. Returns nil if failed."
-  (if elmo-nntp-use-killed-list
+  (if elmo-use-killed-list
       (let* ((dir (elmo-msgdb-expand-path nil spec))
 	     (killed-list (elmo-msgdb-killed-list-load dir)))
 	(mapcar '(lambda (msg)

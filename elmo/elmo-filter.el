@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/07/10 17:55:56 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -69,24 +68,24 @@
 (defun elmo-filter-list-folder (spec)
   (let ((filter (nth 1 spec))
 	(folder (nth 2 spec))
-	msgs)
+	numbers)
     (cond 
      ((vectorp filter)
       (cond ((string= (elmo-filter-key filter)
 		      "last")
-	     (setq msgs (elmo-list-folder folder))
-	     (nthcdr (max (- (length msgs) 
+	     (setq numbers (elmo-list-folder folder))
+	     (nthcdr (max (- (length numbers) 
 			     (string-to-int (elmo-filter-value filter)))
 			  0)
-		     msgs))
+		     numbers))
 	    ((string= (elmo-filter-key filter)
 		      "first")
-	     (setq msgs (elmo-list-folder folder))
+	     (setq numbers (elmo-list-folder folder))
 	     (let ((rest (nthcdr (string-to-int (elmo-filter-value filter) )
-				 msgs)))
+				 numbers)))
 	       (mapcar '(lambda (x) 
-			  (delete x msgs)) rest))
-	     msgs)))
+			  (delete x numbers)) rest))
+	     numbers)))
      ((listp filter)
       (elmo-search folder filter)))))
 
@@ -174,9 +173,6 @@
 
 (defun elmo-filter-commit (spec)
   (elmo-commit (nth 2 spec)))
-
-(defun elmo-filter-clear-killed (spec)
-  (elmo-clear-killed (nth 2 spec)))
 
 (defun elmo-filter-plugged-p (spec)
   (elmo-folder-plugged-p (nth 2 spec)))

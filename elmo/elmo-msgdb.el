@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/07/13 10:32:40 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -73,7 +72,8 @@
 			 (expand-file-name "folder"
 					   elmo-msgdb-dir)))
       ((eq type 'multi)
-       (expand-file-name (elmo-safe-filename folder)
+       (setq fld (concat "*" (mapconcat 'identity (cdr spec) ",")))
+       (expand-file-name (elmo-safe-filename fld)
 			 (expand-file-name "multi"
 					   elmo-msgdb-dir)))
       ((eq type 'filter)

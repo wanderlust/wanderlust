@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/07/10 17:52:07 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -219,10 +218,21 @@
 (defsubst elmo-localdir-list-folder-subr (spec &optional nonsort)
   (let* ((dir (elmo-localdir-get-folder-directory spec))
 	 (flist (mapcar 'string-to-int
-			(directory-files dir nil "^[0-9]+$" t))))
-    (if nonsort
-	(cons (or (elmo-max-of-list flist) 0) (length flist))
-      (sort flist '<))))
+			(directory-files dir nil "^[0-9]+$" t)))
+	 (killed (and elmo-use-killed-list
+		      (elmo-msgdb-killed-list-load
+		       (elmo-msgdb-expand-path nil spec))))
+	 numbers)
+    (setq numbers
+	  (if nonsort
+	      (cons (or (elmo-max-of-list flist) 0) (length flist))
+	    (sort flist '<)))
+    (if killed
+	(delq nil
+	      (mapcar (lambda (number)
+			(unless (memq number killed) number))
+		      numbers))
+      numbers)))
 
 (defun elmo-localdir-append-msg (spec string &optional msg no-see)
   (let ((dir (elmo-localdir-get-folder-directory spec))
@@ -462,7 +472,6 @@
 (defalias 'elmo-localdir-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-localdir-commit 'elmo-generic-commit)
-(defalias 'elmo-localdir-clear-killed 'elmo-generic-clear-killed)
 
 (provide 'elmo-localdir)
 
