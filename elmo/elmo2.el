@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/04/20 10:03:08 teranisi>
+;; Time-stamp: <00/04/20 13:46:16 teranisi>
 
 ;; This file is part of ELMO (Elisp Library for Message Orchestration).
 
@@ -135,21 +135,10 @@
 	   (elmo-msgdb-rename-path old-folder new-folder))
 	(elmo-dop-rename-folder old-folder new-folder)))))
 
-(defun elmo-read-msg-no-cache (folder msg outbuf &optional msgdb force-reload)
-  "Read messsage into outbuf without cacheing.
-If msgdb is specified, use cache."
-  (let (ret-val)
-    (when (and (not force-reload)
-	       msgdb)
-      (set-buffer outbuf)
-      (erase-buffer)
-      (setq ret-val
-	    (elmo-cache-read 
-	     ;; message-id
-	     (cdr (assq msg (elmo-msgdb-get-number-alist msgdb)))
-	     folder msg)))
-    (if (not ret-val)
-	(elmo-call-func folder "read-msg" msg outbuf))))
+(defun elmo-read-msg-no-cache (folder msg outbuf)
+  "Read messsage specified by FOLDER and MSG(number) into OUTBUF
+without cacheing."
+  (elmo-call-func folder "read-msg" msg outbuf))
 
 (defun elmo-force-cache-msg (folder number msgid &optional loc-alist)
   "Force cache message."
@@ -221,7 +210,7 @@ If msgdb is specified, use cache."
   "Read message into outbuf."
   (let ((inhibit-read-only t))
     (if (not (elmo-use-cache-p folder msg))
-	(elmo-read-msg-no-cache folder msg outbuf msgdb force-reload)
+	(elmo-read-msg-no-cache folder msg outbuf)
       (elmo-read-msg-with-cache folder msg outbuf msgdb force-reload))))
 
 (defun elmo-read-msg-with-cache (folder msg outbuf msgdb 
