@@ -1925,6 +1925,8 @@ Only support for TO, SUBJECT, and OTHER-HEADERS has been implemented.
 Support for CONTINUE, YANK-ACTION, and SEND-ACTIONS has not
 been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 
+  (unless (featurep 'wl)
+    (require 'wl))
   ;; protect these -- to and subject get bound at some point, so it looks
   ;; to be necessary to protect the values used w/in
   (let ((wl-user-agent-headers-and-body-alist other-headers)

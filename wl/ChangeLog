@@ -1,3 +1,8 @@
+2000-08-16  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-user-agent-compose): Add (require 'wl) for
+	use function `wl-string-match-assoc'.
+
 2000-08-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-draft-remove-group-list-contents): New user option.
