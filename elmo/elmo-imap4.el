@@ -2230,6 +2230,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	    elmo-msgdb-extra-fields))
 	  (total 0)
 	  (length (length numbers))
+	  print-length print-depth
 	  rfc2060 set-list)
       (setq rfc2060 (memq 'imap4rev1
 			  (elmo-imap4-session-capability-internal
