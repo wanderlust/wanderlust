@@ -282,7 +282,7 @@
 	 ("Organization" . "~/.wl sample")
 	 (body . "Hello, this is XXX \n"))		;; body
 	("report"
-	 ("To" . "boss@example.com")
+	 ("To" . "boss@company.jp")
 	 ("Subject" . "Report")
 	 (top . "Sir, here is my report\n")		;; insert in top.
 ;;	 (bottom-file . "~/work/report.txt")	;; insert file in bottom
