@@ -1,13 +1,13 @@
 2001-04-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-nntp.el (elmo-folder-initialize): Fixed typo (folder->name).
+
 	* elmo-msgdb.el (elmo-msgdb-flist-load): Use elmo-mime-charset.
 	(elmo-msgdb-flist-save): Ditto.
 
 	* elmo-shimbun.el (elmo-folder-list-subfolders):
 	Use `shimbun-groups' instead of `shimbun-groups-internal'.
 	(elmo-folder-exists-p): Ditto.
-
-2001-04-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-shimbun.el (elmo-shimbun-msgdb-create-entity): Set `shimbun'
 	argument for `shimbun-header-insert'.
