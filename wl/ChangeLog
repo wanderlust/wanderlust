@@ -1,3 +1,8 @@
+2002-12-31  Ron Isaacson  <Ron.Isaacson@morganstanley.com>
+
+	* wl-summary.el (wl-summary-mark-collect): Revive missing return
+	for sequential numbering case.
+
 2002-12-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-message.el (wl-message-buffer-display): Back to the first page

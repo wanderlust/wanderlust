@@ -2994,7 +2994,8 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	  (while (not (eobp))
 	    (when (string= (wl-summary-temp-mark) mark)
 	      (setq msglist (cons (wl-summary-message-number) msglist)))
-	    (forward-line 1)))))))
+	    (forward-line 1))
+	  (nreverse msglist))))))
 
 (defun wl-summary-exec ()
   (interactive)
