@@ -1,3 +1,8 @@
+2001-02-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-mime.el (wl-draft-preview-message): Fixed problem that
+	wrong receipients are displayed when forwarded message.
+
 2001-02-01  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-version.el (wl-version): Changed codename to "Stand By Me".
