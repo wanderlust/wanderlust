@@ -122,6 +122,9 @@ Valid states are `closed', `initial', `auth'.")
 (defvar acap-response nil
   "ACAP Response.")
 
+(defvar acap-logging-out nil
+  "Non-nil when ACAP is logging out.")
+
 (make-variable-buffer-local 'acap-state)
 (make-variable-buffer-local 'acap-auth)
 (make-variable-buffer-local 'acap-capability)
@@ -131,6 +134,7 @@ Valid states are `closed', `initial', `auth'.")
 (make-variable-buffer-local 'acap-server)
 (make-variable-buffer-local 'acap-port)
 (make-variable-buffer-local 'acap-response)
+(make-variable-buffer-local 'acap-logging-out)
 
 (defvar acap-network-stream-alist
   '((default . open-network-stream-as-binary)))
@@ -282,6 +286,7 @@ Valid states are `closed', `initial', `auth'.")
 
 (defun acap-close (process)
   (with-current-buffer (process-buffer process)
+    (setq acap-logging-out t)
     (unless (acap-response-ok-p (acap-send-command-wait process "LOGOUT"))
       (message "Server %s didn't let me log out" acap-server))
     (when (memq (process-status process) '(open run))
@@ -543,8 +548,10 @@ ENTRIES is a store-entry list."
     (while (and (not (acap-response-cont-p acap-response))
 		(< acap-reached-tag tag))
       (when (acap-response-bye-p acap-response)
-	(error (prog1 (acap-response-bye-message acap-response)
-		 (setq acap-response nil))))
+	(if acap-logging-out
+	    (setq acap-response nil)
+	  (error (prog1 (acap-response-bye-message acap-response)
+		   (setq acap-response nil)))))
       (or (and (not (memq (process-status process) '(open run)))
 	       (sit-for 1))
 	  (let ((len (/ (point-max) 1024))

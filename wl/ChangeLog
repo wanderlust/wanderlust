@@ -1,3 +1,8 @@
+2001-11-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-acap.el (wl-acap-init): If initialization via ACAP is interrupted,
+	resume msgdb directory.
+
 2001-11-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl.el (wl-exit): Call `wl-acap-exit'.

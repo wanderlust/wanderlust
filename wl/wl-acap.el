@@ -104,6 +104,8 @@ If nil, default acap port is used."
   
 (defun wl-acap-init ()
   "A candidate for `wl-folder-init-function'."
+  (setq wl-acap-original-msgdb-dir nil)
+  (condition-case nil ; catch error and quit.
   (let ((service (wl-acap-find-acap-service))
 	proc entries settings folder-top type)
     (unless (car service) (error "No ACAP service found"))
@@ -171,7 +173,12 @@ If nil, default acap port is used."
     (setq elmo-msgdb-dir (expand-file-name
 			  (concat "acap/" (car service) "/" wl-acap-user)
 			  elmo-msgdb-dir))
-    (acap-close proc)))
+    (acap-close proc))
+  (error (when wl-acap-original-msgdb-dir
+	   (setq elmo-msgdb-dir wl-acap-original-msgdb-dir)))
+  (quit (when wl-acap-original-msgdb-dir
+	  (setq elmo-msgdb-dir wl-acap-original-msgdb-dir)))))
+  
 
 (defun wl-acap-create-folder-entity (string)
   (with-temp-buffer

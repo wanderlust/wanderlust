@@ -1,3 +1,10 @@
+2001-11-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* acap.el (acap-logging-out): New buffer local variable.
+	(acap-close): Set it.
+	(acap-wait-for-response): If acap-logging-out is non-nil, don't cause
+	an error.
+
 2001-11-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* acap.el (acap-response-bye-p): New function.
