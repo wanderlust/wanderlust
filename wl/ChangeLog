@@ -1,5 +1,9 @@
 2001-02-19  OKAZAKI Tetsurou  <okazaki@be.to>
 
+	* wl-highlight.el (wl-highlight-summary-line-string): Use
+	`zerop' instead of `= 0'.
+	(wl-highlight-summary): Use `zerop' instead of `eq 0'.
+
 	* wl-template.el (wl-template-next): Use `=' instead of `eq'
 	for comparing numbers.
 	(wl-template-prev): Use `zerop' instead of `eq 0'.
