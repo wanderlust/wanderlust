@@ -32,7 +32,6 @@
 ;;
 
 (require 'elmo-vars)
-(require 'elmo-util)
 
 (if (module-installed-p 'custom)
     (require 'custom))
@@ -457,8 +456,6 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when Message is displayed.")
 (defvar wl-message-exit-hook nil
   "A hook called when quit message.")
-(defvar wl-summary-exit-pre-hook nil
-  "A hook called before exit summary mode.")
 (defvar wl-summary-exit-hook nil
   "A hook called when exit summary mode.")
 (defvar wl-highlight-headers-hook nil
@@ -1554,8 +1551,7 @@ Each elements are regexp of folder name."
   '(("^-alt\\.chinese" . big5)
     ("^-relcom\\." . koi8-r)
     ("^-tw\\." . big5)
-    ("^-han\\." . euc-kr)
-    ("@sponichi" . shift_jis))
+    ("^-han\\." . euc-kr))
   "Charset alist.  If no match, `wl-mime-charset' is used."
   :type '(repeat (cons (regexp :tag "Folder Regexp") (symbol :tag "Charset")))
   :group 'wl-summary
