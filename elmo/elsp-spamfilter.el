@@ -47,7 +47,7 @@
 
 (eval-and-compile
   (luna-define-class elsp-spamfilter (elsp-generic)
-		     (good-corpus bad-corpus))
+		     (good-corpus bad-corpus modified))
   (luna-define-internal-accessors 'elsp-spamfilter))
 
 (luna-define-method initialize-instance :around ((processor elsp-spamfilter)
@@ -66,11 +66,15 @@
     (elsp-spamfilter-set-bad-corpus-internal  processor spamf-bad-corpus)
     processor))
 
+(luna-define-method elmo-spam-modified-p ((processor elsp-spamfilter))
+  (elsp-spamfilter-modified-internal processor))
+
 (luna-define-method elmo-spam-save-status ((processor elsp-spamfilter))
   (spamf-save-corpus-to-file
    elmo-spam-spamfilter-corpus-filename
    (elsp-spamfilter-good-corpus-internal processor)
-   (elsp-spamfilter-bad-corpus-internal  processor)))
+   (elsp-spamfilter-bad-corpus-internal  processor))
+  (elsp-spamfilter-set-modified-internal processor nil))
 
 (defun elmo-spam-spamfilter-decode-buffer (buffer)
   (mime-display-message
@@ -92,7 +96,8 @@
     (elmo-spam-spamfilter-decode-buffer buffer)
     (spamf-register-good-buffer
      (current-buffer)
-     (elsp-spamfilter-good-corpus-internal processor))))
+     (elsp-spamfilter-good-corpus-internal processor))
+    (elsp-spamfilter-set-modified-internal processor t)))
 
 (luna-define-method elmo-spam-register-good-buffer ((processor elsp-spamfilter)
 						    buffer)
@@ -100,7 +105,8 @@
     (elmo-spam-spamfilter-decode-buffer buffer)
     (spamf-register-spam-buffer
      (current-buffer)
-     (elsp-spamfilter-bad-corpus-internal  processor))))
+     (elsp-spamfilter-bad-corpus-internal  processor))
+    (elsp-spamfilter-set-modified-internal processor t)))
 
 (require 'product)
 (product-provide (provide 'elsp-spamfilter) (require 'elmo-version))

@@ -106,9 +106,11 @@
 					numbers))
     (message "Register good messages...done")))
 
-(defun wl-spam-save-status ()
-  (interactive)
-  (elmo-spam-save-status (elmo-spam-processor)))
+(defun wl-spam-save-status (&optional force)
+  (interactive "P")
+  (let ((processor (elmo-spam-processor)))
+    (when (or force (elmo-spam-modified-p processor))
+      (elmo-spam-save-status processor))))
 
 ;; insinuate into summary mode
 (defvar wl-summary-spam-map nil)

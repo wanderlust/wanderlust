@@ -62,6 +62,9 @@ PROCESSOR is spam processor structure.")
   "Register contents of BUFFER as non spam.
 PROCESSOR is spam processor structure.")
 
+(luna-define-generic elmo-spam-modified-p (processor)
+  "Return non-nil if status of PROCESSOR is modified.")
+
 (luna-define-generic elmo-spam-save-status (processor)
   "Save status of the PROCESSOR.")
 
