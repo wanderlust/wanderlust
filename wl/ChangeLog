@@ -1,5 +1,8 @@
 2004-05-17  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* wl-draft.el (wl-draft-insert-current-message): Cause error also
+	when wl-message-buffer is nil.
+
 	* wl-folder.el (wl-folder): Abolish unused argument.
 	Call wl-folder-init when wl-folder-entity is nil.
 	* wl.el (wl): Change accordingly.

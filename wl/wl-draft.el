@@ -638,12 +638,12 @@ Reply to author if WITH-ARG is non-nil."
 	wl-draft-add-references wl-draft-add-in-reply-to
 	wl-draft-cite-function)
     (with-current-buffer wl-draft-buffer-cur-summary-buffer
-      (with-current-buffer wl-message-buffer
-	(setq original-buffer (wl-message-get-original-buffer))
-	(if (zerop
-	     (with-current-buffer original-buffer
-	       (buffer-size)))
-	    (error "No current message"))))
+      (when (or (not wl-message-buffer)
+		(with-current-buffer wl-message-buffer
+		  (setq original-buffer (wl-message-get-original-buffer))
+		  (zerop (with-current-buffer original-buffer
+			   (buffer-size)))))
+	(error "No current message")))
     (setq mail-reply-buffer original-buffer)
     (wl-draft-yank-from-mail-reply-buffer
      nil
