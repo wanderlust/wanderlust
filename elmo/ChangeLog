@@ -1,3 +1,14 @@
+2000-04-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nntp.el (elmo-nntp-list-folders): Remove progress gauge
+	when display is finished.
+	(elmo-nntp-msgdb-create): Ditto.
+	(elmo-nntp-groups-read-response): Ditto.
+	(elmo-nntp-retrieve-headers): Ditto.
+	(elmo-nntp-msgdb-create-message): Ditto.
+	* elmo-pop3.el (elmo-pop3-retrieve-headers): Ditto.
+	(elmo-pop3-msgdb-create-message): Ditto.
+
 2000-04-24  Yuuichi Teranishi  <teranisi@elmo.dq.isl.ntt.co.jp>
 
 	* elmo-maildir.el (elmo-maildir-msgdb-create):

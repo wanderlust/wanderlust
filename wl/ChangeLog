@@ -7,6 +7,9 @@
 	* wl-summary.el (wl-summary-delete-messages-on-buffer): Ditto.
 	* wl-thread.el (wl-thread-close-all): Ditto.
 
+	* wl-summary.el (wl-summary-delete-messages-on-buffer): Remove
+	progress gauge only when it was displayed.
+
 2000-04-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-incorporate): Enclose
