@@ -146,6 +146,7 @@ into another language, under the above conditions for modified versions.
 * Scoring::                  メッセージのスコア
 * Address Book::             アドレス帳
 * Customization::            カスタマイズ
+* Terminology::              用語の解説
 * Mailing List::             メーリングリスト
 * Addition::                 おまけ
 * Index::                    索引
@@ -6161,7 +6162,7 @@ LDAP を利用する場合は、@code{wl-ldap-server}、@code{wl-ldap-port},
 @end table
 
 
-@node Customization, Mailing List, Address Book, Top
+@node Customization, Terminology, Address Book, Top
 @chapter Wanderlust のカスタマイズ
 @cindex Customization
 
@@ -7183,8 +7184,31 @@ Non-nil ならばオフライン処理で溜った処理を実行するかどうかを確認します。
 
 (Not yet written)
 
+@node Terminology, Mailing List, Customization, Top
+@chapter 用語の解説
+@cindex Terminology
 
-@node Mailing List, Addition, Customization, Top
+このマニュアルで使われている用語についての説明をします。
+
+@table @samp
+@item フォルダ
+メッセージが格納されているいれものです。
+
+@item グループ
+複数のフォルダをまとめた集合です。
+
+@item アクセスグループ
+指定したパス以下のフォルダを自動的に集めてできる、特別なグループを
+指します。
+@xref{Folder Definition}.
+
+@item プリフェッチ
+オフラインでメッセージを読むために、あらかじめメッセージをキャッシュ
+しておくことをいいます。
+@end table
+
+
+@node Mailing List, Addition, Terminology, Top
 @chapter メーリングリスト
 @cindex Bug report
 @cindex Backtrace

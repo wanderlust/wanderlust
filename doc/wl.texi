@@ -121,6 +121,7 @@ This manual is for Wanderlust @value{VERSION}.
 * Scoring::                  Score of the messages
 * Address Book::             Management of Address Book
 * Customization::            Customizing Wanderlust
+* Terminology::              Terminologies
 * Mailing List::             Wanderlust mailing list
 * Addition::                 Additional Information
 * Index::                    Key index
@@ -6249,7 +6250,7 @@ Edit entry.
 @end table
 
 
-@node Customization, Mailing List, Address Book, Top
+@node Customization, Terminology, Address Book, Top
 @chapter Customizing Wanderlust
 @cindex Customization
 
@@ -7275,8 +7276,31 @@ this value, display progress gauge.
 
 (Not yet written)
 
+@node Terminology, Mailing List, Customization, Top
+@chapter Terminology around Wanderlust
+@cindex Terminology
 
-@node Mailing List, Addition, Customization, Top
+Here we explain terminologies used in this manual.
+
+@table @samp
+@item folder
+A container in which messages are stored.
+
+@item group
+A set consists of some folders.
+
+@item access group
+A special group consists of automatically collected folders under
+some specified path.
+@xref{Folder Definition}.
+
+@item prefetch
+To cache messages beforehand in order to read messages after you will be
+disconnected from the server.
+@end table
+
+
+@node Mailing List, Addition, Terminology, Top
 @chapter Wanderlust Mailing List
 @cindex Bug report
 @cindex Backtrace
