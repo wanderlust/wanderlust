@@ -2175,9 +2175,9 @@ XBM even if XPM can be shown."
   "*Icon file for no mail existed state.")
 (defvar wl-prog-uudecode "uudecode"
   "*uudecode program name.")
-(defvar wl-prog-uudecode-arg nil
+(defvar wl-prog-uudecode-arg '("-p") ;; outout is stdout.
   "*Arguments for uudecode program.")
-(defvar wl-prog-uudecode-no-stdout-option t
+(defvar wl-prog-uudecode-no-stdout-option nil
   "*If non-nil, uudecode program don't have option for output to stdout.")
 
 ;; Obsolete variables. for compatibility.

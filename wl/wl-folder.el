@@ -983,15 +983,10 @@ If current line is group folder, check all sub entries."
 	      (or (< 0 new) (< 0 unread)))
 	  (save-window-excursion
 	    (save-excursion
-	      (let ((wl-summary-buffer-name (concat
-					     wl-summary-buffer-name
-					     (symbol-name this-command)))
-		    (wl-message-buf-name (concat wl-message-buf-name
-						 (symbol-name this-command))))
-		(wl-summary-goto-folder-subr entity
-					     (wl-summary-get-sync-range entity)
-					     nil nil nil t)
-		(wl-summary-exit)))))))))
+	      (wl-summary-goto-folder-subr entity
+					   (wl-summary-get-sync-range entity)
+					   nil nil nil t)
+	      (wl-summary-exit))))))))
 
 (defun wl-folder-sync-current-entity (&optional unread-only)
   "Synchronize the folder at position.
@@ -1030,16 +1025,11 @@ If current line is group folder, check all subfolders."
       (if (or (< 0 new) (< 0 unread))
 	(save-window-excursion
 	  (save-excursion
-	    (let ((wl-summary-buffer-name (concat
-					     wl-summary-buffer-name
-					     (symbol-name this-command)))
-		    (wl-message-buf-name (concat wl-message-buf-name
-						 (symbol-name this-command))))
-	      (wl-summary-goto-folder-subr entity
-					   (wl-summary-get-sync-range entity)
-					   nil)
-	      (wl-summary-mark-as-read-all)
-	      (wl-summary-exit))))
+	    (wl-summary-goto-folder-subr entity
+					 (wl-summary-get-sync-range entity)
+					 nil)
+	    (wl-summary-mark-as-read-all)
+	    (wl-summary-exit)))
 	(sit-for 0))))))
 
 (defun wl-folder-mark-as-read-all-current-entity ()
@@ -2620,17 +2610,12 @@ Use `wl-subscribed-mailing-list'."
 	      (< 0 count))
 	  (save-window-excursion
 	    (save-excursion
-	      (let ((wl-summary-buffer-name (concat
-					     wl-summary-buffer-name
-					     (symbol-name this-command)))
-		    (wl-message-buf-name (concat wl-message-buf-name
-						 (symbol-name this-command))))
-		(wl-summary-goto-folder-subr entity
-					     (wl-summary-get-sync-range entity)
-					     nil)
-		(setq ret-val (wl-summary-incorporate))
-		(wl-summary-exit)
-		ret-val)))
+	      (wl-summary-goto-folder-subr entity
+					   (wl-summary-get-sync-range entity)
+					   nil)
+	      (setq ret-val (wl-summary-incorporate))
+	      (wl-summary-exit)
+	      ret-val))
 	(cons 0 0))))))
 
 (defun wl-folder-count-incorporates (folder)
@@ -2677,14 +2662,9 @@ If current line is group folder, all subfolders are prefetched."
       (if (< 0 new)
 	  (save-window-excursion
 	    (save-excursion
-	      (let ((wl-summary-buffer-name (concat
-					     wl-summary-buffer-name
-					     (symbol-name this-command)))
-		    (wl-message-buf-name (concat wl-message-buf-name
-						 (symbol-name this-command))))
-		(wl-summary-goto-folder-subr entity 'no-sync nil)
-		(wl-summary-drop-unsync)
-		(wl-summary-exit)))))))))
+	      (wl-summary-goto-folder-subr entity 'no-sync nil)
+	      (wl-summary-drop-unsync)
+	      (wl-summary-exit))))))))
 
 (defun wl-folder-drop-unsync-current-entity (&optional force-check)
   "Drop all unsync messages in the folder at position.
