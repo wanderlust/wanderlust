@@ -96,7 +96,6 @@
     (setq load-path (cons (expand-file-name ".") load-path))
     (setq load-path (cons (expand-file-name WLDIR)
 			  (cons (expand-file-name ELMODIR) load-path)))
-    (setq wl-icon-dir (expand-file-name ICONDIR))
     ;; load custom file if exists.  `WL-CFG.el' override for committer.
     (load "./WL-CFG" t nil nil)
     ;; load-path
