@@ -1,3 +1,15 @@
+2001-02-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-buffer-message-redisplay-func): Removed.
+
+	* wl-vars.el (wl-cache-prefetch-get-next-func): Ditto.
+
+	* wl-draft.el (wl-caesar-region-func): Ditto.
+
+	* wl-summary.el (wl-summary-exec-subr): Fixed `copy';
+	Keep unread status in elmo-folder-move-messages.
+	(wl-summary-sync-update): Set `wl-summary-buffer-msgdb'.
+
 2001-02-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-summary.el (wl-summary-buffer-exit-function): Renamed from

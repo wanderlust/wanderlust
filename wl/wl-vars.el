@@ -1525,16 +1525,6 @@ e.x.
   :type '(repeat (regexp :tag "Folder Regexp"))
   :group 'wl-pref)
 
-(defcustom wl-cache-prefetch-get-next-func 'wl-summary-default-get-next-msg
-  "*A function to get message number when prefetch next message."
-  :type 'function
-  :group 'wl-pref)
-
-;; obsolete
-;(defvar wl-no-cache-folder-list '("^\\$.*")
-;  "All folders that match this list won't be cached when reading messages.
-;Each elements are regexp of folder name.")
-
 (defcustom wl-summary-always-sticky-folder-list nil
   "All folders that match this list has sticky summary.
 Each elements are regexp of folder name."

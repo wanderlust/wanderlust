@@ -49,6 +49,9 @@
    elmo-mark-default-mark)
   folder)
 
+(luna-define-method elmo-folder-have-subfolder-p ((folder elmo-mark-folder))
+  nil)
+
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-mark-folder))
   (expand-file-name "mark"

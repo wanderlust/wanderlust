@@ -50,7 +50,6 @@
   (defalias-maybe 'wl-draft-mode 'ignore))
 
 (defvar wl-draft-buf-name "Draft")
-(defvar wl-caesar-region-func nil)
 (defvar wl-draft-cite-function 'wl-default-draft-cite)
 (defvar wl-draft-buffer-file-name nil)
 (defvar wl-draft-field-completion-list nil)

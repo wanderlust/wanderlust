@@ -89,7 +89,6 @@
 (defvar wl-summary-buffer-mime-charset  nil)
 (defvar wl-summary-buffer-weekday-name-lang  nil)
 (defvar wl-summary-buffer-thread-indent-set-alist  nil)
-(defvar wl-summary-buffer-message-redisplay-func nil)
 (defvar wl-summary-buffer-view 'thread)
 (defvar wl-summary-buffer-message-modified nil)
 (defvar wl-summary-buffer-mark-modified nil)
@@ -2206,6 +2205,7 @@ If ARG is non-nil, checking is omitted."
 				wl-summary-partial-highlight-above-lines
 				wl-summary-highlight-partial-threshold)))
 	      (wl-highlight-summary (point) (point-max))))))
+    (setq wl-summary-buffer-msgdb (elmo-folder-msgdb folder))
     (wl-delete-all-overlays)
     (set-buffer-modified-p nil)
     (if mes (message "%s" mes))))
@@ -3159,7 +3159,8 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 			    (not (null (cdr dst-msgs)))
 			    nil ; no-delete
 			    nil ; same-number
-			    unread-marks))
+			    unread-marks
+			    t))
 	    (error nil))
 	  (if result			; succeeded.
 	      (progn
@@ -3180,16 +3181,18 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	  (setq result nil)
 	  (condition-case nil
 	      (setq result (elmo-folder-move-messages
-			    (wl-summary-buffer-folder-name)
+			    wl-summary-buffer-elmo-folder
 			    (cdr (car dst-msgs))
-			    (car (car dst-msgs))
+			    (wl-folder-get-elmo-folder
+			     (car (car dst-msgs)))
 			    (wl-summary-buffer-msgdb)
 			    copy-len
 			    copy-executed
 			    (not (null (cdr dst-msgs)))
 			    t ; t is no-delete (copy)
 			    nil ; same number
-			    unread-marks))
+			    unread-marks
+			    t))
 	    (error nil))
 	  (if result			; succeeded.
 	      (progn
