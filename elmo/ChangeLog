@@ -1,3 +1,10 @@
+2004-09-20  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-nmz.el (elmo-folder-initialize): Enable "[" for access
+	group entry.
+	(elmo-folder-exists-p): "[" is empty.
+	(elmo-folder-list-subfolders): New function.
+
 2004-09-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-flag.el (elmo-folder-delete): Update elmo-global-flag-list.

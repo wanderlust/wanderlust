@@ -73,23 +73,24 @@ If the value is a list, all elements are used as index paths for namazu."
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-nmz-folder)
 					    name)
-  (with-temp-buffer
-    (insert "[" name)
-    (goto-char (point-min))
-    (forward-sexp)
-    (elmo-nmz-folder-set-pattern-internal folder
-					  (buffer-substring
-					   (+ 1 (point-min))
-					   (- (point) 1)))
-    (let ((index (buffer-substring (point) (point-max))))
-      (elmo-nmz-folder-set-index-path-internal
-       folder
-       (cond ((cdr (assoc index elmo-nmz-index-alias-alist)))
-	     ((eq (length index) 0)
-	      elmo-nmz-default-index-path)
-	     (t
-	      index))))
-    folder))
+  (when (> (length name) 0)
+    (with-temp-buffer
+      (insert "[" name)
+      (goto-char (point-min))
+      (forward-sexp)
+      (elmo-nmz-folder-set-pattern-internal folder
+					    (buffer-substring
+					     (+ 1 (point-min))
+					     (- (point) 1)))
+      (let ((index (buffer-substring (point) (point-max))))
+	(elmo-nmz-folder-set-index-path-internal
+	 folder
+	 (cond ((cdr (assoc index elmo-nmz-index-alias-alist)))
+	       ((eq (length index) 0)
+		elmo-nmz-default-index-path)
+	       (t
+		index))))))
+  folder)
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-nmz-folder))
@@ -232,7 +233,14 @@ If the value is a list, all elements are used as index paths for namazu."
       (nreverse locations))))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-nmz-folder))
-  t)
+  (elmo-nmz-folder-pattern-internal folder))
+
+(luna-define-method elmo-folder-list-subfolders ((folder elmo-nmz-folder)
+						 &optional one-level)
+  (mapcar (lambda (name) (elmo-recover-string-from-filename name))
+	  (elmo-list-subdirectories (expand-file-name "nmz"
+						      elmo-msgdb-directory)
+				    "" t)))
 
 (require 'product)
 (product-provide (provide 'elmo-nmz) (require 'elmo-version))
