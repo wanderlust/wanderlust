@@ -1,3 +1,7 @@
+2000-10-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.3.92.
+
 2000-10-19  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-demo.el (wl-demo): Use `fancy-splash-insert' for inserting a
@@ -54,6 +58,8 @@
 	(wl-logo-xpm): Use it.
 	(wl-logo-xbm): Ditto.
 	(wl-logo-bitmap): Ditto.
+
+	* Version number is increased to 2.3.91.
 
 2000-10-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
@@ -112,6 +118,8 @@
 	* wl-vars.el (wl-draft-reply-without-argument-list):
 	Changed default value to consider `Reply-To:'.
 	(Advised by TAKAHASHI Kaoru <kaoru@kaisei.org>)
+
+	* Version number is increased to 2.3.90.
 
 	* wl-summary.el (wl-summary-msgdb-load-async): Enclose
 	elmo-imap4-get-session with unwind-protect.
