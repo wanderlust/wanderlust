@@ -1588,7 +1588,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
    (cons "Mail-Reply-To: " (and wl-insert-mail-reply-to
 				(wl-address-header-extract-address
 				 wl-from)))
-   wl-generate-mailer-string-function
+   (cons 'insert
+	 (list (funcall wl-generate-mailer-string-function) "\n"))
    (cons "Reply-To: " mail-default-reply-to)
    (cons 'wl-draft-insert-ccs
 	 (list "Bcc: " (or wl-bcc

@@ -1,3 +1,8 @@
+2002-01-23  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-default-headers): Insert return value of
+	`wl-generate-mailer-string-function'.
+
 2002-01-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-decode-body): Give an argument for delete-char.
