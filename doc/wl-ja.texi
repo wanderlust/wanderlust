@@ -608,8 +608,8 @@ Wanderlust $B$K8GM-$N@_Dj$O(B @file{~/.wl} $B$K5-=R$7$F$*$1$P@0M}$7$d$9$$$G$7
 # @var{$B%a!<%k%"%I%l%9(B}  "@var{$B$"$@L>(B}"  "@var{$BK\L>(B}"
 #
 teranisi@@gohome.org            "$B$F$i$K$7(B"      "$B;{@>M50l(B"
-foo@@bar.gohome.org             "Foo $B$5$s(B"      "John Foo"
-bar@@foo.gohome.org             "Bar $B$5$s(B"      "Michael Bar"
+foo@@example.com                "$B$U!<$5$s(B"      "John Foo"
+bar@@example.org                "$B$P!<$5$s(B"      "Michael Bar"
 @end group
 @end example
 
