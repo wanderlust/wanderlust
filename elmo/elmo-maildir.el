@@ -45,6 +45,21 @@
 				    (unread ?S 'remove)
 				    (answered ?R)))
 
+;; Decided at compile time.
+(defcustom elmo-maildir-separator
+  (if (memq system-type '(windows-nt)) ?\- ?:)
+  "Character separating the id section from the flags section.
+According to the maildir specification, this should be a colon (?:),
+but some file systems don't support colons in filenames."
+  :type 'character
+  :group 'elmo)
+
+(defmacro elmo-maildir-adjust-separator (string)
+  `(if (= elmo-maildir-separator ?:)
+       ,string
+     (elmo-replace-in-string
+      ,string ":" (char-to-string elmo-maildir-separator))))
+
 ;;; ELMO Maildir folder
 (eval-and-compile
   (luna-define-class elmo-maildir-folder
@@ -101,7 +116,9 @@ LOCATION."
     (setq locations
 	  (mapcar
 	   (lambda (x)
-	     (if (string-match "^\\([^:]+\\):\\([^:]+\\)$" x)
+	     (if (string-match
+		  (elmo-maildir-adjust-separator "^\\([^:]+\\):\\([^:]+\\)$")
+		  x)
 		 (progn
 		   (setq sym (elmo-match-string 1 x)
 			 flag-list (string-to-char-list
@@ -260,14 +277,18 @@ LOCATION."
        (expand-file-name (car news) (expand-file-name "new" maildir))
        (expand-file-name (concat
 			  (car news)
-			  (unless (string-match ":2,[A-Z]*$" (car news))
-			    ":2,"))
+			  (unless (string-match
+				   (elmo-maildir-adjust-separator ":2,[A-Z]*$")
+				   (car news))
+			    (elmo-maildir-adjust-separator  ":2,")))
 			 (expand-file-name "cur" maildir)))
       (setq news (cdr news)))))
 
 (defun elmo-maildir-set-mark (filename mark)
   "Mark the FILENAME file in the maildir.  MARK is a character."
-  (if (string-match "^\\([^:]+:[12],\\)\\(.*\\)$" filename)
+  (if (string-match
+       (elmo-maildir-adjust-separator "^\\([^:]+:[12],\\)\\(.*\\)$")
+       filename)
       (let ((flaglist (string-to-char-list (elmo-match-string
 					    2 filename))))
 	(unless (memq mark flaglist)
@@ -277,12 +298,15 @@ LOCATION."
 			       (char-list-to-string flaglist)))))
     ;; Rescue no info file in maildir.
     (rename-file filename
-		 (concat filename ":2," (char-to-string mark))))
+		 (concat filename
+			 (elmo-maildir-adjust-separator ":2,")
+			 (char-to-string mark))))
   t)
 
 (defun elmo-maildir-delete-mark (filename mark)
   "Mark the FILENAME file in the maildir.  MARK is a character."
-  (if (string-match "^\\([^:]+:2,\\)\\(.*\\)$" filename)
+  (if (string-match (elmo-maildir-adjust-separator "^\\([^:]+:2,\\)\\(.*\\)$")
+		    filename)
       (let ((flaglist (string-to-char-list (elmo-match-string
 					    2 filename))))
 	(when (memq mark flaglist)
