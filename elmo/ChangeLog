@@ -1,5 +1,7 @@
 2000-06-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-util.el (elmo-get-passwd): Use old backquote style.
+
 	* pldap.el (ldap-ldif-safe-char-regexp): New constant.
 	(ldap-ldif-safe-init-char-regexp): Ditto.
 	(ldap-ldif-safe-string-regexp): Ditto.
@@ -10,6 +12,18 @@
 	(ldap-search-basic): Consider `attrsonly' also when `attrs' is nil.
 	(ldap-decode-attribute): Decode only when `attr' is consp.
 	(ldap-delete): Bind `ret'.
+	(toplevel): Require 'cl at compile time.
+	Removed (require 'poe) and (require 'std11).
+	(pldap-version): Eliminated.
+	(ldap-search-basic): Removed auth and dn binding.
+	(ldap-ldif-field-name-regexp): New constant.
+	(ldap-ldif-field-head-regexp): Ditto.
+	(ldap-ldif-next-field-head-regexp): Ditto.
+	(ldap/collect-field): Use `ldap-ldif-field-head-regexp'.
+	(ldap/field-end): New function.
+	(ldap/field-body): Use it.
+	(ldap/collect-field): Ditto.
+	(ldap-search-basic): Use `ldap/field-body'.
 
 2000-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
