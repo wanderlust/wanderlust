@@ -840,8 +840,8 @@ Optional argument ARG is repeart count."
     (setq wl-folder-info-alist-modified t)
     (sit-for 0)
     (list (if wl-folder-notify-deleted
-	      (or new (car nums))
-	    (max 0 (or new (car nums))))
+	      (or new (car nums) 0)
+	    (max 0 (or new (car nums) 0)))
 	  unread
 	  (cdr nums))))
 
