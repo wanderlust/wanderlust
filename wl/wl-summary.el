@@ -3670,10 +3670,12 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 
 (defun wl-summary-pick (&optional from-list delete-marks)
   (interactive)
-  (let ((result (elmo-msgdb-search
-		 wl-summary-buffer-elmo-folder
-		 (elmo-read-search-condition wl-summary-pick-field-default)
-		 (wl-summary-buffer-msgdb))))
+  (let* ((condition (car (elmo-parse-search-condition
+			  (elmo-read-search-condition
+			   wl-summary-pick-field-default))))
+	 (result (elmo-folder-search wl-summary-buffer-elmo-folder
+				     condition
+				     from-list)))
     (if delete-marks
       (let ((mlist wl-summary-buffer-target-mark-list))
 	(while mlist
@@ -3681,12 +3683,11 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	    (wl-summary-unmark))
 	  (setq mlist (cdr mlist)))
 	(setq wl-summary-buffer-target-mark-list nil)))
-    (if from-list
-	(setq result (elmo-list-filter from-list result)))
-    (message "%d message(s) are picked." (length result))
-    (if (null result)
-	(message "No message was picked.")
-      (wl-summary-target-mark-msgs result))))
+    (if result
+	(progn
+	  (wl-summary-target-mark-msgs result)
+	  (message "%d message(s) are picked." (length result)))
+      (message "No message was picked."))))
 
 (defun wl-summary-unvirtual ()
   "Exit from current virtual folder."
