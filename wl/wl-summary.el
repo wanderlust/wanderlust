@@ -398,6 +398,11 @@ See also variable `wl-use-petname'."
     ()
   (setq wl-summary-mode-map (make-keymap))
   (suppress-keymap wl-summary-mode-map)
+  (substitute-key-definition 'kill-buffer
+			     'wl-summary-mimic-kill-buffer
+			     wl-summary-mode-map
+			     global-map)
+  ;; basic commands
   (define-key wl-summary-mode-map " "    'wl-summary-read)
   (define-key wl-summary-mode-map "."    'wl-summary-redisplay)
   (define-key wl-summary-mode-map "<"    'wl-summary-display-top)
@@ -579,6 +584,15 @@ See also variable `wl-use-petname'."
    wl-summary-mode-map
    "Menu used in Summary mode."
    wl-summary-mode-menu-spec))
+
+(defun wl-summary-mimic-kill-buffer (buffer)
+  "Kill the current (Summary) buffer with query."
+  (interactive "bKill buffer: ")
+  (if (or (not buffer)
+	  (string-equal buffer "")
+	  (string-equal buffer (buffer-name)))
+      (wl-summary-exit 'force-exit)
+    (kill-buffer buffer)))
 
 (defsubst wl-summary-message-visible-p (number)
   "Return non-nil if the message with NUMBER is visible."
