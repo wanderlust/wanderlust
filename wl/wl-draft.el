@@ -36,6 +36,7 @@
 (require 'emu)
 (condition-case nil (require 'timezone) (error nil))
 (require 'std11)
+(require 'eword-encode)
 (require 'wl-vars)
 
 (defvar x-face-add-x-face-version-header)

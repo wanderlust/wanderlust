@@ -1,3 +1,7 @@
+2004-08-05  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (toplevel): Require eword-encode.
+
 2004-08-01  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-set-message-buffer-or-redisplay): Set
