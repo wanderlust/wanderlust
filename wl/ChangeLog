@@ -31,7 +31,7 @@
 	`mime-edit-insert-user-agent-field' and `mime-editor/version'.
 
 	* wl-version.el (wl-generate-user-agent-string-1): Use `cond'
-	instead of `if'.
+	instead of `if', when verbose case.
 
 2000-10-18  Kenichi OKADA  <okada@opaopa.org>
 

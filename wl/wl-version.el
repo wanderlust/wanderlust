@@ -100,40 +100,40 @@ Insert User-Agent field instead of X-Mailer field."
 (defun wl-generate-user-agent-string-1 (&optional verbose)
   "Return User-Agent field value.
 If VERBOSE return with SEMI, FLIM and APEL version."
-  (cond
-   ;; non-verbose
-   ((not verbose)
-    ;; Don't use product-string-verbose for short User-Agent field value.
-    (concat (product-string-1 'wl-version t) " "
-	    (wl-extended-emacs-version3 "/" t)))
-   ;; SEMI
-   ((and (boundp 'mime-edit-user-agent-value) mime-edit-user-agent-value)
-    (concat (product-string-verbose 'wl-version) " "
-	    mime-edit-user-agent-value))
-   ;; tm
-   ((and (boundp 'mime-editor/version) mime-editor/version)
-    (concat (product-string-verbose 'wl-version) " "
-	    "tm/" mime-editor/version
-	    (if (and (boundp 'mime-editor/codename)
-		     mime-editor/codename)
-		(concat " (" mime-editor/codename ")"))
-	    (if (and (boundp 'mime-library-product)
-		     mime-library-product)
-		(concat " " (aref mime-library-product 0)
-			"/"
-			(mapconcat 'int-to-string
-				   (aref mime-library-product 1)
-				   ".")
-			" (" (aref mime-library-product 2) ")"))
-	    (condition-case nil
-		(progn
-		  (require 'apel-ver)
-		  (concat " " (apel-version)))
-	      (file-error nil))
-	    " " (wl-extended-emacs-version3 "/" t)))
-   ;; error case
-   (t
-    (product-string-1 'wl-version nil))))
+  (if (not verbose)
+      ;; Don't use product-string-verbose for short User-Agent field value.
+      (concat (product-string-1 'wl-version t) " "
+	      (wl-extended-emacs-version3 "/" t))
+    ;; verbose
+    (cond
+     ;; SEMI
+     ((and (boundp 'mime-edit-user-agent-value) mime-edit-user-agent-value)
+      (concat (product-string-verbose 'wl-version) " "
+	      mime-edit-user-agent-value))
+     ;; tm
+     ((and (boundp 'mime-editor/version) mime-editor/version)
+      (concat (product-string-verbose 'wl-version) " "
+	      "tm/" mime-editor/version
+	      (if (and (boundp 'mime-editor/codename)
+		       mime-editor/codename)
+		  (concat " (" mime-editor/codename ")"))
+	      (if (and (boundp 'mime-library-product)
+		       mime-library-product)
+		  (concat " " (aref mime-library-product 0)
+			  "/"
+			  (mapconcat 'int-to-string
+				     (aref mime-library-product 1)
+				     ".")
+			  " (" (aref mime-library-product 2) ")"))
+	      (condition-case nil
+		  (progn
+		    (require 'apel-ver)
+		    (concat " " (apel-version)))
+		(file-error nil))
+	      " " (wl-extended-emacs-version3 "/" t)))
+     ;; error case
+     (t
+      (product-string-1 'wl-version nil)))))
 
 ;; from gnus
 (defun wl-extended-emacs-version (&optional with-codename)
