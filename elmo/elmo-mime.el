@@ -214,7 +214,6 @@ If second optional argument UNREAD is specified, message is displayed but
 keep it as unread.
 Return non-nil if not entire message was fetched."
   (let (mime-display-header-hook ; Do nothing.
-	(elmo-message-displaying t)
 	entity strategy)
     (setq entity (elmo-msgdb-overview-get-entity number
 						 (elmo-folder-msgdb

@@ -827,8 +827,6 @@ to find out how to use this."
 		      )
 	    (setq dest (cons (car ret) dest))
 	    (setq lal (cdr ret)))
-	  (while (eq 'spaces (car (car lal)))
-	    (setq lal (cdr lal)))
 	  (if lal (error "Error while parsing address"))
 	  (nreverse dest)))))
 
