@@ -47,18 +47,7 @@
   :prefix "elmo-"
   :group 'elmo)
 
-;; Local
-(defcustom elmo-localnews-folder-path "~/News"
-  "*Local news folder path."
-  :type 'directory
-  :group 'elmo)
-(defcustom elmo-maildir-folder-path "~/Maildir"
-  "*Maildir folder path."
-  :type 'directory
-  :group 'elmo)
-(defvar elmo-maildir-list '("\\+~/Maildir")
-  "*All Folders that match this list will be treated as Maildir.
-Each elements are regexp of folder name (This is obsolete).")
+;; Message Database
 
 (defvar elmo-msgdb-file-header-chop-length 2048
   "*Number of bytes to get header in one reading from file.")

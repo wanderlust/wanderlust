@@ -32,6 +32,11 @@
 ;;
 (require 'elmo-localdir)
 
+(defcustom elmo-localnews-folder-path "~/News"
+  "*Local news folder path."
+  :type 'directory
+  :group 'elmo)
+
 (eval-and-compile
   (luna-define-class elmo-localnews-folder (elmo-localdir-folder) (group))
   (luna-define-internal-accessors 'elmo-localnews-folder))

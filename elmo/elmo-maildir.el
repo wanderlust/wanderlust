@@ -35,6 +35,11 @@
 (require 'elmo)
 (require 'elmo-map)
 
+(defcustom elmo-maildir-folder-path "~/Maildir"
+  "*Maildir folder path."
+  :type 'directory
+  :group 'elmo)
+
 ;;; ELMO Maildir folder
 (eval-and-compile
   (luna-define-class elmo-maildir-folder
