@@ -416,7 +416,7 @@ the `wl-smtp-features' variable."
 			 (mapconcat 'identity references "\n\t")))
     (wl-draft
      to subject in-reply-to cc references newsgroups mail-followup-to
-     nil nil nil summary-buf)
+     nil nil nil nil summary-buf)
     (setq wl-draft-reply-buffer buf))
   (run-hooks 'wl-reply-hook))
 
