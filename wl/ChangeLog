@@ -1,3 +1,8 @@
+2003-02-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-remove-text-plain-tag): Specify subtype
+	explicitly for mime-make-text-tag.
+
 2003-02-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-draft.el (wl-draft-remove-text-plain-tag): Use
