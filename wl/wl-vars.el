@@ -1956,7 +1956,7 @@ a symbol `xbm' to limit the image format to XBM even if XPM can be shown."
 
 (defvar wl-plug-state-indicator-on  " [ON] ")
 (defvar wl-plug-state-indicator-off " [--] ")
-(defvar wl-plug-state-indicator wl-plug-state-indicator-on)
+(defvar wl-plug-state-indicator 'wl-plug-state-indicator-on)
 
 (defvar wl-show-plug-status-on-modeline t)
 
