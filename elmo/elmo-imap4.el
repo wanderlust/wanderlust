@@ -676,7 +676,7 @@ If optional argument FORCE is non-nil, select mailbox even if current mailbox
 is same as MAILBOX.
 If second optional argument NO-ERROR is non-nil, don't cause an error when
 selecting folder was failed.
-Returns t if selecting folder succeed. Otherwise, nil is returned."
+Returns response value if selecting folder succeed. "
   (when (or force
 	    (not (string=
 		  (elmo-imap4-session-current-mailbox-internal session)
@@ -702,7 +702,7 @@ Returns t if selecting folder succeed. Otherwise, nil is returned."
 	    (error (or
 		    (elmo-imap4-response-error-text response)
 		    (format "Select %s failed" mailbox))))))
-      result)))
+      (and result response))))
 
 (defun elmo-imap4-check-validity (spec validity-file)
 ;;; Not used.

@@ -1,3 +1,9 @@
+2000-10-27  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-session-select-mailbox): Return response
+	value if selecting folder succceeded.
+	(Advised by MII Kazuyoshi <mii@isl.ntt.co.jp> for prom-wl.)
+
 2000-10-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-util.el (elmo-make-directory): Fixed permission lateral
