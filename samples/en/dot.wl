@@ -91,6 +91,7 @@
 ;(setq wl-draft-use-frame t)
 
 ;; Disable inline display HTML part.
+;; Put before (require 'mime-setup)
 ;(setq mime-setup-enable-inline-html nil)
 
 ;; Don't split large message.
@@ -182,7 +183,7 @@
 			    (cadr (split-string sequence " ")))))
     (if (string-match
 ;;;	 "^\\s(\\(.+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
-         "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
+	 "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
 	 subject-string)
 	(progn
 	  (setq subj (substring subject-string (match-end 0)))
@@ -296,11 +297,11 @@
 ;; rule for auto refile.
 ;(setq wl-refile-rule-alist
 ;      '(
-;     	("x-ml-name"
-;     	 ("^Wanderlust" . "+wl")
-;     	 ("^Elisp" . "+elisp"))
-;     	("From"
-;     	 ("teranisi@isl.ntt.co.jp" . "+teranisi"))))
+;	("x-ml-name"
+;	 ("^Wanderlust" . "+wl")
+;	 ("^Elisp" . "+elisp"))
+;	("From"
+;	 ("teranisi@isl.ntt.co.jp" . "+teranisi"))))
 
 ;; Marks to skip auto-refile (default is "N" "U" "!").
 ;; nil means all message is auto-refiled.
