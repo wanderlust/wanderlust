@@ -1,3 +1,9 @@
+2004-05-25  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-shimbun.el (elmo-map-message-fetch): Change default
+	behavior to update overview.
+	(elmo-shimbun-update-overview-folder-list): Note it.
+
 2004-05-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb-standard.el (modb-standard-message-entity): Avoid infinite

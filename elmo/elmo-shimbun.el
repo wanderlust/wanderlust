@@ -67,7 +67,8 @@ See `shimbun-headers' for more detail about RANGE."
 (defcustom elmo-shimbun-update-overview-folder-list nil
   "*List of FOLDER-REGEXP.
 FOLDER-REGEXP is the regexp of shimbun folder name which should be
-update overview when message is fetched."
+update overview when message is fetched.
+If it is nil, update overview for all shimbun folders."
   :type '(repeat (regexp :tag "Folder Regexp"))
   :group 'elmo)
 
@@ -430,9 +431,10 @@ update overview when message is fetched."
 	    shimbun-id)
 	(shimbun-article (elmo-shimbun-folder-shimbun-internal folder)
 			 header)
-	(when (elmo-string-match-member
-	       (elmo-folder-name-internal folder)
-	       elmo-shimbun-update-overview-folder-list)
+	(when (or (null elmo-shimbun-update-overview-folder-list)
+		  (elmo-string-match-member
+		   (elmo-folder-name-internal folder)
+		   elmo-shimbun-update-overview-folder-list))
 	  (elmo-shimbun-update-overview folder location header))
 	(when (setq shimbun-id
 		    (elmo-shimbun-header-extra-field header "x-shimbun-id"))
