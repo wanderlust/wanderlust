@@ -26,6 +26,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    wl-message-buffer-prefetch-idle-time, and
    wl-message-buffer-prefetch-depth are changed.
 
+** Fixed to compile on XEmacs without mule feature.
+
 * Changes in 2.10.0 from 2.8.1
 
 ** You can alter the format of summary lines.
