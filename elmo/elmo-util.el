@@ -1573,6 +1573,14 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
 	    (throw 'member (car list)))
 	(setq list (cdr list))))))
 
+(defun elmo-string-matched-member (str list &optional case-ignore)
+  (let ((case-fold-search case-ignore))
+    (catch 'member
+      (while list
+	(if (string-match str (car list))
+	    (throw 'member (car list)))
+	(setq list (cdr list))))))
+
 (defsubst elmo-string-delete-match (string pos)
   (concat (substring string
 		     0 (match-beginning pos))
