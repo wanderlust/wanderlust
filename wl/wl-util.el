@@ -174,23 +174,35 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 ;;(make-obsolete 'wl-set-hash-val 'elmo-set-hash-val)
 
 (defsubst wl-set-string-width (width string)
-  (elmo-set-work-buf
-   (elmo-set-buffer-multibyte default-enable-multibyte-characters)
-   (insert string)
-   (if (> (current-column) width)
-       (if (> (move-to-column width) width)
-	   (progn
-	     (condition-case nil ; ignore error
-		 (backward-char 1)
-	       (error))
-	     (concat (buffer-substring (point-min) (point)) " "))
-	 (buffer-substring (point-min) (point)))
-     (if (= (current-column) width)
-	 string
-       (concat string
-	       (format (format "%%%ds"
-			       (- width (current-column)))
-		       " "))))))
+  (static-cond
+   ((and (fboundp 'string-width) (fboundp 'truncate-string-to-width)
+	 (not (featurep 'xemacs)))
+    (if (> (string-width string) width)
+	(setq string (truncate-string-to-width string width)))
+    (if (= (string-width string) width)
+	string
+      (concat string
+	      (format (format "%%%ds"
+			      (- width (string-width string)))
+		      " "))))
+   (t
+    (elmo-set-work-buf
+     (elmo-set-buffer-multibyte default-enable-multibyte-characters)
+     (insert string)
+     (if (> (current-column) width)
+	 (if (> (move-to-column width) width)
+	     (progn
+	       (condition-case nil ; ignore error
+		   (backward-char 1)
+		 (error))
+	       (concat (buffer-substring (point-min) (point)) " "))
+	   (buffer-substring (point-min) (point)))
+       (if (= (current-column) width)
+	   string
+	 (concat string
+		 (format (format "%%%ds"
+				 (- width (current-column)))
+			 " "))))))))
 
 (defun wl-display-bytes (num)
   (let (result remain)

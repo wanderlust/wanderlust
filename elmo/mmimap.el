@@ -62,7 +62,7 @@ SECTION is a section string which is defined in RFC2060.")
   "Return a section string from NODE-ID"
   (cond
    ((null node-id)
-    "0")
+    "1")
    ((numberp node-id)
     (number-to-string (1+ node-id)))
    ((listp node-id)
