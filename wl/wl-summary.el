@@ -2551,7 +2551,7 @@ If ARG is non-nil, checking is omitted."
 	nil))))
 
 (defun wl-summary-toggle-thread (&optional arg)
-  "Toggle thread status (T)hread and (S)equencial.
+  "Toggle thread status (T)hread and (S)equential.
 If ARG, without confirm."
   (interactive "P")
   (when (or arg
