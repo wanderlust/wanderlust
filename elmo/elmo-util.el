@@ -710,14 +710,14 @@ Return value is a cons cell of (STRUCTURE . REST)"
     (setq last-modified (+ (* (nth 0 last-modified)
 			      (float 65536)) (nth 1 last-modified)))))
 
-(defun elmo-make-directory (path)
+(defun elmo-make-directory (path &optional mode)
   "Create directory recursively."
   (let ((parent (directory-file-name (file-name-directory path))))
     (if (null (file-directory-p parent))
 	(elmo-make-directory parent))
     (make-directory path)
-    (if (string= path (expand-file-name elmo-msgdb-directory))
-	(set-file-modes path (+ (* 64 7) (* 8 0) 0))))) ; chmod 0700
+    (set-file-modes path (or mode
+			     (+ (* 64 7) (* 8 0) 0))))) ; chmod 0700
 
 (defun elmo-delete-directory (path &optional no-hierarchy)
   "Delete directory recursively."
