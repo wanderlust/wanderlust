@@ -1,23 +1,6 @@
-2001-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* test-env.el (test-base64-encode-4, test-base64-encode-5):
-	New testcases.
-
-2001-08-29  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* test-utf7.el: New file.
-	(test-utf7-encode-string, test-utf7-decode-string): New testcases.
-
-	* test-env.el: New file.
-	(test-apel-version, test-base64-encode-1)
-	(test-base64-encode-2, test-base64-encode-3): New testcases.
-
 2001-08-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
-	* test-wl-util.el: New file.
-	(test-wl-parse-addresses-1, test-wl-unique-id): New testcases.
-
-	* test-elmo-util.el: New file.
+	* test-elmo-util.el: New file
 	(test-elmo-replace-string-as-filename-1): New testcase.
 
 	* test-dist.el: New file.

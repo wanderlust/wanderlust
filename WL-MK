@@ -60,7 +60,6 @@
       (` (defvar (, symbol) (, value) (, doc))))))
 
 (load "bytecomp" nil t)
-
 (unless (fboundp 'byte-compile-file-form-custom-declare-variable)
   ;; Bind defcustom'ed variables.
   (put 'custom-declare-variable 'byte-hunk-handler
@@ -70,16 +69,6 @@
 	(setq byte-compile-bound-variables
 	      (cons (nth 1 (nth 1 form)) byte-compile-bound-variables)))
     form))
-
-(condition-case nil
-    (char-after)
-  (wrong-number-of-arguments
-   ;; Optimize byte code for `char-after'.
-   (put 'char-after 'byte-optimizer 'byte-optimize-char-after)
-   (defun byte-optimize-char-after (form)
-     (if (null (cdr form))
-	 '(char-after (point))
-       form))))
 
 (setq byte-compile-warnings '(free-vars unresolved callargs redefine))
 
