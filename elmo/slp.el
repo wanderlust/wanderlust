@@ -1,4 +1,4 @@
-;;; slp.el --- A SLP interface.
+;;; slp.el --- An SLP interface.
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: SLP
