@@ -347,7 +347,7 @@ Return number if put mark succeed"
 	     ,(wl-summary-action-docstring action)
 	     (interactive)
 	     (wl-summary-set-mark ,(wl-summary-action-mark action)
-				  number (interactive-p))))
+				  number (interactive-p) data)))
     (fset (intern (format "wl-summary-%s-region"
 			  (wl-summary-action-symbol action)))
 	  `(lambda (beg end)
@@ -828,7 +828,7 @@ Return number if put mark succeed"
 				 (error)))
 			 (setq checked-dsts (cons (cons dst ret) checked-dsts))
 			 ret)))
-	    (if (funcall (symbol-function 'wl-summary-refile) dst number)
+	    (if (funcall (symbol-function 'wl-summary-refile) number dst)
 		(incf count))
 	    (message "Marking...%d message(s)." count)))
 	(forward-line))

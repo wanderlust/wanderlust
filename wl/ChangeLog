@@ -1,3 +1,10 @@
+2003-07-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-action.el (wl-summary-define-mark-action): Call
+	`wl-summary-set-mark' with argument `data'.
+	(wl-summary-auto-refile): Fixed order of arguments when call
+	`wl-summary-refile'.
+
 2003-07-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-summary-mark-action-list): Define resend action.
