@@ -813,18 +813,6 @@ Header region is supposed to be narrowed."
     elmo-msgdb-location-filename
     dir) alist))
 
-(defun elmo-dop-queue-load ()
-  (setq elmo-dop-queue
-	(elmo-object-load
-	 (expand-file-name elmo-queue-filename
-			   elmo-msgdb-dir))))
-
-(defun elmo-dop-queue-save ()
-  (elmo-object-save
-   (expand-file-name elmo-queue-filename
-		     elmo-msgdb-dir)
-   elmo-dop-queue))
-
 (require 'product)
 (product-provide (provide 'elmo-msgdb) (require 'elmo-version))
 
