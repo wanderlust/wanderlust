@@ -2,6 +2,7 @@
 
 	* elmo.el (elmo-folder-mark-as-read): Added argument `ignore-flag'.
 	(elmo-folder-mark-as-read): Follow the API change.
+	(elmo-message-set-cached): New function.
 
 	* elmo-pipe.el (elmo-folder-mark-as-read): Follow the API change.
 
