@@ -709,7 +709,7 @@ Returns nil if selecting folder was in failure."
 		(elmo-imap4-send-command (process-buffer process)
 					 process
 					 (format "select \"%s\"" 
-						 (elmo-imap4-spec-folder
+						 (elmo-imap4-spec-mailbox
 						  spec)))
 		(setq msgdb (elmo-msgdb-load (elmo-string folder)))
 		(setq response (elmo-imap4-read-response 
@@ -719,7 +719,7 @@ Returns nil if selecting folder was in failure."
 		(progn
 		  (setcar (cddr connection) nil)
 		  (error "Select folder failed"))
-	      (setcar (cddr connection) (elmo-imap4-spec-folder spec))))
+	      (setcar (cddr connection) (elmo-imap4-spec-mailbox spec))))
 	  (if response msgdb)))
     (elmo-msgdb-load (elmo-string folder))))
 
