@@ -2,6 +2,24 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 * Changes in 2.12.0 from 2.10.1
 
+** Persistent mark string in summary buffer is changed.
+   Default setting indicates cached state by its upper/lower case.
+
+** It displays draft preview on sending confirmation.
+
+** Sending parameters are displayed on draft preview.
+   See description of the variable wl-draft-preview-attribute for detail.
+
+** You can run biff with idle-timer by setting wl-biff-use-idle-timer.
+
+** Now wl-draft-kill confirms with yes-or-no-p.
+
+** Summary thread will be divided if its depth is larger than certain amount.
+   The limit is controlled by the variable wl-summary-max-thread-depth.
+
+** Emacs multi-tty support is supported.
+   (http://lorentey.hu/project/emacs.html)
+
 ** New sort spec 'size' is added in the summary mode.
    Now you can sort the summary by message size.
 
@@ -101,6 +119,9 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 ** wl-draft-reply-myself-*-list are abolished and integrated into
    wl-draft-reply-*-list.
+
+** You can control initial cursor position for replying draft.
+   Set variable wl-draft-reply-default-position appropriately.
 
 ** Changed the way to specify configuration of draft buffer window.
    You can choose keep, full or split as values of wl-draft-buffer-style

@@ -2,6 +2,24 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 * 2.10.1 から 2.12.0 への変更点
 
+** サマリバッファの永続マークの文字列が変更されました。
+   デフォルトの設定ではキャッシュの有無を大文字小文字で示します。
+
+** 送信確認の際にドラフトのプレビューを表示するようになりました。
+
+** ドラフトのプレビューの際に送信パラメータを表示するようになりました。
+   詳しくは変数 wl-draft-preview-attributes の説明を見て下さい。
+
+** wl-biff-use-idle-timer を設定すると biff が idle-timer で走ります。
+
+** wl-draft-kill は yes-or-no-p で確認を求めるようになりました。
+
+** サマリで一定以上深いスレッドは分割されます。
+   変数 wl-summary-max-thread-depth で限界を変更できます。
+
+** Emacs multi-tty support に対応しました。
+   (http://lorentey.hu/project/emacs.html)
+
 ** サマリの並べ替え条件に 'size' が追加されました。
    メッセージサイズによるサマリの並べ替えが可能になりました。
 
@@ -99,6 +117,9 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 ** wl-draft-reply-myself-*-list は廃止され、wl-draft-reply-*-list に統合
    されました。
+
+** 返信用ドラフトのカーソルの初期位置を指定できます。
+   変数 wl-draft-reply-default-position を設定して下さい。
 
 ** ドラフトバッファウィンドウの配置の指定の仕方が変更されました。
    wl-draft-buffer-style と wl-draft-reply-buffer-style に keep,full,split
