@@ -235,8 +235,7 @@ Valid properties include:
   :type 'symbol
   :group 'ldap)
 
-(defcustom ldap-coding-system (if (boundp 'NEMACS) 0
-				nil)
+(defcustom ldap-coding-system nil
   "*Coding system of LDAP string values.
 LDAP v3 specifies the coding system of strings to be UTF-8.
 Mule support is needed for this."

@@ -291,7 +291,7 @@ If function, return value of function.")
 			      ;; static/dl-database
 			      (fboundp 'open-database)))
 
-(defvar elmo-date-match (not (boundp 'nemacs-version))
+(defvar elmo-date-match t
   "Date match is available or not.")
 
 (defvar elmo-network-stream-type-alist

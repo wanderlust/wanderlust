@@ -75,13 +75,7 @@
     (filename newname &optional ok-if-already-exists)
     (copy-file filename newname ok-if-already-exists t)))
 
-;; Nemacs's `read' is different.
-(static-if (fboundp 'nemacs-version)
-    (defun elmo-read (obj)
-      (prog1 (read obj)
-	(if (bufferp obj)
-	    (or (bobp) (forward-char -1)))))
-  (defalias 'elmo-read 'read))
+(defalias 'elmo-read 'read)
 
 (defmacro elmo-set-work-buf (&rest body)
   "Execute BODY on work buffer.  Work buffer remains."
@@ -1126,9 +1120,8 @@ the value of `foo'."
 	(setq err-mes (concat err-mes (format
 				       (if (stringp (car errobj))
 					   "%s"
-					 (if (boundp 'nemacs-version)
-					     "%s"
-					   "%S")) (car errobj))))
+					 "%S")
+				       (car errobj))))
 	(setq errobj (cdr errobj))
 	(if errobj (setq err-mes (concat err-mes (if first ": " ", "))))
 	(setq first nil))

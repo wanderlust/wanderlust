@@ -663,26 +663,21 @@ Header region is supposed to be narrowed."
   (cons (car entity)
 	(copy-sequence (cdr entity))))
 
-(static-if (boundp 'nemacs-version)
-    (defsubst elmo-msgdb-insert-file-header (file)
-      "Insert the header of the article (Does not work on nemacs)."
-      (as-binary-input-file
-       (insert-file-contents file)))
-  (defsubst elmo-msgdb-insert-file-header (file)
-    "Insert the header of the article."
-    (let ((beg 0)
-	  insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
-	  insert-file-contents-post-hook
-	  format-alist)
-      (when (file-exists-p file)
-	;; Read until header separator is found.
-	(while (and (eq elmo-msgdb-file-header-chop-length
-			(nth 1
-			     (insert-file-contents-as-binary
-			      file nil beg
-			      (incf beg elmo-msgdb-file-header-chop-length))))
-		    (prog1 (not (search-forward "\n\n" nil t))
-		      (goto-char (point-max)))))))))
+(defsubst elmo-msgdb-insert-file-header (file)
+  "Insert the header of the article."
+  (let ((beg 0)
+	insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
+	insert-file-contents-post-hook
+	format-alist)
+    (when (file-exists-p file)
+      ;; Read until header separator is found.
+      (while (and (eq elmo-msgdb-file-header-chop-length
+		      (nth 1
+			   (insert-file-contents-as-binary
+			    file nil beg
+			    (incf beg elmo-msgdb-file-header-chop-length))))
+		  (prog1 (not (search-forward "\n\n" nil t))
+		    (goto-char (point-max))))))))
 
 (defsubst elmo-msgdb-create-overview-entity-from-file (number file)
   (let (insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
