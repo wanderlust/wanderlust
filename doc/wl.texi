@@ -2820,6 +2820,11 @@ yet.
 @findex wl-summary-down
 Move cursor to the downward message which is unread or marked
 as @samp{$}.
+In the offline mode, cursor is not moved to the messages which are not cached
+yet.
+If there are messages which have target mark @samp{*} in the summary,
+cursor is moved to the downward message which have a target mark.
+This behavior is changed according to the value of @code{wl-summary-move-order}.
 (@code{wl-summary-down})
 
 @item P
@@ -2827,6 +2832,11 @@ as @samp{$}.
 @findex wl-summary-up
 Move cursor to the upward message which is unread or marked
 as @samp{$}.
+In the offline mode, cursor is not moved to the messages which are not cached
+yet.
+If there are messages which have target mark @samp{*} in the summary,
+cursor is moved to the downward message which have a target mark.
+This behavior is changed according to the value of @code{wl-summary-move-order}.
 (@code{wl-summary-up})
 
 @item w
