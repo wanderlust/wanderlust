@@ -1,3 +1,7 @@
+2004-02-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.11.24.
+
 2004-02-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-toggle-thread): Call
