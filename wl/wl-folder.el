@@ -1228,24 +1228,24 @@ If current line is group folder, all subfolders are marked."
 	entity ret-val)
     (condition-case ()
 	(progn
-	  (set-buffer tmp-buf)
-	  (erase-buffer)
-	  (insert-file-contents wl-folders-file)
-	  (goto-char (point-min))
-	  (while (and (not (eobp))
-		      (setq entity (wl-create-folder-entity-from-buffer)))
-	    (unless (eq entity 'ignore)
-	      (wl-append ret-val (list entity))))
+	  (with-current-buffer tmp-buf
+	    (erase-buffer)
+	    (insert-file-contents wl-folders-file)
+	    (goto-char (point-min))
+	    (while (and (not (eobp))
+			(setq entity (wl-create-folder-entity-from-buffer)))
+	      (unless (eq entity 'ignore)
+		(wl-append ret-val (list entity)))))
 	  (kill-buffer tmp-buf))
       (file-error nil))
     (setq ret-val (list wl-folder-desktop-name 'group ret-val))))
 
 (defun wl-folder-entity-assign-id (entity &optional hashtb on-noid)
-  (let* ((hashtb (or hashtb 
-		     (setq wl-folder-entity-id-name-hashtb
-			   (elmo-make-hash wl-folder-entity-id))))
-	 (entities (list entity))
-	 entity-stack)
+  (let ((hashtb (or hashtb 
+		    (setq wl-folder-entity-id-name-hashtb
+			  (elmo-make-hash wl-folder-entity-id))))
+	(entities (list entity))
+	entity-stack)
     (while entities
       (setq entity (wl-pop entities))
       (cond
@@ -1410,6 +1410,9 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
   (setq buffer-read-only t)
   (setq inhibit-read-only nil)
   (setq truncate-lines t)
+  (setq wl-folder-buffer-cur-entity-id nil
+	wl-folder-buffer-cur-path nil
+	wl-folder-buffer-cur-point nil)
   (when wl-show-plug-status-on-modeline 
     (setq mode-line-format (wl-make-modeline)))
   (easy-menu-add wl-folder-mode-menu)
@@ -1770,9 +1773,9 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 		(wl-folder-update-line newvalue)))))))))
 
 (defun wl-folder-create-entity-hashtb (entity &optional hashtb reconst)
-  (let* ((hashtb (or hashtb (elmo-make-hash wl-folder-entity-id)))
-	 (entities (list entity))
-	 entity-stack)
+  (let ((hashtb (or hashtb (elmo-make-hash wl-folder-entity-id)))
+	(entities (list entity))
+	entity-stack)
     (while entities
       (setq entity (wl-pop entities))
       (cond
@@ -1876,8 +1879,8 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	(elmo-nntp-make-groups-hashtb folders))))
 
 (defun wl-folder-get-path (entity target-id &optional string)
-  (let* ((entities (list entity))
-	 entity-stack result-path)
+  (let ((entities (list entity))
+	entity-stack result-path)
     (reverse
      (catch 'done
        (while entities
@@ -1906,8 +1909,9 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 
 (defun wl-folder-create-group-alist (entity)
   (if (consp entity)
-      (let ((flist (nth 2 entity)) cur-alist append-alist)
-	(setq cur-alist (list (cons (car entity) nil)))
+      (let ((flist (nth 2 entity))
+	    (cur-alist (list (cons (car entity) nil)))
+	     append-alist)
 	(while flist
 	  (if (consp (car flist))
 	      (wl-append append-alist
@@ -1971,8 +1975,9 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 (defun wl-local-folder-init ()
   (message "Initializing folder...")
   (save-excursion
-    (let* ((entity (wl-folder-create-folder-entity))
-	   (inhibit-read-only t))
+    (set-buffer wl-folder-buffer-name)
+    (let ((entity (wl-folder-create-folder-entity))
+	  (inhibit-read-only t))
       (setq wl-folder-entity entity)
       (setq wl-folder-entity-id 0)
       (wl-folder-entity-assign-id wl-folder-entity)
@@ -1982,10 +1987,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	    (wl-folder-create-group-alist entity))
       (setq wl-folder-newsgroups-hashtb
 	    (wl-folder-create-newsgroups-hashtb wl-folder-entity))
-      (wl-folder-init-info-hashtb)
-      (setq wl-folder-buffer-cur-entity-id nil
-	    wl-folder-buffer-cur-path nil
-	    wl-folder-buffer-cur-point nil)))
+      (wl-folder-init-info-hashtb)))
   (message "Initializing folder...done."))
 
 (defun wl-folder-get-realname (petname)
