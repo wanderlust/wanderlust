@@ -6624,10 +6624,10 @@ LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
 
 @menu
 * Usage of Spam Filter::        $B;H$$J}(B
-* Spam Filter Processor::       $BBP1~$7$F$$$k(B Spam Filter
+* Spam Filter Processors::      $BBP1~$7$F$$$k(B Spam Filter
 @end menu
 
-@node Usage of Spam Filter, Spam Filter Processor, Spam Filter, Spam Filter
+@node Usage of Spam Filter, Spam Filter Processors, Spam Filter, Spam Filter
 @section $B;H$$J}(B
 
 @subsection $B=i4|@_Dj(B
@@ -6876,7 +6876,7 @@ spam $BH=Dj$KBP$7$FL58z$J%U%)%k%@$r!"%U%)%k%@L>$N@55,I=8=$N%j%9%H$G;XDj$7(B
 @end table
 
 
-@node Spam Filter Processor,  , Usage of Spam Filter, Spam Filter
+@node Spam Filter Processors,  , Usage of Spam Filter, Spam Filter
 @section $BBP1~$7$F$$$k(B Spam Filter
 @cindex Spam Filter, Bogofilter
 @cindex Spam Filter, Spamfilter
@@ -6886,12 +6886,12 @@ spam $BH=Dj$KBP$7$FL58z$J%U%)%k%@$r!"%U%)%k%@L>$N@55,I=8=$N%j%9%H$G;XDj$7(B
 @menu
 * bogofilter::                  bogofilter
 * spamfilter::                  spamfilter.el
-* Bsfilter::                    bsfilter
+* bsfilter::                    bsfilter
 * SpamAssassin::                SpamAssassin
 @end menu
 
 
-@node bogofilter, spamfilter, Spam Filter Processor, Spam Filter Processor
+@node bogofilter, spamfilter, Spam Filter Processors, Spam Filter Processors
 @subsection bogofilter
 @cindex bogofilter
 
@@ -6913,7 +6913,7 @@ bogofilter $B$K$h$k(B spam $B%U%#%k%?$r;HMQ$9$k$K$O!"(B@file{~/.wl} $B$J$I$
 @item elmo-spam-bogofilter-program
 @vindex elmo-spam-bogofilter-program
 $B=i4|@_Dj$O!"(B@file{bogofilter}$B!#(B
-bogofiler $B$N<B9T%U%!%$%k$NL>A0$r@_Dj$7$^$9!#<B9T%U%!%$%k$,!"4D6-JQ?t(B 
+bogofilter $B$N<B9T%U%!%$%k$NL>A0$r@_Dj$7$^$9!#<B9T%U%!%$%k$,!"4D6-JQ?t(B 
 @env{PATH} $B>e$K$J$$>l9g$O!"%U%k%Q%9$r@_Dj$9$kI,MW$,$"$j$^$9!#(B
 
 @item elmo-spam-bogofilter-args
@@ -6940,7 +6940,7 @@ non-nil $B$K;XDj$9$k$H!"(B@command{bogofilter} $B$+$i$N=PNO$,(B
 @end table
 
 
-@node spamfilter, Bsfilter, bogofilter, Spam Filter Processor
+@node spamfilter, bsfilter, bogofilter, Spam Filter Processors
 @subsection spamfilter.el
 @cindex spamfilter
 
@@ -6969,13 +6969,66 @@ Emacs Lisp $B$G<BAu$5$l$?(B spam $B%U%#%k%?%j%s%0%i%$%V%i%j$G$9!#(B
 $B%3!<%Q%9%U%!%$%k$NL>A0$r@_Dj$7$^$9!#(B
 @end table
 
-@node Bsfilter, SpamAssassin, spamfilter, Spam Filter Processor
+@node bsfilter, SpamAssassin, spamfilter, Spam Filter Processors
 @subsection bsfilter
 @cindex bsfilter
 
-not yet documented...
+bsfilter (@uref{http://bsfilter.org/}) $B$O!"(BRuby $B$G<BAu$5$l$?(B spam $B%U%#%k%?$G$9!#(B
 
-@node SpamAssassin,  , Bsfilter, Spam Filter Processor
+bsfilter $B$K$h$k(B spam $B%U%#%k%?$r;HMQ$9$k$K$O!"(B@file{~/.wl} $B$J$I$K0J2<$N(B
+$B@_Dj$r5-=R$7$^$9!#(B
+
+@lisp
+@group
+(setq elmo-spam-scheme 'bsfilter)
+@end group
+@end lisp
+
+@subsubsection $B%+%9%?%^%$%:JQ?t(B
+
+@table @code
+@item elmo-spam-bsfilter-program
+@vindex elmo-spam-bsfilter-program
+$B=i4|@_Dj$O(B @file{bsfilter}$B!#(B
+@command{bsfilter} $B$N<B9T%U%!%$%k$NL>A0$r@_Dj$7$^$9!#<B9T%U%!%$%k$,!"(B
+$B4D6-JQ?t(B @env{PATH} $B>e$K$J$$>l9g$O!"%U%k%Q%9$r@_Dj$9$kI,MW$,$"$j$^$9!#(B
+
+@item elmo-spam-bsfilter-args
+@vindex elmo-spam-bsfilter-args
+$B=i4|@_Dj$O!"(B@code{nil}$B!#(B
+bsfilter $B$N<B9T;~$K<B9T%U%!%$%k$KEO$5$l$k0z?t$r;XDj$7$^$9!#(B
+
+@item elmo-spam-bsfilter-database-directory
+@vindex elmo-spam-bsfilter-database-directory
+$B;HMQ$9$kE}7W%G!<%?%Y!<%9$NB8:_$9$k%G%#%l%/%H%j$r;XDj$7$^$9!#(B@code{nil} 
+$B$J$i%G%U%)%k%H$N0LCV(B (@file{~/.bsfilter}) $B$,;HMQ$5$l$^$9!#(B
+$B=i4|@_Dj$O!"(B@code{nil}$B!#(B
+
+@item elmo-spam-bsfilter-debug
+@vindex elmo-spam-bsfilter-debug
+$B=i4|@_Dj$O!"(B@code{nil}$B!#(B
+non-nil $B$r;XDj$9$k$H!"(B@command{bsfilter} $B$+$i$N=PNO$,(B
+@code{"*Debug ELMO Bsfilter*"}$B$H$$$&%P%C%U%!$K=PNO$5$l$^$9!#(B
+
+@item elmo-spam-bsfilter-shell-program
+@vindex elmo-spam-bsfilter-shell-program
+$B=i4|@_Dj$O!"(B@file{ruby}$B!#(B
+bsfilter $B$r5/F0$9$k%7%'%k$NL>A0$r@_Dj$7$^$9!#%7%'%k$,4D6-JQ?t(B 
+@env{PATH} $B>e$K$J$$>l9g$O!"%U%k%Q%9$r@_Dj$9$kI,MW$,$"$j$^$9!#(B
+
+@item elmo-spam-bsfilter-shell-switch
+@vindex elmo-spam-bsfilter-shell-switch
+$B=i4|@_Dj$O!"(B@code{nil}$B!#(B
+bsfilter $B$r5/F0$9$k%7%'%k$KM?$($k0z?t$r;XDj$7$^$9!#(B
+
+@item elmo-spam-bsfilter-update-switch
+@vindex elmo-spam-bsfilter-update-switch
+$B=i4|@_Dj$O!"(B@code{"--synchronous-auto-update"}$B!#(B
+$B%a%C%;!<%8$r3X=,$9$k:]$K(B @command{bsfilter} $B$KM?$($k0z?t$r;XDj$7$^$9!#(B
+
+@end table
+
+@node SpamAssassin,  , bsfilter, Spam Filter Processors
 @subsection SpamAssassin
 @cindex SpamAssassin
 

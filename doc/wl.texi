@@ -6698,10 +6698,10 @@ with messages operations on Wanderlust.
 
 @menu
 * Usage of Spam Filter::        Usage of Spam Filter
-* Spam Filter Processor::       Supported spam filters
+* Spam Filter Processors::      Supported spam filters
 @end menu
 
-@node Usage of Spam Filter, Spam Filter Processor, Spam Filter, Spam Filter
+@node Usage of Spam Filter, Spam Filter Processors, Spam Filter, Spam Filter
 @section Usage of Spam Filter
 
 @subsection Initial Setting
@@ -6948,7 +6948,7 @@ Process all messages regardless of persistent marks.
 @end table
 
 
-@node Spam Filter Processor,  , Usage of Spam Filter, Spam Filter
+@node Spam Filter Processors,  , Usage of Spam Filter, Spam Filter
 @section Supported Spam Filters
 @cindex Spam Filter, Bogofilter
 @cindex Spam Filter, Spamfilter
@@ -6958,12 +6958,12 @@ Supported spam filtering libraries are following ones.
 @menu
 * bogofilter::                  bogofilter
 * spamfilter::                  spamfilter.el
-* Bsfilter::                    bsfilter
+* bsfilter::                    bsfilter
 * SpamAssassin::                SpamAssassin
 @end menu
 
 
-@node bogofilter, spamfilter, Spam Filter Processor, Spam Filter Processor
+@node bogofilter, spamfilter, Spam Filter Processors, Spam Filter Processors
 @subsection bogofilter
 @cindex bogofilter
 
@@ -6985,7 +6985,7 @@ To use spam filter with bogofilter, write following setting in
 @item elmo-spam-bogofilter-program
 @vindex elmo-spam-bogofilter-program
 The initial setting is @file{bogofilter}.
-Specify the name of executable of bogofiler. If the executable
+Specify the name of executable of bogofilter. If the executable
 is not in your environmental variable @env{PATH}, you should
 set this by full path.
 
@@ -7013,7 +7013,7 @@ stored in the buffer named @code{"*Debug ELMO SPAM Bogofilter*"}.
 @end table
 
 
-@node spamfilter, Bsfilter, bogofilter, Spam Filter Processor
+@node spamfilter, bsfilter, bogofilter, Spam Filter Processors
 @subsection spamfilter.el
 @cindex spamfilter
 
@@ -7044,13 +7044,68 @@ The initial setting is @file{~/.elmo/.spamfilter}.
 It specifies the name of corpus file.
 @end table
 
-@node Bsfilter, SpamAssassin, spamfilter, Spam Filter Processor
+@node bsfilter, SpamAssassin, spamfilter, Spam Filter Processors
 @subsection bsfilter
 @cindex bsfilter
 
-not yet documented...
+bsfilter (@uref{http://bsfilter.org/index-e.html}) is a spam filter
+implemented by Ruby language.
 
-@node SpamAssassin,  , Bsfilter, Spam Filter Processor
+To use spam filter with bsfilter, write following setting in
+@file{~/.wl} or somewhere else.
+
+@lisp
+@group
+(setq elmo-spam-scheme 'bsfilter)
+@end group
+@end lisp
+
+@subsubsection Customizable Variables
+
+@table @code
+@item elmo-spam-bsfilter-program
+@vindex elmo-spam-bsfilter-program
+The initial setting is @file{bsfilter}.
+Specify the name of executable of @command{bsfilter}.  If the executable
+is not in your environmental variable @env{PATH}, you should
+set this by full path.
+
+@item elmo-spam-bsfilter-args
+@vindex elmo-spam-bsfilter-args
+The initial setting is @code{nil}.
+Specify arguments to be supplied for bsfilter executable.
+
+@item elmo-spam-bsfilter-database-directory
+@vindex elmo-spam-bsfilter-database-directory
+Specify the directory for statistical database to be used.
+@code{nil} to use default directory (@file{~/.bsfilter}).
+The initial setting is @code{nil}.
+
+@item elmo-spam-bsfilter-debug
+@vindex elmo-spam-bsfilter-debug
+The initial setting is @code{nil}.
+If you specify non-nil, the output from @command{bsfilter} is
+stored in the buffer named @code{"*Debug ELMO Bsfilter*"}.
+
+@item elmo-spam-bsfilter-shell-program
+@vindex elmo-spam-bsfilter-shell-program
+The initial setting is @file{ruby}.
+Specify the shell to execute @command{bsfilter}.  If the shell is not
+in your environmental variable @env{PATH}, you should set this by full path.
+
+@item elmo-spam-bsfilter-shell-switch
+@vindex elmo-spam-bsfilter-shell-switch
+The initial setting is @code{nil}.
+Specify options to give to the shell executing @command{bsfilter}.
+
+@item elmo-spam-bsfilter-update-switch
+@vindex elmo-spam-bsfilter-update-switch
+The initial setting is @code{"--synchronous-auto-update"}.
+Specify options to give to @command{bsfilter} for learning messages.
+
+@end table
+
+@node SpamAssassin,  , bsfilter, Spam Filter Processors
 @subsection SpamAssassin
 @cindex SpamAssassin
 
