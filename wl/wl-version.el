@@ -100,7 +100,7 @@ Insert User-Agent field instead of X-Mailer field."
 (defun wl-generate-user-agent-string-1 (&optional verbose)
   "Return User-Agent field value.
 If VERBOSE return with SEMI, FLIM and APEL version"
-  (let ((mime-user-agent (and (boundp 'mime-edit-insert-user-agent-value)
+  (let ((mime-user-agent (and (boundp 'mime-edit-user-agent-value)
 			      mime-edit-user-agent-value)))
     (if (and verbose mime-user-agent)
 	(concat (product-string-verbose 'wl-version) " "
