@@ -111,7 +111,7 @@
 					    (match-string 2 wl-smtp-posting-user)))
 	 (setq smtp-sasl-user-name wl-smtp-posting-user
 	       smtp-sasl-properties nil))
-	 (setq sasl-read-passphrase
+       (setq sasl-read-passphrase
 	     (function
 	      (lambda (prompt)
 		(elmo-get-passwd
