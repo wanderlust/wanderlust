@@ -1,3 +1,9 @@
+2003-09-26  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-action.el (wl-summary-collect-numbers-region): Remove unused
+	local variable.  Change the order of a collected list into the
+	same as the specified range.  Remove nil from a collected list.
+
 2003-09-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-insert-headers): Set visible-only
