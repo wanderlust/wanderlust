@@ -280,13 +280,13 @@ Matched address lists are append to CL."
 	(completing-read "To: " cl)
       (read-string "To: "))))
 
-(defconst wl-address-specials-regexp "[]\"(),.:;<>@[\\]")
-
 (defun wl-address-quote-specials (word)
   "Make quoted string of WORD if needed."
-  (if (string-match wl-address-specials-regexp word)
-      (prin1-to-string word)
-    word))
+  (let ((lal (std11-lexical-analyze word)))
+    (if (or (assq 'specials lal)
+	    (assq 'domain-literal lal))
+	(prin1-to-string word)
+      word)))
 
 (defun wl-address-make-completion-list (address-list)
   (let (addr-tuple cl)

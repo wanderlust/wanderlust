@@ -100,7 +100,7 @@
 			     wl-smtp-authenticate-type
 			   (list wl-smtp-authenticate-type)))))
 	    (smtp-use-sasl (and smtp-sasl-mechanisms t))
-	    (smtp-use-starttls wl-smtp-connection-type)
+	    (smtp-use-starttls (eq wl-smtp-connection-type 'starttls))
 	    smtp-sasl-user-name smtp-sasl-properties sasl-read-passphrase)
        (if (and (string= (car smtp-sasl-mechanisms) "DIGEST-MD5")
 		;; sendmail bug?

@@ -130,10 +130,10 @@
 (defvar wl-use-semi (module-installed-p 'mime-view) ; If nil, use tm.
   "*Use SEMI or not.")
 
-(defcustom wl-from (if (boundp 'user-mail-address)
-		       user-mail-address)
+(defcustom wl-from nil
   "*From string used in draft."
-  :type 'string
+  :type  '(choice (const :tag "Use default value" nil)
+		  string)
   :group 'wl)
 
 (defcustom wl-user-mail-address-list nil
@@ -144,7 +144,7 @@ If you don't have multiple e-mail addresses, you don't have to set this."
   :type '(repeat string)
   :group 'wl)
 
-(defcustom wl-organization nil
+(defcustom wl-organization (getenv "ORGANIZATION")
   "Organization name."
   :type '(choice (const :tag "none" nil)
                  string)

@@ -647,6 +647,9 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (elmo-buffer-cache-clean-up)
     (if (fboundp 'mmelmo-cleanup-entity-buffers)
 	(mmelmo-cleanup-entity-buffers))
+    (if (and wl-folder-use-frame
+	     (> (length (visible-frame-list)) 1))
+	(delete-frame))    
     (setq wl-init nil)
     (unless wl-on-nemacs
       (remove-hook 'kill-emacs-hook 'wl-save-status))
@@ -702,7 +705,9 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (unless (featurep 'mime-setup)
     (require 'mime-setup))
   (unless wl-from
-    (error "Please set `wl-from'"))
+    (setq wl-from
+	  (concat (wl-address-quote-specials (user-full-name))
+		  " <" user-mail-address ">")))
   ;; Message-ID
   (unless (string-match "[^.]\\.[^.]" (or wl-message-id-domain
 					  (if wl-local-domain

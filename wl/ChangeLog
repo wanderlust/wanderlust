@@ -1,3 +1,17 @@
+2001-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-check-environment): If `wl-from' is nil, use default value.
+
+	* wl-vars.el (wl-from): Set default value as nil.
+	(wl-organization): Sed default value as ORGANIZATION environment
+	variable.
+
+	* wl-draft.el (wl-smtp-extension-bind): Check value of
+	wl-smtp-connection-type.
+
+	* wl-address.el (wl-address-specials-regexp): Eliminated.
+	(wl-address-quote-specials): Rewrite.
+
 2001-09-17  Reuben Thomas <rrt@dcs.gla.ac.uk>
 
 	* wl-addrmgr.el (wl-fldmgr-delete): Fix docstring.
