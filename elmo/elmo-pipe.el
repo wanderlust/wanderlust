@@ -79,8 +79,11 @@
 (luna-define-method elmo-message-fetch ((folder elmo-pipe-folder)
 					number strategy
 					&optional section outbuf unseen)
-  (elmo-message-fetch (elmo-pipe-folder-dst-internal folder)
-		      number strategy section outbuf unseen))
+  (when (elmo-message-fetch (elmo-pipe-folder-dst-internal folder)
+			    number strategy section outbuf unseen)
+    (unless unseen
+      (elmo-folder-notify-event folder 'flag-changed (list number)))
+    t))
 
 (luna-define-method elmo-folder-clear :after ((folder elmo-pipe-folder)
 					      &optional keep-killed)
@@ -357,13 +360,15 @@
   (elmo-message-set-cached (elmo-pipe-folder-dst-internal folder)
 			   number cached))
 
-(luna-define-method elmo-find-fetch-strategy
-  ((folder elmo-pipe-folder) entity &optional ignore-cache)
+(luna-define-method elmo-find-fetch-strategy ((folder elmo-pipe-folder)
+					      number
+					      &optional
+					      ignore-cache
+					      require-entireness)
   (elmo-find-fetch-strategy (elmo-pipe-folder-dst-internal folder)
-			    (elmo-message-entity
-			     (elmo-pipe-folder-dst-internal folder)
-			     (elmo-message-entity-number entity))
-			    ignore-cache))
+			    number
+			    ignore-cache
+			    require-entireness))
 
 (luna-define-method elmo-message-number ((folder elmo-pipe-folder)
 					 message-id)

@@ -4547,7 +4547,7 @@ If ARG is numeric number, decode message as following:
 	 (num (or number (wl-summary-message-number)))
 	 (wl-mime-charset      wl-summary-buffer-mime-charset)
 	 (default-mime-charset wl-summary-buffer-mime-charset)
-	 no-folder-mark fld-buf fld-win thr-entity
+	 fld-buf fld-win thr-entity
 	 (elmo-message-fetch-confirm (or elmo-message-fetch-confirm
 					 (and force-reload
 					      elmo-message-fetch-threshold))))
@@ -4569,33 +4569,27 @@ If ARG is numeric number, decode message as following:
 	      (if (setq fld-win (get-buffer-window fld-buf))
 		  (delete-window fld-win)))
 	  (setq wl-current-summary-buffer (current-buffer))
-	  (setq no-folder-mark
-		;; If cache is used, change folder-mark.
-		(if (wl-message-redisplay
-		     folder num
-		     (wl-message-make-display-type
-		      (or mime-mode
-			  (wl-summary-buffer-display-mime-mode))
-		      (or header-mode
-			  (wl-summary-buffer-display-header-mode)))
-		     (or force-reload
-			 (string= (elmo-folder-name-internal folder)
-				  wl-draft-folder)))
-		    nil
-		  ;; plugged, then leave folder-mark.
-		  (if (and (not (elmo-folder-local-p
-				 wl-summary-buffer-elmo-folder))
-			   (elmo-folder-plugged-p
-			    wl-summary-buffer-elmo-folder))
-		      'leave)))
+	  (wl-message-redisplay folder num
+				(wl-message-make-display-type
+				 (or mime-mode
+				     (wl-summary-buffer-display-mime-mode))
+				 (or header-mode
+				     (wl-summary-buffer-display-header-mode)))
+				(or force-reload
+				    (string= (elmo-folder-name-internal folder)
+					     wl-draft-folder)))
 	  (when (elmo-message-use-cache-p folder num)
 	    (elmo-message-set-cached folder num t))
 	  (ignore-errors
 	    (if (elmo-message-flagged-p wl-summary-buffer-elmo-folder
 					num
 					'unread)
-		(wl-summary-mark-as-read num no-folder-mark)
-	      (wl-summary-update-persistent-mark)))
+		(wl-summary-mark-as-read num)
+	      (wl-summary-count-unread)
+	      (wl-summary-update-modeline)
+	      (wl-folder-update-unread
+	       (wl-summary-buffer-folder-name)
+	       wl-summary-buffer-unread-count)))
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
 	    (recenter (/ (- (window-height) 2) 2))

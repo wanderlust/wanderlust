@@ -124,8 +124,7 @@ If optional argument RESTORE is non-nil, unregister from spam list.")
   (let (elmo-message-fetch-threshold)
     (elmo-message-fetch
      folder number
-     (elmo-find-fetch-strategy folder
-			       (elmo-message-entity folder number))
+     (elmo-find-fetch-strategy folder number nil 'entire)
      nil (current-buffer) 'unread)))
 
 ;; generic implement

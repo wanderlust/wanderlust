@@ -2536,52 +2536,41 @@ If optional argument REMOVE is non-nil, remove FLAG."
 
 ;; elmo-folder-open-internal: do nothing.
 
-(luna-define-method elmo-find-fetch-strategy
-  ((folder elmo-imap4-folder) entity &optional ignore-cache)
-  (let ((number (elmo-message-entity-number entity))
-	cache-file size message-id)
-    (setq size (elmo-message-entity-field entity 'size))
-    (setq message-id (elmo-message-entity-field entity 'message-id))
-    (setq cache-file (elmo-file-cache-get message-id))
-    (if (or ignore-cache
-	    (null (elmo-file-cache-status cache-file)))
-	(if (and elmo-message-fetch-threshold
-		 (integerp size)
-		 (>= size elmo-message-fetch-threshold)
-		 (or (not elmo-message-fetch-confirm)
-		     (not (prog1 (y-or-n-p
+(luna-define-method elmo-find-fetch-strategy ((folder elmo-imap4-folder) number
+					      &optional
+					      ignore-cache
+					      require-entireness)
+  (let ((entity (elmo-message-entity folder number)))
+    (if (null entity)
+	(elmo-make-fetch-strategy 'entire)
+      (let* ((size (elmo-message-entity-field entity 'size))
+	     (message-id (elmo-message-entity-field entity 'message-id))
+	     (cache-file (elmo-file-cache-get message-id))
+	     (use-cache (and (not ignore-cache)
+			     (elmo-message-use-cache-p folder number)
+			     (if require-entireness
+				 (eq (elmo-file-cache-status cache-file)
+				     'entire)
+			       (elmo-file-cache-status cache-file)))))
+	(elmo-make-fetch-strategy
+	 (if use-cache
+	     (elmo-file-cache-status cache-file)
+	   (if (and (not require-entireness)
+		    elmo-message-fetch-threshold
+		    (integerp size)
+		    (>= size elmo-message-fetch-threshold)
+		    (or (not elmo-message-fetch-confirm)
+			(not (prog1
+				 (y-or-n-p
 				  (format
 				   "Fetch entire message at once? (%dbytes)"
 				   size))
-			    (message "")))))
-	    ;; Fetch message as imap message.
-	    (elmo-make-fetch-strategy 'section
-				      nil
-				      (elmo-message-use-cache-p
-				       folder number)
-				      (elmo-file-cache-path
-				       cache-file))
-	  ;; Don't use existing cache and fetch entire message at once.
-	  (elmo-make-fetch-strategy 'entire nil
-				    (elmo-message-use-cache-p
-				     folder number)
-				    (elmo-file-cache-path cache-file)))
-      ;; Cache found and use it.
-      (if (not ignore-cache)
-	  (if (eq (elmo-file-cache-status cache-file) 'section)
-	      ;; Fetch message with imap message.
-	      (elmo-make-fetch-strategy 'section
-					t
-					(elmo-message-use-cache-p
-					 folder number)
-					(elmo-file-cache-path
-					 cache-file))
-	    (elmo-make-fetch-strategy 'entire
-				      t
-				      (elmo-message-use-cache-p
-				       folder number)
-				      (elmo-file-cache-path
-				       cache-file)))))))
+			       (message "")))))
+	       'section
+	     'entire))
+	 use-cache
+	 (elmo-message-use-cache-p folder number)
+	 (elmo-file-cache-path cache-file))))))
 
 (luna-define-method elmo-folder-create-plugged ((folder elmo-imap4-folder))
   (elmo-imap4-send-command-wait

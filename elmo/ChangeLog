@@ -1,5 +1,36 @@
 2005-01-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo.el (elmo-find-fetch-strategy): Removed argument `entity'
+	and added `number', `require-entireness'.
+	(elmo-find-fetch-strategy): Rewrite.
+	(elmo-message-fetch): Unset `unread' flag when argument unread is
+	non-nil.
+
+	* elmo-spam.el (elmo-spam-message-fetch): Follow the API change.
+
+	* elmo-multi.el (elmo-find-fetch-strategy): Ditto.
+	(elmo-message-fetch): Notify event `flag-changed'.
+
+	* elmo-pipe.el: Likewise.
+
+	* elmo-mime.el (elmo-mime-entity): New class.
+	(elmo-mime-entity-display-p): New generic function.
+	(elmo-mime-entity-display): Ditto.
+	(elmo-mime-entity-display-as-is): Ditto.
+	(mime-elmo-buffer-entity, mime-elmo-imap-entity): Inherit
+	elmo-mime-entity.
+	(elmo-make-mime-message-location): Removed.
+	(elmo-mime-message-display): Ditto.
+	(elmo-mime-display-as-is): Ditto.
+	(elmo-message-mime-entity): New function.
+
+	* elmo-imap4.el (elmo-find-fetch-strategy): Rewrite.
+
+	* elmo-filter.el (elmo-find-fetch-strategy): Follow the API
+	change.
+	(elmo-message-fetch): Re-count flagged message number and notify
+	event `flag-changed'.
+
 	* elmo-version.el (elmo-version): Up to 2.13.1.
 
 2005-01-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

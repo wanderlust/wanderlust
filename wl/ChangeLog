@@ -1,5 +1,20 @@
 2005-01-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-util.el (wl-current-message-buffer): Follow the API change.
+
+	* wl-summary.el (wl-summary-redisplay-internal): Call
+	`wl-summary-mark-as-read' with 2nd argument as nil and update
+	unread count instead of persistent mark.
+
+	* wl-message.el (wl-message-buffer-mime-entity): New buffer local
+	variable.
+	(wl-message-redisplay): Follow the API change.
+	(wl-message-buffer-display): Managed mime-entity directly and
+	return preview buffer only.
+	(wl-message-display-internal): Rewrite.
+	(wl-message-buffer-prefetch-subr): Not save return value of
+	`wl-message-buffer-display'.
+
 	* Version number is increased to 2.13.1.
 
 2005-01-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
