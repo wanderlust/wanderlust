@@ -1788,7 +1788,7 @@ Return nil if no complete line has arrived."
 (defun elmo-imap4-parse-namespace ()
   (list 'namespace
 	(nconc
-	 elmo-imap4-extra-namespace-alist
+	 (copy-sequence elmo-imap4-extra-namespace-alist)
 	 (elmo-imap4-parse-namespace-subr	
 	  (elmo-imap4-read (concat "(" (buffer-substring
 			     (point) (point-max))
