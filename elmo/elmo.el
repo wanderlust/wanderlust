@@ -1014,6 +1014,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	(setq failure nil
 	      mark (elmo-message-mark src-folder (car numbers))
 	      flag (cond
+		    ((null mark) nil)
 		    ((member mark (elmo-msgdb-answered-marks))
 		     'answered)
 		    ;;
