@@ -1,7 +1,12 @@
 2002-01-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-reedit): Don't enclose wl-draft-reedit
+	with unwind-protect.
+
 	* wl-draft.el (wl-draft-reedit): Rewrite.
 	(wl-jump-to-draft-buffer): Don't use `buffer-file-name'.
+	(wl-draft-save): Insert header separator if it does not exist;
+	Removed condition-case.
 
 	* wl-summary.el (wl-summary-reedit): Revert last change.
 

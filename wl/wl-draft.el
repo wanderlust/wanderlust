@@ -1224,10 +1224,19 @@ Derived from `message-save-drafts' in T-gnus."
 	(let ((msg (buffer-substring-no-properties (point-min) (point-max))))
 	  (with-temp-file wl-draft-buffer-file-name
 	    (insert msg)
-	    ;; XXX Discard error to ignore invalid content. Is it dangerous?
-	    (condition-case nil
-		(mime-edit-translate-buffer)
-	      (error))
+	    ;; If no header separator, insert it.
+	    (save-excursion
+	      (goto-char (point-min))
+	      (unless (re-search-forward
+		       (concat "^" (regexp-quote mail-header-separator) "$")
+		       nil t)
+		(goto-char (point-min))
+		(if (re-search-forward "\n\n" nil t)
+		    (replace-match (concat "\n" mail-header-separator "\n"))
+		  (goto-char (point-max))
+		  (insert (if (eq (char-before) ?\n) "" "\n")
+			  mail-header-separator "\n"))))
+	    (mime-edit-translate-buffer)
 	    (wl-draft-get-header-delimiter t)))
 	(set-buffer-modified-p nil)
 	(wl-draft-config-info-operation

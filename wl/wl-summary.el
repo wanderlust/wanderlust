@@ -595,12 +595,12 @@ If ARG is non-nil, Supersedes message"
       (wl-summary-supersedes-message)
     (if (string= (wl-summary-buffer-folder-name) wl-draft-folder)
 	(if (wl-summary-message-number)
-	    (unwind-protect
-		(wl-draft-reedit (wl-summary-message-number))
+	    (progn
+	      (wl-draft-reedit (wl-summary-message-number))
 	      (if (wl-message-news-p)
 		  (mail-position-on-field "Newsgroups")
 		(mail-position-on-field "To"))
-	      (delete-other-windows)))    
+	      (delete-other-windows)))
       (wl-draft-edit-string (wl-summary-message-string)))))
 
 (defun wl-summary-resend-bounced-mail ()
