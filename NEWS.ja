@@ -1,5 +1,23 @@
 Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
+** ドラフトフォルダへの保存形式が変更されました。wl-draft-save の際には
+   エンコードして保存されます。
+
+** バッファプリフェッチが実装されました。wl-message-buffer-prefetch-depth
+   の数だけ、メッセージをバッファに先読みします。
+
+** 新しいフレームを開いて Wanderlust を起動できるようになりました。
+   (autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
+   のように設定して下さい。
+
+** アクセスグループフォルダの改名が出来るようになりました。
+
+** リスト wl-folder-hierarchy-access-folders の各要素は、アクセスグループに
+   ついての正規表現になりました(これまでは正確なグループ名でした)。
+
+** 変数 wl-draft-reply-with-argument-list 等で、関数の返り値から宛先を
+   決められるようになりました。
+
 * 2.6.1 から 2.8.0 への変更点
 
 ** Nemacs, Mule 2.3 based on Emacs 19.28 はサポートされなくなりました。
