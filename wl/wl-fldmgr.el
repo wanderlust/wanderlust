@@ -1268,7 +1268,8 @@ return value is diffs '(-new -unread -all)."
 	  (if (string= petname old-petname)
 	      nil
 	    (if (or (rassoc petname wl-folder-petname-alist)
-		    (wl-string-assoc petname wl-folder-group-alist))
+		    (and is-group
+			 (wl-string-assoc petname wl-folder-group-alist)))
 		(message "%s: already exists" petname)
 	      (wl-folder-append-petname name petname)
 	      (setq change t)))))

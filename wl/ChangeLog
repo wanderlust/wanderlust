@@ -1,3 +1,9 @@
+2004-12-24  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-fldmgr.el (wl-fldmgr-set-petname): Check wl-folder-group-alist
+	only if the target is group.
+	* wl-folder.el (wl-folder-append-petname): Don't check group name.
+
 2004-12-23  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-folder.el (wl-folder-buffer-search-entity): Check real name.
