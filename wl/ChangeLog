@@ -1,5 +1,9 @@
 2001-01-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-rescan):
+	Call `wl-summary-buffer-number-column-detect'.
+	(Advised by Akihiro MOTOKI <mokkun@iname.com>)
+
 	* wl-message.el (wl-message-mode-map): Define.
 	(wl-message-decode): Use it as local-map.
 
