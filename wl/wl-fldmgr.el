@@ -51,7 +51,6 @@
 # Folder definition file
 # This file is generated automatically by %s.
 #
-#
 # If you edit this file by hand, be sure that comment lines
 # will be washed out by wl-fldmgr.
 #
@@ -800,12 +799,13 @@ return value is diffs '(-new -unread -all)."
 			(condition-case nil
 			    (wl-fldmgr-add-completion-all-completions string)
 			  (error nil))))))))
-    (if (null flag)
-	(try-completion string table predicate)
-      (if (eq flag 'lambda)
-	  (eq t (try-completion string table predicate))
-	(if flag
-	    (all-completions string table predicate))))))
+    (cond
+     ((null flag)
+      (try-completion string table predicate))
+     ((eq flag 'lambda)
+      (eq t (try-completion string table predicate)))
+     (t
+      (all-completions string table predicate)))))
 
 (defun wl-fldmgr-add (&optional name)
   (interactive)
@@ -904,6 +904,7 @@ return value is diffs '(-new -unread -all)."
 	(let* ((tmp (wl-fldmgr-get-path-from-buffer))
 	       (old-folder (nth 4 tmp))
 	       new-folder)
+	  (unless old-folder (error "No folder"))
 	  (setq new-folder
 		(wl-fldmgr-read-string
 		 (wl-summary-read-folder old-folder "to rename" t t old-folder)))

@@ -2,6 +2,8 @@
 
 	* wl-fldmgr.el (wl-fldmgr-folders-header): Add more comment.
 	(wl-fldmgr-save-folders): Fix comment.
+	(wl-fldmgr-rename): Do nothing on the last line.
+	(wl-fldmgr-add-completion-subr): Rewrite conditional.
 
 	* wl-draft.el (wl-draft-send-mail-with-smtp): Catch quitting and
 	write sendlog.
