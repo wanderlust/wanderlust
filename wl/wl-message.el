@@ -32,7 +32,7 @@
 (require 'wl-vars)
 (require 'wl-highlight)
 (require 'elmo)
-(require 'elmo-mime) ; XXX should modify for tm.
+(require 'elmo-mime)
 
 (eval-when-compile
   (if wl-use-semi
@@ -252,57 +252,69 @@ If ARG is specified, narrow to ARGth page."
   "Scroll down current message by LINES.
 Returns non-nil if top of message."
   (interactive)
-  (if (buffer-live-p wl-message-buffer)
-      (let ((cur-buf (current-buffer))
-	    top)
-	(wl-message-select-buffer wl-message-buffer)
-	(move-to-window-line 0)
-	(if (and wl-break-pages
-		 (bobp)
-		 (not (save-restriction (widen) (bobp))))
-	    (progn
-	      (wl-message-narrow-to-page -1)
-	      (goto-char (point-max))
-	      (recenter))
-	  (if (not (bobp))
-	      (condition-case nil
-		  (scroll-down lines)
-		(error))
-	    (setq top t)))
-	(select-window (get-buffer-window cur-buf))
-	top)))
+  (let (cur-buf top real-top)
+    (unless (eq major-mode 'mime-view-mode)
+      (when (buffer-live-p wl-message-buffer)
+	(setq cur-buf (current-buffer))
+	(wl-message-select-buffer wl-message-buffer)))
+    (move-to-window-line 0)
+    (if (and wl-break-pages
+	     (bobp)
+	     (not (setq real-top (save-restriction (widen) (bobp)))))
+	(progn
+	  (wl-message-narrow-to-page -1)
+	  (goto-char (point-max))
+	  (recenter))
+      (if (not (bobp))
+	  (condition-case nil
+	      (scroll-down lines)
+	    (error))
+	(setq top t)))
+    (if real-top
+	(let ((f (assq (mime-preview-original-major-mode)
+		       mime-preview-over-to-previous-method-alist)))
+	  (if f (funcall (cdr f))))
+      (when cur-buf
+	(select-window (get-buffer-window cur-buf))))
+    top))
 
 (defun wl-message-next-page (&optional lines)
   "Scroll up current message by LINES.
 Returns non-nil if bottom of message."
   (interactive)
-  (if (buffer-live-p wl-message-buffer)
-      (let ((cur-buf (current-buffer))
-	    bottom)
-	(wl-message-select-buffer wl-message-buffer)
-	(move-to-window-line -1)
-	(if (save-excursion
-	      (end-of-line)
-	      (and (pos-visible-in-window-p)
-		   (eobp)))
-	    (if (or (null wl-break-pages)
-		    (save-excursion
-		      (save-restriction
-			(widen) (forward-line) (eobp))))
-		(setq bottom t)
-	      (wl-message-narrow-to-page 1)
-	      (setq bottom nil))
-	  (condition-case ()
-	      (static-if (boundp 'window-pixel-scroll-increment)
-		  ;; XEmacs 21.2.20 and later.
-		  (let (window-pixel-scroll-increment)
-		    (scroll-up lines))
-		(scroll-up lines))	      
-	    (end-of-buffer
-	     (goto-char (point-max))))
+  (let (cur-buf bottom)
+    (unless (eq major-mode 'mime-view-mode)
+      (when (buffer-live-p wl-message-buffer)
+	(setq cur-buf (current-buffer))
+	(wl-message-select-buffer wl-message-buffer)))
+    (move-to-window-line -1)
+    (if (save-excursion
+	  (end-of-line)
+	  (and (pos-visible-in-window-p)
+	       (eobp)))
+	(if (or (null wl-break-pages)
+		(save-excursion
+		  (save-restriction
+		    (widen) (forward-line) (eobp))))
+	    (setq bottom t)
+	  (wl-message-narrow-to-page 1)
 	  (setq bottom nil))
-	(select-window (get-buffer-window cur-buf))
-	bottom)))
+      (condition-case ()
+	  (static-if (boundp 'window-pixel-scroll-increment)
+	      ;; XEmacs 21.2.20 and later.
+	      (let (window-pixel-scroll-increment)
+		(scroll-up lines))
+	    (scroll-up lines))	      
+	(end-of-buffer
+	 (goto-char (point-max))))
+      (setq bottom nil))
+    (if (eobp)
+	(let ((f (assq (mime-preview-original-major-mode)
+		       mime-preview-over-to-next-method-alist)))
+	  (if f (funcall (cdr f))))
+      (when cur-buf
+	(select-window (get-buffer-window cur-buf))))
+    bottom))
 
 
 (defun wl-message-follow-current-entity (buffer)

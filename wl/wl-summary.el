@@ -4945,7 +4945,14 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	entity subject num)
     (if (null number)
 	(message "No message.")
-      (wl-summary-redisplay-internal nil nil 'force-reload)
+      (if (and (elmo-message-use-cache-p folder number)
+	       (eq (elmo-file-cache-status
+		    (elmo-file-cache-get
+		     (elmo-message-field folder number 'message-id)))
+		   'section))
+	  ;; Reload.
+	  (wl-summary-redisplay-internal nil nil 'force-reload)
+	(wl-summary-redisplay-internal folder number))
       (setq mes-buf wl-message-buffer)
       (wl-message-select-buffer mes-buf)
       (unless wl-draft-use-frame

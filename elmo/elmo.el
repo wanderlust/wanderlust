@@ -1294,7 +1294,7 @@ If update process is interrupted, return nil."
 	 (length (length overview))
 	 (i 0)
 	 result)
-    (if (elmo-condition-find-key condition "body")
+    (if (not (elmo-condition-in-msgdb-p condition))
 	(elmo-folder-search folder condition number-list)
       (while overview
 	(if (elmo-msgdb-search-internal condition (car overview)
