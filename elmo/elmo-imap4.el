@@ -1209,7 +1209,6 @@ If optional argument UNMARK is non-nil, unmark."
        (elmo-imap4-response-value
 	(elmo-imap4-send-command-wait session "capability")
 	'capability))
-      (debug)
       (when (eq (elmo-network-stream-type-symbol
 		 (elmo-network-session-stream-type-internal session))
 		'starttls)
