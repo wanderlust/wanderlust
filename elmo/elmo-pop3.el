@@ -33,25 +33,15 @@
 
 (require 'elmo-msgdb)
 (require 'elmo-net)
+(require 'sasl)
+
 (eval-when-compile
   (require 'elmo-util)
-  (condition-case nil
-      (progn
-	(require 'starttls)
-	(require 'sasl))
-    (error))
-  (defun-maybe md5 (a))
-  (defun-maybe starttls-negotiate (a))
-  (defun-maybe sasl-find-mechanism (mechanisms))
-  (defun-maybe sasl-make-client (mechanism name service server))
-  (defun-maybe sasl-mechanism-name (client))
-  (defun-maybe sasl-next-step (client step))
-  (defun-maybe sasl-step-data (step))
-  (defun-maybe sasl-step-set-data (step data)))
-(condition-case nil
-    (progn
-      (require 'sasl))
-  (error))
+  (defun-maybe md5 (a)))
+
+(eval-and-compile
+  (autoload 'starttls-open-stream "starttls")
+  (autoload 'starttls-negotiate "starttls"))
 
 (defvar elmo-pop3-use-uidl t
   "*If non-nil, use UIDL.")

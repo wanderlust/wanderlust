@@ -1,3 +1,10 @@
+2000-11-21  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-imap4.el (toplevel): Require 'ssl.
+	Add autoload 'starttls.
+	* elmo-pop3.el (toplevel): Ditto.
+	* elmo-nntp.el (toplevel): Ditto.
+
 2000-11-20  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-imap4.el (toplevel): defun at compile time.

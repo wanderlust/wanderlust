@@ -35,19 +35,16 @@
 
 (require 'elmo-msgdb)
 (eval-when-compile
-  (condition-case nil
-      (progn
-	(require 'starttls))
-    (error))
   (require 'elmo-cache)
-  (require 'elmo-util)
-  (defun-maybe starttls-negotiate (a)))
+  (require 'elmo-util))
 (require 'elmo-net)
 
 (eval-and-compile
   (luna-define-class elmo-nntp-session (elmo-network-session)
 		     (current-group))
-  (luna-define-internal-accessors 'elmo-nntp-session))
+  (luna-define-internal-accessors 'elmo-nntp-session)
+  (autoload 'starttls-open-stream "starttls")
+  (autoload 'starttls-negotiate "starttls"))
 
 ;;
 ;; internal variables

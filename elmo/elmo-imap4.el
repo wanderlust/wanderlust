@@ -45,30 +45,19 @@
 (require 'elmo-cache)
 (require 'elmo-net)
 (require 'utf7)
+(require 'sasl)
 
 ;;; Code:
-(condition-case nil
-    (progn
-      (require 'sasl))
-  (error))
 ;; silence byte compiler.
 (eval-when-compile
   (require 'cl)
-  (condition-case nil
-      (progn
-	(require 'starttls)
-	(require 'sasl))
-    (error))
-  (defun-maybe starttls-negotiate (a))
   (defun-maybe elmo-generic-list-folder-unread (spec number-alist mark-alist unread-marks))
   (defun-maybe elmo-generic-folder-diff (spec folder number-list))
-  (defsubst-maybe utf7-decode-string (string &optional imap) string)
-  (defun-maybe sasl-find-mechanism (mechanisms))
-  (defun-maybe sasl-make-client (mechanism name service server))
-  (defun-maybe sasl-mechanism-name (client))
-  (defun-maybe sasl-next-step (client step))
-  (defun-maybe sasl-step-data (step))
-  (defun-maybe sasl-step-set-data (step data)))
+  (defsubst-maybe utf7-decode-string (string &optional imap) string))
+
+(eval-and-compile
+  (autoload 'starttls-open-stream "starttls")
+  (autoload 'starttls-negotiate "starttls"))
 
 (defvar elmo-imap4-use-lock t
   "USE IMAP4 with locking process.")
