@@ -255,7 +255,7 @@
 					       (car split-mark-alist)
 					       unread-marks)))
 	    split-number-alist (cdr split-number-alist)
-	    split-mark-alist (cdr split-number-alist)
+	    split-mark-alist (cdr split-mark-alist)
 	    folders (cdr folders)))
     unreads))
 

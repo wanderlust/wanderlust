@@ -1,3 +1,7 @@
+2000-10-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-multi.el (elmo-multi-list-folder-unread): Fixed.
+
 2000-10-13  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-imap4.el (elmo-imap4-search-internal-primitive): Remove
