@@ -608,7 +608,7 @@ folders will be explained in detail in the next section.
 
 The part surrounded by @samp{@var{group name}@{} and @samp{@}} will
 become one folder group.  One folder group is treated as a directory
-which can bed opened and closed in folder mode. It is convenient for
+which can be opened and closed in folder mode. It is convenient for
 collecting some folders and putting them in order.
 
 Please note that @samp{@var{group name}@{} and @samp{@}} occupies one
