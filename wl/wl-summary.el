@@ -89,6 +89,7 @@
 (defvar wl-summary-buffer-thread-indent-set-alist  nil)
 (defvar wl-summary-buffer-view nil)
 (defvar wl-summary-buffer-message-modified nil)
+(defvar wl-summary-buffer-mark-modified nil)
 (defvar wl-summary-buffer-thread-modified nil)
 
 (defvar wl-summary-buffer-number-column nil)
@@ -153,6 +154,7 @@
 (make-variable-buffer-local 'wl-summary-buffer-thread-indent-set)
 (make-variable-buffer-local 'wl-summary-buffer-view)
 (make-variable-buffer-local 'wl-summary-buffer-message-modified)
+(make-variable-buffer-local 'wl-summary-buffer-mark-modified)
 (make-variable-buffer-local 'wl-summary-buffer-thread-modified)
 (make-variable-buffer-local 'wl-summary-buffer-number-column)
 (make-variable-buffer-local 'wl-summary-buffer-temp-mark-column)
@@ -817,7 +819,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (wl-mode-line-buffer-identification '(wl-summary-buffer-mode-line))
   (easy-menu-add wl-summary-mode-menu)
   (when wl-summary-lazy-highlight
-    (if wl-on-xemacs
+    (if wl-on-xemacs 
 	(progn
 	  (make-local-variable 'pre-idle-hook)
 	  (add-hook 'pre-idle-hook 'wl-highlight-summary-window))
@@ -1058,10 +1060,10 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   wl-summary-buffer-message-modified)
 (defun wl-summary-set-mark-modified ()
   (elmo-folder-set-mark-modified-internal
-   wl-summary-buffer-elmo-folder t))
+   wl-summary-buffer-elmo-folder t)
+  (setq wl-summary-buffer-mark-modified t))
 (defun wl-summary-mark-modified-p ()
-  (elmo-folder-mark-modified-internal
-   wl-summary-buffer-elmo-folder))
+  wl-summary-buffer-mark-modified)
 (defun wl-summary-set-thread-modified ()
   (setq wl-summary-buffer-thread-modified t))
 (defun wl-summary-thread-modified-p ()
@@ -1199,6 +1201,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (wl-summary-cleanup-temp-marks)
   (erase-buffer)
   (wl-summary-set-message-modified)
+  (wl-summary-set-mark-modified)
   (setq wl-thread-entity-hashtb (elmo-make-hash
 				 (* (length (elmo-msgdb-get-number-alist
 					     (wl-summary-buffer-msgdb))) 2)))
@@ -1649,7 +1652,7 @@ If ARG is non-nil, checking is omitted."
 	     (inhibit-read-only t)
 	     (buffer-read-only nil)
 	     (case-fold-search nil)
-	     msg mark new-mark)
+	     msg mark)
 	(message "Setting all msgs as read...")
 	(elmo-folder-mark-as-read folder
 				  (elmo-folder-list-unreads
@@ -1657,16 +1660,25 @@ If ARG is non-nil, checking is omitted."
 	(save-excursion
 	  (goto-char (point-min))
 	  (while (not (eobp))
-	    (setq msg (wl-summary-message-number)
-		  mark (wl-summary-persistent-mark)
-		  new-mark (or (elmo-message-mark folder msg) " "))
-	    (unless (string= mark new-mark)
+	    (setq msg (wl-summary-message-number))
+	    (setq mark (wl-summary-persistent-mark))
+	    (when (and (not (string= mark " "))
+		       (not (string= mark elmo-msgdb-important-mark))
+		       (not (string= mark elmo-msgdb-read-uncached-mark)))
 	      (delete-backward-char 1)
-	      ;; New mark and unread-uncached mark
-	      (insert new-mark)
+	      (if (or (not (elmo-message-use-cache-p folder msg))
+		      (string= mark elmo-msgdb-unread-cached-mark))
+		  (progn
+		    (insert " ")
+		    (elmo-msgdb-set-mark msgdb msg nil))
+		;; New mark and unread-uncached mark
+		(insert elmo-msgdb-read-uncached-mark)
+		(elmo-msgdb-set-mark
+		 msgdb msg elmo-msgdb-read-uncached-mark))
 	      (if wl-summary-highlight
 		  (wl-highlight-summary-current-line nil nil t)))
 	    (forward-line 1)))
+	(wl-summary-set-mark-modified)
 	(wl-folder-update-unread (wl-summary-buffer-folder-name) 0)
 	(setq wl-summary-buffer-unread-count 0)
 	(setq wl-summary-buffer-new-count    0)
@@ -1697,6 +1709,8 @@ If ARG is non-nil, checking is omitted."
 	  (elmo-message-field wl-summary-buffer-elmo-folder
 			      number
 			      'message-id)))
+	;; (elmo-msgdb-set-mark msgdb number new-mark)
+	;; (wl-summary-set-mark-modified)
 	(if wl-summary-highlight
 	    (wl-highlight-summary-current-line nil nil t))
 	(set-buffer-modified-p nil)))))
@@ -2006,6 +2020,7 @@ If ARG is non-nil, checking is omitted."
 			       "Making thread...done"
 			     "Inserting message...done")))
 		(wl-summary-set-message-modified)
+		(wl-summary-set-mark-modified)
 		(when (and sync-all (eq wl-summary-buffer-view 'thread))
 		  (elmo-kill-buffer wl-summary-search-buf-name)
 		  (message "Inserting message...")
@@ -2160,6 +2175,7 @@ If ARG is non-nil, checking is omitted."
 				    dels)
 ;;;	    (elmo-msgdb-save (wl-summary-buffer-folder-name) nil)
 	    (wl-summary-set-message-modified)
+	    (wl-summary-set-mark-modified)
 	    (wl-folder-set-folder-updated (wl-summary-buffer-folder-name)
 					  (list 0 0 0))
 ;;; for thread.
@@ -2270,6 +2286,7 @@ If ARG, without confirm."
 		   wl-summary-buffer-temp-mark-column
 		   wl-summary-buffer-persistent-mark-column
 		   wl-summary-buffer-message-modified
+		   wl-summary-buffer-mark-modified
 		   wl-summary-buffer-thread-modified
 		   wl-summary-buffer-number-list
 		   wl-summary-buffer-msgdb
@@ -2808,7 +2825,7 @@ If ARG, without confirm."
 	(wl-summary-update-modeline)
 	(wl-folder-update-unread
 	 (wl-summary-buffer-folder-name)
-	 (+ wl-summary-buffer-unread-count
+       	 (+ wl-summary-buffer-unread-count
 	    wl-summary-buffer-new-count)))
       (when visible
 	(unless (string= (wl-summary-persistent-mark) new-mark)
@@ -3025,6 +3042,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	;; end cOpy
 	(wl-summary-folder-info-update)
 	(wl-summary-set-message-modified)
+	(wl-summary-set-mark-modified)
 	(run-hooks 'wl-summary-exec-hook)
 	(unless (and wl-message-buffer
 		     (eq (wl-summary-message-number)
@@ -3873,6 +3891,7 @@ If ARG, exit virtual folder."
       (when (member mark (elmo-msgdb-unread-marks))
 	;; folder mark.
 	(elmo-folder-mark-as-read folder (list number) no-folder-mark))
+      (elmo-message-set-cached folder number t)
       (setq new-mark (elmo-message-mark folder number))
       (unless no-modeline-update
 	;; Update unread numbers.
@@ -3881,7 +3900,7 @@ If ARG, exit virtual folder."
 	(wl-summary-update-modeline)
 	(wl-folder-update-unread
 	 (wl-summary-buffer-folder-name)
-	 (+ wl-summary-buffer-unread-count
+       	 (+ wl-summary-buffer-unread-count
 	    wl-summary-buffer-new-count)))
       ;; set mark on buffer
       (when visible
@@ -3967,7 +3986,8 @@ If ARG, exit virtual folder."
 		(elmo-message-encache folder number 'read))
 	      (unless no-server-update
 		(elmo-msgdb-global-mark-set message-id
-					    elmo-msgdb-important-mark)))))
+					    elmo-msgdb-important-mark)))
+	    (wl-summary-set-mark-modified)))
       (if (and visible wl-summary-highlight)
 	  (wl-highlight-summary-current-line nil nil t))))
   (set-buffer-modified-p nil)
@@ -3987,7 +4007,7 @@ If ARG, exit virtual folder."
   "Return non-nil when summary line format is changed."
   (not (string=
 	wl-summary-buffer-line-format
-	(or (elmo-object-load (expand-file-name
+	(or (elmo-object-load (expand-file-name 
 			       wl-summary-line-format-file
 			       (elmo-folder-msgdb-path
 				wl-summary-buffer-elmo-folder))
@@ -4891,7 +4911,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
       (if downward
 	  (forward-line 1)
 	(forward-line -1))
-      (setq skip (or (string-match skip-tmark-regexp
+      (setq skip (or (string-match skip-tmark-regexp 
 				   (save-excursion
 				     (wl-summary-temp-mark)))
 		     (and skip-pmark-regexp

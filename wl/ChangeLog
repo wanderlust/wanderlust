@@ -1,16 +1,3 @@
-2002-09-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
-
-	* wl-summary.el (wl-summary-mark-as-read-all): Bind new-mark.
-	(wl-summary-mark-as-read): Don't call elmo-message-set-cached.
-
-	* wl-vars.el (toplevel): Require 'elmo-msgdb.
-
-2002-09-20  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-summary.el (wl-summary-buffer-mark-modified): Abolish
-	(All other related portions are changed).
-	(wl-summary-mark-as-read-all): Rewrite.
-
 2002-09-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-sync-marks): Set no-modeline argument of
