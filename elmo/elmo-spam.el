@@ -45,7 +45,8 @@
   :type '(choice (const :tag "none" nil)
 		 (const :tag "Bogofilter" bogofilter)
 		 (const :tag "Spamfilter" spamfilter)
-		 (const :tag "SpamAssassin" sa))
+		 (const :tag "SpamAssassin" sa)
+		 (const :tag "Bsfilter" bsfilter))
   :group 'elmo-spam)
 
 (eval-and-compile
