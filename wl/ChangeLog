@@ -1,3 +1,7 @@
+2000-10-18  SAITO Atsunori <sai@yedo.com>
+
+	* wl-summary.el (wl-summary-print-destination): Adjust line length.
+
 2000-10-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* tm-wl.el (toplevel): Use product-provide.

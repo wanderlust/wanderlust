@@ -3424,6 +3424,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
       (while (< c len)
 	(forward-char -1)
 	(setq c (+ c (char-width (following-char)))))
+      (and (> c len) (setq folder (concat " " folder)))
       (setq rs (point))
       (put-text-property rs re 'invisible t)
       (put-text-property rs re 'wl-summary-destination t)
