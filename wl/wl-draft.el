@@ -1620,7 +1620,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (setq wl-sent-message-queued nil)
     (setq wl-draft-buffer-file-name file-name)
     (setq wl-draft-config-exec-flag t)
-    (setq wl-draft-parent-folder parent-folder)
+    (setq wl-draft-parent-folder (or parent-folder ""))
     (or (eq this-command 'wl-folder-write-current-folder)
 	(setq wl-draft-buffer-cur-summary-buffer summary-buf))
     buf-name))
