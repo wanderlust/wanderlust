@@ -405,7 +405,7 @@ Return nil if STRING can not be formatted as a quoted.  See `elmo-imap4-quotable
   (if (elmo-imap4-quotable-p string)
       (list 'quoted string)))
 
-(defun elmo-imap4-literal-subr (string-or-buffer length)
+(defun elmo-imap4-literal-1 (string-or-buffer length)
   "Internal function for `elmo-imap4-literal' and `elmo-imap4-buffer-literal'.
 Return a list represents STRING-OR-BUFFER as a literal defined in rfc2060.
 STRING-OR-BUFFER must be an encoded string or a single-byte string or a single-byte buffer.
@@ -415,29 +415,29 @@ LENGTH must be the number of octets for STRING-OR-BUFFER."
 (defun elmo-imap4-literal (string)
   "Return a list represents STRING as a literal defined in rfc2060.
 STRING must be an encoded or a single-byte string."
-  (elmo-imap4-literal-subr string (length string)))
+  (elmo-imap4-literal-1 string (length string)))
 
 (defun elmo-imap4-buffer-literal (buffer)
   "Return a list represents BUFFER as a literal defined in rfc2060.
 BUFFER must be a single-byte buffer."
-  (elmo-imap4-literal-subr buffer (with-current-buffer buffer
-				    (buffer-size))))
+  (elmo-imap4-literal-1 buffer (with-current-buffer buffer
+				 (buffer-size))))
 
-(defun elmo-imap4-string-subr (string length)
+(defun elmo-imap4-string-1 (string length)
   "Internal function for `elmo-imap4-string' and `elmo-imap4-buffer-string'.
 Return a list represents STRING as a string defined in rfc2060.
 STRING must be an encoded or a single-byte string.
 LENGTH must be the number of octets for STRING."
   (or (elmo-imap4-quoted string)
-      (elmo-imap4-literal-subr string length)))
+      (elmo-imap4-literal-1 string length)))
 
 (defun elmo-imap4-string (string)
   "Return a list represents STRING as a string defined in rfc2060.
 STRING must be an encoded or a single-byte string."
   (let ((length (length string)))
     (if (< elmo-imap4-literal-threshold length)
-	(elmo-imap4-literal-subr string length)
-      (elmo-imap4-string-subr string length))))
+	(elmo-imap4-literal-1 string length)
+      (elmo-imap4-string-1 string length))))
 
 (defun elmo-imap4-buffer-string (buffer)
   "Return a list represents BUFFER as a string defined in rfc2060.
@@ -445,26 +445,26 @@ BUFFER must be a single-byte buffer."
   (let ((length (with-current-buffer buffer
 		  (buffer-size))))
     (if (< elmo-imap4-literal-threshold length)
-	(elmo-imap4-literal-subr buffer length)
-      (elmo-imap4-string-subr (with-current-buffer buffer
-				(buffer-string))
-			      length))))
+	(elmo-imap4-literal-1 buffer length)
+      (elmo-imap4-string-1 (with-current-buffer buffer
+			     (buffer-string))
+			   length))))
 
-(defun elmo-imap4-astring-subr (string length)
+(defun elmo-imap4-astring-1 (string length)
   "Internal function for `elmo-imap4-astring' and `elmo-imap4-buffer-astring'.
 Return a list represents STRING as an astring defined in rfc2060.
 STRING must be an encoded or a single-byte string.
 LENGTH must be the number of octets for STRING."
   (or (elmo-imap4-atom string)
-      (elmo-imap4-string-subr string length)))
+      (elmo-imap4-string-1 string length)))
 
 (defun elmo-imap4-astring (string)
   "Return a list represents STRING as an astring defined in rfc2060.
 STRING must be an encoded or a single-byte string."
   (let ((length (length string)))
     (if (< elmo-imap4-literal-threshold length)
-	(elmo-imap4-literal-subr string length)
-      (elmo-imap4-astring-subr string length))))
+	(elmo-imap4-literal-1 string length)
+      (elmo-imap4-astring-1 string length))))
 
 (defun elmo-imap4-buffer-astring (buffer)
   "Return a list represents BUFFER as an astring defined in rfc2060.
@@ -472,10 +472,10 @@ BUFFER must be a single-byte buffer."
   (let ((length (with-current-buffer buffer
 		  (buffer-size))))
     (if (< elmo-imap4-literal-threshold length)
-	(elmo-imap4-literal-subr buffer length)
-      (elmo-imap4-astring-subr (with-current-buffer buffer
-				 (buffer-string))
-			       length))))
+	(elmo-imap4-literal-1 buffer length)
+      (elmo-imap4-astring-1 (with-current-buffer buffer
+			      (buffer-string))
+			    length))))
 
 (defun elmo-imap4-nstring (string)
   "Return a list represents STRING as a nstring defined in rfc2060.
