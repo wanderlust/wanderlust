@@ -1078,10 +1078,10 @@ Don't cache if nil.")
 
 (luna-define-method elmo-folder-exists-p-plugged ((folder elmo-nntp-folder))
   (let ((session (elmo-nntp-get-session folder)))
-	  (elmo-nntp-send-command
-	   session
-	   (format "group %s"
-		   (elmo-nntp-folder-group-internal folder)))
+    (elmo-nntp-send-command
+     session
+     (format "group %s"
+	     (elmo-nntp-folder-group-internal folder)))
     (elmo-nntp-read-response session)))
 
 (defun elmo-nntp-retrieve-field (spec field from-msgs)
