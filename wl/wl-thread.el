@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/13 16:10:25 teranisi>
+;; Time-stamp: <00/04/28 09:49:12 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -550,6 +550,9 @@ the closed parent will be opened."
 	 'wl-thread-close-all "Closing all threads..." 
 	 (/ (* cur 100) len)))
       (setq entities (cdr entities))))
+  (elmo-display-progress 'wl-thread-close-all
+			 "Updating marks..."
+			 100)  
   (message "Closing all threads...done.")
   (goto-char (point-max)))
 

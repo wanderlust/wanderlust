@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-04-07 09:30:54 teranisi>
+;; Time-stamp: <00/04/28 11:53:33 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -1651,10 +1651,12 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 		  (setq all    (+ (or all 0) (or (nth 2 ret-val) 0)))
 		  (when mes
 		    (setq i (1+ i))
-		    (and (zerop (% i 10))
-			 (elmo-display-progress
-			  'wl-folder-insert-entity "Inserting group %s..."
-			  (/ (* i 100) len) (car entity))))
+		    (elmo-display-progress
+		     'wl-folder-insert-entity "Inserting group %s..."
+		     (/ (* i 100) len) (car entity)))
+		  ;(elmo-display-progress
+		  ; 'wl-folder-insert-entity "Inserting group %s..."
+		  ; 100 (car entity))
 		  (setq flist (cdr flist)))
 		(when mes (message "")))
 	      (save-excursion
@@ -2366,7 +2368,8 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	       (elmo-display-progress
 		'wl-folder-open-all "Opening all folders..."
 		(/ (* i 100) len))))))
-    (message "Opening all folders...done")
+    (elmo-display-progress
+     'wl-folder-open-all "Opening all folders..." 100)
     (set-buffer-modified-p nil)))
 
 (defun wl-folder-close-all ()
@@ -2476,6 +2479,9 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	    'wl-folder-update-access-group "Updating access group..."
 	    (/ (* i 100) len)))
       (setq unsubscribes (cdr unsubscribes)))
+    (elmo-display-progress
+     'wl-folder-update-access-group "Updating access group..."
+     100)
     ;;
     (if (or new-flist removes)
 	(setq diff t))

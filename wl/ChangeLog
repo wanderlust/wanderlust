@@ -1,3 +1,12 @@
+2000-04-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-folder-insert-entity): Remove progress gauge
+	when display is finished.
+	(wl-folder-open-all): Ditto.
+	(wl-folder-update-access-group): Ditto.
+	* wl-summary.el (wl-summary-delete-messages-on-buffer): Ditto.
+	* wl-thread.el (wl-thread-close-all): Ditto.
+
 2000-04-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-incorporate): Enclose

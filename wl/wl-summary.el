@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/04/26 14:03:56 teranisi>
+;; Time-stamp: <00/04/28 10:27:22 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -1898,6 +1898,8 @@ If optional argument is non-nil, checking is omitted."
 		'wl-summary-delete-messages-on-buffer "Deleting..."
 		(/ (* i 100) len))))
 	(setq msgs (cdr msgs)))
+      (elmo-display-progress
+       'wl-summary-delete-messages-on-buffer "Deleting..." 100)
       (if (eq wl-summary-buffer-view 'thread)
 	  (wl-thread-update-line-msgs (elmo-uniq-list update-list)))
       (wl-thread-cleanup-symbols msgs2)
