@@ -980,9 +980,7 @@ Optional argument ARG is repeart count."
 	    (if buf-win
 		(select-window buf-win)
 	      (set-buffer buf))
-	    (when (and wl-folder-buffer-cur-entity-id
-		       (not (eq wl-folder-buffer-last-visited-entity-id
-				wl-folder-buffer-cur-entity-id)))
+	    (when wl-folder-buffer-cur-entity-id
 	      (setq wl-folder-buffer-last-visited-entity-id wl-folder-buffer-cur-entity-id))
 	    (setq wl-folder-buffer-cur-entity-id entity-id)
 	    (setq wl-folder-buffer-cur-path
