@@ -212,11 +212,12 @@ Return number if put mark succeed"
       mark-list)))
 
 ;; Unset mark
-(defun wl-summary-unset-mark (&optional number interactive)
+(defun wl-summary-unset-mark (&optional number interactive force)
   "Unset temporary mark of the message with NUMBER.
 NUMBER is the message number to unset the mark.
 If not specified, the message on the cursor position is treated.
 Optional INTERACTIVE is non-nil when it should be called interactively.
+If optional FORCE is non-nil, remove scored mark too.
 Return number if put mark succeed"
   (interactive)
   (save-excursion
@@ -238,7 +239,7 @@ Return number if put mark succeed"
       (when visible
 	(unless (string= mark " ")
 	  (wl-summary-put-temp-mark
-	   (or (wl-summary-get-score-mark number)
+	   (or (unless force (wl-summary-get-score-mark number))
 	       " "))
 	  (setq action (assoc mark wl-summary-mark-action-list))
 	  (when wl-summary-highlight

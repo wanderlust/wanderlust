@@ -2251,6 +2251,8 @@ If ARG, without confirm."
 	       ((eq scan-type 'all)
 		(wl-summary-sync 'unset-cursor "all"))
 	       ((eq scan-type 'no-sync))
+	       ((eq scan-type 'rescan)
+		(wl-summary-rescan))
 	       ((or (eq scan-type 'force-update)
 		    (eq scan-type 'update))
 		(setq mes (wl-summary-sync-force-update
@@ -2648,13 +2650,14 @@ If ARG, exit virtual folder."
   "Erase all temp marks from buffer."
   (interactive)
   (when (or wl-summary-buffer-target-mark-list
-	    wl-summary-buffer-temp-mark-list)
+	    wl-summary-buffer-temp-mark-list
+	    wl-summary-scored)
     (save-excursion
       (goto-char (point-min))
       (unless no-msg
 	(message "Unmarking..."))
       (while (not (eobp))
-	(wl-summary-unset-mark)
+	(wl-summary-unset-mark nil nil t)
 	(forward-line 1))
       (unless no-msg
 	(message "Unmarking...done"))
@@ -3227,7 +3230,8 @@ Return non-nil if the mark is updated"
 		(wl-summary-delete-all-temp-marks 'no-msg)
 		(encode-coding-region
 		 (point-min) (point-max)
-		 (or (and wl-on-mule ; one in mcs-ltn1(apel<10.4) cannot take 2 arg.
+		 (or (and wl-on-mule
+			  ;; one in mcs-ltn1(apel<10.4) cannot take 2 arg.
 			  (mime-charset-to-coding-system charset 'LF))
 		     ;; Mule 2 doesn't have `*ctext*unix'.
 		     (mime-charset-to-coding-system charset)))
