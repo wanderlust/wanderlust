@@ -1051,7 +1051,11 @@ return value is diffs '(-new -unread -all)."
     (let ((inhibit-read-only t)
 	  entity flist indent opened)
       (when (and (wl-folder-buffer-group-p)
-		 (looking-at wl-folder-group-regexp))
+		 (looking-at wl-folder-group-regexp)
+		 (prog1
+		     (y-or-n-p (format "Sort subfolders of %s? "
+				       (wl-folder-get-entity-from-buffer)))
+		   (message nil)))
 	(setq indent (wl-match-buffer 1))
 	(setq opened (wl-match-buffer 2))
 	(setq entity (wl-folder-search-group-entity-by-name
