@@ -49,6 +49,9 @@
 (defvar modb-standard-msgid-filename "msgid"
   "Message number <=> Message-Id database.")
 
+(defvar modb-standard-digest-flags '(unread)
+  "Flags which are listed as `digest'.")
+
 (eval-and-compile
   (luna-define-class modb-standard (modb-generic)
 		     (number-list	; sorted list of message numbers.
@@ -342,24 +345,35 @@
    (modb-standard-number-list-internal msgdb)))
 
 (luna-define-method elmo-msgdb-list-flagged ((msgdb modb-standard) flag)
-  (let ((flags (case flag
-		 (digest
-		  (append '(unread) (elmo-get-global-flags t t)))
-		 (any
-		  (append '(unread answered) (elmo-get-global-flags t t)))))
-	entry matched)
+  (let (entry matched)
     (case flag
       (read
        (dolist (number (modb-standard-number-list-internal msgdb))
 	 (unless (memq 'unread (modb-standard-message-flags msgdb number))
 	   (setq matched (cons number matched)))))
-      ((digest any)
+      (uncached
+       (dolist (number (modb-standard-number-list-internal msgdb))
+	 (unless (memq 'cached (modb-standard-message-flags msgdb number))
+	   (setq matched (cons number matched)))))
+      (any
        (mapatoms
 	(lambda (atom)
 	  (setq entry (symbol-value atom))
-	  (when (modb-standard-match-flags flags (cdr entry))
+	  (unless (and (eq (length (cdr entry)) 1)
+		       (eq (car (cdr entry)) 'cached))
+	    ;; If there is a flag other than cached, then the message
+	    ;; matches to `any'.
 	    (setq matched (cons (car entry) matched))))
 	(modb-standard-flag-map msgdb)))
+      (digest
+       (let ((flags (append modb-standard-digest-flags
+			    (elmo-get-global-flags t t))))
+	 (mapatoms
+	  (lambda (atom)
+	    (setq entry (symbol-value atom))
+	    (when (modb-standard-match-flags flags (cdr entry))
+	      (setq matched (cons (car entry) matched))))
+	  (modb-standard-flag-map msgdb))))
       (t
        (mapatoms
 	(lambda (atom)

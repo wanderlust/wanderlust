@@ -167,7 +167,12 @@ REGEXP should have a grouping for namespace prefix.")
 (defconst elmo-imap4-flag-specs '((important "\\Flagged")
 				  (read "\\Seen")
 				  (unread "\\Seen" 'remove)
-				  (answered "\\Answered")))
+				  (answered "\\Answered")
+				  ;; draft-melnikov-imap-keywords-03.txt
+				  (forwarded "$Forwarded")
+				  (work "$Work")
+				  (personal "$Personal")
+				  (shouldreply "$ShouldReply")))
 
 ;; For debugging.
 (defvar elmo-imap4-debug nil
@@ -2561,6 +2566,17 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	 (elmo-imap4-mailbox
 	  (elmo-imap4-folder-mailbox-internal folder)))))
 
+(defun elmo-imap4-flags-to-imap (flags)
+  "Convert FLAGS to the IMAP flag string."
+  (let ((imap-flag (if (not (memq 'unread flags)) "\\Seen"))
+	(flags (delq 'cached (delq 'unread flags)))
+	spec)
+    (dolist (flag flags)
+      (setq imap-flag (concat imap-flag (if imap-flag " ")
+			      (or (car (cdr (assq flag elmo-imap4-flag-specs)))
+				  (capitalize (symbol-name flag))))))
+    imap-flag))
+
 (luna-define-method elmo-folder-append-buffer
   ((folder elmo-imap4-folder) &optional flags number)
   (if (elmo-folder-plugged-p folder)
@@ -2579,19 +2595,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		    (elmo-imap4-mailbox (elmo-imap4-folder-mailbox-internal
 					 folder))
 		    (if (and flags (elmo-folder-use-flag-p folder))
-			(concat " ("
-				(mapconcat
-				 'identity
-				 (append
-				  (and (memq 'important flags)
-				       '("\\Flagged"))
-				  (and (not (memq 'unread flags))
-				       '("\\Seen"))
-				  (and (memq 'answered flags)
-				       '("\\Answered")))
-				 " ")
-				;; XX KEYWORD flags
-				") ")
+			(concat " (" (elmo-imap4-flags-to-imap flags) ") ")
 		      " () ")
 		    (elmo-imap4-buffer-literal send-buffer))))
 	  (kill-buffer send-buffer))

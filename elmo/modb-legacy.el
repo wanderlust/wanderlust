@@ -54,7 +54,7 @@
   "Mark for answered and cached message.")
 
 (defconst modb-legacy-answered-uncached-mark "A"
-  "Mark for answered but cached message.")
+  "Mark for answered but uncached message.")
 
 (defconst modb-legacy-important-mark "$"
   "Mark for important message.")

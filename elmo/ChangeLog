@@ -1,5 +1,18 @@
 2004-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* modb-standard.el (modb-standard-digest-flags): New variable.
+	(elmo-msgdb-list-flagged): Use it for `digest'; Add `uncached';
+	Changed behavior of `any'.
+
+	* elmo-imap4.el (elmo-imap4-flag-specs): Added keyword flags
+	which are defined the Internet draft
+	(draft-melnikov-imap-keywords-03.txt).
+	(elmo-imap4-flags-to-imap): New function.
+	(elmo-folder-append-buffer): Use it.
+
+	* modb-legacy.el (modb-legacy-answered-uncached-mark): Fixed typo
+	in the docstring.
+
 	* utf7.el (utf7-fragment-encode): Don't use narrow-to-region to
 	avoid the bug of Emacs 21.3.
 
