@@ -24,10 +24,36 @@
 ;;
 
 ;;; Commentary:
-;;  Some codes are based on imap.el.
+;;
+;; acap.el is an elisp library providing an interface for talking to
+;; ACAP (RFC2244) servers. 
+;; 
+;; This is a transcript of short interactive session for demonstration
+;; purposes.
+
+;; (setq proc (acap-open "my.acap.server" "username" "CRAM-MD5"))
+;; => #<process ACAP>
+;;
+;; (acap-search proc "/addressbook/" '((RETURN ("*")))))
+;; => ((done-ok nil "search completed")
+;;     (modtime . "20010828091433000010")
+;;     (entry "user"
+;;	   ((("subdataset"
+;;	      ("."))
+;;	     ("modtime" "20010824004532000003")
+;;	     ("entry" "user"))))
+;;     (entry ""
+;;	   ((("modtime" "20010824004532000002")
+;;	     ("entry" "")
+;;	     ("dataset.owner" "anonymous")
+;;	     ("dataset.acl" ("$anyone	xrwia")))))
+;;
+;; (acap-close proc)
+;; => t
 
 ;;; History:
-;; 
+;;
+;; 27 Aug 2001 Created (Some codes are based on imap.el.).
 
 ;;; Code:
 

@@ -4,6 +4,7 @@
 	(acap-network-stream-open): Show "Connecting..." message.
 	(acap-parse-response): Fixed problem for BYE untagged response.
 	(acap-open): Changed argument (Use `acap-default-user' if user is nil).
+	(toplevel): Added tiny comments.
 
 2001-08-20  Tatsuya Kinoshita <tats@iris.ne.jp>
 
