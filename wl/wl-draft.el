@@ -1150,7 +1150,7 @@ If optional argument is non-nil, current draft buffer is killed"
 	    (if wl-draft-verbose-send
 		(message (concat (or wl-draft-verbose-msg
 				     mes-string "Sending...")
-				 "done."))))
+				 "done"))))
 	;; kill sending buffer, anyway.
 	(and (buffer-live-p sending-buffer)
 	     (kill-buffer sending-buffer))))))
@@ -1786,7 +1786,7 @@ If optional argument is non-nil, current draft buffer is killed"
 	  (wl-draft-write-sendlog 'ok 'queue nil wl-queue-folder message-id)
 	  (when wl-draft-verbose-send
 	    (setq wl-draft-verbose-msg "Queuing...")
-	    (message "Queuing...done.")))
+	    (message "Queuing...done")))
       (wl-draft-write-sendlog 'failed 'queue nil wl-queue-folder message-id)
       (error "Queuing failed"))))
 

@@ -476,7 +476,7 @@ Matched address lists are append to CL."
 			 (cadr (car addresses))
 			 wl-address-petname-hash)
       (setq addresses (cdr addresses))))
-  (message "Updating addresses...done."))
+  (message "Updating addresses...done"))
 
 
 (defun wl-address-expand-aliases (alist nest-count)

@@ -1016,7 +1016,7 @@ interpreted as cited text.)"
 		       'wl-highlight-summary "Highlighting..."
 		       percent)))
 		(forward-line 1))
-	      (message "Highlighting...done.")))))))
+	      (message "Highlighting...done")))))))
 
 (defun wl-highlight-headers ()
   (let ((beg (point-min))

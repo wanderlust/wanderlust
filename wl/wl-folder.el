@@ -1553,7 +1553,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 			   (wl-folder-create-newsgroups-hashtb
 			    entity nil)
 			   wl-folder-newsgroups-hashtb))))
-		(message "Fetching folder entries...done."))
+		(message "Fetching folder entries...done"))
 	      (wl-folder-insert-entity indent entity))))))))
 
 (defun wl-folder-insert-entity (indent entity &optional onlygroup)
@@ -1612,7 +1612,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 ;			   (wl-folder-create-newsgroups-hashtb
 ;			    entity nil)
 ;			   wl-folder-newsgroups-hashtb))))
-;		(message "fetching folder entries...done."))
+;		(message "fetching folder entries...done"))
 	      (insert indent "[" (if as-opened "-" "+") "]"
 		      (wl-folder-get-petname (car entity)))
 	      (setq group-name-end (point))
@@ -1977,7 +1977,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
       (setq wl-folder-newsgroups-hashtb
 	    (wl-folder-create-newsgroups-hashtb wl-folder-entity))
       (wl-folder-init-info-hashtb)))
-  (message "Initializing folder...done."))
+  (message "Initializing folder...done"))
 
 (defun wl-folder-get-realname (petname)
   (or (car
@@ -2363,7 +2363,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	(when (> len elmo-display-progress-threshold)
 	  (elmo-display-progress
 	   'wl-folder-open-all "Opening all folders..." 100))))
-    (message "Opening all folders...done.")
+    (message "Opening all folders...done")
     (set-buffer-modified-p nil)))
 
 (defun wl-folder-close-all ()
@@ -2509,7 +2509,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	(setq new-list (cdr new-list))))
     (if new-flist
 	(message "%d new folder(s)." (length new-flist))
-      (message "Updating access group...done."))
+      (message "Updating access group...done"))
     (wl-append new-flist subscribed-list)	;; new is first
     (run-hooks 'wl-folder-update-access-group-hook)
     (setcdr (cdr entity) (list new-flist new-unsubscribes))

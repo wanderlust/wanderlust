@@ -918,12 +918,12 @@ q	Goto folder mode.
 	 (cdar wl-summary-delayed-update)
 	 overview mark-alist nil t)
 	(setq wl-summary-delayed-update (cdr wl-summary-delayed-update))))
-    (message "Constructing summary structure...done.")
+    (message "Constructing summary structure...done")
     (set-buffer cur-buf)
     (when (eq wl-summary-buffer-view 'thread)
       (message "Inserting thread...")
       (wl-thread-insert-top)
-      (message "Inserting thread...done."))
+      (message "Inserting thread...done"))
     (when wl-use-scoring
       (setq wl-summary-scored nil)
       (wl-summary-score-headers nil msgdb
@@ -1743,7 +1743,7 @@ If optional argument is non-nil, checking is omitted."
 	(setq wl-summary-buffer-unread-count 0)
 	(setq wl-summary-buffer-new-count    0)
 	(wl-summary-update-modeline)
-	(message "Setting all msgs as read...done.")
+	(message "Setting all msgs as read...done")
 	(set-buffer-modified-p nil))))
 
 (defun wl-summary-delete-cache ()
@@ -1837,7 +1837,7 @@ If optional argument is non-nil, checking is omitted."
       (elmo-msgdb-set-mark-alist msgdb mark-alist)
       (wl-summary-count-unread mark-alist)
       (wl-summary-update-modeline)
-      (message "Resuming cache status...done.")
+      (message "Resuming cache status...done")
       (set-buffer-modified-p nil))))
 
 (defun wl-summary-resume-marks-and-highlight ()
@@ -1866,7 +1866,7 @@ If optional argument is non-nil, checking is omitted."
 	   'wl-summary-resume-marks-and-highlight "Resuming all marks..."
 	   percent))
 	(forward-line 1)))
-    (message "Resuming all marks...done.")))
+    (message "Resuming all marks...done")))
 
 (defun wl-summary-resume-marks ()
   (let* ((msgdb wl-summary-buffer-msgdb)
@@ -1899,7 +1899,7 @@ If optional argument is non-nil, checking is omitted."
 	   'wl-summary-resume-marks "Resuming all marks..."
 	   percent))
 	(setq mark-alist (cdr mark-alist)))
-      (message "Resuming all marks...done."))))
+      (message "Resuming all marks...done"))))
 
 (defun wl-summary-delete-messages-on-buffer (msgs &optional deleting-info)
   (interactive)
@@ -2191,7 +2191,7 @@ If optional argument is non-nil, checking is omitted."
       (setq diff (elmo-list-diff in-folder in-db)))
     (setq initial-append-list (car diff))
     (setq delete-list (cadr diff))
-    (message "Checking folder diff...done.")
+    (message "Checking folder diff...done")
     ;; Don't delete important-marked msgs other than 'internal.
     (unless (eq (elmo-folder-get-type folder) 'internal)
       (setq delete-list
@@ -2218,7 +2218,7 @@ If optional argument is non-nil, checking is omitted."
 	(elmo-msgdb-delete-msgs folder delete-list msgdb t) ; reserve cache.
 	;;(set-buffer cur-buf)
 	(wl-summary-delete-messages-on-buffer delete-list "Deleting...")
-	(message "Deleting...done."))
+	(message "Deleting...done"))
       ;;(set-buffer cur-buf)
       ;; Change "New" marks to "Uncached Unread" marks.
       (wl-summary-set-status-marks mark-alist
@@ -2298,7 +2298,7 @@ If optional argument is non-nil, checking is omitted."
 		       update-top-list)
 	      (wl-thread-update-indent-string-thread
 	       (elmo-uniq-list update-top-list)))
-	    (message "Updating thread...done.")
+	    (message "Updating thread...done")
 	    ;;(set-buffer cur-buf)
 	    ))
       (wl-summary-set-message-modified)
@@ -2309,7 +2309,7 @@ If optional argument is non-nil, checking is omitted."
 	(message "Inserting thread...")
 	(setq wl-thread-entity-cur 0)
 	(wl-thread-insert-top)
-	(message "Inserting thread...done."))
+	(message "Inserting thread...done"))
       (if elmo-use-database
 	  (elmo-database-close))
       (run-hooks 'wl-summary-sync-updated-hook)
@@ -2438,7 +2438,7 @@ If optional argument is non-nil, checking is omitted."
 	      (elmo-display-progress
 	       'wl-summary-highlight-msgs "Highlighting..."
 	       (/ (* i 100) len)))))
-      (message "Highlighting...done."))))
+      (message "Highlighting...done"))))
 
 (defun wl-summary-message-number ()
   (save-excursion
@@ -2484,7 +2484,7 @@ If optional argument is non-nil, checking is omitted."
 	  (elmo-msgdb-delete-msgs wl-summary-buffer-folder-name
 				  dels wl-summary-buffer-msgdb t)
 	  (wl-summary-delete-messages-on-buffer dels)
-	  (message "Resuming summary status...done."))
+	  (message "Resuming summary status...done"))
 	;; delete resume-file
 	(elmo-dop-append-list-save wl-summary-buffer-folder-name nil t)
 	(when append-list
@@ -2523,7 +2523,7 @@ If optional argument is non-nil, checking is omitted."
 		  (buffer-read-only nil))
 	      (erase-buffer))
 	    ;;	  (if wl-summary-cache-use (wl-summary-save-view-cache))
-	    (message "Deleting...done.")
+	    (message "Deleting...done")
 	    t)
 	nil))))
 
@@ -3914,7 +3914,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
     (while (not (eobp))
       (wl-summary-unmark)
       (forward-line))
-    (message "Unmarking...done.")
+    (message "Unmarking...done")
     (setq wl-summary-buffer-target-mark-list nil)
     (setq wl-summary-buffer-delete-list nil)
     (setq wl-summary-buffer-refile-list nil)
@@ -5058,11 +5058,11 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	     nil)
 	    ((and msg-id (wl-summary-jump-to-msg-by-message-id msg-id))
 	     (wl-summary-redisplay)
-	     (message "Searching parent message...done.")
+	     (message "Searching parent message...done")
 	     t)
 	    ((and msg-num (wl-summary-jump-to-msg msg-num))
 	     (wl-summary-redisplay)
-	     (message "Searching parent message...done.")
+	     (message "Searching parent message...done")
 	     t)
 	    (t ; failed.
 	     (message "Parent message was not found.")
@@ -5918,7 +5918,7 @@ Reply to author if invoked with argument."
 					    (+ wl-summary-buffer-unread-count
 					       wl-summary-buffer-new-count)
 					    sum))
-	(message "Dropping...done."))))
+	(message "Dropping...done"))))
 
 (defun wl-summary-default-get-next-msg (msg)
   (let (next)

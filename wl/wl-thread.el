@@ -114,7 +114,7 @@
       (elmo-set-hash-val (format "#%d" (car (car entities))) (car entities)
 			 wl-thread-entity-hashtb)
       (setq entities (cdr entities)))
-    (message "Resuming thread structure...done.")))
+    (message "Resuming thread structure...done")))
 
 (defun wl-thread-save-entity (dir)
   (wl-thread-save-entities dir)
@@ -565,7 +565,7 @@ the closed parent will be opened."
 	     'wl-thread-close-all "Closing all threads..."
 	     (/ (* cur 100) len))))
       (setq entities (cdr entities))))
-  (message "Closing all threads...done.")
+  (message "Closing all threads...done")
   (goto-char (point-max)))
 
 (defun wl-thread-open-all ()
@@ -587,7 +587,7 @@ the closed parent will be opened."
 	     'wl-thread-open-all "Opening all threads..."
 	     (/ (* cur 100) len))))
       (setq entities (cdr entities))))
-  (message "Opening all threads...done.")
+  (message "Opening all threads...done")
   (goto-char (point-max)))
 
 (defun wl-thread-open-all-unread ()

@@ -617,7 +617,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (wl-folder-info-save)
   (and (featurep 'wl-fldmgr) (wl-fldmgr-exit))
   (wl-crosspost-alist-save)
-  (message "Saving summary and folder status...done."))
+  (message "Saving summary and folder status...done"))
 
 (defun wl-exit ()
   (interactive)
@@ -682,7 +682,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	    (progn
 	      (message "Checking environment...")
 	      (wl-check-environment arg)
-	      (message "Checking environment...done.")))
+	      (message "Checking environment...done")))
 	(if demo-buf
 	    (kill-buffer demo-buf))
 	(if succeed

@@ -1273,7 +1273,7 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 					       mark-alist)
 					      (length num-db)))
 	  (wl-summary-update-modeline)))
-      (message "Updating score...done.")
+      (message "Updating score...done")
       dels)))
 
 (defun wl-score-edit-done ()

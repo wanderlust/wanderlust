@@ -1,3 +1,25 @@
+2000-10-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl.el (wl-save-status, wl-init): Remove last period in
+	"...done." message.
+	* tm-wl.el (wl-summary-burst): Ditto.
+	* wl-summary.el (wl-summary-rescan, wl-summary-mark-as-read-all,
+	wl-summary-resume-cache-status,
+	wl-summary-resume-marks-and-highlight, wl-summary-resume-marks,
+	wl-summary-sync-update3, wl-summary-highlight-msgs,
+	wl-summary-flush-pending-append-operations,
+	wl-summary-delete-all-msgs, wl-summary-delete-all-temp-marks,
+	wl-summary-jump-to-parent-message, wl-summary-drop-unsync): Ditto.
+	* wl-thread.el (wl-thread-resume-entity, wl-thread-close-all,
+	wl-thread-open-all): Ditto.
+	* wl-score.el (wl-summary-score-update-all-lines): Ditto.
+	* wl-mime.el (wl-summary-burst): Ditto.
+	* wl-highlight.el (wl-highlight-summary): Ditto.
+	* wl-folder.el (wl-folder-update-newest, wl-local-folder-init,
+	wl-folder-open-all, wl-folder-update-access-group): Ditto.
+	* wl-draft.el (wl-draft-send, wl-draft-queue-append): Ditto.
+	* wl-address.el (wl-local-address-init): Ditto.
+
 2000-10-19  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-e21.el (wl-biff-init-icons): Use `propertize' instead of

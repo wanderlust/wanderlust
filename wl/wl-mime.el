@@ -242,7 +242,7 @@ By setting following-method as yank-content."
       (when children
 	(message "Bursting...")
 	(wl-summary-burst-subr children target 0)
-	(message "Bursting...done."))
+	(message "Bursting...done"))
       (if (elmo-folder-plugged-p target)
 	  (elmo-commit target)))
     (wl-summary-sync-update3)))
