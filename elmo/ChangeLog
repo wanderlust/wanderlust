@@ -1,3 +1,13 @@
+2000-09-11  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-cache.el, elmo-database.el, elmo-date.el,
+	elmo-dop.el, elmo-filter.el, elmo-imap4.el, elmo-internal.el,
+	elmo-localdir.el, elmo-localnews.el, elmo-maildir.el, elmo-msgdb.el,
+	elmo-multi.el, elmo-nntp.el, elmo-pipe.el, elmo-pop3.el,
+	elmo-util.el, elmo-vars.el, elmo2.el, mmelmo-1.el, mmelmo-2.el,
+	mmelmo-imap4-1.el, mmelmo-imap4-2.el, mmelmo-imap4.el, mmelmo.el
+	(toplevel): Deleted time-stamp line.
+
 2000-06-03  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* mmelmo.el (mmelmo-get-original-buffer): Move `save-excursion'
