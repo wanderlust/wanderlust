@@ -100,6 +100,7 @@ If nil, default acap port is used."
   "A candidate for `wl-folder-init-function'."
   (let ((service (wl-acap-find-acap-service))
 	proc entries settings folder-top type)
+    (unless (car service) (error "No ACAP service found."))
     (setq proc (acap-open (car service)
 			  wl-acap-user
 			  (upcase (symbol-name wl-acap-authenticate-type))

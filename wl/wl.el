@@ -691,7 +691,9 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 
 (defun wl-check-environment (no-check-folder)
   (unless wl-from
-    (error "Please set `wl-from'"))
+    (setq wl-from
+	  (concat (wl-address-quote-specials (user-full-name))
+		  " <" user-mail-address ">")))
   ;; Message-ID
   (unless (string-match "[^.]\\.[^.]" (or wl-message-id-domain
 					  (if wl-local-domain

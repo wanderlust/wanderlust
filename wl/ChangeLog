@@ -1,3 +1,17 @@
+2001-09-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-check-environment): If `wl-from' is nil, use default value.
+
+	* wl-vars.el (wl-from): Set default value as nil.
+	(wl-organization): Sed default value as ORGANIZATION environment
+	variable.
+
+	* wl-draft.el (wl-smtp-extension-bind): Check value of
+	wl-smtp-connection-type.
+
+	* wl-acap.el (wl-acap-init): If ACAP service is not found, cause an
+	error.
+
 2001-09-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* Version number is increased to 2.7.4.
