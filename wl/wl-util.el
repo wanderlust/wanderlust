@@ -747,20 +747,24 @@ that `read' can handle, whenever this is possible."
       (start-itimer wl-biff-timer-name 'wl-biff-check-folders
 		    wl-biff-check-interval wl-biff-check-interval))))
 
- ((condition-case nil (require 'timer) (error nil));; FSFmacs 19+
+ ((and (condition-case nil (require 'timer) (error nil));; FSFmacs 19+
+       (fboundp 'timer-activate))
 
   (defun wl-biff-stop ()
-    (put 'wl-biff 'timer nil))
+    (when (get 'wl-biff 'timer)
+      (cancel-timer (get 'wl-biff 'timer))))
 
   (defun wl-biff-start ()
     (require 'timer)
     (when wl-biff-check-folder-list
       (wl-biff-check-folders)
-      (put 'wl-biff 'timer (run-at-time
-			    (timer-next-integral-multiple-of-time
-			     (current-time) wl-biff-check-interval)
-			    wl-biff-check-interval
-			    'wl-biff-event-handler))))
+      (if (get 'wl-biff 'timer)
+	  (timer-activate (get 'wl-biff 'timer))
+	(put 'wl-biff 'timer (run-at-time
+			      (timer-next-integral-multiple-of-time
+			       (current-time) wl-biff-check-interval)
+			      wl-biff-check-interval
+			      'wl-biff-event-handler)))))
 
   (defun-maybe timer-next-integral-multiple-of-time (time secs)
     "Yield the next value after TIME that is an integral multiple of SECS.
