@@ -1,3 +1,8 @@
+2002-11-14  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-get-message-id-from-buffer): Added
+	workaround for invalid message-id.
+
 2002-11-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-pop3.el (elmo-pop3-get-session): If if-exists is 'any-exists,
