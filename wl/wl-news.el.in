@@ -188,6 +188,9 @@
 
 (defun wl-news-exit ()
   (interactive)
+  (unless (y-or-n-p "Do you want to look at this message again? ")
+    (wl-news-previous-version-save
+     (product-version (product-find 'wl-version))))
   (kill-buffer (current-buffer))
   (if wl-news-winconf
       (set-window-configuration wl-news-winconf)))

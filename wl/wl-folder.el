@@ -116,6 +116,8 @@
     ["Write a message" wl-draft t]
     ["Write for current folder" wl-folder-write-current-folder t]
     "----"
+    ["Wanderlust NEWS" wl-news t]
+    "----"
     ["Toggle Plug Status" wl-toggle-plugged t]
     ["Change Plug Status" wl-plugged-change t]
     "----"

@@ -1,5 +1,10 @@
 2002-12-21  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-news.el.in (wl-news-exit): Update previous version.
+	* wl.el (wl-folder-mode-menu-spec): Add 'Wanderlust NEWS'.
+
+2002-12-21  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-news.el.in (wl-news): Add `delete-other-windows'.
 
 2002-12-21  Kenichi OKADA  <okada@opaopa.org>
