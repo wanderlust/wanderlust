@@ -1,3 +1,8 @@
+2000-05-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-mode-map): Added key binding for
+	`wl-summary-set-parent' (ts).
+
 2000-05-10  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
 
 	* wl-summary.el (wl-summary-insert-thread-entity): Search same
