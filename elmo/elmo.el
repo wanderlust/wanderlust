@@ -46,7 +46,8 @@
 
 (defcustom elmo-message-fetch-threshold 30000
   "Fetch threshold."
-  :type 'integer
+  :type '(choice (integer :tag "Threshold (bytes)")
+		 (const :tag "No limitation" nil))
   :group 'elmo)
 
 (defcustom elmo-message-fetch-confirm t

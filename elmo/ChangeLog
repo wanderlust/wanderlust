@@ -1,3 +1,7 @@
+2004-07-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo.el (elmo-message-fetch-threshold): Add nil to its range.
+
 2004-06-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-version.el (elmo-version): Up to 2.11.30.
