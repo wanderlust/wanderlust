@@ -1,5 +1,10 @@
 2002-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-split.el: New file.
+
+	* elmo-imap4.el (elmo-folder-append-buffer): Set flag as empty
+	explicitly.
+
 	* elmo-version.el (elmo-version): Up to 2.9.14.
 
 	* elmo-util.el (elmo-expand-newtext): New function (renamed from

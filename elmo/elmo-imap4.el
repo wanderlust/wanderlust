@@ -2487,7 +2487,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		    "append "
 		    (elmo-imap4-mailbox (elmo-imap4-folder-mailbox-internal
 					 folder))
-		    (if unread " " " (\\Seen) ")
+		    (if unread " () " " (\\Seen) ")
 		    (elmo-imap4-buffer-literal send-buffer))))
 	  (kill-buffer send-buffer))
 	result)
