@@ -577,10 +577,9 @@ And use Addrbook for get user name."
 	  (string-match wl-summary-showto-folder-regexp
 			wl-summary-buffer-folder-name)
 	  (wl-address-user-mail-address-p fromaddr)
-	  (cond ((setq dest (elmo-msgdb-overview-entity-get-to entity))
+	  (cond ((setq dest (elmo-message-entity-field entity 'to))
 		 (concat "To:" (eword-decode-string (wl-addrbook-get-names dest))))
-		((setq dest (elmo-msgdb-overview-entity-get-extra-field
-			     entity "newsgroups"))
+		((setq dest (elmo-message-entity-field entity 'newsgroups))
 		 (concat "Ng:" dest))))
      (wl-addrbook-nickname-get fromaddr)
      from)))

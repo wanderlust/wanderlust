@@ -1,3 +1,8 @@
+2003-09-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-addrbook.el (wl-summary-addrbook-from): Use
+	elmo-message-entity-field.
+
 2003-07-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* ptexinfmt.el: @verb, @tie, @/ support.
