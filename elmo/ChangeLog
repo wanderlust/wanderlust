@@ -1,3 +1,8 @@
+2002-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-expand-newtext): New function (renamed from
+	wl-expand-newtext).
+
 2002-06-10  Kenichi Sato <ksato@sonycom.com>
 
 	* elmo-msgdb.el (elmo-msgdb-get-message-id-from-buffer): Fix for

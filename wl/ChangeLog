@@ -1,3 +1,11 @@
+2002-07-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl): Don't set wl-init as nil when error occured while
+	auto-checking folders.
+
+	* wl-util.el (wl-expand-newtext): Re-define as an alias for
+	`elmo-expand-newtext'.
+
 2002-07-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-folder.el (wl-folder-goto-folder-subr): Keep value of

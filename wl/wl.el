@@ -829,7 +829,6 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
       (error
        (if (buffer-live-p demo-buf)
 	   (kill-buffer demo-buf))
-       (setq wl-init nil)
        (signal (car obj)(cdr obj)))
       (quit))
     (if (buffer-live-p demo-buf)
