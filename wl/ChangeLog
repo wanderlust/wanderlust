@@ -1,3 +1,23 @@
+2001-01-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-score.el (wl-score-guess-like-gnus): Abolished.
+	(wl-score-get-score-files): Don't use `wl-score-guess-like-gnus'.
+
+2001-01-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-xmas.el (wl-read-event-char): Move from wl-util.el.
+
+	* wl-mule.el (wl-read-event-char): Ditto.
+
+	* wl-e21.el (wl-read-event-char): Ditto.
+
+	* wl-nemacs.el (wl-read-event-char): Ditto.
+	(read-event): Removed.
+
+	* wl-util.el (toplevel): Removed dummy definition of
+	`read-event'.
+	(wl-read-event-char, wl-xmas-read-event-char): Removed.
+
 2001-01-10  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-nemacs.el (elmo-archive-call-process): Moved to

@@ -288,7 +288,7 @@
 	 ("To" . "boss@company.jp")
 	 ("Subject" . "Report")
 	 (top . "Sir, here is my report\n")		;; insert in top.
-;;	 (file-bottom . "~/work/report.txt")	;; insert file in bottom
+;;	 (bottom-file . "~/work/report.txt")	;; insert file in bottom
 	 )
 	))
 ;; Change headers in draft sending time.

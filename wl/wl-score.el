@@ -337,21 +337,6 @@ Set `wl-score-cache' nil."
     (setq wl-current-score-file file)
     (setq wl-score-alist alist)))
 
-(defun wl-score-guess-like-gnus (folder)
-  (let* (score-list
-         (spec (elmo-folder-get-spec folder))
-         (method (symbol-name (car spec)))
-         (fld-name (elmo-string (car (cdr spec)))))
-    (when (stringp fld-name)
-      (while (string-match "[\\/:,;*?\"<>|]" fld-name)
-        (setq fld-name (replace-match "." t nil fld-name)))
-      (setq score-list (list (concat method "@" fld-name ".SCORE")))
-      (while (string-match "[\\/.][^\\/.]*$" fld-name)
-        (setq fld-name (substring fld-name 0 (match-beginning 0)))
-        (wl-append score-list (list (concat method "@" fld-name
-                                            ".all.SCORE"))))
-      score-list)))
-
 (defun wl-score-get-score-files (score-alist folder)
   (let ((files (wl-get-assoc-list-value
 		score-alist folder
@@ -362,8 +347,6 @@ Set `wl-score-cache' nil."
        fl
        (cond ((functionp f)
 	      (funcall f  folder))
-	     ((and (symbolp f) (eq f 'guess))
-              (wl-score-guess-like-gnus folder))
 	     (t
 	      (list f)))))
     fl))

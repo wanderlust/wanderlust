@@ -1,4 +1,26 @@
+2001-01-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-arrival-filter): Check process-buffer.
+	(Based on the report by AMAKAWA Shuhei <sa264@cam.ac.uk>)
+
+	* elmo-pop3.el (elmo-pop3-msgdb-create-as-numlist): Sort msgdb by date.
+	(Pointed out by Mikiya Tani <m-tani@hml.cl.nec.co.jp>)
+
+2001-01-13 Takaaki MORIYAMA <taka@airlab.cs.ritsumei.ac.jp>
+
+	* elmo2.el (elmo-make-folder-numbers-list): Fixed problem
+	when elmo-mark-as-read is called with second argument nil.
+
 2001-01-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pipe.el (elmo-pipe-spec-src, elmo-pipe-spec-dst):
+	Moved to elmo-util.el.
+
+	* elmo-util.el (elmo-pipe-spec-src, elmo-pipe-spec-dst):
+	Moved from elmo-pipe.el
+
+	* elmo-archive.el (elmo-archive-call-process): Enclose with
+	static-if.
 
 	* elmo-imap4.el (elmo-imap4-read-msg): Use "BODY[]" instead of
 	"RFC822" (because RFC822.PEEK is obsolete).

@@ -532,10 +532,11 @@
 	  (setq loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 			    (elmo-msgdb-location-load
 			     (elmo-msgdb-expand-path spec)))))
-      (elmo-pop3-msgdb-create-by-header process numlist
-					new-mark already-mark
-					seen-mark seen-list
-					loc-alist))))
+      (elmo-msgdb-sort-by-date
+       (elmo-pop3-msgdb-create-by-header process numlist
+					 new-mark already-mark
+					 seen-mark seen-list
+					 loc-alist)))))
 
 (defun elmo-pop3-uidl-to-number (uidl)
   (string-to-number (elmo-get-hash-val uidl
