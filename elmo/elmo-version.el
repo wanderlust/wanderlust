@@ -34,8 +34,13 @@
 (product-provide 'elmo-version
   (product-define "ELMO" nil '(2 3 0)))
 
+;; set version-string
+(if (fboundp 'product-version-as-string)
+    (product-version-as-string 'elmo-version)
+  (product-string-1 'elmo-version))
+
 (defun elmo-version ()
-  "Print ELMO version."
+  "Return ELMO version."
   (product-string-1 'elmo-version))
 
 
@@ -45,9 +50,7 @@
  'elmo-appname
  "use (product-name (product-find 'elmo-version)) insteaed.")
 
-(defconst elmo-version
-  (progn (product-string-1 'elmo-version) ; product-set-version-string
-	 (product-version-string (product-find 'elmo-version))))
+(defconst elmo-version (product-version-string (product-find 'elmo-version)))
 (make-obsolete-variable
  'elmo-version
  "use (product-version-string (product-find 'elmo-version)) instead.")

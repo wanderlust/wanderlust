@@ -1,3 +1,8 @@
+2000-10-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-version.el (toplevel): Use product-version-as-string for set
+	verstion-string, if defined.
+
 2000-10-11  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-util.el: Doc fixes.
