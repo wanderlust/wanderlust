@@ -81,12 +81,19 @@
 ;;; ELMO Local directory folder
 (eval-and-compile
   (luna-define-class elmo-archive-folder (elmo-folder)
-		     (archive-name archive-type archive-prefix))
+		     (archive-name archive-type archive-prefix dir-name))
   (luna-define-internal-accessors 'elmo-archive-folder))
+
+(luna-define-generic elmo-archive-folder-path (folder)
+  "Return local directory path of the FOLDER.")
+
+(luna-define-method elmo-archive-folder-path ((folder elmo-archive-folder))
+  elmo-archive-folder-path)
 
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-archive-folder)
 					    name)
+  (elmo-archive-folder-set-dir-name-internal folder name)
   (when (string-match
 	 "^\\([^;]*\\);?\\([^;]*\\);?\\([^;]*\\)$"
 	 name)
@@ -485,7 +492,9 @@ TYPE specifies the archiver's symbol."
 		       "" (file-name-nondirectory path)))
 	     (flist (and (file-directory-p dir)
 			 (directory-files dir nil
-					  (concat "^" name "[^A-z][^A-z]")
+					  (if (> (length name) 0)
+					      (concat "^" name "[^A-z][^A-z]")
+					    name)
 					  nil)))
 	     (regexp (format "^\\(.*\\)\\(%s\\)$"
 			     (mapconcat
@@ -511,10 +520,20 @@ TYPE specifies the archiver's symbol."
 		       suffix prefix)))
 	  flist)))
     (elmo-mapcar-list-of-list
-     (function (lambda (x) (concat (elmo-folder-prefix-internal folder) x)))
+     (function (lambda (x)
+		 (if (file-exists-p
+		      (expand-file-name 
+		       (concat elmo-archive-basename
+			       (elmo-archive-get-suffix
+				(elmo-archive-folder-archive-type-internal
+				 folder)))
+		       (expand-file-name
+			x
+			(elmo-archive-folder-path folder))))
+		     (concat (elmo-folder-prefix-internal folder) x))))
      (elmo-list-subdirectories
-      (elmo-archive-get-archive-directory folder)
-      ""
+      (elmo-archive-folder-path folder)
+      (or (elmo-archive-folder-dir-name-internal folder) "")
       one-level))))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-archive-folder)
