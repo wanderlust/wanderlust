@@ -895,8 +895,8 @@ If optional argument NUMBER is specified, unmark message specified by NUMBER."
   (interactive)
   (wl-summary-target-mark-region (point-min) (point-max))
   (setq wl-summary-buffer-target-mark-list
-	(mapcar 'car
-		(elmo-msgdb-get-number-alist (wl-summary-buffer-msgdb)))))
+	(elmo-folder-list-messages wl-summary-buffer-elmo-folder
+				   nil 'in-msgdb)))
 
 (defun wl-summary-delete-all-mark (mark)
   (goto-char (point-min))
