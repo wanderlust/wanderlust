@@ -10,7 +10,7 @@
 	(wl-message-buffer-prefetch-p): Changed to enable
 	`wl-message-buffer-prefetch-folder-list'.
 
-	* wl-summary.el (wl-summary-prefetch-region): Added argument
+	* wl-summary.el (wl-summary-target-mark-prefetch): Added argument
 	`ignore-cache'.
 
 2001-11-23  Kenichi OKADA  <okada@opaopa.org>
