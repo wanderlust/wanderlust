@@ -1309,10 +1309,19 @@ Example:
 @table @code
 @item elmo-shimbun-update-overview-folder-list
 @vindex elmo-shimbun-update-overview-folder-list
-The initial setting is @code{nil}. You can specify a list of regular
-expressions of shimbun folder names. The overview of matched shimbun
-folder is updated when messages are fetched.
-You should @kbd{s rescan} after fetching to update summary.
+The initial setting is @code{all}. Specify a set of folders to update
+overview when messages are fetched. Specify @code{all} to update
+overview in all shimbun folders. You can specify a list of regular
+expressions of shimbun folder names to restrict affected folders.
+
+Example:
+
+@example
+(setq elmo-shimbun-update-overview-folder-list
+      '("^@@airs\\." "^@@namazu\\."))
+@end example
+
+@kbd{s rescan} is needed after fetching to update summary view.
 @end table
 
 
@@ -6956,10 +6965,11 @@ Process all messages regardless of persistent marks.
 Supported spam filtering libraries are following ones.
 
 @menu
-* bogofilter::                  bogofilter
-* spamfilter::                  spamfilter.el
-* bsfilter::                    bsfilter
-* SpamAssassin::                SpamAssassin
+* bogofilter::                          bogofilter
+* spamfilter::                          spamfilter.el
+* bsfilter::                            bsfilter
+* SpamAssassin::                        SpamAssassin
+* Regular Expressions Header Matching:: Header regexp
 @end menu
 
 
@@ -7105,7 +7115,7 @@ Specify options to give to @command{bsfilter} for learning messages.
 
 @end table
 
-@node SpamAssassin,  , bsfilter, Spam Filter Processors
+@node SpamAssassin, Regular Expressions Header Matching, bsfilter, Spam Filter Processors
 @subsection SpamAssassin
 @cindex SpamAssassin
 
@@ -7162,6 +7172,52 @@ If you specify @code{t}, the output from @command{spamassassin} is
 stored in the buffer named @code{"*Debug ELMO SpamAssassin*"}.
 
 @end table
+
+@node Regular Expressions Header Matching,  , SpamAssassin, Spam Filter Processors
+@subsection Regular Expressions Header Matching
+@cindex Regular Expressions Header Matching
+
+Examine if regular expression matches corresponding field in message heaeder,
+and decide spam or not. To use this backend, add following setting to @file{~/.wl}.
+
+@lisp
+@group
+(setq elmo-spam-scheme 'header)
+@end group
+@end lisp
+
+If you want to check fields not included in the default overview
+information, add one into @code{elmo-msgdb-extra-fields}. Then it will
+do examination by the overview information and avoid loading whole
+message body as far as possible.
+
+@subsubsection Customize Variables
+
+@table @code
+@item elmo-spam-header-good-alist
+@vindex elmo-spam-header-good-alist
+The initial setting is the following list:
+
+@lisp
+'(("X-Spam-Flag" . "No"))
+@end lisp
+
+Specify a list of regular expressions to match with header field name
+for making non-spam decision. It takes precedence over
+@code{elmo-spam-header-spam-alist}.
+
+@item elmo-spam-header-spam-alist
+@vindex elmo-spam-header-spam-alist
+The initial setting is the following list:
+
+@lisp
+'(("X-Spam-Flag" . "Yes"))
+@end lisp
+
+Specify a list of regular expressions to match with header field name
+for making spam decision.
+@end table
+
 
 @node Customization, Terminology, Spam Filter, Top
 @chapter Customizing Wanderlust
