@@ -406,9 +406,7 @@
 		(setq overlay (make-overlay start end))
 		(overlay-put overlay 'wl-e21-icon t)
 		(overlay-put overlay 'evaporate t))
-	      (put-text-property 0 (length status) 'display image status)
-	      (overlay-put overlay 'before-string status)
-	      (overlay-put overlay 'invisible t))))))))
+	      (overlay-put overlay 'display image))))))))
 
 (defun wl-plugged-set-folder-icon (folder string)
   (if (wl-e21-display-image-p)

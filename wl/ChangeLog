@@ -1,3 +1,8 @@
+2004-05-30  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
+
+	* wl-e21.el (wl-highlight-plugged-current-line): Change for
+	emacs multi-tty support.
+
 2004-05-29  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
 
 	* wl-e21.el (wl-e21-display-image-p): Don't call
