@@ -1,3 +1,8 @@
+2001-03-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-move-spec-plugged-alist,
+	wl-summary-move-spec-unplugged-alist): Define without backquote.
+
 2000-03-11  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-draft.el (wl-draft-do-fcc): Fix for `wl-draft-use-cache'
