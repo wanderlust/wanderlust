@@ -4,7 +4,6 @@
 @settitle Wanderlust -- Yet Another Message Interface On Emacsen --
 @c %**end of header
 @documentlanguage en
-@documentencoding us-ascii
 @include version.texi
 @synindex pg cp
 @finalout
@@ -6391,7 +6390,7 @@ learn how to write the condition practically.
 
 @enumerate
 @item
-Functions which accept argument @samp{FIELD-NAME} and @samp{VALUE}.
+Functions which accept arguments @samp{FIELD-NAME} and @samp{VALUE}.
 (@samp{FIELD-NAME} is a symbol that describes the field name)
 
 @table @code
@@ -6413,7 +6412,7 @@ from matching @code{\(\)} patterns in the previous @samp{VALUE}.
 @end table
 
 @item
-Functions which accept an integer argument (@samp{SIZE}).
+Functions which accept an argument @samp{SIZE}, @samp{SIZE} is some number.
 
 @table @code
 @item @code{<}
@@ -6467,6 +6466,7 @@ If some function is specified, execute it.
 
 If the message passes all rules, it will be dealed along @samp{ACTION}
 specified by @code{elmo-split-default-action}.
+
 
 @node Address Book, Customization, Split messages, Top
 @chapter Address Book

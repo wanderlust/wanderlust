@@ -4,7 +4,6 @@
 @settitle Wanderlust -- Yet Another Message Interface On Emacsen --
 @c %**end of header
 @documentlanguage ja
-@documentencoding iso-2022-jp
 @include version.texi
 @synindex pg cp
 @finalout
@@ -6289,7 +6288,7 @@ pop3                    ×    △    △    △
 (@samp{CONDITION} @samp{ACTION} [@code{continue}])
 @end lisp
 
-の組で、@samp{CONDITION} が真の場合に @samp{ACTION} を実行します。
+という一組で、@samp{CONDITION} が真の場合に @samp{ACTION} を実行します。
 第一の要素 @samp{CONDITION} には条件を S 式で記述します。書式については
 すぐ後で説明します。第二の要素 @samp{ACTION} にはメッセージの振り分け先
 のフォルダ名、もしくはシンボルを指定します。
@@ -6324,7 +6323,7 @@ pop3                    ×    △    △    △
 @end table
 
 @item
-1 つの整数 (@samp{SIZE}) を引数としてとる関数。
+何らかの数 @samp{SIZE} を引数としてとる関数。
 
 @table @code
 @item @code{<}
@@ -6334,7 +6333,7 @@ pop3                    ×    △    △    △
 @end table
 
 @item
-任意数の引数を取る関数。
+任意の数の引数を取る関数。
 
 @table @code
 @item @code{or}
@@ -6379,6 +6378,7 @@ pop3                    ×    △    △    △
 全ての振り分け規則を通過したメッセージは、変数
 @code{elmo-split-default-action} で指定した @samp{ACTION} に沿って処理さ
 れます。
+
 
 @node Address Book, Customization, Split messages, Top
 @chapter アドレス帳
