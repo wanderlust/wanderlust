@@ -767,14 +767,12 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
 	    (elmo-progress-set 'elmo-folder-search len "Searching..."))
 	  (unwind-protect
 	      (dolist (number numbers)
-		(let ((entity (elmo-msgdb-overview-get-entity number msgdb))
-		      result)
-		  (if entity
-		      (setq result (elmo-msgdb-match-condition
-				    condition
-				    entity
-				    numbers))
-		    (setq result condition))
+		(let (result)
+		  (setq result (elmo-msgdb-match-condition
+				msgdb
+				condition
+				number
+				numbers))
 		  (when (elmo-filter-condition-p result)
 		    (setq result (elmo-message-match-condition
 				  folder
