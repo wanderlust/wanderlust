@@ -248,30 +248,31 @@
 
 (eval-when-compile
   (defsubst wl-e21-highlight-folder-group-line (start end icon numbers)
-    (when (wl-e21-display-image-p)
-      (let (overlay)
-	(let ((overlays (overlays-in start end)))
-	  (while (and (setq overlay (pop overlays))
-		      (not (overlay-get overlay 'wl-e21-icon)))))
-	(unless overlay
-	  (setq overlay (make-overlay start end))
-	  (overlay-put overlay 'wl-e21-icon t)
-	  (overlay-put overlay 'evaporate t))
-	(let ((image (get icon 'image)))
+    (let (image)
+      (when (wl-e21-display-image-p)
+	(let (overlay)
+	  (let ((overlays (overlays-in start end)))
+	    (while (and (setq overlay (pop overlays))
+			(not (overlay-get overlay 'wl-e21-icon)))))
+	  (unless overlay
+	    (setq overlay (make-overlay start end))
+	    (overlay-put overlay 'wl-e21-icon t)
+	    (overlay-put overlay 'evaporate t))
+	  (setq image (get icon 'image))
 	  (unless image
 	    (let ((name (symbol-value
 			 (cdr (assq icon wl-folder-toggle-icon-list))))
 		  (load-path (cons wl-icon-directory load-path)))
 	      (setq image (find-image `((:type xpm :file ,name
 					       :ascent center))))))
-	  (overlay-put overlay 'display image)
-	  (when (and wl-use-highlight-mouse-line (display-mouse-p))
-	    (let ((inhibit-read-only t))
-	      (put-text-property (if image
-				     (max (1- start) (line-beginning-position))
-				   start)
-				 (line-end-position)
-				 'mouse-face 'highlight)))))))
+	  (overlay-put overlay 'display image)))
+      (when (and wl-use-highlight-mouse-line (display-mouse-p))
+	(let ((inhibit-read-only t))
+	  (put-text-property (if image
+				 (max (1- start) (line-beginning-position))
+			       start)
+			     (line-end-position)
+			     'mouse-face 'highlight)))))
 
   (defsubst wl-e21-highlight-folder-by-numbers (start end text-face numbers)
     (when (display-color-p)

@@ -2,6 +2,8 @@
 
 	* wl-e21.el (wl-e21-display-image-p): Respect
 	`wl-highlight-folder-with-icon'.
+	(wl-e21-highlight-folder-group-line): Highlight mouse line
+	even if wl-e21-display-image-p is nil.
 
 	* wl-summary.el (wl-summary-update-mark-and-highlight-window):
 	Respect value of `wl-summary-highlight'.
