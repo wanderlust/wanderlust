@@ -513,14 +513,14 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
 
 (defun wl-folder-set-persistent-mark (folder number flag)
   "Set a persistent mark which corresponds to the specified flag on message."
-  (let ((buffer (wl-summary-get-buffer folder))
-	elmo-folder)
-    (if buffer
+  (let ((buffer (wl-summary-get-buffer folder)))
+    (if (and buffer
+	     (with-current-buffer buffer
+	       (string= wl-summary-buffer-folder-name folder)))
 	(with-current-buffer buffer
 	  (wl-summary-set-persistent-mark flag number))
       ;; Parent buffer does not exist.
-      (when (setq elmo-folder (and folder
-				   (wl-folder-get-elmo-folder folder)))
+      (let ((elmo-folder (wl-folder-get-elmo-folder folder)))
 	(elmo-folder-open elmo-folder 'load-msgdb)
 	(elmo-folder-set-flag elmo-folder (list wl-draft-parent-number) flag)
 	(elmo-folder-close elmo-folder)))))

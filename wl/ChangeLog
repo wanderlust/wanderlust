@@ -1,3 +1,8 @@
+2005-03-13  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-folder.el (wl-folder-set-persistent-mark): If summary
+	buffer is not for given folder, don't use it.
+
 2005-03-13  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* Version number is increased to 2.15.0.
