@@ -1561,8 +1561,8 @@ and access it, messages are downloaded automatically from
 
 On the other hand, if you put @samp{|:} instead of second @samp{|},
 then messages are copied to the destination folder (not deleted from
-source-folder), and copied messages are put into the killed list. Therefore
-if you access in the next time, only new messages will be copied.
+source-folder). At the next time you access that folder, only new
+messages will be copied.
 
 @example
 @samp{|} @var{source-folder} @samp{|:} @var{destination-folder}
