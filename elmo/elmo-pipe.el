@@ -46,10 +46,10 @@
 (defun elmo-pipe-append-msg (spec string &optional msg no-see)
   (elmo-append-msg (elmo-pipe-spec-dst spec) string))
 
-(defun elmo-pipe-read-msg (spec number outbuf)
+(defun elmo-pipe-read-msg (spec number outbuf &optional msgdb unread)
   (elmo-call-func (elmo-pipe-spec-dst spec)
 		  "read-msg"
-		  number outbuf))
+		  number outbuf msgdb unread))
 
 (defun elmo-pipe-delete-msgs (spec msgs)
   (elmo-delete-msgs (elmo-pipe-spec-dst spec) msgs))

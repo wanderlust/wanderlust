@@ -138,7 +138,7 @@
   "Read messsage specified by FOLDER and MSG(number) into OUTBUF
 without cacheing.
 If optional UNREAD is non-nil, message is keeped as unread."
-  (elmo-call-func folder "read-msg" msg outbuf unread))
+  (elmo-call-func folder "read-msg" msg outbuf nil unread))
 
 (defun elmo-force-cache-msg (folder number msgid &optional loc-alist)
   "Force cache message."
@@ -181,7 +181,9 @@ If optional UNREAD is non-nil, message is keeped as unread."
 	      ((elmo-folder-local-p (car real-fld-num)))
 	      (t (setq ret-val (elmo-call-func (car real-fld-num)
 					       "read-msg"
-					       (cdr real-fld-num) outbuf))))
+					       (cdr real-fld-num)
+					       outbuf
+					       nil 'unread))))
 	(if ret-val
 	    (elmo-cache-save message-id
 			     (elmo-string-partial-p ret-val)
@@ -237,7 +239,8 @@ If optional UNREAD is non-nil, message is keeped as unread."
 			  folder msg))
       (if (setq ret-val (elmo-call-func (car real-fld-num)
 					"read-msg"
-					(cdr real-fld-num) outbuf unread))
+					(cdr real-fld-num) outbuf
+					nil unread))
 	  (if (and message-id
 		   (not (elmo-local-file-p folder msg))
 		   (elmo-use-cache-p folder msg))
