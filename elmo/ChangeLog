@@ -1,3 +1,8 @@
+2005-01-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-folder-list-subfolders): Use root mailbox without
+	delimiter to obtain root mailbox itself.
+
 2005-01-25  Tetsurou Okazaki  <okazaki@be.to>
 
 	* elmo-net.el (elmo-network-session-idle-timeout): Fix customization

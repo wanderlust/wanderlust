@@ -1966,6 +1966,7 @@ Return nil if no complete line has arrived."
 	 (delim (or (cdr namespace-assoc)
 		 elmo-imap4-default-hierarchy-delimiter))
 	 ;; Append delimiter when root with namespace.
+	 (root-nodelim root)
 	 (root (if (and namespace-assoc
 			(match-end 1)
 			(string= (substring root (match-end 1))
@@ -1984,7 +1985,8 @@ Return nil if no complete line has arrived."
 		    (elmo-imap4-response-get-selectable-mailbox-list
 		     (elmo-imap4-send-command-wait
 		      session
-		      (list "list \"\" " (elmo-imap4-mailbox root)))))))
+		      (list "list \"\" " (elmo-imap4-mailbox
+					  root-nodelim)))))))
     (when (or (not (string= (elmo-net-folder-user-internal folder)
 			    elmo-imap4-default-user))
 	      (not (eq (elmo-net-folder-auth-internal folder)
