@@ -389,12 +389,13 @@ See `wl-score-simplify-buffer-fuzzy' for details."
       (let ((mark (car (wl-score-get 'mark alist)))
 	    (expunge (car (wl-score-get 'expunge alist)))
 	    (mark-and-expunge (car (wl-score-get 'mark-and-expunge alist)))
-	    (temp (car (wl-score-get 'temp alist)))
+	    (temp (car (wl-score-get 'temp alist))) ; obsolate
+	    (target (car (wl-score-get 'target alist)))
 	    (important (car (wl-score-get 'important alist))))
 	(setq wl-summary-important-above
 	      (or important wl-summary-important-above))
-	(setq wl-summary-temp-above
-	      (or temp wl-summary-temp-above))
+	(setq wl-summary-target-above
+	      (or target temp wl-summary-target-above))
 	(setq wl-summary-mark-below
 	      (or mark mark-and-expunge wl-summary-mark-below))
 	(setq wl-summary-expunge-below
@@ -1244,8 +1245,8 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 		    (> score wl-summary-important-above))
 	       (if (wl-thread-jump-to-msg num);; force open
 		   (wl-summary-mark-as-important num " ")))
-	      ((and wl-summary-temp-above
-		    (> score wl-summary-temp-above))
+	      ((and wl-summary-target-above
+		    (> score wl-summary-target-above))
 	       (if visible
 		   (wl-summary-mark-line "*"))
 	       (setq wl-summary-buffer-target-mark-list
