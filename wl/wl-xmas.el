@@ -290,7 +290,7 @@
 	    (when wl-use-highlight-mouse-line
 	      (put-text-property start end 'mouse-face 'highlight))
 	    (let ((text-face
-		   (if (looking-at (format "^[ \t]*\\(?:%s\\|%s\\)"
+		   (if (looking-at (format "^[ \t]*\\(%s\\|%s\\)"
 					   wl-folder-unsubscribe-mark
 					   wl-folder-removed-mark))
 		       'wl-highlight-folder-killed-face
