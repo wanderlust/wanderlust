@@ -3711,6 +3711,7 @@ Following is an example (hide duplicated messages in multi folders)
 Message Buffers utilize MIME-View mode of SEMI.  For operational
 procedures and key bindings, refer to respective documents.
 @xref{MIME-View, , ,mime-ui-en, a MIME user interface for GNU Emacs}.
+You can also see help by @kbd{?} in message buffer.
 
 @kbd{p} at the top of a message or @kbd{n} at the bottom of a message
 brings you back to Summary mode.  @kbd{l} toggles display of Summary
@@ -3814,6 +3815,7 @@ the message is saved when it is sent.
 Multi-part editing utilize MIME edit mode of SEMI.  For procedures of
 editing, refer to respective documents.  @xref{MIME-Edit, , ,mime-ui-en,
 a MIME user interface for GNU Emacs}.
+You can also see help by @kbd{C-c C-x ?} in draft buffer.
 
 @subsection Dynamic Modification of Messages
 @vindex wl-draft-config-alist
