@@ -6238,8 +6238,9 @@ pop3                    ×    △    △    △
 @cindex Split messages
 
 @code{elmo-split} を使うと、フォルダ @code{elmo-split-folder} 内の
-メッセージを特定の規則に従って procmail 風に振り分けることができます。
-この機能を使うには、まず @file{~/.emacs} に以下のように設定して下さい。
+メッセージを特定の規則に従って @command{procmail} 風に振り分けることが
+できます。 この機能を使うには、まず @file{~/.emacs} に以下のように設定
+して下さい。
 
 @lisp
 (autoload 'elmo-split "elmo-split" "Split messages on the folder." t)
