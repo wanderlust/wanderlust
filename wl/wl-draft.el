@@ -1487,6 +1487,7 @@ Derived from `message-save-drafts' in T-gnus."
 	      (append header-alist (list (cons 'Subject ""))))))
     (setq header-alist (append header-alist
 			       (wl-draft-default-headers)
+			       wl-draft-additional-header-alist
 			       (if body (list "" body))))
     (wl-draft-create-contents header-alist)
     (if edit-again
@@ -1558,6 +1559,7 @@ Derived from `message-save-drafts' in T-gnus."
   (symbol . nil)       ;;  insert nothing
   (function . (arg1 arg2 ..))  ;; call function with argument
   nil                  ;;  insert nothing
+  )
 "
   (unless (eq major-mode 'wl-draft-mode)
     (error "wl-draft-create-header must be use in wl-draft-mode."))

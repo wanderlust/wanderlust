@@ -265,6 +265,12 @@ If nil, `wl-from' is used."
   :group 'wl
   :group 'wl-setting)
 
+(defcustom wl-draft-additional-header-alist nil
+  "*Additional headers in the draft."
+  :type '(repeat (cons (symbol :tag "Field Name")
+		       (choice (string :tag "String")
+			       (function :tag "Function")))))
+
 (defcustom wl-draft-add-in-reply-to t
   "*If non-nil, message-id of the cited message is inserted to the
 in-reply-to field of the current draft."
