@@ -27,7 +27,7 @@
 
 ;;  General settings:
 ;;  (autoload 'wl-draft-send-with-imput-async "im-wl")
-;;  (setq wl-draft-send-func 'wl-draft-send-with-imput-async)
+;;  (setq wl-draft-send-function 'wl-draft-send-with-imput-async)
 ;;
 ;;  for Nifty4U+ users:
 ;;  (add-hook 'wl-mail-setup-hook '(lambda () (require 'im-wl)))
@@ -36,7 +36,7 @@
 ;;	      ;; to avoid header-encoding.
 ;;	      ;; [cf.  slrn-ja-0.9.4.6.jp4/doc/README.macros.euc]
 ;;	      ;(eword-field-encoding-method-alist . '((t .  iso-2022-jp-2)))
-;;	      (wl-draft-send-func . 'wl-draft-send-with-imput-async)
+;;	      (wl-draft-send-function . 'wl-draft-send-with-imput-async)
 ;;	      (im-wl-dispatcher . '("~/nifty4u-plus/inews-nifty4u" "-h"))
 ;;	      (im-wl-dispatcher-error-msg
 ;;	       . (format "^%s :" (expand-file-name (car im-wl-dispatcher)))))))
