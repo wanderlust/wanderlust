@@ -160,11 +160,8 @@
 	  (if (elmo-folder-move-messages folder
 					 refile-list
 					 dst-folder
-					 nil ; XXX
-					 t
 					 copy
-					 preserve-number
-					 wl-expire-add-seen-list)
+					 preserve-number)
 	      (progn
 		(wl-expire-append-log
 		 (elmo-folder-name-internal folder)
@@ -213,11 +210,8 @@ If REFILE-LIST includes reserve mark message, so copy."
 		    (elmo-folder-move-messages folder
 					       refile-list
 					       dst-folder
-					       nil ;
-					       t
 					       copy-reserve-message
-					       preserve-number
-					       wl-expire-add-seen-list))
+					       preserve-number))
 	    (error "Expire: move msgs to %s failed"
 		   (elmo-folder-name-internal dst-folder)))
 	  (wl-expire-append-log (elmo-folder-name-internal folder)

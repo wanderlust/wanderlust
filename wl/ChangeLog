@@ -2,6 +2,19 @@
 
 	* Version number is increased to 2.11.8.
 
+	* wl-summary.el (wl-summary-buffer-msgdb): Abolish.
+
+	* wl-expire.el (wl-expire-refile): Follow the API change on
+	`elmo-folder-move-messages'.
+	(wl-expire-refile-with-copy-reserve-msg): Ditto.
+
+	* wl-action.el (wl-summary-move-mark-list-messages): Ditto.
+	(wl-summary-exec-action-refile): Ditto.
+	(wl-summary-exec-action-copy): Ditto.
+	(wl-summary-no-auto-refile-message-p): No use
+	`wl-summary-buffer-msgdb'.
+	(wl-summary-auto-refile): Ditto.
+
 2003-08-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-sync): Fix regexp for last: and first:.

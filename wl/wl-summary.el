@@ -71,10 +71,6 @@
   (` (and wl-summary-buffer-elmo-folder
 	  (elmo-folder-name-internal wl-summary-buffer-elmo-folder))))
 
-(defmacro wl-summary-buffer-msgdb ()
-  (` (and wl-summary-buffer-elmo-folder
-	  (elmo-folder-msgdb wl-summary-buffer-elmo-folder))))
-
 (defvar wl-summary-buffer-disp-msg    nil)
 (defvar wl-summary-buffer-disp-folder nil)
 (defvar wl-summary-buffer-temp-mark-list nil)

@@ -122,8 +122,7 @@
 			     "Copying messages..."
 			   "Moving messages...")))
     (unwind-protect
-	(elmo-folder-move-messages src msgs dst
-				   nil nil copy)
+	(elmo-folder-move-messages src msgs dst copy)
       (elmo-progress-clear 'elmo-folder-move-messages))
     (when (and copy msgs)
       (setq ignore-list (elmo-number-set-append-list ignore-list

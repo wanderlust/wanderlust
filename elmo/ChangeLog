@@ -2,6 +2,10 @@
 
 	* elmo-version.el (elmo-version): Up to 2.11.8.
 
+	* elmo.el (elmo-folder-move-messages): Removed unused arguments.
+
+	* elmo-pipe.el (elmo-pipe-drain): Follow the change above.
+
 2003-08-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-detach-messages): Undo last change.

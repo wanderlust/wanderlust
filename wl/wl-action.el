@@ -292,12 +292,7 @@ Return number if put mark succeed"
 			  refiles
 			  (if (eq folder-name 'null)
 			      'null
-			    (wl-folder-get-elmo-folder folder-name))
-			  (wl-summary-buffer-msgdb)
-			  (not (null (cdr dst-msgs)))
-			  nil ; no-delete
-			  nil ; same-number
-			  t))
+			    (wl-folder-get-elmo-folder folder-name))))
 	  (error nil))
 	(when result		; succeeded.
 	  ;; update buffer.
@@ -476,13 +471,7 @@ Return number if put mark succeed"
 	    (setq result (elmo-folder-move-messages
 			  wl-summary-buffer-elmo-folder
 			  (cdr (car dst-msgs))
-			  (wl-folder-get-elmo-folder
-			   (car (car dst-msgs)))
-			  (wl-summary-buffer-msgdb)
-			  (not (null (cdr dst-msgs)))
-			  nil ; no-delete
-			  nil ; same-number
-			  t))
+			  (wl-folder-get-elmo-folder (car (car dst-msgs)))))
 	  (error nil))
 	(if result		; succeeded.
 	    (progn
@@ -520,15 +509,10 @@ Return number if put mark succeed"
 	(setq result nil)
 	(condition-case nil
 	    (setq result (elmo-folder-move-messages
-			    wl-summary-buffer-elmo-folder
-			    (cdr (car dst-msgs))
-			    (wl-folder-get-elmo-folder
-			     (car (car dst-msgs)))
-			    (wl-summary-buffer-msgdb)
-			    (not (null (cdr dst-msgs)))
-			    t ; t is no-delete (copy)
-			    nil ; same-number
-			    t))
+			  wl-summary-buffer-elmo-folder
+			  (cdr (car dst-msgs))
+			  (wl-folder-get-elmo-folder (car (car dst-msgs)))
+			  'no-delete))
 	  (error nil))
 	(if result		; succeeded.
 	    (progn
@@ -802,8 +786,8 @@ Return number if put mark succeed"
       (wl-summary-prev)
     (wl-summary-next)))
 
-(defsubst wl-summary-no-auto-refile-message-p (msg)
-  (member (elmo-msgdb-get-mark (wl-summary-buffer-msgdb) msg)
+(defsubst wl-summary-no-auto-refile-message-p (number)
+  (member (elmo-message-mark wl-summary-buffer-elmo-folder number)
 	  wl-summary-auto-refile-skip-marks))
 
 (defun wl-summary-auto-refile (&optional open-all)
@@ -834,8 +818,8 @@ Return number if put mark succeed"
 		     (setq dst
 			   (wl-folder-get-realname
 			    (wl-refile-guess-by-rule
-			     (elmo-msgdb-overview-get-entity
-			      number (wl-summary-buffer-msgdb)))))
+			     (elmo-message-entity wl-summary-buffer-elmo-folder
+						  number))))
 		     (not (equal dst spec))
 		     (let ((pair (assoc dst checked-dsts))
 			   ret)

@@ -1071,11 +1071,9 @@ NUMBERS is a list of message numbers, messages are searched from the list."
 
 ;; Arguments should be reduced.
 (defun elmo-folder-move-messages (src-folder msgs dst-folder
-					     &optional msgdb
-					     no-delete-info
+					     &optional
 					     no-delete
-					     same-number
-					     save-unread)
+					     same-number)
   (save-excursion
     (let* ((messages msgs)
 	   (elmo-inhibit-display-retrieval-progress t)
