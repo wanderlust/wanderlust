@@ -1,3 +1,9 @@
+2005-02-01  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-flag.el (elmo-flag-valid-p): Simplify.
+	(elmo-folder-list-subfolders): Copy `elmo-global-flags'.
+	(elmo-folder-delete): Update `elmo-global-flag-folder-alist'.
+
 2005-01-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-util.el (elmo-passwd-alist-load, elmo-passwd-alist-save):

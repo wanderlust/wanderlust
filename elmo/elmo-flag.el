@@ -47,11 +47,9 @@
   (defconst elmo-flag-char-regexp "]!#$&'+,./0-9:;<=>?@A-Z[^_`a-z|}~-"))
 
 (defun elmo-flag-valid-p (flag)
-  (unless (stringp flag)
-    (setq flag (symbol-name flag)))
   (string-match (eval-when-compile
 		  (concat "^[" elmo-flag-char-regexp "]+$"))
-		flag))
+		(if (stringp flag) flag (symbol-name flag))))
 
 (eval-and-compile
   (luna-define-class elmo-flag-folder (elmo-localdir-folder)
@@ -144,7 +142,7 @@
 	    (elmo-uniq-list
 	     (append
 	      (mapcar 'intern (delete ".." (delete "." (directory-files dir))))
-	      elmo-global-flags)))))
+	      (copy-sequence elmo-global-flags))))))
 
 (defun elmo-flag-folder-delete-message (folder number
 					       &optional keep-referrer)
@@ -483,6 +481,9 @@ If optional IGNORE-PRESERVED is non-nil, preserved flags
   (let ((flag (elmo-flag-folder-flag-internal folder)))
     (when (luna-call-next-method)
       (setq elmo-global-flags (delq flag elmo-global-flags))
+      (setq elmo-global-flag-folder-alist
+	    (delq (assq flag elmo-global-flag-folder-alist)
+		  elmo-global-flag-folder-alist))
       t)))
 
 (require 'product)
