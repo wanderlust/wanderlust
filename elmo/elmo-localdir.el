@@ -118,9 +118,9 @@
   (when numlist
     (let ((dir (elmo-localdir-get-folder-directory spec))
 	  overview number-alist mark-alist entity message-id
-	  i percent len num seen gmark)
-      (setq len (length numlist))
-      (setq i 0)
+	  num seen gmark
+	  (i 0)
+	  (len (length numlist)))
       (message "Creating msgdb...")
       (while numlist
 	(setq entity
@@ -132,12 +132,11 @@
 	  (setq overview 
 		(elmo-msgdb-append-element
 		 overview entity))
-	  (setq number-alist
-		(elmo-msgdb-number-add number-alist
-				       num
-				       (elmo-msgdb-overview-entity-get-id
-					entity)))
 	  (setq message-id (elmo-msgdb-overview-entity-get-id entity))
+  	  (setq number-alist
+  		(elmo-msgdb-number-add number-alist
+  				       num
+  				       message-id))
 	  (setq seen (member message-id seen-list))
 	  (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
 			      (if (elmo-cache-exists-p message-id) ; XXX
@@ -154,10 +153,9 @@
 		     gmark))))
 	(when (> len elmo-display-progress-threshold)
 	  (setq i (1+ i))
-	  (setq percent (/ (* i 100) len))
 	  (elmo-display-progress
 	   'elmo-localdir-msgdb-create-as-numlist "Creating msgdb..."
-	   percent))
+	   (/ (* i 100) len)))
 	(setq numlist (cdr numlist)))
       (message "Creating msgdb...done.")
       (list overview number-alist mark-alist))))
