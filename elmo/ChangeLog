@@ -1,3 +1,8 @@
+2001-10-12  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-imap4.el (elmo-folder-list-subfolders): Fixed problem;
+	Return duplicate folder if it has subfolder.
+
 2001-10-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-make-folder): Add folder name error check.

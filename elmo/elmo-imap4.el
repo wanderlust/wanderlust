@@ -1871,14 +1871,6 @@ Return nil if no complete line has arrived."
 		     elmo-imap4-server-namespace)))
 		 elmo-imap4-default-hierarchy-delimiter))
 	 result append-serv type)
-    ;; Append delimiter
-;;    (if (and root
-;;	     (not (string= root ""))
-;;	     (not (string-match (concat "\\(.*\\)"
-;;					(regexp-quote delim)
-;;					"\\'")
-;;				root)))
-;;	(setq root (concat root delim)))
     (setq result (elmo-imap4-response-get-selectable-mailbox-list
 		  (elmo-imap4-send-command-wait
 		   session
@@ -1907,41 +1899,39 @@ Return nil if no complete line has arrived."
 				    (elmo-network-stream-type-spec-string
 				     type)))))
     (if one-level
-	(let (folder folders ret)
-	  (while (setq folders (car result))
-	    (if (prog1
-		    (string-match
-		     (concat "^\\(" root "[^" delim "]" "+\\)" delim)
-			  folders)
-		  (setq folder (match-string 1 folders)))
-		(progn
-		  (setq ret
-			(append ret
-				(list
-				 (list
-				  (concat
-				   prefix
-				   (elmo-imap4-decode-folder-string folder)
-				   (and append-serv
-					(eval append-serv)))))))
-		  (setq result
-			(delq
-			 nil
-			 (mapcar '(lambda (fld)
-				    (unless
-					(string-match
-					 (concat "^" (regexp-quote folder) delim)
+	(let ((re-delim (regexp-quote delim))
+	      folder ret has-child-p)
+	  ;; Append delimiter
+	  (when (and root
+		     (not (string= root ""))
+		     (not (string-match
+			   (concat "\\(.*\\)" re-delim "\\'")
+			   root)))
+	    (setq root (concat root delim)))
+	  (while (setq folder (car result))
+	    (when (string-match
+		   (concat "^\\(" (regexp-quote root) "[^" re-delim "]" "+\\)"
+			   re-delim)
+		   folder)
+	      (setq folder (match-string 1 folder)))
+	    (setq has-child-p nil
+		  result (delq
+			  nil
+			  (mapcar (lambda (fld)
+				    (if (string-match
+					 (concat "^" (regexp-quote folder)
+						 "\\(" re-delim "\\|\\'\\)")
 					 fld)
+					(progn (setq has-child-p t) nil)
 				      fld))
-				 result))))
-	      (setq ret (append
-			 ret
-			 (list
-			  (concat prefix
-				  (elmo-imap4-decode-folder-string folders)
-				  (and append-serv
-				       (eval append-serv))))))
-	      (setq result (cdr result))))
+				  (cdr result)))
+		  folder (concat prefix
+				 (elmo-imap4-decode-folder-string folder)
+				 (and append-serv
+				      (eval append-serv)))
+		  ret (append ret (if has-child-p
+				      (list (list folder))
+				    (list folder)))))
 	  ret)
       (mapcar (lambda (fld)
 		(concat prefix (elmo-imap4-decode-folder-string fld)
