@@ -1145,9 +1145,11 @@ q	Goto folder mode.
 	ret-val seen-list)
     (unwind-protect
 	(progn
-	  (setq seen-list (elmo-msgdb-seen-load msgdb-dir))
+	  (if wl-summary-buffer-persistent
+	      (setq seen-list (elmo-msgdb-seen-load msgdb-dir)))
 	  (setq ret-val (wl-summary-sync-update3 seen-list unset-cursor))
-	  (elmo-msgdb-seen-save msgdb-dir nil))
+	  (if wl-summary-buffer-persistent
+	      (elmo-msgdb-seen-save msgdb-dir nil)))
       (set-buffer (current-buffer)))
     (if (interactive-p)
 	(message "%s" ret-val))
@@ -2062,13 +2064,13 @@ If optional argument is non-nil, checking is omitted."
             num-ma (length mark-alist)
 	    importants (elmo-list-folder-important
 			wl-summary-buffer-folder-name
-			(elmo-msgdb-get-overview wl-summary-buffer-msgdb))
+			wl-summary-buffer-msgdb)
 	    has-imap4 (elmo-folder-contains-type
 		       wl-summary-buffer-folder-name 'imap4)
 	    unreads (if (and has-imap4 plugged)
 			(elmo-list-folder-unread
 			 wl-summary-buffer-folder-name
-			 mark-alist unread-marks)))
+			 wl-summary-buffer-msgdb unread-marks)))
       (while mark-alist
 	(if (string= (cadr (car mark-alist))
 		     wl-summary-important-mark)
@@ -3963,22 +3965,12 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
   (interactive "P")
   (if arg
       (wl-summary-unvirtual)
-    (let* ((completion-ignore-case t)
-	   (field (completing-read (format "Field name (%s): "
-					   wl-summary-pick-field-default)
-				   '(("From" . "From")
-				     ("Subject" . "Subject")
-				     ("To" . "To")
-				     ("Cc" . "Cc")
-				     ("Body" . "Body")
-				     ("Since" . "Since")
-				     ("Before" . "Before"))))
-	   (value (read-from-minibuffer "Value: ")))
-      (if (string= field "")
-	  (setq field wl-summary-pick-field-default))
-      (wl-summary-goto-folder-subr (concat "/" (downcase field) "=" value "/"
-					   wl-summary-buffer-folder-name)
-				   'update nil nil t))))
+    (wl-summary-goto-folder-subr (concat "/"
+					 (elmo-read-search-condition
+					  wl-summary-pick-field-default)
+					 "/"
+					 wl-summary-buffer-folder-name)
+				 'update nil nil t)))
 
 (defun wl-summary-delete-all-temp-marks ()
   (interactive)
@@ -5480,10 +5472,14 @@ Reply to author if invoked with argument."
 				       (if wl-message-cache-used
 					   nil
 					 ;; plugged, then leave server-mark.
-					 (if (elmo-folder-plugged-p
-					      wl-summary-buffer-folder-name)
+					 (if (and
+					      (not
+					       (elmo-folder-local-p
+						wl-summary-buffer-folder-name))
+					      (elmo-folder-plugged-p
+					       wl-summary-buffer-folder-name))
 					     'leave))
-				       t) ;; displayed
+				       t) ; displayed
 	    )
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter

@@ -1,3 +1,16 @@
+2000-09-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl-toggle-plugged): Set `wl-biff-check-folders-running' as
+	nil.
+
+	* wl-summary.el (wl-summary-sync-force-update): Save seen-list only
+	when it is persistent.
+	(wl-summary-sync-marks): Changed argument for
+	`elmo-list-folder-unread' and `elmo-list-folder-important'.
+	(wl-summary-virtual): Use `elmo-read-search-condition'.
+	(wl-summary-redisplay-internal): If folder is local, mark as read
+	even when folder is plugged.
+
 2000-09-28  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-e21.el (wl-e21-make-toolbar-buttons): Don't modify the value

@@ -107,6 +107,7 @@
 	;; msgdb is saved, but cache is not saved yet.
 	(wl-summary-set-message-modified)))
      (wl-collect-summary)))
+  (setq wl-biff-check-folders-running nil)
   (if wl-plugged
       (progn
 	;; flush queue!!
