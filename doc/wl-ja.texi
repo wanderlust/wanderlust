@@ -3,12 +3,13 @@
 @setfilename wl-ja.info
 @settitle Wanderlust -- Yet Another Message Interface On Emacsen --
 @c %**end of header
-@c @documentlanguage ja
-@c @documentencoding iso-2022-jp
-@set version 2.3.0
+@documentlanguage ja
+@documentencoding iso-2022-jp
+@set VERSION 2.3.0
 @synindex pg cp
 @finalout
 
+@dircategory GNU Emacs Lisp
 @direntry
 * Wanderlust-ja: (wl-ja).  Yet Another Message Interface On Emacsen
 @end direntry
@@ -25,9 +26,9 @@ Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi},
 @w{Fujikazu Okunishi}, @w{Masahiro Murata},
 @w{Kenichi Okada} and @w{Kaoru Takahashi}.
 
-This edition is for Wanderlust version @value{version}.
+This edition is for Wanderlust version @value{VERSION}.
 
-$B$3$NHG$O(B Wanderlust version @value{version} $B$KBP1~$7$^$9!#(B
+$B$3$NHG$O(B Wanderlust version @value{VERSION} $B$KBP1~$7$^$9!#(B
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -67,7 +68,7 @@ into another language, under the above conditions for modified versions.
 @sp 10
 @title Wanderlust $B%f!<%6%^%K%e%"%k(B
 @subtitle Yet another message interface on Emacsen
-@subtitle for Wanderlust version @value{version}
+@subtitle for Wanderlust version @value{VERSION}
 @author Yuuichi Teranishi $B;{@>M50l(B
 @author Fujikazu Okunishi $B1|@>F#OB(B
 @author Masahiro Murata   $BB<EDA442(B
@@ -80,9 +81,9 @@ Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi},
 @w{Fujikazu Okunishi}, @w{Masahiro Murata},
 @w{Kenichi Okada}, and @w{Kaoru Takahashi}.
 
-This manual is for Wanderlust version @value{version}.
+This manual is for Wanderlust version @value{VERSION}.
 
-$B$3$N%^%K%e%"%k$O(B Wanderlust version @value{version} $B$KBP1~$7$^$9!#(B
+$B$3$N%^%K%e%"%k$O(B Wanderlust version @value{VERSION} $B$KBP1~$7$^$9!#(B
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -123,7 +124,7 @@ Kenichi Okada     $B2,ED7r0l(B
 Kaoru Takahashi   $B9b66(B  $B0j(B
 @end flushright
 
-$B$3$NJ8=q$O(B Wanderlust @value{version} $B$KBP1~$7$^$9!#(B
+$B$3$NJ8=q$O(B Wanderlust @value{VERSION} $B$KBP1~$7$^$9!#(B
 
 @end ifinfo
 
@@ -363,14 +364,18 @@ ftp://opaopa.org/pub/mirror/elisp/wl/
 
 Wanderlust $B$G$O!"(BSMTP, IMAP, NNTP, POP $B$N%3%M%/%7%g%s$K$*$$$F!"(B
 SSL (Secure Socket Layer) $B$rMQ$$$k$3$H$,$G$-$^$9!#(B
+
 SSL $B$NMxMQ7ABV$K$O(B2$B<oN`$"$j!"(B
 $B%3%M%/%7%g%s$HF1;~$K(B SSL negotiation $B$r;O$a$k$b$N$H!"(B
 starttls command $B$N8e$K(B SSL negotiation $B$r;O$a$k$b$N$,$"$j$^$9!#(B
+
 $BDL>o$N(B SSL $B$rMxMQ$9$k$K$O(B $BK\%Q%C%1!<%8$N(B @file{utils} $B%G%#%l%/%H%j$K$"$k(B
 @file{ssl.el} $B$r%$%s%9%H!<%k$9$kI,MW$,$"$j$^$9!#(B
 $B$J$*$+$D!"(BOpenSSL $B$K4^$^$l$k(B @file{openssl} $B$K%Q%9$,DL$C$F$$$kI,MW$,$"$j$^$9!#(B
+
 STARTTLS $B$rMxMQ$9$k$K$O!"$5$i$K!"(Bstarttls $B%Q%C%1!<%8$r%$%s%9%H!<%k(B
 $B$9$kI,MW$,$"$j$^$9!#(B
+
 starttls $B%Q%C%1!<%8$O0J2<$N>l=j$+$iF~<j$G$-$^$9!#(B
 
 @example
@@ -741,7 +746,7 @@ M-x wl
 Wanderlust $B$O(B ELMO $B$N%$%s%?%U%'!<%9$rMxMQ$7$F$$$k$?$a!"(BELMO $B%b%8%e!<%k$K(B
 $B$h$C$F%5%]!<%H$5$l$F$$$l$P!"$I$s$J%U%)%k%@$G$bMxMQ$9$k$3$H$,$G$-$^$9!#(B
 
-$B%P!<%8%g%s(B @value{version} $B8=:_!"MQ0U$5$l$F$$$k%U%)%k%@$O!"(B
+$B%P!<%8%g%s(B @value{VERSION} $B8=:_!"MQ0U$5$l$F$$$k%U%)%k%@$O!"(B
 IMAP, NNTP, LocalDir(MH), Maildir, News Spool, POP, Archive, 
 Multi, Filter, Pipe, Internal $B$N(B 10 $B<oN`$G$9!#(B
 
@@ -5693,13 +5698,13 @@ Non-nil $B$J$i(B@code{wl-highlight-citation-prefix-regexp}$B$GM?$($i$l$k(B
 @vindex wl-highlight-citation-header-regexp
 $B0zMQ$r;O$a$k$3$H$r<($9%X%C%@$N@55,I=8=$r;XDj$7$^$9!#(B
 $B$3$N@55,I=8=$K%^%C%A$7$?K\J8$O!"(B
-@code{wl-highlight-message-headers}$B$G;XDj$5$l$k(Bface$B$G%O%$%i%$%H$5$l$^$9!#(B
+@code{wl-highlight-message-headers}$B$G;XDj$5$l$k(B face $B$G%O%$%i%$%H$5$l$^$9!#(B
 
 @item  wl-highlight-max-message-size
 @vindex wl-highlight-max-message-size
 $B=i4|@_Dj$O(B 10000$B!#(B
 $B%a%C%;!<%8$,$3$NCM$h$jBg$-$$>l9g!"%a%C%;!<%8$N%O%$%i%$%H$r9T$$$^$;$s!#(B
-$B$3$l$K$h$j(Buuencode$B$dHs>o$KBg$-$J%@%$%8%'%9%H$J$I$N(B
+$B$3$l$K$h$j(B uuencode $B$dHs>o$KBg$-$J%@%$%8%'%9%H$J$I$N(B
 $B%O%$%i%$%H$NM^;_$r9T$$$^$9!#(B
 
 @item  wl-highlight-signature-separator
@@ -5707,7 +5712,7 @@ Non-nil $B$J$i(B@code{wl-highlight-citation-prefix-regexp}$B$GM?$($i$l$k(B
 $B%7%0%K%A%c$N6-3&$rI=$9@55,I=8=$r;XDj$7$^$9!#(B
 $B@55,I=8=$G$b!"@55,I=8=$N%j%9%H$G$b9=$$$^$;$s!#(B
 $B$3$N@55,I=8=$K%^%C%A$7$?>l=j0J9_$N%a%C%;!<%8$O!"(B
-@code{wl-highlight-message-signature}$B$G;XDj$5$l$k(Bface$B$G%O%$%i%$%H$5$l$^$9!#(B
+@code{wl-highlight-message-signature}$B$G;XDj$5$l$k(B face $B$G%O%$%i%$%H$5$l$^$9!#(B
 
 @item  wl-max-signature-size
 @vindex wl-max-signature-size
@@ -5890,7 +5895,6 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 (@samp{X-ML-Name:} $B%U%#!<%k%I5Z$S(B @samp{Reply-To:} $B%U%#!<%k%I$NN>J}$,855-;v$K(B
 $BB8:_$9$k>l9g$@$1!"(B@samp{To:} $B$K855-;vCf$N(B @samp{Reply-To:} $B%U%#!<%k%I$,=`Hw$5$l$^$9!#(B)
 
-@c @noindent
 @c ($B:G8e$N9T$N0UL#$O!"%I%i%U%H$N(B @samp{To:} $B$K855-;vCf$N(B @samp{From:} $B%U%#!<(B
 @c $B%k%I$,!"%I%i%U%H$N(B @samp{Cc:} $B$K855-;v$N(B @samp{To:} $B%U%#!<%k%I$*$h$S(B 
 @c @samp{Cc:} $B%U%#!<%k%I!"$=$7$F(B @samp{Newsgroups:} $B$K855-;v$N(B c
@@ -6358,3 +6362,7 @@ elmo $B$O!"(B@samp{Elisp Library for Message Orchestration} $B$NN,$G$9!#(B
 @summarycontents
 @contents
 @bye
+
+@c Local Variables: 
+@c fill-column: 72
+@c End:

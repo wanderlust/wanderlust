@@ -3,12 +3,13 @@
 @setfilename wl.info
 @settitle Wanderlust -- Yet Another Message Interface On Emacsen --
 @c %**end of header
-@c @documentlanguage en
-@c @documentencoding us-ascii
-@set version 2.3.0
+@documentlanguage en
+@documentencoding us-ascii
+@set VERSION 2.3.0
 @synindex pg cp
 @finalout
 
+@dircategory GNU Emacs Lisp
 @direntry
 * Wanderlust: (wl).         Yet Another Message Interface On Emacsen
 @end direntry
@@ -23,7 +24,7 @@ Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi},
 @w{Kenichi Okada}, @w{Kaoru Takahashi},
 @w{Bun Mizuhara} and @w{Masayuki Osada}.
 
-This edition is for Wanderlust version @value{version}.
+This edition is for Wanderlust version @value{VERSION}.
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -50,7 +51,7 @@ into another language, under the above conditions for modified versions.
 @sp 10
 @title Wanderlust User's Manual
 @subtitle Yet another message interface on Emacsen
-@subtitle for Wanderlust version @value{version}
+@subtitle for Wanderlust version @value{VERSION}
 @author Yuuichi Teranishi
 @author Fujikazu Okunishi
 @author Masahiro Murata
@@ -66,7 +67,7 @@ Copyright @copyright{} 1998, 1999, 2000 @w{Yuuichi Teranishi},
 @w{Kenichi Okada}, @w{Kaoru Takahashi},
 @w{Bun Mizuhara} and @w{Masayuki Osada}.
 
-This manual is for Wanderlust version @value{version}.
+This manual is for Wanderlust version @value{VERSION}.
 
 Permission is granted to make and distribute verbatim copies of
 this manual provided the copyright notice and this permission notice
@@ -100,7 +101,7 @@ Bun Mizuhara
 Masayuki Osada
 @end flushright
 
-This manual is for Wanderlust @value{version}.
+This manual is for Wanderlust @value{VERSION}.
 
 @end ifinfo
 
@@ -722,7 +723,7 @@ This chapter describes the folder types which Wanderlust is able to handle.
 Wanderlust uses ELMO as it's interface, so every folder types supported
 by ELMO is usable in Wanderlust.
 
-As of version @value{version}, 10 types of folders are predefined. These are
+As of version @value{VERSION}, 10 types of folders are predefined. These are
 IMAP, NNTP, LocalDir(MH), News Spool, POP, Archive, Multi, Filter, Pipe
 and Internal folder types.
 
@@ -6414,3 +6415,7 @@ U.S. Billboard magazines in 1980s.
 @summarycontents
 @contents
 @bye
+
+@c Local Variables: 
+@c fill-column: 72
+@c End:
