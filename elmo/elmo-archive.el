@@ -469,8 +469,6 @@ TYPE specifies the archiver's symbol."
       (error "No such file: %s" old-arc))
     (when (file-exists-p new-arc)
       (error "Already exists: %s" new-arc))
-    (unless (file-directory-p new-dir)
-      (elmo-make-directory new-dir))
     (rename-file old-arc new-arc)
     t))
 
