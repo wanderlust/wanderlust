@@ -1607,6 +1607,12 @@ with wl-highlight-folder-many-face."
   :group 'wl-summary
   :group 'wl-pref)
 
+(defcustom wl-summary-max-thread-depth 30
+  "*If thread depth of the message is larger than this value, divide it."
+  :type 'integer
+  :group 'wl-summary
+  :group 'wl-pref)
+
 (defcustom wl-summary-no-from-message "nobody@nowhere?"
   "*A string displayed in summary when no from field exists."
   :type 'string

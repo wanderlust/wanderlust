@@ -1,3 +1,11 @@
+2002-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-vars.el (wl-summary-max-thread-depth): New user option.
+
+	* wl-summary.el (wl-summary-insert-thread-entity):
+	If the thread depth is reached to wl-summary-max-thread-depth,
+	divide the thread.
+
 2002-12-08  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-draft.el (wl-draft-send-mail-with-smtp): Fix logic
