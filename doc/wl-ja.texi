@@ -2,9 +2,9 @@
 @c %**start of header
 @setfilename wl-ja.info
 @settitle Wanderlust -- Yet Another Message Interface On Emacsen --
+@c %**end of header
 @c @documentlanguage ja
 @c @documentencoding iso-2022-jp
-@c %**end of header
 @set version 2.3.0
 @synindex pg cp
 @finalout
@@ -5009,8 +5009,8 @@ prefix argument $B$rIU$1$F(B @kbd{C-u M-x wl-summary-archive} $B$G<B9T$9$k$H!
 $B$5$l$F$$$k>uBV$K$J$j$^$9$N$G!"E,Ev$KJT=8$7$?$N$A(B @kbd{@key{RET}} $B$r2!$7$^$9!#(B
 
 $B$3$l$G!"F~NO$7$?J8;zNs$HF1$8(B Subject $B$r;}$D%a%C%;!<%8$KBP$7$F%9%3%"(B 
--1000 $B$,$D$1$i$l$k$h$&$K$J$j$^$9!#$D$^$j!"$3$N$h$&$J%9%3%"%U%!%$%k$,<+F0E*(B
-$B$K:n@.$5$l$?$3$H$K$J$j$^$9!#(B
+@minus{}1000 $B$,$D$1$i$l$k$h$&$K$J$j$^$9!#(B
+$B$D$^$j!"$3$N$h$&$J%9%3%"%U%!%$%k$,<+F0E*$K:n@.$5$l$?$3$H$K$J$j$^$9!#(B
 
 $B<!$K!"F1$8%5%^%j%P%C%U%!$G(B @kbd{h} @kbd{e} $B$H%?%$%W$7$F$/$@$5$$!#(B
 $B$9$k$H@h$[$I:n@.$7$?%9%3%"%U%!%$%k$,I=<($5$l$F$$$k$H;W$$$^$9!#(B
@@ -5050,9 +5050,9 @@ prefix argument $B$rIU$1$F(B @kbd{C-u M-x wl-summary-archive} $B$G<B9T$9$k$H!
 @code{wl-score-edit-insert-entry} $B$GF1$8%(%s%H%j$rDI2C$7$?>l9g!"(B
 $B%9%3%"$,2C;;$5$l$^$9!#(B
 
-$B$?$H$($P!"(B@kbd{L a} $B$G%9%3%"$,(B -1000 $B$N(B @samp{from} $B%(%s%H%j$r:n@.$7$?8e!"(B
-$B:FEY(B @kbd{C-u 200 L a} $B$G%9%3%"$,(B -200 $B$N(B @samp{from} $B%(%s%H%j$r:n@.$9$k$H!"(B
-$B%9%3%"$,(B -1200 $B$N%(%s%H%j$,(B1$B$D:n@.$5$l$k$3$H$K$J$j$^$9!#(B
+$B$?$H$($P!"(B@kbd{L a} $B$G%9%3%"$,(B @minus{}1000 $B$N(B @samp{from} $B%(%s%H%j$r:n@.$7$?8e!"(B
+$B:FEY(B @kbd{C-u 200 L a} $B$G%9%3%"$,(B @minus{}200 $B$N(B @samp{from} $B%(%s%H%j$r:n@.$9$k$H!"(B
+$B%9%3%"$,(B @minus{}1200 $B$N%(%s%H%j$,(B1$B$D:n@.$5$l$k$3$H$K$J$j$^$9!#(B
 
 @subsubsection Thread$B%-!<$N:n@.(B
 

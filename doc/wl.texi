@@ -2,8 +2,9 @@
 @c %**start of header
 @setfilename wl.info
 @settitle Wanderlust -- Yet Another Message Interface On Emacsen --
-@c @documentlanguage en
 @c %**end of header
+@c @documentlanguage en
+@c @documentencoding us-ascii
 @set version 2.3.0
 @synindex pg cp
 @finalout
@@ -5053,8 +5054,8 @@ In the summary buffer, move to an appropriate message and type @kbd{L}.
 Then type @kbd{s}, @kbd{s}, and @kbd{p} at a prompt in a mini-buffer.
 The string in Subject is presented.  Edit it and press @kbd{@key{RET}}.
 
-This makes -1000 are scored for messages with the same Subject as the
-string you entered.  That is, such a score file is created
+This makes @minus{}1000 are scored for messages with the same Subject as
+the string you entered.  That is, such a score file is created
 automatically.
 
 Then, try typing @kbd{h} and @kbd{e} in the same summary buffer.
@@ -5096,9 +5097,9 @@ If you add the same entries by @code{wl-summary-increase-score},
 @code{wl-summary-lower-score}, and @code{wl-score-edit-insert-entry},
 scores for the entry is summed up.
 
-For example, if you create @samp{from} entry with the score of -1000 by
-@kbd{L a} and again @samp{from} with -200, one entry with the score of
--1200 will be created as a result.
+For example, if you create @samp{from} entry with the score of @minus{}1000 by
+@kbd{L a} and again @samp{from} with @minus{}200, one entry with the score of
+@minus{}1200 will be created as a result.
 
 @subsubsection Creating Thread Key
 
