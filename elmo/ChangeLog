@@ -1,3 +1,8 @@
+2003-08-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-message-entity-field): Decode value
+	when field is from or subject.
+
 2003-08-23  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-multi.el (elmo-message-entity-parent): Define.

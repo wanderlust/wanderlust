@@ -1,3 +1,8 @@
+2003-08-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-refile.el (wl-refile-get-field-value): Call
+	`elmo-message-entity-field' with 3rd argument is non-nil.
+
 2003-08-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-draft-preview-attributes): New user option.

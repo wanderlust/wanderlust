@@ -1016,7 +1016,7 @@ Return CONDITION itself if no entity exists in msgdb."
 		(references (aref (cdr entity) 1))
 		(size (aref (cdr entity) 7))
 		(t (cdr (assoc (symbol-name field) (aref (cdr entity) 8)))))))
-	 (if decode
+	 (if (and decode (memq field '(from subject)))
 	     (elmo-msgdb-get-decoded-cache field-value)
 	   field-value))))
 
