@@ -418,11 +418,20 @@ file name for maildir directories."
 	  (delete-file file)))))
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-maildir-folder)
-					    location strategy
-					    &optional section unseen)
+					    location strategy &optional
+					    section outbuf unseen)
   (let ((file (elmo-maildir-message-file-name folder location)))
     (when (file-exists-p file)
-      (insert-file-contents-as-binary file))))
+      (if outbuf
+	  (with-current-buffer outbuf
+	    (erase-buffer)
+	    (insert-file-contents-as-binary file)
+	    (elmo-delete-cr-buffer)
+	    t)
+	(with-temp-buffer
+	  (insert-file-contents-as-binary file)
+	  (elmo-delete-cr-buffer)
+	  (buffer-string))))))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-maildir-folder))
   (let ((basedir (elmo-maildir-folder-directory-internal folder)))

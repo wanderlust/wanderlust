@@ -31,104 +31,14 @@
 ;;; Code:
 ;; 
 (require 'elmo-localdir)
+(luna-define-class elmo-localnews-folder (elmo-localdir-folder) ())
 
-(defmacro elmo-localnews-as-newsdir (&rest body)
-  (` (let ((elmo-localdir-folder-path elmo-localnews-folder-path))
-       (,@ body))))
+(luna-define-method elmo-localdir-folder-path ((folder elmo-localnews-folder))
+  elmo-localnews-folder-path)
 
-(defun elmo-localnews-msgdb-create-as-numlist (spec numlist new-mark
-						    already-mark seen-mark
-						    important-mark seen-list)
-  (when numlist
-    (elmo-localnews-as-newsdir
-     (elmo-localdir-msgdb-create-as-numlist spec numlist new-mark
-					    already-mark seen-mark
-					    important-mark seen-list))))
-
-(defalias 'elmo-localnews-msgdb-create 'elmo-localnews-msgdb-create-as-numlist)
-
-(defun elmo-localnews-list-folders (spec &optional hierarchy)
-  (let ((folder (concat "=" (nth 1 spec))))
-    (elmo-localnews-as-newsdir
-     (elmo-localdir-list-folders-subr folder hierarchy))))
-
-(defun elmo-localnews-append-msg (spec string &optional msg no-see)
-  (elmo-localnews-as-newsdir
-   (elmo-localdir-append-msg spec string)))
-
-(defun elmo-localnews-delete-msgs (dir number)
-  (elmo-localnews-as-newsdir
-   (elmo-localdir-delete-msgs dir number)))
-
-(defun elmo-localnews-read-msg (spec number outbuf)
-  (elmo-localnews-as-newsdir
-   (elmo-localdir-read-msg spec number outbuf)))
-
-(defun elmo-localnews-list-folder (spec)
-  (elmo-localnews-as-newsdir
-   (elmo-localdir-list-folder-subr spec)))
-
-(defun elmo-localnews-max-of-folder (spec)
-  (elmo-localnews-as-newsdir
-   (elmo-localdir-list-folder-subr spec t)))
-
-(defun elmo-localnews-check-validity (spec validity-file)
-  (elmo-localnews-as-newsdir
-   (elmo-localdir-check-validity spec validity-file)))
-
-(defun elmo-localnews-sync-validity (spec validity-file)
-  (elmo-localnews-as-newsdir
-   (elmo-localdir-sync-validity spec validity-file)))
-
-(defun elmo-localnews-folder-exists-p (spec)
-  (elmo-localnews-as-newsdir
-   (elmo-localdir-folder-exists-p spec)))
-
-(defun elmo-localnews-folder-creatable-p (spec)
-  t)
-
-(defun elmo-localnews-create-folder (spec)
-  (elmo-localnews-as-newsdir
-   (elmo-localdir-create-folder spec)))
-
-(defun elmo-localnews-delete-folder (spec)
-  (elmo-localnews-as-newsdir
-   (elmo-localdir-delete-folder spec)))
-
-(defun elmo-localnews-rename-folder (old-spec new-spec)
-  (elmo-localnews-as-newsdir
-   (elmo-localdir-rename-folder old-spec new-spec)))
-
-(defun elmo-localnews-search (spec condition &optional from-msgs)
-  (elmo-localnews-as-newsdir
-   (elmo-localdir-search spec condition from-msgs)))
-
-(defun elmo-localnews-copy-msgs (dst-spec msgs src-spec
-					  &optional loc-alist same-number)
-  (elmo-localdir-copy-msgs
-   dst-spec msgs src-spec loc-alist same-number))
-
-(defun elmo-localnews-pack-number (spec msgdb arg)
-  (elmo-localnews-as-newsdir
-   (elmo-localdir-pack-number spec msgdb arg)))
-
-(defun elmo-localnews-use-cache-p (spec number)
-  nil)
-
-(defun elmo-localnews-local-file-p (spec number)
-  t)
-
-(defun elmo-localnews-get-msg-filename (spec number &optional loc-alist)
-  (elmo-localnews-as-newsdir
-   (elmo-localdir-get-msg-filename spec number loc-alist)))
-
-(defalias 'elmo-localnews-sync-number-alist 'elmo-generic-sync-number-alist)
-(defalias 'elmo-localnews-list-folder-unread
-  'elmo-generic-list-folder-unread)
-(defalias 'elmo-localnews-list-folder-important
-  'elmo-generic-list-folder-important)
-(defalias 'elmo-localnews-commit 'elmo-generic-commit)
-(defalias 'elmo-localnews-folder-diff 'elmo-generic-folder-diff)
+(luna-define-method elmo-localdir-folder-name ((folder elmo-localnews-folder)
+					       name)
+  (elmo-replace-in-string name "\\." "/"))
 
 (require 'product)
 (product-provide (provide 'elmo-localnews) (require 'elmo-version))

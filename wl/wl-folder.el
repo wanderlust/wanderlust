@@ -2631,8 +2631,7 @@ Use `wl-subscribed-mailing-list'."
 					     wl-summary-buffer-name
 					     (symbol-name this-command))))
 		(wl-summary-goto-folder-subr entity
-					     (wl-summary-get-sync-range
-					      (wl-folder-get-elmo-folder entity))
+					     (wl-summary-get-sync-range entity)
 					     nil)
 		(setq ret-val (wl-summary-incorporate))
 		(wl-summary-exit)

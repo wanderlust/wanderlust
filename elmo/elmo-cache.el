@@ -151,19 +151,28 @@
      (expand-file-name location
 		       (elmo-cache-folder-directory-internal folder)))))
 
-(luna-define-method elmo-message-fetch-with-cache-process
-  ((folder elmo-cache-folder) number strategy &optional section unseen)
-  ;; disbable cache process
-  (elmo-message-fetch-internal folder number strategy section unseen))
-
-(luna-define-method elmo-map-message-fetch ((folder elmo-cache-folder)
-					    location strategy
-					    &optional section unseen)
+(defsubst elmo-cache-folder-map-message-fetch (folder location strategy
+						      section outbuf unseen)
   (let ((file (expand-file-name
 	       location
 	       (elmo-cache-folder-directory-internal folder))))
     (when (file-exists-p file)
-      (insert-file-contents-as-binary file))))
+      (if outbuf
+	  (with-current-buffer outbuf
+	    (erase-buffer)
+	    (insert-file-contents-as-binary file)
+	    (elmo-delete-cr-buffer)
+	    t)
+	(with-temp-buffer
+	  (insert-file-contents-as-binary file)
+	  (elmo-delete-cr-buffer)
+	  (buffer-string))))))
+
+(luna-define-method elmo-map-message-fetch ((folder elmo-cache-folder)
+					    location strategy &optional
+					    section outbuf unseen)
+  (elmo-cache-folder-map-message-fetch folder location strategy
+				       section outbuf unseen))
 
 (luna-define-method elmo-folder-creatable-p ((folder elmo-cache-folder))
   nil)

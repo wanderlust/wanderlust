@@ -104,7 +104,6 @@ If a folder name begins with PREFIX, use BACKEND."
 				     persistent   ; non-nil if persistent.
 				     message-modified ; message is modified.
 				     mark-modified    ; mark is modified.
-				     process-duplicates  ; read or hide
 				     ))
   (luna-define-internal-accessors 'elmo-folder))
 
@@ -525,33 +524,6 @@ is fetched (if possible).
 If second optional argument OUTBUF is specified, fetched message is
 inserted to the buffer and returns t if fetch was ended successfully.
 If third optional argument UNREAD is non-nil, message is not marked as read.
-Returns non-nil if fetching was succeed.")
-
-(luna-define-generic elmo-message-fetch-with-cache-process (folder
-							    number strategy
-							    &optional
-							    section
-							    unread)
-  "Fetch a message into current buffer with cache process.
-FOLDER is the ELMO folder structure.
-NUMBER is the number of the message in the FOLDER.
-STRATEGY is the message fetching strategy.
-If optional argument SECTION is specified, only the SECTION of the message
-is fetched (if possible).
-If second optional argument UNREAD is non-nil, message is not marked as read.
-Returns non-nil if fetching was succeed.")
-
-(luna-define-generic elmo-message-fetch-internal (folder number strategy
-							 &optional
-							 section
-							 unread)
-  "Fetch a message into current buffer.
-FOLDER is the ELMO folder structure.
-NUMBER is the number of the message in the FOLDER.
-STRATEGY is the message fetching strategy.
-If optional argument SECTION is specified, only the SECTION of the message
-is fetched (if possible).
-If second optional argument UNREAD is non-nil, message is not marked as read.
 Returns non-nil if fetching was succeed.")
 
 (luna-define-generic elmo-message-folder (folder number)
@@ -1017,7 +989,7 @@ FIELD is a symbol of the field."
 					 (elmo-folder-msgdb folder))
 					number-alist)))
 	     (cur number-alist)
-	     pair overview
+	     pair
 	     to-be-deleted
 	     mark-alist)
 	(while cur
@@ -1026,25 +998,13 @@ FIELD is a symbol of the field."
 	  (if (setq pair (rassoc (cdr (car cur)) all-alist))
 	      (setq to-be-deleted (nconc to-be-deleted (list (car pair)))))
 	  (setq cur (cdr cur)))
-	(cond ((eq (elmo-folder-process-duplicates-internal folder)
-		   'hide)
-	       ;; Hide duplicates.
-	       (setq overview (elmo-delete-if
-			       (lambda (x)
-				 (memq (elmo-msgdb-overview-entity-get-number
-					x)
-				       to-be-deleted))
-			       (elmo-msgdb-get-overview append-msgdb)))
-	       ;; Should be mark as read.
-	       (elmo-folder-mark-as-read folder to-be-deleted)
-	       (elmo-msgdb-set-overview append-msgdb overview))
-	      ((eq (elmo-folder-process-duplicates-internal folder)
-		   'read)
-	       ;; Mark as read duplicates.
-	       (elmo-folder-mark-as-read folder to-be-deleted))
-	      (t 
-	       ;; Do nothing.
-	       (setq to-be-deleted nil)))
+	;; XXXX If caching is enabled, read-uncached mark should be set.
+	(setq mark-alist (elmo-delete-if
+			  (function
+			   (lambda (x)
+			     (memq (car x) to-be-deleted)))
+			  (elmo-msgdb-get-mark-alist append-msgdb)))
+	(elmo-msgdb-set-mark-alist append-msgdb mark-alist)
 	(elmo-folder-set-msgdb-internal folder
 					(elmo-msgdb-append
 					 (elmo-folder-msgdb folder)
@@ -1079,43 +1039,6 @@ FIELD is a symbol of the field."
 	       (not elmo-folder-update-confirm))
 	  (nthcdr (max (- len elmo-folder-update-threshold) 0) appends)
 	appends))))
-
-(luna-define-method elmo-message-fetch ((folder elmo-folder)
-					number strategy
-					&optional
-					section
-					outbuf
-					unread)
-  (if outbuf
-      (with-current-buffer outbuf
-	(erase-buffer)
-	(elmo-message-fetch-with-cache-process folder number
-					       strategy section unread)
-	t)
-    (with-temp-buffer
-      (elmo-message-fetch-with-cache-process folder number
-					     strategy section unread)
-      (buffer-string))))
-
-(luna-define-method elmo-message-fetch-with-cache-process ((folder elmo-folder)
-							   number strategy
-							   &optional
-							   section unread)
-  (let (cache-file)
-    (if (and (elmo-fetch-strategy-use-cache strategy)
-	     (setq cache-file (elmo-file-cache-expand-path
-			       (elmo-fetch-strategy-cache-path strategy)
-			       section))
-	     (file-exists-p cache-file))
-	(insert-file-contents-as-binary cache-file)
-      (elmo-message-fetch-internal folder number strategy section unread)
-      (elmo-delete-cr-buffer)
-      (when (and (> (buffer-size) 0)
-		 (elmo-fetch-strategy-save-cache strategy)
-		 (elmo-fetch-strategy-cache-path strategy))
-	(elmo-file-cache-save
-	 (elmo-fetch-strategy-cache-path strategy)
-	 section)))))
 
 (defun elmo-folder-synchronize (folder
 				new-mark             ;"N"
@@ -1187,14 +1110,12 @@ CROSSED is cross-posted message number."
 	    (elmo-msgdb-append-to-killed-list folder (car diff-2)))
 	  ;; Don't delete important marked messages.
 	  (setq delete-list
-		(if (eq (elmo-folder-type-internal folder) 'mark)
-		    (cadr diff)
-		  (elmo-delete-if
-		   (lambda (x)
-		     (and (setq mark (cadr (assq x mark-alist)))
-			  (string= mark important-mark)))
-		   ;; delete message list
-		   (cadr diff))))
+		(elmo-delete-if
+		 (lambda (x)
+		   (and (setq mark (cadr (assq x mark-alist)))
+			(string= mark important-mark)))
+		 ;; delete message list
+		 (cadr diff)))
 	  (if (or (equal diff '(nil nil))
 		  (equal diff '(nil))
 		  (and (eq (length (car diff)) 0)
