@@ -452,7 +452,7 @@ Returns non-nil if bottom of message."
 	   wl-message-ignored-field-list))
 	(elmo-message-visible-field-list wl-message-visible-field-list)
 	(elmo-message-sorted-field-list wl-message-sort-field-list)
-	(elmo-message-fetch-threshold wl-fetch-confirm-threshold))
+	(elmo-fetch-threshold wl-fetch-confirm-threshold))
     (prog1 
 	(if (eq flag 'as-is)
 	    (let (wl-highlight-x-face-function)

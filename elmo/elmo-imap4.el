@@ -1932,7 +1932,7 @@ Return nil if no complete line has arrived."
 			 (mapcar '(lambda (fld)
 				    (unless
 					(string-match
-					 (concat "^" (regexp-quote folder) delim)
+					 (concat "^" (regexp-quote folder))
 					 fld)
 				      fld))
 				 result))))
