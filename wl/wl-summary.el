@@ -626,6 +626,7 @@ This only makes sense if the current message is a bounce message which
 contains some mail you have written but has been bounced back to
 you."
   (interactive)
+  (wl-summary-toggle-disp-msg 'off)
   (save-excursion
     (wl-summary-set-message-buffer-or-redisplay)
     (set-buffer (wl-message-get-original-buffer))
@@ -5320,6 +5321,7 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 (defun wl-summary-supersedes-message ()
   "Supersede current message."
   (interactive)
+  (wl-summary-toggle-disp-msg 'off)
   (let ((summary-buf (current-buffer))
 	message-buf from)
     (wl-summary-set-message-buffer-or-redisplay)

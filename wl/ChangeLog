@@ -1,5 +1,11 @@
 2002-11-07  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl-draft.el (wl-draft-create-buffer): Rewrite the part to hide
+	message buffer by using `wl-summary-toggle-disp-msg'.
+	* wl-summary.el (wl-summary-resend-bounced-mail): Hide message
+	buffer window.
+	(wl-summary-supresedes-message): Ditto.
+
 	* wl-summary.el (wl-summary-reedit): Hide message buffer window.
 	Do not delete other windows.
 	* wl-draft.el (wl-draft-edit-string): Do not delete other windows.

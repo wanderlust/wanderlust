@@ -1636,11 +1636,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	       (error "Invalid value for wl-draft-reply-buffer-style"))))
 	(case wl-draft-buffer-style
 	  (split
-	   (when (and (eq major-mode 'wl-summary-mode)
-		      wl-message-buffer
-		      (buffer-live-p wl-message-buffer)
-		      (get-buffer-window wl-message-buffer))
-	     (delete-window (get-buffer-window wl-message-buffer)))
+	   (when (eq major-mode 'wl-summary-mode)
+	     (wl-summary-toggle-disp-msg 'off))
 	   (split-window-vertically)
 	   (other-window 1)
 	   (switch-to-buffer buf-name))
