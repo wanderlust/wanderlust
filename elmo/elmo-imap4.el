@@ -1144,14 +1144,14 @@ Return nil if no complete line has arrived."
 	    (progn
 	      (if (and elmo-imap4-display-literal-progress
 		       (> (string-to-number (match-string 1))
-			  (min elmo-display-retrieval-progress-threshold 100)))
+			  elmo-display-retrieval-progress-threshold))
 		  (elmo-display-progress
 		   'elmo-display-retrieval-progress
 		   (format "Retrieving (%d/%d bytes)..."
 			   (- (point-max) (point))
 			   (string-to-number (match-string 1)))
-		   (/ (- (point-max) (point))
-		      (/ (string-to-number (match-string 1)) 100))))
+		   (floor (* (/ (float (- (point-max) (point)))
+				(string-to-number (match-string 1))) 100))))
 	      nil)
 	  (goto-char (+ (point) (string-to-number (match-string 1))))
 	  (elmo-imap4-find-next-line))
@@ -2477,7 +2477,8 @@ If optional argument REMOVE is non-nil, remove FLAG."
       (setq elmo-imap4-display-literal-progress nil))
     (unless elmo-inhibit-display-retrieval-progress
       (elmo-display-progress 'elmo-imap4-display-literal-progress
-			     "" 100)  ; remove progress bar.
+			     ""
+			     100)  ; remove progress bar.
       (message "Retrieving...done."))
     (if (setq response (elmo-imap4-response-bodydetail-text
 			(elmo-imap4-response-value-all

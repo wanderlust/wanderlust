@@ -239,13 +239,14 @@ set as non-nil.")
     (insert output)
     (if (and elmo-pop3-total-size
 	     (> elmo-pop3-total-size 
-		(min elmo-display-retrieval-progress-threshold 100)))
+		elmo-display-retrieval-progress-threshold))
 	(elmo-display-progress
 	 'elmo-display-retrieval-progress
 	 (format "Retrieving (%d/%d bytes)..."
 		 (buffer-size)
 		 elmo-pop3-total-size)
-	 (/ (buffer-size) (/ elmo-pop3-total-size 100))))))
+	 (floor (* (/ (float (buffer-size))
+		      elmo-pop3-total-size) 100))))))
 
 (defun elmo-pop3-auth-user (session)
   (let ((process (elmo-network-session-process-internal session)))
@@ -859,8 +860,7 @@ set as non-nil.")
 	  (setq elmo-pop3-total-size size)
 	  (elmo-display-progress
 	   'elmo-pop3-display-retrieval-progress
-	   (format "Retrieving (0/%d bytes)..." elmo-pop3-total-size)
-	   0))
+	   (format "Retrieving (0/%d bytes)..." elmo-pop3-total-size)))
 	(unwind-protect
 	    (progn
 	      (when (null (setq response (elmo-pop3-read-response
@@ -869,8 +869,6 @@ set as non-nil.")
 	      (setq response (elmo-pop3-read-body process outbuf)))
 	  (setq elmo-pop3-total-size nil))
 	(unless elmo-inhibit-display-retrieval-progress
-	  (elmo-display-progress
-	   'elmo-display-retrieval-progress "" 100)  ; remove progress bar.
 	  (message "Retrieving...done."))
 	(set-buffer outbuf)
 	(goto-char (point-min))
