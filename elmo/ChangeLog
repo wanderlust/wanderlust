@@ -1,7 +1,3 @@
-2002-10-22  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* elmo.el (elmo-generic-folder-diff): Avoid byte-compile warning.
-
 2002-10-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* elmo-dop.el (elmo-folder-status-dop): If spool-folder is absent,
