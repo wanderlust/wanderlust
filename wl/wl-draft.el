@@ -1315,6 +1315,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		(setq major-mode 'wl-draft-mode)
 		(wl-draft-create-contents
 		 (append `((To . ,recipient)
+			   (From . ,wl-from)
 			   (Subject . ,(concat "A blind carbon copy ("
 					       orig-subj
 					       ")")))
