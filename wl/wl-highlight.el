@@ -820,31 +820,47 @@
 	      (put-text-property bol (match-end 0) 'face face)))
 	(put-text-property bol eol 'face text-face)))))
 
+(defsubst wl-highlight-summary-line-face-spec (flags temp-mark indent)
+  "Return a cons cell of (face . argument)."
+  (let (action)
+    (if (setq action (assoc temp-mark wl-summary-mark-action-list))
+	(cons (nth 5 action) (nth 2 action))
+      (cond
+       ((and (string= temp-mark wl-summary-score-over-mark)
+	     (or (memq 'new flags) (memq 'unread flags)))
+	'(wl-highlight-summary-high-unread-face))
+       ((and (string= temp-mark wl-summary-score-below-mark)
+	     (or (memq 'new flags) (memq 'unread flags)))
+	'(wl-highlight-summary-low-unread-face))
+       ((let ((priorities wl-summary-flag-priority-list)
+	      result)
+	  (while (and (null result) priorities)
+	    (when (memq (car priorities) flags)
+	      (setq result
+		    (case (car priorities)
+		      (new
+		       '(wl-highlight-summary-new-face))
+		      (important
+		       '(wl-highlight-summary-important-face))
+		      (answered
+		       '(wl-highlight-summary-answered-face))
+		      (unread
+		       '(wl-highlight-summary-unread-face)))))
+	    (setq priorities (cdr priorities)))
+	  result))
+       ((string= temp-mark wl-summary-score-below-mark)
+	'(wl-highlight-summary-low-read-face))
+       ((string= temp-mark wl-summary-score-over-mark)
+	'(wl-highlight-summary-high-read-face))
+       (t (if indent
+	      '(wl-highlight-summary-normal-face)
+	    '(wl-highlight-summary-thread-top-face)))))))
+
 (defun wl-highlight-summary-line-string (line flags temp-mark indent)
-  (let (fsymbol action)
-    (cond ((and (string= temp-mark wl-summary-score-over-mark)
-		(or (memq 'new flags) (memq 'unread flags)))
-	   (setq fsymbol 'wl-highlight-summary-high-unread-face))
-	  ((and (string= temp-mark wl-summary-score-below-mark)
-		(or (memq 'new flags) (memq 'unread flags)))
-	   (setq fsymbol 'wl-highlight-summary-low-unread-face))
-	  ((setq action (assoc temp-mark wl-summary-mark-action-list))
-	   (setq fsymbol (nth 5 action)))
-	  ((memq 'new flags)
-	   (setq fsymbol 'wl-highlight-summary-new-face))
-	  ((memq 'unread flags)
-	   (setq fsymbol 'wl-highlight-summary-unread-face))
-	  ((memq 'answered flags)
-	   (setq fsymbol 'wl-highlight-summary-answered-face))
-	  ((memq 'important flags)
-	   (setq fsymbol 'wl-highlight-summary-important-face))
-	  ((string= temp-mark wl-summary-score-below-mark)
-	   (setq fsymbol 'wl-highlight-summary-low-read-face))
-	  ((string= temp-mark wl-summary-score-over-mark)
-	   (setq fsymbol 'wl-highlight-summary-high-read-face))
-	  (t (if (zerop (length indent))
-		 (setq fsymbol 'wl-highlight-summary-thread-top-face)
-	       (setq fsymbol 'wl-highlight-summary-normal-face))))
+  (let ((fsymbol (car (wl-highlight-summary-line-face-spec
+		       flags
+		       temp-mark
+		       (> (length indent) 0)))))
     (put-text-property 0 (length line) 'face fsymbol line))
   (if wl-use-highlight-mouse-line
       (put-text-property 0 (length line) 'mouse-face 'highlight line)))
@@ -853,58 +869,23 @@
   (interactive)
   (save-excursion
     (let ((inhibit-read-only t)
-	  (case-fold-search nil) temp-mark
+	  (case-fold-search nil)
 	  (deactivate-mark nil)
 	  (number (wl-summary-message-number))
-	  fsymbol action bol eol matched thread-top looked-at dest ds)
+	  bol eol spec)
       (end-of-line)
       (setq eol (point))
       (beginning-of-line)
       (setq bol (point))
-      (setq temp-mark (wl-summary-temp-mark))
-      (when (setq action (assoc temp-mark wl-summary-mark-action-list))
-	(setq fsymbol (nth 5 action))
-	(setq dest (nth 2 action)))
-      (if (not fsymbol)
-	  (cond
-	   ((null number))
-	   ((and (string= temp-mark wl-summary-score-over-mark)
-		 (or (elmo-message-flagged-p wl-summary-buffer-elmo-folder
-					     number 'new)
-		     (elmo-message-flagged-p wl-summary-buffer-elmo-folder
-					     number 'unread)))
-	    (setq fsymbol 'wl-highlight-summary-high-unread-face))
-	   ((and (string= temp-mark wl-summary-score-below-mark)
-		 (or (elmo-message-flagged-p wl-summary-buffer-elmo-folder
-					     number 'new)
-		     (elmo-message-flagged-p wl-summary-buffer-elmo-folder
-					      number 'unread)))
-	    (setq fsymbol 'wl-highlight-summary-low-unread-face))
-	   ((elmo-message-flagged-p wl-summary-buffer-elmo-folder
-				     number 'new)
-	    (setq fsymbol 'wl-highlight-summary-new-face))
-	   ((elmo-message-flagged-p wl-summary-buffer-elmo-folder
-				     number 'unread)
-	    (setq fsymbol 'wl-highlight-summary-unread-face))
-	   ((elmo-message-flagged-p wl-summary-buffer-elmo-folder
-				     number 'answered)
-	    (setq fsymbol 'wl-highlight-summary-answered-face))
-	   ((elmo-message-flagged-p wl-summary-buffer-elmo-folder
-				     number 'important)
-	    (setq fsymbol 'wl-highlight-summary-important-face))
-	   ;; score mark
-	   ((string= temp-mark wl-summary-score-below-mark)
-	    (setq fsymbol 'wl-highlight-summary-low-read-face))
-	   ((string= temp-mark wl-summary-score-over-mark)
-	    (setq fsymbol 'wl-highlight-summary-high-read-face))
-	   ;;
-	   (t (if (null
-		   (wl-thread-entity-get-parent-entity
-		    (wl-thread-get-entity number)))
-		  (setq fsymbol 'wl-highlight-summary-thread-top-face)
-		(setq fsymbol 'wl-highlight-summary-normal-face)))))
-      (when fsymbol (put-text-property bol eol 'face fsymbol))
-      (when dest
+      (setq spec (wl-highlight-summary-line-face-spec
+		  (elmo-message-flags wl-summary-buffer-elmo-folder
+				      number)
+		  (wl-summary-temp-mark)
+		  (wl-thread-entity-get-parent-entity
+		   (wl-thread-get-entity number))))
+      (when (car spec)
+	(put-text-property bol eol 'face (car spec)))
+      (when (cdr spec)
 	(put-text-property (next-single-property-change
 			    (next-single-property-change
 			     bol 'wl-summary-action-argument
@@ -913,11 +894,10 @@
 			   eol
 			   'face
 			   'wl-highlight-action-argument-face))
-      (if wl-use-highlight-mouse-line
-	  (put-text-property bol
-			     eol 'mouse-face 'highlight))
-      (if wl-use-dnd
-	  (wl-dnd-set-drag-starter bol eol)))))
+      (when wl-use-highlight-mouse-line
+	(put-text-property bol eol 'mouse-face 'highlight))
+      (when wl-use-dnd
+	(wl-dnd-set-drag-starter bol eol)))))
 
 (defun wl-highlight-folder (start end)
   "Highlight folder between start and end.
