@@ -16,7 +16,7 @@
 	(wl-summary-target-mark-mark-as-read): Ditto.
 	(wl-summary-redisplay-internal): Ditto.
 	(wl-summary-redisplay-no-mime-internal): Ditto.
-	(wl-summary-redisplay-all-header): DItto.
+	(wl-summary-redisplay-all-header): Ditto.
 	(wl-summary-mark-as-read): Removed argument `cached';
 	Use current cache status to set cache mark.
 	(wl-summary-redisplay-internal): Follow the change above.
