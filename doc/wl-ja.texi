@@ -3163,6 +3163,8 @@ prefix argument $B$D$-$J$i$P%-%c%C%7%e$,B8:_$7$F$bL5;k$7$F:FFI$_9~$_$7D>$7$^$9!
 $B8=:_%+!<%=%k$,$"$k9T$N%a%C%;!<%8$,(B
 MIME $B$G%+%W%;%k2=$5$l$?J#?t$N%a%C%;!<%84^$`>l9g!"(B
 $B$=$l$i$r8=:_$N%U%)%k%@$K$[$I$-$^$9!#(B
+$B=q$-9~$_IT2D$N%U%)%k%@$K5o$k>l9g$d(B prefix argument $B$r$D$1$F<B9T$7$?>l9g(B
+$B$K$O!"E83+@h$N%U%)%k%@$r?R$M$^$9!#(B
 (@code{wl-summary-burst})
 
 @item @@
@@ -3821,11 +3823,6 @@ petname $B$G$bJd40$,$G$-$^$9!#(B
 @item wl-summary-from-width
 @vindex wl-summary-from-width
 $B=i4|@_Dj$O(B 17$B!#%5%^%j$N(B From $BItJ,$NI=<(I}$G$9!#(B
-
-@item wl-summary-subject-length-limit
-@vindex wl-summary-subject-length-limit
-$B=i4|@_Dj$O(B @code{nil}$B!#%5%^%j$N(B Subject $BItJ,$NI=<(I}$N>e8B$G$9!#(B
-@code{nil} $B$N>l9g!"(BSubject $BItJ,$ND9$5$N@)8B$r$7$^$;$s!#(B
 
 @item wl-summary-indent-length-limit
 @vindex  wl-summary-indent-length-limit

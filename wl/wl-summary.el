@@ -2615,7 +2615,6 @@ If ARG, without confirm."
 			wl-summary-alike-hashtb)))
 
 (defun wl-summary-insert-headers (overview func mime-decode)
-  (message "Creating subject cache...")
   (let (ov this last alike)
     (buffer-disable-undo (current-buffer))
     (make-local-variable 'wl-summary-alike-hashtb)
@@ -2626,7 +2625,7 @@ If ARG, without confirm."
       (setq this (funcall func ov))
       (and this (setq this (std11-unfold-string this)))
       (if (equal last this)
-	  (wl-append alike (list ov))
+	  (setq alike (cons ov alike))
 	(when last
 	  (wl-summary-put-alike alike)
 	  (insert last ?\n))
@@ -2640,54 +2639,59 @@ If ARG, without confirm."
 				  elmo-mime-charset)
       (when (eq mime-decode 'mime)
 	(eword-decode-region (point-min) (point-max))))
-    (message "Creating subject cache...done")
     (run-hooks 'wl-summary-insert-headers-hook)))
 
 (defun wl-summary-search-by-subject (entity overview)
   (let ((summary-buf (current-buffer))
 	(buf (get-buffer-create wl-summary-search-buf-name))
 	(folder-name (wl-summary-buffer-folder-name))
-	match founds found-entity)
+	match founds cur result)
     (with-current-buffer buf
       (let ((case-fold-search t))
 	(when (or (not (string= wl-summary-search-buf-folder-name folder-name))
 		  (zerop (buffer-size)))
 	  (setq wl-summary-search-buf-folder-name folder-name)
+	  (message "Creating subject cache...")
 	  (wl-summary-insert-headers
 	   overview
 	   (function
 	    (lambda (x)
 	      (funcall wl-summary-subject-filter-function
-	       (elmo-msgdb-overview-entity-get-subject-no-decode x))))
-	   t))
+		       (elmo-msgdb-overview-entity-get-subject-no-decode x))))
+	   t)
+	  (message "Creating subject cache...done"))
 	(setq match (funcall wl-summary-subject-filter-function
 			     (elmo-msgdb-overview-entity-get-subject entity)))
 	(if (string= match "")
 	    (setq match "\n"))
-	(goto-char (point-min))
-	(while (and (not founds)
-		    (not (= (point) (point-max)))
-		    (search-forward match nil t))
+	(goto-char (point-max))
+	(while (and (null result)
+		    (not (= (point) (point-min)))
+		    (search-backward match nil t))
 	  ;; check exactly match
-	  (when (and (eolp)
-		     (= (point-at-bol)
-			(match-beginning 0)))
-	    (setq found-entity (wl-summary-get-alike))
-	    (if (and found-entity
-		     ;; Is founded entity myself or children?
-		     (not (string=
-			   (elmo-msgdb-overview-entity-get-id entity)
-			   (elmo-msgdb-overview-entity-get-id
-			    (car found-entity))))
-		     (with-current-buffer summary-buf
+	  (when (and (bolp) (= (point-at-eol)(match-end 0)))
+	    (setq founds (wl-summary-get-alike))
+	    (with-current-buffer summary-buf
+	      (while founds
+		(when (and
+		       ;; the first element of found-entity list exists on
+		       ;; thread tree.
+		       (wl-thread-get-entity
+			(elmo-msgdb-overview-entity-get-number
+			 (car founds)))
+		       ;; message id is not same as myself.
+		       (not (string=
+			     (elmo-msgdb-overview-entity-get-id entity)
+			     (elmo-msgdb-overview-entity-get-id (car founds))))
+		       ;; not a descendant.
 		       (not (wl-thread-descendant-p
 			     (elmo-msgdb-overview-entity-get-number entity)
 			     (elmo-msgdb-overview-entity-get-number
-			      (car found-entity))))))
-		;; return matching entity
-		(setq founds found-entity))))
-	(if founds
-	    (car founds))))))
+			      (car founds)))))
+		  (setq result (car founds)
+			founds nil))
+		(setq founds (cdr founds))))))
+	result))))
 
 (defun wl-summary-insert-thread-entity (entity msgdb update
 					       &optional force-insert)
@@ -2766,26 +2770,29 @@ If ARG, without confirm."
 	 (overview-entity entity)
 	 (parent-id (elmo-msgdb-overview-entity-get-id parent-entity))
 	 (number (elmo-msgdb-overview-entity-get-number entity))
-	 (parent-number (elmo-msgdb-overview-entity-get-number parent-entity)))
+	 (parent-number (elmo-msgdb-overview-entity-get-number parent-entity))
+	 insert-line)
     (cond
      ((or (not parent-id)
 	  (string= this-id parent-id))
       (goto-char (point-max))
-      (beginning-of-line))
+      (beginning-of-line)
+      (setq insert-line t))
      ;; parent already exists in buffer.
      ((wl-summary-jump-to-msg parent-number)
-      (wl-thread-goto-bottom-of-sub-thread)))
-    (let ((inhibit-read-only t)
-	  (buffer-read-only nil))
-      (wl-summary-insert-line
-       (wl-summary-create-line
-	entity
-	parent-entity
-	nil
-	(elmo-msgdb-get-mark (wl-summary-buffer-msgdb) number)
-	(wl-thread-maybe-get-children-num number)
-	(wl-thread-make-indent-string thr-entity)
-	(wl-thread-entity-get-linked thr-entity))))))
+      (wl-thread-goto-bottom-of-sub-thread)
+      (setq insert-line t)))
+    (when insert-line
+      (let (buffer-read-only)
+	(wl-summary-insert-line
+	 (wl-summary-create-line
+	  entity
+	  parent-entity
+	  nil
+	  (elmo-msgdb-get-mark (wl-summary-buffer-msgdb) number)
+	  (wl-thread-maybe-get-children-num number)
+	  (wl-thread-make-indent-string thr-entity)
+	  (wl-thread-entity-get-linked thr-entity)))))))
 
 (defun wl-summary-mark-as-unread (&optional number
 					    no-folder-mark
@@ -3091,7 +3098,8 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	(setq c (+ c (char-width (following-char)))))
       (and (> c len) (setq folder (concat " " folder)))
       (setq rs (point))
-      (put-text-property rs re 'invisible t)
+      (when wl-summary-width
+	  (put-text-property rs re 'invisible t))
       (put-text-property rs re 'wl-summary-destination t)
       (goto-char re)
       (wl-highlight-refile-destination-string folder)
@@ -4039,7 +4047,6 @@ If ARG, exit virtual folder."
 	 (t (format "%dB" size)))
       "")))
 
-(defvar wl-summary-line-subject-minimum-length nil)
 (defun wl-summary-line-subject ()
   (let (no-parent subject parent-raw-subject parent-subject)
     (if (string= wl-thr-indent-string "")
@@ -4054,24 +4061,12 @@ If ARG, exit virtual folder."
     (setq parent-subject
 	  (if parent-raw-subject
 	      (elmo-delete-char ?\n parent-raw-subject)))
-    (setq subject
-	  (if (or no-parent
-		  (null parent-subject)
-		  (not (wl-summary-subject-equal
-			subject parent-subject)))
-	      (funcall wl-summary-subject-function subject)
-	    ""))
-    (when (and wl-summary-line-subject-minimum-length
-	       (< (string-width subject)
-		  wl-summary-line-subject-minimum-length))
-      (while (< (string-width subject)
-		wl-summary-line-subject-minimum-length)
-	(setq subject (concat subject " "))))
-    (if (and (not wl-summary-width)
-	     wl-summary-subject-length-limit)
-	(truncate-string subject
-			 wl-summary-subject-length-limit)
-      subject)))
+    (if (or no-parent
+	    (null parent-subject)
+	    (not (wl-summary-subject-equal
+		  subject parent-subject)))
+	(funcall wl-summary-subject-function subject)
+      "")))
 
 (defun wl-summary-line-from ()
   (elmo-delete-char ?\n
