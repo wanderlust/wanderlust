@@ -7996,7 +7996,12 @@ a folder and the like.
 @item wl-draft-folder
 @vindex wl-draft-folder
 The initial setting is @samp{+draft}.  It is the folder to which drafts are
-saved.  It must be a localdir folder.
+saved.  It must be a writable folder.
+Note that variable settings applied by @code{wl-draft-config-exec} is saved
+under @code{elmo-msgdb-directory}.  That is to say, if you specified remote
+folder as @code{wl-draft-folder}, variable settings which are applied by
+@code{wl-draft-config-exec} before saving the draft will not affect on the
+draft buffer on another host by invoking @code{wl-summary-reedit}.
 
 @item wl-trash-folder
 @vindex wl-trash-folder

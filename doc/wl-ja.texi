@@ -8010,7 +8010,11 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 @item wl-draft-folder
 @vindex wl-draft-folder
 $B=i4|@_Dj$O(B @samp{+draft}$B!#%I%i%U%H$r%;!<%V$9$k%U%)%k%@$G$9!#(B
-localdir $B%U%)%k%@$G$"$kI,MW$,$"$j$^$9!#(B
+$B=q$-9~$_$N$G$-$k%U%)%k%@$r;XDj$9$kI,MW$,$"$j$^$9!#(B
+$B$J$*!"(B@code{wl-draft-config-exec} $B$G@_Dj$5$l$?JQ?t$O(B @code{elmo-msgdb-directory}
+$B0J2<$KJ]B8$5$l$^$9!#$7$?$,$C$F!"(B@code{wl-draft-folder} $B$G%j%b!<%H$N%U%)%k%@(B
+$B$r;XDj$7$?>l9g!"%I%i%U%H$N%;!<%VA0$K(B @code{wl-draft-config-exec} $B$G@_Dj$5$l$?JQ?t(B
+$B$OJL$N%^%7%s$G(B @code{wl-summary-reedit} $B$G:FJT=8$7$?;~$K$O8z2L$r;}$A$^$;$s!#(B
 
 @item wl-trash-folder
 @vindex wl-trash-folder
