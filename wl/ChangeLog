@@ -1,3 +1,8 @@
+2000-06-03  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-vars.el (wl-smtp-posting-server): Customization Type fix.
+	(wl-summary-showto-folder-regexp): Ditto.
+
 2000-05-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-thread.el (wl-thread-close-all): Fixed typo in display-progress
