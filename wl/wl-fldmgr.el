@@ -852,6 +852,7 @@ return value is diffs '(-new -unread -all)."
 	   (entity (elmo-string (nth 4 tmp)))
 	   (folder (wl-folder-get-elmo-folder entity)))
       (when (elmo-folder-delete folder)
+	(wl-folder-clear-entity-info entity)
 	(wl-fldmgr-cut tmp nil t)
 	(wl-fldmgr-save-access-list)))))
 

@@ -1,5 +1,8 @@
 2004-09-26  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* wl-fldmgr.el (wl-fldmgr-delete): Remove folder entity
+	after deletion.
+
 	* wl-draft.el (wl-draft-send-confirm): Check major-mode
 	before calling wl-mime-quit-preview.
 
