@@ -4876,9 +4876,6 @@ Reply to author if invoked with ARG."
       (wl-message-select-buffer wl-message-buffer)
       (set-buffer mes-buf)
       (goto-char (point-min))
-      (unless wl-draft-use-frame
-	(split-window-vertically)
-	(other-window 1))
       (when (setq mes-buf (wl-message-get-original-buffer))
 	(wl-draft-reply mes-buf arg summary-buf)
 	(unless without-setup-hook
@@ -4950,9 +4947,6 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(wl-summary-redisplay-internal folder number))
       (setq mes-buf wl-message-buffer)
       (wl-message-select-buffer mes-buf)
-      (unless wl-draft-use-frame
-	(split-window-vertically)
-	(other-window 1))
       ;; get original subject.
       (if summary-buf
 	  (save-excursion
