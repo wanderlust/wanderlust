@@ -218,26 +218,14 @@ here.
 @pindex APEL
 @pindex FLIM
 @pindex SEMI
-@pindex tm
 
-SEMI or tm must be installed to make Wanderlust work correctly.
+SEMI must be installed to make Wanderlust work correctly.
 
-SEMI does not run on Emacs 19.28 or earlier
-@footnote{SEMI runs on Emacs 19.34. @*
-@uref{http://www.jpl.org/elips/INSTALL-SEMI-ja.html} describes how to.},
-so you must install tm, the predecessor of SEMI. (tm version 8.7 or later
-is needed.)
-
-However, SEMI is recommended because of its wider functionality.
-
-Refer to the documents of each package for detailed installation procedure.
-
-SEMI and tm can be downloaded from these sites:
+SEMI can be downloaded from these sites:
 
 @example
 @group
 SEMI:   ftp://ftp.m17n.org/pub/mule/semi/
-tm:     http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
 @end group
 @end example
 
@@ -255,10 +243,16 @@ You have to install APEL, FLIM and SEMI in this order.  Generally,
 @samp{make install} will do the job.  (In XEmacs 21, @samp{make
 install-package}.)
 
+Refer to the documents of each package for detailed installation
+procedure @footnote{If you want to use SEMI on Emacs 19.34. @*
+@uref{http://www.jpl.org/elips/INSTALL-SEMI-ja.html} (In Japanese)
+may help you.}.
+
+
 Recommended combination of APEL, FLIM and SEMI are following:
 
 @itemize @minus
-@item APEL 10.3, FLIM 1.14.2 and SEMI 1.14.3
+@item APEL 10.3, FLIM 1.14.3 and SEMI 1.14.3
 @end itemize
 
 You can also use many other FLIM/SEMI variants. Combination of the
@@ -270,8 +264,7 @@ confirmed to work.
 @item APEL 10.2, SLIM 1.14.3, EMY 1.13.9
 @end itemize
 
-You have to re-install Wanderlust if you upgraded APEL, FLIM, SEMI or
-tm.
+You have to re-install Wanderlust if you upgraded APEL, FLIM or SEMI.
 
 
 @node Download, Install, MIME Modules, Start Me Up

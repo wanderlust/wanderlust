@@ -243,29 +243,15 @@ Wanderlust を起動するまでに必要な手順を順番に説明します。
 @pindex APEL
 @pindex FLIM
 @pindex SEMI
-@pindex tm
 
-Wanderlust を正常に動作させるには、まず、SEMI もしくは tm がインス
-トールされている必要があります。
+Wanderlust を正常に動作させるには、まず、SEMI がインストールされている
+必要があります。
 
-Emacs19.28 以前をベースとした Mule をお使いの場合は SEMI が動かないはず
-@footnote{Emacs 19.34 ベースの Mule では SEMI を動作させることも可能です。@*
-@uref{http://www.jpl.org/elips/INSTALL-SEMI-ja.html} が参考になります。}
-なので tm をインストールします。
-(tm はバージョン 8.7 以降をご利用ください。)
-
-SEMI が使える Emacsen では、tm よりも機能の充実した SEMI をインストールす
-ることをお勧めします。
-
-インストールの方法は各パッケージに添付されているドキュメントを参照して
-ください。
-
-SEMI, tm は以下の場所からダウンロードできます。
+SEMI は以下の場所からダウンロードできます。
 
 @example
 @group
 SEMI:   ftp://ftp.m17n.org/pub/mule/semi/
-tm:     http://cvs.m17n.org/tomo/comp/emacsen/tm/tm-8/
 @end group
 @end example
 
@@ -283,10 +269,16 @@ APEL, FLIM, SEMI の順にインストールしてください。
 基本的にすべて @samp{make install} の実行で済むはずです
 (XEmacs 21 では @samp{make install-package})。
 
+インストールの方法の詳細については、各パッケージに添付されているドキュメ
+ントを参照してください @footnote{Emacs 19.34 ベースの Mule を使っている
+場合、@* @uref{http://www.jpl.org/elips/INSTALL-SEMI-ja.html} が参考にな
+るかもしれません。}。
+
+
 推奨される APEL, FLIM, SEMI のバージョンの組合せは、以下の通りです。
 
 @itemize @minus
-@item APEL 10.3, FLIM 1.14.2, SEMI 1.14.3
+@item APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
 @end itemize
 
 その他、FLIM, SEMI にはいろいろな変形バージョンが存在しますが、
@@ -299,8 +291,8 @@ APEL, FLIM, SEMI の順にインストールしてください。
 @item APEL 10.2, SLIM 1.14.3, EMY 1.13.9
 @end itemize
 
-APEL, FLIM, SEMI か tm のバージョンアップを行った場合は、Wanderlust をイ
-ンストールし直してください。
+APEL, FLIM もしくは SEMI のバージョンアップを行った場合は、Wanderlust を
+インストールし直してください。
 
 
 @node Download, Install, MIME Modules, Start Me Up
