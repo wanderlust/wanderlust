@@ -514,11 +514,12 @@ If it is the symbol `all', update overview for all shimbun folders."
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-shimbun-folder))
   (if (elmo-shimbun-folder-group-internal folder)
-      (progn
+      (if (fboundp 'shimbun-group-p)
+	  (shimbun-group-p (elmo-shimbun-folder-shimbun-internal folder)
+			   (elmo-shimbun-folder-group-internal folder))
 	(member
 	 (elmo-shimbun-folder-group-internal folder)
-	 (shimbun-groups (elmo-shimbun-folder-shimbun-internal
-			  folder))))
+	 (shimbun-groups (elmo-shimbun-folder-shimbun-internal folder))))
     t))
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-shimbun-folder)
