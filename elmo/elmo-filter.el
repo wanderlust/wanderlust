@@ -92,6 +92,9 @@
        folder
        (elmo-folder-list-messages folder t t))))
 
+(defun elmo-filter-folder-copy-flag-count (flag-counts)
+  (mapcar (lambda (pair) (cons (car pair) (cdr pair))) flag-counts))
+
 (luna-define-method elmo-folder-open :after ((folder elmo-filter-folder)
 					     &optional load-msgdb)
   (when load-msgdb
@@ -181,9 +184,18 @@
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-filter-folder)
 						 numbers)
-  (and (elmo-folder-delete-messages
-	(elmo-filter-folder-target-internal folder) numbers)
-       (elmo-folder-detach-messages folder numbers)))
+  (let ((flag-count (elmo-filter-folder-copy-flag-count
+		     (elmo-filter-folder-flag-count-internal folder)))
+	(messages (copy-sequence
+		   (elmo-filter-folder-number-list-internal folder)))
+	success)
+    (elmo-folder-detach-messages folder numbers)
+    (unless (setq success
+		  (elmo-folder-delete-messages
+		   (elmo-filter-folder-target-internal folder) numbers))
+      (elmo-filter-folder-set-flag-count-internal folder flag-count)
+      (elmo-filter-folder-set-number-list-internal folder messages))
+    success))
 
 (luna-define-method elmo-folder-list-messages ((folder elmo-filter-folder)
 					       &optional visible-only in-msgdb)
@@ -418,7 +430,9 @@
 (luna-define-method elmo-folder-detach-messages ((folder elmo-filter-folder)
 						 numbers)
   (elmo-filter-folder-countup-message-flags folder numbers -1)
-  (elmo-list-delete numbers (elmo-filter-folder-number-list folder) #'delq)
+  (elmo-filter-folder-set-number-list-internal
+   folder
+   (elmo-list-delete numbers (elmo-filter-folder-number-list folder) #'delq))
   t)
 
 (luna-define-method elmo-folder-length ((folder elmo-filter-folder))
