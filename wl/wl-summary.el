@@ -3456,7 +3456,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
   (or (and (memq number wl-summary-buffer-delete-list) "D")
       (and (assq number wl-summary-buffer-copy-list) "O")
       (and (assq number wl-summary-buffer-refile-list) "o")
-      (and (assq number wl-summary-buffer-target-mark-list) "*")))
+      (and (memq number wl-summary-buffer-target-mark-list) "*")))
 
 (defsubst wl-summary-reserve-temp-mark-p (mark)
   "Return t if temporal MARK should be reserved."

@@ -1,3 +1,8 @@
+2000-11-01  Akihiro MOTOKI  <motoki@da.jp.nec.com>
+
+	* wl-summary.el (wl-summary-get-mark): Fixed
+	`wl-summary-buffer-target-mark' check logic.
+
 2000-11-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-folder.el (wl-folder-write-current-folder): Added group
