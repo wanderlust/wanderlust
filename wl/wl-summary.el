@@ -1056,9 +1056,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	      (kill-buffer summary-buf)))
 	(run-hooks 'wl-summary-exit-hook)))))
 
-(defun wl-summary-sync-force-update (&optional unset-cursor no-check)
+(defun wl-summary-sync-force-update (&optional unset-cursor)
   (interactive)
-  (wl-summary-sync-update unset-cursor nil no-check))
+  (wl-summary-sync-update unset-cursor))
 
 (defsubst wl-summary-sync-all-init ()
   (wl-summary-cleanup-temp-marks)
@@ -2010,7 +2010,7 @@ If ARG is non-nil, checking is omitted."
 	  (nthcdr (max (- len in) 0) appends))
       appends)))
 
-(defun wl-summary-sync-update (&optional unset-cursor sync-all no-check)
+(defun wl-summary-sync-update (&optional unset-cursor sync-all)
   "Update the summary view to the newest folder status."
   (interactive)
   (let* ((folder wl-summary-buffer-elmo-folder)
@@ -2041,7 +2041,7 @@ If ARG is non-nil, checking is omitted."
 		       wl-summary-unread-cached-mark
 		       wl-summary-read-uncached-mark
 		       wl-summary-important-mark
-		       sync-all no-check))
+		       sync-all))
     (setq new-msgdb (nth 0 sync-result))
     (setq delete-list (nth 1 sync-result))
     (setq crossed (nth 2 sync-result))
@@ -2553,8 +2553,7 @@ If ARG, without confirm."
 	       ((eq scan-type 'no-sync))
 	       ((or (eq scan-type 'force-update)
 		    (eq scan-type 'update))
-		(setq mes (wl-summary-sync-force-update
-			   'unset-cursor 'no-check)))))
+		(setq mes (wl-summary-sync-force-update 'unset-cursor)))))
 	  (if interactive
 	      (switch-to-buffer buf)
 	    (set-buffer buf))
@@ -4610,12 +4609,11 @@ Return t if message exists."
     (wl-summary-jump-to-msg (car mlist))
     (wl-summary-reply arg t)
     (goto-char (point-max))
-    (setq start-point (point-marker))
+    (setq start-point (point))
     (setq draft-buf (current-buffer))
     (save-window-excursion
       (while mlist
 	(set-buffer summary-buf)
-	(delete-other-windows)
 	(wl-summary-jump-to-msg (car mlist))
 	(wl-summary-redisplay)
 	(set-buffer draft-buf)

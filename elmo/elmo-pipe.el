@@ -196,7 +196,7 @@
    (elmo-pipe-folder-dst-internal folder)))
 
 (luna-define-method elmo-folder-message-make-temp-file-p
-  ((folder elmo-pipe-folder))
+  ((folder elmo-localdir-folder))
   (elmo-folder-message-make-temp-file-p
    (elmo-pipe-folder-dst-internal folder)))
 
