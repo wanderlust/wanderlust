@@ -38,26 +38,37 @@
 					    name)
   (elmo-internal-folder-initialize folder name))
 
+(defvar elmo-internal-folder-list '(mark cache))
+
 (defun elmo-internal-folder-initialize (folder name)
-  (cond ((string-match "^mark" name)
-	 (require 'elmo-mark)
-	 (elmo-folder-initialize
-	  (luna-make-entity
-	   'elmo-mark-folder
-	   :type 'mark
-	   :prefix (elmo-folder-prefix-internal folder)
-	   :name (elmo-folder-name-internal folder)
-	   :persistent (elmo-folder-persistent-internal folder))
-	  name))
-	((string-match "^cache" name)
-	 (require 'elmo-cache)
-	 ;; XXX FIXME: elmo-cache-folder initialization
-	 folder)
-	(t folder)))
+  (let ((fsyms elmo-internal-folder-list)
+	fname class sym)
+    (if (progn (while fsyms
+		 (setq fname (symbol-name (car fsyms)))
+		 (when (string-match (concat "^" fname) name)
+		   (require (intern (concat "elmo-" fname)))
+		   (setq class (intern (concat "elmo-" fname "-folder"))
+			 sym (intern fname)
+			 fsyms nil))
+		 (setq fsyms (cdr fsyms)))
+	       class)
+	(elmo-folder-initialize
+	 (luna-make-entity
+	  class
+	  :type sym
+	  :prefix (elmo-folder-prefix-internal folder)
+	  :name (elmo-folder-name-internal folder)
+	  :persistent (elmo-folder-persistent-internal folder))
+	 name)
+      folder)))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-internal-folder)
 						 &optional one-level)
-  (list (list "'cache") "'mark"))
+  (mapcar
+   (lambda (x)
+     (list (concat (elmo-folder-prefix-internal folder)
+		   (symbol-name x))))
+   elmo-internal-folder-list))
 
 (require 'product)
 (product-provide (provide 'elmo-internal) (require 'elmo-version))

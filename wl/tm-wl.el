@@ -63,36 +63,33 @@ By setting following-method as yank-content."
 (defun wl-draft-preview-message ()
   (interactive)
   (let* (recipients-message
-	 (config-exec-flag wl-draft-config-exec-flag)
 	 (mime-viewer/content-header-filter-hook 'wl-highlight-headers)
 	 (mime-viewer/ignored-field-regexp "^:$")
 	 (mime-editor/translate-buffer-hook
-	  (append
-	   '((lambda ()
-	       (let ((wl-draft-config-exec-flag config-exec-flag))
-		 (run-hooks 'wl-draft-send-hook)
-		 (setq recipients-message
-		       (concat "Recipients: "
-			       (mapconcat
-				'identity
-				(wl-draft-deduce-address-list
-				 (current-buffer)
-				 (point-min)
-				 (save-excursion
-				   (goto-char (point-min))
-				   (re-search-forward
-				    (concat "^"
-					    (regexp-quote mail-header-separator)
-					    "$")
-				    nil t)
-				   (point)))
-				", "))))))
-	   mime-editor/translate-buffer-hook)))
+	  '((lambda ()
+	      (setq recipients-message
+		    (concat "Recipients: "
+			    (mapconcat
+			     'identity
+			     (wl-draft-deduce-address-list
+			      (current-buffer)
+			      (point-min)
+			      (save-excursion
+				(re-search-forward
+				 (concat "^"
+					 (regexp-quote mail-header-separator)
+					 "$")
+				 nil t)
+				(point)))
+			     ", ")))
+	      (run-hooks 'wl-draft-send-hook)))
+	  mime-editor/translate-buffer-hook))
     (mime-editor/preview-message)
     (let ((buffer-read-only nil))
-      (when wl-highlight-body-too
-	(wl-highlight-body))
-      (run-hooks 'wl-draft-preview-message-hook))
+      (let ((buffer-read-only nil))
+	(when wl-highlight-body-too
+	  (wl-highlight-body))
+	(run-hooks 'wl-draft-preview-message-hook)))
     (message recipients-message)))
 
 (defmacro wl-draft-caesar-region (beg end)
