@@ -155,7 +155,7 @@ XEmacs のパッケージとしてインストール
 load-path の設定
 ================
 
-  Emacs 20.3 以降もしくは XEmacs 使って普通にインストールした場合は、
+  Emacs 20.3 以降もしくは XEmacs を使って普通にインストールした場合は、
   load-path を設定する必要はありません。
 
   Emacs 20.2 以前をお使いなら、Wanderlust を install した場所を
