@@ -1,3 +1,11 @@
+2000-06-03  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-message.el (wl-message-normal-get-original-buffer): Use
+	`save-excursion'.
+
+	* wl-vars.el (wl-smtp-posting-server): Customization Type fix.
+	(wl-summary-showto-folder-regexp): Ditto.
+
 2000-05-31  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* wl-util.el (wl-delete-alist): Doc fix.
