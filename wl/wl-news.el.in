@@ -185,15 +185,18 @@
   (define-key wl-news-mode-map "a"     'wl-news-show-all)
   (define-key wl-news-mode-map "m"     'wl-news-append-to-folder)
   (define-key wl-news-mode-map "\C-m"  'wl-news-next-line)
-  (define-key wl-news-mode-map " "     'wl-news-next-page))
+  (define-key wl-news-mode-map " "     'wl-news-next-page)
+  (define-key wl-news-mode-map "\177"  'wl-news-previous-page)
+  ;; re-bind commands of outline-mode
+  (define-key wl-news-mode-map "n"     'outline-next-visible-heading)
+  (define-key wl-news-mode-map "p"     'outline-previous-visible-heading)
+  (define-key wl-news-mode-map "u"     'outline-up-heading)
+  (define-key wl-news-mode-map "N"     'outline-forward-same-level)
+  (define-key wl-news-mode-map "P"     'outline-backward-same-level))
 
-(defun wl-news-mode ()
+(require 'derived)
+(define-derived-mode wl-news-mode outline-mode "NEWS"
   "Mode for Wanderlust NEWS(.ja)."
-  (interactive)
-  (kill-all-local-variables)
-  (use-local-map wl-news-mode-map)
-  (setq major-mode 'wl-news-mode)
-  (setq mode-name "NEWS")
   (setq buffer-read-only t))
 
 (defun wl-news (&optional arg)
@@ -236,6 +239,10 @@
 (defun wl-news-next-page ()
   (interactive)
   (scroll-up))
+
+(defun wl-news-previous-page ()
+  (interactive)
+  (scroll-down))
 
 (defun wl-news-show-all ()
   (interactive)
