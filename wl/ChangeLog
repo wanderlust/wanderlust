@@ -1,27 +1,3 @@
-2000-12-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* wl-version.el (wl-version-status-alist): Use `zerop' instead of
-	(eq x 0).
-	(wl-generate-user-agent-string-1): Fix conditional statement.
-
-2000-11-27  Kenichi OKADA  <okada@opaopa.org>
-
-	* wl.el (wl-check-environment): Additional check for
-	'wl-local-domain' and `wl-message-id-domain'.
-
-2000-11-19  Kenichi OKADA  <okada@opaopa.org>
-
-	* wl-draft.el (toplevel): Delete defvar for sasl-*.
-
-2000-11-19  Kenichi OKADA  <okada@opaopa.org>
-
-	* wl-draft.el (wl-smtp-extension-bind): Use `smtp-sasl-properties'
-	instead of `smtp-sasl-user-realm'.
-
-2000-11-19  Kenichi OKADA  <okada@opaopa.org>
-
-	* wl-draft.el (wl-smtp-extension-bind): Rewrite for new SASL API.
-
 2000-12-19  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-draft.el (wl-draft-reply): Bind `mime-header-lexical-analyzer'
@@ -50,7 +26,7 @@
 2000-12-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-mark-as-important):
-	Remove cache if folder is local.
+	Remove cache if	folder is local.
 
 2000-12-06  Taro Kawagishi <taro.kawagishi@nokia.com>
 
