@@ -98,7 +98,7 @@ Return number if put mark succeed"
     ;; Return value.
     number))
 
-(defun wl-summary-register-target-mark (number mark)
+(defun wl-summary-register-target-mark (number mark data)
   (or (memq number wl-summary-buffer-target-mark-list)
       (setq wl-summary-buffer-target-mark-list
 	    (cons number wl-summary-buffer-target-mark-list))))
@@ -122,8 +122,9 @@ Return number if put mark succeed"
 		(setq number (car numlist)
 		      numlist nil))
 	    (setq numlist (cdr numlist)))
+	  (wl-summary-jump-to-msg number)
 	  (setq data (funcall (wl-summary-action-argument-function action)
-			      action number)))
+			      (wl-summary-action-symbol action) number)))
 	(while (not (eobp))
 	  (when (string= (wl-summary-temp-mark) "*")
 	    (let (wl-summary-buffer-disp-msg)
@@ -352,19 +353,19 @@ Return number if put mark succeed"
 	     (interactive "r")
 	     (goto-char beg)
 	     (wl-summary-mark-region-subr
-	      ,(intern (format "wl-summary-%s"
-			       (wl-summary-action-symbol action)))
+	      (quote ,(intern (format "wl-summary-%s"
+				      (wl-summary-action-symbol action))))
 	      beg end
-	      (if (wl-summary-action-argument-function action)
-		  (funcall (wl-summary-action-argument-function action)
-			   (wl-summary-action-symbol action)
+	      (if ,(wl-summary-action-argument-function action)
+		  (funcall ,(wl-summary-action-argument-function action)
+			   ,(wl-summary-action-symbol action)
 			   (wl-summary-message-number))))))
     (fset (intern (format "wl-summary-target-mark-%s"
 			  (wl-summary-action-symbol action)))
 	  `(lambda ()
 	     ,(wl-summary-action-docstring action)
 	     (interactive)
-	     (wl-summary-target-mark-set-action action)))))
+	     (wl-summary-target-mark-set-action (quote ,action))))))
 
 (defun wl-summary-get-dispose-folder (folder)
   (if (string= folder wl-trash-folder)

@@ -1028,11 +1028,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-entity-info-msg (entity finfo)
   (or (and entity
 	   (concat
-	    (elmo-replace-in-string
-	     (if (memq 'ask-folder wl-use-folder-petname)
-		 (wl-folder-get-petname entity)
-	       entity)
-	     "%" "%%")
+	    (if (memq 'ask-folder wl-use-folder-petname)
+		(wl-folder-get-petname entity)
+	      entity)
 	    (if (null (car finfo))
 		" (? new/? unread)"
 	      (format
