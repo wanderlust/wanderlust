@@ -450,6 +450,7 @@ Don't cache if nil.")
 
 (defun elmo-nntp-folder-list-subfolders (folder one-level)
   (let ((session (elmo-nntp-get-session folder))
+	(case-fold-search nil)
 	response ret-val top-ng append-serv use-list-active start)
     (with-temp-buffer
       (set-buffer-multibyte nil)

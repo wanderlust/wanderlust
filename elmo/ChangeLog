@@ -1,5 +1,10 @@
 2002-01-21  Kenichi OKADA  <okada@opaopa.org>
 
+	* elmo-imap4.el (elmo-folder-list-subfolders): Case sensitive.
+	* elmo-nntp.el (elmo-folder-list-subfolders): Ditto.
+
+2002-01-21  Kenichi OKADA  <okada@opaopa.org>
+
 	* elmo-utils.el (elmo-read-search-condition-internal): REQUIRE-MATCH
 	is nil on `completing-read'.
 

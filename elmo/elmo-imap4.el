@@ -1928,6 +1928,7 @@ Return nil if no complete line has arrived."
 				     type)))))
     (if one-level
 	(let ((re-delim (regexp-quote delim))
+	      (case-fold-search nil)
 	      folder ret has-child-p)
 	  ;; Append delimiter
 	  (when (and root
