@@ -703,32 +703,33 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (run-hooks 'wl-init-hook)))
 
 (defun wl-check-environment (no-check-folder)
-  (unless wl-from (error "Please set `wl-from'"))
+  (unless wl-from (elmo-warning "Please set `wl-from'."))
   ;; Message-ID
   (let (from domain)
     (if wl-message-id-use-wl-from
 	(if (and (setq from (wl-address-header-extract-address wl-from))
 		 (string-match "^\\(.*\\)@\\(.*\\)$" from))
 	    (setq domain (match-string 2 from))
-	  (error "Please set `wl-from' to get valid Message-ID string."))
+	  (elmo-warning
+	   "Please set `wl-from' to get valid Message-ID string."))
       (setq domain
 	    (or wl-message-id-domain
 		(if wl-local-domain
 		    (concat (system-name) "." wl-local-domain)
 		  (system-name)))))
     (unless (string-match "[^.]\\.[^.]" domain)
-      (error "Please set `wl-local-domain' to get valid FQDN"))
+      (elmo-warning "Please set `wl-local-domain' to get valid FQDN."))
     (if (string-match "@" domain)
-	(error "Please remove `@' from `wl-message-id-domain'"))
+	(error "Please remove `@' from `wl-message-id-domain'."))
     (if (string= wl-local-domain "localdomain")
-	(error "Please set `wl-local-domain'"))
+	(elmo-warning "Please set `wl-local-domain' properly."))
     (if (string= domain "localhost.localdomain")
-	(error "Please set `wl-message-id-domain'")))
+	(elmo-warning
+	 "Please set `wl-message-id-domain' to get valid Message-ID string.")))
   ;; folders
   (when (not no-check-folder)
     (let ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
 	  (queue-folder (wl-folder-get-elmo-folder wl-queue-folder))
-	  (trash-folder (wl-folder-get-elmo-folder wl-trash-folder))
 	  (lost+found-folder (wl-folder-get-elmo-folder
 			      elmo-lost+found-folder)))
       (if (not (elmo-folder-message-file-p draft-folder))
@@ -747,12 +748,6 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	      (elmo-folder-create queue-folder)
 	    (error "Queue Folder is not created")))
       (when (not (eq no-check-folder 'wl-draft))
-	(unless (elmo-folder-exists-p trash-folder)
-	  (if (y-or-n-p
-	       (format "Trash Folder %s does not exist, create it? "
-		       wl-trash-folder))
-	      (elmo-folder-create trash-folder)
-	    (error "Trash Folder is not created")))
 	(unless (elmo-folder-exists-p lost+found-folder)
 	  (elmo-folder-create lost+found-folder)))
       ;; tmp dir
@@ -812,12 +807,10 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
     (condition-case obj
 	(progn
 	  (if check
-	      (condition-case nil
-		  (progn
-		    (message "Checking environment...")
-		    (wl-check-environment arg)
-		    (message "Checking environment...done"))
-		((error quit))))
+	      (progn
+		(message "Checking environment...")
+		(wl-check-environment arg)
+		(message "Checking environment...done")))
 	  (message "Checking type of variables...")
 	  (wl-check-variables)
 	  (wl-check-variables-2)

@@ -1,5 +1,16 @@
 2002-03-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* wl.el (wl-check-environment): Use elmo-warning instead of
+	error for non-critical ones.
+	Remove trash folder check.
+	(wl): Don't ignore error in wl-check-environment.
+
+	* wl-summary.el (wl-summary-get-delete-folder): Add trash folder
+	check, which is moved from `wl-check-environment'.
+	(Adviced by Teranishi-san [X-Mail-Count: 9661])
+
+2002-03-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
 	* wl-summary.el (wl-summary-write-current-folder): If it cannot
 	guess anything, call wl-summary-write.
 	(wl-summary-write): Create draft with blank To field.

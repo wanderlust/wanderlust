@@ -1925,7 +1925,14 @@ If ARG is non-nil, checking is omitted."
 	    ((or (equal type 'remove) (equal type 'null))
 	     'null)
 	    (t;; (equal type 'trash)
-	     wl-trash-folder)))))
+	     (let ((trash-folder (wl-folder-get-elmo-folder wl-trash-folder)))
+	       (unless (elmo-folder-exists-p trash-folder)
+		 (if (y-or-n-p
+		      (format "Trash Folder %s does not exist, create it? "
+			      wl-trash-folder))
+		     (elmo-folder-create trash-folder)
+		   (error "Trash Folder is not created"))))
+	       wl-trash-folder)))))
 
 (defun wl-summary-delete-important-msgs-from-list (delete-list
 						   mark-alist)
