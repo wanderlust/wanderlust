@@ -155,11 +155,10 @@
 	     (nth 1 (product-version (product-find 'wl-version)))))))
      '("README" "README.ja"))))
 
-;; copyright notice (beta only)
+;; copyright notice
 (luna-define-method test-wl-demo-copyright-notice ((case test-dist))
   (require 'wl-demo)
-  (when (string= (wl-version-status) "beta")
-    (lunit-assert
-     (string-match
-      (format-time-string "%Y" (current-time))
-      wl-demo-copyright-notice))))
+  (lunit-assert
+   (string-match
+    (format-time-string "%Y" (current-time))
+    wl-demo-copyright-notice)))
