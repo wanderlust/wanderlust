@@ -95,6 +95,22 @@ set as non-nil.")
 
 (defvar elmo-pop3-total-size nil)
 
+;; For debugging.
+(defvar elmo-pop3-debug nil
+  "Non-nil forces POP3 folder as debug mode.
+Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
+
+(defvar elmo-pop3-debug-inhibit-logging nil)
+
+;;; Debug
+(defsubst elmo-pop3-debug (message &rest args)
+  (if elmo-pop3-debug
+      (with-current-buffer (get-buffer-create "*POP3 DEBUG*")
+	(goto-char (point-max))
+	(if elmo-pop3-debug-inhibit-logging
+	    (insert "NO LOGGING\n")
+	  (insert (apply 'format message args) "\n")))))
+
 ;;; ELMO POP3 folder
 (eval-and-compile
   (luna-define-class elmo-pop3-folder (elmo-net-folder)
@@ -192,12 +208,13 @@ set as non-nil.")
     (goto-char (point-min))
     (setq elmo-pop3-read-point (point))
     (elmo-pop3-lock)
+    (elmo-pop3-debug "SEND: %s\n" command)
     (process-send-string process command)
     (process-send-string process "\r\n")))
 
-(defun elmo-pop3-read-response (process &optional not-command buffer)
+(defun elmo-pop3-read-response (process &optional not-command keep-lock)
   ;; buffer is in case for process is dead.
-  (with-current-buffer (or buffer (process-buffer process))
+  (with-current-buffer (process-buffer process)
     (let ((case-fold-search nil)
 	  (response-string nil)
 	  (response-continue t)
@@ -233,7 +250,7 @@ set as non-nil.")
 		      (concat return-value "\n" response-string)
 		    response-string)))
 	  (setq elmo-pop3-read-point match-end)))
-      (elmo-pop3-unlock)
+      (unless keep-lock	(elmo-pop3-unlock))
       return-value)))
 
 (defun elmo-pop3-process-filter (process output)
@@ -241,6 +258,7 @@ set as non-nil.")
     (set-buffer (process-buffer process))
     (goto-char (point-max))
     (insert output)
+    (elmo-pop3-debug "RECEIVED: %s\n" output)
     (if (and elmo-pop3-total-size
 	     (> elmo-pop3-total-size 
 		(min elmo-display-retrieval-progress-threshold 100)))
@@ -301,6 +319,7 @@ set as non-nil.")
   (let ((process (elmo-network-session-process-internal session))
 	response mechanism)
     (with-current-buffer (process-buffer process)
+      (elmo-pop3-lock)
       (set-process-filter process 'elmo-pop3-process-filter)
       (setq elmo-pop3-read-point (point-min))
       ;; Skip garbage output from process before greeting.
@@ -330,6 +349,7 @@ set as non-nil.")
   (with-current-buffer (process-buffer 
 			(elmo-network-session-process-internal session))
     (let* ((process (elmo-network-session-process-internal session))
+	   (elmo-pop3-debug-inhibit-logging t)
 	   (auth (elmo-network-session-auth-internal session))
 	   (auth (mapcar '(lambda (mechanism) (upcase (symbol-name mechanism)))
 			 (if (listp auth) auth (list auth))))
@@ -408,7 +428,7 @@ set as non-nil.")
       (setq elmo-pop3-size-hash (elmo-make-hash 31))
       ;; To get obarray of uidl and size
       (elmo-pop3-send-command process "list")
-      (if (null (elmo-pop3-read-response process))
+      (if (null (elmo-pop3-read-response process nil 'keep-lock))
 	  (error "POP LIST command failed"))
       (if (null (setq response
 		      (elmo-pop3-read-contents
@@ -422,7 +442,7 @@ set as non-nil.")
 	(setq elmo-pop3-number-uidl-hash (elmo-make-hash (* count 2)))
 	;; UIDL
 	(elmo-pop3-send-command process "uidl")
-	(unless (elmo-pop3-read-response process)
+	(unless (elmo-pop3-read-response process nil 'keep-lock)
 	  (error "POP UIDL failed"))
 	(unless (setq response (elmo-pop3-read-contents
 				(current-buffer) process))
@@ -628,7 +648,11 @@ set as non-nil.")
 (defun elmo-pop3-locked-p (process)
   "Return t if pop3 PROCESS is locked."
   (with-current-buffer (process-buffer process)
-    elmo-pop3-lock))
+    (if elmo-pop3-lock
+	(progn
+	  (elmo-pop3-debug "POP3 is LOCKED!")
+	  t)
+      nil)))
      
 (defun elmo-pop3-retrieve-headers (buffer tobuffer process articles)
   (save-excursion
@@ -835,6 +859,7 @@ set as non-nil.")
 	(accept-process-output process)
 	(goto-char start))
       (setq end (point))
+      (elmo-pop3-unlock)
       (with-current-buffer outbuf
 	(erase-buffer)
 	(insert-buffer-substring (process-buffer process) start (- end 3))))))
@@ -852,7 +877,6 @@ set as non-nil.")
 			       folder))))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-pop3-folder))
-  (elmo-pop3-folder-set-location-alist-internal folder nil)
   (elmo-folder-check folder))
 
 (luna-define-method elmo-message-fetch-plugged ((folder elmo-pop3-folder)
@@ -881,7 +905,7 @@ set as non-nil.")
 	(unwind-protect
 	    (progn
 	      (when (null (setq response (elmo-pop3-read-response
-					  process t)))
+					  process t 'keep-lock)))
 		(error "Fetching message failed"))
 	      (setq response (elmo-pop3-read-body process outbuf)))
 	  (setq elmo-pop3-total-size nil))
@@ -927,13 +951,13 @@ set as non-nil.")
   (and (elmo-folder-persistent-internal folder)
        (elmo-pop3-folder-use-uidl-internal folder)))
 
-
 (luna-define-method elmo-folder-check ((folder elmo-pop3-folder))
   (if (elmo-folder-plugged-p folder)
       (let ((session (elmo-pop3-get-session folder 'if-exists)))
 	(when (and session
 		   (not (elmo-pop3-locked-p
 			 (elmo-network-session-process-internal session))))
+	  (elmo-pop3-folder-set-location-alist-internal folder nil)
 	  (elmo-network-close-session session)))))
 
 (require 'product)
