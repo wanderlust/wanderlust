@@ -1316,9 +1316,9 @@ If optional argument is non-nil, current draft buffer is killed"
     (require 'wl))
   (unless wl-init
     (wl-load-profile)
-    (elmo-init)
-    (wl-folder-init))
-  (wl-init) ;; returns immediately if already initialized.
+    (wl-folder-init)
+    (elmo-init))
+  (wl-init) ; returns immediately if already initialized.
   (if (interactive-p)
       (setq summary-buf (wl-summary-get-buffer (wl-summary-buffer-folder-name))))
   (let ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
@@ -1410,7 +1410,6 @@ If optional argument is non-nil, current draft buffer is killed"
 			   (1- (point)))
 			 'category 'mail-header-separator)
       (and body (insert body)))
-    (push-mark (point) t t)
     (as-binary-output-file
      (write-region (point-min)(point-max) wl-draft-buffer-file-name
 		   nil t))
@@ -1510,7 +1509,6 @@ If optional argument is non-nil, current draft buffer is killed"
     (goto-char (point-min))
     (or (re-search-forward "\n\n" nil t)
 	(search-forward (concat mail-header-separator "\n") nil t))
-    (push-mark (point) t t)
     (write-region (point-min)(point-max) wl-draft-buffer-file-name
 		  nil t)
     (wl-draft-overload-functions)

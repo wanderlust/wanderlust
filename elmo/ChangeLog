@@ -1,3 +1,8 @@
+2001-09-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-address-quote-specials): New function;
+	Renamed from `wl-address-quote-specials'.
+
 2001-09-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-version.el (elmo-version): Up to 2.7.4.

@@ -131,10 +131,14 @@
 (defvar wl-use-semi (module-installed-p 'mime-view) ; If nil, use tm.
   "*Use SEMI or not.")
 
-(defcustom wl-from nil
+(defcustom wl-from (and user-mail-address
+			(concat (and user-full-name
+				     (concat (elmo-address-quote-specials
+					      user-full-name)
+					     " "))
+				"<" user-mail-address ">"))
   "*From string used in draft."
-  :type  '(choice (const :tag "Use default value" nil)
-		  string)
+  :type  'string
   :group 'wl
   :group 'wl-setting)
 

@@ -36,7 +36,6 @@
 (eval-when-compile
   (require 'elmo-util))
 
-(condition-case nil (require 'tm-edit) (error nil))
 (condition-case nil (require 'pp) (error nil))
 
 (eval-when-compile
