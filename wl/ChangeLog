@@ -1,3 +1,8 @@
+2001-12-06  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-subject-length-limit): This value can be nil (nil
+	means unlimited).
+
 2001-12-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-write-sendlog): Use `write-region-as-binary';

@@ -1373,8 +1373,10 @@ with wl-highlight-folder-many-face."
   :group 'wl-pref)
 
 (defcustom wl-subject-length-limit 35
-  "*Subject width in summary."
-  :type 'integer
+  "*Set subject width in summary when wl-summary-width is nil.
+Nil means unlimited"
+  :type '(choice (const :tag "Unlimited" nil)
+		 integer)
   :group 'wl-summary
   :group 'wl-pref)
 
