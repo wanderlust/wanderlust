@@ -2362,6 +2362,7 @@ If optional argument is non-nil, checking is omitted."
 						 msgdb))
 					       (length in-folder)))
     (wl-summary-update-modeline)
+    (wl-summary-buffer-number-column-detect t)
     ;;
     (unless unset-cursor
       (goto-char (point-min))
@@ -4538,6 +4539,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 (defsubst wl-summary-buffer-number-column-detect (update)
   (let (end)
     (save-excursion
+      (goto-char (point-min))
       (setq wl-summary-buffer-number-column
 	    (or
 	     (if (and update 

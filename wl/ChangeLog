@@ -1,3 +1,9 @@
+2000-07-24  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync-update3): Call
+	`wl-summary-buffer-number-column-detect'.
+	(wl-summary-buffer-number-column-detect): Search from point-min.
+
 2000-07-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-reply): Fixed problem when mail-followup-to
