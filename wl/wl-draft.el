@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-05-18 14:14:17 teranisi>
+;; Time-stamp: <2000-05-19 10:23:11 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -439,7 +439,8 @@ the `wl-smtp-features' variable."
     (run-hooks 'wl-draft-cited-hook)
     (and wl-draft-add-references
 	 (if (wl-draft-add-references)
-	     (wl-highlight-headers)))
+	     (let (wl-highlight-x-face-func)
+	       (wl-highlight-headers))))
     (if wl-highlight-body-too
 	(wl-highlight-body-region beg (point-max)))))
 
