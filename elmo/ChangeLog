@@ -1,6 +1,8 @@
 2000-10-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-nntp.el (elmo-nntp-search-primitive): Decode header field.
+	(elmo-nntp-search-primitive): Fixed problem when condition is
+	'unmatch'.
 
 	* elmo-util.el (elmo-buffer-field-primitive-condition-match): Fixed.
 

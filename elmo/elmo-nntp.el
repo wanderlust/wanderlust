@@ -1205,6 +1205,8 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	     (key-datestr (elmo-date-make-sortable-string key-date))
 	     (since (string= "since" search-key))
 	     result)
+	(if (eq (elmo-filter-type condition) 'unmatch)
+	    (setq since (not since)))
 	(setq result
 	      (delq nil
 		    (mapcar
@@ -1227,6 +1229,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	  result)))
      (t 
       (let ((val (elmo-filter-value condition))
+	    (negative (eq (elmo-filter-type condition) 'unmatch))
 	    (case-fold-search t)
 	    result)
 	(setq result
@@ -1237,7 +1240,8 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 					 (eword-decode-string
 					  (decode-mime-charset-string
 					   (cdr pair) elmo-mime-charset)))
-			   (car pair)))
+			   (unless negative (car pair))
+			 (if negative (car pair))))
 		     (elmo-nntp-retrieve-field spec search-key
 					       from-msgs))))
 	(if from-msgs
