@@ -1119,7 +1119,8 @@ FIELD is a symbol of the field."
 (defun elmo-folder-confirm-appends (appends)
   (let ((len (length appends))
 	in)
-    (if (and (> len elmo-folder-update-threshold)
+    (if (and elmo-folder-update-threshold
+	     (> len elmo-folder-update-threshold)
 	     elmo-folder-update-confirm)
 	(if (y-or-n-p (format "Too many messages(%d).  Continue? " len))
 	    appends
@@ -1135,7 +1136,8 @@ FIELD is a symbol of the field."
 				    (max (- len in) 0)))
 		  (throw 'end in))))
 	  (nthcdr (max (- len in) 0) appends))
-      (if (and (> len elmo-folder-update-threshold)
+      (if (and elmo-folder-update-threshold
+	       (> len elmo-folder-update-threshold)
 	       (not elmo-folder-update-confirm))
 	  (nthcdr (max (- len elmo-folder-update-threshold) 0) appends)
 	appends))))
