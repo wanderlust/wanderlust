@@ -70,6 +70,7 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
   "(Internal switch for using UIDL on POP3).")
 
 (defvar elmo-pop3-exists-exactly t)
+(defvar sasl-mechanism-alist)
 
 ;;; ELMO POP3 folder
 (eval-and-compile
@@ -296,6 +297,7 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 	   (auth (elmo-network-session-auth-internal session))
 	   (auth (mapcar '(lambda (mechanism) (upcase (symbol-name mechanism)))
 			 (if (listp auth) auth (list auth))))
+	   sasl-mechanisms
 	   client name step response mechanism
 	   sasl-read-passphrase)
       (or (and (string= "USER" (car auth))
@@ -303,6 +305,8 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 	  (and (string= "APOP" (car auth))
 	       (elmo-pop3-auth-apop session))
 	  (progn
+	    (require 'sasl)
+	    (setq sasl-mechanisms (mapcar 'car sasl-mechanism-alist))
 	    (setq mechanism (sasl-find-mechanism auth))
 	    (unless mechanism
 	      (signal 'elmo-authenticate-error '(elmo-pop3-auth-no-mechanisms)))
@@ -327,7 +331,7 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 	     process
 	     (concat "AUTH " name
 		     (and (sasl-step-data step)
-			  (concat 
+			  (concat
 			   " "
 			   (elmo-base64-encode-string
 			    (sasl-step-data step) 'no-line-break))))) ;)
@@ -536,7 +540,7 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
     (elmo-pop3-list-by-list folder)))
 
 (luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-pop3-folder))
+  ((folder elmo-pop3-folder) &optional nohide)
   (elmo-pop3-folder-list-messages folder))
 
 (luna-define-method elmo-folder-status ((folder elmo-pop3-folder))

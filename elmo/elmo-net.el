@@ -328,12 +328,12 @@ Returns a process object.  if making session failed, returns nil."
     (error "Unplugged")))
 
 (luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-net-folder))
-  (elmo-net-folder-list-messages-internal folder))
+  ((folder elmo-net-folder) &optional nohide)
+  (elmo-net-folder-list-messages-internal folder nohide))
 
-(defun elmo-net-folder-list-messages-internal (folder)
+(defun elmo-net-folder-list-messages-internal (folder nohide)
   (if (elmo-folder-plugged-p folder)
-      (elmo-folder-send folder 'elmo-folder-list-messages-plugged)
+      (elmo-folder-send folder 'elmo-folder-list-messages-plugged nohide)
     (elmo-folder-send folder 'elmo-folder-list-messages-unplugged)))
 
 (luna-define-method elmo-folder-list-messages-plugged

@@ -1093,7 +1093,9 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	    'force-update nil nil t))
 	  (t
 	   (wl-summary-sync-update unset-cursor
-				   (string= range "all"))))))
+				   (cond ((string= range "all") 'all)
+					 ((string= range "all-visible")
+					  'visible-only)))))))
 
 (defvar wl-summary-edit-addresses-candidate-fields
   ;; First element becomes default.
@@ -4423,7 +4425,7 @@ If ARG, exit virtual folder."
   "returns update or all or rescan."
   ;; for the case when parts are expanded in the bottom of the folder
   (let ((input-range-list '("update" "all" "rescan" "first:" "last:"
-			    "rescan-noscore"))
+			    "no-sync" "rescan-noscore" "all-visible"))
 	(default (or (wl-get-assoc-list-value
 		      wl-folder-sync-range-alist
 		      folder)

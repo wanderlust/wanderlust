@@ -237,7 +237,7 @@
    (elmo-map-folder-list-message-locations folder)))
 
 (luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-map-folder))
+  ((folder elmo-map-folder) &optional nohide)
   (mapcar 'car (elmo-map-folder-location-alist-internal folder)))
 
 (luna-define-method elmo-folder-unmark-important ((folder elmo-map-folder)

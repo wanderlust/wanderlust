@@ -418,7 +418,7 @@
     all-importants))
 
 (luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-multi-folder))
+  ((folder elmo-multi-folder) &optional nohide)
   (let* ((flds (elmo-multi-folder-children-internal folder))
 	 (cur-number 0)
 	 numbers)

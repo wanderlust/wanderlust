@@ -1,3 +1,32 @@
+2001-02-20  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-e21.el (wl-e21-setup-draft-toolbar): Don't refer to
+	`wl-use-toolbar' nor `display-graphic-p'.
+	(wl-e21-setup-message-toolbar): Ditto.
+	(wl-e21-setup-summary-toolbar): Ditto.
+	(wl-e21-setup-folder-toolbar): Ditto.
+
+	(wl-biff-init-icons): Rewrite using `wl-e21-display-image-p'.
+	(wl-plugged-init-icons): Ditto.
+
+	(wl-folder-init-icons): Use `wl-e21-display-image-p' instead of
+	`display-graphic-p'.
+	(wl-plugged-set-folder-icon): Ditto.
+	(wl-highlight-plugged-current-line): Ditto.
+	(wl-highlight-folder-current-line): Ditto.
+	(wl-e21-highlight-folder-group-line): Ditto.
+	(wl-e21-setup-toolbar): Ditto.
+	(wl-e21-display-image-p): New macro.
+
+	* wl-demo.el (wl-demo): Simplified.
+	(wl-demo-image-type-alist): Use `image-type-available-p' for
+	checking whether the image type `xbm' is available.
+
+2000-02-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync): Rename 'all-shown' to `all-visible'.
+	(wl-summary-input-range): Ditto.
+
 2001-02-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-edit-addresses): Use
@@ -44,6 +73,7 @@
 	* wl-vars.el (wl-demo-display-logo): Add `bitmap' to the selection.
 
 	* wl-demo.el: Work also with BITMAP-MULE under Emacs 21.
+	(wl-demo-image-type-alist): New macro.
 
 2001-02-19  Katsumi Yamaoka    <yamaoka@jpl.org>
 
@@ -77,7 +107,43 @@
 	* wl-summary.el (wl-summary-save-view): Renamed from
 	`wl-summary-save-status'.
 
-2001-01-23  Yuuichi Teranishi  <teranisi@gohome.org>
+2000-02-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-sync): Added 'all-shown'
+
+2000-02-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-input-range): Added `all-shown'
+
+2000-02-19  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-sync-update3): Bind 'nohide as t if sync-all.
+
+2001-02-19  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* wl-highlight.el (wl-highlight-summary-line-string): Use
+	`zerop' instead of `= 0'.
+	(wl-highlight-summary): Use `zerop' instead of `eq 0'.
+
+	* wl-template.el (wl-template-next): Use `=' instead of `eq'
+	for comparing numbers.
+	(wl-template-prev): Use `zerop' instead of `eq 0'.
+
+	* wl-draft.el (wl-draft-insert-current-message): Use
+	`with-current-buffer' instead of `save-excursion'.
+	Use `zerop' instead of `eq 0'.
+
+2001-02-17  Kenichi OKADA  <okada@opaopa.org>
+
+	* wl-draft.el (wl-draft-insert-ccs): New function.
+	(wl-draft): Use `wl-draft-insert-ccs' for Bcc and FCC.
+	* wl-vars.el (wl-draft-delete-myself-from-bcc-fcc): New variable.
+
+2001-02-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-cache-prefetch-message): Fixed last change.
+
+2001-02-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-expire.el (wl-expire-refile): Don't call
 	elmo-msgdb-add-msgs-to-seen-list;
