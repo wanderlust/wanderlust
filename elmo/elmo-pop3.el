@@ -43,6 +43,8 @@
 (defvar elmo-pop3-exists-exactly t)
 (defvar sasl-mechanism-alist)
 
+(defvar elmo-pop3-total-size nil)
+
 (luna-define-class elmo-pop3-session (elmo-network-session))
 
 ;; buffer-local
@@ -138,7 +140,9 @@
     (set-buffer (process-buffer process))
     (goto-char (point-max))
     (insert output)
-    (message "Retrieving...(%d bytes)." (buffer-size))))
+    (if elmo-pop3-total-size
+	(message "Retrieving...(%d/%d bytes)." 
+		 (buffer-size) elmo-pop3-total-size))))
 
 (defun elmo-pop3-auth-user (session)
   (let ((process (elmo-network-session-process-internal session)))
@@ -698,18 +702,24 @@
 			   (elmo-msgdb-expand-path spec)))))
 	 (process (elmo-network-session-process-internal
 		   (elmo-pop3-get-session spec)))
-	 response errmsg msg)
+	 size response errmsg msg)
     (with-current-buffer (process-buffer process)
       (if loc-alist
 	  (setq number (elmo-pop3-uidl-to-number
 			(cdr (assq number loc-alist)))))
+      (setq size (string-to-number
+		  (elmo-pop3-number-to-size number)))
       (when number
 	(elmo-pop3-send-command process
 				(format "retr %s" number))
-	(when (null (setq response (elmo-pop3-read-response
-				    process t)))
-	  (error "Fetching message failed"))
-	(setq response (elmo-pop3-read-body process outbuf))
+	(setq elmo-pop3-total-size size)
+	(unwind-protect
+	    (progn
+	      (when (null (setq response (elmo-pop3-read-response
+					  process t)))
+		(error "Fetching message failed"))
+	      (setq response (elmo-pop3-read-body process outbuf)))
+	  (setq elmo-pop3-total-size nil))
 	(set-buffer outbuf)
 	(goto-char (point-min))
 	(while (re-search-forward "^\\." nil t)
