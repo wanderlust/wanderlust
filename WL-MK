@@ -46,15 +46,34 @@
 (condition-case () (require 'custom) (error nil))
 ;; for wl-vars.el
 (unless (and (fboundp 'defgroup)
-             (fboundp 'defcustom)
-             ;; ignore broken module
-             (not (featurep 'tinycustom)))
-  (require 'backquote)
+	     (fboundp 'defcustom)
+	     ;; ignore broken module
+	     (not (featurep 'tinycustom)))
+  (when (and (boundp 'emacs-major-version)
+	     (eq emacs-major-version 19)
+	     (>= emacs-minor-version 29))
+    (message "%s" "
+  Warning: You don't seem to have \"new custom\" package installed.
+  It is recommended to use \"new custom\" package if you are using
+  old Emacs, such as Mule 2.3.
+  Get it from http://www.dina.kvl.dk/~abraham/custom/ and then apply
+  the patch which is included in README file of APEL package.
+"))
   (defmacro defgroup (&rest args))
   (defmacro defcustom (symbol value &optional doc &rest args)
     (let ((doc (concat "*" (or doc ""))))
-      (` (defvar (, symbol) (, value) (, doc)))))
-  )
+      (` (defvar (, symbol) (, value) (, doc))))))
+
+(require 'bytecomp)
+(unless (fboundp 'byte-compile-file-form-custom-declare-variable)
+  ;; Bind defcustom'ed variables.
+  (put 'custom-declare-variable 'byte-hunk-handler
+       'byte-compile-file-form-custom-declare-variable)
+  (defun byte-compile-file-form-custom-declare-variable (form)
+    (if (memq 'free-vars byte-compile-warnings)
+	(setq byte-compile-bound-variables
+	      (cons (nth 1 (nth 1 form)) byte-compile-bound-variables)))
+    form))
 
 (setq byte-compile-warnings '(free-vars unresolved callargs redefine))
 
@@ -62,6 +81,9 @@
 (if (or (boundp 'MULE)
 	(fboundp 'nemacs-version))
     (setq max-lisp-eval-depth 400))
+
+;; FIXME: it is currently needed to byte-compile with Emacs 21.
+(setq recursive-load-depth-limit nil)
 
 (condition-case () (require 'easymenu) (error nil))
 
@@ -87,9 +109,25 @@
       (require 'mime-setup)
     (error (error "No MIME module was detected. Please install SEMI or tm.")))
   (if wl-use-semi
-      (princ (concat "\nUse SEMI" 
+      (princ (concat "\nUse SEMI"
 		     (if wl-use-luna " with LUNA\n" " without LUNA\n")))
     (princ "\nUse tm.\n"))))
+
+(defun config-wl-pixmap-dir (&optional packagedir)
+  "Examine pixmap directory where icon files should go."
+  (let ((pixmap-dir (car command-line-args-left)))
+    (defvar PIXMAPDIR
+      (if (string= pixmap-dir "NONE")
+	  (if packagedir
+	      (expand-file-name "etc/wl/" packagedir)
+	    (if (or (featurep 'xemacs)
+		    (and (boundp 'emacs-major-version)
+			 (>= emacs-major-version 21)))
+		(expand-file-name "wl/icons/" data-directory)))
+	pixmap-dir)))
+  (if PIXMAPDIR
+      (princ (format "PIXMAPDIR is %s\n" PIXMAPDIR)))
+  (setq command-line-args-left (cdr command-line-args-left)))
 
 (defun config-wl-package ()
   (config-wl-package-subr)
@@ -98,8 +136,11 @@
     (if (string= elispdir "NONE")
 	(defvar LISPDIR (install-detect-elisp-directory))
       (defvar LISPDIR elispdir)))
-  (princ (format "LISPDIR is %s\n\n" LISPDIR))
-  (setq command-line-args-left (cdr command-line-args-left)))
+  (princ (format "LISPDIR is %s\n" LISPDIR))
+  (setq command-line-args-left (cdr command-line-args-left))
+  ;; PIXMAPDIR check.
+  (config-wl-pixmap-dir)
+  (princ "\n"))
 
 
 (defun wl-scan-source (path)
@@ -136,6 +177,19 @@
       (compile-elisp-modules (cdr x) (car x)))
    modules-alist))
 
+(defun install-wl-icons ()
+  (if (not (file-directory-p PIXMAPDIR))
+      (make-directory PIXMAPDIR t))
+  (let* ((case-fold-search t)
+	 (icons (directory-files ICONDIR t "\\.x[bp]m$"))
+	 icon dest)
+    (while icons
+      (setq icon (car icons)
+	    icons (cdr icons)
+	    dest (expand-file-name (file-name-nondirectory icon) PIXMAPDIR))
+      (princ (format "%s->%s\n" icon dest))
+      (copy-file icon dest t))))
+
 (defun install-wl-package ()
   (compile-wl-package)
   (let ((wl-install-dir (expand-file-name WL_PREFIX LISPDIR))
@@ -146,7 +200,9 @@
 			       (if (string= (car x) ELMODIR)
 				   elmo-install-dir
 				 wl-install-dir)))
-     modules-alist)))
+     modules-alist))
+  (if PIXMAPDIR
+      (install-wl-icons)))
 
 
 (defun uninstall-wl-package ()
@@ -158,8 +214,19 @@
     (wl-uninstall (wl-scan-source (list WLDIR UTILSDIR SASLDIR))
 		  wl-install-dir)
     (wl-uninstall (wl-scan-source (list ELMODIR))
-		  elmo-install-dir)
-    ))
+		  elmo-install-dir))
+  (if PIXMAPDIR
+      (let* ((case-fold-search t)
+	     (icons (directory-files PIXMAPDIR t "\\.x[bp]m$"))
+	     icon)
+	(while icons
+	  (setq icon (car icons)
+		icons (cdr icons))
+	  (if (and (file-exists-p icon)
+		   (file-writable-p icon))
+	      (progn
+		(princ (format "%s was uninstalled.\n" icon))
+		(delete-file icon)))))))
 
 
 (defun config-wl-package-xmas ()
@@ -184,8 +251,11 @@
 		       (setq dirs (cdr dirs)))
 		     dir)))
 	   (defvar PACKAGEDIR package-dir)))
-    (princ (format "PACKAGEDIR is %s\n\n" PACKAGEDIR))
-    (setq command-line-args-left (cdr command-line-args-left))))
+    (princ (format "PACKAGEDIR is %s\n" PACKAGEDIR))
+    (setq command-line-args-left (cdr command-line-args-left)))
+  ;; PIXMAPDIR check.
+  (config-wl-pixmap-dir PACKAGEDIR)
+  (princ "\n"))
 
 ;; from SEMI-MK
 (defun compile-wl-package-xmas ()
@@ -216,21 +286,14 @@
     (or (file-exists-p INFODIR)
 	(make-directory INFODIR t))
     ;; copy xpm files
-    (mapcar '(lambda (x) 
-	       (let* ((src-file-nondirectory (file-name-nondirectory x))
-		      (dst-file (expand-file-name src-file-nondirectory
-						  DATADIR)))
-		 (princ (format "%s->%s\n"
-				x ; fullpath
-				dst-file))
-		 (copy-file x dst-file t)))
-	    (directory-files "etc/icons" t "xpm"))
+    (install-wl-icons)
+
     (mapcar '(lambda (x)
              (install-elisp-modules (cdr x) (car x) LISPDIR))
                   modules-alist)
     ;; WL-AUTOLOAD-MODULES
     (install-elisp-modules WL-AUTOLOAD-MODULES WLDIR LISPDIR)
-    ;; 
+    ;;
     (wl-texinfo-format)
     (wl-texinfo-install)))
 
@@ -245,17 +308,10 @@
     (or (file-newer-than-file-p (expand-file-name infofile DOCDIR)
 				(expand-file-name texifile DOCDIR))
 	(let (obuf beg)
+	  ;; Support old texinfmt.el
+	  (require 'ptexinfmt (expand-file-name "ptexinfmt.el" UTILSDIR))
 	  (find-file (expand-file-name texifile DOCDIR))
 	  (setq obuf (current-buffer))
-	  ;; texinfmt.el 2.37 or earlier can't format @direntry
-	  (require 'texinfmt)
-	  (unless (fboundp 'texinfo-format-direntry)
-	    (goto-char (point-min))
-	    (when (re-search-forward "^@direntry" nil t)
-	      (replace-match "@ifinfo\nSTART-INFO-DIR-ENTRY"))
-	    (when (re-search-forward "^@end direntry" nil t)
-	      (replace-match "END-INFO-DIR-ENTRY\n@end ifinfo"))
-	    (set-buffer-modified-p nil))
 	  ;; We can't know file names if splitted.
 	  (texinfo-format-buffer t)
 	  ;; Emacs20.2's default is 'raw-text-unix.

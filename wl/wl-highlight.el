@@ -24,23 +24,27 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (if (and (featurep 'xemacs)
 	 (featurep 'dragdrop))
     (require 'wl-dnd))
 (require 'wl-vars)
-(provide 'wl-highlight)
+(require 'product)
+(product-provide (provide 'wl-highlight) (require 'wl-version))
 
 (eval-when-compile
-  (if wl-on-xemacs
-      (require 'wl-xmas)
-    (if wl-on-nemacs
-	(require 'wl-nemacs)
-      (require 'wl-mule)))
+  (cond (wl-on-xemacs
+	 (require 'wl-xmas))
+	(wl-on-emacs21
+	 (require 'wl-e21))
+	(wl-on-nemacs
+	 (require 'wl-nemacs))
+	(t
+	 (require 'wl-mule)))
   (defun-maybe extent-begin-glyph (a))
   (defun-maybe delete-extent (a))
   (defun-maybe make-extent (a b))
@@ -729,6 +733,17 @@
       () ; noop
     (` (defun (, name) (,@ everything-else)))))
 
+(defmacro wl-delete-all-overlays ()
+  "Delete all momentary overlays."
+  (if wl-on-nemacs
+      nil
+    '(let ((overlays (overlays-in (point-min) (point-max)))
+	   overlay)
+       (while (setq overlay (car overlays))
+	 (if (overlay-get overlay 'wl-momentary-overlay)
+	     (delete-overlay overlay))
+	 (setq overlays (cdr overlays))))))
+
 (defun-hilit wl-highlight-summary-displaying ()
   (interactive)
   (wl-delete-all-overlays)
@@ -738,44 +753,42 @@
       (setq bol (point))
       (save-excursion (end-of-line) (setq eol (point)))
       (setq ov (make-overlay bol eol))
-      (overlay-put ov 'face 'wl-highlight-summary-displaying-face))))
+      (overlay-put ov 'face 'wl-highlight-summary-displaying-face)
+      (overlay-put ov 'evaporate t)
+      (overlay-put ov 'wl-momentary-overlay t))))
 
 (defun-hilit2 wl-highlight-folder-group-line (numbers)
-  (if wl-highlight-group-folder-by-numbers
-      (let (fsymbol bol eol)
-	(beginning-of-line)
-	(setq bol (point))
-	(save-excursion (end-of-line) (setq eol (point)))
-	(setq fsymbol
-	      (let ((unsync (nth 0 numbers))
-		    (unread (nth 1 numbers)))
-		(cond ((and unsync (eq unsync 0))
-		       (if (and unread (> unread 0))
-			   'wl-highlight-folder-unread-face
-			 'wl-highlight-folder-zero-face))
-		      ((and unsync
-			    (>= unsync wl-folder-many-unsync-threshold))
-		       'wl-highlight-folder-many-face)
-		      (t
-		       'wl-highlight-folder-few-face))))
-	(put-text-property bol eol 'face fsymbol))
-    (let ((highlights (list "opened" "closed"))
-	  fregexp fsymbol bol eol matched type extent num type)
-      (beginning-of-line)
-      (setq bol (point))
-      (save-excursion (end-of-line) (setq eol (point)))
-      (catch 'highlighted
-	(while highlights
-	  (setq fregexp (symbol-value
-			 (intern (format "wl-highlight-folder-%s-regexp"
-					 (car highlights)))))
-	  (setq fsymbol (intern (format "wl-highlight-folder-%s-face"
-					(car highlights))))
-	  (when (looking-at fregexp)
-	    (put-text-property bol eol 'face fsymbol)
-	    (setq matched t)
-	    (throw 'highlighted nil))
-	  (setq highlights (cdr highlights)))))))
+  (end-of-line)
+  (let ((eol (point))
+	bol)
+    (beginning-of-line)
+    (setq bol (point))
+    (let ((text-face (cond ((looking-at wl-highlight-folder-opened-regexp)
+			    'wl-highlight-folder-opened-face)
+			   ((looking-at wl-highlight-folder-closed-regexp)
+			    'wl-highlight-folder-closed-face))))
+      (if (and wl-highlight-folder-by-numbers
+	       (re-search-forward "[0-9-]+/[0-9-]+/[0-9-]+" eol t))
+	  (let* ((unsync (nth 0 numbers))
+		 (unread (nth 1 numbers))
+		 (face (cond ((and unsync (zerop unsync))
+			      (if (and unread (> unread 0))
+				  'wl-highlight-folder-unread-face
+				'wl-highlight-folder-zero-face))
+			     ((and unsync
+				   (>= unsync wl-folder-many-unsync-threshold))
+			      'wl-highlight-folder-many-face)
+			     (t
+			      'wl-highlight-folder-few-face))))
+	    (if (numberp wl-highlight-folder-by-numbers)
+		(progn
+		  (put-text-property bol (match-beginning 0) 'face text-face)
+		  (put-text-property (match-beginning 0) (match-end 0)
+				     'face face))
+	      ;; Remove previous face.
+	      (put-text-property bol (match-end 0) 'face nil)
+	      (put-text-property bol (match-end 0) 'face face)))
+	(put-text-property bol eol 'face text-face)))))
 
 (defun-hilit2 wl-highlight-summary-line-string (line mark temp-mark indent)
   (let (fsymbol)
@@ -814,7 +827,7 @@
     (put-text-property 0 (length line) 'face fsymbol line))
   (if wl-use-highlight-mouse-line
       (put-text-property 0 (length line) 'mouse-face 'highlight line)))
-  
+
 (defun-hilit2 wl-highlight-summary-current-line (&optional smark regexp temp-too)
   (interactive)
   (save-excursion
@@ -825,7 +838,7 @@
 		    wl-summary-buffer-number-regexp
 		    "\\(.\\)\\(.\\)../..\(.*\)..:.. \\("
 		    wl-highlight-thread-indent-string-regexp
-		    "\\)\\["))
+		    "\\)[[<]"))
 	  fregexp fsymbol bol eol matched thread-top looked-at)
       (beginning-of-line)
       (setq bol (point))
@@ -921,12 +934,6 @@ Variables used:
 	    (wl-highlight-folder-current-line)
 	    (forward-line 1)))))))
 
-(if (not wl-on-nemacs)
-    (defsubst wl-delete-all-overlays ()
-      (mapcar (lambda (x)
-		(delete-overlay x))
-	      (overlays-in (point-min) (point-max)))))
-
 (defun-hilit2 wl-highlight-folder-path (folder-path)
   "Highlight current folder path...overlay"
   (save-excursion
@@ -946,7 +953,9 @@ Variables used:
 		    (match-beginning 1)
 		    (match-end 1)))
 	  (setq wl-folder-buffer-cur-point (point))
-	  (overlay-put ov 'face 'wl-highlight-folder-path-face))
+	  (overlay-put ov 'face 'wl-highlight-folder-path-face)
+	  (overlay-put ov 'evaporate t)
+	  (overlay-put ov 'wl-momentary-overlay t))
 	(forward-line 1)))))
 
 (defun-hilit2 wl-highlight-refile-destination-string (string)
@@ -958,7 +967,7 @@ Variables used:
   "For evaluation"
   (interactive)
   (wl-highlight-summary (point-min)(point-max)))
-  
+
 (defun-hilit2 wl-highlight-summary (start end)
   "Highlight summary between start and end.
 Faces used:
@@ -999,23 +1008,51 @@ interpreted as cited text.)"
 	      (setq i 0)
 	      (while (not (eobp))
 		(wl-highlight-summary-current-line nil nil wl-summary-scored)
-		(setq i (+ i 1))
-		(setq percent (/ (* i 100) lines))
-		(if (eq (% percent 5) 0)
-		    (elmo-display-progress
-		     'wl-highlight-summary "Highlighting..."
-		     percent))
+		(when (> lines elmo-display-progress-threshold)
+		  (setq i (+ i 1))
+		  (setq percent (/ (* i 100) lines))
+		  (if (or (eq (% percent 5) 0) (= i lines))
+		      (elmo-display-progress
+		       'wl-highlight-summary "Highlighting..."
+		       percent)))
 		(forward-line 1))
 	      (message "Highlighting...done.")))))))
 
 (defun wl-highlight-headers ()
   (let ((beg (point-min))
-	(end (or (save-excursion (re-search-forward "^$" nil t))
+	(end (or (save-excursion (re-search-forward "^$" nil t)
+				 (point))
 		 (point-max))))
     (wl-highlight-message beg end nil)
+    (wl-highlight-message-add-buttons-to-header beg end)
     (and wl-highlight-x-face-func
 	 (funcall wl-highlight-x-face-func beg end))
     (run-hooks 'wl-highlight-headers-hook)))
+
+(defun wl-highlight-message-add-buttons-to-header (start end)
+  (save-excursion
+    (save-restriction
+      (narrow-to-region start end)
+      (let ((case-fold-search t)
+	    (alist wl-highlight-message-header-button-alist)
+	    entry)
+	(while alist
+	  (setq entry (car alist)
+		alist (cdr alist))
+	  (goto-char (point-min))
+	  (while (re-search-forward (car entry) nil t)
+	    (setq start (match-beginning 0)
+		  end (if (re-search-forward "^[^ \t]" nil t)
+			  (match-beginning 0)
+			(point-max)))
+	    (goto-char start)
+	    (while (re-search-forward (nth 1 entry) end t)
+	      (goto-char (match-end 0))
+	      (wl-message-add-button
+	       (match-beginning (nth 2 entry))
+	       (match-end (nth 2 entry))
+	       (nth 3 entry) (match-string (nth 4 entry))))
+	    (goto-char end)))))))
 
 (defun wl-highlight-body-all ()
   (wl-highlight-message (point-min) (point-max) t t))
@@ -1152,13 +1189,13 @@ interpreted as cited text.)"
 		(put-text-property
 		 (match-beginning 2) (match-end 2)
 		 'face 'wl-highlight-message-header-contents)))
- 	      (goto-char hend))
+	      (goto-char hend))
 	     ((looking-at mail-header-separator)
 	      (put-text-property (match-beginning 0) (match-end 0)
 				 'face 'wl-highlight-header-separator-face)
 	      (goto-char (match-end 0)))
- 	     ;; ignore non-header field name lines
- 	     (t (forward-line 1)))))
+	     ;; ignore non-header field name lines
+	     (t (forward-line 1)))))
 	;; now do the body, unless it's too big....
 	(if too-big
 	    nil

@@ -39,16 +39,10 @@
 	(require 'mime-view)
 	(require 'mmelmo-imap4))
     (require 'tm-wl))
-  (mapcar
-   (function
-    (lambda (symbol)
-      (unless (boundp symbol)
-	(set (make-local-variable symbol) nil))))
-   '(mime-view-ignored-field-list mmelmo-imap4-skipped-parts))
-  (defun-maybe event-window (a))
-  (defun-maybe posn-window (a))
-  (defun-maybe event-start (a))
-  (defun-maybe mime-open-entity (a b)))
+  (defalias-maybe 'event-window 'ignore)
+  (defalias-maybe 'posn-window 'ignore)
+  (defalias-maybe 'event-start 'ignore)
+  (defalias-maybe 'mime-open-entity 'ignore))
 
 (defvar wl-original-buf-name "*Message*")
 (defvar wl-message-buf-name "Message")
@@ -60,12 +54,13 @@
 (defvar wl-original-buffer-cur-number nil)
 (defvar wl-original-buffer-cur-msgdb  nil)
 
-(mapcar
- (function make-variable-buffer-local)
- (list 'wl-message-buffer-cur-folder
-       'wl-message-buffer-cur-number))
+(defvar mmelmo-imap4-skipped-parts)
 
-(provide 'wl-message)
+(make-variable-buffer-local 'wl-message-buffer-cur-folder)
+(make-variable-buffer-local 'wl-message-buffer-cur-number)
+
+(require 'product)
+(product-provide (provide 'wl-message) (require 'wl-version))
 
 (defvar wl-fixed-window-configuration nil)
 
@@ -336,13 +331,13 @@
 	(setq wl-message-buffer-cur-summary-buffer sum-buf)))))
 
 (defun wl-message-normal-get-original-buffer ()
-  (let (ret-val)
-    (if (setq ret-val (get-buffer wl-original-buf-name))
-	ret-val
-      (set-buffer (setq ret-val
-			(get-buffer-create wl-original-buf-name)))
-      (wl-message-original-mode)
-      ret-val)))
+  (let ((ret-val (get-buffer wl-original-buf-name)))
+    (if (not ret-val)
+	(save-excursion
+	  (set-buffer (setq ret-val
+			    (get-buffer-create wl-original-buf-name)))
+	  (wl-message-original-mode)))
+    ret-val))
 
 
 (if wl-use-semi
@@ -406,8 +401,7 @@
 	 (message-id (cdr (assq number
 				(elmo-msgdb-get-number-alist msgdb))))
 	 (size (elmo-msgdb-overview-entity-get-size
-		(assoc message-id
-		       (elmo-msgdb-get-overview msgdb))))
+		(elmo-msgdb-overview-get-entity number msgdb)))
 	 (backend (wl-message-decide-backend folder number message-id size))
 	 cur-entity ret-val header-end real-fld-num summary-win)
     (require 'mmelmo)
@@ -422,10 +416,10 @@
 	  (erase-buffer)
 	  (if backend
 	      (let (mime-display-header-hook ;; bind to nil...
-		    (mime-view-ignored-field-list
+		    (wl-message-ignored-field-list
 		     (if (eq flag 'all-header)
 			 nil
-		       mime-view-ignored-field-list))
+		       wl-message-ignored-field-list))
 		    (mmelmo-force-reload force-reload)
 		    (mmelmo-imap4-threshold wl-fetch-confirm-threshold))
 		(setq real-fld-num (elmo-get-real-folder-number
@@ -496,10 +490,8 @@
 	 (message-id (cdr (assq number
 				(elmo-msgdb-get-number-alist msgdb))))
 	 (size (elmo-msgdb-overview-entity-get-size
-		(assoc message-id
-		       (elmo-msgdb-get-overview msgdb))))
-	 header-end ret-val summary-win
-	 )
+		(elmo-msgdb-overview-get-entity number msgdb)))
+	 header-end ret-val summary-win)
     (wl-select-buffer view-message-buffer)
     (unwind-protect
 	(progn
@@ -558,6 +550,35 @@
       ret-val
       )))
 
+(defvar wl-message-button-map (make-sparse-keymap))
+
+(defun wl-message-add-button (from to function &optional data)
+  "Create a button between FROM and TO with callback FUNCTION and DATA."
+  (add-text-properties
+   from to
+   (nconc (list 'mouse-face 'highlight)
+	  (list 'local-map wl-message-button-map)
+	  (list 'wl-message-button-callback function)
+	  (if data
+	      (list 'wl-message-button-data data)))))
+
+(defun wl-message-button-dispatcher (event)
+  "Select the button under point."
+  (interactive "@e")
+  (mouse-set-point event)
+  (let ((callback (get-text-property (point) 'wl-message-button-callback))
+	(data (get-text-property (point) 'wl-message-button-data)))
+    (if callback
+	(funcall callback data)
+      (wl-message-button-dispatcher-internal event))))
+
+(defun wl-message-button-refer-article (data)
+  "Read article specified by Message-ID DATA at point."
+  (switch-to-buffer-other-window
+   wl-message-buffer-cur-summary-buffer)
+  (if (wl-summary-jump-to-msg-by-message-id data)
+      (wl-summary-redisplay)))
+
 (defun wl-message-refer-article-or-url (e)
   "Read article specified by message-id around point. If failed,
    attempt to execute button-dispatcher."
@@ -582,7 +603,7 @@
 		 wl-message-buffer-cur-summary-buffer)
 		(if (wl-summary-jump-to-msg-by-message-id msg-id)
 		    (wl-summary-redisplay)))
-	    (wl-message-button-dispatcher e)))
+	    (wl-message-button-dispatcher-internal e)))
       (if (eq mouse-window (get-buffer-window (current-buffer)))
 	  (select-window window)))))
 
@@ -592,23 +613,27 @@
     (search-forward "\n\n")
     (let ((sp (point))
 	  ep filename case-fold-search)
-      (if first
-	  (progn
-	    (re-search-forward "^begin[ \t]+[0-9]+[ \t]+\\([^ ].*\\)" nil t)
-	    (setq filename (buffer-substring (match-beginning 1)(match-end 1))))
-	(re-search-forward "^M.*$" nil t)) ; uuencoded string
-      (beginning-of-line)
-      (setq sp (point))
-      (goto-char (point-max))
-      (if last
-	  (re-search-backward "^end" sp t)
-        (re-search-backward "^M.*$" sp t)) ; uuencoded string
-      (forward-line 1)
-      (setq ep (point))
-      (set-buffer outbuf)
-      (goto-char (point-max))
-      (insert-buffer-substring buf sp ep)
-      (set-buffer buf)
-      filename)))
+      (catch 'done
+	(if first
+	    (progn
+	      (if (re-search-forward "^begin[ \t]+[0-9]+[ \t]+\\([^ ].*\\)" nil t)
+		  (setq filename (buffer-substring (match-beginning 1)(match-end 1)))
+		(throw 'done nil)))
+	  (re-search-forward "^M.*$" nil t)) ; uuencoded string
+	(beginning-of-line)
+	(setq sp (point))
+	(goto-char (point-max))
+	(if last
+	    (re-search-backward "^end" sp t)
+	  (re-search-backward "^M.*$" sp t)) ; uuencoded string
+	(forward-line 1)
+	(setq ep (point))
+	(set-buffer outbuf)
+	(goto-char (point-max))
+	(insert-buffer-substring buf sp ep)
+	(set-buffer buf)
+	filename))))
 
 ;;; wl-message.el ends here
+
+

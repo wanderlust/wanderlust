@@ -119,7 +119,7 @@ size:   size of the entity."
 					&optional invisible-fields
 					visible-fields)
   (mmelmo-insert-sorted-header-from-buffer
-   (mime-entity-buffer entity)
+   (mime-buffer-entity-buffer-internal entity)
    (mime-buffer-entity-header-start-internal entity)
    (mime-buffer-entity-header-end-internal entity)
    invisible-fields visible-fields mmelmo-sort-field-list))
@@ -136,6 +136,7 @@ size:   size of the entity."
 ;		       (mime-buffer-entity-body-end-internal entity)))
 ;   (mime-entity-encoding entity)))
 
-(provide 'mmelmo-2)
+(require 'product)
+(product-provide (provide 'mmelmo-2) (require 'elmo-version))
 
 ;;; mmelmo-2.el ends here

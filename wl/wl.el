@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (require 'elmo2)
 ;; from x-face.el
@@ -41,12 +41,16 @@
 
 (require 'wl-vars)
 (require 'wl-util)
+(require 'wl-version)
 
-(if wl-on-xemacs
-    (require 'wl-xmas)
-  (if wl-on-nemacs
-      (require 'wl-nemacs)
-    (require 'wl-mule)))
+(cond (wl-on-xemacs
+       (require 'wl-xmas))
+      (wl-on-emacs21
+       (require 'wl-e21))
+      (wl-on-nemacs
+       (require 'wl-nemacs))
+      (t
+       (require 'wl-mule)))
 
 (provide 'wl) ; circular dependency
 (require 'wl-folder)
@@ -77,14 +81,10 @@
   (when make-alist
     (wl-make-plugged-alist))
   ;; Plug status.
-  (setq elmo-plugged (setq wl-plugged (elmo-plugged-p)))
-  (setq wl-plug-state-indicator
-	(if wl-plugged
-	    wl-plug-state-indicator-on
-	  wl-plug-state-indicator-off))
+  (setq elmo-plugged (setq wl-plugged (elmo-plugged-p))
+	wl-modeline-plug-status wl-plugged)
   (if wl-plugged
-      (wl-toggle-plugged t 'flush))
-  (force-mode-line-update t))
+      (wl-toggle-plugged t 'flush)))
 
 (defun wl-toggle-plugged (&optional arg queue-flush-only)
   (interactive)
@@ -97,20 +97,19 @@
       (setq wl-plugged nil))
      (t (setq wl-plugged (null wl-plugged))))
     (elmo-set-plugged wl-plugged))
-  (setq elmo-plugged wl-plugged)
+  (setq elmo-plugged wl-plugged
+	wl-modeline-plug-status wl-plugged)
   (save-excursion
-    (mapcar
-     (function
-      (lambda (x)
-	(set-buffer x)
+    (let ((summaries (wl-collect-summary)))
+      (while summaries
+	(set-buffer (pop summaries))
 	(wl-summary-msgdb-save)
 	;; msgdb is saved, but cache is not saved yet.
-	(wl-summary-set-message-modified)))
-     (wl-collect-summary)))
+	(wl-summary-set-message-modified))))
+  (setq wl-biff-check-folders-running nil)
   (if wl-plugged
       (progn
 	;; flush queue!!
-	(setq wl-plug-state-indicator wl-plug-state-indicator-on)
 	(elmo-dop-queue-flush)
 	(if (and wl-draft-enable-queuing
 		 wl-auto-flush-queue)
@@ -124,7 +123,6 @@
 		  (wl-summary-flush-pending-append-operations seen-list))
 	    (elmo-msgdb-seen-save msgdb-dir seen-list)))
 	(run-hooks 'wl-plugged-hook))
-    (setq wl-plug-state-indicator wl-plug-state-indicator-off)
     (run-hooks 'wl-unplugged-hook))
   (force-mode-line-update t))
 
@@ -140,7 +138,7 @@
   '(("Queuing" . wl-draft-enable-queuing)
     ("AutoFlushQueue" . wl-auto-flush-queue)
     ("DisconnectedOperation" . elmo-enable-disconnected-operation)))
- 
+
 (defvar wl-plugged-buf-name "Plugged")
 (defvar wl-plugged-mode-map nil)
 (defvar wl-plugged-alist nil)
@@ -149,9 +147,6 @@
 (defvar wl-plugged-sending-queue-alist nil)
 (defvar wl-plugged-dop-queue-alist nil)
 (defvar wl-plugged-alist-modified nil)
-
-(defvar wl-plugged-glyph nil)
-(defvar wl-unplugged-glyph nil)
 
 (defvar wl-plugged-mode-menu-spec
   '("Plugged"
@@ -209,8 +204,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (setq major-mode 'wl-plugged-mode)
   (setq mode-name "Plugged")
   (easy-menu-add wl-plugged-mode-menu)
-  (when wl-show-plug-status-on-modeline
-    (setq mode-line-format (wl-make-modeline)))
+  (wl-mode-line-buffer-identification)
   (setq wl-plugged-switch wl-plugged)
   (setq wl-plugged-alist-modified nil)
   (setq buffer-read-only t)
@@ -514,13 +508,10 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	    (elmo-set-plugged plugged nil nil nil alist)))
 	  ;; redraw
 	  (wl-plugged-redrawing wl-plugged-alist)
-	  ;; change wl-plug-state-indicator
+	  ;; show plugged status in modeline
 	  (let ((elmo-plugged wl-plugged-switch))
-	    (setq wl-plugged-switch (elmo-plugged-p))
-	    (setq wl-plug-state-indicator
-		  (if wl-plugged-switch
-		      wl-plug-state-indicator-on
-		    wl-plug-state-indicator-off))
+	    (setq wl-plugged-switch (elmo-plugged-p)
+		  wl-modeline-plug-status wl-plugged-switch)
 	    (force-mode-line-update t))))))
     (setq wl-plugged-alist-modified t)
     (goto-char cur-point)))
@@ -538,11 +529,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (wl-plugged-redrawing wl-plugged-alist)
     (goto-char cur-point)
     (setq wl-plugged-alist-modified t)
-    ;; change wl-plug-state-indicator
-    (setq wl-plug-state-indicator
-	  (if wl-plugged-switch
-	      wl-plug-state-indicator-on
-	    wl-plug-state-indicator-off))
+    ;; show plugged status in modeline
+    (setq wl-modeline-plug-status wl-plugged-switch)
     (force-mode-line-update t)))
 
 (defun wl-plugged-exit ()
@@ -617,20 +605,15 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (let (summary-buf)
     (save-excursion
       (let ((summaries (wl-collect-summary)))
-	(mapcar
-	 (function
-	  (lambda (x)
-	    (set-buffer x)
-	    (unless keep-summary
-	      (wl-summary-cleanup-temp-marks))
-	    (wl-summary-save-status keep-summary)
-	    (unless keep-summary
-	      (kill-buffer x))))
-	 summaries))))
-  (wl-refile-alist-save
-   wl-refile-alist-file-name wl-refile-alist)
-  (wl-refile-alist-save
-   wl-refile-msgid-alist-file-name wl-refile-msgid-alist)
+	(while summaries
+	  (set-buffer (car summaries))
+	  (unless keep-summary
+	    (wl-summary-cleanup-temp-marks))
+	  (wl-summary-save-status keep-summary)
+	  (unless keep-summary
+	    (kill-buffer (car summaries)))
+	  (setq summaries (cdr summaries))))))
+  (wl-refile-alist-save)
   (wl-folder-info-save)
   (and (featurep 'wl-fldmgr) (wl-fldmgr-exit))
   (wl-crosspost-alist-save)
@@ -641,6 +624,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (when (or (not wl-interactive-exit)
 	    (y-or-n-p "Quit Wanderlust?"))
     (elmo-quit)
+    (wl-biff-stop)
     (run-hooks 'wl-exit-hook)
     (wl-save-status)
     (wl-folder-cleanup-variables)
@@ -651,7 +635,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 			(list (format "%s\\(:.*\\)?"
 				      (default-value 'wl-message-buf-name))
 			      wl-original-buf-name
-			      wl-folder-buffer-name)
+			      wl-folder-buffer-name
+			      wl-plugged-buf-name)
 			"\\|")))
     (elmo-buffer-cache-clean-up)
     (if (fboundp 'mmelmo-cleanup-entity-buffers)
@@ -711,10 +696,16 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (error "Please set `wl-from'"))
   (unless (string-match "[^.]\\.[^.]" (or wl-message-id-domain
 					  (if wl-local-domain
- 					      (concat (system-name)
+					      (concat (system-name)
 						      "." wl-local-domain)
- 					    (system-name))))
+					    (system-name))))
     (error "Please set `wl-local-domain' to get valid FQDN"))
+  (if (string-match "@" (or wl-message-id-domain
+			    (if wl-local-domain
+				(concat (system-name)
+					"." wl-local-domain)
+			      (system-name))))
+      (error "Please remove `@' from `wl-message-id-domain'"))
   (when (not no-check-folder)
     (if (not (eq (elmo-folder-get-type wl-draft-folder) 'localdir))
 	(error "%s is not allowed for draft folder" wl-draft-folder))
@@ -751,13 +742,18 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   "Start Wanderlust -- Yet Another Message Interface On Emacsen.
 If prefix argument is specified, folder checkings are skipped."
   (interactive "P")
-  (unless wl-init
-    (wl-load-profile))
+  (or wl-init (wl-load-profile))
   (unwind-protect
       (wl-init arg)
-    (let ((make (wl-folder arg)))
-      (wl-plugged-init make)))
-  (run-hooks 'wl-hook))
+    (wl-plugged-init (wl-folder arg))
+    (sit-for 0))
+  (unwind-protect
+      (unless arg 
+	(run-hooks 'wl-auto-check-folder-pre-hook)
+	(wl-folder-auto-check)
+	(run-hooks 'wl-auto-check-folder-hook))
+    (unless arg (wl-biff-start))
+    (run-hooks 'wl-hook)))
 
 ;; Define some autoload functions WL might use.
 (eval-and-compile
@@ -806,7 +802,8 @@ If prefix argument is specified, folder checkings are skipped."
 
 ;; for backward compatibility
 (defalias 'wl-summary-from-func-petname 'wl-summary-default-from)
- 
-(provide 'wl)
+
+(require 'product)
+(product-provide (provide 'wl) (require 'wl-version))
 
 ;;; wl.el ends here

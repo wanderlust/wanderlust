@@ -33,6 +33,7 @@
 (require 'wl-folder)
 (require 'wl-summary)
 (require 'wl-highlight)
+(require 'wl-version)
 (eval-when-compile
   (require 'wl-util))
 
@@ -47,23 +48,10 @@
 (defconst wl-fldmgr-folders-header
   "#
 # Folder definition file
-# This file is generated automatically by %s %s (%s).
+# This file is generated automatically by %s.
 #
 
 ")
-
-(defconst wl-fldmgr-filter-completion-alist
-  '(("/last:")
-    ("/first:")
-    ("/since:")
-    ("/before:")
-    ("/from=")
-    ("/subject=")
-    ("/date=")
-    ("/to=")
-    ("/cc=")
-    ("/tocc=")
-    ("/body=")))
 
 ;;; Initial setup
 
@@ -363,13 +351,10 @@ return value is diffs '(-new -unread -all)."
 
 (defun wl-add-entity (key-path new entity prev-entity-id &optional errmes)
   (when (string= (caar key-path) (car entity))
-    (mapcar
-     '(lambda (ent)
+    (let ((entities new))
+      (while entities
 	(wl-folder-entity-assign-id
-	 ent
-	 wl-folder-entity-id-name-hashtb
-	 t))
-     new)
+	 (pop entities) wl-folder-entity-id-name-hashtb t)))
     (when (wl-add-entity-sub (cdr key-path) new entity errmes)
       ;; return value is non-nil (diffs)
       (wl-fldmgr-add-entity-hashtb new))))
@@ -415,20 +400,15 @@ return value is diffs '(-new -unread -all)."
 	  ;; do it
 	  (when access
 	    ;; remove from unsubscribe
-	    (mapcar
-	     '(lambda (x)
-		(cond
-		 ((consp x)
+	    (setq new2 new)
+	    (while new2
+	      (if (consp (car new2))
 		  (setq unsubscribes
-			(delete (wl-string-assoc (car x) unsubscribes)
-				unsubscribes)))
-		 (t
-		  (setq unsubscribes (delete (elmo-string x) unsubscribes)))))
-	     new)
-;;	    (setq new2 new)
-;; 	    (while new2
-;; 	      (setq unsubscribes (delete (elmo-string (car new2)) unsubscribes))
-;; 	      (setq new2 (cdr new2)))
+			(delq (wl-string-assoc (car (car new2)) unsubscribes)
+			      unsubscribes))
+		(setq unsubscribes (delete (elmo-string (car new2))
+					   unsubscribes)))
+	      (setq new2 (cdr new2)))
  	    (setcdr (cddr entity) (list unsubscribes))
 	    (wl-fldmgr-add-modified-access-list group))
 	  (if (not key-path);; insert group top
@@ -782,7 +762,7 @@ return value is diffs '(-new -unread -all)."
 	(pattern
 	 (if (string-match "\\.$"
 			   (car (elmo-network-get-spec
-				 string nil nil nil)))
+				 string nil nil nil nil)))
 	     (substring string 0 (match-beginning 0))
 	   (concat string nil))))
     (or table
@@ -1012,37 +992,16 @@ return value is diffs '(-new -unread -all)."
     (beginning-of-line)
     (if (looking-at wl-folder-group-regexp)
 	(message "This folder is group")
-      (let ((tmp (wl-fldmgr-get-path-from-buffer)))
+      (let ((tmp (wl-fldmgr-get-path-from-buffer))
+	    entity)
 	(if (eq (cdr (nth 2 tmp)) 'access)
-	    (message "Tan't change access group")
-	  (let* ((entity (nth 4 tmp))
-		 (old-entity entity)
-		 old-filter
-		 filter new-entity)
-	    (unless entity (error "no folder"))
-	    (when (string-match "^\\(\\(/[^/]+/\\)+\\)\\(.*\\)" entity)
-	      (setq old-filter (substring entity
-					  (match-beginning 1)
-					  (match-end 1)))
-	      (setq old-entity (substring entity
-					  (match-beginning 3)
-					  (match-end 3))))
-	    (setq filter (completing-read "Filter: "
-					  wl-fldmgr-filter-completion-alist
-					  nil nil
-					  (or old-filter "/")))
-	    (unless (or (string= filter "")
-			(string-match "/$" filter))
-	      (setq filter (concat filter "/")))
-	    (setq new-entity (concat filter old-entity))
-	    (let ((entity new-entity)
-		  spec)
-	      ;; check filter syntax
-	      (while (eq
-		      (car (setq spec (elmo-folder-get-spec entity)))
-		      'filter)
-		(setq entity (nth 2 spec))))
-	    (wl-fldmgr-add new-entity)))))))
+	    (message "Can't change access group")
+	  (setq entity (nth 4 tmp))
+	  (unless entity (error "no folder"))
+	  (wl-fldmgr-add (concat "/"
+				 (elmo-read-search-condition
+				  wl-fldmgr-make-filter-default)
+				 "/" entity)))))))
 
 (defun wl-fldmgr-sort ()
   (interactive)
@@ -1350,8 +1309,7 @@ return value is diffs '(-new -unread -all)."
     (message "Saving folders...")
     (set-buffer tmp-buf)
     (erase-buffer)
-    (insert (format wl-fldmgr-folders-header
-		    wl-appname wl-version wl-codename))
+    (insert (format wl-fldmgr-folders-header (wl-version t)))
     (wl-fldmgr-delete-disused-petname)
     (setq save-petname-entities
 	  (wl-fldmgr-insert-folders-buffer "" (nth 2 wl-folder-entity)))
@@ -1384,6 +1342,7 @@ return value is diffs '(-new -unread -all)."
     (setq wl-fldmgr-modified-access-list nil)
     (message "Saving folders...done")))
 
-(provide 'wl-fldmgr)
+(require 'product)
+(product-provide (provide 'wl-fldmgr) (require 'wl-version))
 
 ;;; wl-fldmgr.el ends here

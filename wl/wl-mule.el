@@ -25,10 +25,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (eval-when-compile
   (require 'wl-folder)
@@ -53,64 +53,51 @@ Special commands:
   "Highlight current folder line."
   (interactive)
   (save-excursion
-    (let ((highlights (list "opened" "closed"))
+    (end-of-line)
+    (let ((end (point))
+	  (start (progn (beginning-of-line) (point)))
 	  (inhibit-read-only t)
-	  (fld-name (wl-folder-get-folder-name-by-id
-		     (get-text-property (point) 'wl-folder-entity-id)))
-	  fregexp fsymbol bol eol matched type extent num type)
-      (beginning-of-line)
-      (setq bol (point))
-      (save-excursion (end-of-line) (setq eol (point)))
-      (if (and numbers (nth 0 numbers) (nth 1 numbers))
-	  (progn
-	    (setq fsymbol
-		  (let ((unsync (nth 0 numbers))
-			(unread (nth 1 numbers)))
-		    (cond ((and unsync (eq unsync 0))
-			   (if (and unread (> unread 0))
-			       'wl-highlight-folder-unread-face
-			     'wl-highlight-folder-zero-face))
-			  ((and unsync
-				(>= unsync wl-folder-many-unsync-threshold))
-			   'wl-highlight-folder-many-face)
-			  (t
-			   'wl-highlight-folder-few-face))))
-	    (put-text-property bol eol 'face fsymbol)
-	    (setq matched t)))
-      (catch 'highlighted
-	(while highlights
-	  (setq fregexp (symbol-value
-			 (intern (format "wl-highlight-folder-%s-regexp"
-					 (car highlights)))))
-	  (if (not wl-highlight-group-folder-by-numbers)
-	      (setq fsymbol (intern (format "wl-highlight-folder-%s-face"
-					    (car highlights)))))
-	  (when (looking-at fregexp)
-	    (put-text-property bol eol 'face fsymbol)
-	    (setq matched t)
-	    (throw 'highlighted nil))
-	  (setq highlights (cdr highlights))))
-      (if (not matched)
-	  (if (looking-at (format "^[ ]*\\(%s\\|%s\\)"
-				  wl-folder-unsubscribe-mark
-				  wl-folder-removed-mark))
-	      (put-text-property bol eol 'face
-				 'wl-highlight-folder-killed-face)
-	    (put-text-property bol eol 'face
-			       'wl-highlight-folder-unknown-face)))
-      (if wl-use-highlight-mouse-line
-	  (wl-highlight-folder-mouse-line)))))
-  
+	  (text-face
+	   (cond ((looking-at wl-highlight-folder-opened-regexp)
+		  'wl-highlight-folder-opened-face)
+		 ((looking-at wl-highlight-folder-closed-regexp)
+		  'wl-highlight-folder-closed-face)
+		 (t
+		  (if (looking-at (format "^[ \t]*\\(%s\\|%s\\)"
+					  wl-folder-unsubscribe-mark
+					  wl-folder-removed-mark))
+		      'wl-highlight-folder-killed-face
+		    'wl-highlight-folder-unknown-face)))))
+      (if (and wl-highlight-folder-by-numbers
+	       numbers (nth 0 numbers) (nth 1 numbers)
+	       (re-search-forward "[0-9-]+/[0-9-]+/[0-9-]+" end t))
+	  (let* ((unsync (nth 0 numbers))
+		 (unread (nth 1 numbers))
+		 (face (cond
+			((and unsync (zerop unsync))
+			 (if (and unread (zerop unread))
+			     'wl-highlight-folder-zero-face
+			   'wl-highlight-folder-unread-face))
+			((and unsync
+			      (>= unsync wl-folder-many-unsync-threshold))
+			 'wl-highlight-folder-many-face)
+			(t
+			 'wl-highlight-folder-few-face))))
+	    (if (numberp wl-highlight-folder-by-numbers)
+		(progn
+		  (put-text-property start (match-beginning 0) 'face text-face)
+		  (put-text-property (match-beginning 0) (point) 'face face))
+	      ;; Remove previous face.
+	      (put-text-property start (point) 'face nil)
+	      (put-text-property start (point) 'face face))
+	    (goto-char start))
+	(put-text-property start end 'face text-face)))
+    (when wl-use-highlight-mouse-line
+      (wl-highlight-folder-mouse-line))))
+
 (defun wl-highlight-plugged-current-line ())
 (defun wl-plugged-set-folder-icon (folder string)
   string)
-
-(defun wl-folder-init-icons ()) ; dummy.
-(defun wl-plugged-init-icons ()) ; dummy.
-
-(defun wl-xmas-setup-folder ()) ; dummy
-(defun wl-xmas-setup-summary ())
-(defun wl-xmas-setup-draft-toolbar ())
 
 (defun wl-message-overload-functions ()
   (local-set-key "l" 'wl-message-toggle-disp-summary)
@@ -118,7 +105,10 @@ Special commands:
   (local-set-key [mouse-4] 'wl-message-wheel-down)
   (local-set-key [mouse-5] 'wl-message-wheel-up)
   (local-set-key [S-mouse-4] 'wl-message-wheel-down)
-  (local-set-key [S-mouse-5] 'wl-message-wheel-up))
+  (local-set-key [S-mouse-5] 'wl-message-wheel-up)
+  (set-keymap-parent wl-message-button-map (current-local-map))
+  (define-key wl-message-button-map [mouse-2]
+    'wl-message-button-dispatcher))
 
 (defun wl-message-wheel-up (event)
   (interactive "e")
@@ -183,14 +173,9 @@ Special commands:
     '("FCC" . wl-draft-fcc)))
 
 (defun wl-draft-overload-functions ()
-  (setq mode-line-buffer-identification
-	(format "Wanderlust: %s" (buffer-name)))
-  (local-set-key "\C-c\C-s" 'wl-draft-send)    ; override
-  (wl-draft-overload-menubar)
-  (when wl-show-plug-status-on-modeline
-    (setq mode-line-format (wl-make-modeline))))
-
-(defalias 'wl-make-modeline 'wl-make-modeline-subr)
+  (wl-mode-line-buffer-identification)
+  (local-set-key "\C-c\C-s" 'wl-draft-send);; override
+  (wl-draft-overload-menubar))
 
 ;; for "ja-mule-canna-2.3.mini" on PocketBSD
 (defun-maybe make-face (a))
@@ -293,6 +278,7 @@ Warning: Unknown req `%S' with options `%S'" req options))
 			     nil))))
 	match)))))
 
-(provide 'wl-mule)
+(require 'product)
+(product-provide (provide 'wl-mule) (require 'wl-version))
 
 ;;; wl-mule.el ends here

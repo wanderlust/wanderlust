@@ -24,44 +24,29 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
-(provide 'wl-util)
+(require 'product)
+(product-provide (provide 'wl-util) (require 'wl-version))
 (eval-when-compile
-  (provide 'elmo-util))
+  (require 'elmo-util))
 
-(condition-case ()
-    (require 'tm-edit)
-  (error))
-(condition-case ()
-    (require 'pp)
-  (error))
+(condition-case nil (require 'tm-edit) (error nil))
+(condition-case nil (require 'pp) (error nil))
+
 (eval-when-compile
-  (mapcar
-   (function
-    (lambda (symbol)
-      (unless (boundp symbol)
-	(set (make-local-variable symbol) nil))))
-   '(mule-version
-     nemacs-version
-     emacs-beta-version
-     xemacs-codename
-     mime-edit-insert-user-agent-field
-     mime-edit-user-agent-value
-     mime-editor/version
-     mime-editor/codename))
   (require 'time-stamp)
-  (defun-maybe read-event ())
-  (defun-maybe next-command-event ())
-  (defun-maybe event-to-character (a))
-  (defun-maybe key-press-event-p (a))
-  (defun-maybe button-press-event-p (a))
-  (defun-maybe set-process-kanji-code (a b))
-  (defun-maybe set-process-coding-system (a b c))
-  (defun-maybe dispatch-event (a)))
+  (defalias-maybe 'read-event 'ignore)
+  (defalias-maybe 'next-command-event 'ignore)
+  (defalias-maybe 'event-to-character 'ignore)
+  (defalias-maybe 'key-press-event-p 'ignore)
+  (defalias-maybe 'button-press-event-p 'ignore)
+  (defalias-maybe 'set-process-kanji-code 'ignore)
+  (defalias-maybe 'set-process-coding-system 'ignore)
+  (defalias-maybe 'dispatch-event 'ignore))
 
 (defalias 'wl-set-work-buf 'elmo-set-work-buf)
 (make-obsolete 'wl-set-work-buf 'elmo-set-work-buf)
@@ -157,120 +142,6 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
        (nreverse list)) ; jwz: fixed order
      )))
 
-(defun wl-version (&optional with-codename)
-  (format "%s %s%s" wl-appname wl-version
-	  (if with-codename
-	      (format " - \"%s\"" wl-codename) "")))
-
-(defun wl-version-show ()
-  (interactive)
-  (message "%s" (wl-version t)))
-
-;; from gnus
-(defun wl-extended-emacs-version (&optional with-codename)
-  "Stringified Emacs version"
-  (interactive)
-  (cond
-   ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
-    (concat "Emacs " (wl-match-string 1 emacs-version)
-	    (and (boundp 'mule-version)(concat "/Mule " mule-version))))
-   ((string-match "\\([A-Z]*[Mm][Aa][Cc][Ss]\\)[^(]*\\(\\((beta.*)\\|'\\)\\)?"
-		  emacs-version)
-    (concat (wl-match-string 1 emacs-version)
-	    (format " %d.%d" emacs-major-version emacs-minor-version)
-	    (if (and (boundp 'emacs-beta-version)
-		     emacs-beta-version)
-		(format "b%d" emacs-beta-version))
-	    (if with-codename
-		(if (boundp 'xemacs-codename)
-		    (concat " - \"" xemacs-codename "\"")))))
-   (t emacs-version)))
-
-(defun wl-extended-emacs-version2 (&optional delimiter with-codename)
-  "Stringified Emacs version"
-  (interactive)
-  (cond
-   ((and (boundp 'mule-version)
-	 mule-version
-	 (string-match "\\([0-9]+\.[0-9]+\\)\\(.*$\\)" mule-version))
-    (format "Mule%s%s@%d.%d%s"
-	    (or delimiter " ")
-	    (wl-match-string 1 mule-version)
-	    emacs-major-version
-	    emacs-minor-version
-	    (if with-codename
-		(wl-match-string 2 mule-version)
-	      "")))
-   ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
-    (if (boundp 'nemacs-version)
-	(concat "Nemacs" (or delimiter " ")
-		nemacs-version
-		"@"
-		(substring emacs-version
-			   (match-beginning 1)
-			   (match-end 1)))
-      (concat "Emacs" (or delimiter " ")
-	      (wl-match-string 1 emacs-version))))
-   ((string-match "\\([A-Z]*[Mm][Aa][Cc][Ss]\\)[^(]*\\(\\((beta.*)\\|'\\)\\)?"
-		  emacs-version)
-    (concat (wl-match-string 1 emacs-version)
-	    (or delimiter " ")
-	    (format "%d.%d" emacs-major-version emacs-minor-version)
-	    (if (and (boundp 'emacs-beta-version)
-		     emacs-beta-version)
-		(format "b%d" emacs-beta-version))
-	    (if (and with-codename
-		     (boundp 'xemacs-codename)
-		     xemacs-codename)
-		(format " (%s)" xemacs-codename))))
-   (t emacs-version)))
-
-(defun wl-extended-emacs-version3 (&optional delimiter with-codename)
-  "Stringified Emacs version"
-  (interactive)
-  (cond
-   ((and (boundp 'mule-version)
-	 mule-version
-	 (string-match "\\([0-9]+\.[0-9]+\\)\\(.*$\\)" mule-version))
-    (format "Emacs%s%d.%d Mule%s%s%s"
-	    (or delimiter " ")
-	    emacs-major-version
-	    emacs-minor-version
-	    (or delimiter " ")
-	    (wl-match-string 1 mule-version)
-	    (if with-codename
-		(wl-match-string 2 mule-version)
-	      "")))
-   ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
-    (if (boundp 'nemacs-version)
-	(let ((nemacs-codename-assoc '(("3.3.2" . " (FUJIMUSUME)")
-				       ("3.3.1" . " (HINAMATSURI)")
-				       ("3.2.3" . " (YUMENO-AWAYUKI)"))))
-	  (format "Emacs%s%s Nemacs%s%s%s"
-		  (or delimiter " ")
-		  (wl-match-string 1 emacs-version)
-		  (or delimiter " ")
-		  nemacs-version
-		  (or (and with-codename
-			   (cdr (assoc nemacs-version
-				       nemacs-codename-assoc)))
-		      "")))
-      (concat "Emacs" (or delimiter " ")
-	      (wl-match-string 1 emacs-version))))
-   ((string-match "\\([A-Z]*[Mm][Aa][Cc][Ss]\\)[^(]*\\(\\((beta.*)\\|'\\)\\)?"
-		  emacs-version)
-    (concat (wl-match-string 1 emacs-version)
-	    (or delimiter " ")
-	    (format "%d.%d" emacs-major-version emacs-minor-version)
-	    (if (and (boundp 'emacs-beta-version)
-		     emacs-beta-version)
-		(format "b%d" emacs-beta-version))
-	    (if (and with-codename
-		     (boundp 'xemacs-codename)
-		     xemacs-codename)
-		(format " (%s)" xemacs-codename))))
-   (t emacs-version)))
-
 (defun wl-append-element (list element)
   (if element
       (append list (list element))
@@ -295,7 +166,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 	       (event-to-character event))
 	  event)))
 
-(if running-xemacs
+(if wl-on-xemacs
     (fset 'wl-read-event-char 'wl-xmas-read-event-char))
 
 (defmacro wl-push (v l)
@@ -362,68 +233,38 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
       (format "%dK" result))
      (t (format "%dB" result)))))
 
-(defun wl-generate-user-agent-string ()
-  "A candidate of wl-generate-mailer-string-func.
-Insert User-Agent field instead of X-Mailer field."
-  (let ((mime-user-agent (and (boundp 'mime-edit-insert-user-agent-field)
-			      mime-edit-insert-user-agent-field
-			      mime-edit-user-agent-value)))
-    (if mime-user-agent
-	(concat "User-Agent: "
-		wl-appname "/" wl-version
-		" (" wl-codename ") "
-		mime-user-agent)
-      (if (and (boundp 'mime-editor/version)
-	       mime-editor/version)
-	  (concat "User-Agent: "
-		  wl-appname "/" wl-version
-		  " (" wl-codename ") "
-		  "tm/" mime-editor/version
-		  (if (and (boundp 'mime-editor/codename)
-			   mime-editor/codename)
-		      (concat " (" mime-editor/codename ")"))
-		  (if (and (boundp 'mime-library-product)
-			   mime-library-product)
-		      (concat " " (aref mime-library-product 0)
-			      "/"
-			      (mapconcat 'int-to-string
-					 (aref mime-library-product 1)
-					 ".")
-			      " (" (aref mime-library-product 2) ")"))
-		  (condition-case nil
-		      (progn
-			(require 'apel-ver)
-			(concat " " (apel-version)))
-		    (file-error nil))
-		  " " (wl-extended-emacs-version3 "/" t))
-	(concat "User-Agent: " wl-appname "/" wl-version " (" wl-codename ") "
-		(wl-extended-emacs-version3 "/" t))))))
-
-(defun wl-make-modeline-subr ()
-  (let* ((duplicated (copy-sequence mode-line-format))
-	 (cur-entry duplicated)
-	 return-modeline)
-    (if (memq 'wl-plug-state-indicator mode-line-format)
-	duplicated
-      (catch 'done
-	(while cur-entry
-	  (if (or (and (symbolp (car cur-entry))
-		       (eq 'mode-line-buffer-identification
-			      (car cur-entry)))
-		  (and (consp (car cur-entry))
-		       (or
-			(eq 'modeline-buffer-identification
-			       (car (car cur-entry)))
-			(eq 'modeline-buffer-identification
-			       (cdr (car cur-entry))))))
-	      (progn
-		(setq return-modeline (append return-modeline
-					      (list 'wl-plug-state-indicator)
-					      cur-entry))
-		(throw 'done return-modeline))
-	    (setq return-modeline (append return-modeline
-					  (list (car cur-entry)))))
-	  (setq cur-entry (cdr cur-entry)))))))
+(defun wl-mode-line-buffer-identification (&optional id)
+  (let ((priorities '(biff plug title)))
+    (let ((items (reverse wl-mode-line-display-priority-list))
+	  item)
+      (while items
+	(setq item (car items)
+	      items (cdr items))
+	(unless (memq item '(biff plug))
+	  (setq item 'title))
+	(setq priorities (cons item (delq item priorities)))))
+    (let (priority result)
+      (while priorities
+	(setq priority (car priorities)
+	      priorities (cdr priorities))
+	(cond
+	 ((eq 'biff priority)
+	  (when wl-biff-check-folder-list
+	    (setq result (append result '((wl-modeline-biff-status
+					   wl-modeline-biff-state-on
+					   wl-modeline-biff-state-off))))))
+	 ((eq 'plug priority)
+	  (when wl-show-plug-status-on-modeline
+	    (setq result (append result '((wl-modeline-plug-status
+					   wl-modeline-plug-state-on
+					   wl-modeline-plug-state-off))))))
+	 (t
+	  (setq result (append result (or id '("Wanderlust: %12b")))))))
+      (prog1
+	  (setq mode-line-buffer-identification (if (stringp (car result))
+						    result
+						  (cons "" result)))
+	(force-mode-line-update t)))))
 
 (defalias 'wl-display-error 'elmo-display-error)
 (make-obsolete 'wl-display-error 'elmo-display-error)
@@ -483,7 +324,7 @@ Insert User-Agent field instead of X-Mailer field."
 
 (defun wl-parse-newsgroups (string &optional subscribe-only)
   (let* ((nglist (wl-parse string "[ \t\f\r\n,]*\\([^ \t\f\r\n,]+\\)"))
-	 spec ret-val)
+	 ret-val)
     (if (not subscribe-only)
 	nglist
       (while nglist
@@ -499,7 +340,7 @@ Insert User-Agent field instead of X-Mailer field."
   (if (fboundp 'region-exists-p)
       (defmacro wl-region-exists-p ()
 	(list 'region-exists-p))))
-  
+
 (if (not (fboundp 'overlays-in))
     (defun overlays-in (beg end)
       "Return a list of the overlays that overlap the region BEG ... END.
@@ -552,11 +393,41 @@ or between BEG and END."
 	      (list (list item value))))))
 
 (defun wl-delete-alist (key alist)
-  "Delete all entries in ALIST that have a key eq to KEY."
+  "Delete by side effect any entries specified with KEY from ALIST.
+Return the modified ALIST.  Key comparison is done with `assq'.
+Write `(setq foo (wl-delete-alist key foo))' to be sure of changing
+the value of `foo'."
   (let (entry)
     (while (setq entry (assq key alist))
       (setq alist (delq entry alist)))
     alist))
+
+(defun wl-delete-associations (keys alist)
+  "Delete by side effect any entries specified with KEYS from ALIST.
+Return the modified ALIST.  KEYS must be a list of keys for ALIST.
+Deletion is done with `wl-delete-alist'.
+Write `(setq foo (wl-delete-associations keys foo))' to be sure of
+changing the value of `foo'."
+  (while keys
+    (setq alist (wl-delete-alist (car keys) alist))
+    (setq keys (cdr keys)))
+  alist)
+
+(defun wl-inverse-alist (keys alist)
+  "Inverse ALIST, copying.  Return an association list represents
+the inverse mapping of ALIST, from objects to KEYS.
+The objects mapped (cdrs of elements of the ALIST) are shared."
+  (let (x y tmp result)
+    (while keys
+      (setq x (car keys))
+      (setq y (cdr (assq x alist)))
+      (if y
+	  (if (setq tmp (assoc y result))
+	      (setq result (cons (append tmp (list x))
+				 (delete tmp result)))
+	    (setq result (cons (list y x) result))))
+      (setq keys (cdr keys)))
+    result))
 
 (eval-when-compile
   (require 'static))
@@ -633,11 +504,11 @@ that `read' can handle, whenever this is possible."
 (defsubst wl-get-date-iso8601 (date)
   (or (get-text-property 0 'wl-date date)
       (let* ((d1 (timezone-fix-time date nil nil))
- 	     (time (format "%04d%02d%02dT%02d%02d%02d"
- 			   (aref d1 0) (aref d1 1) (aref d1 2)
- 			   (aref d1 3) (aref d1 4) (aref d1 5))))
- 	(put-text-property 0 1 'wl-date time date)
- 	time)))
+	     (time (format "%04d%02d%02dT%02d%02d%02d"
+			   (aref d1 0) (aref d1 1) (aref d1 2)
+			   (aref d1 3) (aref d1 4) (aref d1 5))))
+	(put-text-property 0 1 'wl-date time date)
+	time)))
 
 (defun wl-make-date-string ()
   (let ((s (current-time-string)))
@@ -645,13 +516,13 @@ that `read' can handle, whenever this is possible."
 		  s)
     (concat (wl-match-string 1 s) ", "
 	    (timezone-make-date-arpa-standard s (current-time-zone)))))
- 
+
 (defun wl-date-iso8601 (date)
   "Convert the DATE to YYMMDDTHHMMSS."
   (condition-case ()
       (wl-get-date-iso8601 date)
     (error "")))
- 
+
 (defun wl-day-number (date)
   (let ((dat (mapcar '(lambda (s) (and s (string-to-int s)) )
 		     (timezone-parse-date date))))
@@ -709,17 +580,17 @@ that `read' can handle, whenever this is possible."
 		    (and (get-buffer x)
 			 (kill-buffer x)))))
 	     (buffer-list))))
- 
+
 (defun wl-sendlog-time ()
   (static-if (fboundp 'format-time-string)
       (format-time-string "%Y/%m/%d %T")
     (let ((date (current-time-string)))
       (format "%s/%02d/%02d %s"
- 	      (substring date -4)
- 	      (cdr (assoc (upcase (substring date 4 7))
+	      (substring date -4)
+	      (cdr (assoc (upcase (substring date 4 7))
 			  timezone-months-assoc))
- 	      (string-to-int (substring date 8 10))
- 	      (substring date 11 19)))))
+	      (string-to-int (substring date 8 10))
+	      (substring date 11 19)))))
 
 (defun wl-collect-summary ()
   (let (result)
@@ -812,8 +683,197 @@ that `read' can handle, whenever this is possible."
 (defun wl-local-load-profile ()
   (message "Initializing ...")
   (load wl-init-file 'noerror 'nomessage))
-  
+
 (defun wl-load-profile ()
   (funcall wl-load-profile-func))
+
+;;;
+
+(defmacro wl-count-lines ()
+  (` (save-excursion
+       (beginning-of-line)
+       (count-lines 1 (point)))))
+
+(defun wl-horizontal-recenter ()
+  "Recenter the current buffer horizontally."
+  (beginning-of-line)
+  (re-search-forward "[[<]" (point-at-eol) t)
+  (if (< (current-column) (/ (window-width) 2))
+      (set-window-hscroll (get-buffer-window (current-buffer) t) 0)
+    (let* ((orig (point))
+	   (end (window-end (get-buffer-window (current-buffer) t)))
+	   (max 0))
+      (when end
+	;; Find the longest line currently displayed in the window.
+	(goto-char (window-start))
+	(while (and (not (eobp))
+		    (< (point) end))
+	  (end-of-line)
+	  (setq max (max max (current-column)))
+	  (forward-line 1))
+	(goto-char orig)
+	;; Scroll horizontally to center (sort of) the point.
+	(if (> max (window-width))
+	    (set-window-hscroll
+	     (get-buffer-window (current-buffer) t)
+	     (min (- (current-column) (/ (window-width) 3))
+		  (+ 2 (- max (window-width)))))
+	  (set-window-hscroll (get-buffer-window (current-buffer) t) 0))
+	max))))
+
+;; Biff
+(static-cond
+ (wl-on-xemacs
+  (defvar wl-biff-timer-name "wl-biff")
+
+  (defun wl-biff-stop ()
+    (when (get-itimer wl-biff-timer-name)
+      (delete-itimer wl-biff-timer-name)))
+
+  (defun wl-biff-start ()
+    (wl-biff-stop)
+    (when wl-biff-check-folder-list
+      (wl-biff-check-folders)
+      (start-itimer wl-biff-timer-name 'wl-biff-check-folders
+		    wl-biff-check-interval wl-biff-check-interval))))
+
+ ((condition-case nil (require 'timer) (error nil));; FSFmacs 19+
+
+  (defun wl-biff-stop ()
+    (put 'wl-biff 'timer nil))
+
+  (defun wl-biff-start ()
+    (require 'timer)
+    (when wl-biff-check-folder-list
+      (wl-biff-check-folders)
+      (put 'wl-biff 'timer (run-at-time
+			    (timer-next-integral-multiple-of-time
+			     (current-time) wl-biff-check-interval)
+			    wl-biff-check-interval
+			    'wl-biff-event-handler))))
+
+  (defun-maybe timer-next-integral-multiple-of-time (time secs)
+    "Yield the next value after TIME that is an integral multiple of SECS.
+More precisely, the next value, after TIME, that is an integral multiple
+of SECS seconds since the epoch.  SECS may be a fraction.
+This function is imported from Emacs 20.7."
+    (let ((time-base (ash 1 16)))
+      (if (fboundp 'atan)
+	  ;; Use floating point, taking care to not lose precision.
+	  (let* ((float-time-base (float time-base))
+		 (million 1000000.0)
+		 (time-usec (+ (* million
+				  (+ (* float-time-base (nth 0 time))
+				     (nth 1 time)))
+			       (nth 2 time)))
+		 (secs-usec (* million secs))
+		 (mod-usec (mod time-usec secs-usec))
+		 (next-usec (+ (- time-usec mod-usec) secs-usec))
+		 (time-base-million (* float-time-base million)))
+	    (list (floor next-usec time-base-million)
+		  (floor (mod next-usec time-base-million) million)
+		  (floor (mod next-usec million))))
+	;; Floating point is not supported.
+	;; Use integer arithmetic, avoiding overflow if possible.
+	(let* ((mod-sec (mod (+ (* (mod time-base secs)
+				   (mod (nth 0 time) secs))
+				(nth 1 time))
+			     secs))
+	       (next-1-sec (+ (- (nth 1 time) mod-sec) secs)))
+	  (list (+ (nth 0 time) (floor next-1-sec time-base))
+		(mod next-1-sec time-base)
+		0)))))
+
+  (defun wl-biff-event-handler ()
+    ;; PAKURing from FSF:time.el
+    (wl-biff-check-folders)
+    ;; Do redisplay right now, if no input pending.
+    (sit-for 0)
+    (let* ((current (current-time))
+	   (timer (get 'wl-biff 'timer))
+	   ;; Compute the time when this timer will run again, next.
+	   (next-time (timer-relative-time
+		       (list (aref timer 1) (aref timer 2) (aref timer 3))
+		       (* 5 (aref timer 4)) 0)))
+      ;; If the activation time is far in the past,
+      ;; skip executions until we reach a time in the future.
+      ;; This avoids a long pause if Emacs has been suspended for hours.
+      (or (> (nth 0 next-time) (nth 0 current))
+	  (and (= (nth 0 next-time) (nth 0 current))
+	       (> (nth 1 next-time) (nth 1 current)))
+	  (and (= (nth 0 next-time) (nth 0 current))
+	       (= (nth 1 next-time) (nth 1 current))
+	       (> (nth 2 next-time) (nth 2 current)))
+	  (progn
+	    (timer-set-time timer (timer-next-integral-multiple-of-time
+				   current wl-biff-check-interval)
+			    wl-biff-check-interval)
+	    (timer-activate timer))))))
+ (t
+  (fset 'wl-biff-stop 'ignore)
+  (fset 'wl-biff-start 'ignore)))
+
+(defsubst wl-biff-notify (new-mails notify-minibuf)
+  (setq wl-modeline-biff-status (> new-mails 0))
+  (force-mode-line-update t)
+  (when notify-minibuf
+    (cond ((zerop new-mails) (message "No mail."))
+	  ((eq 1 new-mails) (message "You have a new mail."))
+	  (t (message "You have %d new mails." new-mails)))))
+
+;; Internal variable.
+(defvar wl-biff-check-folders-running nil)
+
+(defun wl-biff-check-folders ()
+  (interactive)
+  (if wl-biff-check-folders-running
+      (when (interactive-p)
+	(message "Biff process is running."))
+    (setq wl-biff-check-folders-running t)
+    (when (interactive-p)
+      (message "Checking new mails..."))
+    (let ((new-mails 0)
+	  (flist (or wl-biff-check-folder-list (list wl-default-folder)))
+	  (elmo-network-session-name-prefix "BIFF-")
+	  folder)
+      (if (eq (length flist) 1)
+	  (wl-biff-check-folder-async (car flist) (interactive-p))
+	(unwind-protect
+	    (while flist
+	      (setq folder (car flist)
+		    flist (cdr flist))
+	      (when (elmo-folder-plugged-p folder)
+		(setq new-mails
+		      (+ new-mails
+			 (nth 0 (wl-folder-check-one-entity folder))))))
+	  (setq wl-biff-check-folders-running nil)
+	  (wl-biff-notify new-mails (interactive-p)))))))
+
+(defun wl-biff-check-folder-async-callback (diff data)
+  (if (nth 1 data)
+      (with-current-buffer (nth 1 data)
+	(wl-folder-entity-hashtb-set wl-folder-entity-hashtb (nth 0 data)
+				     (list (car diff) 0 (cdr diff))
+				     (current-buffer))))
+  (setq wl-folder-info-alist-modified t)
+  (setq wl-biff-check-folders-running nil)
+  (sit-for 0)
+  (wl-biff-notify (car diff) (nth 2 data)))
+
+(defun wl-biff-check-folder-async (folder notify-minibuf)
+  (when (elmo-folder-plugged-p folder)
+    (if (and (eq (elmo-folder-get-type folder) 'imap4)
+	     (wl-folder-use-server-diff-p folder))
+	;; Check asynchronously only when IMAP4 and use server diff.
+	(progn
+	  (setq elmo-folder-diff-async-callback
+		'wl-biff-check-folder-async-callback)
+	  (setq elmo-folder-diff-async-callback-data
+		(list folder (get-buffer wl-folder-buffer-name)
+		      notify-minibuf))
+	  (elmo-folder-diff-async folder))
+      (wl-biff-notify (car (wl-folder-check-one-entity folder))
+		      notify-minibuf)
+      (setq wl-biff-check-folders-running nil))))
 
 ;;; wl-util.el ends here

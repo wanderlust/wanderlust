@@ -1,3 +1,482 @@
+2000-10-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-version.el (elmo-version): Up to 2.3.90.
+
+	* elmo-imap4.el (elmo-imap4-list-folder-unread): Check plugged status.
+	(elmo-imap4-list-folder-important): Ditto.
+
+2000-10-16  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-nntp.el (elmo-network-initialize-session): Fix.
+
+2000-10-16  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-nntp.el (elmo-nntp-read-msg): Don't error.
+
+2000-10-15  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-nntp.el (elmo-network-initialize-session):
+	Add starttls negotiation.
+
+2000-10-15  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* elmo-nntp.el (elmo-network-initialize-session): Read greeting
+	response.
+	(elmo-network-setup-session): Define.
+	Call `elmo-nntp-send-mode-reader' when session opened.
+
+2000-10-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-multi.el (elmo-multi-list-folder-unread): Fixed.
+
+2000-10-13  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-imap4.el (elmo-imap4-search-internal-primitive): Remove
+	an invalid SPACE character ahead of `SEARCH' command.  Move
+	a valid SPACE character following `SEARCH' from conditional
+	`format' arguments to control-strings.
+
+2000-10-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-call-func-on-markable-msgs): Return t if marking
+	was succeeded.
+
+	* elmo-util.el (elmo-folder-get-spec): Enclose with save-match-data.
+
+2000-10-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-localdir.el (elmo-localdir-list-folders-subr): Bind
+	`w32-get-true-file-link-count' as t.
+
+	* elmo-imap4.el (elmo-imap4-read): Abolished.
+	(Renamed to `elmo-read' and moved to elmo-util.el)
+	All other related portions are changed.
+
+	* elmo-util.el (elmo-read): New function.
+	(elmo-condition-parse-search-value): Use it.
+
+2000-10-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-quit): Don't use `elmo-nntp-flush-connection'.
+
+	* elmo-nntp.el (elmo-nntp-session): Define.
+	(elmo-nntp-setting): Abolished.
+	All other related portions are changed.
+	(elmo-nntp-get-server-command): Changed argument.
+	(elmo-nntp-set-server-command): Ditto.
+	(elmo-nntp-xover-p): Ditto.
+	(elmo-nntp-set-xover): Ditto.
+	(elmo-nntp-listgroup-p): Ditto.
+	(elmo-nntp-set-listgroup): Ditto.
+	(elmo-nntp-list-active-p): Ditto.
+	(elmo-nntp-set-list-active): Ditto.
+	(elmo-nntp-xhdr-p): Ditto.
+	(elmo-nntp-set-xhdr): Ditto.
+	(elmo-nntp-flush-connection): Abolished.
+	(elmo-nntp-get-connection): Abolished.
+	(elmo-nntp-get-session): New function.
+	(elmo-network-initialize-session): Defined.
+	(elmo-network-authenticate-session): Ditto.
+	(elmo-nntp-send-mode-reader): Changed argument.
+	(elmo-nntp-send-command): Changed argument.
+	All other related portions are changed.
+	(elmo-nntp-read-response): Ditto.
+	(elmo-nntp-read-raw-response): Ditto.
+	(elmo-nntp-read-contents): Ditto.
+	(elmo-nntp-read-body): Ditto.
+	(elmo-nntp-goto-folder): Abolished.
+	(elmo-nntp-select-group): New function.
+	All other related portions are changed.
+	(This function substitutes `elmo-nntp-goto-folder')
+	(elmo-nntp-msgdb-create-by-header): Rewrite.
+	(elmo-nntp-get-overview): Eliminated.
+	(elmo-nntp-get-message): Ditto.
+	(elmo-nntp-open-connection) Abolished.
+	(elmo-nntp-read-msg): Rewrite.
+	(elmo-nntp-post): Ditto.
+	(elmo-nntp-send-data): Abolished.
+	(elmo-nntp-send-buffer): New function.
+	(elmo-nntp-send-data-line): Define as inline function.
+	(elmo-nntp-get-folders-info-prepare): Use session as key.
+	(elmo-nntp-groups-read-response): Changed argument.
+	(elmo-nntp-retrieve-headers): Ditto.
+	(elmo-nntp-msgdb-create-message): Ditto.
+
+	* elmo-msgdb.el (elmo-msgdb-search-internal-primitive): Fixed problem
+	when searching by 'since' or 'before'.
+
+2000-10-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-version.el (toplevel): Use product-version-as-string for set
+	verstion-string, if defined.
+
+2000-10-11  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-util.el: Doc fixes.
+
+2000-10-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-archive.el (toplevel): Use product-provide.
+	* elmo-cache.el (toplevel): Ditto.
+	* elmo-database.el (toplevel): Ditto.
+	* elmo-date.el (toplevel): Ditto.
+	* elmo-dop.el (toplevel): Ditto.
+	* elmo-filter.el (toplevel): Ditto.
+	* elmo-imap4.el (toplevel): Ditto.
+	* elmo-internal.el (toplevel): Ditto.
+	* elmo-localdir.el (toplevel): Ditto.
+	* elmo-localnews.el (toplevel): Ditto.
+	* elmo-maildir.el (toplevel): Ditto.
+	* elmo-msgdb.el (toplevel): Ditto.
+	* elmo-multi.el (toplevel): Ditto.
+	* elmo-net.el (toplevel): Ditto.
+	* elmo-nntp.el (toplevel): Ditto.
+	* elmo-pipe.el (toplevel): Ditto.
+	* elmo-pop3.el (toplevel): Ditto.
+	* elmo-util.el (toplevel): Ditto.
+	* elmo-vars.el (toplevel): Ditto.
+	* elmo2.el (toplevel): Ditto.
+	* mmelmo-1.el (toplevel): Ditto.
+	* mmelmo-2.el (toplevel): Ditto.
+	* mmelmo-imap4-1.el (toplevel): Ditto.
+	* mmelmo-imap4-2.el (toplevel): Ditto.
+	* mmelmo-imap4.el (toplevel): Ditto.
+	* mmelmo.el (toplevel): Ditto.
+
+2000-10-10  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-dop.el (elmo-dop-flush-pending-append-operations): Add no-see.
+	(elmo-dop-call-func-on-msgs): Don't delete appends from msgs.
+
+2000-10-10  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-multi.el (elmo-multi-split-mark-alist): Copy and sort alist
+	before splitting.
+	(elmo-multi-split-number-alist): Ditto.
+
+2000-10-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-version.el: New file.  Use product.el.
+	* elmo2.el: Add (require 'elmo-version).
+	* elmo-vars.el (elmo-appname, elmo-version): Move to
+	elmo-version.el
+
+2000-10-09  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-copy-msgs): Set `spec' as 1st argument for
+	`elmo-msgdb-expand-path'.
+	(elmo-msgdb-load): Ditto.
+	Abolished 2nd argument.	If 1st argument is not string, treat as spec.
+	(elmo-generic-list-folder-unread): Rewrite.
+	(elmo-generic-list-folder-important): Changed argument.
+	(elmo-list-folder-unread): Ditto.
+	(elmo-list-folder-important): Ditto.
+	(elmo-folder-diff): Rewrite.
+	(elmo-generic-folder-diff): New function.
+	(elmo-multi-get-number-alist-list): Abolished
+	(Renamed to elmo-multi-split-number-alist and moved to elmo-multi.el)
+	(elmo-multi-folder-diff): Moved to elmo-multi.el
+	(toplevel): Removed autoload setting of `elmo-multi-folder-diff'.
+
+	* elmo-pop3.el (elmo-pop3-list-folder): Set `spec' as 1st argument for
+	`elmo-msgdb-expand-path'.
+	(elmo-pop3-msgdb-create-as-numlist): Ditto.
+	(elmo-pop3-read-msg): Ditto.
+	(elmo-pop3-delete-msgs): Ditto.
+	(elmo-pop3-folder-diff): New alias.
+
+	* elmo-pipe.el (elmo-pipe-list-folder): Set `spec' as 1st argument for
+	`elmo-msgdb-expand-path'.
+	(elmo-pipe-list-folder-unread): Changed arguments.
+	(elmo-pipe-list-folder-important): Ditto.
+	(elmo-pipe-folder-diff): New alias.
+
+	* elmo-nntp.el (elmo-nntp-list-folder): Set `spec' as 1st argument for
+	`elmo-msgdb-expand-path'.
+	(elmo-nntp-max-of-folder): Ditto.
+	(elmo-nntp-msgdb-create): Ditto.
+	(elmo-nntp-delete-msgs): Ditto.
+	(elmo-nntp-folder-diff): New alias.
+
+	* elmo-multi.el (elmo-multi-folder-diff): New function.
+	(elmo-multi-split-mark-alist): Ditto.
+	(elmo-multi-split-number-alist): Ditto.
+	(elmo-multi-mark-alist-list): Abolished (Renamed to
+	elmo-multi-split-mark-alist).
+	(elmo-multi-list-folder-unread): Rewrite.
+	(elmo-multi-list-folder-important): Ditto.
+	(elmo-multi-list-folder): Set `spec' as 1st argument for
+	`elmo-msgdb-expand-path'.
+	(elmo-multi-sync-number-alist): Use `elmo-multi-split-number-alist'
+	instead of `elmo-multi-get-number-alist-list'.
+
+	* elmo-msgdb.el (elmo-msgdb-expand-path): Abolished 2nd argument.
+	If 1st argument is not string, treat as spec.
+	(elmo-list-folder-by-location): Set `spec' as 1st argument for
+	`elmo-msgdb-expand-path'.
+	(elmo-msgdb-flist-load): Ditto.
+	(elmo-msgdb-flist-save): Ditto.
+	(elmo-msgdb-delete-path): Ditto.
+	(elmo-msgdb-rename-path): Ditto.
+
+	* elmo-maildir.el (elmo-maildir-set-mark-msgs):
+	Set `spec' as 1st argument for `elmo-msgdb-expand-path'.
+	(elmo-maildir-delete-mark-msgs): Ditto.
+	(elmo-maildir-msgdb-create): Ditto.
+	(elmo-maildir-read-msg): Ditto.
+	(elmo-maildir-delete-msgs): Ditto.
+	(elmo-maildir-list-folder-subr): Ditto.
+	(elmo-maildir-search): Ditto.
+	(elmo-maildir-get-msg-filename): Ditto.
+	(elmo-maildir-pack-number): Ditto.
+	(elmo-maildir-folder-diff): New alias.
+
+	* elmo-localnews.el (elmo-localnews-folder-diff): New alias.
+
+	* elmo-localdir.el (elmo-localdir-list-folder-subr):
+	Set `spec' as 1st argument for `elmo-msgdb-expand-path'.
+	(elmo-localdir-folder-diff): New alias.
+
+	* elmo-internal.el (elmo-internal-list-folder-subr):
+	Set `spec' as 1st argument for `elmo-msgdb-expand-path'.
+	(elmo-internal-list-folder-by-location): Ditto.
+	(elmo-internal-msgdb-create): Ditto.
+	(elmo-internal-delete-msgs): Ditto.
+	(elmo-internal-read-msg): Ditto.
+	(elmo-internal-folder-diff): New alias.
+
+	* elmo-imap4.el (elmo-imap4-folder-diff): New function.
+	(elmo-imap4-list-folder): Set `spec' as 1st argument for
+	`elmo-msgdb-expand-path'.
+	(elmo-imap4-list-folder-unread): Changed arguments.
+	(elmo-imap4-list-folder-important): Ditto.
+
+	* elmo-filter.el (elmo-filter-list-folder-unread): Changed arguments.
+	(elmo-filter-list-folder-important): Ditto.
+	(elmo-filter-folder-diff): New function.
+
+	* elmo-dop.el (elmo-dop-folder-exists-p): Check elmo directory first.
+
+	* elmo-cache.el (elmo-cache-list-folder):
+	Set `spec' as 1st argument for `elmo-msgdb-expand-path'.
+	(elmo-cache-copy-msgs): Ditto.
+	(elmo-cache-folder-diff): New alias.
+
+	* elmo-archive.el (elmo-archive-list-folder-subr):
+	Set `spec' as 1st argument for `elmo-msgdb-expand-path'.
+	(elmo-archive-get-archive-name): Ditto.
+	(elmo-archive-create-file): Ditto.
+	(elmo-archive-append-msg): Ditto.
+	(elmo-archive-copy-msgs): Ditto.
+	(elmo-archive-copy-msgs-froms): Ditto.
+	(elmo-archive-get-msg-filename): Ditto.
+	(elmo-archive-folder-diff): New alias.
+
+2000-10-06   Daiki Ueno  <ueno@unixuser.org>
+
+	* elmo-vars.el (elmo-imap4-stream-type-alist): New variable.
+	(elmo-pop3-stream-type-alist): New variable.
+	(elmo-nntp-stream-type-alist): New variable.
+
+	* elmo-util.el (elmo-buffer-exists-p): Rewrite as function.
+	(elmo-kill-buffer): Ditto.
+	(elmo-get-network-stream-type): Add 2nd argument `stream-type-alist'.
+	(elmo-network-get-spec): Add 5th argument `stream-type-alist'.
+	(elmo-nntp-get-spec): Take into account `elmo-nntp-stream-type-alist'.
+	(elmo-pop3-get-spec): Take into account `elmo-pop3-stream-type-alist'.
+	(elmo-imap4-get-spec): Take into account
+	`elmo-imap4-stream-type-alist'.
+
+2000-10-06  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-nntp.el (elmo-nntp-list-folders): Fix for `-/'
+	(elmo-nntp-list-folders-get-cache): Ditto.
+
+2000-10-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-search-internal-primitive): Added space
+	character before 'uid'.
+
+2000-10-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-delete-msgs): Don't save location data.
+
+	* elmo-nntp.el (elmo-nntp-max-of-folder): Fixed.
+
+	* elmo-util.el (elmo-number-set-member): New function.
+	(elmo-number-set-append-list): Ditto.
+	(elmo-number-set-append): Ditto.
+
+	* elmo-msgdb.el (elmo-msgdb-killed-message-p):
+	Use `elmo-number-set-member'.
+	(elmo-living-messages): Ditto.
+	(elmo-msgdb-set-as-killed): Use `elmo-number-set-append'.
+	(elmo-msgdb-append-to-killed-list): Use `elmo-number-set-append-list'.
+
+	* elmo-imap4.el (elmo-imap4-folder-exists-p): Rewrite.
+	(elmo-imap4-add-to-cont-list): Abolished.
+	(elmo-imap4-make-number-set-list): Use `elmo-number-set-append'
+	instead of elmo-imap4-add-to-cont-list.
+
+	* elmo2.el (elmo-msgdb-search): Moved from elmo-msgdb.el.
+	(toplevel): Removed autoload setting for `elmo-imap4-get-connection'.
+
+	* elmo-msgdb.el (elmo-msgdb-search): Moved to elmo2.el.
+
+2000-10-03  Hiroya Murata      <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-util.el (elmo-condition-parse-search-value):
+	Fixed date parsing.
+
+2000-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-condition-find-key-internal): New function.
+	(elmo-condition-find-key): Ditto.
+
+	* elmo-msgdb.el (elmo-msgdb-search-internal-primitive): New function.
+	(elmo-msgdb-search-internal): Ditto.
+	(elmo-msgdb-search): Ditto.
+
+2000-10-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-cross-device-link-error-p): Abolished.
+	(elmo-copy-file): Uncheck error condition for `add-name-to-file'.
+
+	* elmo-nntp.el (elmo-nntp-search-primitive): Decode header field.
+	(elmo-nntp-search-primitive): Fixed problem when condition is
+	'unmatch'.
+
+	* elmo-util.el (elmo-buffer-field-primitive-condition-match): Fixed.
+
+	* elmo-nntp.el (elmo-nntp-default-use-xhdr): New variable.
+	(elmo-nntp-xhdr-p): New macro.
+	(elmo-nntp-set-xhdr): Ditto.
+	(elmo-nntp-parse-xhdr-response): New function.
+	(elmo-nntp-retrieve-field): Ditto.
+	(elmo-nntp-search-primitive): Ditto.
+	(elmo-nntp-search): Implemented.
+
+	* elmo-date.el (elmo-date-make-sortable-string): New macro.
+
+	* elmo-archive.el (elmo-archive-search): Set all number list to
+	`elmo-archive-field-condition-match'
+
+	* elmo-localdir.el (elmo-localdir-search): Likewise.
+
+	* elmo-maildir.el (elmo-maildir-search): Likewise.
+
+2000-10-01  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-msgdb.el (elmo-living-messages): New function.
+	* elmo-archive.el (elmo-archive-list-folder-subr): Use it.
+	* elmo-cache.el (elmo-cache-list-folder): Ditto.
+	* elmo-dop.el (elmo-dop-list-folder): Ditto.
+	* elmo-imap4.el (elmo-imap4-list-folder): Ditto.
+	* elmo-internal.el (elmo-internal-list-folder-subr): Ditto.
+	* elmo-localdir.el (elmo-localdir-list-folder-subr): Ditto.
+	* elmo-maildir.el (elmo-maildir-list-folder-subr): Ditto.
+	* elmo-multi.el (elmo-multi-list-folder): Ditto.
+	* elmo-nntp.el (elmo-nntp-list-folder): Ditto.
+	* elmo-pipe.el (elmo-pipe-list-folder): Ditto.
+	* elmo-pop3.el (elmo-pop3-list-folder): Ditto.
+
+2000-09-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-maildir.el (elmo-maildir-pack-number): Implemented.
+
+	* elmo-msgdb.el (elmo-msgdb-delete-msgs): Save location data.
+
+	* elmo2.el (elmo-pack-number): Added 'maildir as allowd type.
+
+	* elmo-imap4.el (elmo-imap4-search-internal-primitive): Fixed
+	arguments for `SEARCH' command.
+	(elmo-imap4-parse-string): Set `POS' argument for char-after.
+	All other related portions are changed.
+
+	* elmo-cache.el (elmo-cache-search-all): Added argument `from-msgs'.
+
+	* elmo2.el (elmo-generic-list-folder-unread): Rewrite.
+	(elmo-list-folder-unread): Rewrite.
+	(elmo-list-folder-important): Ditto.
+
+	* elmo-util.el (elmo-filter-get-spec): Rewrite.
+	(elmo-condition-parse-error): New inline function.
+	(elmo-read-search-condition): New function.
+	(elmo-read-search-condition-internal): Ditto.
+	(elmo-parse-search-condition): Rewrite.
+	(elmo-condition-parse): New function.
+	(elmo-condition-parse-or-expr): Ditto.
+	(elmo-condition-parse-and-expr): Ditto.
+	(elmo-condition-parse-primitive): Ditto.
+	(elmo-condition-parse-search-value): Ditto.
+	(elmo-buffer-field-primitive-condition-match): Ditto.
+	(elmo-buffer-field-condition-match): Rewrite.
+	(elmo-file-field-condition-match): Ditto.
+
+	* elmo-msgdb.el (elmo-msgdb-expand-path): Use
+	`elmo-replace-msgid-as-filename' instead of `elmo-safe-filename'.
+
+	* elmo-internal.el (elmo-internal-search): Set `number' and
+	`number-list' argument of `elmo-file-field-condition-match'.
+
+	* elmo-maildir.el (elmo-maildir-search): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-list-folder-unread): Use
+	`msgdb' as argument instead of `mark-alist'.
+	(elmo-imap4-list-folder-important): Use `msgdb' as argument instead of
+	`overview'.
+
+	* elmo-multi.el: Likewise.
+
+	* elmo-pipe.el: Likewise.
+
+	* elmo-imap4.el	(elmo-imap4-search-internal-primitive): New function.
+	(elmo-imap4-search-internal): Rewrite.
+	(elmo-imap4-search): Ditto.
+
+	* elmo-filter.el (elmo-filter-list-folder): Rewrite.
+	(elmo-filter-list-folder-unread): Ditto.
+	(elmo-filter-list-folder-important): Ditto.
+	(elmo-filter-search): Rewrite.
+
+	* elmo-cache.el (elmo-cache-search-all): Set `number' and
+	`number-list' argument of `elmo-file-field-condition-match'.
+	(elmo-cache-search): Ditto.
+
+	* elmo-localdir.el: Likewise.
+
+	* elmo-archive.el (elmo-archive-field-condition-match): Added argument
+	number-list and pass it to `elmo-buffer-field-condition-match'.
+	(elmo-archive-field-condition-match): Pass `number-list' to
+	`elmo-archive-field-condition-match'
+
+2000-09-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nntp.el (elmo-nntp-list-folder): Set current group after
+	`listgroup'.
+
+	* elmo2.el (elmo-folder-diff-async-callback): New variable.
+	(elmo-folder-diff-async-callback-data): Ditto.
+	(elmo-folder-diff-async): New function.
+
+	* elmo-net.el (elmo-network-session-name-prefix): New variable.
+	(elmo-network-session-cache-key): Use it as a prefix of the session
+	name.
+	(elmo-network-open-session): Ditto.
+
+	* elmo-imap4.el (elmo-imap4-status-callback): New local variable.
+	(elmo-imap4-status-callback-data): Ditto.
+	(elmo-imap4-server-diff-async-callback): New variable.
+	(elmo-imap4-server-diff-async-callback-data): Ditto.
+	(elmo-imap4-local-variables): Added `elmo-imap4-status-callback' and
+	`elmo-imap4-status-callback-data'.
+	(elmo-imap4-max-of-folder): Set `elmo-imap4-status-callback' and
+	`elmo-imap4-status-callback-data' as nil.
+	(elmo-imap4-server-diff): Ditto.
+	(elmo-imap4-server-diff-async-callback-1): New function.
+	(elmo-imap4-server-diff-async): Ditto.
+	(elmo-imap4-parse-status): Call `elmo-imap4-status-callback'.
+
 2000-09-24  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-util.el (elmo-list-delete): Doc fix.
@@ -5,9 +484,507 @@
 	* elmo2.el (elmo-crosspost-message-delete): Use `elmo-list-delete'
 	instead of `elmo-delete-lists'.
 
-2000-09-11  OKAZAKI Tetsurou  <okazaki@be.to>
+2000-09-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* elmo-cache.el, elmo-database.el, elmo-date.el,
+	* elmo-imap4.el (elmo-imap4-make-number-set-list): Copy `msg-list'
+	before `sort'.
+
+2000-09-18  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-imap4.el (elmo-imap4-literal-1): Renamed from
+	`elmo-imap4-literal-subr'.
+	(elmo-imap4-string-1): Renamed from `elmo-imap4-string-subr'.
+	(elmo-imap4-astring-1): Renamed from `elmo-imap4-astring-subr'.
+
+2000-09-15  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-archive.el (elmo-archive-list-folder-subr): Fix.
+	(elmo-archive-list-folder): Fix.
+	(elmo-archive-max-of-folder): Fix.
+
+2000-09-15  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-localdir.el (elmo-localdir-copy-msgs): Use
+	 `elmo-localdir-max-of-folder' instead of 'elmo-localdir-list-folder-subr'.
+	(elmo-localdir-append-msg): Ditto.
+	(elmo-localdir-list-folder): Fix for `nonsort'.
+	(elmo-localdir-list-folder-subr): Fix for `killed'.
+	* elmo-maildir.el (elmo-maildir-list-folder): Ditto.
+	(elmo-maildir-list-folder-subr): Ditto.
+	* elmo-archive.el (elmo-archive-list-folder): Ditto.
+	(elmo-archive-list-folder-subr): Ditto.
+	* elmo-internal.el (elmo-internal-list-folder): Ditto.
+	(elmo-internal-list-folder-subr): Ditto.
+
+2000-09-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-parse-flag-list): Rewrite.
+
+2000-09-12  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* elmo-util.el (elmo-delete-plugged): Fix parenthesis.
+
+2000-09-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmelmo-imap4-2.el (mmelmo-imap4-get-mime-entity):
+	Clear `elmo-imap4-fetch-callback' and `elmo-imap4-fetch-callback-data'.
+
+	* elmo-imap4.el (elmo-network-initialize-session): Skip garbage output
+	before greeting.
+	(elmo-imap4-read-part): Use "body.peek" to fetch part.
+	Clear `elmo-imap4-fetch-callback' and `elmo-imap4-fetch-callback-data'.
+
+2000-09-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmelmo-imap4-2.el (mime-entity-children): Defined.
+
+	* elmo-imap4.el (elmo-imap4-mark-set-on-msgs):
+	Clear `elmo-imap4-fetch-callback' and `elmo-imap4-fetch-callback-data'
+	before STORE command.
+
+2000-09-04  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-multi-folder-diff): Fixed problem of filter folder.
+
+	* elmo-imap4.el (elmo-imap4-authenticator-alist): Added `plain' entry.
+	(elmo-imap4-send-command): Use `elmo-imap4-current-response' instead
+	of `response'.
+	(elmo-imap4-list-folders): Removed unused local variable.
+	(elmo-network-initialize-session): Ditto.
+	(elmo-imap4-delete-msg-by-id): Ditto.
+	(elmo-imap4-parse-fetch): Ditto.
+	(elmo-imap4-copy-msgs): Ditto.
+	Use `dst-spec' instead of `dst-folder'.
+	(elmo-network-authenticate-session): Check authenticate type `plain'.
+
+2000-09-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-parse-response): Use string-match for
+	garbage checking.
+	(elmo-imap4-read-part): Use `elmo-imap4-response-value-all' instead of
+	`elmo-imap4-response-value'.
+	(elmo-imap4-parse-response): Return value of `EXPUNGE'.
+
+2000-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-send-command):
+	Cause elmo-imap4-bye-error when current response is BYE.
+	(elmo-imap4-arrival-filter): Changed greeting response value.
+
+	* elmo2.el (elmo-imap4-bye-error): Define.
+
+	* elmo-imap4.el (elmo-imap4-list): Don't call `elmo-imap4-commit'.
+	(elmo-imap4-server-diff): Ditto.
+	(elmo-imap4-response-bye-p): New macro.
+	(elmo-imap4-response-error-text): Get text from BYE response.
+	(elmo-imap4-read-response): Return if BYE response.
+	(elmo-imap4-accept-ok): Cause elmo-imap4-bye-error when BYE response.
+	(elmo-imap4-folder-exists-p): Ditto.
+	(elmo-imap4-commit): Do nothing when different mailbox is selected.
+	(elmo-imap4-parse-bye): New function.
+	(elmo-imap4-parse-response): Remove needless let.
+	Call `elmo-imap4-parse-bye'.
+
+2000-08-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-folder-exists-p): Don't cause an error when
+	the mailbox does not exist.
+	(elmo-imap4-parse-namespace): Copy `elmo-imap4-extra-namespace-alist'.
+
+2000-08-30  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-imap4.el (elmo-imap4-send-command): Remove unused local variable.
+
+2000-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-vars.el (elmo-search-mime-charset): Abolished.
+
+	* elmo-pop3.el (elmo-pop3-local-variables): New variable.
+	(elmo-network-initialize-session-buffer): Defined.
+
+	* mmelmo-imap4-2.el (mmelmo-imap4-parse-bodystructure-string):
+	Abolished.
+	(mmelmo-imap4-get-mime-entity): Rewrite.
+
+	* elmo2.el (elmo-error): Capitalize error message.
+
+	* elmo-net.el (elmo-network-initialize-session-buffer): New method.
+	(elmo-network-session-buffer): New macro.
+	(elmo-network-open-session): Use it.
+
+	* elmo-imap4.el: Rewrite.
+
+2000-08-27 Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-nntp.el (Toplevel): Require 'elmo-net.
+
+2000-08-27   Daiki Ueno  <ueno@unixuser.org>
+
+	* elmo-imap4.el (elmo-imap4-make-address): Abolish.
+	(elmo-imap4-msgdb-create): Don't request ENVELOPE.
+	(elmo-imap4-create-msgdb-from-overview-string): Use
+	`elmo-msgdb-create-overview-from-buffer'.
+
+2000-08-26   Daiki Ueno  <ueno@unixuser.org>
+
+	* elmo-imap4.el (elmo-imap4-parse-namespace): Tolerate INBOX regexp.
+	(elmo-imap4-default-hierarchy-delimiter): New variable.
+	(elmo-imap4-list-folders): Use it.
+
+2000-08-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-net.el (elmo-network-open-session): Add user and
+	stream-type for process-buffer name.
+
+	* elmo-pop3.el (elmo-network-initialize-session): Call
+	buffer-disable-undo.
+
+	* elmo-imap4.el (elmo-network-initialize-session):
+	Set current-buffer as an argument for `buffer-disable-undo'.
+
+	* elmo-pop3.el (elmo-network-close-session): Don't use
+	`process-live-p'.
+
+	* elmo-vars.el (elmo-default-pop3-authenticate-type):
+	Set default as 'user.
+
+	* mmelmo-imap4-2.el (mmelmo-imap4-get-mime-entity): Rewrite.
+
+	* elmo2.el (elmo-quit): Don't use `elmo-pop3-flush-connection'
+	and `elmo-imap4-flush-connection'.
+
+	* elmo-util.el (toplevel): Removed workaround for timezone y2k.
+	(elmo-pop3-get-spec): Assume auth as symbol.
+	(elmo-open-network-stream): Moved to `elmo-net'.
+
+	* elmo-pop3.el (toplevel): Require 'elmo-net.
+	Define `sasl-cram-md5' to silence byte compilier.
+	(elmo-pop3-connection-cache) Abolished.
+	(elmo-pop3-authenticator-alist) New variable.
+	(elmo-pop3-session): Define.
+	(elmo-pop3-connection-get-process): Abolished.
+	(elmo-pop3-connection-get-buffer): Ditto.
+	(elmo-pop3-close-connection): Ditto.
+	(elmo-pop3-flush-connection): Ditto.
+	(elmo-pop3-get-connection): Ditto.
+	(elmo-pop3-get-session): New function.
+	(Replacement for `elmo-pop3-get-connection').
+	All other related modules are changed.
+	(elmo-network-close-session): Define.
+	(elmo-pop3-send-command): Abolished argument `buffer'.
+	All other related modules are changed.
+	(elmo-pop3-read-response): Likewise.
+	(elmo-pop3-open-connection): Abolished.
+	(elmo-pop3-auth-user): New function.
+	(elmo-pop3-auth-apop): Ditto.
+	(elmo-pop3-auth-cram-md5): Ditto.
+	(elmo-pop3-auth-scram-md5): Ditto.
+	(elmo-pop3-auth-digest-md5): Ditto.
+	(elmo-network-initialize-session): Define.
+	(elmo-network-authenticate-session): Ditto.
+	(elmo-network-setup-session): Ditto.
+
+	* elmo-imap4.el (toplevel): Require 'elmo-net.
+	(elmo-imap4-session): Define.
+	(elmo-imap4-connection-cache): Abolished.
+	(elmo-imap4-password-key): Ditto.
+	(elmo-imap4-flush-connection): Ditto.
+	(elmo-imap4-get-connection): Ditto.
+	All other related modules are changed.
+	(elmo-imap4-get-session): New function
+	(Replacement for `elmo-imap4-get-connection').
+	(elmo-imap4-read-response): Abolished argument `buffer'.
+	All other related modules are changed.
+	(elmo-imap4-send-command): Likewise.
+	(elmo-imap4-select-folder): Abolished.
+	All other related modules are changed.
+	(elmo-imap4-select-mailbox): New function.
+	(Replacement for `elmo-imap4-select-folder').
+	(elmo-imap4-auth-login): Simplify.
+	(Assume current buffer as process buffer)
+	(elmo-imap4-auth-cram-md5): Ditto.
+	(elmo-imap4-auth-digest-md5): Ditto.
+	(elmo-imap4-login): Ditto.
+	(elmo-imap4-open-connection): Abolished.
+	(elmo-imap4-open-connection-1): Abolished.
+	(elmo-network-initialize-sessoin): Define.
+	(elmo-network-authenticate-session): Ditto.
+	(elmo-network-setup-session): Ditto.
+
+	* elmo-net.el: New module.
+
+2000-08-22   Daiki Ueno  <ueno@unixuser.org>
+
+	* elmo-util.el (elmo-define-error): New function.
+
+	* elmo2.el (elmo-error): Define.
+	(elmo-open-error): Define.
+	(elmo-authenticate-error): Define.
+
+	* elmo-imap4.el (elmo-imap4-error): Abolish.
+	(elmo-imap4-error-type): Abolish.
+	(elmo-imap4-error-process): Abolish.
+	(elmo-imap4-error-message): Abolish
+	(elmo-imap4-list-folders): Don't quote lambda.
+	(elmo-imap4-create-msgdb-from-overview-string): Ditto.
+	(elmo-imap4-parse-namespace): Ditto.
+	(elmo-imap4-open-connection): Rewrite.
+	(elmo-imap4-open-connection-1): Simplified (authenticate only).
+	(elmo-imap4-get-connection): Abolish local variable `result'.
+
+2000-08-21  Kaoru Takahashi  <kaoru@kaisei.org>
+
+	* elmo-imap4.el (elmo-imap4-open-connection-1): Fixed probrem
+	wrong-type-argument error when auth is nil.
+
+2000-08-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-vars.el (elmo-default-imap4-stream-type): New variable.
+	(elmo-default-nntp-stream-type): Ditto.
+	(elmo-default-pop3-stream-type): Ditto.
+	(elmo-network-stream-type-alist): Ditto.
+	(elmo-default-imap4-ssl): Abolished.
+	(elmo-default-nntp-ssl): Ditto.
+	(elmo-default-pop3-ssl): Ditto.
+
+	* elmo-util.el: (toplevel): Removed needless requires.
+	(elmo-network-get-spec): Use `elmo-network-stream-type-alist'.
+	(elmo-open-network-stream): Open network stream according to
+	the value of `elmo-network-stream-type-alist'.
+	(elmo-get-network-stream-type): New function.
+	(elmo-network-stream-type-spec-string): New macro.
+	(elmo-network-stream-type-symbol): Ditto.
+	(elmo-network-stream-type-function): Ditto.
+
+	* elmo-pop3.el (elmo-pop3-get-connection): Follow up changes for
+	network-stream-type. All other related portions are changed.
+	(elmo-pop3-open-connection): Ditto.
+
+	* elmo-nntp.el (elmo-nntp-setting): Follow up changes for
+	network-stream-type. All other related portions are changed.
+
+	* elmo-imap4.el (elmo-imap4-get-connection): Follow up changes for
+	network-stream-type.All other related portions are changed.
+	(elmo-imap4-error): New macro.
+	(elmo-imap4-error-type): Ditto.
+	(elmo-imap4-error-process): Ditto.
+	(elmo-imap4-error-message): Ditto.
+	(elmo-imap4-auth-login): Use `elmo-imap4-error'.
+	(elmo-imap4-auth-cram-md5): Ditto.
+	(elmo-imap4-auth-digest-md5): Ditto.
+	(elmo-imap4-login): Ditto.
+	(elmo-imap4-open-connection): Remove password entry if authentication
+	was in vain.
+	(elmo-imap4-user-at-host): Abolished.
+	(elmo-imap4-password-key): New buffer local variable.
+	(elmo-imap4-open-connection-1): Set value of `elmo-imap4-password-key'
+	using protocol, port, auth and stream-type.
+
+	* elmo-dop.el (elmo-dop-list-folder): Use killed list.
+
+2000-08-13   Daiki Ueno  <ueno@unixuser.org>
+
+	* elmo-vars.el (elmo-default-imap4-authenticate-type): Default to nil.
+
+	* elmo-util.el (elmo-imap4-get-spec): Assume auth as symbol.
+
+	* elmo-imap4.el (elmo-imap4-user-at-host): New variable.
+	(elmo-imap4-authenticator-alist): New variable.
+	(elmo-imap4-open-connection-1): Rename from
+	elmo-imap4-open-connection.
+	(elmo-imap4-open-connection): Abolish 5th argument `passphrase';
+	only wraps elmo-imap4-open-connection-1.
+	(elmo-imap4-get-connection): Abolish local variable buffer, proc-stat,
+	user-at-host.
+	(elmo-imap4-auth-login): New function.
+	(elmo-imap4-auth-cram-md5): New function.
+	(elmo-imap4-auth-digest-md5): New function.
+	(elmo-imap4-login): New function.
+
+2000-08-12  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-maildir.el (elmo-maildir-delete-folder): Set argument of the
+	function `error'.
+
+2000-08-12  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-pop3-get-connection): Add `signal'.
+
+2000-08-08  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-move-msgs): Set value of `unseen'.
+
+2000-08-06  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-imap4.el (elmo-imap4-parse-overview-string): In regexps
+	for server responses, quote `*' regardless of where it appears.
+
+2000-08-03  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-maildir.el (elmo-maildir-commit): New alias.
+
+2000-08-03  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-util.el (elmo-display-progress):
+		Use `progress-feedback-with-label'.
+
+2000-08-02  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-imap4.el (elmo-imap4-quoted-specials-list): New constant.
+	(elmo-imap4-non-atom-char-regex): Ditto.
+	(elmo-imap4-non-text-char-regex): Ditto.
+	(elmo-imap4-literal-threshold): Ditto.
+	(elmo-imap4-atom-p): New function.
+	(elmo-imap4-quotable-p): Ditto.
+	(elmo-imap4-nil): Ditto.
+	(elmo-imap4-atom): Ditto.
+	(elmo-imap4-quoted): Ditto.
+	(elmo-imap4-literal-subr): Ditto.
+	(elmo-imap4-literal): Ditto.
+	(elmo-imap4-buffer-literal): Ditto.
+	(elmo-imap4-string-subr): Ditto.
+	(elmo-imap4-string): Ditto.
+	(elmo-imap4-buffer-string): Ditto.
+	(elmo-imap4-astring-subr): Ditto.
+	(elmo-imap4-astring): Ditto.
+	(elmo-imap4-buffer-astring): Ditto.
+	(elmo-imap4-nstring): Ditto.
+	(elmo-imap4-buffer-nstring): Ditto.
+	(elmo-imap4-mailbox): New alias.
+	(elmo-imap4-field-body): Ditto.
+	(elmo-imap4-userid): Ditto.
+	(elmo-imap4-password): Ditto.
+	(elmo-imap4-format-quoted): New function.
+	(elmo-imap4-send-command): Rewritten.  Accept a list of command
+	arguments and handle "atom", "quoted" and "literal" string here.
+	(elmo-imap4-list-folders): Use `elmo-imap4-mailbox' for
+	`elmo-imap4-send-command'.
+	(elmo-imap4-folder-exists-p): Likewise.
+	(elmo-imap4-create-folder): Likewise.
+	(elmo-imap4-delete-folder): Likewise.
+	(elmo-imap4-rename-folder): Likewise.
+	(elmo-imap4-max-of-folder): Likewise.
+	(elmo-imap4-check-validity): Likewise.
+	(elmo-imap4-sync-validity): Likewise.
+	(elmo-imap4-server-diff): Likewise.
+	(elmo-imap4-select-folder): Likewise.
+	(elmo-imap4-copy-msgs): Likewise.
+	(elmo-imap4-search-internal): Use `elmo-imap4-astring'.
+	(elmo-imap4-mark-set-on-msgs): Likewise.
+	(elmo-imap4-read-part): Likewise.
+	(elmo-imap4-read-msg): Likewise.
+	(elmo-imap4-open-connection): Use `elmo-imap4-userid' and
+	`elmo-imap4-password' for `elmo-imap4-send-command'.
+	(elmo-imap4-delete-msg-by-id): Use `elmo-imap4-field-body'.
+	(elmo-imap4-append-msg-by-id): Use `elmo-imap4-mailbox' and
+	`elmo-imap4-buffer-literal'.
+	(elmo-imap4-append-msg): Likewise.
+
+	* elmo-imap4.el (elmo-imap4-get-connection): Use `delq' instead of
+	`delete' for removing dead connection from the connection cache.
+	Move deletion of the process buffer after that.
+	(elmo-imap4-list): Change `defsubst' to `defun'.
+	(elmo-imap4-commit): Make error message verbose.
+	(elmo-imap4-search): Ditto.
+	(elmo-imap4-list): Ditto.
+	(elmo-imap4-select-folder): Ditto.
+	(elmo-imap4-copy-msgs): Ditto.
+	(elmo-imap4-delete-msg-by-id): Ditto.
+	(elmo-imap4-append-msg-by-id): Ditto.
+	(elmo-imap4-append-msg): Ditto.
+
+2000-07-26  Takaaki MORIYAMA <taka@airlab.cs.ritsumei.ac.jp>
+
+	* elmo-archive.el (elmo-archive-get-archive-name): Fixed problem
+	when dired is used on XEmacs.
+
+2000-07-25  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-imap4.el (elmo-imap4-process-folder-list): Use `nconc'
+	instead of `append'.
+	(elmo-imap4-commit): Use `elmo-imap4-plugged-p' instead of
+	`elmo-plugged-p' directly.
+	* elmo-pop3.el (elmo-pop3-commit): Use `elmo-pop3-plugged-p' instead
+	of `elmo-plugged-p' directly.
+
+	* elmo-pop3.el (elmo-pop3-get-connection): Split temporary variable.
+	Eliminate unused variable.  Use `memq' for checking a process status.
+	Use `cons' instead of `append' for updating the connection cache.
+	* elmo-nntp.el (elmo-nntp-get-connection): Likewise.
+	* elmo-imap4.el (elmo-imap4-get-connection): Likewise.
+
+2000-07-22  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-imap4.el (elmo-imap4-read-bytes): Advance
+	`elmo-imap4-read-point' exactly.
+
+	* mmelmo-imap4-2.el (mmelmo-imap4-get-mime-entity): Rename
+	the local variable `folder' to `mailbox'.
+	Rename the argument `fld' to `folder'.
+
+2000-07-20  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-pop3-commit): Do nothing when unplugged.
+	* elmo-imap4.el (elmo-imap4-commit): Ditto.
+
+2000-07-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-pop3-use-uidl): New variable.
+	(elmo-pop3-number-uidl-hash): New buffer-local variable.
+	(elmo-pop3-uidl-number-hash): Ditto.
+	(elmo-pop3-size-hash): Ditto.
+	(elmo-pop3-uidl-done): Ditto.
+	(elmo-pop3-list-done): Ditto.
+	(elmo-pop3-connection-get-process): New defmacro.
+	(elmo-pop3-connection-get-buffer): Ditto.
+	(elmo-pop3-close-connection): Delete buffer and process.
+	(elmo-pop3-flush-connection): Don't delete buffer and process.
+	(elmo-pop3-get-connection): Added optional argument `if-exists'.
+	Setup UIDL and size hash.
+	(elmo-pop3-send-command-no-erase): Deleted
+	(elmo-pop3-send-command): Added optional argument `no-erase'.
+	(elmo-pop3-parse-uidl-response): New function.
+	(elmo-pop3-parse-list-response): Set size hash.
+	(elmo-pop3-list-location): New function.
+	(elmo-pop3-list-by-uidl-subr): Ditto.
+	(elmo-pop3-list-by-list): Ditto.
+	(elmo-pop3-list-folder): Call `elmo-pop3-commit'.
+	Call `elmo-pop3-list-by-uidl-subr' or `elmo-pop3-list-by-list'.
+	(elmo-pop3-max-of-folder): Call `elmo-pop3-commit'.
+	Call `elmo-pop3-list-by-uidl-subr' if `elmo-pop3-use-uidl' is non-nil.
+	(elmo-pop3-msgdb-create-as-numlist): Added optional argument `msgdb'.
+	Use uidl.
+	(elmo-pop3-uidl-to-number): New function.
+	(elmo-pop3-number-to-uidl): Ditto.
+	(elmo-pop3-number-to-size): Ditto.
+	(elmo-pop3-msgdb-create-by-header): Added argument `loc-alist'.
+	Set number by use of uidl.
+	(elmo-pop3-msgdb-create-message): Likewise.
+	Set size, loc-alist in msgdb.
+	(elmo-pop3-read-msg): Set number by use of uidl.
+	Added optional argument `msgdb'.
+	(elmo-pop3-delete-msg): Ditto.
+	(elmo-pop3-delete-msgs): Added optional argument `msgdb'.
+	(elmo-pop3-commit): Close connection.
+
+	* elmo-pipe.el (elmo-pipe-max-of-folder):
+	Bind `elmo-pop3-use-uidl' as nil.
+	(elmo-pipe-drain): Ditto.
+	Call `elmo-commit'.
+
+	* elmo-msgdb.el (elmo-msgdb-delete-msgs): Delete location too.
+	(elmo-msgdb-overview-entity-set-size): New defsubst.
+
+2000-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-vars.el (elmo-use-killed-list): New variable
+	(Renamed from `elmo-nntp-use-killed-list').
+	(elmo-nntp-use-killed-list): Eliminated.
+
+	* elmo-msgdb.el (elmo-msgdb-expand-path):
+	Changed expanding msgdb path for elmo-multi.
+
+	* elmo-archive.el, elmo-cache.el, elmo-database.el, elmo-date.el,
 	elmo-dop.el, elmo-filter.el, elmo-imap4.el, elmo-internal.el,
 	elmo-localdir.el, elmo-localnews.el, elmo-maildir.el, elmo-msgdb.el,
 	elmo-multi.el, elmo-nntp.el, elmo-pipe.el, elmo-pop3.el,
@@ -15,21 +992,210 @@
 	mmelmo-imap4-1.el, mmelmo-imap4-2.el, mmelmo-imap4.el, mmelmo.el
 	(toplevel): Deleted time-stamp line.
 
+	* elmo2.el (elmo-clear-killed ): Defined as function
+	(Abolished defining as a backend function).
+	All other related modules are changed.
+
+2000-07-14  Hiroshi Tsutsui <tsutsui@easter.kuee.kyoto-u.ac.jp>
+
+	* elmo-cache.el (elmo-cache-clear-killed): Fixed.
+
+2000-07-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-msgdb.el (elmo-msgdb-append-to-killed-list): New function.
+
+2000-07-12  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-pop3.el (elmo-pop3-clear-killed): New alias.
+
+2000-07-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nntp.el (elmo-nntp-max-of-folder): Use killed list in
+	asynchronous folder check.
+
+	* elmo2.el (elmo-move-msgs): Don't move message when buffer-size is 0.
+
+	* elmo-nntp.el (elmo-nntp-delete-msgs): Check the value of
+	`elmo-nntp-use-killed-list'.
+	(elmo-nntp-list-folder): Use killed list.
+	(elmo-nntp-max-of-folder): Ditto.
+	(elmo-nntp-msgdb-create): Set killed list.
+
+	* elmo-vars.el (elmo-nntp-use-killed-list): New user option.
+
+	* elmo2.el (elmo-clear-killed): New backend function.
+	All other related modules are changed.
+
+2000-07-07  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-util.el (elmo-imap4-spec-folder): Use
+	`elmo-imap4-spec-mailbox'; Mark as obsolete.
+	All callers changed.
+
+2000-06-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* mmelmo-2.el (initialize-instance):
+	Use `mime-buffer-entity-buffer-internal' instead of
+	`mime-entity-buffer'.
+
+	* mmelmo-imap4-2.el (mmelmo-imap4-mime-entity-buffer): New function.
+	(mime-entity-body): Implemented.
+	(mime-goto-header-start-point): Deleted.
+	(mime-goto-body-end-point): Ditto.
+	(mime-entity-point-min): Ditto.
+	(mime-entity-point-max): Ditto.
+	(mime-entity-children): Ditto.
+	(mime-insert-header): Use `mime-buffer-entity-buffer-internal'
+	instead of `mime-entity-buffer'.
+	(mime-entity-header-buffer): Ditto.
+	(mime-entity-body-buffer): Ditto.
+	(mime-write-entity-content): Ditto.
+
+	* pldap.el (ldap-static-if): New macro.
+	(toplevel): Use it instead of `static-if'.
+
+2000-06-19  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* pldap.el (ldap-search-basic): Don't collect 'dn' value even if it is
+	included in `attrs' argument.
+
+2000-06-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-get-passwd): Use old backquote style.
+
+	* pldap.el (ldap-ldif-safe-char-regexp): New constant.
+	(ldap-ldif-safe-init-char-regexp): Ditto.
+	(ldap-ldif-safe-string-regexp): Ditto.
+	(ldap/ldif-safe-string-p): New macro.
+	(ldap/ldif-insert-field): Ditto.
+	(ldap-modify): Use it.
+	(ldap-add): Ditto.
+	(ldap-search-basic): Consider `attrsonly' also when `attrs' is nil.
+	(ldap-decode-attribute): Decode only when `attr' is consp.
+	(ldap-delete): Bind `ret'.
+	(toplevel): Require 'cl at compile time.
+	Removed (require 'poe) and (require 'std11).
+	(pldap-version): Eliminated.
+	(ldap-search-basic): Removed auth and dn binding.
+	(ldap-ldif-field-name-regexp): New constant.
+	(ldap-ldif-field-head-regexp): Ditto.
+	(ldap-ldif-next-field-head-regexp): Ditto.
+	(ldap/collect-field): Use `ldap-ldif-field-head-regexp'.
+	(ldap/field-end): New function.
+	(ldap/field-body): Use it.
+	(ldap/collect-field): Ditto.
+	(ldap-search-basic): Use `ldap/field-body'.
+
+2000-06-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* pldap.el (ldap-default-attribute-encoder): New user option.
+	(ldap/field-body): Decode base64 string.
+	(ldap/collect-field): Ditto.
+	(ldap-encode-attribute): New function.
+	(ldap-add-entries): Use it.
+	(ldap-modify-entries): Ditto.
+	(ldap-search-entries): Enclosed decoding function with
+	`with-temp-buffer' and set as unibyte.
+	(ldap-search-basic): Set process buffer as unibyte.
+
+	* elmo-util.el (elmo-folder-identical-system-p):
+	Eliminated name space checking.
+
+	* pldap.el: New module.
+	toplevel: Changed condition to detect built-in ldap feature.
+	(ldap-delete): Enclosed call-process with `with-temp-buffer'.
+	(ldap-add): Added error handling.
+	(ldap-modify): Ditto.
+	(ldap-delete): Ditto.
+
 2000-06-03  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-localdir.el (elmo-localdir-msgdb-create-as-numlist):
+	Initialize local variables with `let'.  Inline a temporary
+	variable for the progress percentage.  Sort `setq' to reduce
+	function call in the while-loop.
 
 	* mmelmo.el (mmelmo-get-original-buffer): Move `save-excursion'
 	into the conditional branch.
+
+2000-05-30  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo2.el (elmo-move-msgs): Replace `append' with `nconc'.
+	Move a conditional out of the while-loop.
+
+2000-05-27  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-overview-get-entity): Use
+	elmo-msgdb-overview-get-entity-by-number.
+	(elmo-msgdb-overview-get-entity-by-number): Don't use catch and
+	throw.
 
 2000-05-26  OKAZAKI Tetsurou  <okazaki@be.to>
 
 	* elmo-localdir.el (elmo-localdir-pack-number): Renamed
 	the local variable for a packed number self descriptively.
-	Initialized it correctly with 1.
+
+2000-05-21  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* elmo2.el (elmo-msgdb-load): Remove elmo-msgdb-overview-hashtb.
+	* elmo-localdir.el (elmo-localdir-pack-number): Use
+	`elmo-msgdb-overview-get-entity' instead of
+	`elmo-msgdb-overview-get-entity-by-number'.
+	* elmo-msgdb.el (elmo-msgdb-overview-hashtb): Removed.
+	(elmo-msgdb-search-overview-entity): Removed.
+	(elmo-msgdb-overview-get-entity): Change argument. Get overview entity
+	by message-id or number.
+	(elmo-msgdb-delete-msgs): Use `elmo-msgdb-overview-get-entity'
+	instead of `elmo-msgdb-overview-get-entity-by-number'.
+
+2000-05-20  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* elmo-vars.el (elmo-use-overview-hashtb): New variable. If
+	non-nil, use hash table for overview.
+	(elmo-hash-maximum-size): New variable.
+	* elmo-msgdb.el (elmo-msgdb-overview-hashtb): New variable.
+	(elmo-msgdb-make-overview-hashtb): New function.
+	(elmo-msgdb-clear-overview-hashtb): New function.
+	(elmo-clear-hash-val): New macro.
+	All other related modules are changed.
+
+2000-05-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo2.el (elmo-move-msgs): If there's other message with
+	same message-id, don't use cache.
+
+2000-05-18  Nishimoto Masaki <nishimoto@gaju.org>
+
+	* elmo-localdir.el (elmo-localdir-pack-number): Fixed problem when
+	number is already packed.
+
+2000-05-15  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-vars.el: Doc fixes. Trim trailing whitespace.
+
+2000-05-12  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* elmo-vars.el (elmo-display-progress-threshold): New variable.
+	All other related modules are changed.
 
 2000-05-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-msgdb.el (elmo-msgdb-sort-by-date): Fixed a problem
 	of refiling failure on Maildir.
+
+2000-05-10  Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-get-decoded-cache): get string of
+	decoded mime-charset with cache.
+	(elmo-msgdb-overview-entity-get-from): Ditto.
+	(elmo-msgdb-overview-entity-get-subject): Ditto.
+	* elmo-vars.el (elmo-use-decoded-cache): New variable.
+
+2000-05-10  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-utils.el (elmo-get-passwd): Set timeout of password.
+	(elmo-remove-passwd): Fill password with 0 before erase.
+	* elmo-vars.el (elmo-passwd-life-time): New variable.
 
 
 2000-05-10  Yuuichi Teranishi  <teranisi@gohome.org>

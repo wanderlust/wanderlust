@@ -148,7 +148,7 @@ This variable should not be used in elsewhere.")
   (let ((dir (elmo-maildir-get-folder-directory spec))
 	(locs (if msgdb
 		  (elmo-msgdb-get-location msgdb)
-		(elmo-msgdb-location-load (elmo-msgdb-expand-path nil spec))))
+		(elmo-msgdb-location-load (elmo-msgdb-expand-path spec))))
 	file)
     (while msgs
       (if (setq file (elmo-maildir-number-to-filename dir (car msgs) locs))
@@ -159,7 +159,7 @@ This variable should not be used in elsewhere.")
   (let ((dir (elmo-maildir-get-folder-directory spec))
 	(locs (if msgdb
 		  (elmo-msgdb-get-location msgdb)
-		(elmo-msgdb-location-load (elmo-msgdb-expand-path nil spec))))
+		(elmo-msgdb-location-load (elmo-msgdb-expand-path spec))))
 	file)
     (while msgs
       (if (setq file (elmo-maildir-number-to-filename dir (car msgs) locs))
@@ -187,7 +187,7 @@ This variable should not be used in elsewhere.")
     (let* ((dir (elmo-maildir-get-folder-directory spec))
 	   (loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 			(elmo-msgdb-location-load (elmo-msgdb-expand-path
-						   nil spec))))
+						   spec))))
 	   (loc-seen (elmo-maildir-list-location dir))
 	   (loc-list  (car loc-seen))
 	   (seen-list (cdr loc-seen))
@@ -222,11 +222,12 @@ This variable should not be used in elsewhere.")
 			(elmo-msgdb-overview-entity-get-id
 			 entity))
 		       new-mark)))))
-	(setq i (1+ i))
-	(setq percent (/ (* i 100) num))
-	(elmo-display-progress
-	 'elmo-maildir-msgdb-create "Creating msgdb..."
-	 percent)
+	(when (> num elmo-display-progress-threshold)
+	  (setq i (1+ i))
+	  (setq percent (/ (* i 100) num))
+	  (elmo-display-progress
+	   'elmo-maildir-msgdb-create "Creating msgdb..."
+	   percent))
 	(setq numlist (cdr numlist)))
       (message "Creating msgdb...done.")
       (elmo-msgdb-sort-by-date
@@ -328,7 +329,7 @@ file name for maildir directories."
   (save-excursion
     (let* ((loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 			(elmo-msgdb-location-load (elmo-msgdb-expand-path
-						   nil spec))))
+						   spec))))
 	   (dir (elmo-maildir-get-folder-directory spec))
 	   (file (elmo-maildir-number-to-filename dir number loc-alist)))
       (set-buffer outbuf)
@@ -340,7 +341,7 @@ file name for maildir directories."
 (defun elmo-maildir-delete-msgs (spec msgs &optional msgdb)
   (let ((loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 		     (elmo-msgdb-location-load (elmo-msgdb-expand-path
-						nil spec)))))
+						spec)))))
     (mapcar '(lambda (msg) (elmo-maildir-delete-msg spec msg
 						    loc-alist))
 	    msgs)))
@@ -350,11 +351,19 @@ file name for maildir directories."
 	 (flist (elmo-list-folder-by-location
 		 spec
 		 (car (elmo-maildir-list-location dir))))
-	 (news (car (elmo-maildir-list-location dir "new"))))
+	 (killed (and elmo-use-killed-list
+		      (elmo-msgdb-killed-list-load
+		       (elmo-msgdb-expand-path spec))))
+	 (news (car (elmo-maildir-list-location dir "new")))
+	 numbers)
     (if nonsort
 	(cons (+ (or (elmo-max-of-list flist) 0) (length news))
-	      (+ (length flist) (length news)))
-      (sort flist '<))))
+	      (+ (length news)
+		 (if killed
+		     (- (length flist) (length killed))
+		   (length flist))))
+      (setq numbers (sort flist '<))
+      (elmo-living-messages numbers killed))))
 
 (defun elmo-maildir-list-folder (spec)
   (elmo-maildir-update-current spec)
@@ -403,30 +412,31 @@ file name for maildir directories."
 	    (lambda (dir)
 	      (setq dir (expand-file-name dir basedir))
 	      (if (not (file-directory-p dir))
-		  (error)
+		  (error nil)
 		(elmo-delete-directory dir t))))
 	   '("new" "cur" "tmp" "."))
 	  t)
-      (error))))
+      (error nil))))
 
 (defun elmo-maildir-search (spec condition &optional from-msgs msgdb)
   (save-excursion
     (let* ((msgs (or from-msgs (elmo-maildir-list-folder spec)))
 	   (loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 			(elmo-msgdb-location-load (elmo-msgdb-expand-path
-						   nil spec))))
+						   spec))))
 	   (dir (elmo-maildir-get-folder-directory spec))
 	   (i 0)
 	   case-fold-search ret-val
 	   percent num
 	   (num (length msgs))
-	   msg-num)
+	   number-list msg-num)
+      (setq number-list msgs)
       (while msgs
 	(setq msg-num (car msgs))
 	(if (elmo-file-field-condition-match
 	     (elmo-maildir-number-to-filename
 	      dir (car msgs) loc-alist)
-	     condition)
+	     condition (car msgs) number-list)
 	    (setq ret-val (append ret-val (list msg-num))))
 	(setq i (1+ i))
 	(setq percent (/ (* i 100) num))
@@ -464,7 +474,39 @@ file name for maildir directories."
    (elmo-maildir-get-folder-directory spec)
    number (or loc-alist (elmo-msgdb-location-load
 			 (elmo-msgdb-expand-path
-			  nil spec)))))
+			  spec)))))
+
+(defun elmo-maildir-pack-number (spec msgdb arg)
+  (let ((old-number-alist (elmo-msgdb-get-number-alist msgdb))
+	(old-overview (elmo-msgdb-get-overview msgdb))
+	(old-mark-alist (elmo-msgdb-get-mark-alist msgdb))
+	(old-location (elmo-msgdb-get-location msgdb))
+	old-number overview number-alist mark-alist location
+	mark (number 1))
+    (setq overview old-overview)
+    (while old-overview
+      (setq old-number
+	    (elmo-msgdb-overview-entity-get-number (car old-overview)))
+      (elmo-msgdb-overview-entity-set-number (car old-overview) number)
+      (setq number-alist
+	    (cons (cons number (cdr (assq old-number old-number-alist)))
+		  number-alist))
+      (when (setq mark (cadr (assq old-number old-mark-alist)))
+	(setq mark-alist
+	      (elmo-msgdb-mark-append
+	       mark-alist number mark)))
+      (setq location
+	    (cons (cons number (cdr (assq old-number old-location)))
+		  location))
+      (setq number (1+ number))
+      (setq old-overview (cdr old-overview)))
+    ;; XXX Should consider when folder is not persistent.
+    (elmo-msgdb-location-save (elmo-msgdb-expand-path spec) location)
+    (list overview
+	  (nreverse number-alist)
+	  (nreverse mark-alist)
+	  (nreverse location)
+	  (elmo-msgdb-make-overview-hashtb overview))))
 
 (defalias 'elmo-maildir-sync-number-alist
   'elmo-generic-sync-number-alist)
@@ -472,7 +514,10 @@ file name for maildir directories."
   'elmo-generic-list-folder-unread)
 (defalias 'elmo-maildir-list-folder-important
   'elmo-generic-list-folder-important)
+(defalias 'elmo-maildir-commit 'elmo-generic-commit)
+(defalias 'elmo-maildir-folder-diff 'elmo-generic-folder-diff)
 
-(provide 'elmo-maildir)
+(require 'product)
+(product-provide (provide 'elmo-maildir) (require 'elmo-version))
 
 ;;; elmo-maildir.el ends here

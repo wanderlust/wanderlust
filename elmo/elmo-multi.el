@@ -161,74 +161,134 @@
       (setq cur-number (+ 1 cur-number)))
     t))
 
-(defun elmo-multi-mark-alist-list (mark-alist)
+(defun elmo-multi-folder-diff (spec folder &optional number-list)
+  (let ((flds (cdr spec))
+	(num-alist-list
+	 (elmo-multi-split-number-alist
+	  (elmo-msgdb-number-load (elmo-msgdb-expand-path spec))))
+	(count 0)
+	(unsync 0)
+	(messages 0)
+	diffs)
+    (while flds
+      (setq diffs (nconc diffs (list (elmo-folder-diff
+				      (car flds)
+				      (mapcar 'car
+					      (nth count num-alist-list))))))
+      (setq count (+ 1 count))
+      (setq flds (cdr flds)))
+    (while diffs
+      (and (car (car diffs))
+	   (setq unsync (+ unsync (car (car diffs)))))
+      (setq messages  (+ messages (cdr (car diffs))))
+      (setq diffs (cdr diffs)))
+    (elmo-folder-set-info-hashtb folder
+				 nil messages)
+    (cons unsync messages)))
+
+(defun elmo-multi-split-mark-alist (mark-alist)
   (let ((cur-number 0)
+	(alist (sort (copy-sequence mark-alist)
+		     (lambda (pair1 pair2)
+		       (< (car pair1)(car pair2)))))
 	one-alist result)
-    (while mark-alist
+    (while alist
       (setq cur-number (+ cur-number 1))
       (setq one-alist nil)
-      (while (and mark-alist
+      (while (and alist
 		  (eq 0
-		      (/ (- (car (car mark-alist))
+		      (/ (- (car (car alist))
 			    (* elmo-multi-divide-number cur-number))
 			 elmo-multi-divide-number)))
 	(setq one-alist (nconc
 			 one-alist
 			 (list
-			  (list (% (car (car mark-alist))
+			  (list (% (car (car alist))
 				   (* elmo-multi-divide-number cur-number))
-				(cadr (car mark-alist))))))
-	(setq mark-alist (cdr mark-alist)))
+				(cadr (car alist))))))
+	(setq alist (cdr alist)))
       (setq result (nconc result (list one-alist))))
     result))
 
-(defun elmo-multi-list-folder-unread (spec mark-alist unread-marks)
-  (let* ((flds (cdr spec))
-	 (cur-number 0)
-	 mark-alist-list
-	 ret-val)
-    (setq mark-alist-list (elmo-multi-mark-alist-list mark-alist))
-    (while flds
+(defun elmo-multi-split-number-alist (number-alist)
+  (let ((alist (sort (copy-sequence number-alist)
+		     (lambda (pair1 pair2)
+		       (< (car pair1)(car pair2)))))
+	(cur-number 0)
+	one-alist split num)
+    (while alist
       (setq cur-number (+ cur-number 1))
-      (setq ret-val (append
-		     ret-val
-		     (mapcar
-		      (function
-		       (lambda (x)
-			 (+
-			  (* elmo-multi-divide-number cur-number) x)))
-		      (elmo-list-folder-unread (car flds)
-					       (car mark-alist-list)
-					       unread-marks))))
-      (setq mark-alist-list (cdr mark-alist-list))
-      (setq flds (cdr flds)))
-    ret-val))
+      (setq one-alist nil)
+      (while (and alist
+		  (eq 0
+		      (/ (- (setq num (car (car alist)))
+			    (* elmo-multi-divide-number cur-number))
+			 elmo-multi-divide-number)))
+	(setq one-alist (nconc
+			 one-alist
+			 (list
+			  (cons
+			   (% num (* elmo-multi-divide-number cur-number))
+			   (cdr (car alist))))))
+	(setq alist (cdr alist)))
+      (setq split (nconc split (list one-alist))))
+    split))
 
-(defun elmo-multi-list-folder-important (spec overview)
-  (let* ((flds (cdr spec))
-	 (cur-number 0)
-	 ret-val)
-    (while flds
-      (setq cur-number (+ cur-number 1))
-      (setq ret-val (append
-		     ret-val
+(defun elmo-multi-list-folder-unread (spec number-alist mark-alist
+					   unread-marks)
+  (let ((folders (cdr spec))
+	(cur-number 0)
+	(split-mark-alist (elmo-multi-split-mark-alist mark-alist))
+	(split-number-alist (elmo-multi-split-number-alist number-alist))
+	unreads)
+    (while folders
+      (setq cur-number (+ cur-number 1)
+	    unreads (append
+		     unreads
 		     (mapcar
 		      (function
 		       (lambda (x)
 			 (+
 			  (* elmo-multi-divide-number cur-number) x)))
-		      (elmo-list-folder-important (car flds) overview))))
-      (setq flds (cdr flds)))
-    ret-val))
+		      (elmo-list-folder-unread (car folders)
+					       (car split-number-alist)
+					       (car split-mark-alist)
+					       unread-marks)))
+	    split-number-alist (cdr split-number-alist)
+	    split-mark-alist (cdr split-mark-alist)
+	    folders (cdr folders)))
+    unreads))
+
+(defun elmo-multi-list-folder-important (spec number-alist)
+  (let ((folders (cdr spec))
+	(cur-number 0)
+	(split-number-alist (elmo-multi-split-number-alist number-alist))
+	importants)
+    (while folders
+      (setq cur-number (+ cur-number 1)
+	    importants (nconc
+			importants
+			(mapcar
+			 (function
+			  (lambda (x)
+			    (+ (* elmo-multi-divide-number cur-number) x)))
+			 (elmo-list-folder-important 
+			  (car folders)
+			  (car split-number-alist))))
+	    folders (cdr folders)))
+    importants))
 
 (defun elmo-multi-list-folder (spec)
   (let* ((flds (cdr spec))
 	 (cur-number 0)
-	 ret-val)
+	 (killed (and elmo-use-killed-list
+		      (elmo-msgdb-killed-list-load
+		       (elmo-msgdb-expand-path spec))))
+	 numbers)
     (while flds
       (setq cur-number (+ cur-number 1))
-      (setq ret-val (append
-		     ret-val
+      (setq numbers (append
+		     numbers
 		     (mapcar
 		      (function
 		       (lambda (x)
@@ -236,7 +296,7 @@
 			  (* elmo-multi-divide-number cur-number) x)))
 		      (elmo-list-folder (car flds)))))
       (setq flds (cdr flds)))
-    ret-val))
+    (elmo-living-messages numbers killed)))
 
 (defun elmo-multi-folder-exists-p (spec)
   (let* ((flds (cdr spec)))
@@ -340,7 +400,7 @@
 (defun elmo-multi-sync-number-alist (spec number-alist)
   (let ((folder-list (cdr spec))
 	(number-alist-list
-	 (elmo-multi-get-number-alist-list number-alist))
+	 (elmo-multi-split-number-alist number-alist))
 	(multi-base 0)
 	append-alist result-alist)
     (while folder-list
@@ -359,6 +419,7 @@
       (setq folder-list (cdr folder-list)))
     result-alist))
 
-(provide 'elmo-multi)
+(require 'product)
+(product-provide (provide 'elmo-multi) (require 'elmo-version))
 
 ;;; elmo-multi.el ends here

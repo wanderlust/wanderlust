@@ -24,10 +24,10 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
 (eval-when-compile
   (require 'wl-folder)
@@ -35,31 +35,22 @@
   (require 'wl-draft)
   (require 'wl-message)
   (require 'wl-highlight)
-  (defvar-maybe wl-draft-mode-map (make-sparse-keymap)))
+  (defvar-maybe wl-draft-mode-map (make-sparse-keymap))
+  (defalias-maybe 'toolbar-make-button-list 'ignore))
 
-(defun wl-xmas-setup-toolbar (bar)
-  (let ((dir wl-icon-dir)
-	icon up down disabled name)
-    (when dir
-      (while bar
-	(setq icon (aref (car bar) 0)
-	      name (symbol-name icon)
-	      bar (cdr bar))
-	(when (not (boundp icon))
-	  (setq up (concat dir elmo-path-sep name "-up.xpm"))
-	  (setq down (concat dir elmo-path-sep name "-down.xpm"))
-	  (setq disabled (concat dir elmo-path-sep name "-disabled.xpm"))
-	  (if (not (file-exists-p up))
-	      (setq bar nil
-		    dir nil)
-	    (set icon (toolbar-make-button-list
-		       up (and (file-exists-p down) down)
-		       (and (file-exists-p disabled) disabled)))))))
-    dir))
+(add-hook 'wl-folder-mode-hook 'wl-setup-folder)
+(add-hook 'wl-folder-mode-hook 'wl-folder-init-icons)
+
+(add-hook 'wl-make-plugged-hook 'wl-biff-init-icons)
+(add-hook 'wl-make-plugged-hook 'wl-plugged-init-icons)
+
+(add-hook 'wl-summary-mode-hook 'wl-setup-summary)
 
 (defvar wl-use-toolbar (if (featurep 'toolbar) 'default-toolbar nil))
 (defvar wl-plugged-glyph nil)
 (defvar wl-unplugged-glyph nil)
+(defvar wl-biff-mail-glyph nil)
+(defvar wl-biff-nomail-glyph nil)
 
 (defvar wl-folder-toolbar
   '([wl-folder-jump-to-current-entity
@@ -70,8 +61,8 @@
      wl-folder-prev-entity t "Previous Folder"]
     [wl-folder-check-current-entity
      wl-folder-check-current-entity t "Check Current Folder"]
-;    [wl-draft
-;     wl-draft t "Write a New Message"]
+    ;;[wl-draft
+    ;; wl-draft t "Write a New Message"]
     [wl-folder-sync-current-entity
      wl-folder-sync-current-entity t "Sync Current Folder"]
     [wl-draft
@@ -127,7 +118,7 @@
     )
   "The Message buffer toolbar.")
 
-(defalias 'wl-draft-insert-signature 'insert-signature) ;; for draft toolbar.
+(defalias 'wl-draft-insert-signature 'insert-signature);; for draft toolbar.
 
 (defvar wl-draft-toolbar
   '([wl-draft-send-from-toolbar
@@ -141,120 +132,194 @@
     )
   "The Draft buffer toolbar.")
 
-(defun wl-xmas-setup-folder-toolbar ()
-  (and wl-use-toolbar
-       (wl-xmas-setup-toolbar wl-folder-toolbar)
-       (set-specifier (symbol-value wl-use-toolbar)
-		      (cons (current-buffer) wl-folder-toolbar))))
+(defun wl-xmas-setup-toolbar (bar)
+  (let ((dir wl-icon-dir)
+	icon up down disabled name)
+    (when dir
+      (while bar
+	(setq icon (aref (car bar) 0)
+	      name (symbol-name icon)
+	      bar (cdr bar))
+	(unless (boundp icon)
+	  (setq up (expand-file-name (concat name "-up.xpm") dir)
+		down (expand-file-name (concat name "-down.xpm") dir)
+		disabled (expand-file-name (concat name "-disabled.xpm") dir))
+	  (if (file-exists-p up)
+	      (set icon (toolbar-make-button-list
+			 up (and (file-exists-p down) down)
+			 (and (file-exists-p disabled) disabled)))
+	    (setq bar nil
+		  dir nil)))))
+    dir))
 
-(defun wl-xmas-setup-summary-toolbar ()
-  (and wl-use-toolbar
-       (wl-xmas-setup-toolbar wl-summary-toolbar)
-       (set-specifier (symbol-value wl-use-toolbar)
-		      (cons (current-buffer) wl-summary-toolbar))))
+(defun wl-xmas-make-icon-glyph (icon-string icon-file
+					    &optional locale tag-set)
+  (let ((glyph (make-glyph (vector 'string :data icon-string))))
+    (when wl-highlight-folder-with-icon
+      (set-glyph-image glyph
+		       (vector 'xpm :file (expand-file-name
+					   icon-file wl-icon-dir))
+		       locale tag-set 'prepend))
+    glyph))
 
-(defun wl-xmas-setup-message-toolbar ()
-  (and wl-use-toolbar
-       (wl-xmas-setup-toolbar wl-message-toolbar)
-       (set-specifier (symbol-value wl-use-toolbar)
-		      (cons (current-buffer) wl-message-toolbar))))
+(eval-when-compile
+  (defsubst wl-xmas-setup-folder-toolbar ()
+    (and wl-use-toolbar
+	 (wl-xmas-setup-toolbar wl-folder-toolbar)
+	 (set-specifier (symbol-value wl-use-toolbar)
+			(cons (current-buffer) wl-folder-toolbar))))
 
-(defun wl-xmas-setup-draft-toolbar ()
-  (and wl-use-toolbar
-       (wl-xmas-setup-toolbar wl-draft-toolbar)
-       (set-specifier (symbol-value wl-use-toolbar)
-		      (cons (current-buffer) wl-draft-toolbar))))
+  (defsubst wl-xmas-setup-summary-toolbar ()
+    (and wl-use-toolbar
+	 (wl-xmas-setup-toolbar wl-summary-toolbar)
+	 (set-specifier (symbol-value wl-use-toolbar)
+			(cons (current-buffer) wl-summary-toolbar))))
 
-;; XEmacs implementations.
+  (defsubst wl-xmas-setup-message-toolbar ()
+    (and wl-use-toolbar
+	 (wl-xmas-setup-toolbar wl-message-toolbar)
+	 (set-specifier (symbol-value wl-use-toolbar)
+			(cons (current-buffer) wl-message-toolbar))))
+
+  (defsubst wl-xmas-setup-draft-toolbar ()
+    (and wl-use-toolbar
+	 (wl-xmas-setup-toolbar wl-draft-toolbar)
+	 (set-specifier (symbol-value wl-use-toolbar)
+			(cons (current-buffer) wl-draft-toolbar)))))
+
+(defvar wl-folder-toggle-icon-list
+  '((wl-folder-opened-glyph       . wl-opened-group-folder-icon)
+    (wl-folder-closed-glyph       . wl-closed-group-folder-icon)))
+
+(eval-when-compile
+  (defsubst wl-xmas-highlight-folder-group-line (glyph text-face numbers)
+    (let ((start (match-beginning 1))
+	  (end (match-end 1)))
+      (let (extent)
+	(while (and (setq extent (extent-at start nil nil extent 'at))
+		    (not (and (eq start (extent-start-position extent))
+			      (eq end (extent-end-position extent))
+			      (extent-end-glyph extent)))))
+	(unless extent
+	  (setq extent (make-extent start end)))
+	(set-extent-properties extent `(end-open t start-closed t invisible t))
+	(set-extent-end-glyph
+	 extent
+	 (or (get glyph 'glyph)
+	     (put glyph 'glyph
+		  (wl-xmas-make-icon-glyph
+		   (buffer-substring-no-properties start end)
+		   (symbol-value
+		    (cdr (assq glyph wl-folder-toggle-icon-list))))))))
+      (let ((inhibit-read-only t))
+	(when wl-use-highlight-mouse-line
+	  (put-text-property start (point-at-eol) 'mouse-face 'highlight))
+	(setq start end
+	      end (point-at-eol))
+	(if (and wl-highlight-folder-by-numbers
+		 numbers (nth 0 numbers) (nth 1 numbers)
+		 (re-search-forward "[0-9-]+/[0-9-]+/[0-9-]+" end t))
+	    (let* ((unsync (nth 0 numbers))
+		   (unread (nth 1 numbers))
+		   (face (cond ((and unsync (zerop unsync))
+				(if (and unread (zerop unread))
+				    'wl-highlight-folder-zero-face
+				  'wl-highlight-folder-unread-face))
+			       ((and unsync
+				     (>= unsync
+					 wl-folder-many-unsync-threshold))
+				'wl-highlight-folder-many-face)
+			       (t
+				'wl-highlight-folder-few-face))))
+	      (if (numberp wl-highlight-folder-by-numbers)
+		  (progn
+		    (put-text-property start (match-beginning 0)
+				       'face text-face)
+		    (put-text-property (match-beginning 0) (point) 'face face))
+		(put-text-property start end 'face face)))
+	  (put-text-property start end 'face text-face))))))
+
 (defun wl-highlight-folder-current-line (&optional numbers)
   (interactive)
   (save-excursion
-    (let ((highlights (list "opened" "closed"))
-	  (inhibit-read-only t)
-	  (fld-name (wl-folder-get-folder-name-by-id
-		     (get-text-property (point) 'wl-folder-entity-id)))
-	  fregexp fsymbol bol eol matched type extent num type glyph)
-      (setq eol (progn (end-of-line) (point))
-	    bol (progn (beginning-of-line) (point)))
-      (when (and fld-name (looking-at "[ \t]+\\([^ \t]+\\)"))
-	(if (and (setq extent (extent-at (match-beginning 1) nil nil nil 'at))
-		 (extent-begin-glyph extent))
-	    (delete-extent extent))
-	(setq extent (make-extent (match-beginning 1) (match-beginning 1)))
-	(cond
-	 ((string= fld-name wl-trash-folder) ;; set trash folder icon
-	  (setq num (nth 2 numbers)) ;; number of messages
-	  (set-extent-begin-glyph extent
-				  (if (or (null num)
-					  (eq num 0))
-				      wl-folder-trash-empty-glyph
-				    wl-folder-trash-glyph)))
-	 ((string= fld-name wl-draft-folder) ;; set draft folder icon
-	  (set-extent-begin-glyph extent wl-folder-draft-glyph))
-	 ((string= fld-name wl-queue-folder)
-	  (set-extent-begin-glyph extent wl-folder-queue-glyph))
-	 ((and (setq type (elmo-folder-get-type fld-name))
-	       (or numbers ;; XXX dirty...!!
-		   (not (assoc fld-name wl-folder-group-alist))))
-	  ;; not group folder.
-	  (set-extent-begin-glyph extent
-				  (symbol-value
-				   (intern (format "wl-folder-%s-glyph"
-						   type)))))))
-      (when (and numbers (nth 0 numbers) (nth 1 numbers))
-	(setq fsymbol
-	      (let ((unsync (nth 0 numbers))
-		    (unread (nth 1 numbers)))
-		(cond ((and unsync (eq unsync 0))
-		       (if (and unread (> unread 0))
-			   'wl-highlight-folder-unread-face
-			 'wl-highlight-folder-zero-face))
-		      ((and unsync
-			    (>= unsync wl-folder-many-unsync-threshold))
-		       'wl-highlight-folder-many-face)
-		      (t
-		       'wl-highlight-folder-few-face))))
-	(put-text-property bol eol 'face nil)
-	(put-text-property bol eol 'face fsymbol)
-	(setq matched t))
-      (while highlights
-	(setq fregexp (symbol-value
-		       (intern (format "wl-highlight-folder-%s-regexp"
-				       (car highlights)))))
-	(if (not wl-highlight-group-folder-by-numbers)
-	    (setq fsymbol (intern (format "wl-highlight-folder-%s-face"
-					  (car highlights)))))
-	(when (looking-at fregexp)
-	  (setq extent (make-extent (match-beginning 1) (match-end 1))
-		glyph (intern (format "wl-folder-%s-glyph"
-				      (car highlights))))
-	  (if (null (symbol-value glyph))
-	      (set glyph (wl-xmas-make-icon-glyph
-			  (extent-string extent)
-			  (symbol-value
-			   (cdr (assq glyph wl-folder-toggle-icon-list))))))
-	  (setq glyph (symbol-value glyph))
-	  (set-extent-property extent 'end-open t)
-	  (set-extent-property extent 'start-closed t)
-	  (set-extent-property extent 'invisible t)
-	  (set-extent-end-glyph extent glyph)
-	  (put-text-property bol eol 'face nil)
-	  (put-text-property bol eol 'face fsymbol)
-	  (setq matched t highlights nil))
-	(setq highlights (cdr highlights)))
-      (when (not matched)
-	(put-text-property bol eol 'face nil)
-	(if (looking-at (format "^[ ]*\\(%s\\|%s\\)"
-				wl-folder-unsubscribe-mark
-				wl-folder-removed-mark))
-	    (put-text-property bol eol 'face
-			       'wl-highlight-folder-killed-face)
-	  (put-text-property bol eol 'face
-			     'wl-highlight-folder-unknown-face)))
-      (if wl-use-highlight-mouse-line
-	  (wl-highlight-folder-mouse-line))
-      (if (and (featurep 'dragdrop) wl-use-dnd)
-	  (wl-dnd-set-drop-target bol eol)))))
+    (beginning-of-line)
+    (let (fld-name)
+      (cond
+       (;; opened folder group
+	(looking-at wl-highlight-folder-opened-regexp)
+	(wl-xmas-highlight-folder-group-line 'wl-folder-opened-glyph
+					     'wl-highlight-folder-opened-face
+					     numbers))
+       (;; closed folder group
+	(looking-at wl-highlight-folder-closed-regexp)
+	(wl-xmas-highlight-folder-group-line 'wl-folder-closed-glyph
+					     'wl-highlight-folder-closed-face
+					     numbers))
+       (;; basic folder
+	(and (setq fld-name (wl-folder-get-folder-name-by-id
+			     (get-text-property (point) 'wl-folder-entity-id)))
+	     (looking-at "[ \t]+\\([^ \t]+\\)"))
+	(let ((start (match-beginning 1)))
+	  (let (extent)
+	    (while (and (setq extent (extent-at start nil nil extent 'at))
+			(not (and (eq start (extent-start-position extent))
+				  (eq start (extent-end-position extent))
+				  (extent-begin-glyph extent)))))
+	    (unless extent
+	      (setq extent (make-extent start start)))
+	    (let (type)
+	      (set-extent-begin-glyph
+	       extent
+	       (cond
+		((string= fld-name wl-trash-folder);; trash folder
+		 (let ((num (nth 2 numbers)));; number of messages
+		   (get (if (or (not num) (zerop num))
+			    'wl-folder-trash-empty-glyph
+			  'wl-folder-trash-glyph)
+			'glyph)))
+		((string= fld-name wl-draft-folder);; draft folder
+		 (get 'wl-folder-draft-glyph 'glyph))
+		((string= fld-name wl-queue-folder);; queue folder
+		 (get 'wl-folder-queue-glyph 'glyph))
+		(;; and one of many other folders
+		 (setq type (elmo-folder-get-type fld-name))
+		 (get (intern (format "wl-folder-%s-glyph" type)) 'glyph))))))
+	  (let ((end (point-at-eol)))
+	    (when wl-use-highlight-mouse-line
+	      (put-text-property start end 'mouse-face 'highlight))
+	    (let ((text-face
+		   (if (looking-at (format "^[ \t]*\\(%s\\|%s\\)"
+					   wl-folder-unsubscribe-mark
+					   wl-folder-removed-mark))
+		       'wl-highlight-folder-killed-face
+		     'wl-highlight-folder-unknown-face)))
+	      (if (and wl-highlight-folder-by-numbers
+		       numbers (nth 0 numbers) (nth 1 numbers)
+		       (re-search-forward "[0-9-]+/[0-9-]+/[0-9-]+" end t))
+		  (let* ((unsync (nth 0 numbers))
+			 (unread (nth 1 numbers))
+			 (face (cond
+				((and unsync (zerop unsync))
+				 (if (and unread (zerop unread))
+				     'wl-highlight-folder-zero-face
+				   'wl-highlight-folder-unread-face))
+				((and unsync
+				      (>= unsync
+					  wl-folder-many-unsync-threshold))
+				 'wl-highlight-folder-many-face)
+				(t
+				 'wl-highlight-folder-few-face))))
+		    (if (numberp wl-highlight-folder-by-numbers)
+			(progn
+			  (put-text-property start (match-beginning 0)
+					     'face text-face)
+			  (put-text-property (match-beginning 0)
+					     (match-end 0)
+					     'face face))
+		      ;; Remove previous face.
+		      (put-text-property start (match-end 0) 'face nil)
+		      (put-text-property start (match-end 0) 'face face)))
+		(put-text-property start end 'face text-face))))))))))
 
 (defun wl-highlight-plugged-current-line ()
   (interactive)
@@ -264,9 +329,9 @@
       (beginning-of-line)
       (when (looking-at "[ \t]*\\(\\[\\([^]]+\\)\\]\\)")
 	(setq switch (elmo-match-buffer 2))
-	(if (and (setq extent (extent-at (match-end 1) nil nil nil 'at))
-		 (extent-end-glyph extent))
-	    (delete-extent extent))
+	(when (and (setq extent (extent-at (match-end 1) nil nil nil 'at))
+		   (extent-end-glyph extent))
+	  (delete-extent extent))
 	(setq extent (make-extent (match-beginning 1) (match-end 1)))
 	(set-extent-property extent 'end-open t)
 	(set-extent-property extent 'start-closed t)
@@ -280,12 +345,14 @@
 	(len (length string))
 	type)
     (if (string= folder wl-queue-folder)
-	(put-text-property 0 len 'begin-glyph wl-folder-queue-glyph string)
+	(put-text-property 0 len 'begin-glyph
+			   (get 'wl-folder-queue-glyph 'glyph)
+			   string)
       (if (setq type (elmo-folder-get-type folder))
 	  (put-text-property 0 len
 			     'begin-glyph
-			     (symbol-value
-			      (intern (format "wl-folder-%s-glyph" type)))
+			     (get (intern (format "wl-folder-%s-glyph" type))
+				  'glyph)
 			     string)))
     string))
 
@@ -307,53 +374,44 @@
     (wl-folder-queue-glyph        . wl-queue-folder-icon)
     (wl-folder-trash-glyph        . wl-trash-folder-icon)))
 
-(defvar wl-folder-toggle-icon-list
-  '((wl-folder-opened-glyph       . wl-opened-group-folder-icon)
-    (wl-folder-closed-glyph       . wl-closed-group-folder-icon)))
-
-(defun wl-xmas-make-icon-glyph (icon-string icon-file &optional locale tag-set)
-  (let ((glyph (make-glyph (vector 'string :data icon-string))))
-    (if wl-highlight-folder-with-icon
-	(set-glyph-image glyph
-			 (vector 'xpm :file (expand-file-name
-					     icon-file wl-icon-dir))
-			 locale tag-set 'prepend))
-    glyph))
-
 (defun wl-folder-init-icons ()
-  (mapcar
-   (lambda (x)
-     (if (null (symbol-value (car x)))
-	 (set (car x) (wl-xmas-make-icon-glyph "" (symbol-value (cdr x))))))
-   wl-folder-internal-icon-list))
+  (dolist (icon wl-folder-internal-icon-list)
+    (unless (get (car icon) 'glyph)
+      (put (car icon) 'glyph
+	   (wl-xmas-make-icon-glyph "" (symbol-value (cdr icon)))))))
 
 (defun wl-plugged-init-icons ()
-  (if (null wl-plugged-glyph)
-      (setq wl-plugged-glyph
-	    (wl-xmas-make-icon-glyph
-	     (concat "[" wl-plugged-plug-on "]")
-	     wl-plugged-icon)))
-  (if (null wl-unplugged-glyph)
-      (setq wl-unplugged-glyph
-	    (wl-xmas-make-icon-glyph
-	     (concat "[" wl-plugged-plug-off "]")
-	     wl-unplugged-icon))))
+  (unless wl-plugged-glyph
+    (setq wl-plugged-glyph (wl-xmas-make-icon-glyph
+			    wl-plug-state-indicator-on wl-plugged-icon)
+	  wl-unplugged-glyph (wl-xmas-make-icon-glyph
+			      wl-plug-state-indicator-off wl-unplugged-icon))
+    (let ((extent (make-extent nil nil)))
+      (let ((keymap (make-sparse-keymap)))
+	(define-key keymap 'button2
+	  (make-modeline-command-wrapper 'wl-toggle-plugged))
+	(set-extent-keymap extent keymap)
+	(set-extent-property extent 'help-echo
+			     "button2 toggles plugged status"))
+      (setq wl-modeline-plug-state-on (cons extent wl-plugged-glyph)
+	    wl-modeline-plug-state-off (cons extent wl-unplugged-glyph)))))
 
-(defun wl-make-modeline ()
-  "Make modeline for Wanderlust"
-  (wl-plugged-init-icons)
-  (let ((extent (make-extent nil nil))
-	(toggle-keymap (make-sparse-keymap)))
-    (define-key toggle-keymap 'button2 (make-modeline-command-wrapper
-					'wl-toggle-plugged))
-    (set-extent-keymap extent toggle-keymap)
-    (set-extent-property extent 'help-echo "button2 toggles plugged status")
-    (setq wl-plug-state-indicator-on (cons extent wl-plugged-glyph))
-    (setq wl-plug-state-indicator-off (cons extent wl-unplugged-glyph))
-    (setq wl-plug-state-indicator (if wl-plugged
-				      wl-plug-state-indicator-on
-				    wl-plug-state-indicator-off)))
-  (wl-make-modeline-subr))
+(defun wl-biff-init-icons ()
+  (unless wl-biff-mail-glyph
+    (setq wl-biff-mail-glyph (wl-xmas-make-icon-glyph
+			      wl-biff-state-indicator-on
+			      wl-biff-mail-icon)
+	  wl-biff-nomail-glyph (wl-xmas-make-icon-glyph
+				wl-biff-state-indicator-off
+				wl-biff-nomail-icon))
+    (let ((extent (make-extent nil nil)))
+      (let ((keymap (make-sparse-keymap)))
+	(define-key keymap 'button2
+	  (make-modeline-command-wrapper 'wl-biff-check-folders))
+	(set-extent-keymap extent keymap)
+	(set-extent-property extent 'help-echo "button2 checks new mails"))
+      (setq wl-modeline-biff-state-on (cons extent wl-biff-mail-glyph)
+	    wl-modeline-biff-state-off (cons extent wl-biff-nomail-glyph)))))
 
 (defun wl-make-date-string ()
   (let ((s (current-time-string)))
@@ -362,13 +420,14 @@
     (concat (wl-match-string 1 s) ", "
 	    (timezone-make-date-arpa-standard s (current-time-zone)))))
 
-
-(defun wl-xmas-setup-folder ()
+(defun wl-setup-folder ()
   (and (featurep 'scrollbar)
        (set-specifier scrollbar-height (cons (current-buffer) 0)))
   (wl-xmas-setup-folder-toolbar))
 
-(defun wl-xmas-setup-summary ()
+(defvar dragdrop-drop-functions)
+
+(defun wl-setup-summary ()
   (make-local-variable 'dragdrop-drop-functions)
   (setq dragdrop-drop-functions '((wl-dnd-default-drop-message t t)))
   (and (featurep 'scrollbar)
@@ -382,7 +441,10 @@
   (local-set-key 'button4 'wl-message-wheel-down)
   (local-set-key 'button5 'wl-message-wheel-up)
   (local-set-key [(shift button4)] 'wl-message-wheel-down)
-  (local-set-key [(shift button5)] 'wl-message-wheel-up))
+  (local-set-key [(shift button5)] 'wl-message-wheel-up)
+  (set-keymap-parent wl-message-button-map (current-local-map))
+  (define-key wl-message-button-map 'button2
+    'wl-message-button-dispatcher))
 
 (defun wl-message-wheel-up (event)
   (interactive "e")
@@ -392,10 +454,10 @@
       (select-window (event-window event))
       (set-buffer cur-buf)
       (setq proceed (wl-message-next-page)))
-    (if proceed
-	(if (memq 'shift (event-modifiers event))
-	    (wl-summary-down t)
-	  (wl-summary-next t)))))
+    (when proceed
+      (if (memq 'shift (event-modifiers event))
+	  (wl-summary-down t)
+	(wl-summary-next t)))))
 
 (defun wl-message-wheel-down (event)
   (interactive "e")
@@ -405,19 +467,19 @@
       (select-window (event-window event))
       (set-buffer cur-buf)
       (setq proceed (wl-message-prev-page)))
-    (if proceed
-	(if (memq 'shift (event-modifiers event))
-	    (wl-summary-up t)
-	  (wl-summary-prev t)))))
+    (when proceed
+      (if (memq 'shift (event-modifiers event))
+	  (wl-summary-up t)
+	(wl-summary-prev t)))))
 
 (defun wl-draft-overload-menubar ()
-  (add-menu-item '("Mail") "Send, Keep Editing"
-		 'wl-draft-send t "Send Mail")
-  (add-menu-item '("Mail") "Send Message"
-		 'wl-draft-send-and-exit t "Send and Exit")
-  (delete-menu-item '("Mail" "Send Mail"))
-  (delete-menu-item '("Mail" "Send and Exit"))
-  )
+  (when (featurep 'menubar)
+    (add-menu-item '("Mail") "Send, Keep Editing"
+		   'wl-draft-send t "Send Mail")
+    (add-menu-item '("Mail") "Send Message"
+		   'wl-draft-send-and-exit t "Send and Exit")
+    (delete-menu-item '("Mail" "Send Mail"))
+    (delete-menu-item '("Mail" "Send and Exit"))))
 
 (defun wl-draft-mode-setup ()
   (require 'derived)
@@ -447,16 +509,14 @@ Special commands:
   (define-key wl-draft-mode-map "\C-xk"    'wl-draft-mimic-kill-buffer))
 
 (defun wl-draft-overload-functions ()
-  (setq mode-line-buffer-identification
-	(format "Wanderlust: %s" (buffer-name)))
-  (local-set-key "\C-c\C-s" 'wl-draft-send) ; override
+  (wl-mode-line-buffer-identification)
+  (local-set-key "\C-c\C-s" 'wl-draft-send);; override
   (wl-xmas-setup-draft-toolbar)
-  (wl-draft-overload-menubar)
-  (when wl-show-plug-status-on-modeline
-    (setq mode-line-format (wl-make-modeline))))
+  (wl-draft-overload-menubar))
 
 (defalias 'wl-defface 'defface)
 
-(provide 'wl-xmas)
+(require 'product)
+(product-provide (provide 'wl-xmas) (require 'wl-version))
 
 ;;; wl-xmas.el ends here

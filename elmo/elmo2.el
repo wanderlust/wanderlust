@@ -34,7 +34,8 @@
 (require 'elmo-cache)
 (require 'elmo-util)
 (require 'elmo-dop)
-(provide 'elmo2)
+(require 'product)
+(product-provide (provide 'elmo2) (require 'elmo-version))
 
 (eval-when-compile
   (require 'elmo-localdir)
@@ -54,17 +55,17 @@
 	(featurep 'berkeley-db))
     (require 'elmo-database))
 
+(elmo-define-error 'elmo-error "Error" 'error)
+(elmo-define-error 'elmo-open-error "Cannot open" 'elmo-error)
+(elmo-define-error 'elmo-authenticate-error "Login failed" 'elmo-open-error)
+(elmo-define-error 'elmo-imap4-bye-error "IMAP4 BYE response" 'elmo-open-error)
+
 (defun elmo-quit ()
   (interactive)
-  (if (featurep 'elmo-imap4)
-      (elmo-imap4-flush-connection))
-  (if (featurep 'elmo-nntp)
-      (elmo-nntp-flush-connection))
-  (if (featurep 'elmo-pop3)
-      (elmo-pop3-flush-connection))
+  (if (featurep 'elmo-net)
+      (elmo-network-clear-session-cache))
   (if (get-buffer elmo-work-buf-name)
-      (kill-buffer elmo-work-buf-name))
-  )
+      (kill-buffer elmo-work-buf-name)))
 
 (defun elmo-cleanup-variables ()
   (setq elmo-folder-info-hashtb nil
@@ -85,7 +86,6 @@
     (elmo-dop-list-folder folder)))
 
 ;;  list elmo-list-folders (folder)
-
 (defun elmo-list-folders (folder &optional hierarchy)
   (elmo-call-func folder "list-folders" hierarchy))
 
@@ -208,9 +208,11 @@ without cacheing."
 (defun elmo-read-msg (folder msg outbuf msgdb &optional force-reload)
   "Read message into outbuf."
   (let ((inhibit-read-only t))
-    (if (not (elmo-use-cache-p folder msg))
-	(elmo-read-msg-no-cache folder msg outbuf)
-      (elmo-read-msg-with-cache folder msg outbuf msgdb force-reload))))
+    ;;Only use elmo-read-msg-with-cache, because if folder is network and
+    ;;elmo-use-cache-p is nil, cannot read important msg. (by muse)
+    ;;(if (not (elmo-use-cache-p folder msg))
+    ;;  (elmo-read-msg-no-cache folder msg outbuf)
+    (elmo-read-msg-with-cache folder msg outbuf msgdb force-reload)))
 
 (defun elmo-read-msg-with-cache (folder msg outbuf msgdb
 					&optional force-reload)
@@ -234,7 +236,9 @@ without cacheing."
       (if (setq ret-val (elmo-call-func (car real-fld-num)
 					"read-msg"
 					(cdr real-fld-num) outbuf))
-	  (if (not (elmo-local-file-p folder msg))
+	  (if (and message-id
+		   (not (elmo-local-file-p folder msg))
+		   (elmo-use-cache-p folder msg))
 	      (elmo-cache-save message-id
 			       (elmo-string-partial-p ret-val)
 			       folder msg)))
@@ -245,7 +249,7 @@ without cacheing."
 	 (loc-alist (if msgdb
 			(elmo-msgdb-get-location msgdb)
 		      (elmo-msgdb-location-load
-		       (elmo-msgdb-expand-path nil src-spec)))))
+		       (elmo-msgdb-expand-path src-spec)))))
     (if (eq (car src-spec) 'archive)
 	(elmo-archive-copy-msgs-froms
 	 (elmo-folder-get-spec dst-folder)
@@ -267,10 +271,13 @@ without cacheing."
 	   (len (length msgs))
 	   (all-msg-num (or all len))
 	   (done-msg-num (or done 0))
+	   (progress-message (if no-delete
+				 "Copying messages..."
+			       "Moving messages..."))
 	   (tmp-buf (get-buffer-create " *elmo-move-msg*"))
 	   ;elmo-no-cache-flag
-	   ret-val real-fld-num done-copy dir
-	   mes-string message-id src-cache i percent unseen seen-list)
+	   ret-val real-fld-num done-copy dir pair
+	   mes-string message-id src-cache i unseen seen-list)
       (setq i done-msg-num)
       (set-buffer tmp-buf)
       (when (and (not (eq dst-folder 'null))
@@ -287,13 +294,14 @@ without cacheing."
       (while messages
 	(setq real-fld-num (elmo-get-real-folder-number src-folder
 							(car messages)))
-	(setq message-id (cdr (assq (car messages) number-alist)))
+	(setq message-id (cdr (setq pair (assq (car messages) number-alist))))
 	;; seen-list.
 	(if (and (not (eq dst-folder 'null))
 		 (not (and unread-marks
-			   (member
-			    (cadr (assq (car messages) mark-alist))
-			    unread-marks))))
+			   (setq unseen
+				 (member
+				  (cadr (assq (car messages) mark-alist))
+				  unread-marks)))))
 	    (setq seen-list (cons message-id seen-list)))
 	(unless (or (eq dst-folder 'null) done-copy)
 	  (if (and (elmo-folder-plugged-p src-folder)
@@ -309,25 +317,34 @@ without cacheing."
 				  same-number)
 		(error "Copy message to %s failed" dst-folder))
 	    ;; use cache if exists.
-	    (elmo-read-msg src-folder (car messages) tmp-buf msgdb)
-	    (unless (elmo-append-msg dst-folder (buffer-string) message-id
-				     (if same-number (car messages))
-				     ;; null means all unread.
-				     (or (null unread-marks)
-					 unseen))
-	      (error "move: append message to %s failed" dst-folder))))
+	    ;; if there's other message with same message-id,
+	    ;; don't use cache.
+	    (elmo-read-msg src-folder (car messages)
+			   tmp-buf msgdb
+			   (and (elmo-folder-plugged-p src-folder)
+				(and pair
+				     (or
+				      (rassoc
+				       message-id
+				       (cdr (memq pair number-alist)))
+				      (not (eq pair
+					       (rassoc message-id
+						       number-alist)))))))
+	    (unless (eq (buffer-size) 0)
+	      (unless (elmo-append-msg dst-folder (buffer-string) message-id
+				       (if same-number (car messages))
+				       ;; null means all unread.
+				       (or (null unread-marks)
+					   unseen))
+		(error "move: append message to %s failed" dst-folder)))))
 	;; delete src cache if it is partial.
 	(elmo-cache-delete-partial message-id src-folder (car messages))
-	(setq ret-val (append ret-val (list (car messages))))
-	(setq i (+ i 1))
-	(setq percent (/ (* i 100) all-msg-num))
-	(if no-delete
-	    (elmo-display-progress
-	     'elmo-move-msgs "Copying messages..."
-	     percent)
+	(setq ret-val (nconc ret-val (list (car messages))))
+	(when (> all-msg-num elmo-display-progress-threshold)
+	  (setq i (+ i 1))
 	  (elmo-display-progress
-	   'elmo-move-msgs "Moving messages..."
-	   percent))
+	   'elmo-move-msgs progress-message
+	   (/ (* i 100) all-msg-num)))
 	(setq messages (cdr messages)))
       ;; Save seen-list.
       (unless (eq dst-folder 'null)
@@ -367,14 +384,34 @@ without cacheing."
       (elmo-call-func folder "delete-msgs" msgs)
     (elmo-dop-delete-msgs folder msgs msgdb)))
 
-;;
-;; Server side search.
-;;
 (defun elmo-search (folder condition &optional from-msgs)
-  (let ((type (elmo-folder-get-type folder)))
-    (if (elmo-folder-plugged-p folder)
-	(elmo-call-func folder "search" condition from-msgs)
-      (elmo-cache-search-all folder condition from-msgs))))
+  (if (elmo-folder-plugged-p folder)
+      (elmo-call-func folder "search" condition from-msgs)
+    (elmo-cache-search-all folder condition from-msgs)))
+
+(defun elmo-msgdb-search (folder condition msgdb)
+  "Search messages which satisfy CONDITION from FOLDER with MSGDB."
+  (let* ((condition (car (elmo-parse-search-condition condition)))
+	 (overview (elmo-msgdb-get-overview msgdb))
+	 (number-alist (elmo-msgdb-get-number-alist msgdb))
+	 (number-list (mapcar 'car number-alist))
+	 (length (length overview))
+	 (i 0)
+	 result)
+    (if (elmo-condition-find-key condition "body")
+	(elmo-search folder condition number-list)
+      (while overview
+	(if (elmo-msgdb-search-internal condition (car overview)
+					number-list)
+	    (setq result
+		  (cons
+		   (elmo-msgdb-overview-entity-get-number (car overview))
+		   result)))
+	(setq i (1+ i))
+	(elmo-display-progress
+	 'elmo-msgdb-search "Searching..." (/ (* i 100) length))
+	(setq overview (cdr overview)))
+      (nreverse result))))
 
 (defun elmo-msgdb-create (folder numlist new-mark already-mark
 				 seen-mark important-mark seen-list)
@@ -398,9 +435,10 @@ without cacheing."
     ret-val))
 
 (defun elmo-call-func-on-markable-msgs (folder func-name msgs msgdb)
+  "Returns t if marked."
   (save-match-data
     (let ((folder-numbers (elmo-make-folder-numbers-list folder msgs))
-	  type)
+	  type error)
       (while folder-numbers
 	(if (or (eq
 		 (setq type (car
@@ -417,8 +455,9 @@ without cacheing."
 		   func-name
 		   (cdr (car folder-numbers)) ; real number
 		   msgdb)
-		(error "Unplugged"))))
-	(setq folder-numbers (cdr folder-numbers))))))
+		(setq error t))))
+	(setq folder-numbers (cdr folder-numbers)))
+      (not error))))
 
 (defun elmo-unmark-important (folder msgs msgdb)
   (elmo-call-func-on-markable-msgs folder "unmark-important" msgs msgdb))
@@ -442,14 +481,17 @@ without cacheing."
      seen-mark important-mark seen-list)))
 
 ;;   msgdb elmo-msgdb-load        (folder)
-(defun elmo-msgdb-load (folder &optional spec)
+(defun elmo-msgdb-load (folder)
   (message "Loading msgdb for %s..." folder)
-  (let* ((path (elmo-msgdb-expand-path folder spec))
+  (let* ((path (elmo-msgdb-expand-path folder))
+	 (overview (elmo-msgdb-overview-load path))
 	 (ret-val
-	  (list (elmo-msgdb-overview-load path)
+	  (list overview
 		(elmo-msgdb-number-load path)
 		(elmo-msgdb-mark-load path)
-		(elmo-msgdb-location-load path))))
+		(elmo-msgdb-location-load path)
+		(elmo-msgdb-make-overview-hashtb overview)
+		)))
     (message "Loading msgdb for %s...done." folder)
     (elmo-folder-set-info-max-by-numdb folder (nth 1 ret-val))
     ret-val))
@@ -519,9 +561,10 @@ without cacheing."
 		   (elmo-msgdb-expand-path folder))))
 
 (defun elmo-pack-number (folder msgdb arg)
-  (if (string-match "^[\\+=].*" folder)
-      (elmo-call-func folder "pack-number" msgdb arg)
-    (error "pack-number not supported")))
+  (let ((type (elmo-folder-get-type folder)))
+    (if (memq type '(localdir localnews maildir))
+	(elmo-call-func folder "pack-number" msgdb arg)
+      (error "pack-number not supported"))))
 
 (defun elmo-sync-validity (folder)
   (elmo-call-func folder "sync-validity"
@@ -555,16 +598,16 @@ without cacheing."
   "Just return number-alist."
   number-alist)
 
-(defun elmo-generic-list-folder-unread (spec mark-alist unread-marks)
-  (elmo-delete-if
-   'null
-   (mapcar
-    (function (lambda (x)
-		(if (member (cadr (assq (car x) mark-alist)) unread-marks)
-		    (car x))))
-    mark-alist)))
+(defun elmo-generic-list-folder-unread (spec number-alist mark-alist
+					     unread-marks)
+  (delq nil
+	(mapcar
+	 (function (lambda (x)
+		     (if (member (cadr (assq (car x) mark-alist)) unread-marks)
+			 (car x))))
+	 mark-alist)))
 
-(defun elmo-generic-list-folder-important (spec overview)
+(defun elmo-generic-list-folder-important (spec number-alist)
   nil)
 
 (defun elmo-update-number (folder msgdb)
@@ -609,29 +652,26 @@ without cacheing."
 		0)))
 	  (length in-folder))))
 
-(defun elmo-list-folder-unread (folder mark-alist unread-marks)
-  (elmo-call-func folder "list-folder-unread" mark-alist unread-marks))
+(defun elmo-list-folder-unread (folder number-alist mark-alist unread-marks)
+  (elmo-call-func folder "list-folder-unread"
+		  number-alist mark-alist unread-marks))
 
-(defun elmo-list-folder-important (folder overview)
+(defun elmo-list-folder-important (folder number-alist)
   (let (importants)
-    ;; server side importants...(append only.)
+    ;; Server side importants...(append only.)
     (if (elmo-folder-plugged-p folder)
 	(setq importants (elmo-call-func folder "list-folder-important"
-					 overview)))
+					 number-alist)))
     (or elmo-msgdb-global-mark-alist
 	(setq elmo-msgdb-global-mark-alist
 	      (elmo-object-load (expand-file-name
 				 elmo-msgdb-global-mark-filename
 				 elmo-msgdb-dir))))
-    (while overview
-      (car overview)
-      (if (assoc (elmo-msgdb-overview-entity-get-id (car overview))
+    (while number-alist
+      (if (assoc (cdr (car number-alist))
 		 elmo-msgdb-global-mark-alist)
-	  (setq importants (cons
-			    (elmo-msgdb-overview-entity-get-number
-			     (car overview))
-			    importants)))
-      (setq overview (cdr overview)))
+	  (setq importants (cons (car (car number-alist)) importants)))
+      (setq number-alist (cdr number-alist)))
     importants))
 
 (defun elmo-generic-commit (folder)
@@ -640,61 +680,68 @@ without cacheing."
 (defun elmo-commit (folder)
   (elmo-call-func folder "commit"))
 
-;; returns cons cell of (unsync . number-of-messages-in-folder)
-(defun elmo-folder-diff (fld &optional number-alist)
-  (interactive)
-  (let ((type (elmo-folder-get-type fld)))
-    (cond ((eq type 'multi)
-	   (elmo-multi-folder-diff fld))
-	  ((and (eq type 'filter)
-		(or (elmo-multi-p fld)
-		    (not
-		     (vectorp (nth 1 (elmo-folder-get-spec fld)))))
-		;; not partial...unsync number is unknown.
-		(cons nil
-		      (cdr (elmo-folder-diff
-			    (nth 2 (elmo-folder-get-spec fld)))))))
-	  ((and (eq type 'imap4)
-		elmo-use-server-diff)
-	   (elmo-call-func fld "server-diff")) ;; imap4 server side diff.
-	  (t
-	   (let ((cached-in-db-max (elmo-folder-get-info-max fld))
-		 (in-folder (elmo-max-of-folder fld))
-		 (in-db t)
-		 unsync nomif
-		 in-db-max)
-	     (if (or number-alist
-		     (not cached-in-db-max))
-		 (let* ((dir (elmo-msgdb-expand-path fld))
-			(nalist (or number-alist
-				    (elmo-msgdb-number-load dir))))
-		   ;; No info-cache.
-		   (setq in-db (sort (mapcar 'car nalist) '<))
-		   (setq in-db-max (or (nth (max 0 (1- (length in-db))) in-db)
-				       0))
-		   (if (not number-alist)
-		       ;; Number-alist is not used.
-		       (elmo-folder-set-info-hashtb fld in-db-max
-						    nil))
-;; 						   (or
-;; 						    (and in-db (length in-db))
-;; 						    0)))
-		   )
-	       ;; info-cache exists.
-	       (setq in-db-max cached-in-db-max))
-	     (setq unsync (if (and in-db
-				   (car in-folder))
-			      (- (car in-folder) in-db-max)
-			    (if (and in-folder
-				     (null in-db))
-				(cdr in-folder)
-			      (if (null (car in-folder))
-				  nil))))
-	     (setq nomif (cdr in-folder))
-	     (if (and unsync nomif (> unsync nomif))
-		 (setq unsync nomif))
-	     (cons (or unsync 0) (or nomif 0)))))))
-    
+(defun elmo-clear-killed (folder)
+  (elmo-msgdb-killed-list-save (elmo-msgdb-expand-path folder) nil))
+
+(defvar elmo-folder-diff-async-callback nil)
+(defvar elmo-folder-diff-async-callback-data nil)
+
+(defun elmo-folder-diff-async (folder)
+  "Get diff of FOLDER asynchronously.
+`elmo-folder-diff-async-callback' is called with arguments of
+FOLDER and DIFF (cons cell of UNSEEN and MESSAGES).
+Currently works on IMAP4 folder only."
+  (if (eq (elmo-folder-get-type folder) 'imap4)
+      ;; Only works on imap4 with server diff.
+      (progn
+	(setq elmo-imap4-server-diff-async-callback
+	      elmo-folder-diff-async-callback)
+	(setq elmo-imap4-server-diff-async-callback-data
+	      elmo-folder-diff-async-callback-data)
+	(elmo-imap4-server-diff-async (elmo-folder-get-spec folder)))
+    (and elmo-folder-diff-async-callback
+	 (funcall elmo-folder-diff-async-callback
+		  folder
+		  (elmo-folder-diff folder)))))
+
+(defun elmo-folder-diff (folder &optional number-list)
+  "Get diff of FOLDER.
+Return value is a cons cell of NEW and MESSAGES.
+If optional argumnet NUMBER-LIST is set, it is used as a 
+message list in msgdb. Otherwise, number-list is load from msgdb."
+  (elmo-call-func folder "folder-diff" folder number-list))
+
+(defun elmo-generic-folder-diff (spec folder &optional number-list)
+  (let ((cached-in-db-max (elmo-folder-get-info-max folder))
+	(in-folder (elmo-max-of-folder folder))
+	(in-db t)
+	unsync messages
+	in-db-max)
+    (if (or number-list (not cached-in-db-max))
+	(let ((number-list (or number-list
+			       (mapcar 'car
+				       (elmo-msgdb-number-load
+					(elmo-msgdb-expand-path spec))))))
+	  ;; No info-cache.
+	  (setq in-db (sort number-list '<))
+	  (setq in-db-max (or (nth (max 0 (1- (length in-db))) in-db)
+			      0))
+	  (if (not number-list)
+	      (elmo-folder-set-info-hashtb folder in-db-max nil)))
+      (setq in-db-max cached-in-db-max))
+    (setq unsync (if (and in-db
+			  (car in-folder))
+		     (- (car in-folder) in-db-max)
+		   (if (and in-folder
+			    (null in-db))
+		       (cdr in-folder)
+		     (if (null (car in-folder))
+			 nil))))
+    (setq messages (cdr in-folder))
+    (if (and unsync messages (> unsync messages))
+	(setq unsync messages))
+    (cons (or unsync 0) (or messages 0))))
+
 (defsubst elmo-folder-get-info (folder &optional hashtb)
   (elmo-get-hash-val folder
 		     (or hashtb elmo-folder-info-hashtb)))
@@ -709,50 +756,6 @@ without cacheing."
     (elmo-set-hash-val folder
 		       (list new unread numbers max)
 		       elmo-folder-info-hashtb)))
-
-(defun elmo-multi-get-number-alist-list (number-alist)
-  (let ((alist (sort number-alist (function (lambda (x y) (< (car x)
-							     (car y))))))
-	(cur-number 0)
-	one-alist ret-val num)
-    (while alist
-      (setq cur-number (+ cur-number 1))
-      (setq one-alist nil)
-      (while (and alist
-		  (eq 0
-		      (/ (- (setq num (car (car alist)))
-			    (* elmo-multi-divide-number cur-number))
-			 elmo-multi-divide-number)))
-	(setq one-alist (nconc
-			 one-alist
-			 (list
-			  (cons
-			   (% num (* elmo-multi-divide-number cur-number))
-			   (cdr (car alist))))))
-	(setq alist (cdr alist)))
-      (setq ret-val (nconc ret-val (list one-alist))))
-    ret-val))
-
-(defun elmo-multi-folder-diff (fld)
-  (let ((flds (cdr (elmo-folder-get-spec fld)))
-	(num-alist-list
-	 (elmo-multi-get-number-alist-list
-	  (elmo-msgdb-number-load (elmo-msgdb-expand-path fld))))
-	(count 0)
-	diffs (unsync 0) (nomif 0))
-    (while flds
-      (setq diffs (nconc diffs (list (elmo-folder-diff (car flds)
-						       (nth count
-							    num-alist-list)
-						       ))))
-      (setq count (+ 1 count))
-      (setq flds (cdr flds)))
-    (while diffs
-      (setq unsync (+ unsync (car (car diffs))))
-      (setq nomif  (+ nomif (cdr (car diffs))))
-      (setq diffs (cdr diffs)))
-    (elmo-folder-set-info-hashtb fld nil nomif)
-    (cons unsync nomif)))
 
 (defun elmo-folder-set-info-max-by-numdb (folder msgdb-number)
   (let ((num-db (sort (mapcar 'car msgdb-number) '<)))
@@ -1001,12 +1004,10 @@ without cacheing."
     (elmo-folder-number-get-spec fld number)))
 
 ;; autoloads
-(autoload 'elmo-imap4-get-connection "elmo-imap4")
 (autoload 'elmo-nntp-make-groups-hashtb "elmo-nntp")
 (autoload 'elmo-nntp-post "elmo-nntp")
 (autoload 'elmo-localdir-max-of-folder "elmo-localdir")
 (autoload 'elmo-localdir-msgdb-create-overview-entity-from-file "elmo-localdir")
-(autoload 'elmo-multi-folder-diff "elmo-multi")
 (autoload 'elmo-archive-copy-msgs-froms "elmo-archive")
 
 ;;; elmo2.el ends here

@@ -66,26 +66,35 @@
   (let ((msgdb (elmo-msgdb-load src))
 	elmo-nntp-use-cache
 	elmo-imap4-use-cache
-	elmo-pop3-use-cache) ; Inhibit caching while moving messages.
+	elmo-pop3-use-cache ; Inhibit caching while moving messages.
+	elmo-pop3-use-uidl) ; No need to use UIDL
     (message "Checking %s..." src)
     (elmo-move-msgs src (elmo-list-folder src) dst msgdb)
     (elmo-msgdb-save src msgdb)
+    (elmo-commit src)
     (run-hooks 'elmo-pipe-drained-hook)))
 
 (defun elmo-pipe-list-folder (spec)
   (elmo-pipe-drain (elmo-pipe-spec-src spec)
 		   (elmo-pipe-spec-dst spec))
-  (elmo-list-folder (elmo-pipe-spec-dst spec)))
+  (let ((killed (and elmo-use-killed-list
+		     (elmo-msgdb-killed-list-load
+		      (elmo-msgdb-expand-path spec))))
+	numbers)
+    (setq numbers (elmo-list-folder (elmo-pipe-spec-dst spec)))
+    (elmo-living-messages numbers killed)))
 
-(defun elmo-pipe-list-folder-unread (spec mark-alist unread-marks)
-  (elmo-list-folder-unread (elmo-pipe-spec-dst spec) mark-alist unread-marks))
+(defun elmo-pipe-list-folder-unread (spec number-alist mark-alist unread-marks)
+  (elmo-list-folder-unread (elmo-pipe-spec-dst spec)
+			   number-alist mark-alist unread-marks))
   
-(defun elmo-pipe-list-folder-important (spec overview)
-  (elmo-list-folder-important (elmo-pipe-spec-dst spec) overview))
+(defun elmo-pipe-list-folder-important (spec number-alist)
+  (elmo-list-folder-important (elmo-pipe-spec-dst spec) number-alist))
 
 (defun elmo-pipe-max-of-folder (spec)
-  (let ((src-length (length (elmo-list-folder (elmo-pipe-spec-src spec))))
-	(dst-list (elmo-list-folder (elmo-pipe-spec-dst spec))))
+  (let* (elmo-pop3-use-uidl
+	 (src-length (length (elmo-list-folder (elmo-pipe-spec-src spec))))
+	 (dst-list (elmo-list-folder (elmo-pipe-spec-dst spec))))
     (cons (+ src-length (elmo-max-of-list dst-list))
 	  (+ src-length (length dst-list)))))
 
@@ -136,6 +145,9 @@
 (defun elmo-pipe-server-diff (spec)
   nil)
 
-(provide 'elmo-pipe)
+(defalias 'elmo-pipe-folder-diff 'elmo-generic-folder-diff)
+
+(require 'product)
+(product-provide (provide 'elmo-pipe) (require 'elmo-version))
 
 ;;; elmo-pipe.el ends here

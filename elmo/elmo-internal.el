@@ -35,17 +35,24 @@
 	 (arg (nth 2 spec))
 	 (flist (elmo-list-folder-by-location
 		 spec
-		 (elmo-internal-list-location directive arg))))
+		 (elmo-internal-list-location directive arg)))
+	 (killed (and elmo-use-killed-list
+		      (elmo-msgdb-killed-list-load
+		       (elmo-msgdb-expand-path spec))))
+	 numbers)
     (if nonsort
 	(cons (or (elmo-max-of-list flist) 0)
-	      (length flist))
-      (sort flist '<))))
+	      (if killed
+		  (- (length flist) (length killed))
+		(length flist)))
+      (setq numbers (sort flist '<))
+      (elmo-living-messages numbers killed))))
 
 (defun elmo-internal-list-folder (spec)
   (elmo-internal-list-folder-subr spec))
 
 (defun elmo-internal-list-folder-by-location (spec location &optional msgdb)
-  (let* ((path (elmo-msgdb-expand-path nil spec))
+  (let* ((path (elmo-msgdb-expand-path spec))
 	 (location-alist
 	  (if msgdb
 	      (elmo-msgdb-get-location msgdb)
@@ -102,7 +109,7 @@
 	   (arg       (nth 2 spec))
 	   (loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 			(elmo-msgdb-location-load (elmo-msgdb-expand-path
-						   nil spec))))
+						   spec))))
 	   (loc-list (elmo-internal-list-location directive arg))
 	   overview number-alist mark-alist entity
 	   i percent num location pair)
@@ -140,11 +147,12 @@
 			     entity))
 			   already-mark
 			 new-mark))))))
-	(setq i (1+ i))
-	(setq percent (/ (* i 100) num))
-	(elmo-display-progress
-	 'elmo-internal-msgdb-create "Creating msgdb..."
-	 percent)
+	(when (> num elmo-display-progress-threshold)
+	  (setq i (1+ i))
+	  (setq percent (/ (* i 100) num))
+	  (elmo-display-progress
+	   'elmo-internal-msgdb-create "Creating msgdb..."
+	   percent))
 	(setq numlist (cdr numlist)))
       (message "Creating msgdb...done.")
       (list overview number-alist mark-alist loc-alist))))
@@ -175,7 +183,7 @@
 (defun elmo-internal-delete-msgs (spec msgs &optional msgdb)
   (let ((loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 		     (elmo-msgdb-location-load (elmo-msgdb-expand-path
-						nil spec)))))
+						spec)))))
     (mapcar '(lambda (msg) (elmo-internal-delete-msg spec msg
 						     loc-alist))
 	    msgs)))
@@ -188,7 +196,7 @@
   (save-excursion
     (let* ((loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 			(elmo-msgdb-location-load (elmo-msgdb-expand-path
-						   nil spec))))
+						   spec))))
 	   (file (elmo-cache-get-path (cdr (assq number loc-alist)))))
       (set-buffer outbuf)
       (erase-buffer)
@@ -223,7 +231,8 @@
 				      elmo-msgdb-dir)))))
 	 (loc-alist (if msgdb (elmo-msgdb-get-location msgdb)
 		      (elmo-msgdb-location-load (elmo-msgdb-expand-path
-						 nil spec))))
+						 spec))))
+	 (number-list (mapcar 'car loc-alist))
 	 cache-file
 	 ret-val
 	 case-fold-search msg
@@ -233,7 +242,9 @@
     (while loc-alist
       (if (and (setq cache-file (elmo-cache-exists-p (cdr (car loc-alist))))
 	       (elmo-file-field-condition-match cache-file
-						condition))
+						condition
+						(car (car loc-alist))
+						number-list))
 	  (setq ret-val (append ret-val (list (car (car loc-alist))))))
       (setq i (1+ i))
       (setq percent (/ (* i 100) num))
@@ -256,7 +267,9 @@
 (defalias 'elmo-internal-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-internal-commit 'elmo-generic-commit)
+(defalias 'elmo-internal-folder-diff 'elmo-generic-folder-diff)
 
-(provide 'elmo-internal)
+(require 'product)
+(product-provide (provide 'elmo-internal) (require 'elmo-version))
 
 ;;; elmo-internal.el ends here

@@ -1,6 +1,6 @@
-;;; mmelmo-imap4.el -- MM backend of IMAP4 for ELMO.
+;;; elmo-version.el -- Version information for ELMO.
 
-;; Copyright 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright 2000 Yuuichi Teranishi <teranisi@gohome.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
@@ -28,14 +28,31 @@
 
 ;;; Code:
 ;; 
-
-(static-if (fboundp 'luna-define-method)
-    ;; FLIM 1.13 or later
-    (require 'mmelmo-imap4-2)
-  ;; FLIM 1.12
-  (require 'mmelmo-imap4-1))
-
 (require 'product)
-(product-provide (provide 'mmelmo-imap4) (require 'elmo-version))
+(provide 'elmo-version)
 
-;;; mmelmo-imap4.el ends here
+(product-provide 'elmo-version
+  (product-define "ELMO" nil '(2 3 90)))
+
+;; set version-string
+(if (fboundp 'product-version-as-string)
+    (product-version-as-string 'elmo-version)
+  (product-string-1 'elmo-version))
+
+(defun elmo-version ()
+  "Return ELMO version."
+  (product-string-1 'elmo-version))
+
+
+;; for backward compatibility
+(defconst elmo-appname (product-name (product-find 'elmo-version)))
+(make-obsolete-variable
+ 'elmo-appname
+ "use (product-name (product-find 'elmo-version)) insteaed.")
+
+(defconst elmo-version (product-version-string (product-find 'elmo-version)))
+(make-obsolete-variable
+ 'elmo-version
+ "use (product-version-string (product-find 'elmo-version)) instead.")
+
+;;; elmo-version.el ends here

@@ -138,6 +138,15 @@
 	       "0:00")
 	     (cadr timezone)) nil nil)))
 
-(provide 'elmo-date)
+(defmacro elmo-date-make-sortable-string (datevec)
+  "Make a sortable string from DATEVEC."
+  (` (timezone-make-sortable-date
+      (aref (, datevec) 0)
+      (aref (, datevec) 1)
+      (aref (, datevec) 2)
+      (aref (, datevec) 3))))
+
+(require 'product)
+(product-provide (provide 'elmo-date) (require 'elmo-version))
 
 ;;; elmo-date.el ends here

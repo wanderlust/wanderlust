@@ -117,9 +117,9 @@
   (when numlist
     (let ((dir (elmo-localdir-get-folder-directory spec))
 	  overview number-alist mark-alist entity message-id
-	  i percent len num seen gmark)
-      (setq len (length numlist))
-      (setq i 0)
+	  num seen gmark
+	  (i 0)
+	  (len (length numlist)))
       (message "Creating msgdb...")
       (while numlist
 	(setq entity
@@ -131,12 +131,11 @@
 	  (setq overview
 		(elmo-msgdb-append-element
 		 overview entity))
-	  (setq number-alist
-		(elmo-msgdb-number-add number-alist
-				       num
-				       (elmo-msgdb-overview-entity-get-id
-					entity)))
 	  (setq message-id (elmo-msgdb-overview-entity-get-id entity))
+  	  (setq number-alist
+  		(elmo-msgdb-number-add number-alist
+  				       num
+  				       message-id))
 	  (setq seen (member message-id seen-list))
 	  (if (setq gmark (or (elmo-msgdb-global-mark-get message-id)
 			      (if (elmo-cache-exists-p message-id) ; XXX
@@ -151,11 +150,11 @@
 		     mark-alist
 		     num
 		     gmark))))
-	(setq i (1+ i))
-	(setq percent (/ (* i 100) len))
-	(elmo-display-progress
-	 'elmo-localdir-msgdb-create-as-numlist "Creating msgdb..."
-	 percent)
+	(when (> len elmo-display-progress-threshold)
+	  (setq i (1+ i))
+	  (elmo-display-progress
+	   'elmo-localdir-msgdb-create-as-numlist "Creating msgdb..."
+	   (/ (* i 100) len)))
 	(setq numlist (cdr numlist)))
       (message "Creating msgdb...done.")
       (list overview number-alist mark-alist))))
@@ -171,6 +170,7 @@
 
 (defun elmo-localdir-list-folders-subr (folder &optional hierarchy)
   (let ((case-fold-search t)
+	(w32-get-true-file-link-count t) ; for Meadow
 	folders curdir dirent relpath abspath attr
 	subprefix subfolder)
     (condition-case ()
@@ -219,16 +219,24 @@
 (defsubst elmo-localdir-list-folder-subr (spec &optional nonsort)
   (let* ((dir (elmo-localdir-get-folder-directory spec))
 	 (flist (mapcar 'string-to-int
-			(directory-files dir nil "^[0-9]+$" t))))
+			(directory-files dir nil "^[0-9]+$" t)))
+	 (killed (and elmo-use-killed-list
+		      (elmo-msgdb-killed-list-load
+		       (elmo-msgdb-expand-path spec))))
+	 numbers)
     (if nonsort
-	(cons (or (elmo-max-of-list flist) 0) (length flist))
-      (sort flist '<))))
+	(cons (or (elmo-max-of-list flist) 0)
+	      (if killed
+		  (- (length flist) (length killed))
+		(length flist)))
+      (setq numbers (sort flist '<))
+      (elmo-living-messages numbers killed))))
 
 (defun elmo-localdir-append-msg (spec string &optional msg no-see)
   (let ((dir (elmo-localdir-get-folder-directory spec))
 	(tmp-buffer (get-buffer-create " *ELMO Temp buffer*"))
 	(next-num (or msg
-		      (1+ (car (elmo-localdir-list-folder-subr spec t)))))
+		      (1+ (car (elmo-localdir-max-of-folder spec)))))
 	filename)
     (save-excursion
       (set-buffer tmp-buffer)
@@ -345,24 +353,29 @@
 	(rename-file old new)
 	t))))
 
-(defsubst elmo-localdir-field-condition-match (spec number condition)
+(defsubst elmo-localdir-field-condition-match (spec condition
+						    number number-list)
   (elmo-file-field-condition-match
    (expand-file-name (int-to-string number)
 		     (elmo-localdir-get-folder-directory spec))
-   condition))
+   condition
+   number number-list))
 
 (defun elmo-localdir-search (spec condition &optional from-msgs)
   (let* ((msgs (or from-msgs (elmo-localdir-list-folder spec)))
 	 (num (length msgs))
-	 (i 0) case-fold-search ret-val)
+	 (i 0)
+	 number-list case-fold-search ret-val)
+    (setq number-list msgs)
     (while msgs
-      (if (elmo-localdir-field-condition-match spec (car msgs)
-					       condition)
+      (if (elmo-localdir-field-condition-match spec condition
+					       (car msgs) number-list)
 	  (setq ret-val (cons (car msgs) ret-val)))
-      (setq i (1+ i))
-      (elmo-display-progress
-       'elmo-localdir-search "Searching..."
-       (/ (* i 100) num))
+      (when (> num elmo-display-progress-threshold)
+	(setq i (1+ i))
+	(elmo-display-progress
+	 'elmo-localdir-search "Searching..."
+	 (/ (* i 100) num)))
       (setq msgs (cdr msgs)))
     (nreverse ret-val)))
 
@@ -371,7 +384,7 @@
 					 &optional loc-alist same-number)
   (let ((dst-dir
 	 (elmo-localdir-get-folder-directory dst-spec))
-	(next-num (1+ (car (elmo-localdir-list-folder-subr dst-spec t)))))
+	(next-num (1+ (car (elmo-localdir-max-of-folder dst-spec)))))
     (while msgs
       (elmo-copy-file
        ;; src file
@@ -386,7 +399,7 @@
 		(if (and (eq (car dst-spec) 'localdir)
 			 (elmo-localdir-locked-p))
 		    ;; MDA is running.
-		    (1+ (car (elmo-localdir-list-folder-subr dst-spec t)))
+		    (1+ (car (elmo-localdir-max-of-folder dst-spec)))
 		  (1+ next-num)))))
     t))
 
@@ -394,7 +407,6 @@
   (let ((dir (elmo-localdir-get-folder-directory spec))
 	(onum-alist (elmo-msgdb-get-number-alist msgdb))
 	(omark-alist (elmo-msgdb-get-mark-alist msgdb))
-	(oov (elmo-msgdb-get-overview msgdb))
 	(new-number 1)			; first ordinal position in localdir
 	flist onum mark new-mark-alist total)
     (setq flist
@@ -403,9 +415,10 @@
 	    (mapcar 'car onum-alist)))
     (setq total (length flist))
     (while flist
-      (elmo-display-progress
-       'elmo-localdir-pack-number "Packing..."
-       (/ (* new-number 100) total))
+      (when (> total elmo-display-progress-threshold)
+	(elmo-display-progress
+	 'elmo-localdir-pack-number "Packing..."
+	 (/ (* new-number 100) total)))
       (setq onum (car flist))
       (when (not (eq onum new-number))		; why \=() is wrong..
         (elmo-bind-directory
@@ -414,8 +427,8 @@
 	 (rename-file (int-to-string onum) (int-to-string new-number) t))
         ;; update overview
         (elmo-msgdb-overview-entity-set-number
-	 (elmo-msgdb-overview-get-entity-by-number
-	  oov onum) new-number)
+	 (elmo-msgdb-overview-get-entity onum msgdb)
+	 new-number)
 	;; update number-alist
 	(setcar (assq onum onum-alist) new-number))
       ;; update mark-alist
@@ -430,7 +443,9 @@
     (list (elmo-msgdb-get-overview msgdb)
 	  onum-alist
 	  new-mark-alist
-	  (elmo-msgdb-get-location msgdb))))
+	  (elmo-msgdb-get-location msgdb)
+	  ;; remake hash table
+	  (elmo-msgdb-make-overview-hashtb (elmo-msgdb-get-overview msgdb)))))
 
 (defun elmo-localdir-use-cache-p (spec number)
   nil)
@@ -459,7 +474,9 @@
 (defalias 'elmo-localdir-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-localdir-commit 'elmo-generic-commit)
+(defalias 'elmo-localdir-folder-diff 'elmo-generic-folder-diff)
 
-(provide 'elmo-localdir)
+(require 'product)
+(product-provide (provide 'elmo-localdir) (require 'elmo-version))
 
 ;;; elmo-localdir.el ends here

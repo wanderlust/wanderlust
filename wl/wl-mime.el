@@ -35,16 +35,12 @@
 (require 'mmelmo)
 
 (eval-when-compile
-  (defun-maybe Meadow-version ())
-  (mapcar
-   (function
-    (lambda (symbol)
-      (unless (boundp symbol)
-	(set (make-local-variable symbol) nil))))
-   '(xemacs-betaname
-     xemacs-codename
-     enable-multibyte-characters
-     mule-version)))
+  (defalias-maybe 'Meadow-version 'ignore))
+
+(defvar xemacs-betaname)
+(defvar xemacs-codename)
+(defvar enable-multibyte-characters)
+(defvar mule-version)
 
 ;;; Draft
 
@@ -202,7 +198,8 @@ By setting following-method as yank-content."
 (defalias 'wl-message-play-content    'mime-preview-play-current-entity)
 (defalias 'wl-message-extract-content 'mime-preview-extract-current-entity)
 (defalias 'wl-message-quit            'mime-preview-quit)
-(defalias 'wl-message-button-dispatcher 'mime-button-dispatcher)
+(defalias 'wl-message-button-dispatcher-internal
+  'mime-button-dispatcher)
 
 ;;; Summary
 (defun wl-summary-burst-subr (children target number)
@@ -220,13 +217,10 @@ By setting following-method as yank-content."
           (message (format "Bursting...%s" (setq number (+ 1 number))))
           (setq message-entity
                 (car (mime-entity-children (car children))))
-          (save-restriction
-            (narrow-to-region (mime-entity-point-min message-entity)
-                              (mime-entity-point-max message-entity))
-            (elmo-append-msg target
-                             ;;(mime-entity-content (car children))))
-                             (buffer-substring (point-min) (point-max))
-                             (std11-field-body "Message-ID")))))
+	  (elmo-append-msg target
+			   (mime-entity-body (car children))
+			   (mime-entity-fetch-field message-entity
+						    "Message-ID"))))
       (setq children (cdr children)))
     number))
 
@@ -324,6 +318,13 @@ automatically."
 	  (setq overviews (cdr overviews)))
 	(message "Not all partials found.")))))
 
+(defun wl-mime-header-presentation-method (entity situation)
+  (let ((mmelmo-sort-field-list wl-message-sort-field-list))
+    (mime-insert-header entity
+			wl-message-ignored-field-list
+			wl-message-visible-field-list)
+    (wl-highlight-headers)))
+
 ;;; Setup methods.
 (defun wl-mime-setup ()
   (set-alist 'mime-preview-quitting-method-alist
@@ -366,11 +367,19 @@ automatically."
   (set-alist 'mime-raw-representation-type-alist
 	     'mmelmo-original-mode 'binary)
   ;; Sort and highlight header fields.
-  (setq mmelmo-sort-field-list wl-message-sort-field-list)
-  (add-hook 'mmelmo-header-inserted-hook 'wl-highlight-headers)
+  (or wl-message-ignored-field-list
+      (setq wl-message-ignored-field-list
+	    mime-view-ignored-field-list))
+  (or wl-message-visible-field-list
+      (setq wl-message-visible-field-list
+	    mime-view-visible-field-list))
+  (set-alist 'mime-header-presentation-method-alist
+	     'mmelmo-original-mode
+	     (function wl-mime-header-presentation-method))
   (add-hook 'mmelmo-entity-content-inserted-hook 'wl-highlight-body))
   
 
-(provide 'wl-mime)
+(require 'product)
+(product-provide (provide 'wl-mime) (require 'wl-version))
 
 ;;; wl-mime.el ends here

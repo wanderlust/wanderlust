@@ -24,16 +24,11 @@
 ;;
 
 ;;; Commentary:
-;; 
+;;
 
 ;;; Code:
-;; 
+;;
 
-(defun wl-xmas-setup-folder ()) ; dummy
-(defun wl-xmas-setup-summary ())
-(defun wl-xmas-setup-draft-toolbar ())
-
-(defun wl-summary-setup-mouse ())
 (defun wl-message-overload-functions ()
   (local-set-key "l" 'wl-message-toggle-disp-summary))
 
@@ -49,15 +44,11 @@
 (defun wl-highlight-summary-line-string (line mark indent before-indent))
 (defun wl-highlight-body-region (beg end))
 (defun wl-highlight-message (start end hack-sig &optional body-only))
-(defun wl-delete-all-overlays ())
 (defun wl-highlight-summary-current-line (&optional smark regexp temp-too))
 
 (defun wl-highlight-plugged-current-line ())
 (defun wl-plugged-set-folder-icon (folder string)
   string)
-
-(defun wl-folder-init-icons ()) ; dummy.
-(defun wl-plugged-init-icons ()) ; dummy.
 
 (defmacro wl-defface (face spec doc &rest args)
   (` (defvar (, face) (, spec) (, doc))))
@@ -75,8 +66,7 @@
   (list (cons t (mime-charset-to-coding-system default-mime-charset))))
 
 (defun wl-draft-overload-functions ()
-  (setq mode-line-buffer-identification
-	(format "Wanderlust: %s" (buffer-name)))
+  (wl-mode-line-buffer-identification)
   (local-set-key "\C-c\C-y" 'wl-draft-yank-original)
   (local-set-key "\C-c\C-s" 'wl-draft-send)
   (local-set-key "\C-c\C-a" 'wl-draft-insert-x-face-field)
@@ -91,11 +81,7 @@
   (local-set-key "\C-c\C-j" 'wl-template-select)
   (local-set-key "\C-c\C-p" 'wl-draft-preview-message)
   (local-set-key "\C-x\C-s" 'wl-draft-save)
-  (local-set-key "\C-xk"    'wl-draft-mimic-kill-buffer)
-  (when wl-show-plug-status-on-modeline
-    (set (make-variable-buffer-local 'mode-line-format) (wl-make-modeline))))
-
-(defalias 'wl-make-modeline 'wl-make-modeline-subr)
+  (local-set-key "\C-xk"    'wl-draft-mimic-kill-buffer))
 
 ;;; Emulations.
 
@@ -166,6 +152,7 @@ However, if `mail-yank-prefix' is non-nil, insert that prefix on each line."
 ;; a dead duck... We MUST re-load it certainly.
 (load-library "poe-18")
 
-(provide 'wl-nemacs)
+(require 'product)
+(product-provide (provide 'wl-nemacs) (require 'wl-version))
 
 ;;; wl-nemacs.el ends here

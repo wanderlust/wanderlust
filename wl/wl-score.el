@@ -34,7 +34,7 @@
 (require 'wl-vars)
 (require 'wl-util)
 (eval-when-compile
-  (provide 'elmo-msgdb))
+  (require 'elmo-msgdb))		; for inline functions
 
 (defvar wl-score-edit-header-char
   '((?a "from" nil string)
@@ -104,10 +104,8 @@
 (defvar wl-score-edit-exit-func nil
   "Function run on exit from the score buffer.")
 
-(mapcar
- (function make-variable-buffer-local)
- (list 'wl-current-score-file
-       'wl-score-alist))
+(make-variable-buffer-local 'wl-current-score-file)
+(make-variable-buffer-local 'wl-score-alist)
 
 ;; Utility functions
 
@@ -118,18 +116,17 @@ It is assumed to be a single-line subject.
 Whitespace is generally cleaned up, and miscellaneous leading/trailing
 matter is removed.  Additional things can be deleted by setting
 wl-score-simplify-fuzzy-regexp."
-  (let ((case-fold-search t)
-	(modified-tick))
+  (let ((regexp
+	 (if (listp wl-score-simplify-fuzzy-regexp)
+	     (mapconcat (function identity) wl-score-simplify-fuzzy-regexp
+			"\\|")
+	   wl-score-simplify-fuzzy-regexp))
+	(case-fold-search t)
+	modified-tick)
     (elmo-buffer-replace "\t" " ")
     (while (not (eq modified-tick (buffer-modified-tick)))
       (setq modified-tick (buffer-modified-tick))
-      (cond
-       ((listp wl-score-simplify-fuzzy-regexp)
-	(mapcar 'elmo-buffer-replace
-		wl-score-simplify-fuzzy-regexp))
-       (wl-score-simplify-fuzzy-regexp
-	(elmo-buffer-replace
-	 wl-score-simplify-fuzzy-regexp)))
+      (elmo-buffer-replace regexp)
       (elmo-buffer-replace "^ *\\[[-+?*!][-+?*!]\\] *")
       (elmo-buffer-replace
        "^ *\\(re\\|fw\\|fwd\\|forward\\)[[{(^0-9]*[])}]?[:;] *")
@@ -150,15 +147,14 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 
 (defun wl-score-simplify-subject (subject)
   (elmo-set-work-buf
-   (let ((case-fold-search t))
+   (let ((regexp
+	  (if (listp wl-score-simplify-fuzzy-regexp)
+	      (mapconcat (function identity) wl-score-simplify-fuzzy-regexp
+			 "\\|")
+	    wl-score-simplify-fuzzy-regexp))
+	 (case-fold-search t))
      (insert subject)
-     (cond
-      ((listp wl-score-simplify-fuzzy-regexp)
-       (mapcar 'elmo-buffer-replace
-	       wl-score-simplify-fuzzy-regexp))
-      (wl-score-simplify-fuzzy-regexp
-       (elmo-buffer-replace
-	wl-score-simplify-fuzzy-regexp)))
+     (elmo-buffer-replace regexp)
      (elmo-buffer-replace
       "^[ \t]*\\(re\\|was\\|fw\\|fwd\\|forward\\)[:;][ \t]*")
      (buffer-string))))
@@ -338,7 +334,7 @@ See `wl-score-simplify-buffer-fuzzy' for details."
   (let* (score-list
          (spec (elmo-folder-get-spec folder))
          (method (symbol-name (car spec)))
-         (fld-name (car (cdr spec))))
+         (fld-name (elmo-string (car (cdr spec)))))
     (when (stringp fld-name)
       (while (string-match "[\\/:,;*?\"<>|]" fld-name)
         (setq fld-name (replace-match "." t nil fld-name)))
@@ -388,12 +384,13 @@ See `wl-score-simplify-buffer-fuzzy' for details."
       (let ((mark (car (wl-score-get 'mark alist)))
 	    (expunge (car (wl-score-get 'expunge alist)))
 	    (mark-and-expunge (car (wl-score-get 'mark-and-expunge alist)))
-	    (temp (car (wl-score-get 'temp alist)))
+	    (temp (car (wl-score-get 'temp alist))) ; obsolate
+	    (target (car (wl-score-get 'target alist)))
 	    (important (car (wl-score-get 'important alist))))
 	(setq wl-summary-important-above
 	      (or important wl-summary-important-above))
-	(setq wl-summary-temp-above
-	      (or temp wl-summary-temp-above))
+	(setq wl-summary-target-above
+	      (or target temp wl-summary-target-above))
 	(setq wl-summary-mark-below
 	      (or mark mark-and-expunge wl-summary-mark-below))
 	(setq wl-summary-expunge-below
@@ -465,9 +462,8 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 	(setq wl-scores-messages (cdr wl-scores-messages))))
     (message "Scoring...done")
     ;; Remove buffers.
-    (mapcar '(lambda (x) (elmo-kill-buffer x))
-    	    wl-score-header-buffer-list)
-    (setq wl-score-header-buffer-list nil)))
+    (while wl-score-header-buffer-list
+      (elmo-kill-buffer (pop wl-score-header-buffer-list)))))
 
 (defun wl-score-integer (scores header now expire)
   (let ((wl-score-index (nth 2 (assoc header wl-score-header-index)))
@@ -561,11 +557,6 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 	  (setq entries rest)))))
   nil)
 
-(defsubst wl-score-lines ()
-  (save-excursion
-    (beginning-of-line)
-    (count-lines 1 (point))))
-
 (defun wl-score-extra (scores header now expire)
   (let ((score-list scores)
 	entries alist extra extras)
@@ -583,17 +574,13 @@ See `wl-score-simplify-buffer-fuzzy' for details."
     nil))
 
 (defmacro wl-score-put-alike ()
-  (` (elmo-set-hash-val (format "#%d" (wl-score-lines))
+  (` (elmo-set-hash-val (format "#%d" (wl-count-lines))
 			alike
 			wl-score-alike-hashtb)))
-;;(push (cons (wl-score-lines) alike) wl-score-alike-alist)
-;;(put-text-property (1- (point)) (point) 'messages alike)
 
 (defmacro wl-score-get-alike ()
-  (` (elmo-get-hash-val (format "#%d" (wl-score-lines))
+  (` (elmo-get-hash-val (format "#%d" (wl-count-lines))
 			wl-score-alike-hashtb)))
-;;(cdr (assq (wl-score-lines) wl-score-alike-alist))
-;;(get-text-property (point) 'messages)))
 
 (defun wl-score-insert-header (header messages &optional extra-header)
   (let ((mime-decode (nth 3 (assoc header wl-score-header-index)))
@@ -1244,33 +1231,32 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 	       (wl-push num dels))
 	      ((< score wl-summary-mark-below)
 	       (if visible
-		   (wl-summary-mark-as-read
-		    t nil nil nil (elmo-use-cache-p folder num));; opened
+		   (wl-summary-mark-as-read t); opened
 		 (setq update-unread t)
-		 (wl-thread-msg-mark-as-read num)));; closed
+		 (wl-summary-mark-as-read t nil nil num))) ; closed
 	      ((and wl-summary-important-above
 		    (> score wl-summary-important-above))
 	       (if (wl-thread-jump-to-msg num);; force open
 		   (wl-summary-mark-as-important num " ")))
-	      ((and wl-summary-temp-above
-		    (> score wl-summary-temp-above))
+	      ((and wl-summary-target-above
+		    (> score wl-summary-target-above))
 	       (if visible
 		   (wl-summary-mark-line "*"))
 	       (setq wl-summary-buffer-target-mark-list
 		     (cons num wl-summary-buffer-target-mark-list))))
-	(setq i (1+ i))
-	(and (zerop (% i 10))
-	     (message "Updating score...%d%%" (/ (* i 100) count)))
-	(setq alist (cdr alist)))
+	(setq alist (cdr alist))
+	(when (> count elmo-display-progress-threshold)
+	  (setq i (1+ i))
+	  (elmo-display-progress
+	   'wl-summary-score-update-all-lines "Updating score..."
+	   (/ (* i 100) count))))
       (when dels
-;	(elmo-msgdb-delete-msgs wl-summary-buffer-folder-name
-;				dels wl-summary-buffer-msgdb t)
-	;; mark as read.
-	(setq mark-alist (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
-	(mapcar (function (lambda (x)
-			    (setq mark-alist
-				  (elmo-msgdb-mark-set mark-alist x nil))))
-		dels)
+	(setq mark-alist
+	      (elmo-msgdb-get-mark-alist wl-summary-buffer-msgdb))
+	(let ((marks dels))
+	  (while marks
+	    (setq mark-alist
+		  (elmo-msgdb-mark-set mark-alist (pop marks) nil))))
 	(elmo-mark-as-read wl-summary-buffer-folder-name
 			   dels wl-summary-buffer-msgdb)
 	(elmo-msgdb-set-mark-alist wl-summary-buffer-msgdb mark-alist)
@@ -1493,6 +1479,7 @@ Entering Score mode calls the value of `wl-score-mode-hook'."
 	(pp form (current-buffer)))
       (goto-char (point-min)))))
 
-(provide 'wl-score)
+(require 'product)
+(product-provide (provide 'wl-score) (require 'wl-version))
 
 ;;; wl-score.el ends here

@@ -202,11 +202,13 @@ If KBYTES is kilo bytes (This value must be float)."
 				    (lambda (x y)
 				      (< (cdr x)
 					 (cdr y))))))))
-      (setq i (+ i 1))
-      (elmo-display-progress
-       'elmo-cache-get-sorted-cache-file-list "Collecting cache info..."
-       (/ (* i 100) num))
+      (when (> num elmo-display-progress-threshold)
+	(setq i (+ i 1))
+	(elmo-display-progress
+	 'elmo-cache-get-sorted-cache-file-list "Collecting cache info..."
+	 (/ (* i 100) num)))
       (setq dirs (cdr dirs)))
+    (message "Collecting cache info...done.")
     ret-val))
 
 (defun elmo-cache-expire-by-age (&optional days)
@@ -281,25 +283,31 @@ If KBYTES is kilo bytes (This value must be float)."
 (defun elmo-cache-search-all (folder condition from-msgs)
   (let* ((number-alist (elmo-msgdb-number-load
 			(elmo-msgdb-expand-path folder)))
-	 (nalist number-alist)
+	 (number-list (or from-msgs (mapcar 'car number-alist)))
 	 (num (length number-alist))
 	 cache-file
 	 ret-val
 	 case-fold-search msg
 	 percent i)
     (setq i 0)
-    (while nalist
-      (if (and (setq cache-file (elmo-cache-exists-p (cdr (car nalist))
+    (while number-alist
+      (if (and (memq (car (car number-alist)) number-list)
+	       (setq cache-file (elmo-cache-exists-p (cdr (car
+							   number-alist))
 						     folder
-						     (car (car nalist))))
-	       (elmo-file-field-condition-match cache-file condition))
-	  (setq ret-val (append ret-val (list (caar nalist)))))
-      (setq i (1+ i))
-      (setq percent (/ (* i 100) num))
-      (elmo-display-progress
-       'elmo-cache-search-all "Searching..."
-       percent)
-      (setq nalist (cdr nalist)))
+						     (car (car
+							   number-alist))))
+	       (elmo-file-field-condition-match cache-file condition
+						(car (car number-alist))
+						number-list))
+	  (setq ret-val (append ret-val (list (caar number-alist)))))
+      (when (> num elmo-display-progress-threshold)
+	(setq i (1+ i))
+	(setq percent (/ (* i 100) num))
+	(elmo-display-progress
+	 'elmo-cache-search-all "Searching..."
+	 percent))
+      (setq number-alist (cdr number-alist)))
     ret-val))
 
 (defun elmo-cache-collect-sub-directories (init dir &optional recursively)
@@ -532,11 +540,12 @@ Returning its cache buffer."
 		     mark-alist
 		     num
 		     gmark))))
-	(setq i (1+ i))
-	(setq percent (/ (* i 100) len))
-	(elmo-display-progress
-	 'elmo-cache-msgdb-create-as-numlist "Creating msgdb..."
-	 percent)
+	(when (> len elmo-display-progress-threshold)
+	  (setq i (1+ i))
+	  (setq percent (/ (* i 100) len))
+	  (elmo-display-progress
+	   'elmo-cache-msgdb-create-as-numlist "Creating msgdb..."
+	   percent))
 	(setq numlist (cdr numlist)))
       (message "Creating msgdb...done.")
       (list overview number-alist mark-alist))))
@@ -651,7 +660,12 @@ Returning its cache buffer."
 		       msgs)))))
 
 (defun elmo-cache-list-folder (spec); called by elmo-cache-search()
-  (elmo-cache-list-folder-subr spec))
+  (let ((killed (and elmo-use-killed-list
+		     (elmo-msgdb-killed-list-load
+		      (elmo-msgdb-expand-path spec))))
+	numbers)
+    (setq numbers (elmo-cache-list-folder-subr spec))
+    (elmo-living-messages numbers killed)))
 
 (defun elmo-cache-max-of-folder (spec)
   (elmo-cache-list-folder-subr spec t))
@@ -682,12 +696,15 @@ Returning its cache buffer."
 	    (elmo-msgid-to-cache
 	     (cdr (assq (car msgs) number-alist)))
 	    (elmo-cache-get-folder-directory spec))
-					    condition)
+	   condition
+	   (car msgs)
+	   msgs)
 	  (setq ret-val (cons (car msgs) ret-val)))
-      (setq i (1+ i))
-      (elmo-display-progress
-       'elmo-cache-search "Searching..."
-       (/ (* i 100) num))
+      (when (> num elmo-display-progress-threshold)
+	(setq i (1+ i))
+	(elmo-display-progress
+	 'elmo-cache-search "Searching..."
+	 (/ (* i 100) num)))
       (setq msgs (cdr msgs)))
     (nreverse ret-val)))
 
@@ -699,7 +716,7 @@ Returning its cache buffer."
 	(next-num (1+ (car (elmo-cache-list-folder-subr dst-spec t))))
 	(number-alist
 	 (elmo-msgdb-number-load
-	  (elmo-msgdb-expand-path nil src-spec))))
+	  (elmo-msgdb-expand-path src-spec))))
     (if same-number (error "Not implemented"))
     (while msgs
       (elmo-copy-file
@@ -733,7 +750,9 @@ Returning its cache buffer."
 (defalias 'elmo-cache-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-cache-commit 'elmo-generic-commit)
+(defalias 'elmo-cache-folder-diff 'elmo-generic-folder-diff)
 
-(provide 'elmo-cache)
+(require 'product)
+(product-provide (provide 'elmo-cache) (require 'elmo-version))
 
 ;;; elmo-cache.el ends here

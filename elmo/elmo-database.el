@@ -68,6 +68,7 @@
 				    elmo-database-msgid-filename))))
     (and match (read match))))
 
-(provide 'elmo-database)
+(require 'product)
+(product-provide (provide 'elmo-database) (require 'elmo-version))
 
 ;;; elmo-database.el ends here

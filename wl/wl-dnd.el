@@ -29,7 +29,8 @@
 ;;; Code:
 ;; 
 
-(provide 'wl-dnd)
+(require 'product)
+(product-provide (provide 'wl-dnd) (require 'wl-version))
 
 (static-cond
  ((featurep 'offix)

@@ -116,7 +116,7 @@ This is most commonly `imput(impost)' or `inews-nifty4u'.")
 	(while (and (re-search-forward "\n\n\n*" delimline t)
 		    (< (point) delimline))
 	  (replace-match "\n"))
-	;; Find and handle any FCC fields. 
+	;; Find and handle any FCC fields.
 	;; 'cause imput can NOT handle `Fcc: %IMAP'.
 	(goto-char (point-min))
 	(if (re-search-forward "^FCC:" delimline t)

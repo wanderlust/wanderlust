@@ -126,7 +126,9 @@
 (defalias 'elmo-localnews-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-localnews-commit 'elmo-generic-commit)
+(defalias 'elmo-localnews-folder-diff 'elmo-generic-folder-diff)
 
-(provide 'elmo-localnews)
+(require 'product)
+(product-provide (provide 'elmo-localnews) (require 'elmo-version))
 
 ;;; elmo-localnews.el ends here

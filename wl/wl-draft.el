@@ -32,31 +32,24 @@
 (require 'sendmail)
 (require 'wl-template)
 (require 'emu)
-(if (module-installed-p 'timezone)
-    (require 'timezone))
+(condition-case nil (require 'timezone) (error nil))
 (require 'std11)
 (require 'wl-vars)
 
+(defvar x-face-add-x-face-version-header)
+(defvar mail-reply-buffer)
+(defvar mail-from-style)
+(defvar smtp-authenticate-type)
+(defvar smtp-authenticate-user)
+(defvar smtp-authenticate-passphrase)
+(defvar smtp-connection-type)
+
 (eval-when-compile
-  (require 'smtp)
   (require 'elmo-pop3)
-  (mapcar
-   (function
-    (lambda (symbol)
-      (unless (boundp symbol)
-	(set (make-local-variable symbol) nil))))
-   '(x-face-add-x-face-version-header
-     mail-reply-buffer
-     mail-from-style
-     smtp-authenticate-type
-     smtp-authenticate-user
-     smtp-authenticate-passphrase
-     smtp-connection-type
-     ))
-  (defun-maybe x-face-insert (a))
-  (defun-maybe x-face-insert-version-header ())
-  (defun-maybe wl-init (&optional a))
-  (defun-maybe wl-draft-mode ()))
+  (defalias-maybe 'x-face-insert 'ignore)
+  (defalias-maybe 'x-face-insert-version-header 'ignore)
+  (defalias-maybe 'wl-init 'ignore)
+  (defalias-maybe 'wl-draft-mode 'ignore))
 
 (defvar wl-draft-buf-name "Draft")
 (defvar wl-caesar-region-func nil)
@@ -263,69 +256,101 @@ the `wl-smtp-features' variable."
 	cc))))
 
 (defun wl-draft-forward (original-subject summary-buf)
-  (wl-draft "" (concat "Forward: " original-subject)
-	    nil nil nil nil nil nil nil nil summary-buf)
+  (let (references)
+    (with-current-buffer (wl-message-get-original-buffer)
+      (setq references (nconc
+			(std11-field-bodies '("References" "In-Reply-To"))
+			(list (std11-field-body "Message-Id"))))
+      (setq references (delq nil references)
+	    references (mapconcat 'identity references " ")
+	    references (wl-draft-parse-msg-id-list-string references)
+	    references (wl-delete-duplicates references)
+	    references (if references
+			   (mapconcat 'identity references "\n\t"))))
+    (wl-draft "" (concat "Forward: " original-subject)
+	      nil nil references nil nil nil nil nil nil summary-buf))
   (goto-char (point-max))
   (wl-draft-insert-message)
   (mail-position-on-field "To"))
 
 (defun wl-draft-reply (buf no-arg summary-buf)
 ;  (save-excursion
-  (let ((r-list (if no-arg wl-draft-reply-without-argument-list
-		  wl-draft-reply-with-argument-list))
+  (let (r-list
+	(eword-lexical-analyzer '(eword-analyze-quoted-string
+				  eword-analyze-domain-literal
+				  eword-analyze-comment
+				  eword-analyze-spaces
+				  eword-analyze-special
+				  eword-analyze-encoded-word
+				  eword-analyze-atom))
 	to mail-followup-to cc subject in-reply-to references newsgroups
-	from)
+	from addr-alist)
     (set-buffer buf)
-    (if (wl-address-user-mail-address-p
-	 (setq from
-	       (wl-address-header-extract-address (std11-field-body "From"))))
-	(setq to (mapconcat 'identity (elmo-multiple-field-body "To") ",")
-	      cc (mapconcat 'identity (elmo-multiple-field-body "Cc") ",")
-	      newsgroups (or (std11-field-body "Newsgroups") ""))
-      (catch 'done
-	(while r-list
-	  (when (let ((condition (car (car r-list))))
-		  (cond ((stringp condition)
-			 (std11-field-body condition))
-			((listp condition)
-			 (catch 'done
-			   (while condition
-			     (if (not (std11-field-body (car condition)))
-				 (throw 'done nil))
-			     (setq condition (cdr condition)))
-			   t))
-			((symbolp condition)
-			 (funcall condition))))
-	    (let ((r-to-list (nth 0 (cdr (car r-list))))
-		  (r-cc-list (nth 1 (cdr (car r-list))))
-		  (r-ng-list (nth 2 (cdr (car r-list)))))
-	      (when (and (member "Followup-To" r-ng-list)
-			 (string= (std11-field-body "Followup-To") "poster"))
-		(setq r-to-list (cons "From" r-to-list))
-		(setq r-ng-list (delete "Followup-To" (copy-sequence r-ng-list))))
-	      (setq to (wl-concat-list (cons to
-					     (elmo-multiple-fields-body-list
-					      r-to-list))
-				       ","))
-	      (setq cc (wl-concat-list (cons cc
-					     (elmo-multiple-fields-body-list
-					      r-cc-list))
-				       ","))
-	      (setq newsgroups (wl-concat-list (cons newsgroups
-						     (std11-field-bodies
-						      r-ng-list))
-					       ",")))
-	    (throw 'done nil))
-	  (setq r-list (cdr r-list)))
-	(error "No match field: check your `wl-draft-reply-without-argument-list'")))
+    (setq from (wl-address-header-extract-address (std11-field-body "From")))
+    (setq r-list 
+	  (if (wl-address-user-mail-address-p from)
+	      (if no-arg wl-draft-reply-myself-without-argument-list
+		wl-draft-reply-myself-with-argument-list)
+	    (if no-arg wl-draft-reply-without-argument-list
+	      wl-draft-reply-with-argument-list)))
+    (catch 'done
+      (while r-list
+	(when (let ((condition (car (car r-list))))
+		(cond ((stringp condition)
+		       (std11-field-body condition))
+		      ((listp condition)
+		       (catch 'done
+			 (while condition
+			   (if (not (std11-field-body (car condition)))
+			       (throw 'done nil))
+			   (setq condition (cdr condition)))
+			 t))
+		      ((symbolp condition)
+		       (funcall condition))))
+	  (let ((r-to-list (nth 0 (cdr (car r-list))))
+		(r-cc-list (nth 1 (cdr (car r-list))))
+		(r-ng-list (nth 2 (cdr (car r-list)))))
+	    (when (and (member "Followup-To" r-ng-list)
+		       (string= (std11-field-body "Followup-To") "poster"))
+	      (setq r-to-list (cons "From" r-to-list))
+	      (setq r-ng-list (delete "Followup-To" (copy-sequence r-ng-list))))
+	    (setq to (wl-concat-list (cons to
+					   (elmo-multiple-fields-body-list
+					    r-to-list))
+				     ","))
+	    (setq cc (wl-concat-list (cons cc
+					   (elmo-multiple-fields-body-list
+					    r-cc-list))
+				     ","))
+	    (setq newsgroups (wl-concat-list (cons newsgroups
+						   (std11-field-bodies
+						    r-ng-list))
+					     ",")))
+	  (throw 'done nil))
+	(setq r-list (cdr r-list)))
+      (error "No match field: check your `wl-draft-reply-without-argument-list'"))
     (setq subject (std11-field-body "Subject"))
-    (with-temp-buffer ; to keep raw buffer unibyte.
+    (setq to (wl-parse-addresses to)
+	  cc (wl-parse-addresses cc))
+    (with-temp-buffer			; to keep raw buffer unibyte.
       (elmo-set-buffer-multibyte default-enable-multibyte-characters)
       (setq subject (or (and subject
 			     (eword-decode-string
 			      (decode-mime-charset-string
 			       subject
-			       wl-mime-charset))))))
+			       wl-mime-charset)))))
+      (if wl-draft-reply-use-address-with-full-name
+	  (setq addr-alist
+		(mapcar
+		 '(lambda (addr)
+		    (setq addr (eword-extract-address-components addr))
+		    (cons (nth 1 addr)
+			  (if (nth 0 addr)
+			      (concat
+			       (wl-address-quote-specials (nth 0 addr))
+			       " <" (nth 1 addr) ">")
+			    (nth 1 addr))))
+		 (append to cc)))))
     (and subject wl-reply-subject-prefix
 	 (let ((case-fold-search t))
 	   (not
@@ -334,16 +359,10 @@ the `wl-smtp-features' variable."
 			   subject)
 	     0)))
 	 (setq subject (concat wl-reply-subject-prefix subject)))
-    (and (setq in-reply-to (std11-field-body "Message-Id"))
-	 (setq in-reply-to
-	       (format "In your message of \"%s\"\n\t%s"
-		       (or (std11-field-body "Date") "some time ago")
-		       in-reply-to)))
+    (setq in-reply-to (std11-field-body "Message-Id"))
     (setq references (nconc
 		      (std11-field-bodies '("References" "In-Reply-To"))
 		      (list in-reply-to)))
-    (setq to (wl-parse-addresses to)
-	  cc (wl-parse-addresses cc))
     (setq to (mapcar '(lambda (addr)
 			(wl-address-header-extract-address
 			 addr)) to))
@@ -369,29 +388,67 @@ the `wl-smtp-features' variable."
 	      (append (wl-delete-duplicates cc nil t)
 		      to (copy-sequence to))
 	      t t))
-    (and to (setq to (mapconcat 'identity to ",\n\t")))
-    (and cc (setq cc (mapconcat 'identity cc ",\n\t")))
-    (and mail-followup-to (setq mail-followup-to
-				(mapconcat 'identity
-					   mail-followup-to ",\n\t")))
+    (and to (setq to (mapconcat
+		      '(lambda (addr)
+			 (if wl-draft-reply-use-address-with-full-name
+			     (or (cdr (assoc addr addr-alist)) addr)
+			   addr))
+		      to ",\n\t")))
+    (and cc (setq cc (mapconcat
+		      '(lambda (addr)
+			 (if wl-draft-reply-use-address-with-full-name
+			     (or (cdr (assoc addr addr-alist)) addr)
+			   addr))
+		      cc ",\n\t")))
+    (and mail-followup-to
+	 (setq mail-followup-to
+	       (mapconcat
+		'(lambda (addr)
+		   (if wl-draft-reply-use-address-with-full-name
+		       (or (cdr (assoc addr addr-alist)) addr)
+		     addr))
+		mail-followup-to ",\n\t")))
     (and (null to) (setq to cc cc nil))
     (setq references (delq nil references)
 	  references (mapconcat 'identity references " ")
-	  references (wl-parse references "[^<]*\\(<[^>]+>\\)")
+	  references (wl-draft-parse-msg-id-list-string references)
 	  references (wl-delete-duplicates references)
 	  references (if references
 			 (mapconcat 'identity references "\n\t")))
     (wl-draft
      to subject in-reply-to cc references newsgroups mail-followup-to
-     nil nil nil summary-buf)
+     nil nil nil nil summary-buf)
     (setq wl-draft-reply-buffer buf))
   (run-hooks 'wl-reply-hook))
+
+(defun wl-draft-add-references ()
+  (let* ((mes-id (save-excursion
+                   (set-buffer mail-reply-buffer)
+                   (std11-field-body "message-id")))
+         (ref (std11-field-body "References"))
+         (ref-list nil) (st nil))
+    (when (and mes-id ref)
+      (while (string-match "<[^>]+>" ref st)
+        (setq ref-list
+              (cons (substring ref (match-beginning 0) (setq st (match-end 0)))
+                    ref-list)))
+      (if (and ref-list
+               (member mes-id ref-list))
+          (setq mes-id nil)))
+    (when mes-id
+      (save-excursion
+        (when (mail-position-on-field "References")
+          (forward-line)
+          (while (looking-at "^[ \t]")
+            (forward-line))
+          (setq mes-id (concat "\t" mes-id "\n")))
+        (insert mes-id))
+      t)))
 
 (defun wl-draft-yank-from-mail-reply-buffer (decode-it
 					     &optional ignored-fields)
   (interactive)
   (save-restriction
-    (current-buffer)
     (narrow-to-region (point)(point))
     (insert
      (save-excursion
@@ -413,6 +470,10 @@ the `wl-smtp-features' variable."
 	  (t (and wl-draft-cite-func
 		  (funcall wl-draft-cite-func)))) ; default cite
     (run-hooks 'wl-draft-cited-hook)
+    (and wl-draft-add-references
+	 (if (wl-draft-add-references)
+	     (let (wl-highlight-x-face-func)
+	       (wl-highlight-headers))))
     (if wl-highlight-body-too
 	(wl-highlight-body-region beg (point-max)))))
 
@@ -449,7 +510,7 @@ the `wl-smtp-features' variable."
   (let ((cur-buf (current-buffer))
 	(tmp-buf (get-buffer-create " *wl-draft-edit-string*"))
 	to subject in-reply-to cc references newsgroups mail-followup-to
-	content-type
+	content-type content-transfer-encoding
 	body-beg buffer-read-only
 	)
     (set-buffer tmp-buf)
@@ -478,6 +539,7 @@ the `wl-smtp-features' variable."
     (setq newsgroups (std11-field-body "Newsgroups"))
     (setq mail-followup-to (std11-field-body "Mail-Followup-To"))
     (setq content-type (std11-field-body "Content-Type"))
+    (setq content-transfer-encoding (std11-field-body "Content-Transfer-Encoding"))
     (goto-char (point-min))
     (or (re-search-forward "\n\n" nil t)
 	(search-forward (concat mail-header-separator "\n") nil t))
@@ -485,7 +547,7 @@ the `wl-smtp-features' variable."
 	(set-buffer
 	 (wl-draft to subject in-reply-to cc references newsgroups
 		   mail-followup-to
-		   content-type
+		   content-type content-transfer-encoding
 		   (buffer-substring (point) (point-max))
 		   'edit-again
 		   ))
@@ -493,13 +555,13 @@ the `wl-smtp-features' variable."
       (delete-other-windows)
       (kill-buffer tmp-buf)))
   (setq buffer-read-only nil) ;;??
-  (run-hooks 'wl-mail-setup-hook))
+  (run-hooks 'wl-draft-reedit-hook))
 
 (defun wl-draft-insert-current-message (dummy)
   (interactive)
   (let ((mail-reply-buffer (wl-message-get-original-buffer))
 	mail-citation-hook mail-yank-hooks
-	wl-draft-cite-func)
+	wl-draft-add-references wl-draft-cite-func)
     (if (eq 0
 	    (save-excursion
 	      (set-buffer mail-reply-buffer)
@@ -753,6 +815,91 @@ to find out how to use this."
 	;; should never happen
 	(t   (error "qmail-inject reported unknown failure"))))))
 
+(defun wl-draft-parse-msg-id-list-string (string)
+  "Get msg-id list from STRING."
+  (let ((parsed (std11-parse-msg-ids-string string))
+	tokens msg-id msg-id-list)
+    (while parsed
+      (setq msg-id nil)
+      (when (eq (car (car parsed)) 'msg-id)
+	(setq tokens (cdr (car parsed)))
+	(while tokens
+	  (if (or (eq (car (car tokens)) 'atom)
+		  (eq (car (car tokens)) 'specials))
+	      (setq msg-id (concat msg-id (cdr (car tokens)))))
+	  (setq tokens (cdr tokens))))
+      (if msg-id (setq msg-id-list (cons (concat "<" msg-id ">")
+					 msg-id-list)))
+      (setq parsed (cdr parsed)))
+    (nreverse msg-id-list)))
+
+(defun wl-draft-parse-mailbox-list (field &optional remove-group-list)
+  "Get mailbox list of FIELD from current buffer.
+The buffer is expected to be narrowed to just the headers of the message.
+If optional argument REMOVE-GROUP-LIST is non-nil, remove group list content
+from current buffer."
+  (save-excursion
+    (let ((case-fold-search t)
+	  (inhibit-read-only t)
+	  addresses address
+	  mailbox-list beg seq has-group-list)
+      (goto-char (point-min))
+      (while (re-search-forward (concat "^" (regexp-quote field) "[\t ]*:")
+				nil t)
+	(setq beg (point))
+	(re-search-forward "^[^ \t]" nil 'move)
+	(beginning-of-line)
+	(skip-chars-backward "\n")
+	(setq seq (std11-lexical-analyze
+		   (buffer-substring-no-properties beg (point))))
+	(setq addresses (std11-parse-addresses seq))
+	(while addresses
+	  (cond ((eq (car (car addresses)) 'group)
+		 (setq has-group-list t)
+		 (setq mailbox-list
+		       (nconc mailbox-list
+			      (mapcar
+			       'std11-address-string
+			       (nth 2 (car addresses))))))
+		((eq (car (car addresses)) 'mailbox)
+		 (setq address (nth 1 (car addresses)))
+		 (setq mailbox-list
+		       (nconc mailbox-list
+			      (list
+			       (std11-addr-to-string
+				(if (eq (car address) 'phrase-route-addr)
+				    (nth 2 address)
+				  (cdr address))))))))
+	  (setq addresses (cdr addresses)))
+	(when (and remove-group-list has-group-list)
+	  (delete-region beg (point))
+	  (insert " " (wl-address-string-without-group-list-contents seq))))
+      mailbox-list)))
+
+(defun wl-draft-deduce-address-list (buffer header-start header-end)
+  "Get address list suitable for smtp RCPT TO:<address>.
+Group list content is removed if `wl-draft-remove-group-list-contents' is
+non-nil."
+  (let ((fields        '("to" "cc" "bcc"))
+	(resent-fields '("resent-to" "resent-cc" "resent-bcc"))
+	(case-fold-search t)
+	addrs recipients)
+    (save-excursion
+      (save-restriction
+	(narrow-to-region header-start header-end)
+	(goto-char (point-min))
+	(save-excursion
+	  (if (re-search-forward "^resent-to[\t ]*:" nil t)
+	      (setq fields resent-fields)))
+	(while fields
+	  (setq recipients
+		(nconc recipients
+		       (wl-draft-parse-mailbox-list
+			(car fields)
+			wl-draft-remove-group-list-contents)))
+	  (setq fields (cdr fields)))
+	recipients))))
+
 ;;
 ;; from Semi-gnus
 ;;
@@ -772,21 +919,32 @@ to find out how to use this."
 		       (concat "^" (regexp-quote mail-header-separator)
 			       "$\\|^$") nil t)
 		      (point-marker)))
-	 (recipients (smtp-deduce-address-list (current-buffer)
-					       (point-min) delimline))
-	 (smtp-server (or wl-smtp-posting-server
-			  (if (functionp smtp-server)
-			      (funcall smtp-server sender
-				       recipients)
-			    (or smtp-server "localhost"))))
+	 (smtp-server
+	  (or wl-smtp-posting-server
+	      ;; Compatibility stuff for FLIM 1.12.5 or earlier.
+	      ;; They don't accept a function as the value of `smtp-server'.
+	      (if (functionp smtp-server)
+		  (funcall
+		   smtp-server
+		   sender
+		   ;; no harm..
+		   (let (wl-draft-remove-group-list-contents)
+		     (wl-draft-deduce-address-list
+		      (current-buffer) (point-min) delimline)))
+		(or smtp-server "localhost"))))
 	 (smtp-service (or wl-smtp-posting-port smtp-service))
 	 (smtp-local-domain (or smtp-local-domain wl-local-domain))
-	 (id (std11-field-body "message-id")))
+	 (id (std11-field-body "message-id"))
+	 recipients)
     (if (not (elmo-plugged-p smtp-server smtp-service))
 	(wl-draft-set-sent-message 'mail 'unplugged
 				   (cons smtp-server smtp-service))
       (unwind-protect
 	  (save-excursion
+	    ;; Instead of `smtp-deduce-address-list'.
+	    (setq recipients (wl-draft-deduce-address-list
+			      (current-buffer) (point-min) delimline))
+	    (unless recipients (error "No recipients"))
 	    ;; Insert an extra newline if we need it to work around
 	    ;; Sun's bug that swallows newlines.
 	    (goto-char (1+ delimline))
@@ -819,7 +977,7 @@ to find out how to use this."
   "Send the prepared message buffer with POP-before-SMTP."
   (require 'elmo-pop3)
   (condition-case ()
-      (elmo-pop3-get-connection
+      (elmo-pop3-get-session
        (list 'pop3
 	     (or wl-pop-before-smtp-user
 		 elmo-default-pop3-user)
@@ -829,8 +987,8 @@ to find out how to use this."
 		 elmo-default-pop3-server)
 	     (or wl-pop-before-smtp-port
 		 elmo-default-pop3-port)
-	     (or wl-pop-before-smtp-ssl
-		 elmo-default-pop3-ssl)))
+	     (or wl-pop-before-smtp-stream-type
+		 elmo-default-pop3-stream-type)))
     (error))
   (wl-draft-send-mail-with-smtp))
 
@@ -897,9 +1055,14 @@ to find out how to use this."
 	     (unplugged-via (car status))
 	     (sent-via (nth 1 status)))
 	;; If one sent, process fcc folder.
-	(when (and sent-via wl-draft-fcc-list)
-	  (wl-draft-do-fcc (wl-draft-get-header-delimiter) wl-draft-fcc-list)
-	  (setq wl-draft-fcc-list nil))
+	(if (and sent-via wl-draft-fcc-list)
+	    (progn
+	      (wl-draft-do-fcc (wl-draft-get-header-delimiter) wl-draft-fcc-list)
+	      (setq wl-draft-fcc-list nil))
+	  (if wl-draft-use-cache
+	      (let ((id (std11-field-body "Message-ID"))
+		    (elmo-enable-disconnected-operation t))
+		(elmo-cache-save id nil nil nil))))
 	;; If one unplugged, append queue.
 	(when (and unplugged-via
 		   wl-sent-message-modified)
@@ -933,16 +1096,13 @@ to find out how to use this."
 (defun wl-draft-clone-local-variables ()
   (let ((locals (buffer-local-variables))
 	result)
-    (mapcar
-     (function
-      (lambda (local)
-	(when (and (consp local)
-		   (car local)
-		   (string-match
-		    wl-draft-clone-local-variable-regexp
-		    (symbol-name (car local))))
-	  (setq result (wl-append result (list (car local)))))))
-     locals)
+    (while locals
+      (when (and (consp (car locals))
+		 (car (car locals))
+		 (string-match wl-draft-clone-local-variable-regexp
+			       (symbol-name (car (car locals)))))
+	(wl-append result (list (car (car locals)))))
+      (setq locals (cdr locals)))
     result))
 
 (defun wl-draft-send (&optional kill-when-done mes-string)
@@ -1124,7 +1284,9 @@ If optional argument is non-nil, current draft buffer is killed"
 	      t
 	    (save-excursion
 	      (forward-line -1)
-	      (if (looking-at ".*,[ \t]?$") nil t)))
+	      (if (or (looking-at ".*,[ \t]?$")
+		      (looking-at "^[^ \t]+:[ \t]+.*:$")); group list name
+		  nil t)))
 	(let ((pos (point)))
 	  (save-excursion
 	    (beginning-of-line)
@@ -1139,7 +1301,7 @@ If optional argument is non-nil, current draft buffer is killed"
 ;;;###autoload
 (defun wl-draft (&optional to subject in-reply-to cc references newsgroups
 			   mail-followup-to
-			   content-type
+			   content-type content-transfer-encoding
 			   body edit-again summary-buf)
   "Write and send mail/news message with Wanderlust."
   (interactive)
@@ -1202,7 +1364,7 @@ If optional argument is non-nil, current draft buffer is killed"
     (if (or wl-bcc mail-self-blind)
 	(insert "Bcc: " (or wl-bcc (user-login-name)) "\n"))
     (if wl-fcc
-	(insert "FCC: " wl-fcc "\n"))
+	(insert "FCC: " (if (functionp wl-fcc) (funcall wl-fcc) wl-fcc) "\n"))
     (if wl-organization
 	(insert "Organization: " wl-organization "\n"))
     (and wl-auto-insert-x-face
@@ -1216,7 +1378,11 @@ If optional argument is non-nil, current draft buffer is killed"
 	(let (start)
 	  (setq start (point))
 	  (when content-type
-	    (insert "Content-type: " content-type "\n\n"))
+	    (insert "Content-type: " content-type "\n"))
+	  (when content-transfer-encoding
+	    (insert "Content-Transfer-encoding: " content-transfer-encoding "\n"))
+	  (if (or content-type content-transfer-encoding)
+	      (insert "\n"))
 	  (and body (insert body))
 	  (save-restriction
 	    (narrow-to-region start (point))
@@ -1269,8 +1435,8 @@ If optional argument is non-nil, current draft buffer is killed"
 	 (or wl-nntp-posting-server elmo-default-nntp-server))
 	(elmo-default-nntp-port
 	 (or wl-nntp-posting-port elmo-default-nntp-port))
-	(elmo-default-nntp-ssl
-	 (or wl-nntp-posting-ssl elmo-default-nntp-ssl)))
+	(elmo-default-nntp-stream-type
+	 (or wl-nntp-posting-stream-type elmo-default-nntp-stream-type)))
     (if (not (elmo-plugged-p elmo-default-nntp-server elmo-default-nntp-port))
  	(wl-draft-set-sent-message 'news 'unplugged
  				   (cons elmo-default-nntp-server
@@ -1291,15 +1457,13 @@ If optional argument is non-nil, current draft buffer is killed"
       (wl-draft-editor-mode)
       (insert-buffer editing-buffer)
       (message "")
-      (when local-variables
-	(mapcar
-	 (function
-	  (lambda (var)
-	    (make-local-variable var)
-	    (set var (save-excursion
-		       (set-buffer editing-buffer)
-		       (symbol-value var)))))
-	 local-variables))
+      (while local-variables
+	(make-local-variable (car local-variables))
+	(set (car local-variables)
+	     (save-excursion
+	       (set-buffer editing-buffer)
+	       (symbol-value (car local-variables))))
+	(setq local-variables (cdr local-variables)))
       (current-buffer))))
 
 (defun wl-draft-reedit (number)
@@ -1783,6 +1947,8 @@ Only support for TO, SUBJECT, and OTHER-HEADERS has been implemented.
 Support for CONTINUE, YANK-ACTION, and SEND-ACTIONS has not
 been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 
+  (unless (featurep 'wl)
+    (require 'wl))
   ;; protect these -- to and subject get bound at some point, so it looks
   ;; to be necessary to protect the values used w/in
   (let ((wl-user-agent-headers-and-body-alist other-headers)
@@ -1831,16 +1997,15 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
   (if wl-user-agent-compose-p
       (progn
 	;; insert headers
-	(let ((case-fold-search t))
-	  (mapcar
-	   (lambda (x)
-	     (let ((header-name (car x))
-		   (header-value (cdr x)))
-	       ;; skip body
-	       (if (not (string-match "^body$" header-name))
-		   (wl-user-agent-insert-header header-name header-value)
-		 t)))
-	   wl-user-agent-headers-and-body-alist))
+	(let ((headers wl-user-agent-headers-and-body-alist)
+	      (case-fold-search t))
+	  (while headers
+	    ;; skip body
+	    (if (not (string-match "^body$" (car (car headers))))
+		(wl-user-agent-insert-header
+		 (car (car headers)) (cdr (car headers)))
+	      t)
+	    (setq headers (cdr headers))))
 	;; highlight headers (from wl-draft in wl-draft.el)
 	(let (wl-highlight-x-face-func)
 	  (wl-highlight-headers))
@@ -1853,6 +2018,7 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 		   wl-user-agent-headers-and-body-alist 'ignore-case)))))
     t))
 
-(provide 'wl-draft)
+(require 'product)
+(product-provide (provide 'wl-draft) (require 'wl-version))
 
 ;;; wl-draft.el ends here

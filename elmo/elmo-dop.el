@@ -277,14 +277,16 @@ even an operation concerns the unplugged folder."
 		'(imap4 nntp pop3 filter pipe))
 	  (and (elmo-multi-p folder) (not (elmo-folder-local-p folder))))
       (if elmo-enable-disconnected-operation
-	  (let* ((number-alist (elmo-msgdb-number-load
-				(elmo-msgdb-expand-path folder)))
+	  (let* ((path (elmo-msgdb-expand-path folder))
+		 (number-alist (elmo-msgdb-number-load path))
 		 (number-list (mapcar 'car number-alist))
 		 (append-list (elmo-dop-append-list-load folder))
 		 (append-num (length append-list))
+		 (killed (and elmo-use-killed-list
+			      (elmo-msgdb-killed-list-load path)))
 		 alreadies
-		 (i 0)
-		 max-num)
+		 max-num
+		 (i 0))
 	    (while append-list
 	      (if (rassoc (car append-list) number-alist)
 		  (setq alreadies (append alreadies
@@ -299,7 +301,7 @@ even an operation concerns the unplugged folder."
 		    (append number-list
 			    (list (+ max-num i 1))))
 	      (setq i (+ 1 i)))
-	    number-list)
+	    (elmo-living-messages number-list killed))
 	(error "Unplugged"))
     ;; not imap4 folder...list folder
     (elmo-call-func folder "list-folder")))
@@ -313,10 +315,10 @@ even an operation concerns the unplugged folder."
 	matched)
     (if (eq (elmo-folder-get-type folder) 'imap4)
 	(progn
-	  (while append-list
-	    (if (setq matched (car (rassoc (car append-list) number-alist)))
-		(setq msgs (delete matched msgs)))
-	    (setq append-list (cdr append-list)))
+;;	  (while append-list
+;;	    (if (setq matched (car (rassoc (car append-list) number-alist)))
+;;		(setq msgs (delete matched msgs)))
+;;	    (setq append-list (cdr append-list)))
 	  (if msgs
 	      (elmo-dop-queue-append folder func-name msgs)))
       ;; maildir... XXX hard coding.....
@@ -377,7 +379,7 @@ even an operation concerns the unplugged folder."
     (when resume
       ;; Resume msgdb changed by elmo-dop-msgdb-create.
       (let* ((resumed-list (elmo-dop-append-list-load folder t))
-	     (number-alist (elmo-msgdb-number-load
+	     (number-alist (elmo-msgdb-number-load 
 			    (elmo-msgdb-expand-path folder)))
 	     (appendings append-list)
 	     pair dels)
@@ -388,22 +390,26 @@ even an operation concerns the unplugged folder."
 	  (setq appendings (cdr appendings)))
 	(elmo-dop-append-list-save folder resumed-list t)))
     (while appendings
-      (setq failure nil)
-      (setq file-string (elmo-get-file-string  ; message string
-			 (elmo-cache-get-path
-			  (car appendings))))
-      (when file-string
-	(condition-case ()
-	    (elmo-append-msg folder file-string (car appendings))
-	  (quit  (setq failure t))
-	  (error (setq failure t)))
-	(setq i (+ 1 i))
-	(message (format "Appending queued messages...%d" i))
-	(if failure
-	    (elmo-append-msg elmo-lost+found-folder
-			     file-string (car appendings))))
-      (elmo-dop-unlock-message (car appendings))
-      (setq appendings (cdr appendings)))
+      (let* ((seen-list (elmo-msgdb-seen-load 
+			 (elmo-msgdb-expand-path folder))))
+	(setq failure nil)
+	(setq file-string (elmo-get-file-string  ; message string
+			   (elmo-cache-get-path
+			    (car appendings))))
+	(when file-string
+	  (condition-case ()
+	      (elmo-append-msg folder file-string (car appendings) nil
+			       (not (member (car appendings) seen-list)))
+	    (quit  (setq failure t))
+	    (error (setq failure t)))
+	  (setq i (+ 1 i))
+	  (message (format "Appending queued messages...%d" i))
+	  (if failure
+	      (elmo-append-msg elmo-lost+found-folder
+			       file-string (car appendings) nil
+			       (not (member (car appendings) seen-list)))))
+	(elmo-dop-unlock-message (car appendings))
+	(setq appendings (cdr appendings))))
     ;; All pending append operation is flushed.
     (elmo-dop-append-list-save folder nil)
     (elmo-commit folder)
@@ -417,10 +423,11 @@ even an operation concerns the unplugged folder."
   (message "Appending queued messages...done."))
 
 (defun elmo-dop-folder-exists-p (folder)
-  (if (and elmo-enable-disconnected-operation
-	   (eq (elmo-folder-get-type folder) 'imap4))
-      (file-exists-p (elmo-msgdb-expand-path folder))
-    (elmo-call-func folder "folder-exists-p")))
+  (or (file-exists-p (elmo-msgdb-expand-path folder))
+      (if (and elmo-enable-disconnected-operation
+	       (eq (elmo-folder-get-type folder) 'imap4))
+	  (file-exists-p (elmo-msgdb-expand-path folder))
+	(elmo-call-func folder "folder-exists-p"))))
 
 (defun elmo-dop-create-folder (folder)
   (if (eq (elmo-folder-get-type folder) 'imap4)
@@ -537,11 +544,12 @@ even an operation concerns the unplugged folder."
 		      (setq mark-alist
 			    (elmo-msgdb-mark-append
 			     mark-alist (car numlist) gmark)))))
-	      (setq i (1+ i))
-	      (setq percent (/ (* i 100) num))
-	      (elmo-display-progress
-	       'elmo-dop-msgdb-create-as-numlist "Creating msgdb..."
-	       percent)
+	      (when (> num elmo-display-progress-threshold)
+		(setq i (1+ i))
+		(setq percent (/ (* i 100) num))
+		(elmo-display-progress
+		 'elmo-dop-msgdb-create-as-numlist "Creating msgdb..."
+		 percent))
 	      (setq numlist (cdr numlist)))
 	    (list overview number-alist mark-alist))
 	(error "Unplugged"))
@@ -549,6 +557,7 @@ even an operation concerns the unplugged folder."
     (elmo-call-func folder "msgdb-create" numlist new-mark already-mark
 		    seen-mark important-mark seen-list)))
 
-(provide 'elmo-dop)
+(require 'product)
+(product-provide (provide 'elmo-dop) (require 'elmo-version))
 
 ;;; elmo-dop.el ends here

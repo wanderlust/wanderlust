@@ -231,14 +231,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Scan Folder
 
-(defsubst elmo-archive-list-folder-subr (file type prefix &optional nonsort)
+(defsubst elmo-archive-list-folder-subr (spec &optional nonsort)
   "*Returns list of number-file(int, not string) in archive FILE.
 TYPE specifies the archiver's symbol."
-  (let* ((method (elmo-archive-get-method type 'ls))
+  (let* ((type (nth 2 spec))
+	 (prefix (nth 3 spec))
+         (file (elmo-archive-get-archive-name (nth 1 spec) type spec))
+	 (method (elmo-archive-get-method type 'ls))
 	 (args (list file))
 	 (file-regexp (format (elmo-archive-get-regexp type)
 			      (elmo-concat-path (regexp-quote prefix) "")))
-	 buf file-list header-end)
+	 (killed (and elmo-use-killed-list
+		      (elmo-msgdb-killed-list-load
+		       (elmo-msgdb-expand-path spec))))
+	 numbers buf file-list header-end)
     (when (file-exists-p file)
       (save-excursion
 	(set-buffer (setq buf (get-buffer-create " *ELMO ARCHIVE ls*")))
@@ -258,20 +264,18 @@ TYPE specifies the archiver's symbol."
 						  (match-string 1))))))
 	(kill-buffer buf)))
     (if nonsort
-	(cons (or (elmo-max-of-list file-list) 0) (length file-list))
-      (sort file-list '<))))
+	(cons (or (elmo-max-of-list file-list) 0)
+	      (if killed
+		  (- (length file-list) (length killed))
+		(length file-list)))
+      (setq numbers (sort file-list '<))
+      (elmo-living-messages numbers killed))))
 
 (defun elmo-archive-list-folder (spec)
-  (let* ((type (nth 2 spec))
-	 (prefix (nth 3 spec))
-	 (arc (elmo-archive-get-archive-name (nth 1 spec) type spec)))
-    (elmo-archive-list-folder-subr arc type prefix)))
+  (elmo-archive-list-folder-subr spec))
 
 (defun elmo-archive-max-of-folder (spec)
-  (let* ((type (nth 2 spec))
-	 (prefix (nth 3 spec))
-         (arc (elmo-archive-get-archive-name (nth 1 spec) type spec)))
-    (elmo-archive-list-folder-subr arc type prefix t)))
+  (elmo-archive-list-folder-subr spec t))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -297,7 +301,10 @@ TYPE specifies the archiver's symbol."
 	  (expand-file-name
 	   (concat folder suffix)
 	   elmo-archive-folder-path))
-      (if (and (not (find-file-name-handler dir 'copy-file)) ; dir is local.
+      (if (and (let ((handler (find-file-name-handler dir 'copy-file))) ; dir is local.
+		 (or (not handler)
+		     (if (featurep 'xemacs)
+			 (eq handler 'dired-handler-fn))))
 	       (or (not (file-exists-p dir))
 		   (file-directory-p dir)))
 	  (expand-file-name
@@ -309,7 +316,7 @@ TYPE specifies the archiver's symbol."
 	    (progn
 	      (setq filename (expand-file-name
 			      (concat elmo-archive-basename suffix)
-			      (setq dbdir (elmo-msgdb-expand-path nil spec))))
+			      (setq dbdir (elmo-msgdb-expand-path spec))))
 	      (if (file-directory-p dbdir)
 		  (); ok.
 		(if (file-exists-p dbdir)
@@ -356,7 +363,7 @@ TYPE specifies the archiver's symbol."
 (defun elmo-archive-create-file (archive type spec)
   (save-excursion
     (let* ((tmp-dir (directory-file-name
-		     (elmo-msgdb-expand-path nil spec)))
+		     (elmo-msgdb-expand-path spec)))
            (dummy elmo-archive-dummy-file)
            (method (or (elmo-archive-get-method type 'create)
 		       (elmo-archive-get-method type 'mv)))
@@ -473,7 +480,7 @@ TYPE specifies the archiver's symbol."
 	 (next-num (or msg
 		       (1+ (if (file-exists-p arc)
 			       (car (elmo-archive-max-of-folder spec)) 0))))
-	 (tmp-dir (elmo-msgdb-expand-path nil spec))
+	 (tmp-dir (elmo-msgdb-expand-path spec))
 	 newfile)
     (when (null method)
       (ding)
@@ -512,7 +519,7 @@ TYPE specifies the archiver's symbol."
 		(1+ (car (elmo-archive-max-of-folder dst-spec)))))
 	 (src-dir (elmo-localdir-get-folder-directory src-spec))
 	 (tmp-dir
-	  (file-name-as-directory (elmo-msgdb-expand-path nil dst-spec)))
+	  (file-name-as-directory (elmo-msgdb-expand-path dst-spec)))
 	 (do-link t)
 	 src tmp newfile tmp-msgs)
     (when (not (elmo-archive-folder-exists-p dst-spec))
@@ -576,7 +583,7 @@ TYPE specifies the archiver's symbol."
 	 (p-method (elmo-archive-get-method src-type 'ext-pipe))
 	 (n-method (elmo-archive-get-method src-type 'ext))
 	 (tmp-dir
-	  (file-name-as-directory (elmo-msgdb-expand-path nil src-spec)))
+	  (file-name-as-directory (elmo-msgdb-expand-path src-spec)))
 	 (tmp-msgs (mapcar '(lambda (x) (elmo-concat-path
 					 prefix
 					 (int-to-string x)))
@@ -833,11 +840,12 @@ TYPE specifies the archiver's symbol."
 		     mark-alist
 		     (elmo-msgdb-overview-entity-get-number entity)
 		     gmark))))
-	(setq i (1+ i))
-	(setq percent (/ (* i 100) num))
-	(elmo-display-progress
-	 'elmo-archive-msgdb-create-as-numlist-subr1 "Creating msgdb..."
-	 percent)
+	(when (> num elmo-display-progress-threshold)
+	  (setq i (1+ i))
+	  (setq percent (/ (* i 100) num))
+	  (elmo-display-progress
+	   'elmo-archive-msgdb-create-as-numlist-subr1 "Creating msgdb..."
+	   percent))
 	(setq numlist (cdr numlist)))
       (kill-buffer tmp-buf)
       (message "Creating msgdb...done.")
@@ -895,11 +903,12 @@ TYPE specifies the archiver's symbol."
 ;	(setq mark-alist (append mark-alist (nth 2 result))))
        (t			;; unknown format
 	(error "unknown format!")))
-      (setq i (+ n i))
-      (setq percent (/ (* i 100) num))
-      (elmo-display-progress
-       'elmo-archive-msgdb-create-as-numlist-subr2 "Creating msgdb..."
-       percent))
+      (when (> num elmo-display-progress-threshold)
+	(setq i (+ n i))
+	(setq percent (/ (* i 100) num))
+	(elmo-display-progress
+	 'elmo-archive-msgdb-create-as-numlist-subr2 "Creating msgdb..."
+	 percent)))
     (kill-buffer buf)
     (list overview number-alist mark-alist)) )
 
@@ -957,7 +966,8 @@ TYPE specifies the archiver's symbol."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Search functions
 
-(defsubst elmo-archive-field-condition-match (spec number condition prefix)
+(defsubst elmo-archive-field-condition-match (spec number number-list
+						   condition prefix)
   (save-excursion
     (let* ((type (nth 2 spec))
 	   (arc (elmo-archive-get-archive-name (nth 1 spec) type spec))
@@ -969,7 +979,7 @@ TYPE specifies the archiver's symbol."
 	  (elmo-archive-call-method method args t))
 	 (elmo-set-buffer-multibyte default-enable-multibyte-characters)
 	 (decode-mime-charset-region (point-min)(point-max) elmo-mime-charset)
-	 (elmo-buffer-field-condition-match condition))))))
+	 (elmo-buffer-field-condition-match condition number number-list))))))
 
 (defun elmo-archive-search (spec condition &optional from-msgs)
   (let* (;;(args (elmo-string-to-list key))
@@ -980,16 +990,18 @@ TYPE specifies the archiver's symbol."
 	 (num (length msgs))
 	 (i 0)
 	 (case-fold-search nil)
-	 ret-val)
+	 number-list ret-val)
+    (setq number-list msgs)
     (while msgs
-      (if (elmo-archive-field-condition-match spec (car msgs)
+      (if (elmo-archive-field-condition-match spec (car msgs) number-list
 					      condition
 					      (nth 3 spec))
 	  (setq ret-val (cons (car msgs) ret-val)))
-      (setq i (1+ i))
-      (elmo-display-progress
-       'elmo-archive-search "Searching..."
-       (/ (* i 100) num))
+      (when (> num elmo-display-progress-threshold)
+	(setq i (1+ i))
+	(elmo-display-progress
+	 'elmo-archive-search "Searching..."
+	 (/ (* i 100) num)))
       (setq msgs (cdr msgs)))
     (nreverse ret-val)))
 
@@ -1037,7 +1049,7 @@ TYPE specifies the archiver's symbol."
   nil)
 
 (defun elmo-archive-get-msg-filename (spec number &optional loc-alist)
-  (let ((tmp-dir (file-name-as-directory (elmo-msgdb-expand-path nil spec)))
+  (let ((tmp-dir (file-name-as-directory (elmo-msgdb-expand-path spec)))
 	(prefix (nth 3 spec)))
     (expand-file-name
      (elmo-concat-path prefix (int-to-string number))
@@ -1050,9 +1062,12 @@ TYPE specifies the archiver's symbol."
 (defalias 'elmo-archive-list-folder-important
   'elmo-generic-list-folder-important)
 (defalias 'elmo-archive-commit 'elmo-generic-commit)
+(defalias 'elmo-archive-folder-diff 'elmo-generic-folder-diff)
 
 ;;; End
 (run-hooks 'elmo-archive-load-hook)
-(provide 'elmo-archive)
+
+(require 'product)
+(product-provide (provide 'elmo-archive) (require 'elmo-version))
 
 ;;; elmo-archive.el ends here

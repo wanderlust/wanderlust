@@ -546,7 +546,7 @@ Refile to archive folder followed message date."
 			(t
 			 (error "%s: invalid type" rm-type))))
 	    (when (and (not notsummary) delete-list)
-	      (wl-summary-delete-messages-on-buffer delete-list)
+	      (wl-summary-delete-messages-on-buffer delete-list t)
 	      (wl-summary-folder-info-update)
 	      (wl-summary-set-message-modified)
 	      (wl-summary-set-mark-modified)
@@ -723,6 +723,7 @@ Refile to archive folder followed message date."
 	  (message (format "%s is not writable." filename)))
 	(kill-buffer tmp-buf)))))
 
-(provide 'wl-expire)
+(require 'product)
+(product-provide (provide 'wl-expire) (require 'wl-version))
 
 ;;; wl-expire.el ends here
