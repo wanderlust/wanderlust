@@ -224,8 +224,9 @@
     (let* ((pair (elmo-multi-real-folder-number folder key))
 	   (entity (elmo-message-entity (car pair) (cdr pair))))
       (when entity
-	(elmo-message-entity-set-number (elmo-message-copy-entity entity)
-					key))))
+	(setq entity (elmo-message-copy-entity entity))
+	(elmo-message-entity-set-number entity key)
+	entity)))
    ((stringp key)
     (let ((children (elmo-multi-folder-children-internal folder))
 	  (cur-number 0)

@@ -495,8 +495,7 @@ If each field is t, function is set as default converter."
 
 (luna-define-method elmo-msgdb-message-entity-set-number
   ((handler modb-legacy-entity-handler) entity number)
-  (and entity (aset (cdr entity) 0 number))
-  entity)
+  (and entity (aset (cdr entity) 0 number)))
 
 (luna-define-method elmo-msgdb-message-entity-field
   ((handler modb-legacy-entity-handler) entity field &optional type)

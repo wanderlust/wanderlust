@@ -1,3 +1,11 @@
+2005-03-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* modb-entity.el (elmo-msgdb-message-entity-set-number): Return
+	`number'.
+
+	* elmo-multi.el (elmo-message-entity): Don't use return value of
+	`elmo-message-entity-set-number'.
+
 2005-03-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb.el (modb-generic): Added slot `mime-charset'.
