@@ -871,7 +871,7 @@ return value is diffs '(-new -unread -all)."
        ((and (wl-folder-buffer-group-p)
 	     (looking-at wl-folder-group-regexp)) ;; group
 	(let* ((indent (wl-match-buffer 1))
-	       (old-group (wl-folder-get-realname (wl-match-buffer 3)))
+	       (old-group (wl-folder-get-entity-from-buffer))
 	       (group-entity (wl-folder-search-group-entity-by-name
 			      old-group wl-folder-entity))
 	       group)
@@ -1053,9 +1053,7 @@ return value is diffs '(-new -unread -all)."
 		 (looking-at wl-folder-group-regexp))
 	(setq indent (wl-match-buffer 1))
 	(setq opened (wl-match-buffer 2))
-	(setq entity (wl-folder-search-group-entity-by-name
-		      (wl-folder-get-realname (wl-match-buffer 3))
-		      wl-folder-entity))
+	(setq entity (wl-folder-get-entity-from-buffer))
 	(message "Sorting...")
 	(setq flist (sort (nth 2 entity) wl-fldmgr-sort-function))
 	(when arg (setq flist (nreverse flist)))
@@ -1196,9 +1194,7 @@ return value is diffs '(-new -unread -all)."
 	(looking-at wl-folder-group-regexp))
       (setq indent (wl-match-buffer 1))
       (setq opened (wl-match-buffer 2))
-      (setq entity (wl-folder-search-group-entity-by-name
-		    (wl-folder-get-realname (wl-match-buffer 3))
-		    wl-folder-entity))
+      (setq entity (wl-folder-get-entity-from-buffer))
       (when (eq (nth 1 entity) 'access)
 	(save-excursion
 	  (if (string= opened "-")
@@ -1310,10 +1306,8 @@ return value is diffs '(-new -unread -all)."
 		       "")
 		     "\n"))
 	    ((consp name)
-	     (let ((group (wl-folder-get-realname (car name)))
+	     (let ((group (car name))
 		   (type (nth 1 name)))
-	       (if (not (string= group (car name))) ; petname.
-		   (wl-append pet-entities (list (car name))))
 	       (cond ((eq type 'group)
 		      (insert indent group "{\n")
 		      (setq pet-entities

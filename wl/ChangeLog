@@ -1,3 +1,15 @@
+2003-03-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-fldmgr.el (wl-fldmgr-rename): Don't refer visible name.
+	(wl-fldmgr-sort,wl-fldmgr-access-display-all): Ditto.
+	* wl-folder.el (wl-folder-jump-to-current-entity)
+	(wl-folder-update-recursive-current-entity,wl-folder-next-unsync)
+	(wl-folder-open-folder-sub,wl-folder-open-all)
+	(wl-folder-write-current-folder): Ditto.
+	(wl-folder-insert-entity): Don't use petname for normal group.
+	* wl-fldmgr.el (wl-fldmgr-insert-folders-buffer): car of the name
+	is the real name.
+
 2003-03-06  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-draft.el (wl-draft-create-buffer): Add

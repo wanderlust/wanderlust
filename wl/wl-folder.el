@@ -619,7 +619,7 @@ Optional argument ARG is repeart count."
      ((and (wl-folder-buffer-group-p)
 	   (looking-at wl-folder-group-regexp))
       (save-excursion
-	(setq fname (wl-folder-get-realname (wl-match-buffer 3)))
+	(setq fname (wl-folder-get-entity-from-buffer))
 	(setq indent (wl-match-buffer 1))
 	(setq opened (wl-match-buffer 2))
 	(if (string= opened "+")
@@ -719,7 +719,7 @@ Optional argument ARG is repeart count."
 	(if entity ()
 	  (setq entity
 		(wl-folder-search-group-entity-by-name
-		 (wl-folder-get-realname (wl-match-buffer 3))
+		 (wl-folder-get-entity-from-buffer)
 		 wl-folder-entity)))
 	(let ((inhibit-read-only t)
 	      (entities (list entity))
@@ -1421,8 +1421,7 @@ If current line is group folder, all subfolders are marked."
 	    (if (or (wl-folder-buffer-group-p)
 		    (not plugged)
 		    (setq entity
-			  (wl-folder-get-realname
-			   (wl-folder-folder-name)))
+			  (wl-folder-get-entity-from-buffer))
 		    (elmo-folder-plugged-p entity))
 		(throw 'found t))))
 	(beginning-of-line)
@@ -1715,7 +1714,9 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 ;;;			   wl-folder-newsgroups-hashtb))))
 ;;;		(message "fetching folder entries...done"))
 	      (insert indent "[" (if as-opened "-" "+") "]"
-		      (wl-folder-get-petname (car entity)))
+		      (if (eq (cadr entity) 'access)
+			  (wl-folder-get-petname (car entity))
+			(car entity)))
 	      (setq group-name-end (point))
 	      (insert ":0/0/0\n")
 	      (wl-folder-put-folder-property
@@ -1762,7 +1763,9 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 		(wl-highlight-folder-current-line ret-val)))
 	  (setq ret-val (wl-folder-calc-finfo entity))
 	  (insert indent "[" (if as-opened "-" "+") "]"
-		  (wl-folder-get-petname (car entity))
+		  (if (eq (cadr entity) 'access)
+		      (wl-folder-get-petname (car entity))
+		    (car entity))
 		  (format ":%d/%d/%d"
 			  (or (nth 0 ret-val) 0)
 			  (or (nth 1 ret-val) 0)
@@ -2458,7 +2461,7 @@ Use `wl-subscribed-mailing-list'."
 		 (string= "+" (wl-match-buffer 2)));; closed group
 	    (save-excursion
 	      (setq indent (wl-match-buffer 1))
-	      (setq name (wl-folder-get-realname (wl-match-buffer 3)))
+	      (setq name (wl-folder-get-entity-from-buffer))
 	      (setq entity (wl-folder-search-group-entity-by-name
 			    name
 			    wl-folder-entity))
@@ -2517,7 +2520,7 @@ Use `wl-subscribed-mailing-list'."
 		"^\\([ ]*\\)\\[\\([+]\\)\\]\\(.+\\):[-0-9-]+/[0-9-]+/[0-9-]+\n"
 		nil t)
 	  (setq indent (wl-match-buffer 1))
-	  (setq name (wl-folder-get-realname (wl-match-buffer 3)))
+	  (setq name (wl-folder-get-entity-from-buffer))
 	  (setq entity (wl-folder-search-group-entity-by-name
 			name
 			wl-folder-entity))
@@ -2830,7 +2833,7 @@ Call `wl-summary-write-current-folder' with current folder name."
   (interactive)
   (unless (wl-folder-buffer-group-p)
     (wl-summary-write-current-folder
-     (wl-folder-get-realname (wl-folder-entity-name)))))
+     (wl-folder-get-entity-from-buffer))))
 
 (defun wl-folder-mimic-kill-buffer ()
   "Kill the current (Folder) buffer with query."
