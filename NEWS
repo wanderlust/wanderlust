@@ -83,6 +83,10 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** POP3 folder existence check is simplifyed (by default).
    The default value for elmo-pop3-exists-exactly is changed to nil.
 
+** POP3 response code extension defined in the RFC2449 is supported.
+   If a login failure occurred because of user's another POP3 session, 
+   entered password is not cleared and used in the future login.
+
 ** IMAP4 commands EXPUNGE and CHECK are now send asynchronously.
 
 ** Default value of wl-folder-hierarchy-access-folders has been changed.

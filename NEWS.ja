@@ -81,6 +81,10 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 ** POP3 フォルダの存在チェックのデフォルト挙動を簡略化
    elmo-pop3-exists-exactly のデフォルト値を nil にしました。
 
+** RFC2449 の POP3 拡張のレスポンスコードに対応しました。
+   他のセッションが使用中であるために認証に失敗したときには、パスワード
+   がクリアされなくなりました。
+
 ** IMAP4 において、EXPUNGE, CHECK コマンドを非同期で送信するようにしました。
 
 ** wl-folder-hierarchy-access-folders の初期値が変更されました。
