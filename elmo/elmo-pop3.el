@@ -309,7 +309,11 @@
 		      (sasl-step-data step) 'no-line-break))))))
     (catch 'done
       (while t
-	(setq response (elmo-pop3-read-response process t))
+	(unless (setq response (elmo-pop3-read-response process t))
+	  (signal 'elmo-authenticate-error
+		  (list (intern
+			 (concat "elmo-pop3-auth-"
+				 (downcase name))))))
 	(if (string-match "^\+OK" response)
 	    (if (sasl-next-step client step)
 		(signal 'elmo-authenticate-error
@@ -319,7 +323,8 @@
 	      (throw 'done nil)))
 	(sasl-step-set-data
 	 step
-	 (elmo-base64-decode-string response))
+	 (elmo-base64-decode-string 
+	  (cadr (split-string response " "))))
 	(setq step (sasl-next-step client step))
 	(elmo-pop3-send-command
 	 process

@@ -1,5 +1,10 @@
 2000-11-19  Kenichi OKADA  <okada@opaopa.org>
 
+	* elmo-pop3.el (elmo-network-authenticate-session): Split 
+	encoded response value.
+
+2000-11-19  Kenichi OKADA  <okada@opaopa.org>
+
 	* elmo-pop3.el (elmo-network-authenticate-session): Abolish
 	`elmo-pop3-force-login'.
 	Redefine `sasl-mechanisms'.
