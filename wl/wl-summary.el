@@ -36,10 +36,10 @@
 (require 'wl-highlight)
 (require 'wl-refile)
 (require 'wl-util)
-(require 'timezone nil 'noerror)
-(require 'easymenu nil 'noerror)
+(condition-case nil (require 'timezone) (error nil))
+(condition-case nil (require 'easymenu) (error nil))
 (require 'elmo-date)
-(require 'ps-print nil 'noerror)
+(condition-case nil (require 'ps-print) (error nil))
 
 (eval-when-compile
   (require 'cl)

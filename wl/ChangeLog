@@ -1,5 +1,12 @@
 2000-10-05  Katsumi Yamaoka    <yamaoka@jpl.org>
 
+	* wl-summary.el: Don't use the 3rd argument of `require' because
+	it might be ignored by some wrappers (e.g. jam-zcat, efs, etc.).
+	* wl-util.el: Ditto.
+	* wl-draft.el: Ditto.
+
+2000-10-05  Katsumi Yamaoka    <yamaoka@jpl.org>
+
 	* wl-demo.el (wl-demo): Don't pass by the XEmacs routine when
 	window system is not used.
 

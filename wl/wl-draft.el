@@ -32,7 +32,7 @@
 (require 'sendmail)
 (require 'wl-template)
 (require 'emu)
-(require 'timezone nil 'noerror)
+(condition-case nil (require 'timezone) (error nil))
 (require 'std11)
 (require 'wl-vars)
 

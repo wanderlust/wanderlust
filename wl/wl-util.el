@@ -33,8 +33,8 @@
 (eval-when-compile
   (require 'elmo-util))
 
-(require 'tm-edit nil 'noerror)
-(require 'pp nil 'noerror)
+(condition-case nil (require 'tm-edit) (error nil))
+(condition-case nil (require 'pp) (error nil))
 
 (defvar mule-version)
 (defvar nemacs-version)
