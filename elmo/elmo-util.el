@@ -807,13 +807,13 @@ the directory becomes empty after deletion."
   `(or (vectorp ,filter) (consp ,filter)))
 
 (defmacro elmo-filter-type (filter)
-  (` (aref (, filter) 0)))
+  `(aref ,filter 0))
 
 (defmacro elmo-filter-key (filter)
-  (` (aref (, filter) 1)))
+  `(aref ,filter 1))
 
 (defmacro elmo-filter-value (filter)
-  (` (aref (, filter) 2)))
+  `(aref ,filter 2))
 
 (defsubst elmo-buffer-field-primitive-condition-match (condition
 						       number
@@ -864,25 +864,6 @@ the directory becomes empty after deletion."
 	(setq result (not result)))
     result))
 
-(defun elmo-condition-in-msgdb-p-internal (condition fields)
-  (cond
-   ((vectorp condition)
-    (if (not (member (elmo-filter-key condition) fields))
-	(throw 'found t)))
-   ((or (eq (car condition) 'and)
-	(eq (car condition) 'or))
-    (elmo-condition-in-msgdb-p-internal (nth 1 condition) fields)
-    (elmo-condition-in-msgdb-p-internal (nth 2 condition) fields))))
-
-(defun elmo-condition-in-msgdb-p (condition)
-  (not (catch 'found
-	 (elmo-condition-in-msgdb-p-internal condition
-					     (append
-					      elmo-msgdb-extra-fields
-					      '("last" "first" "from"
-						"subject" "to" "cc" "since"
-						"before"))))))
-
 (defun elmo-buffer-field-condition-match (condition number number-list)
   (cond
    ((vectorp condition)
@@ -898,51 +879,6 @@ the directory becomes empty after deletion."
 	 (nth 1 condition) number number-list)
 	(elmo-buffer-field-condition-match
 	 (nth 2 condition) number number-list)))))
-
-(defsubst elmo-file-field-primitive-condition-match (file
-						     condition
-						     number
-						     number-list)
-  (let (result)
-    (goto-char (point-min))
-    (cond
-     ((string= (elmo-filter-key condition) "last")
-      (setq result (<= (length (memq number number-list))
-		       (string-to-int (elmo-filter-value condition))))
-      (if (eq (elmo-filter-type condition) 'unmatch)
-	  (setq result (not result))))
-     ((string= (elmo-filter-key condition) "first")
-      (setq result (< (- (length number-list)
-			 (length (memq number number-list)))
-		      (string-to-int (elmo-filter-value condition))))
-      (if (eq (elmo-filter-type condition) 'unmatch)
-	  (setq result (not result))))
-     (t
-      (elmo-set-work-buf
-       (as-binary-input-file (insert-file-contents file))
-       (set-buffer-multibyte default-enable-multibyte-characters)
-       ;; Should consider charset?
-       (decode-mime-charset-region (point-min)(point-max) elmo-mime-charset)
-       (setq result
-	     (elmo-buffer-field-primitive-condition-match
-	      condition number number-list)))))
-    result))
-
-(defun elmo-file-field-condition-match (file condition number number-list)
-  (cond
-   ((vectorp condition)
-    (elmo-file-field-primitive-condition-match
-     file condition number number-list))
-   ((eq (car condition) 'and)
-    (and (elmo-file-field-condition-match
-	  file (nth 1 condition) number number-list)
-	 (elmo-file-field-condition-match
-	  file (nth 2 condition) number number-list)))
-   ((eq (car condition) 'or)
-    (or (elmo-file-field-condition-match
-	 file (nth 1 condition) number number-list)
-	(elmo-file-field-condition-match
-	 file (nth 2 condition) number number-list)))))
 
 (defmacro elmo-get-hash-val (string hashtable)
   (static-if (fboundp 'unintern)

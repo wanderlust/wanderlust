@@ -323,13 +323,6 @@
     (rename-file old new)
     t))
 
-(defsubst elmo-localdir-field-condition-match (folder condition
-						      number number-list)
-  (elmo-file-field-condition-match
-   (expand-file-name (int-to-string number)
-		     (elmo-localdir-folder-directory-internal folder))
-   condition number number-list))
-
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-localdir-folder))
   (let* ((dir (elmo-localdir-folder-directory-internal folder))
 	 (msgdb (elmo-folder-msgdb folder))

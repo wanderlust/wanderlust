@@ -1,3 +1,12 @@
+2005-03-12  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-util.el (elmo-condition-in-msgdb-p-internal): Removed.
+	(elmo-condition-in-msgdb-p): Ditto.
+	(elmo-file-field-primitive-condition-match): Ditto.
+	(elmo-file-field-condition-match): Ditto.
+
+	* elmo-localdir.el (elmo-localdir-field-condition-match): Ditto.
+
 2005-03-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-flag.el (elmo-folder-list-subfolders): Don't list from
