@@ -1254,10 +1254,10 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   (let ((wl-interactive-send t))
     (wl-draft-send-and-exit)))
 
-(defun wl-draft-delete-field (field &optional delimline)
-  (wl-draft-delete-fields (regexp-quote field) delimline))
+(defun wl-draft-delete-field (field &optional delimline replace)
+  (wl-draft-delete-fields (regexp-quote field) delimline replace))
 
-(defun wl-draft-delete-fields (regexp &optional delimline)
+(defun wl-draft-delete-fields (regexp &optional delimline replace)
   (save-restriction
     (unless delimline
       (if (search-forward "\n\n" nil t)
@@ -1266,8 +1266,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (narrow-to-region (point-min) delimline)
     (goto-char (point-min))
     (let ((regexp (concat "^" regexp ":"))
-	  (case-fold-search t)
-	  last)
+	  (case-fold-search t))
       (while (not (eobp))
 	(if (looking-at regexp)
 	    (progn
@@ -1277,7 +1276,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		 (forward-line 1)
 		 (if (re-search-forward "^[^ \t]" nil t)
 		     (goto-char (match-beginning 0))
-		   (point-max)))))
+		   (point-max))))
+	      (if replace
+		  (insert (concat field ": " replace "\n"))))
 	  (forward-line 1)
 	  (if (re-search-forward "^[^ \t]" nil t)
 	      (goto-char (match-beginning 0))

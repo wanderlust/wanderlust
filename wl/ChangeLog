@@ -1,5 +1,10 @@
 2002-01-23  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-draft.el (wl-draft-delete-field): Optional argument.
+	(wl-draft-delete-fields): Ditto.
+
+2002-01-23  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-message.el (toplevel): Eliminated byte-compile warning.
 	for `itimer-function', `delete-timer' and `itimer-list'.
 
