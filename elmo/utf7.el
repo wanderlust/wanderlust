@@ -88,7 +88,8 @@
   (concat utf7-direct-encoding-chars "+\\~")
   "Character ranges which do not need escaping in the IMAP variant of UTF-7.")
 
-(defconst utf7-utf-16-coding-system (find-coding-system 'utf-16-be)
+(defconst utf7-utf-16-coding-system (and (fboundp 'find-coding-system)
+					 (find-coding-system 'utf-16-be))
   "Coding system which encodes big endian UTF-16.")
 
 (defsubst utf7-imap-get-pad-length (len modulus)

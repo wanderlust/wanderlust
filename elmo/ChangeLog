@@ -1,3 +1,8 @@
+2004-08-31  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* utf7.el (utf7-utf-16-coding-system): Avoid error when the
+	function find-coding-system does not exist.
+
 2004-08-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-util.el (elmo-condition-parse-search-value): Fixed atom
