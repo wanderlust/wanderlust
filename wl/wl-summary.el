@@ -6,9 +6,9 @@
 ;; Copyright 1999,2000      Kenichi OKADA  <okada@opaopa.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
-;;         Masahiro MURATA  <muse@ba2.so-net.ne.jp>
-;;         TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp>
-;;         Kenichi OKADA  <okada@opaopa.org>
+;;	Masahiro MURATA  <muse@ba2.so-net.ne.jp>
+;;	TSUMURA Tomoaki <tsumura@kuis.kyoto-u.ac.jp>
+;;	Kenichi OKADA  <okada@opaopa.org>
 ;; Keywords: mail, net news
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).

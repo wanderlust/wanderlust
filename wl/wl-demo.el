@@ -4,7 +4,7 @@
 ;; Copyright 2000 Katsumi Yamaoka <yamaoka@jpl.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
-;;         Katsumi Yamaoka <yamaoka@jpl.org>
+;;	Katsumi Yamaoka <yamaoka@jpl.org>
 ;; Keywords: mail, net news
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).

@@ -4,7 +4,7 @@
 ;; Copyright 2000 TAKAHASHI Kaoru <kaoru@kaisei.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
-;;         TAKAHASHI Kaoru <kaoru@kaisei.org>
+;;	TAKAHASHI Kaoru <kaoru@kaisei.org>
 ;; Keywords: mail, net news
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).

@@ -1,5 +1,16 @@
 2000-10-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-address.el (toplevel): Fixed multiple Author header format.
+	* wl-demo.el (toplevel): Ditto.
+	* wl-draft.el (toplevel): Ditto.
+	* wl-folder.el (toplevel): Ditto.
+	* wl-summary.el (toplevel): Ditto.
+	* wl-thread.el (toplevel): Ditto.
+	* wl-util.el (toplevel): Ditto.
+	* wl-vars.el (toplevel): Ditto.
+	* wl-version.el (toplevel): Ditto.
+	* wl-xmas.el (toplevel): Ditto.
+
 	* wl-version.el (toplevel): Added require `elmo-version' for
 	`product-version-as-string'.
 
