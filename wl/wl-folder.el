@@ -148,7 +148,7 @@
   (define-key wl-folder-mode-map "g"    'wl-folder-goto-folder)
   (define-key wl-folder-mode-map "j"    'wl-folder-jump-to-current-entity)
   (define-key wl-folder-mode-map "w"    'wl-draft)
-  (define-key wl-folder-mode-map "W"    'wl-folder-write-current-newsgroup)
+  (define-key wl-folder-mode-map "W"    'wl-folder-write-current-folder)
   (define-key wl-folder-mode-map "\C-c\C-o" 'wl-jump-to-draft-buffer)
   (define-key wl-folder-mode-map "rS"   'wl-folder-sync-region)
   (define-key wl-folder-mode-map "S"    'wl-folder-sync-current-entity)
@@ -2002,6 +2002,55 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
       (setq alist (cdr alist)))
     hashtb))
 
+(defun wl-folder-get-newsgroups (folder)
+  "Return Newsgroups field value string for FOLDER newsgroup.
+If FOLDER is multi, return comma separated string (cross post)."
+  (let ((flist (elmo-folder-get-primitive-folder-list folder)) ; multi
+	newsgroups fld ret)
+    (while (setq fld (car flist))
+      (if (setq ret
+		(cond ((eq 'nntp (elmo-folder-get-type fld))
+		       (nth 1 (elmo-folder-get-spec fld)))
+		      ((eq 'localnews (elmo-folder-get-type fld))
+		       (elmo-replace-in-string
+			(nth 1 (elmo-folder-get-spec fld)) "/" "\\."))))
+	  ;; append newsgroup
+	  (setq newsgroups (if (stringp newsgroups)
+			       (concat newsgroups "," ret)
+			     ret)))
+      (setq flist (cdr flist)))
+    (list nil nil newsgroups)))
+
+(defun wl-folder-guess-mailing-list-by-refile-rule (folder)
+  "Return ML address guess by FOLDER.
+Use `wl-subscribed-mailing-list' and `wl-refile-rule-alist'.
+Don't care multi."
+  (setq folder (car (elmo-folder-get-primitive-folder-list folder)))
+  (unless (memq (elmo-folder-get-type folder)
+		'(localnews nntp))
+    (let ((rules wl-refile-rule-alist)
+	  mladdress tokey toalist histkey)
+      (while rules
+	(if (or (and (stringp (car (car rules)))
+		     (string-match "[Tt]o" (car (car rules))))
+		(and (listp (car (car rules)))
+		     (elmo-string-matched-member "to" (car (car rules))
+						 'case-ignore)))
+	    (setq toalist (append toalist (cdr (car rules)))))
+	(setq rules (cdr rules)))
+      (when toalist
+	(setq tokey (car (rassoc folder toalist)))
+;;;     (setq histkey (car (rassoc folder wl-refile-alist)))
+	(elmo-string-matched-member tokey
+				    wl-subscribed-mailing-list t))
+
+      ;; case-ignore search `wl-subscribed-mailing-list'
+      (if (stringp tokey)
+	  (list
+	   (elmo-string-matched-member tokey wl-subscribed-mailing-list t)
+	   nil nil)
+	nil))))
+
 (defun wl-folder-update-diff-line (diffs)
   (let ((inhibit-read-only t)
 	(buffer-read-only nil)
@@ -2627,10 +2676,10 @@ If optional arg exists, don't check any folders."
 	(wl-folder-drop-unsync-entity entity)
 	(message "All unsync messages in %s are dropped!" entity-name)))))
 
-(defun wl-folder-write-current-newsgroup ()
+(defun wl-folder-write-current-folder ()
   ""
   (interactive)
-  (wl-summary-write-current-newsgroup (wl-folder-entity-name)))
+  (wl-summary-write-current-folder (wl-folder-entity-name)))
 
 (defun wl-folder-mimic-kill-buffer ()
   "Kill the current (Folder) buffer with query."

@@ -1,5 +1,15 @@
 2000-11-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-summary.el (wl-summary-write-current-folder): Renamed from
+	`wl-summary-write-current-newsgroup'.
+	(wl-summary-write-current-folder-functions): New variable.
+	* wl-folder.el (wl-folder-get-newsgroups): New function.
+	(wl-folder-guess-mailing-list-by-refile-rule): New function.
+	(wl-folder-write-current-folder): Renamed from
+	`wl-folder-write-current-newsgroup'.
+
+2000-11-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
 	* Version number is increased to 2.3.93.
 
 2000-11-01  Yuuichi Teranishi  <teranisi@gohome.org>

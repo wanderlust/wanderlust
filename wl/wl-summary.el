@@ -391,7 +391,7 @@
   (define-key wl-summary-mode-map "P"    'wl-summary-up)
 ;;;(define-key wl-summary-mode-map "w"    'wl-draft)
   (define-key wl-summary-mode-map "w"    'wl-summary-write)
-  (define-key wl-summary-mode-map "W"    'wl-summary-write-current-newsgroup)
+  (define-key wl-summary-mode-map "W"    'wl-summary-write-current-folder)
 ;;;(define-key wl-summary-mode-map "e"     'wl-draft-open-file)
   (define-key wl-summary-mode-map "e"     'wl-summary-save)
   (define-key wl-summary-mode-map "\C-c\C-o" 'wl-jump-to-draft-buffer)
@@ -5117,28 +5117,39 @@ Reply to author if invoked with ARG."
   (run-hooks 'wl-mail-setup-hook)
   (mail-position-on-field "To"))
 
-(defun wl-summary-write-current-newsgroup (&optional folder)
-  ""
+(defvar wl-summary-write-current-folder-functions
+  '(wl-folder-get-newsgroups
+;;; wl-folder-guess-mailing-list-by-refile-rule
+    )
+  "Newsgroups or Mailing List address guess functions list.
+Call from `wl-summary-write-current-folder'")
+
+(defun wl-summary-write-current-folder (&optional folder)
+  "Write message to current FOLDER's newsgroup or mailing-list.
+Use function list is `wl-summary-write-current-folder-functions'."
   (interactive)
-  (let* ((folder (or folder wl-summary-buffer-folder-name))
-	 (flist (elmo-folder-get-primitive-folder-list folder))
-	 newsgroups fld ret)
-    (while (setq fld (car flist))
-      (if (setq ret
-		(cond ((eq 'nntp (elmo-folder-get-type fld))
-		       (nth 1 (elmo-folder-get-spec fld)))
-		      ((eq 'localnews (elmo-folder-get-type fld))
-		       (elmo-replace-in-string
-			(nth 1 (elmo-folder-get-spec fld)) "/" "\\."))))
-	  (setq newsgroups (cond (newsgroups
-				  (concat newsgroups "," ret))
-				 (t ret))))
-      (setq flist (cdr flist)))
-    (if newsgroups
-	(progn
-	  (wl-draft nil nil nil nil nil newsgroups)
-	  (run-hooks 'wl-mail-setup-hook))
-      (error "%s is not newsgroup" folder))))
+  (let (newsgroups to cc)
+    ;; default FOLDER is current buffer folder
+    (setq folder (or folder wl-summary-buffer-folder-name))
+    (let ((flist wl-summary-write-current-folder-functions)
+	  guess-list)
+      (while flist
+	(setq guess-list (funcall (car flist) folder))
+	(if (or (nth 0 guess-list)	; To:
+;;;		(nth 1 guess-list)	; Cc:
+		(nth 2 guess-list))	; Newsgroups:
+	    (setq flist nil)
+	  (setq flist (cdr flist))))
+      (if guess-list
+	  (progn
+	    (wl-draft (nth 0 guess-list) ; To:
+		      nil nil
+		      (nth 1 guess-list) ; Cc:
+		      nil		
+		      (nth 2 guess-list)) ; Newsgroups:
+	    (run-hooks 'wl-mail-setup-hook))
+;;;	(error "%s is not newsgroup" folder)
+	(error "Can't guess by folder %s" folder)))))
 
 (defun wl-summary-forward (&optional without-setup-hook)
   ""
