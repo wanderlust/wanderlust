@@ -35,10 +35,6 @@
 (require 'elmo)
 (require 'elmo-map)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;
-;; cache backend by Kenichi OKADA <okada@opaopa.org>
-;;
 (eval-and-compile
   (luna-define-class elmo-cache-folder (elmo-map-folder) (dir-name directory))
   (luna-define-internal-accessors 'elmo-cache-folder))
