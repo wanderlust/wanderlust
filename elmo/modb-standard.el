@@ -49,9 +49,6 @@
 (defvar modb-standard-msgid-filename "msgid"
   "Message number <=> Message-Id database.")
 
-(defvar modb-standard-digest-flags '(unread)
-  "Flags which are listed as `digest'.")
-
 (eval-and-compile
   (luna-define-class modb-standard (modb-generic)
 		     (number-list	; sorted list of message numbers.
@@ -366,7 +363,7 @@
 	    (setq matched (cons (car entry) matched))))
 	(modb-standard-flag-map msgdb)))
       (digest
-       (let ((flags (append modb-standard-digest-flags
+       (let ((flags (append elmo-digest-flags
 			    (elmo-get-global-flags t t))))
 	 (mapatoms
 	  (lambda (atom)

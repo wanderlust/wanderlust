@@ -763,28 +763,50 @@ Returns response value if selecting folder succeed. "
     (t
      (member "\\*" (elmo-imap4-session-flags-internal session)))))
 
+(defun elmo-imap4-flag-to-imap-search-key (flag)
+  (case flag
+    (read "seen")
+    (unread "unseen")
+    (important "flagged")
+    (answered "answered")
+    (new "new")
+    (t (concat
+	"keyword "
+	(or (car (cdr (assq flag elmo-imap4-flag-specs)))
+	    (symbol-name flag))))))
+
+(defun elmo-imap4-flag-to-imap-criteria (flag)
+  (case flag
+    ((any digest)
+     (let ((criteria "flagged")
+	   (global-flags (delq 'important (elmo-get-global-flags t t))))
+       (dolist (flag (delete 'new
+			     (delete 'cached
+				     (copy-sequence
+				      (case flag
+					(any
+					 elmo-preserved-flags)
+					(digest
+					 elmo-digest-flags))))))
+	 (setq criteria (concat "or "
+				(elmo-imap4-flag-to-imap-search-key flag)
+				" "
+				criteria)))
+       (while global-flags
+	 (setq criteria (concat "or keyword "
+				(symbol-name (car global-flags))
+				" "
+				criteria))
+	 (setq global-flags (cdr global-flags)))
+       criteria))
+    (t
+     (elmo-imap4-flag-to-imap-search-key flag))))
+
 (defun elmo-imap4-folder-list-flagged (folder flag)
   "List flagged message numbers in the FOLDER.
 FLAG is one of the `unread', `read', `important', `answered', `any'."
   (let ((session (elmo-imap4-get-session folder))
-	(criteria (case flag
-		    (read "seen")
-		    (unread "unseen")
-		    (important "flagged")
-		    (answered "answered")
-		    (new "new")
-		    (any "or answered or unseen flagged")
-		    (digest "or unseen flagged")
-		    (t (concat "keyword " (capitalize (symbol-name flag)))))))
-    ;; Add search keywords
-    (when (or (eq flag 'digest)(eq flag 'any))
-      (let ((flags (delq 'important (elmo-get-global-flags t t))))
-	(while flags
-	  (setq criteria (concat "or keyword "
-				 (symbol-name (car flags))
-				 " "
-				 criteria))
-	  (setq flags (cdr flags)))))
+	(criteria (elmo-imap4-flag-to-imap-criteria flag)))
     (if (elmo-imap4-session-flag-available-p session flag)
 	(progn
 	  (elmo-imap4-session-select-mailbox

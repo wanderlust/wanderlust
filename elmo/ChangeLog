@@ -1,5 +1,17 @@
 2004-08-31  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* modb-standard.el (modb-standard-digest-flags): Abolish.
+	(elmo-msgdb-list-flagged): Use elmo-digest-flags instead.
+
+	* elmo-vars.el (elmo-digest-flags): New variable.
+	(elmo-preserved-flags): Moved from elmo-flag.el.
+
+	* elmo-imap4.el (elmo-imap4-flag-to-imap-search-key): New function.
+	(elmo-imap4-flag-to-imap-criteria): Ditto.
+	(elmo-imap4-folder-list-flagged): Use it.
+
+	* elmo-flag.el (elmo-preserved-flags): Moved to elmo-vars.el.
+
 	* elmo.el (elmo-folder-count-flags): Changed return value.
 
 	* elmo-flag.el (elmo-preserved-flags): New variable.

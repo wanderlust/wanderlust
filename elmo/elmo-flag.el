@@ -30,10 +30,6 @@
 (eval-when-compile (require 'cl))
 
 ;;; Code:
-(defcustom elmo-preserved-flags '(answered cached new unread)
-  "Reserved flags which are not treated as global."
-  :type '(repeat (symbol :tag "flag")))
-
 (defcustom elmo-global-flag-list '(important)
   "A list of flag symbol which is managed globally by the flag folder."
   :type '(repeat symbol)

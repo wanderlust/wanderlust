@@ -57,6 +57,16 @@
   :prefix "elmo-"
   :group 'elmo)
 
+(defcustom elmo-digest-flags '(unread)
+  "Flags which are treated as `digest'."
+  :type '(repeat (symbol :tag "flag"))
+  :group 'elmo)
+
+(defcustom elmo-preserved-flags '(answered cached new unread)
+  "Reserved flags which are not treated as global."
+  :type '(repeat (symbol :tag "flag"))
+  :group 'elmo)
+
 ;; Message Database
 
 (defcustom elmo-msgdb-default-type 'legacy
