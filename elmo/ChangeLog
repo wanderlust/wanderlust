@@ -1,3 +1,28 @@
+2001-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-version.el (elmo-version): Up to 2.7.3.
+
+	* acap.el (acap-parse-response): Don't delete process when BYE
+	response (It causes hang-up on slow network environment).
+	(toplevel): Added comment.
+
+2001-08-28  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* slp.el (slp-exec-wait): Use `slp-program-arguments'.
+
+	* acap.el (acap-parse-return-metadata-or-return-metalist): Fix for
+	parsing NIL.
+	(acap-parse-return-metadata): Ditto.
+
+	* slp.el: New file.
+	(toplevel): Fixed typo.
+
+	* acap.el: New file.
+	(acap-network-stream-open): Show "Connecting..." message.
+	(acap-parse-response): Fixed problem for BYE untagged response.
+	(acap-open): Changed argument (Use `acap-default-user' if user is nil).
+	(toplevel): Added tiny comments.
+
 2001-08-20  Tatsuya Kinoshita <tats@iris.ne.jp>
 
 	* elmo-pop3.el (elmo-pop3-parse-uidl-response): Allow multiple
