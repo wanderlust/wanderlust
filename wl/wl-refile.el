@@ -198,11 +198,7 @@ If RULE does not match ENTITY, returns nil."
 
 (defun wl-refile-get-field-value (entity field)
   "Get FIELD value from ENTITY."
-  (let ((field (downcase field))
-	(fixed-fields '(from subject to cc)))
-    (if (member field fixed-fields)
-	(elmo-message-entity-field entity field)
-      (elmo-msgdb-overview-entity-get-extra-field entity field))))
+  (elmo-message-entity-field entity (intern (downcase field))))
 
 (defun wl-refile-guess-by-rule (entity)
   (let ((rules wl-refile-rule-alist)

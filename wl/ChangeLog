@@ -1,3 +1,7 @@
+2003-07-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-refile.el (wl-refile-get-field-value): Fixed and simplified.
+
 2003-07-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-refile.el (wl-refile-learn): Don't use msgdb.
