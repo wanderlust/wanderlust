@@ -239,14 +239,13 @@ set as non-nil.")
     (insert output)
     (if (and elmo-pop3-total-size
 	     (> elmo-pop3-total-size 
-		elmo-display-retrieval-progress-threshold))
+		(min elmo-display-retrieval-progress-threshold 100)))
 	(elmo-display-progress
 	 'elmo-display-retrieval-progress
 	 (format "Retrieving (%d/%d bytes)..."
 		 (buffer-size)
 		 elmo-pop3-total-size)
-	 (floor (* (/ (float (buffer-size))
-		      elmo-pop3-total-size) 100))))))
+	 (/ (buffer-size) (/ elmo-pop3-total-size 100))))))
 
 (defun elmo-pop3-auth-user (session)
   (let ((process (elmo-network-session-process-internal session)))

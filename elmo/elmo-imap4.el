@@ -1144,14 +1144,14 @@ Return nil if no complete line has arrived."
 	    (progn
 	      (if (and elmo-imap4-display-literal-progress
 		       (> (string-to-number (match-string 1))
-			  elmo-display-retrieval-progress-threshold))
+			  (min elmo-display-retrieval-progress-threshold 100)))
 		  (elmo-display-progress
 		   'elmo-display-retrieval-progress
 		   (format "Retrieving (%d/%d bytes)..."
 			   (- (point-max) (point))
 			   (string-to-number (match-string 1)))
-		   (floor (* (/ (float (- (point-max) (point)))
-				(string-to-number (match-string 1))) 100))))
+		   (/ (- (point-max) (point))
+		      (/ (string-to-number (match-string 1)) 100))))
 	      nil)
 	  (goto-char (+ (point) (string-to-number (match-string 1))))
 	  (elmo-imap4-find-next-line))
