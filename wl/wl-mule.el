@@ -108,7 +108,8 @@ Special commands:
     (define-key keymap [S-mouse-5] 'wl-message-wheel-up)
     (set-keymap-parent wl-message-button-map keymap)
     (define-key wl-message-button-map [mouse-2]
-      'wl-message-button-dispatcher))
+      'wl-message-button-dispatcher)
+    keymap))
 
 (defun wl-message-wheel-up (event)
   (interactive "e")

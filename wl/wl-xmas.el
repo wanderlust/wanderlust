@@ -451,7 +451,8 @@
     (define-key keymap [(shift button5)] 'wl-message-wheel-up)
     (set-keymap-parent wl-message-button-map keymap)
     (define-key wl-message-button-map 'button2
-      'wl-message-button-dispatcher)))
+      'wl-message-button-dispatcher)
+    keymap))
 
 (defun wl-message-wheel-up (event)
   (interactive "e")
