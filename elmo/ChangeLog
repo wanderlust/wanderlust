@@ -1,3 +1,8 @@
+2004-02-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-file.el (elmo-map-message-fetch): Decode body only when content
+	type seems to be a text.
+
 2004-02-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elsp-sa.el (elmo-spam-register-spam-buffer): Don't specify '--forget'.

@@ -135,39 +135,42 @@
 				(elmo-file-folder-file-path-internal folder)))
 	charset guess uid)
     (when (file-exists-p file)
+      (set-buffer-multibyte nil)
       (prog1
 	  (insert-file-contents-as-binary file)
 	(unless (or (std11-field-body "To")
 		    (std11-field-body "Cc")
 		    (std11-field-body "Subject"))
-	    (erase-buffer)
+	  (setq guess (mime-find-file-type file))
+	  (when (string= (nth 0 guess) "text")
 	    (set-buffer-multibyte t)
-	    (insert-file-contents file)
+	    (decode-coding-region
+	     (point-min) (point-max)
+	     elmo-mime-display-as-is-coding-system)
 	    (setq charset (detect-mime-charset-region (point-min)
-						      (point-max)))
-	    (goto-char (point-min))
-	    (setq guess (mime-find-file-type file))
-	    (setq uid (nth 2 (file-attributes file)))
-	    (insert "From: " (concat (user-full-name uid)
-				     " <"(user-login-name uid) "@"
-				     (system-name) ">") "\n")
-	    (insert "Subject: " (file-name-nondirectory file) "\n")
-	    (insert "Date: "
-		    (elmo-file-make-date-string (file-attributes file))
-		    "\n")
-	    (insert "Message-ID: "
-		    (concat "<" (elmo-replace-in-string file "/" ":")
-			    "@" (system-name) ">\n"))
-	    (insert "Content-Type: "
-		    (concat (nth 0 guess) "/" (nth 1 guess))
-		    (or (and (string= (nth 0 guess) "text")
-			     (concat
-			      "; charset=" (upcase (symbol-name charset))))
-			"")
-		    "\nMIME-Version: 1.0\n\n")
-	    (when (string= (nth 0 guess) "text")
-	      (encode-mime-charset-region (point-min) (point-max) charset))
-	    (set-buffer-multibyte nil))))))
+						      (point-max))))
+	  (goto-char (point-min))
+	  (setq uid (nth 2 (file-attributes file)))
+	  (insert "From: " (concat (user-full-name uid)
+				   " <"(user-login-name uid) "@"
+				   (system-name) ">") "\n")
+	  (insert "Subject: " (file-name-nondirectory file) "\n")
+	  (insert "Date: "
+		  (elmo-file-make-date-string (file-attributes file))
+		  "\n")
+	  (insert "Message-ID: "
+		  (concat "<" (elmo-replace-in-string file "/" ":")
+			  "@" (system-name) ">\n"))
+	  (insert "Content-Type: "
+		  (concat (nth 0 guess) "/" (nth 1 guess))
+		  (or (and (string= (nth 0 guess) "text")
+			   (concat
+			    "; charset=" (upcase (symbol-name charset))))
+		      "")
+		  "\nMIME-Version: 1.0\n\n")
+	  (when (string= (nth 0 guess) "text")
+	    (encode-mime-charset-region (point-min) (point-max) charset))
+	  (set-buffer-multibyte nil))))))
 
 (luna-define-method elmo-map-folder-list-message-locations
   ((folder elmo-file-folder))
