@@ -478,6 +478,8 @@ Return number if put mark succeed"
 		(+ failures (length (cdr (car dst-msgs))))))
 	(setq dst-msgs (cdr dst-msgs)))
       (elmo-progress-clear 'elmo-folder-move-messages)
+      (if (<= failures 0)
+	  (message "Refiling messages...done"))
       failures)))
 
 ;; Copy action
@@ -519,6 +521,8 @@ Return number if put mark succeed"
 		(+ failures (length (cdr (car dst-msgs))))))
 	(setq dst-msgs (cdr dst-msgs)))
       (elmo-progress-clear 'elmo-folder-move-messages)
+      (if (<= failures 0)
+	  (message "Copying messages...done"))
       failures)))
 
 ;; Prefetch.
