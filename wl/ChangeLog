@@ -1,3 +1,8 @@
+2000-09-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-util.el (wl-mode-line-buffer-identification): Don't breed
+	excessive titles.
+
 2000-09-20  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl.el (wl-plugged-mode): Use revised

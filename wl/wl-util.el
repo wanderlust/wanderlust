@@ -413,10 +413,12 @@ Insert User-Agent field instead of X-Mailer field."
       (while priorities
 	(setq priority (car priorities)
 	      priorities (cdr priorities))
-	(cond ((and wl-biff-check-folder-list (eq 'biff priority))
-	       (setq result (append result '(wl-biff-state-indicator))))
-	      ((and wl-show-plug-status-on-modeline (eq 'plug priority))
-	       (setq result (append result '(wl-plug-state-indicator))))
+	(cond ((eq 'biff priority)
+	       (when wl-biff-check-folder-list
+		 (setq result (append result '(wl-biff-state-indicator)))))
+	      ((eq 'plug priority)
+	       (when wl-show-plug-status-on-modeline
+		 (setq result (append result '(wl-plug-state-indicator)))))
 	      (t
 	       (setq result (append result (or id '("Wanderlust: %12b")))))))
       (prog1
