@@ -1,7 +1,7 @@
 
  Wanderlust -- Yet Another Message Interaface on Emacsen
 		      by Yuuichi Teranishi <teranisi@gohome.org>
-		      Time-stamp: <2000-04-07 09:51:18 teranisi>
+		      Time-stamp: <00/06/05 14:29:13 teranisi>
 
 Wanderlust は Emacs 上で動く IMAP4rev1 対応のメール/ニュース管理システムです。
 
@@ -75,8 +75,14 @@ CVS:
 
 	cvs@cvs.m17n.org
 
-  にアカウント名と、UNIX の /etc/passwd 様式で暗号化されたパスワードを
-  送ってください。開かれた開発に参加してくださることを期待します。
+  にアカウント名と、ssh の公開鍵を送ってください。ssh 経由では、
+  cvsroot は :ext:cvs@cvs.m17n.org:/cvs/root となります。
+
+  どうしても ssh が使えない場合、pserver 経由でも開発に参加できます。
+  この場合、UNIX の /etc/passwd 様式で暗号化されたパスワードを送って下
+  さい。この場合 cvsroot は :pserver:<アカウント名>@cvs.m17n.org:/cvs/root
+  となります。
+  開かれた開発に参加してくださることを期待します。
 
 References:
 
