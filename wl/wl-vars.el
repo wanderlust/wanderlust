@@ -677,6 +677,11 @@ Default is for 'followup-to-me'."
   :type '(string :tag "Base")
   :group 'wl)
 
+(defcustom wl-ldap-objectclass "person"
+  "*LDAP objectclass."
+  :type 'string
+  :group 'wl)
+
 (defcustom wl-use-ldap nil
   "*If non-nil, use LDAP for address completion."
   :type 'boolean
