@@ -1246,7 +1246,8 @@ with wl-highlight-folder-many-face."
 
 (defcustom wl-summary-width 80
   "*Set summary line width if non nil."
-  :type 'integer
+  :type '(choice (const :tag "Don't truncate" nil)
+		 integer)
   :group 'wl-summary
   :group 'wl-pref)
 
