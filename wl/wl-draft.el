@@ -1470,16 +1470,21 @@ Derived from `message-save-drafts' in T-gnus."
       (setq header-alist
 	    (append (list (cons 'From wl-from)) header-alist)))
     (unless (cdr (assq 'To header-alist))
-      (setq header-alist
-	    (append header-alist
-		    (list (cons 'To
-				(and
-				 (or (interactive-p)
-				       (eq this-command 'wl-summary-write))
-				 ""))))))
-    (or (assoc 'Subject header-alist)
+      (let ((to))
+	(when (setq to (and
+			(or (interactive-p)
+			    (eq this-command 'wl-summary-write))
+			""))
+	  (if (assq 'To header-alist)
+	      (setcdr (assq 'To header-alist) to)
+	    (setq header-alist
+		  (append header-alist
+			  (list (cons 'To to))))))))
+    (unless (cdr (assq 'Subject header-alist))
+      (if (assq 'Subject header-alist)
+	  (setcdr (assq 'Subject header-alist) "")
 	(setq header-alist
-	      (append header-alist (list (cons 'Subject "")))))
+	      (append header-alist (list (cons 'Subject ""))))))
     (setq header-alist (append header-alist
 			       (wl-draft-default-headers)
 			       (if body (list "" body))))
