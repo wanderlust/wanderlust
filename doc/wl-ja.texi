@@ -7744,6 +7744,7 @@ Wanderlust List in English @t{<wl-en@@lists.airs.net>}
 2001  7/04    2.6.0 stable リリース。
       8/21    wl-addrmgr by 北本さん。
      12/27    2.8.1 stable リリース。
+2002 12/11    2.10.0 stable リリース。
 @end example
 
 詳しい変遷は @file{ChangeLog} を御覧ください。

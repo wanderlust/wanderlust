@@ -7828,6 +7828,7 @@ valuable advice and many pieces of code they contributed.
 2001  7/04    Released 2.6.0 stable.
       8/21    wl-addrmgr by Kitamoto-san.
      12/27    Released 2.8.1 stable.
+2002 12/11    Released 2.10.0 stable.
 @end example
 
 See @file{ChangeLog} for details.
