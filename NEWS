@@ -1,5 +1,18 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust.
 
+* Version 2.6.1 is basically a bug fix version of 2.6.0.
+
+** Fixed a problem that Emacs 21 causes `Recursive load...' error.
+
+** Fixed a problem that thread character is broken in XEmacs 21.1.
+
+** Fixed a problem that in IMAP4 folder, progress bar is remained in XEmacs .
+
+** Fixed a problem that searching is failed for the header fields that
+   begins with X-.
+
+** Some other fixes.
+
 * Changes in 2.6.0 from 2.4.1.
 
 ** FLIM 1.13.x is not supported any longer.

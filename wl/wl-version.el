@@ -46,7 +46,7 @@
    "Wanderlust" nil
    (eval-when-compile
      (product-version (product-find 'elmo-version))) ; equals to ELMO version.
-   "Twist And Shout"))
+   "Upside Down"))
 
 ;; set version-string
 (product-version-as-string 'wl-version)
