@@ -1230,6 +1230,14 @@ Otherwise treat \\ in NEWTEXT string as special:
 	(t
 	 (elmo-folder-direct-copy-p folder1 folder2))))
 
+(defun elmo-folder-get-store-type (folder)
+  (let ((spec (elmo-folder-get-spec folder)))
+    (case (car spec)
+      (filter (elmo-folder-get-store-type (nth 2 spec)))
+      (pipe (elmo-folder-get-store-type (elmo-pipe-spec-dst spec)))
+      (multi (elmo-folder-get-store-type (nth 1 spec)))
+      (t (car spec)))))
+
 (defconst elmo-folder-direct-copy-alist
   '((localdir  . (localdir localnews archive))
     (maildir   . (maildir  localdir localnews archive))
@@ -1238,8 +1246,8 @@ Otherwise treat \\ in NEWTEXT string as special:
     (cache     . (localdir localnews archive))))
 
 (defun elmo-folder-direct-copy-p (src-folder dst-folder)
-  (let ((src-type (car (elmo-folder-get-spec src-folder)))
-	(dst-type (car (elmo-folder-get-spec dst-folder)))
+  (let ((src-type (elmo-folder-get-store-type src-folder))
+	(dst-type (elmo-folder-get-store-type dst-folder))
 	dst-copy-type)
     (and (setq dst-copy-type
 	       (cdr (assq src-type elmo-folder-direct-copy-alist)))

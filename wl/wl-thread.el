@@ -550,47 +550,51 @@ The closed parent will be opened."
   "Close all top threads."
   (interactive)
   (message "Closing all threads...")
-  (let ((entities wl-thread-entity-list)
-	(cur 0)
-	(len (length wl-thread-entity-list)))
-    (while entities
-      (when (and (wl-thread-entity-get-opened (wl-thread-get-entity
-					       (car entities)))
-		 (wl-thread-entity-get-children (wl-thread-get-entity
-						 (car entities))))
-	(wl-summary-jump-to-msg (car entities))
-	(wl-thread-open-close))
-      (when (> len elmo-display-progress-threshold)
-	(setq cur (1+ cur))
-	(if (or (zerop (% cur 5)) (= cur len))
-	    (elmo-display-progress
-	     'wl-thread-close-all "Closing all threads..."
-	     (/ (* cur 100) len))))
-      (setq entities (cdr entities))))
-  (message "Closing all threads...done")
-  (goto-char (point-max)))
+  (save-excursion
+    (let ((entities wl-thread-entity-list)
+	  (cur 0)
+	  (len (length wl-thread-entity-list)))
+      (while entities
+	(when (and (wl-thread-entity-get-opened (wl-thread-get-entity
+						 (car entities)))
+		   (wl-thread-entity-get-children (wl-thread-get-entity
+						   (car entities))))
+	  (wl-summary-jump-to-msg (car entities))
+	  (wl-thread-open-close))
+	(when (> len elmo-display-progress-threshold)
+	  (setq cur (1+ cur))
+	  (if (or (zerop (% cur 5)) (= cur len))
+	      (elmo-display-progress
+	       'wl-thread-close-all "Closing all threads..."
+	       (/ (* cur 100) len))))
+	(setq entities (cdr entities)))))
+  (message "Closing all threads...done"))
 
 (defun wl-thread-open-all ()
   "Open all threads."
   (interactive)
   (message "Opening all threads...")
-  (let ((entities wl-thread-entity-list)
-	(cur 0)
-	(len (length wl-thread-entity-list)))
-    (while entities
-      (if (not (wl-thread-entity-get-opened (wl-thread-get-entity
-					     (car entities))))
-	  (wl-thread-entity-force-open (wl-thread-get-entity
-					(car entities))))
-      (when (> len elmo-display-progress-threshold)
-	(setq cur (1+ cur))
-	(if (or (zerop (% cur 5)) (= cur len))
-	    (elmo-display-progress
-	     'wl-thread-open-all "Opening all threads..."
-	     (/ (* cur 100) len))))
-      (setq entities (cdr entities))))
-  (message "Opening all threads...done")
-  (goto-char (point-max)))
+  (save-excursion
+    (goto-char (point-min))
+    (let ((len (count-lines (point-min) (point-max)))
+	  (cur 0)
+	  entity)
+      (while (not (eobp))
+	(unless (wl-thread-entity-get-opened
+		 (setq entity (wl-thread-get-entity
+			       (wl-summary-message-number))))
+	  (wl-thread-entity-force-open entity))
+	(wl-thread-goto-bottom-of-sub-thread)
+	(when (> len elmo-display-progress-threshold)
+	  (setq cur (1+ cur))
+	  (elmo-display-progress
+	   'wl-thread-open-all "Opening all threads..."
+	   (/ (* cur 100) len)))))
+    ;; Make sure to be 100%.
+    (elmo-display-progress
+     'wl-thread-open-all "Opening all threads..."
+     100))
+  (message "Opening all threads...done"))
 
 (defun wl-thread-open-all-unread ()
   (interactive)

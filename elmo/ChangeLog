@@ -1,3 +1,25 @@
+2000-12-29  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo2.el (toplevel): Move `product-provide' declare.
+	* mmelmo.el (toplevel): Ditto.
+
+2000-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-util.el (elmo-folder-get-store-type): Rewrite.
+
+2000-12-26  OKAZAKI Tetsurou <okazaki@be.to>
+
+	* elmo-util.el (elmo-folder-get-store-type): New function.
+	(elmo-folder-direct-copy-p): Use it.
+
+2000-12-26  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-imap4.el (elmo-imap4-msgdb-create): Set
+	`elmo-imap4-fetch-callback-data' as a cons cell of `args'
+	and result of `elmo-imap4-use-flag-p'.
+	(elmo-imap4-fetch-callback-1): Set mark according to
+	the result of `elmo-imap4-use-flag-p'.
+
 2000-12-22  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-msgdb.el (elmo-generic-folder-diff): Moved from elmo2.el
