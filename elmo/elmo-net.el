@@ -61,7 +61,7 @@
 If elapsed time since last access is larger than this value,
 cached session is not reused.
 If nil, network cache is reused."
-  :type 'number
+  :type '(choice number (const nil))
   :group 'elmo)
 
 ;;; Code:
