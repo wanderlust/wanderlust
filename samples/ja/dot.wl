@@ -8,7 +8,7 @@
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
 ;; ここまで
 
-;; アイコンを置くディレクトリ (XEmacs, Emacs21 のみ)
+;; アイコンを置くディレクトリ
 ;; XEmacs の package としてインストールされている場合は必要ありません。
 ;(setq wl-icon-dir "/usr/local/lib/emacs/etc")
 
