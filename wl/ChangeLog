@@ -1,3 +1,10 @@
+2000-10-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-version.el (wl-generate-user-agent-string): Fixed docstring.
+	(wl-extended-emacs-version, wl-extended-emacs-version2,
+	wl-extended-emacs-version3): Remove `interactive'.  Fixed
+	docstring.
+
 2000-10-18  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-expire.el (wl-summary-expire): Fix.

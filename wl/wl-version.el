@@ -29,7 +29,7 @@
 ;;; Code:
 ;;
 (require 'product)
-(provide 'wl-version)
+(provide 'wl-version)			; have to declare in the top.
 
 (product-provide 'wl-version
   (product-define
@@ -42,7 +42,7 @@
 ;; set version-string
 (if (fboundp 'product-version-as-string)
     (product-version-as-string 'wl-version)
-  (product-string-1 'wl-version))
+  (product-string-1 'wl-version))	; APEL 10.2 or earlier
 
 ;; require wl-util after product-provide.
 (eval-when-compile (require 'wl-util))	; wl-match-string
@@ -58,7 +58,8 @@
 (defvar mime-editor/codename)
 
 (defun wl-version (&optional with-codename)
-  "Return Wanderlust version.  If WITH-CODENAME is non-nil, add codename."
+  "Return Wanderlust version.
+If WITH-CODENAME add codename."
   (product-string-1 'wl-version with-codename))
 
 (defun wl-version-show (&optional arg)
@@ -70,7 +71,7 @@ If ARG insert string at point."
     (message "%s" (wl-version t))))
 
 (defun wl-generate-user-agent-string ()
-  "A candidate of wl-generate-mailer-string-func.
+  "A candidate of `wl-generate-mailer-string-func'.
 Insert User-Agent field instead of X-Mailer field."
   (let ((mime-user-agent (and (boundp 'mime-edit-insert-user-agent-field)
 			      mime-edit-insert-user-agent-field
@@ -107,8 +108,8 @@ Insert User-Agent field instead of X-Mailer field."
 
 ;; from gnus
 (defun wl-extended-emacs-version (&optional with-codename)
-  "Stringified Emacs version"
-  (interactive)
+  "Stringified Emacs version.
+If WITH-CODENAME add XEmacs codename."
   (cond
    ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
     (concat "Emacs " (wl-match-string 1 emacs-version)
@@ -126,8 +127,8 @@ Insert User-Agent field instead of X-Mailer field."
    (t emacs-version)))
 
 (defun wl-extended-emacs-version2 (&optional delimiter with-codename)
-  "Stringified Emacs version"
-  (interactive)
+  "Stringified Emacs version.
+Separate DELIMITER (default it \" \").  If WITH-CODENAME add XEmacs codename."
   (cond
    ((and (boundp 'mule-version)
 	 mule-version
@@ -165,8 +166,8 @@ Insert User-Agent field instead of X-Mailer field."
    (t emacs-version)))
 
 (defun wl-extended-emacs-version3 (&optional delimiter with-codename)
-  "Stringified Emacs version"
-  (interactive)
+  "Stringified Emacs version.
+Separate DELIMITER (default it \" \").  If WITH-CODENAME add XEmacs codename."
   (cond
    ((and (boundp 'mule-version)
 	 mule-version
@@ -227,4 +228,4 @@ Insert User-Agent field instead of X-Mailer field."
  'wl-codename
  "use (product-code-name (product-find 'wl-version)) instead.")
 
-;; wl-version.el ends here
+;;; wl-version.el ends here
