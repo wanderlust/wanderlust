@@ -1609,7 +1609,8 @@ with wl-highlight-folder-many-face."
 
 (defcustom wl-summary-max-thread-depth 30
   "*If thread depth of the message is larger than this value, divide it."
-  :type 'integer
+  :type '(choice (const :tag "Unlimited" nil)
+		 integer)
   :group 'wl-summary
   :group 'wl-pref)
 
