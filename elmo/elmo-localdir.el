@@ -91,7 +91,8 @@
     'identity
     (mapcar
      'elmo-replace-string-as-filename
-     (split-string (elmo-localdir-folder-dir-name-internal folder)
+     (split-string (expand-file-name
+		    (elmo-localdir-folder-dir-name-internal folder))
 		   "/"))
     "/")
    (expand-file-name ;;"localdir"

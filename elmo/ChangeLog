@@ -1,5 +1,10 @@
 2003-01-15  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
+	* elmo-localdir.el (elmo-folder-expand-msgdb-path): Correct msgdb
+	path for "+~/something".
+
+2003-01-15  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
 	* elmo-localdir.el (elmo-folder-rename-internal): If new-dir exist
 	as non-directory, cause error before rename-file.
 	* elmo-archive.el (elmo-folder-rename-internal): Create directory
