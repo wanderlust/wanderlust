@@ -5,15 +5,31 @@
 					Yuuichi Teranishi,
 					Tsunehiko Baba
 
+System Requirements
+===================
+
+  Wanderlust supports following Emacsen:
+
+	Mule 2.3 based on Emacs 19.34
+	Emacs 20.2 or later
+	XEmacs 20.4 or later
+
+  Before installing Wanderlust, please install the following MIME
+  modules.
+
+	SEMI	(1.14.3 or later)
+	FLIM	(1.14.3 or later)
+
+  Wanderlust and MIME modules require APEL.  Before installing MIME
+  modules, please install the APEL.
+
+	APEL	(10.3 or later)
+
+
 Select MIME Module
 ==================
 
-  Before installing Wanderlust, please install the following MIME modules. 
-
-	SEMI    (1.14.1 or later)
-
-  SEMI requires APEL and FLIM packages.  For each Emacsen, Recommended
-  combination of MIME module package following.
+  For each Emacsen, Recommended combination of MIME module package following.
 
   (a) XEmacs 21.1 or later
 

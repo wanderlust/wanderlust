@@ -12,6 +12,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
    warning の表示を抑制するには、変数 elmo-obsolete-variable-show-warnings を
    nil にしてください。
 
+** 新規内部フォルダ 'sendlog が追加されました。
+
 ** 新規フォルダ shimbun フォルダが追加されました。
 
    書式: '@' '仮想サーバ名' '.' 'グループ名'

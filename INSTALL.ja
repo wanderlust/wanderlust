@@ -5,16 +5,31 @@
 					Yuuichi Teranishi 寺西裕一,
 					Tsunehiko Baba    馬場恒彦
 
+必要条件
+========
+
+  Wanderlust がサポートする Emacsen を以下に示します。
+
+	Mule 2.3 based on Emacs 19.34
+	Emacs 20.2 以降
+	XEmacs 20.4 以降
+
+  Wanderlust を使うためには、以下に示すMIME用モジュールをインストールし
+  ておく必要があります。
+
+	SEMI	(1.14.3 以降)
+	FLIM	(1.14.3 以降)
+
+  Wanderlust および MIME用モジュールを使うためには APEL をインストールし
+  ておく必要があります。APEL は常に最新版を使うことを推奨します。
+
+	APEL	(10.3 以降)
+
+
 MIME用モジュールの選択
 ======================
 
-  Wanderlust を使うためには、以下の MIME 用モジュールをインス
-  トールしておく必要があります。
-
-	SEMI    (1.14.1 以上)
-
-  SEMI には APEL, FLIM と呼ばれるパッケージも必要です。主な Emacsen につ
-  いて推奨される APEL, FLIM, SEMI の組合せを以下に示します。
+  主な Emacsen について推奨する APEL, FLIM, SEMI の組合せを以下に示します。
 
   (a) XEmacs 21.1 以降
 

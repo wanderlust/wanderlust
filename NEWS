@@ -12,6 +12,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    To suppress warning messages, set elmo-obsolete-variable-show-warnings to
    nil.
 
+** Added new internal folders: 'sendlog folder
+
 ** Added new type of folders: shimbun folder
 
    Format: '@' 'virtual server name' '.' 'group name'

@@ -26,11 +26,9 @@ Features:
  * 自動リファイル。
  * 定型メッセージの送信に便利なテンプレート機能。
 
-必要条件:
+System Requirements:
 
- * Emacs 19.34 〜
- * APEL (10.3 以降)
- * SEMI (1.14.3 以降)
+ INSTALL.ja を御覧ください。 
 
 Install:
 
