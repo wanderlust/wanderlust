@@ -1293,7 +1293,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 
 (defun wl-draft-do-mime-bcc (field-body)
   "Send MIME-Bcc (Encapsulated blind carbon copy)."
-  (let ((orig-subj (std11-field-body "subject"))
+  (let ((orig-from (std11-field-body "from"))
+	(orig-subj (std11-field-body "subject"))
 	(recipients (wl-parse-addresses field-body))
 	(draft-buffer (current-buffer))
 	buffer)
@@ -1314,8 +1315,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		;; To work wl-draft-create-contents.
 		(setq major-mode 'wl-draft-mode)
 		(wl-draft-create-contents
-		 (append `((To . ,recipient)
-			   (From . ,wl-from)
+		 (append `((From . ,orig-from)
+			   (To . ,recipient)
 			   (Subject . ,(concat "A blind carbon copy ("
 					       orig-subj
 					       ")")))

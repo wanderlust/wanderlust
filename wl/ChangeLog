@@ -1,3 +1,8 @@
+2002-05-20  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-do-mime-bcc): Preserve original from instead
+	of using wl-from.
+
 2002-05-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-do-mime-bcc): Use generate-new-buffer and
