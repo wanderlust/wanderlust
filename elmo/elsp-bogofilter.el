@@ -124,6 +124,8 @@ Must be return a string or list of string."
   (elsp-bogofilter-register-buffer buffer nil restore))
 
 (defsubst elmo-spam-bogofilter-register-messages (folder numbers spam restore)
+  (if (not (< 0 elmo-spam-bogofilter-max-messages-per-process))
+      (error "non-positive value for `elmo-spam-bogofilter-max-messages-per-process'"))
   (with-temp-buffer
     (buffer-disable-undo (current-buffer))
     (while numbers

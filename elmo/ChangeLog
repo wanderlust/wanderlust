@@ -1,3 +1,8 @@
+2004-01-25  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elsp-bogofilter.el (elmo-spam-bogofilter-register-messages):
+	Protect from infinite loop.
+
 2004-01-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elsp-bogofilter.el
