@@ -1,5 +1,7 @@
 2000-10-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-version.el (elmo-version): Move to top.
+
 	* elmo-cache.el (toplevel): Fixed multiple Author header format.
 	* elmo-imap4.el (toplevel): Ditto.
 	* elmo-localdir.el (toplevel): Ditto.

@@ -1,7 +1,7 @@
 ;;; elmo-version.el -- Version information for ELMO.
 
-;; Copyright 2000 Yuuichi Teranishi <teranisi@gohome.org>
-;;                TAKAHASHI Kaoru <kaoru@kaisei.org>
+;; Copyright (C) 2000 Yuuichi Teranishi <teranisi@gohome.org>
+;; Copyright (C) 2000 TAKAHASHI Kaoru <kaoru@kaisei.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;;	TAKAHASHI Kaoru <kaoru@kaisei.org>
@@ -33,6 +33,10 @@
 (require 'product)
 (provide 'elmo-version)			; have to declare in the top.
 
+;; product-define in the first place
+(product-provide 'elmo-version
+  (product-define "ELMO" nil '(2 3 92)))
+
 ;; For APEL 10.2 or earlier.
 (defun-maybe product-version-as-string (product)
   "Return version number of product as a string.
@@ -46,9 +50,6 @@ If optional argument UPDATE is non-nil, then regenerate
                                        (mapconcat (function int-to-string)
                                                   (product-version product)
                                                   ".")))))
-
-(product-provide 'elmo-version
-  (product-define "ELMO" nil '(2 3 92)))
 
 ;; set version-string
 (product-version-as-string 'elmo-version)
