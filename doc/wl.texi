@@ -2858,17 +2858,22 @@ To execute auto refile on all messages, set following.
 
 The buffer of the `sticky summary' does not killed by typing @kbd{q}.
 
-By entering the summary by typing @kbd{C-u RET} in Folder mode or
-@kbd{C-u g} in some suummary sticky summary buffer is created.
+By entering the summary by typing @kbd{Shift RET} in Folder mode or
+@kbd{G} in some suummary sticky summary buffer is created.
 Also typing @kbd{M-s} (@code{wl-summary-stick}) on the normal summary
 makes current one sticky.
 
 The buffer name of the sticky summary becomes like
 @samp{Summary:@var{folder-name}}.
-
 You can visit the sticky summary at any time by @kbd{C-x b}
-(@code{switch-to-buffer}).  To exit sticky summary, type @kbd{C-u
-q}. Other operations in the sticky summary are same as normal summary.
+(@code{switch-to-buffer}), or you can go round summary buffers by
+@kbd{C-c C-n} (@code{wl-summary-previous-buffer}) and @kbd{C-c C-p}
+(@code{wl-summary-next-buffer}) in summary mode.
+
+In sticky summary, the summary buffer is preserved after @kbd{g} or
+@kbd{q}.  To delete sticky summary, type @kbd{C-u q} to exit or move to
+another summary by @kbd{C-u g}. Other operations in the sticky summary
+are same as normal summary.
 
 @code{wl-summary-always-sticky-folder-list} specifies the folders that
 are automatically stuck.
