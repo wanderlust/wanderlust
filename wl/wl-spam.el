@@ -267,10 +267,10 @@ See `wl-summary-mark-action-list' for the detail of element."
 	(elmo-spam-register-spam-messages (elmo-spam-processor)
 					  folder
 					  (mapcar #'car mark-list)))
-      (message "Registering spam...done")
-      (wl-summary-move-mark-list-messages mark-list
-					  wl-spam-folder-name
-					  "Refiling spam..."))))
+      (message "Registering spam...done"))
+    (wl-summary-move-mark-list-messages mark-list
+					wl-spam-folder-name
+					"Refiling spam...")))
 
 (defun wl-summary-exec-action-refile-with-register (mark-list)
   (let ((processor (elmo-spam-processor))

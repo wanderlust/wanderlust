@@ -1,5 +1,7 @@
 2003-10-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-spam.el (wl-summary-exec-action-spam): Fixed.
+
 	* wl-vars.el (wl-summary-mark-action-list): Fixed type spec.
 
 	* wl-spam.el (toplevel): Require wl-highlight.
