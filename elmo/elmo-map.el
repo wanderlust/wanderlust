@@ -95,15 +95,19 @@
 
 (luna-define-method elmo-folder-status ((folder elmo-map-folder))
   (elmo-folder-open-internal folder)
-  (prog1
-      (let ((numbers (mapcar
-		      'car
-		      (elmo-map-folder-location-alist-internal folder))))
+  (elmo-folder-set-killed-list-internal
+   folder
+   (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder)))
+  (let ((numbers (mapcar
+		  'car
+		  (elmo-map-folder-location-alist-internal folder))))
+    (setq numbers (elmo-living-messages numbers (elmo-folder-killed-list-internal folder)))
+    (prog1
 	(cons (elmo-max-of-list numbers)
-	      (length numbers)))
-    ;; Don't close after status.
-    (unless (elmo-folder-reserve-status-p folder)
-      (elmo-folder-close-internal folder))))
+	      (length numbers))
+      ;; Don't close after status.
+      (unless (elmo-folder-reserve-status-p folder)
+	(elmo-folder-close-internal folder)))))
 
 (defun elmo-map-message-number (folder location)
   "Return number of the message in the FOLDER with LOCATION."

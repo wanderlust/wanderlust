@@ -96,7 +96,11 @@
 	    (elmo-msgdb-create-overview-entity-from-file
 	     (car numbers) (elmo-message-file-name folder (car numbers))))
       (if (null entity)
-	  ()
+	  (elmo-folder-set-killed-list-internal
+	   folder
+	   (nconc
+	    (elmo-folder-killed-list-internal folder)
+	    (list (car numbers))))
 	(setq num (elmo-msgdb-overview-entity-get-number entity))
 	(setq overview
 	      (elmo-msgdb-append-element
@@ -129,8 +133,10 @@
 (luna-define-method elmo-map-message-fetch ((folder elmo-sendlog-folder)
 					    location strategy
 					    &optional section unseen)
-  (insert-file-contents-as-binary 
-   (elmo-file-cache-get-path location)))
+  (let ((filename (elmo-file-cache-get-path location)))
+    (if (file-exists-p filename)
+	(insert-file-contents-as-binary filename)
+      (error "Now this message is not cached. Please s all"))))
 
 (luna-define-method elmo-folder-creatable-p ((folder elmo-sendlog-folder))
   nil)
@@ -139,6 +145,15 @@
   nil)
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-sendlog-folder))
+  t)
+
+(luna-define-method elmo-folder-delete-messages ((folder elmo-sendlog-folder)
+						 numbers)
+  (let ((killed-list (elmo-folder-killed-list-internal folder)))
+    (dolist (number numbers)
+      (setq killed-list
+	    (elmo-msgdb-set-as-killed killed-list number)))
+    (elmo-folder-set-killed-list-internal folder killed-list))
   t)
 
 (luna-define-method elmo-folder-search ((folder elmo-sendlog-folder)

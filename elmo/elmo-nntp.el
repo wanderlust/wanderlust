@@ -638,7 +638,7 @@ Don't cache if nil.")
 		   elmo-newsgroups-hashtb))
 	    (progn
 	      (setq end-num (nth 2 entry))
-	      (when(and  killed-list
+	      (when (and killed-list
 			 (elmo-number-set-member end-num killed-list))
 		;; Max is killed.
 		(setq end-num nil))
