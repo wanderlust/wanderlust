@@ -1,3 +1,20 @@
+2003-07-18  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-folder-list-unreads): Don't use msgdb API.
+	(elmo-folder-list-importants): Ditto.
+	(elmo-folder-list-answereds): Ditto.
+
+	* elmo-multi.el (elmo-folder-mark-as-important): Remove :before
+	qualifier.
+	(elmo-folder-mark-as-read): Ditto.
+	(elmo-folder-unmark-read): Ditto.
+	(elmo-folder-mark-as-answered): Ditto.
+	(elmo-folder-unmark-answered): Ditto.
+	(elmo-folder-list-flagged): Define.
+	(elmo-folder-commit): Ditto.
+	(elmo-folder-length): Ditto.
+	(elmo-folder-count-flags): Ditto.
+
 2003-07-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo.el (elmo-folder-detach-messages): New method.

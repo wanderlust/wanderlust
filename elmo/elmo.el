@@ -268,13 +268,13 @@ If optional IN-MSGDB is non-nil, retrieve flag information from msgdb.")
   (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) flag))
 
 (luna-define-method elmo-folder-list-unreads ((folder elmo-folder))
-  (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) 'unread))
+  (elmo-folder-list-flagged folder 'unread))
 
 (luna-define-method elmo-folder-list-importants ((folder elmo-folder))
-  (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) 'important))
+  (elmo-folder-list-flagged folder 'important))
 
 (luna-define-method elmo-folder-list-answereds ((folder elmo-folder))
-  (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) 'answered))
+  (elmo-folder-list-flagged folder 'answered))
 
 (luna-define-generic elmo-folder-list-messages-internal (folder &optional
 								visible-only)

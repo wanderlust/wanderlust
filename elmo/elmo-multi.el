@@ -441,57 +441,98 @@
       (setq msg-list (cdr msg-list)))
     ret-val))
 
-(luna-define-method elmo-folder-mark-as-important :before ((folder
-							    elmo-multi-folder)
-							   numbers
-							   &optional
-							   ignore-flags)
+(luna-define-method elmo-folder-mark-as-important ((folder
+						    elmo-multi-folder)
+						   numbers
+						   &optional
+						   ignore-flags)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-mark-as-important (car folder-numbers)
 				   (cdr folder-numbers)
 				   ignore-flags)))
 
-(luna-define-method elmo-folder-unmark-important :before ((folder
-							   elmo-multi-folder)
-							  numbers
-							  &optional
-							  ignore-flags)
+(luna-define-method elmo-folder-unmark-important ((folder
+						   elmo-multi-folder)
+						  numbers
+						  &optional
+						  ignore-flags)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-unmark-important (car folder-numbers)
 				  (cdr folder-numbers)
 				  ignore-flags)))
 
-(luna-define-method elmo-folder-mark-as-read :before ((folder
-						       elmo-multi-folder)
-						      numbers
-						      &optional ignore-flag)
+(luna-define-method elmo-folder-mark-as-read ((folder
+					       elmo-multi-folder)
+					      numbers
+					      &optional ignore-flag)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-mark-as-read (car folder-numbers)
 			      (cdr folder-numbers)
 			      ignore-flag)))
 
-(luna-define-method elmo-folder-unmark-read :before ((folder
-						      elmo-multi-folder)
-						     numbers
-						     &optional ignore-flag)
+(luna-define-method elmo-folder-unmark-read ((folder
+					      elmo-multi-folder)
+					     numbers
+					     &optional ignore-flag)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-unmark-read (car folder-numbers)
 			     (cdr folder-numbers)
 			     ignore-flag)))
 
-(luna-define-method elmo-folder-mark-as-answered :before ((folder
-							   elmo-multi-folder)
-							  numbers)
+(luna-define-method elmo-folder-mark-as-answered ((folder
+						   elmo-multi-folder)
+						  numbers)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-mark-as-answered (car folder-numbers)
 				  (cdr folder-numbers))))
 
-(luna-define-method elmo-folder-unmark-answered :before ((folder
-							  elmo-multi-folder)
-							 numbers)
+(luna-define-method elmo-folder-unmark-answered ((folder
+						  elmo-multi-folder)
+						 numbers)
   (dolist (folder-numbers (elmo-multi-make-folder-numbers-list folder numbers))
     (elmo-folder-unmark-answered (car folder-numbers)
 				 (cdr folder-numbers))))
+
+(luna-define-method elmo-folder-list-flagged ((folder elmo-multi-folder)
+					      flag
+					      &optional in-msgdb)
+  (let ((cur-number 0)
+	numbers)
+    (dolist (child (elmo-multi-folder-children-internal folder))
+      (setq cur-number (+ cur-number 1)
+	    numbers
+	    (nconc
+	     numbers
+	     (mapcar
+	      (function
+	       (lambda (x)
+		 (+
+		  (* (elmo-multi-folder-divide-number-internal folder)
+		     cur-number) x)))
+	      (elmo-folder-list-flagged child flag in-msgdb)))))
+    numbers))
+
+(luna-define-method elmo-folder-commit ((folder elmo-multi-folder))
+  (dolist (child (elmo-multi-folder-children-internal folder))
+    (elmo-folder-commit child)))
+
+(luna-define-method elmo-folder-length ((folder elmo-multi-folder))
+  (let ((sum 0))
+    (dolist (child (elmo-multi-folder-children-internal folder))
+      (setq sum (+ sum (elmo-folder-length child))))
+    sum))
+
+(luna-define-method elmo-folder-count-flags ((folder elmo-multi-folder))
+  (let ((new 0)
+	(unreads 0)
+	(answered 0)
+	flags)
+    (dolist (child (elmo-multi-folder-children-internal folder))
+      (setq flags (elmo-folder-count-flags child))
+      (setq new (+ new (nth 0 flags)))
+      (setq unreads (+ unreads (nth 1 flags)))
+      (setq answered (+ answered (nth 2 flags))))
+    (list new unreads answered)))
 
 (require 'product)
 (product-provide (provide 'elmo-multi) (require 'elmo-version))
