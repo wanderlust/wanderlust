@@ -734,9 +734,12 @@ Refile to archive folder followed message date."
 	 archives func args dst-folder archive-list)
     (if arg
 	(let ((wl-default-spec (char-to-string
-				(car (rassq 'archive elmo-folder-type-alist)))))
+				(car (rassq 'archive
+					    elmo-folder-type-alist)))))
 	  (setq dst-folder (wl-summary-read-folder
-			    (concat wl-default-spec (substring folder 1))
+			    (concat wl-default-spec
+				    (substring
+				     (elmo-folder-name-internal folder) 1))
 			    "for archive"))))
     (run-hooks 'wl-summary-archive-pre-hook)
     (if dst-folder
