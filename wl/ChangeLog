@@ -1,3 +1,9 @@
+2001-09-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl.el (wl-toggle-plugged): Use `not' instead of `null' for
+	boolean value.
+	* wl-draft.el (wl-draft-do-fcc): Ditto.
+
 2001-09-26  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-vars.el (wl-fcc-force-as-read): New variable.

@@ -94,7 +94,7 @@
       (setq wl-plugged t))
      ((eq arg 'off)
       (setq wl-plugged nil))
-     (t (setq wl-plugged (null wl-plugged))))
+     (t (setq wl-plugged (not wl-plugged))))
     (elmo-set-plugged wl-plugged))
   (setq elmo-plugged wl-plugged
 	wl-modeline-plug-status wl-plugged)
