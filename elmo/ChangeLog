@@ -1,3 +1,7 @@
+2002-01-07  Kenichi OKADA  <okada@opaopa.org>
+
+	* elmo-version.el (elmo-version): Up to 2.9.4.
+
 2002-01-07  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-nntp.el (elmo-folder-list-messages-plugged): Renamed from
