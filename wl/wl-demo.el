@@ -301,7 +301,8 @@ Return a number of lines that an image occupies in the buffer."
 				  (list ':background bg))
 				(when (stringp fg)
 				  (list ':foreground fg))))))
-   ((featurep 'xemacs)
+   ((and (featurep 'xemacs)
+	 (face-background-name 'wl-highlight-demo-face))
     (set-face-background 'default
 			 (face-background-name 'wl-highlight-demo-face)
 			 (current-buffer)))))

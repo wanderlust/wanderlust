@@ -1,3 +1,8 @@
+2004-07-16  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-demo.el (wl-demo-setup-properties): Avoid error for XEmacs on
+	tty.
+
 2004-07-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-action.el (wl-summary-exec): Print failure count.
