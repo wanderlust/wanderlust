@@ -2067,15 +2067,6 @@ Non-nil ならフォルダ一覧用に新しいフレームを開きます。
 
 @item wl-folder-hierarchy-access-folders
 @vindex wl-folder-hierarchy-access-folders
-初期設定は以下のリスト。
-
-@lisp
-@group
-("^-$" "^-alt$")
-@end group
-@end lisp
-
-@noindent
 階層構造に作成するアクセスグループの正規表現からなるリストです。
 
 例えば、以下のように 
@@ -2084,7 +2075,7 @@ Non-nil ならフォルダ一覧用に新しいフレームを開きます。
 @lisp
 @group
 (setq wl-folder-hierarchy-access-folders
-     '("^-$" "^-alt$" "^-japan$" "^-comp$" "^-comp.unix$"))
+     '("^-[^\\.]*$" "^-comp.unix$" "^-comp.unix.bsd$"))
 @end group
 @end lisp
 
