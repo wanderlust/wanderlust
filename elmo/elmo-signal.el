@@ -135,7 +135,11 @@ This function is for internal use only."
 
 (defun elmo-connect-signal (source signal-name listener function
 				   &optional filter handback)
-  "Add FUNCTION as a listener of a signal identified by SIGNAL-NAME."
+  "Add FUNCTION as a listener of a signal identified by SIGNAL-NAME.
+If SOURCE has non-nil value, FUNCTION will be invoked only if SOURCE is same as
+source argument of `elmo-emit-signal'. Comparison is done with `eq'. If SOURCE
+is nil, react on signals from any sources.
+You can specify further filter function by FILTER."
   (let ((symbol (intern (symbol-name signal-name) elmo-signal-slot-obarray)))
     (set symbol (cons (elmo-make-slot source listener function filter handback)
 		      (if (boundp symbol)
@@ -158,7 +162,7 @@ This function is for internal use only."
   (fillarray elmo-signal-slot-obarray 0))
 
 (defun elmo-emit-signal (signal-name source &rest args)
-  "Emit SIGNAL."
+  "Emit signal with SIGNAL-NAME."
   (let ((symbol (intern-soft (symbol-name signal-name)
 			     elmo-signal-slot-obarray))
 	signal)
@@ -171,11 +175,11 @@ This function is for internal use only."
 			 (ignore-errors
 			  (funcall (elmo-slot-filter slot)
 				   (elmo-slot-listener slot)
-				   (elmo-slot-source slot)
+				   source
 				   args))))
 	    (funcall (elmo-slot-function slot)
 		     (elmo-slot-listener slot)
-		     (elmo-slot-source slot)
+		     source
 		     args
 		     (elmo-slot-handback slot))))))))
 
