@@ -5,7 +5,6 @@
 
 ;; Author: Masahiro MURATA <muse@ba2.so-net.ne.jp>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/14 19:34:28 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -826,7 +825,9 @@ return value is diffs '(-new -unread -all)."
     (beginning-of-line)
     (let ((ret-val nil)
 	  (inhibit-read-only t)
-	  (wl-folder-completion-func (function wl-fldmgr-add-completion-subr))
+	  (wl-folder-completion-func
+	   (if wl-fldmgr-add-complete-with-current-folder-list
+	       (function wl-fldmgr-add-completion-subr)))
 	  tmp indent path diffs)
       (if (bobp)
 	  (message "Can't insert in the out of desktop group")

@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/14 19:32:32 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -100,9 +99,9 @@ By setting following-method as yank-content."
 	(if (setq mime-out-win (get-buffer-window mime-out-buf))
 	    (delete-window mime-out-win)))))
 
-(defun wl-message-request-partial (folder number msgdb)
+(defun wl-message-request-partial (folder number)
   (elmo-set-work-buf
-   (elmo-read-msg-no-cache folder number (current-buffer) msgdb)
+   (elmo-read-msg-no-cache folder number (current-buffer))
    (mime/parse-message nil nil)))
 
 (defalias 'wl-message-read            'mime-viewer/scroll-up-content)
@@ -114,10 +113,31 @@ By setting following-method as yank-content."
 (defalias 'wl-message-button-dispatcher 'tm:button-dispatcher)
 
 ;;; Summary
+(defun wl-summary-burst-subr (children target number)
+  ;; returns new number.
+  (let (content-type message-entity granch)
+    (while children
+      (setq content-type (mime::content-info/type (car children)))
+      (if (string-match "multipart" content-type)
+	  (setq number (wl-summary-burst-subr
+			(mime::content-info/children (car children))
+			target
+			number))
+	(when (string= "message/rfc822" (downcase content-type))
+	  (message (format "Bursting...%s" (setq number (+ 1 number))))
+	  (setq message-entity 
+		(car (mime::content-info/children (car children))))
+	  (save-restriction
+	    (narrow-to-region (mime::content-info/point-min message-entity)
+			      (mime::content-info/point-max message-entity))
+	    (elmo-append-msg target
+			     (buffer-substring (point-min) (point-max))
+			     (std11-field-body "Message-ID")))))
+      (setq children (cdr children)))))
+
 (defun wl-summary-burst ()
   (interactive)
   (let ((raw-buf (wl-message-get-original-buffer))
-	(i 0)
 	target 
 	children message-entity content-type)
     (save-excursion
@@ -129,19 +149,8 @@ By setting following-method as yank-content."
       (set-buffer raw-buf)
       (setq children (mime::content-info/children mime::article/content-info))
       (message "Bursting...")
-      (while children
-	(setq content-type (mime::content-info/type (car children)))
-	(when (string= "message/rfc822" (downcase content-type))
-	  (message (format "Bursting...%s" (setq i (+ 1 i))))
-	  (setq message-entity 
-		(car (mime::content-info/children (car children))))
-	  (save-restriction
-	    (narrow-to-region (mime::content-info/point-min message-entity)
-			      (mime::content-info/point-max message-entity))
-	    (elmo-append-msg target
-			     (buffer-substring (point-min) (point-max))
-			     (std11-field-body "Message-ID"))))
-	(setq children (cdr children)))
+      (when children
+	(wl-summary-burst-subr children target 0))
       (message "Bursting...done."))
     (if (elmo-folder-plugged-p target)
 	(elmo-commit target))
@@ -223,8 +232,7 @@ By setting following-method as yank-content."
 	      (setq cinfo
 		    (wl-message-request-partial
 		     folder
-		     (elmo-msgdb-overview-entity-get-number (car overviews))
-		     msgdb))
+		     (elmo-msgdb-overview-entity-get-number (car overviews))))
 	      (setq parameters (mime::content-info/parameters cinfo))
 	      (setq the-id (assoc-value "id" parameters))
 	      (if (string= the-id id)

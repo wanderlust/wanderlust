@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/07/13 12:41:30 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -274,6 +273,13 @@ the `wl-smtp-features' variable."
 ;  (save-excursion 
   (let ((r-list (if no-arg wl-draft-reply-without-argument-list
 		  wl-draft-reply-with-argument-list))
+	(eword-lexical-analyzer '(eword-analyze-quoted-string
+				  eword-analyze-domain-literal
+				  eword-analyze-comment
+				  eword-analyze-spaces
+				  eword-analyze-special
+				  eword-analyze-encoded-word
+				  eword-analyze-atom))
 	to mail-followup-to cc subject in-reply-to references newsgroups
 	from addr-alist)
     (set-buffer buf)

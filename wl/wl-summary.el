@@ -4,7 +4,6 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/07/13 10:56:56 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -2201,8 +2200,7 @@ If optional argument is non-nil, checking is omitted."
       (wl-summary-set-message-modified)
       (wl-summary-set-mark-modified)
       (erase-buffer))
-    (if (and (setq has-nntp (elmo-folder-contains-type folder 'nntp))
-	     (not elmo-nntp-use-killed-list))
+    (if (not elmo-use-killed-list)
 	(setq diff (if (eq (elmo-folder-get-type folder) 'multi)
 		       (elmo-multi-list-bigger-diff in-folder in-db)
 		     (elmo-list-bigger-diff in-folder in-db)))
@@ -2247,8 +2245,7 @@ If optional argument is non-nil, checking is omitted."
        wl-summary-unread-uncached-mark)
       ;; Confirm appended message number.
       (setq append-list (wl-summary-confirm-appends initial-append-list))
-      (when (and append-list
-		 has-nntp
+      (when (and elmo-use-killed-list
 		 (not (eq (length initial-append-list)
 			  (length append-list)))
 		 (setq diff (elmo-list-diff initial-append-list append-list)))
@@ -2985,7 +2982,7 @@ If optional argument is non-nil, checking is omitted."
 (defun wl-summary-search-by-subject (entity overview)
   (let ((buf (get-buffer-create wl-summary-search-buf-name))
 	(folder-name wl-summary-buffer-folder-name)
-	match founds)
+	match founds found-entity)
     (save-excursion
       (set-buffer buf)
       (let ((case-fold-search t))
@@ -3003,25 +3000,27 @@ If optional argument is non-nil, checking is omitted."
 		     (elmo-msgdb-overview-entity-get-subject entity)))
 	(if (string= match "")
 	    (setq match "\n"))
-	(goto-char (point-min))
+	(goto-char (point-max))
 	(while (and (not founds)
-		    (not (eobp))
-		    (search-forward match nil t))
+		    (not (= (point) (point-min)))
+		    (search-backward match nil t))
 	  ;; check exactly match
-	  (when (and (eolp)
-		     (= (save-excursion (forward-line 0) (point))
-			(match-beginning 0)))
-	    (setq founds (wl-summary-get-alike))))))
-    (if (and founds
-	     ;; Is founded entity myself or children?
-	     (not (string=
-		   (elmo-msgdb-overview-entity-get-id entity)
-		   (elmo-msgdb-overview-entity-get-id (car founds))))
-	     (not (wl-thread-descendant-p
-		   (elmo-msgdb-overview-entity-get-number entity)
-		   (elmo-msgdb-overview-entity-get-number (car founds)))))
-	;; return first matching entity
-	(car founds))))
+	  (when (and (bolp)
+		     (= (point-at-eol)
+			(match-end 0)))
+	    (setq found-entity (wl-summary-get-alike))
+	    (if (and found-entity
+		     ;; Is founded entity myself or children?
+		     (not (string=
+			   (elmo-msgdb-overview-entity-get-id entity)
+			   (elmo-msgdb-overview-entity-get-id (car found-entity))))
+		     (not (wl-thread-descendant-p
+			   (elmo-msgdb-overview-entity-get-number entity)
+			   (elmo-msgdb-overview-entity-get-number (car found-entity)))))
+		;; return matching entity
+		(setq founds found-entity))))
+	(if founds
+	    (car founds))))))
 
 (defun wl-summary-insert-thread-entity (entity overview mark-alist update
 					       &optional force-insert)
