@@ -516,12 +516,13 @@ Reply to author if WITH-ARG is non-nil."
   (save-restriction
     (narrow-to-region (point)(point))
     (insert
-     (with-current-buffer mail-reply-buffer
-       (when decode-it
-	 (decode-mime-charset-region (point-min) (point-max)
-				     wl-mime-charset))
-       (buffer-substring-no-properties
-	(point-min) (point-max))))
+     (string-as-multibyte
+      (with-current-buffer mail-reply-buffer
+	(when decode-it
+	  (decode-mime-charset-region (point-min) (point-max)
+				      wl-mime-charset))
+	(buffer-substring-no-properties
+	 (point-min) (point-max)))))
     (when ignored-fields
       (goto-char (point-min))
       (wl-draft-delete-fields ignored-fields))
@@ -1732,6 +1733,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	       (error "Invalid value for wl-draft-buffer-style"))))))
     (auto-save-mode -1)
     (wl-draft-mode)
+    (set-buffer-multibyte t)		; draft buffer is always multibyte.
     (make-local-variable 'truncate-partial-width-windows)
     (setq truncate-partial-width-windows nil)
     (setq truncate-lines wl-draft-truncate-lines)

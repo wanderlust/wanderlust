@@ -1,5 +1,10 @@
 2004-05-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-draft.el (wl-draft-yank-from-mail-reply-buffer): Convert to
+	multibyte string before insert into draft buffer.
+	(wl-draft-create-buffer): Always enable multibyte characters for
+	draft buffer.
+
 	* Version number is increased to 2.11.28.
 
 2004-05-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
