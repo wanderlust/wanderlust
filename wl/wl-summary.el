@@ -3906,9 +3906,9 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
        ((string-match field "cc")
 	(setq get-func 'elmo-msgdb-overview-entity-get-cc))
        ((string-match field "since")
-	(setq server-side-search (vector 'date "since" value)))
+	(setq server-side-search (vector 'match "since" value)))
        ((string-match field "before")
-	(setq server-side-search (vector 'date "before" value)))
+	(setq server-side-search (vector 'match "before" value)))
        ((string-match field "body")
 	(setq server-side-search (vector 'match "body" value)))
        ((member field elmo-msgdb-extra-fields)
@@ -3923,7 +3923,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		(message "Searching...")
 		(let ((elmo-mime-charset wl-summary-buffer-mime-charset))
 		  (setq result (elmo-search wl-summary-buffer-folder-name
-					    (list server-side-search))))
+					    server-side-search)))
 		(if from-list
 		    (setq result (elmo-list-filter from-list result)))
 		(message "%d message(s) are picked." (length result)))

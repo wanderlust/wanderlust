@@ -1,5 +1,7 @@
 2000-10-03  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-summary.el (wl-summary-pick): Fixed.
+
 	* wl-draft.el (wl-draft-forward): Get references field from
 	original buffer.
 	(wl-draft-forward): Use `wl-draft-parse-msg-id-list-string'.
