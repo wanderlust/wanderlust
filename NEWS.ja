@@ -34,6 +34,9 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 ** リスト wl-folder-hierarchy-access-folders の各要素は、アクセスグループに
    ついての正規表現になりました(これまでは正確なグループ名でした)。
 
+** ドラフトのヘッダ部分で C-a すると、行頭もしくはヘッダの先頭にカーソルが
+   移動します。
+
 ** カプセル化 Blind Carbon Copy を送れるようになりました。
    デフォルトのフィールド名は "Ecc:" です。
 

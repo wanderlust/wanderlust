@@ -32,6 +32,9 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** Members of the list wl-folder-hierarchy-access-folders is now some REGEXP
    for access group names instead of exact group names.
 
+** In header part of the draft buffer C-a brings cursor to the beginning of
+   the line or the beginning of the header body.
+
 ** You can send encapsulated blind carbon copies. Its default field name is
    "Ecc:".
 
