@@ -1,3 +1,7 @@
+2000-11-20  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-e21.el (wl-make-date-string): Bind `system-time-locale' to "C".
+
 2000-11-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-send-mail-with-smtp): Use `smtp-send-buffer'
