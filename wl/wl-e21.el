@@ -536,7 +536,6 @@ corresponding to the mode line clicked."
 
 (defalias 'wl-setup-summary 'wl-e21-setup-summary-toolbar)
 
-(defvar widget-keymap)
 (defun wl-message-define-keymap ()
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap "l" 'wl-message-toggle-disp-summary)
@@ -544,9 +543,6 @@ corresponding to the mode line clicked."
     (define-key keymap [mouse-5] 'wl-message-wheel-up)
     (define-key keymap [S-mouse-4] 'wl-message-wheel-down)
     (define-key keymap [S-mouse-5] 'wl-message-wheel-up)
-    (when (and (get 'mime-button 'widget-type) ; mime-button is defined.
-	       (boundp 'widget-keymap))
-      (set-keymap-parent keymap widget-keymap))
     (set-keymap-parent wl-message-button-map keymap)
     (define-key wl-message-button-map
       [mouse-2] 'wl-message-button-dispatcher)

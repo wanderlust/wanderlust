@@ -99,7 +99,6 @@ Special commands:
 (defun wl-plugged-set-folder-icon (folder string)
   string)
 
-(defvar widget-keymap)
 (defun wl-message-define-keymap ()
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap "l" 'wl-message-toggle-disp-summary)
@@ -107,11 +106,7 @@ Special commands:
     (define-key keymap [mouse-5] 'wl-message-wheel-up)
     (define-key keymap [S-mouse-4] 'wl-message-wheel-down)
     (define-key keymap [S-mouse-5] 'wl-message-wheel-up)
-    (when (fboundp 'set-keymap-parent)
-      (when (and (get 'mime-button 'widget-type) ; mime-button is defined.
-		 (boundp 'widget-keymap))
-	(set-keymap-parent keymap widget-keymap))    
-      (set-keymap-parent wl-message-button-map keymap))
+    (set-keymap-parent wl-message-button-map keymap)
     (define-key wl-message-button-map [mouse-2]
       'wl-message-button-dispatcher))
 

@@ -1,5 +1,10 @@
 2001-10-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-e21.el (wl-message-define-keymap): Don't set widget-keymap as
+	parent.
+
+	* wl-mule.el (wl-message-define-keymap): Ditto.
+
 	* wl-xmas.el (wl-message-define-keymap): Fixed parenthesis.
 
 	* wl-xmas.el (wl-message-display-internal-hook): Define.
