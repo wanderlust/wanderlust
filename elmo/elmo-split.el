@@ -100,8 +100,9 @@ Example:
   :type 'sexp)
 
 (defcustom elmo-split-folder "%inbox"
-  "Target folder for splitting."
-  :type 'string
+  "Target folder or list of folders for splitting."
+  :type '(choice (string :tag "folder name")
+		 (repeat (string :tag "folder name")))
   :group 'elmo)
 
 (defcustom elmo-split-log-coding-system 'x-ctext
@@ -118,7 +119,7 @@ Example:
 (defvar elmo-split-match-string-internal nil
   "Internal variable for string matching.  Don't touch this variable by hand.")
 
-;;; 
+;;;
 (defun elmo-split-or (buffer &rest args)
   (catch 'done
     (dolist (arg args)
@@ -206,9 +207,14 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
   (interactive "P")
   (unless elmo-split-rule
     (error "Split rule doest not exist. Set `elmo-split-rule' first."))
-  (let ((folder (elmo-make-folder elmo-split-folder))
-	(elmo-inhibit-display-retrieval-progress t)
-	(reharsal arg)
+  (let ((folders (if (listp elmo-split-folder)
+		     elmo-split-folder
+		   (list elmo-split-folder))))
+    (dolist (folder folders)
+      (elmo-split-subr (elmo-make-folder folder) arg))))
+
+(defun elmo-split-subr (folder &optional reharsal)
+  (let ((elmo-inhibit-display-retrieval-progress t)
 	(count 0)
 	(fcount 0)
 	msgs fname target-folder failure)
@@ -240,7 +246,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 			    (progn
 			      (setq target-folder (elmo-make-folder fname))
 			      (unless (elmo-folder-exists-p target-folder)
-				(when 
+				(when
 				    (and
 				     (elmo-folder-creatable-p
 				      target-folder)
@@ -279,13 +285,13 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
       (elmo-progress-clear 'elmo-split))
     (run-hooks 'elmo-split-hook)
     (message
-     (concat 
-      (cond 
+     (concat
+      (cond
        ((eq count 0)
 	"No message is splitted")
        ((eq count 1)
-	"1 message is splitted") 
-       (t 
+	"1 message is splitted")
+       (t
 	(format "%d messages are splitted" count)))
       (if (eq fcount 0)
 	  "."
