@@ -2,6 +2,7 @@
 
 	* wl-draft.el (wl-draft-yank-from-mail-reply-buffer): Push mark
 	with third argument t.
+	(wl-draft): Set first argument for wl-plugged-init as t.
 
 	* wl-vars.el (wl-biff-state-indicator-off): Changed default value
 	definition.
