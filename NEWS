@@ -1,5 +1,59 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust.
 
+* Changes in 2.12.0 from 2.10.1
+
+** New mark, 'A' and '&' is added for answered messages.
+   Now answered messages have its own mark in the summary mode.
+   'A' is displayed for uncached messages and '&' is for cached messages.
+
+** New search condition 'Flag' (Status of the message) is added.
+   There are flags 'unread', 'important', 'answered',
+   'digest' (unread or important) and 'any' (any of the flag).
+   For example, following filter folder contains only unread or important
+   messages in the %inbox folder.
+
+   /flag:digest/%inbox
+
+** The temporary mark and corresponding action is now customizable.
+
+   By default, follwoing mark-and-actions are defined.
+   mark-and-actions which are defined as before.
+    "o" refile   (same as before)
+    "O" copy     (same as before)
+    "d" dispose  (formerly delete, 'D' mark. Messages are moved to
+    		  wl-trash-folder. Its behavior is decided by
+		  wl-dispose-folder-alist.)
+   New mark-and-actions which are newly introduced.
+    "D" delete   (remove message immediately)
+    "i" prefetch (prefetch message)
+    "~" resend   (resend message)
+   Press 'x' to execute actions which corresponds to the mark.
+   mark-and-actions can be define by the new variable, 
+   'wl-summary-mark-action-list'. See its docstring for more in detail.
+
+** New face
+
+   wl-highlight-summary-disposed-face
+   wl-highlight-summary-prefetch-face
+   wl-highlight-summary-resend-face
+   wl-highlight-summary-answered-face
+   wl-highlight-action-argument-face
+
+** Abolished face
+
+   wl-highlight-refile-destination-face
+   (wl-highlight-action-argument-face ¤ËÊÑÌ¾)
+
+** Variables renamed
+   wl-summary-*-mark are renamed to elmo-msgdb-*-mark.
+   wl-summary-delete-folder-alist is renamed to
+   wl-summary-dispose-folder-alist.
+
+** POP3 folder existence check is simplifyed (by default).
+   The default value for elmo-pop3-exists-exactly is changed to nil.
+
+** IMAP4 commands EXPUNGE and CHECK are now send asynchronously.
+
 ** Default value of wl-folder-hierarchy-access-folders has been changed.
 
 ** Access group "@/" of shimbun folders can be used now.
