@@ -43,7 +43,7 @@
 (defcustom elmo-split-rule nil
   "Split rule for the command `elmo-split'.
 The format of this variable is a list of RULEs which has form like:
-\(CONDITION FOLDER [continue]\)
+\(CONDITION ACTION [continue]\)
 
 The 1st element CONDITION is a sexp which consists of following.
 
@@ -71,7 +71,13 @@ FIELD-NAME is a symbol of the field name.
 
 When a symbol is specified, it is evaluated.
 
-The 2nd element FOLDER is the name of the folder to split messages into.
+The 2nd element ACTION is the name of the destination folder or some symbol.
+If CONDITION is satisfied, the message is splitted according to this value.
+
+If ACTION is a string, it will be considered as the name of destination folder.
+Symbol `delete' means that the substance of the message will be removed. On the
+other hand, symbol `noop' is used to do nothing and keep the substance of the
+message as it is. Or, if some function is specified, it will be called.
 
 When the 3rd element `continue' is specified as symbol, evaluating rules is
 not stopped even when the condition is satisfied.
@@ -103,6 +109,14 @@ Example:
   "Target folder or list of folders for splitting."
   :type '(choice (string :tag "folder name")
 		 (repeat (string :tag "folder name")))
+  :group 'elmo)
+
+(defcustom elmo-split-default-action 'noop
+  "Default action for messages which pass all rules."
+  :type '(choice (const :tag "do not touch" noop)
+		 (const :tag "delete" delete)
+		 (string :tag "folder name")
+		 (function :tag "function"))
   :group 'elmo)
 
 (defcustom elmo-split-log-coding-system 'x-ctext
@@ -137,6 +151,12 @@ Example:
       (unless (elmo-split-eval buffer arg)
 	(throw 'done nil)))
     t))
+
+(defun elmo-split-> (buffer size)
+  (> (buffer-size buffer) size))
+
+(defun elmo-split-< (buffer size)
+  (< (buffer-size buffer) size))
 
 (defun elmo-split-address-equal (buffer field value)
   (with-current-buffer buffer
@@ -252,7 +272,9 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
   (let ((elmo-inhibit-display-retrieval-progress t)
 	(count 0)
 	(fcount 0)
-	msgs fname target-folder failure)
+	(default-rule `((t ,elmo-split-default-action)))
+	msgs action target-folder failure delete-substance
+	record-log log-string)
     (message "Splitting...")
     (elmo-folder-open-internal folder)
     (setq msgs (elmo-folder-list-messages folder))
@@ -268,52 +290,96 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 					  nil (current-buffer) 'unread))
 		(setq elmo-split-message-entity (mime-parse-buffer))
 		(catch 'terminate
-		  (dolist (rule elmo-split-rule)
+		  (dolist (rule (append elmo-split-rule default-rule))
 		    (setq elmo-split-match-string-internal nil)
 		    (when (elmo-split-eval (current-buffer) (car rule))
-		      (if elmo-split-match-string-internal
-			  (setq fname (elmo-expand-newtext
-				       (nth 1 rule)
-				       elmo-split-match-string-internal))
-			(setq fname (nth 1 rule)))
+		      (if (and (stringp (nth 1 rule))
+			       elmo-split-match-string-internal)
+			  (setq action (elmo-expand-newtext
+					(nth 1 rule)
+					elmo-split-match-string-internal))
+			(setq action (nth 1 rule)))
+		      ;; 1. ACTION & DELETION
 		      (unless reharsal
-			(setq failure nil)
-			(condition-case nil
-			    (progn
-			      (setq target-folder (elmo-make-folder fname))
-			      (unless (elmo-folder-exists-p target-folder)
-				(when
-				    (and
-				     (elmo-folder-creatable-p
-				      target-folder)
-				     (y-or-n-p
-				      (format
-				       "Folder %s does not exist, Create it? "
-				       fname)))
-				  (elmo-folder-create target-folder)))
-			      (elmo-folder-open-internal target-folder)
-			      (elmo-folder-append-buffer target-folder 'unread)
-			      (elmo-folder-close-internal target-folder))
-			  (error (setq failure t)
-				 (incf fcount)))
-			(unless failure
+			(setq failure nil
+			      delete-substance nil
+			      record-log nil
+			      log-string nil)
+			(cond
+			 ((stringp action)
+			  (condition-case nil
+			      (progn
+				(setq target-folder (elmo-make-folder action))
+				(unless (elmo-folder-exists-p target-folder)
+				  (when
+				      (and
+				       (elmo-folder-creatable-p target-folder)
+				       (y-or-n-p
+					(format
+					 "Folder %s does not exist, Create it? "
+					 action)))
+				    (elmo-folder-create target-folder)))
+				(elmo-folder-open-internal target-folder)
+				(elmo-folder-append-buffer target-folder 'unread)
+				(elmo-folder-close-internal target-folder))
+			    (error (setq failure t)
+				   (incf fcount)))
+			  (setq record-log t
+				delete-substance
+				(not (or failure
+					 (eq (nth 2 rule) 'continue))))
+			  (incf count))
+			 ((eq action 'delete)
+			  (setq record-log t
+				delete-substance t))
+			 ((eq action 'noop)
+			  ;; do nothing
+			  )
+			 ((functionp action)
+			  (funcall action))
+			 (t
+			  (error "Wrong action specified in elmo-split-rule")))
+			(when delete-substance
 			  (ignore-errors
-			    (elmo-folder-delete-messages folder (list msg))))
-			(incf count))
-		      (elmo-split-log
-		       (concat "From "
-			       (nth 1 (std11-extract-address-components
-				       (or (std11-field-body "from") "")))
-			       "  " (or (std11-field-body "date") "") "\n"
-			       " Subject: "
-			       (eword-decode-string (or (std11-field-body
-							 "subject") ""))
-			       "\n"
-			       (if reharsal
-				   "  Test: "
-				 "  Folder: ")
-			       fname "/0" "\n")
-		       reharsal)
+			    (elmo-folder-delete-messages folder (list msg)))))
+		      ;; 2. RECORD LOG
+		      (when (or record-log
+				reharsal)
+			(elmo-split-log
+			 (concat "From "
+				 (nth 1 (std11-extract-address-components
+					 (or (std11-field-body "from") "")))
+				 "  " (or (std11-field-body "date") "") "\n"
+				 " Subject: "
+				 (eword-decode-string (or (std11-field-body
+							   "subject") ""))
+				 "\n"
+				 (if reharsal
+				     (cond
+				      ((stringp action)
+				       (concat "  Test: " action "\n"))
+				      ((eq action 'delete)
+				       "  Test: /dev/null\n")
+				      ((eq action 'noop)
+				       "  Test: do nothing\n")
+				      ((function action)
+				       (format "  Test: function:%s\n"
+					       (symbol-name action)))
+				      (t
+				       "  ERROR: wrong action specified\n"))
+				   (cond
+				    (failure
+				     (concat "  FAILED: " action "\n"))
+				    ((stringp action)
+				     (concat "  Folder: " action "\n"))
+				    ((eq action 'delete)
+				     "  Deleted\n")
+				    (log-string
+				     log-string)
+				    (t
+				     (debug)))))
+			 reharsal))
+		      ;; 3. CONTINUATION CHECK
 		      (unless (eq (nth 2 rule) 'continue)
 			(throw 'terminate nil))))))
 	      (elmo-progress-notify 'elmo-split)))

@@ -35,6 +35,11 @@
 	of elmo-string-matched-assoc to use match-data.
 	(Thanks to Mito <mito@mxa.nes.nec.co.jp>)
 
+2002-11-17  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-split.el (elmo-split->): New function.
+	(elmo-split-<): Ditto.
+
 2002-11-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-msgdb.el (elmo-msgdb-get-message-id-from-buffer): Added
@@ -50,6 +55,13 @@
 	* elmo-maildir.el (elmo-maildir-update-current): Don't append
 	info part to the cur files when the new files already have it.
 	(Adviced by Jared Rhine <jared@wordzoo.com>)
+
+2002-11-06  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* elmo-split.el (elmo-split-default-action): New variable.
+	(elmo-split-subr): Use it if all other conditions are passed.
+	Extend `fname' and rename it as `action'. (implemented
+	Teranishi-san's idea in [wl:10800])
 
 2002-10-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
