@@ -1,3 +1,8 @@
+2003-05-24  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-message.el (wl-message-buffer-cache-add): Create new buffer
+	when it hits killed buffer.
+
 2003-05-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-draft.el, wl-expire.el, wl-mime.el, wl-summary.el, wl-util.el

@@ -147,9 +147,12 @@ Return its cache buffer."
 	(buf nil))
     (if (< len wl-message-buffer-cache-size)
 	(setq buf (wl-message-buffer-create))
-      (setq buf (wl-message-buffer-cache-buffer-get
-		 (nth (1- len) wl-message-buffer-cache)))
-      (setcdr (nthcdr (- len 2) wl-message-buffer-cache) nil))
+      (let ((entry (nth (1- len) wl-message-buffer-cache)))
+	(if (buffer-live-p
+	     (setq buf (wl-message-buffer-cache-buffer-get entry)))
+	    (setcdr (nthcdr (- len 2) wl-message-buffer-cache) nil)
+	  (setq wl-message-buffer-cache (delq entry wl-message-buffer-cache))
+	  (setq buf (wl-message-buffer-create)))))
     (setq wl-message-buffer-cache
 	  (cons (wl-message-buffer-cache-entry-make key buf)
 		wl-message-buffer-cache))
