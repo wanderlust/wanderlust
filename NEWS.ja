@@ -43,6 +43,10 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
    なりました。変数 wl-message-truncate-lines, wl-draft-truncate-lines が
    non-nil なら、それぞれについて長い行を window 幅で切り縮めます。
 
+** オープニングデモに使われるビットマップ画像は wl-demo.elc から取り除かれ、
+   wl-icon-directory から読み込むようになりました。
+   クリスマスの時期には特別な画像が表示されます :)
+
 ** elmo モジュールが全体的に書き直されました。
 
 ** elmo のバックエンドに依存した変数は "elmo-バックエンド名-*" 
