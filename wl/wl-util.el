@@ -829,7 +829,7 @@ This function is imported from Emacs 20.7."
   (if (eq (elmo-folder-type folder) 'pop3)
       ;; pop3 biff should share the session.
       (prog2
-	  (elmo-folder-close folder) ; Close session.
+	  (elmo-folder-check folder)
 	  (wl-folder-check-one-entity (elmo-folder-name-internal folder))
 	(elmo-folder-close folder))
     (let ((elmo-network-session-name-prefix "BIFF-"))
