@@ -7392,7 +7392,7 @@ Non-nil ならば、メール送信時に本当に送信して良いかを確認します。
 @end lisp
 
 @noindent
-フォルダ名の正規表現とフォルダ移動時のサマリ更新レンジとの連想リストです。
+フォルダ名の正規表現とサマリ更新レンジとの連想リストです。
 更新レンジには @code{wl-summary-sync} で入力できる値のいずれか
 (@samp{all}, @samp{update}, @samp{rescan}, @samp{rescan-noscore},
 @samp{first}, @samp{last}, @samp{no-sync}) を指定します。マッチしなかった場合は、
