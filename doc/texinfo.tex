@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2003-01-17.09}
+\def\texinfoversion{2003-01-27.08}
 %
 % Copyright (C) 1985, 1986, 1988, 1990, 1991, 1992, 1993, 1994, 1995,
 % 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003 Free Software Foundation, Inc.
@@ -482,13 +482,16 @@
 \let\{=\mylbrace
 \let\}=\myrbrace
 \begingroup
-  % Definitions to produce actual \{ & \} command in an index.
+  % Definitions to produce \{ and \} commands for indices,
+  % and @{ and @} for the aux file.
   \catcode`\{ = \other \catcode`\} = \other
   \catcode`\[ = 1 \catcode`\] = 2
-  \catcode`\@ = 0 \catcode`\\ = \other
-  @gdef@lbracecmd[\{]%
-  @gdef@rbracecmd[\}]%
-@endgroup
+  \catcode`\! = 0 \catcode`\\ = \other
+  !gdef!lbracecmd[\{]%
+  !gdef!rbracecmd[\}]%
+  !gdef!lbraceatcmd[@{]%
+  !gdef!rbraceatcmd[@}]%
+!endgroup
 
 % Accents: @, @dotaccent @ringaccent @ubaraccent @udotaccent
 % Others are defined by plain TeX: @` @' @" @^ @~ @= @u @v @H.
@@ -498,7 +501,6 @@
 \let\tieaccent = \t
 \let\ubaraccent = \b
 \let\udotaccent = \d
-\let\acuteaccent = \'  % workaround aux file using ' as escape
 
 % Other special characters: @questiondown @exclamdown
 % Plain TeX defines: @AA @AE @O @OE @L (plus lowercase versions) @ss.
@@ -1365,7 +1367,25 @@ where each line of input produces a line of output.}
   \let\tensf=\smallersf \let\teni=\smalleri \let\tensy=\smallersy
   \let\tenttsl=\smallerttsl
   \resetmathfonts \setleading{9.5pt}}
-\let\smallexamplefonts = \smallerfonts
+
+% Set the fonts to use with the @small... environments.
+\let\smallexamplefonts = \smallfonts
+
+% About \smallexamplefonts.  If we use \smallfonts (9pt), @smallexample
+% can fit this many characters:
+%   8.5x11=86   smallbook=72  a4=90  a5=69
+% If we use \smallerfonts (8pt), then we can fit this many characters:
+%   8.5x11=90+  smallbook=80  a4=90+  a5=77
+% For me, subjectively, the few extra characters that fit aren't worth
+% the additional smallness of 8pt.  So I'm making the default 9pt.
+% 
+% By the way, for comparison, here's what fits with @example (10pt):
+%   8.5x11=71  smallbook=60  a4=75  a5=58
+% 
+% I wish we used A4 paper on this side of the Atlantic.
+% 
+% --karl, 24jan03.
+
 
 % Set up the default fonts, so we can use them for creating boxes.
 %
@@ -2279,18 +2299,18 @@ where each line of input produces a line of output.}
   \go
 }
 
-% This used to have \hskip1sp.  But then the space in a template line is
-% not enough.  That is bad.  So let's go back to just & until we
-% encounter the problem it was intended to solve again.
-% --karl, nathan@acm.org, 20apr99.
-\def\tab{&}
-
 % @multitable ... @end multitable definitions:
 %
 \def\multitable{\parsearg\dotable}
 \def\dotable#1{\bgroup
   \vskip\parskip
-  \let\item\crcr
+  \let\item=\crcrwithfootnotes
+  % A \tab used to include \hskip1sp.  But then the space in a template
+  % line is not enough.  That is bad.  So let's go back to just & until
+  % we encounter the problem it was intended to solve again.  --karl,
+  % nathan@acm.org, 20apr99.
+  \let\tab=&%
+  \let\startfootins=\startsavedfootnote
   \tolerance=9500
   \hbadness=9500
   \setmultitablespacing
@@ -2298,7 +2318,11 @@ where each line of input produces a line of output.}
   \parindent=\multitableparindent
   \overfullrule=0pt
   \global\colcount=0
-  \def\Emultitable{\global\setpercentfalse\cr\egroup\egroup}%
+  \def\Emultitable{%
+    \global\setpercentfalse
+    \crcrwithfootnotes\crcr
+    \egroup\egroup
+  }%
   %
   % To parse everything between @multitable and @item:
   \setuptable#1 \endsetuptable
@@ -2387,6 +2411,25 @@ width0pt\relax} \fi
                                       %% than skip between lines in the table.
 \fi}
 
+% In case a @footnote appears inside an alignment, save the footnote
+% text to a box and make the \insert when a row of the table is
+% finished.  Otherwise, the insertion is lost, it never migrates to the
+% main vertical list.  --kasal, 22jan03.
+%
+\newbox\savedfootnotes
+%
+% \dotable \let's \startfootins to this, so that \dofootnote will call
+% it instead of starting the insertion right away.
+\def\startsavedfootnote{%
+  \global\setbox\savedfootnotes = \vbox\bgroup
+    \unvbox\savedfootnotes
+}
+\def\crcrwithfootnotes{%
+  \crcr
+  \ifvoid\savedfootnotes \else
+    \noalign{\insert\footins{\box\savedfootnotes}}%
+  \fi
+}
 
 \message{conditionals,}
 % Prevent errors for section commands.
@@ -2880,44 +2923,81 @@ width0pt\relax} \fi
 \def\docodeindex#1{\edef\indexname{#1}\parsearg\singlecodeindexer}
 \def\singlecodeindexer #1{\doind{\indexname}{\code{#1}}}
 
-% Define \#1 as \realbackslash #1\space, thus effectively preventing its
-% expansion.  This is used only for control words, not control
-% characters, because the \space would be incorrect for control
-% characters, but is needed to separate the control word from whatever
-% follows.
-% 
-% This can be used both for control words that take an argument and
-% those that do not.  If it does take an argument, then it'll be
-% followed by {arg} in the input, which will dutifully get written to
-% the index (or wherever).
-% 
-\def\definedummyword#1{%
-  \expandafter\def\csname #1\endcsname{\realbackslash #1\space}%
-}
-
 % Take care of Texinfo commands that can appear in an index entry.
 % Since there are some commands we want to expand, and others we don't,
 % we have to laboriously prevent expansion for those that we don't.
 % 
 \def\indexdummies{%
-  \def\ {\realbackslash }%
-  \def\@{@}% change to @@ when we switch to @ as escape char in aux files.
+  \def\@{@}% change to @@ when we switch to @ as escape char in index files.
+  \def\ {\realbackslash\space }%
   % Need these in case \tex is in effect and \{ is a \delimiter again.
   % But can't use \lbracecmd and \rbracecmd because texindex assumes
   % braces and backslashes are used only as delimiters.  
   \let\{ = \mylbrace
   \let\} = \myrbrace
-  \def\_{{\realbackslash _}}%
+  %
+  % \definedummyword defines \#1 as \realbackslash #1\space, thus
+  % effectively preventing its expansion.  This is used only for control
+  % words, not control letters, because the \space would be incorrect
+  % for control characters, but is needed to separate the control word
+  % from whatever follows.
+  % 
+  % For control letters, we have \definedummyletter, which omits the
+  % space.
+  % 
+  % These can be used both for control words that take an argument and
+  % those that do not.  If it is followed by {arg} in the input, then
+  % that will dutifully get written to the index (or wherever).
+  % 
+  \def\definedummyword##1{%
+    \expandafter\def\csname ##1\endcsname{\realbackslash ##1\space}%
+  }%
+  \def\definedummyletter##1{%
+    \expandafter\def\csname ##1\endcsname{\realbackslash ##1}%
+  }%
+  %
+  % Do the redefinitions.
+  \commondummies
+}
+
+% For the aux file, @ is the escape character.  So we want to redefine
+% everything using @ instead of \realbackslash.  When everything uses 
+% @, this will be simpler.
+% 
+\def\atdummies{%
+  \def\@{@@}%
+  \def\ {@ }%
+  \let\{ = \lbraceatcmd
+  \let\} = \rbraceatcmd
+  %
+  % (See comments in \indexdummies.)
+  \def\definedummyword##1{%
+    \expandafter\def\csname ##1\endcsname{@##1\space}%
+  }%
+  \def\definedummyletter##1{%
+    \expandafter\def\csname ##1\endcsname{@##1}%
+  }%
+  %
+  % Do the redefinitions.
+  \commondummies
+}
+
+% Called from \indexdummies and \atdummies.  \definedummyword and
+% \definedummyletter must be defined first.
+% 
+\def\commondummies{%
+  %
   \normalturnoffactive
   %
-  % Accents.
-  \def\,{\realbackslash ,}%
-  \def\"{\realbackslash "}%
-  \def\`{\realbackslash `}%
-  \def\'{\realbackslash acuteaccent }% workaround aux file using ' as escape
-  \def\^{\realbackslash ^}%
-  \def\~{\realbackslash ~}%
-  \def\={\realbackslash =}%
+  % Control letters and accents.
+  \definedummyletter{_}%
+  \definedummyletter{,}%
+  \definedummyletter{"}%
+  \definedummyletter{`}%
+  \definedummyletter{'}%
+  \definedummyletter{^}%
+  \definedummyletter{~}%
+  \definedummyletter{=}%
   \definedummyword{u}%
   \definedummyword{v}%
   \definedummyword{H}%
@@ -2979,11 +3059,16 @@ width0pt\relax} \fi
   \definedummyword{var}%
   \definedummyword{w}%
   %
-  % These math commands don't seem likely to be used in index entries.
+  % Assorted special characters.
+  \definedummyword{bullet}%
   \definedummyword{copyright}%
+  \definedummyword{dots}%
+  \definedummyword{enddots}%
   \definedummyword{equiv}%
   \definedummyword{error}%
   \definedummyword{expansion}%
+  \definedummyword{minus}%
+  \definedummyword{pounds}%
   \definedummyword{point}%
   \definedummyword{print}%
   \definedummyword{result}%
@@ -3008,9 +3093,9 @@ width0pt\relax} \fi
 
 
 % \indexnofonts is used when outputting the strings to sort the index
-% by.  Therefore, it eliminates all control sequences and just writes
-% whatever the best ASCII sort string would be for a given command
-% (usually its argument).
+% by, and when constructing control sequence names.  It eliminates all
+% control sequences and just writes whatever the best ASCII sort string
+% would be for a given command (usually its argument).
 %
 \def\indexdummytex{TeX}
 \def\indexdummydots{...}
@@ -3086,13 +3171,6 @@ width0pt\relax} \fi
   \let\var=\asis
   \let\w=\asis
 }
-
-% To define \realbackslash, we must make \ not be an escape.
-% We must first make another character (@) an escape
-% so we do not become unable to do a definition.
-
-{\catcode`\@=0 \catcode`\\=\other
- @gdef@realbackslash{\}}
 
 \let\indexbackslash=0  %overridden during \printindex.
 \let\SETmarginindex=\relax % put index entries in margin (undocumented)?
@@ -4406,7 +4484,7 @@ width0pt\relax} \fi
 %
 \newskip\lskip\newskip\rskip
 
-\long\def\cartouche{%
+\def\cartouche{%
 \begingroup
         \lskip=\leftskip \rskip=\rightskip
         \leftskip=0pt\rightskip=0pt %we want these *outside*.
@@ -4491,27 +4569,16 @@ width0pt\relax} \fi
 % @example: Same as @lisp.
 \def\example{\begingroup \def\Eexample{\nonfillfinish\endgroup}\lisp}
 
-% @small... is usually equivalent to the non-small (@smallbook
-% redefines).  We must call \example (or whatever) last in the
-% definition, since it reads the return following the @example (or
-% whatever) command.
-%
-% This actually allows (for example) @end display inside an
-% @smalldisplay.  Too bad, but makeinfo will catch the error anyway.
-%
-\def\smalldisplay{\begingroup\def\Esmalldisplay{\nonfillfinish\endgroup}\display}
-\def\smallexample{\begingroup\def\Esmallexample{\nonfillfinish\endgroup}\lisp}
-\def\smallformat{\begingroup\def\Esmallformat{\nonfillfinish\endgroup}\format}
-\def\smalllisp{\begingroup\def\Esmalllisp{\nonfillfinish\endgroup}\lisp}
-
-% Real @smallexample and @smalllisp (when @smallbook): use smaller fonts.
+% @smallexample and @smalllisp: use smaller fonts.
 % Originally contributed by Pavel@xerox.
-\def\smalllispx{\begingroup
+\def\smalllisp{\begingroup
   \def\Esmalllisp{\nonfillfinish\endgroup}%
   \def\Esmallexample{\nonfillfinish\endgroup}%
   \smallexamplefonts
   \lisp
 }
+\let\smallexample = \smalllisp
+
 
 % @display: same as @lisp except keep current font.
 %
@@ -4521,9 +4588,9 @@ width0pt\relax} \fi
   \gobble
 }
 %
-% @smalldisplay (when @smallbook): @display plus smaller fonts.
+% @smalldisplay: @display plus smaller fonts.
 %
-\def\smalldisplayx{\begingroup
+\def\smalldisplay{\begingroup
   \def\Esmalldisplay{\nonfillfinish\endgroup}%
   \smallexamplefonts \rm
   \display
@@ -4538,9 +4605,9 @@ width0pt\relax} \fi
   \gobble
 }
 %
-% @smallformat (when @smallbook): @format plus smaller fonts.
+% @smallformat: @format plus smaller fonts.
 %
-\def\smallformatx{\begingroup
+\def\smallformat{\begingroup
   \def\Esmallformat{\nonfillfinish\endgroup}%
   \smallexamplefonts \rm
   \format
@@ -5724,15 +5791,23 @@ width0pt\relax} \fi
 \gdef\restoresf{\relax \ifhmode \spacefactor=\savesfregister \fi}
 \gdef\anchor#1{\savesf \setref{#1}{Ynothing}\restoresf \ignorespaces}
 
-% \setref{NAME}{SNT} defines a cross-reference point NAME, namely
-% NAME-title, NAME-pg, and NAME-SNT.  Called from \foonoderef.  We have
-% to set \indexdummies so commands such as @code in a section title
-% aren't expanded.  It would be nicer not to expand the titles in the
-% first place, but there's so many layers that that is hard to do.
+% \setref{NAME}{SNT} defines a cross-reference point NAME (a node or an
+% anchor), namely NAME-title (the corresponding @chapter/etc. name),
+% NAME-pg (the page number), and NAME-snt (section number and type).
+% Called from \foonoderef.
+% 
+% We have to set \indexdummies so commands such as @code in a section
+% title aren't expanded.  It would be nicer not to expand the titles in
+% the first place, but there's so many layers that that is hard to do.
 %
+% Likewise, use \turnoffactive so that punctuation chars such as underscore
+% and backslash work in node names.
+% 
 \def\setref#1#2{{%
-  \indexdummies
+  \atdummies
   \pdfmkdest{#1}%
+  %
+  \turnoffactive
   \dosetq{#1-title}{Ytitle}%
   \dosetq{#1-pg}{Ypagenumber}%
   \dosetq{#1-snt}{#2}%
@@ -5784,7 +5859,7 @@ width0pt\relax} \fi
   \ifpdf
     \leavevmode
     \getfilename{#4}%
-    {\normalturnoffactive
+    {\turnoffactive \otherbackslash
      \ifnum\filenamelength>0
        \startlink attr{/Border [0 0 0]}%
          goto file{\the\filename.pdf} name{#1}%
@@ -5804,7 +5879,7 @@ width0pt\relax} \fi
     % into the usual \leavevmode...\vrule stuff for purposes of
     % printing. So we \turnoffactive for the \refx-snt, back on for the
     % printing, back off for the \refx-pg.
-    {\normalturnoffactive
+    {\turnoffactive \otherbackslash
      % Only output a following space if the -snt ref is nonempty; for
      % @unnumbered and @anchor, it won't be.
      \setbox2 = \hbox{\ignorespaces \refx{#1-snt}{}}%
@@ -5813,74 +5888,70 @@ width0pt\relax} \fi
     % [mynode],
     [\printednodename],\space
     % page 3
-    \turnoffactive \putwordpage\tie\refx{#1-pg}{}%
+    \turnoffactive \otherbackslash \putwordpage\tie\refx{#1-pg}{}%
   \fi
   \endlink
 \endgroup}
 
-% \dosetq is the interface for calls from other macros
-
-% Use \normalturnoffactive so that punctuation chars such as underscore
-% and backslash work in node names.  (\turnoffactive doesn't do \.)
+% \dosetq is called from \setref to do the actual \write (\iflinks).
+%
 \def\dosetq#1#2{%
   {\let\folio=0%
-   \normalturnoffactive
    \edef\next{\write\auxfile{\internalsetq{#1}{#2}}}%
-   \iflinks
-     \next
-   \fi
+   \iflinks \next \fi
   }%
 }
 
-% \internalsetq {foo}{page} expands into
-% CHARACTERS 'xrdef {foo}{...expansion of \Ypage...}
-% When the aux file is read, ' is the escape character
+% \internalsetq{foo}{page} expands into
+%   CHARACTERS @xrdef{foo}{...expansion of \page...}
+\def\internalsetq#1#2{@xrdef{#1}{\csname #2\endcsname}}
 
-\def\internalsetq #1#2{'xrdef {#1}{\csname #2\endcsname}}
-
-% Things to be expanded by \internalsetq
-
+% Things to be expanded by \internalsetq.
+% 
 \def\Ypagenumber{\folio}
-
 \def\Ytitle{\thissection}
-
 \def\Ynothing{}
-
 \def\Ysectionnumberandtype{%
-\ifnum\secno=0 \putwordChapter\xreftie\the\chapno %
-\else \ifnum \subsecno=0 \putwordSection\xreftie\the\chapno.\the\secno %
-\else \ifnum \subsubsecno=0 %
-\putwordSection\xreftie\the\chapno.\the\secno.\the\subsecno %
-\else %
-\putwordSection\xreftie\the\chapno.\the\secno.\the\subsecno.\the\subsubsecno %
-\fi \fi \fi }
+  \ifnum\secno=0
+    \putwordChapter@tie \the\chapno
+  \else \ifnum\subsecno=0
+    \putwordSection@tie \the\chapno.\the\secno
+  \else \ifnum\subsubsecno=0
+    \putwordSection@tie \the\chapno.\the\secno.\the\subsecno
+  \else
+    \putwordSection@tie \the\chapno.\the\secno.\the\subsecno.\the\subsubsecno
+  \fi\fi\fi
+}
 
 \def\Yappendixletterandtype{%
-\ifnum\secno=0 \putwordAppendix\xreftie'char\the\appendixno{}%
-\else \ifnum \subsecno=0 \putwordSection\xreftie'char\the\appendixno.\the\secno %
-\else \ifnum \subsubsecno=0 %
-\putwordSection\xreftie'char\the\appendixno.\the\secno.\the\subsecno %
-\else %
-\putwordSection\xreftie'char\the\appendixno.\the\secno.\the\subsecno.\the\subsubsecno %
-\fi \fi \fi }
-
-\gdef\xreftie{'tie}
+  \ifnum\secno=0
+     \putwordAppendix@tie @char\the\appendixno{}%
+  \else \ifnum\subsecno=0
+     \putwordSection@tie @char\the\appendixno.\the\secno
+  \else \ifnum\subsubsecno=0
+    \putwordSection@tie @char\the\appendixno.\the\secno.\the\subsecno
+  \else
+    \putwordSection@tie
+      @char\the\appendixno.\the\secno.\the\subsecno.\the\subsubsecno
+  \fi\fi\fi
+}
 
 % Use TeX 3.0's \inputlineno to get the line number, for better error
 % messages, but if we're using an old version of TeX, don't do anything.
 %
 \ifx\inputlineno\thisisundefined
-  \let\linenumber = \empty % Non-3.0.
+  \let\linenumber = \empty % Pre-3.0.
 \else
   \def\linenumber{\the\inputlineno:\space}
 \fi
 
 % Define \refx{NAME}{SUFFIX} to reference a cross-reference string named NAME.
 % If its value is nonempty, SUFFIX is output afterward.
-
+%
 \def\refx#1#2{%
   {%
-    \indexdummies
+    \indexnofonts
+    \otherbackslash
     \expandafter\global\expandafter\let\expandafter\thisrefX
       \csname X#1\endcsname
   }%
@@ -5906,12 +5977,7 @@ width0pt\relax} \fi
 
 % This is the macro invoked by entries in the aux file.
 %
-\def\xrdef#1{\begingroup
-  % Reenable \ as an escape while reading the second argument.
-  \catcode`\\ = 0
-  \afterassignment\endgroup
-  \expandafter\gdef\csname X#1\endcsname
-}
+\def\xrdef#1{\expandafter\gdef\csname X#1\endcsname}
 
 % Read the last existing aux file, if any.  No error if none exists.
 \def\readauxfile{\begingroup
@@ -5942,9 +6008,7 @@ width0pt\relax} \fi
   \catcode`\^^]=\other
   \catcode`\^^^=\other
   \catcode`\^^_=\other
-  \catcode`\@=\other
-  \catcode`\^=\other
-  % It was suggested to define this as 7, which would allow ^^e4 etc.
+  % It was suggested to set the catcode of ^ to 7, which would allow ^^e4 etc.
   % in xref tags, i.e., node names.  But since ^^e4 notation isn't
   % supported in the main text, it doesn't seem desirable.  Furthermore,
   % that is not enough: for node names that actually contain a ^
@@ -5957,6 +6021,9 @@ width0pt\relax} \fi
   % \def\auxhat{\def^{'hat }}% extra space so ok if followed by letter
   % and then to call \auxhat in \setq.
   %
+  \catcode`\^=\other
+  %
+  % Special characters.  Should be turned off anyway, but...
   \catcode`\~=\other
   \catcode`\[=\other
   \catcode`\]=\other
@@ -5968,7 +6035,9 @@ width0pt\relax} \fi
   \catcode`\$=\other
   \catcode`\#=\other
   \catcode`\&=\other
+  \catcode`\%=\other
   \catcode`+=\other % avoid \+ for paranoia even though we've turned it off
+  %
   % Make the characters 128-255 be printing characters
   {%
     \count 1=128
@@ -5978,17 +6047,18 @@ width0pt\relax} \fi
       \ifnum \count 1<256 \loop \fi
     }%
   }%
-  % The aux file uses ' as the escape (for now).
+  %
   % Turn off \ as an escape so we do not lose on
   % entries which were dumped with control sequences in their names.
-  % For example, 'xrdef {$\leq $-fun}{page ...} made by @defun ^^
+  % For example, @xrdef{$\leq $-fun}{page ...} made by @defun ^^
   % Reference to such entries still does not work the way one would wish,
   % but at least they do not bomb out when the aux file is read in.
+  \catcode`\\=\other
+  %
+  % @ is our escape character in .aux files.
   \catcode`\{=1
   \catcode`\}=2
-  \catcode`\%=\other
-  \catcode`\'=0
-  \catcode`\\=\other
+  \catcode`\@=0
   %
   \openin 1 \jobname.aux
   \ifeof 1 \else
@@ -6033,7 +6103,7 @@ width0pt\relax} \fi
   % Remove inadvertent blank space before typesetting the footnote number.
   \unskip
   \thisfootno\@sf
-  \footnotezzz
+  \dofootnote
 }%
 
 % Don't bother with the trickery in plain.tex to not require the
@@ -6043,10 +6113,17 @@ width0pt\relax} \fi
 % \parseargline fail inside footnotes because the tokens are fixed when
 % the footnote is read.  --karl, 16nov96.
 %
-\long\gdef\footnotezzz{\insert\footins\bgroup
+% The start of the footnote looks usually like this:
+\gdef\startfootins{\insert\footins\bgroup}
+%
+% ... but this macro is redefined inside @multitable.
+%
+\gdef\dofootnote{%
+  \startfootins
   % We want to typeset this text as a normal paragraph, even if the
   % footnote reference occurs in (for example) a display environment.
   % So reset some parameters.
+  \hsize=\pagewidth
   \interlinepenalty\interfootnotelinepenalty
   \splittopskip\ht\strutbox % top baseline for broken footnotes
   \splitmaxdepth\dp\strutbox
@@ -6076,12 +6153,6 @@ width0pt\relax} \fi
   \footstrut
   \futurelet\next\fo@t
 }
-\def\fo@t{\ifcat\bgroup\noexpand\next \let\next\f@@t
-  \else\let\next\f@t\fi \next}
-\def\f@@t{\bgroup\aftergroup\@foot\let\next}
-\def\f@t#1{#1\@foot}
-\def\@foot{\strut\par\egroup}
-
 }%end \catcode `\@=11
 
 % @| inserts a changebar to the left of the current line.  It should
@@ -6128,8 +6199,8 @@ width0pt\relax} \fi
 \openin 1 = epsf.tex
 \ifeof 1 \else
   \closein 1
-  % Do not bother showing banner with post-v2.7 epsf.tex (available in
-  % doc/epsf.tex until it shows up on ctan).
+  % Do not bother showing banner with epsf.tex v2.7k (available in
+  % doc/epsf.tex and on ctan).
   \def\epsfannounce{\toks0 = }%
   \input epsf.tex
 \fi
@@ -6290,15 +6361,6 @@ should work if nowhere else does.}
   \setemergencystretch
 }
 
-% Use `small' versions.
-% 
-\def\smallenvironments{%
-  \let\smalldisplay = \smalldisplayx
-  \let\smallexample = \smalllispx
-  \let\smallformat = \smallformatx
-  \let\smalllisp = \smalllispx
-}
-
 % @letterpaper (the default).
 \def\letterpaper{{\globaldefs = 1
   \parskip = 3pt plus 2pt minus 1pt
@@ -6326,7 +6388,6 @@ should work if nowhere else does.}
   \hfuzz = 1pt
   \contentsrightmargin = 0pt
   \defbodyindent = .5cm
-  \smallenvironments
 }}
 
 % Use @afourpaper to print on European A4 paper.
@@ -6373,8 +6434,6 @@ should work if nowhere else does.}
   \contentsrightmargin = 0pt
   \defbodyindent = 2mm
   \tableindent = 12mm
-  %
-  \smallenvironments
 }}
 
 % A specific text layout, 24x15cm overall, intended for A4 paper.  
@@ -6515,14 +6574,20 @@ should work if nowhere else does.}
 
 \catcode`\@=0
 
-% \rawbackslashxx output one backslash character in current font
+% \rawbackslashxx outputs one backslash character in current font,
+% as in \char`\\.
 \global\chardef\rawbackslashxx=`\\
-%{\catcode`\\=\other
-%@gdef@rawbackslashxx{\}}
 
-% \rawbackslash redefines \ as input to do \rawbackslashxx.
+% \rawbackslash defines an active \ to do \rawbackslashxx.
+% \otherbackslash defines an active \ to be a literal `\' character with
+% catcode other.
 {\catcode`\\=\active
-@gdef@rawbackslash{@let\=@rawbackslashxx }}
+ @gdef@rawbackslash{@let\=@rawbackslashxx}
+ @gdef@otherbackslash{@let\=@realbackslash}
+}
+
+% \realbackslash is an actual character `\' with catcode other.
+{\catcode`\\=\other @gdef@realbackslash{\}}
 
 % \normalbackslash outputs one backslash in fixed width font.
 \def\normalbackslash{{\tt\rawbackslashxx}}
@@ -6531,18 +6596,23 @@ should work if nowhere else does.}
 
 % Used sometimes to turn off (effectively) the active characters
 % even after parsing them.
-@def@turnoffactive{@let"=@normaldoublequote
-@let\=@realbackslash
-@let~=@normaltilde
-@let^=@normalcaret
-@let_=@normalunderscore
-@let|=@normalverticalbar
-@let<=@normalless
-@let>=@normalgreater
-@let+=@normalplus
-@let$=@normaldollar}%$ font-lock fix
+@def@turnoffactive{%
+  @let"=@normaldoublequote
+  @let\=@realbackslash
+  @let~=@normaltilde
+  @let^=@normalcaret
+  @let_=@normalunderscore
+  @let|=@normalverticalbar
+  @let<=@normalless
+  @let>=@normalgreater
+  @let+=@normalplus
+  @let$=@normaldollar %$ font-lock fix
+}
 
-% Same as @turnoffactive except for \.
+% Same as @turnoffactive except outputs \ as {\tt\char`\\} instead of
+% the literal character `\'.  (Thus, \ is not expandable when this is in
+% effect.)
+% 
 @def@normalturnoffactive{@turnoffactive @let\=@normalbackslash}
 
 % Make _ and + \other characters, temporarily.
