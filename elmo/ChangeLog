@@ -1,3 +1,16 @@
+2003-06-07  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-shimbun-get-headers): Use shimbun-server
+	instead of shimbun-server-internal;
+	Use shimbun-current-group instead of shimbun-current-group-internal.
+	(elmo-folder-plugged-p): Use shimbun-server instead of
+	shimbun-server-internal.
+	(elmo-folder-set-plugged): Ditto.
+	(elmo-net-port-info): Ditto.
+	(elmo-folder-check): Ditto.
+	(elmo-folder-expand-msgdb-path): Ditto.
+	(elmo-folder-list-subfolders): Ditto.
+
 2003-05-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-msgdb.el (elmo-msgdb-overview-entity-get-extra-field):
