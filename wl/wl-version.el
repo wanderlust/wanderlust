@@ -48,11 +48,10 @@
      (product-version (product-find 'elmo-version))) ; equals to ELMO version.
    "Smooth Criminal"))
 
-(defconst wl-version-status "alpha"
+(defconst wl-version-status nil
   "Wanderlust verstion status.  For override default rule.
 If nil, use default rule.")
 
-
 ;; set version-string
 (product-version-as-string 'wl-version)
 

@@ -120,6 +120,7 @@ For disconnected operations.")
 (defvar elmo-enable-disconnected-operation nil
   "*Enable disconnected operations.")
 
+
 (defvar elmo-auto-change-plugged 600
   "*Time to expire change plugged state automatically, as the number of seconds.
 Don't change plugged state automatically if nil.")
