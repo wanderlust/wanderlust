@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-04-18 10:27:36 teranisi>
+;; Time-stamp: <2000-04-18 11:30:43 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -2756,8 +2756,9 @@ If optional argument is non-nil, checking is omitted."
 		  (save-excursion
 		    (forward-line (- 
 				   0 
-				   (or wl-summary-partial-highlight-above-lines
-				       wl-summary-highlight-partial-threshold)))
+				   (or
+				    wl-summary-partial-highlight-above-lines
+				    wl-summary-highlight-partial-threshold)))
 		    (wl-highlight-summary (point) (point-max)))
 		(wl-highlight-summary (point-min) (point-max))))
 	  (if (null wl-summary-buffer-msgdb) ;; one more try.
