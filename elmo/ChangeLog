@@ -1,3 +1,7 @@
+2000-10-20  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-version.el (elmo-version): Up to 2.3.92.
+
 2000-10-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo2.el (elmo-move-msgs, elmo-msgdb-load, elmo-msgdb-save,
