@@ -14,7 +14,7 @@
    ))
 
 (defconst ELMO-MODULES '(
-   elmo-util elmo-imap4 elmo-nntp elmo-archive
+   elmo-util elmo-net elmo-imap4 elmo-nntp elmo-archive
    elmo-localdir elmo-msgdb elmo-vars elmo2
    elmo-cache elmo-multi elmo-filter elmo-pipe
    elmo-dop elmo-pop3 elmo-localnews elmo-maildir
