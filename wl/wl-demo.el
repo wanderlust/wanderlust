@@ -200,24 +200,38 @@ Return a number of lines that an image occupies in the buffer."
 		((eq 'bitmap image-type)
 		 ;; Use ready-composed bitmap image.
 		 (require 'bitmap)
-		 (if wl-on-emacs21
-		     (progn
-		       ;; Decode bitmap data line by line.
-		       (let ((coding-system-for-read 'raw-text))
-			 (insert-file-contents file))
-		       (while (not (eobp))
-			 (decode-coding-region (point) (line-end-position)
-					       'iso-2022-7bit)
-			 (forward-line 1))
-		       (goto-char (point-min)))
-		   (let ((coding-system-for-read 'iso-2022-7bit)
-			 (input-coding-system '*iso-2022-jp*))
-		     (insert-file-contents file)))
-		 (end-of-line)
+		 (let ((coding-system-for-read 'iso-2022-7bit)
+		       (input-coding-system '*iso-2022-jp*))
+		   (insert-file-contents file))
+		 (goto-char (point-max))
+		 (unless (bolp)
+		   (insert "\n"))
+		 (setq width 0)
+		 (while (progn
+			  (end-of-line 0)
+			  (not (bobp)))
+		   (setq width (max width (current-column))))
+		 ;; Emacs 21.1 would fail to decode composite chars
+		 ;; if it has been built without fixing coding.c.
+		 (when (and wl-on-emacs21
+			    (>= width 80))
+		   (erase-buffer)
+		   (let ((coding-system-for-read 'raw-text))
+		     (insert-file-contents file))
+		   (goto-char (point-max))
+		   (unless (bolp)
+		     (insert "\n"))
+		   (setq width 0)
+		   (while (progn
+			    (end-of-line 0)
+			    (not (bobp)))
+		     ;; Decode bitmap data line by line.
+		     (decode-coding-region (line-beginning-position)
+					   (point)
+					   'iso-2022-7bit)
+		     (setq width (max width (current-column)))))
 		 (indent-rigidly (point-min) (point-max)
-				 (max 0 (/ (1+ (- (window-width)
-						  (current-column)))
-					   2)))
+				 (max 0 (/ (1+ (- (window-width) width)) 2)))
 		 (put-text-property (point-min) (point-max)
 				    'face 'wl-highlight-logo-face)
 		 (count-lines (point-min) (goto-char (point-max))))
@@ -301,6 +315,7 @@ argument."
 		  (get-buffer-create "*WL Demo*"))))
     (switch-to-buffer buffer)
     (setq buffer-read-only nil)
+    (buffer-disable-undo)
     (erase-buffer)
     (setq truncate-lines t
 	  tab-width 8)

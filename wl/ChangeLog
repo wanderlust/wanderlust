@@ -1,3 +1,13 @@
+2001-12-17  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-e21.el (wl-e21-toolbar-configurations): Replace
+	`auto-resize-tool-bar' to `auto-resize-tool-bars'.  Pavel Janik
+	<Pavel@Janik.cz> has realized this in the emacs-w3m list.
+
+	* wl-demo.el (wl-demo-insert-image): Retry to read *.img file only
+	if it was failed.
+	(wl-demo): Disable undo in the demo buffer.
+
 2001-12-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-version.el (wl-version): Changed codename.
