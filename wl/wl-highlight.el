@@ -300,21 +300,6 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-;; answered 
-(wl-defface wl-highlight-summary-answered-face
-  '((((type tty)
-      (background dark))
-     (:foreground "yellow"))
-    (((class color)
-      (background dark))
-     (:foreground "khaki"))
-    (((class color)
-      (background light))
-     (:foreground "khaki")))
-  "Face used for displaying answered messages."
-  :group 'wl-summary-faces
-  :group 'wl-faces)  
-
 ;; obsolete.
 (wl-defface wl-highlight-summary-temp-face
   '(
@@ -814,9 +799,6 @@
 	  ((member mark (list elmo-msgdb-unread-cached-mark
 			      elmo-msgdb-unread-uncached-mark))
 	   (setq fsymbol 'wl-highlight-summary-unread-face))
-	  ((member mark (list elmo-msgdb-answered-cached-mark
-			      elmo-msgdb-answered-uncached-mark))
-	   (setq fsymbol 'wl-highlight-summary-answered-face))
 	  ((or (string= mark elmo-msgdb-important-mark))
 	   (setq fsymbol 'wl-highlight-summary-important-face))
 	  ((string= temp-mark "-")
@@ -874,9 +856,6 @@
 	   ((member status-mark (list elmo-msgdb-unread-cached-mark
 				      elmo-msgdb-unread-uncached-mark))
 	    (setq fsymbol 'wl-highlight-summary-unread-face))
-	   ((member status-mark (list elmo-msgdb-answered-cached-mark
-				      elmo-msgdb-answered-uncached-mark))
-	    (setq fsymbol 'wl-highlight-summary-answered-face))
 	   ((string= status-mark elmo-msgdb-important-mark)
 	    (setq fsymbol 'wl-highlight-summary-important-face))
 	   ;; score mark

@@ -1,14 +1,5 @@
 2002-10-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* wl-highlight.el (wl-highlight-summary-answered-face): New face.
-	(wl-highlight-summary-line-string): Use it.
-	(wl-highlight-summary-current-line): Ditto.
-
-	* wl-mime.el (wl-message-delete-current-part): Check the class of
-	mime-entity.
-
-	* wl-draft.el (wl-draft-reedit): Set wl-draft-parent-folder.
-
 	* wl-summary.el (wl-summary-make-number-list): Initialize.
 	(wl-summary-update-mark): New function.
 	(wl-summary-reply): Put `answered' mark on the message.

@@ -1,18 +1,5 @@
 2002-10-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* elmo.el (elmo-folder-unmark-important): Follow the changes above.
-	(elmo-folder-mark-as-important): Ditto.
-	(elmo-folder-unmark-read): Ditto.
-	(elmo-folder-mark-as-read): Ditto.
-	(elmo-folder-unmark-answered): Ditto.
-	(elmo-folder-mark-as-answered): Ditto.
-
-	* elmo-msgdb.el (elmo-msgdb-set-cached): Use the term 'flag' for
-	message status.
-	(elmo-msgdb-mark): Likewise.
-	(elmo-msgdb-set-flag): Renamed from elmo-msgdb-set-status.
-	(elmo-msgdb-unset-flag): Likewise.
-
 	* elmo.el (elmo-generic-folder-diff): Avoid byte-compile warning.
 
 2002-10-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
