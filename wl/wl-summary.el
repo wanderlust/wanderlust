@@ -1196,6 +1196,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	(save-excursion
 	  (when (wl-summary-jump-to-msg wl-summary-buffer-current-msg)
 	    (wl-highlight-summary-displaying))))
+      (wl-thread-make-number-list)
       (wl-summary-set-message-modified)
       (wl-summary-jump-to-msg start-number)
       (move-to-column start-column))))
