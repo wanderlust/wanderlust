@@ -414,10 +414,14 @@ Reply to author if WITH-ARG is non-nil."
   (run-hooks 'wl-reply-hook))
 
 (defun wl-draft-add-references ()
+  (wl-draft-add-in-reply-to "References"))
+
+(defun wl-draft-add-in-reply-to (&optional alt-field)
   (let* ((mes-id (save-excursion
 		   (set-buffer mail-reply-buffer)
 		   (std11-field-body "message-id")))
-	 (ref (std11-field-body "References"))
+	 (field (or alt-field "In-Reply-To"))
+	 (ref (std11-field-body field))
 	 (ref-list nil) (st nil))
     (when (and mes-id ref)
       (while (string-match "<[^>]+>" ref st)
@@ -429,7 +433,7 @@ Reply to author if WITH-ARG is non-nil."
 	(setq mes-id nil)))
     (when mes-id
       (save-excursion
-	(when (mail-position-on-field "References")
+	(when (mail-position-on-field field)
 	  (forward-line)
 	  (while (looking-at "^[ \t]")
 	    (forward-line))
@@ -460,8 +464,10 @@ Reply to author if WITH-ARG is non-nil."
 	  (mail-yank-hooks (run-hooks 'mail-yank-hooks))
 	  (wl-draft-cite-function (funcall wl-draft-cite-function))) ; default cite
     (run-hooks 'wl-draft-cited-hook)
-    (when (and wl-draft-add-references
-	       (wl-draft-add-references))
+    (when (if wl-draft-add-references
+	      (wl-draft-add-references)
+	    (if wl-draft-add-in-reply-to
+		(wl-draft-add-in-reply-to)))
       (wl-highlight-headers 'for-draft)) ; highlight when added References:
     (when wl-highlight-body-too
       (wl-highlight-body-region beg (point-max)))))
@@ -567,7 +573,8 @@ Reply to author if WITH-ARG is non-nil."
   (let (original-buffer
 	mail-reply-buffer
 	mail-citation-hook mail-yank-hooks
-	wl-draft-add-references wl-draft-cite-function)
+	wl-draft-add-references wl-draft-add-in-reply-to
+	wl-draft-cite-function)
     (with-current-buffer wl-draft-buffer-cur-summary-buffer
       (with-current-buffer wl-message-buffer
 	(setq original-buffer (wl-message-get-original-buffer))

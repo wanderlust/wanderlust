@@ -270,7 +270,13 @@ If nil, `wl-from' is used."
   :group 'wl
   :group 'wl-setting)
 
-(defcustom wl-draft-add-references t
+(defcustom wl-draft-add-in-reply-to t
+  "*If non-nil, message-id of the cited message is inserted to the
+in-reply-to field of the current draft."
+  :type 'boolean
+  :group 'wl)
+
+(defcustom wl-draft-add-references nil
   "*If non-nil, message-id of the cited message is inserted to the
 references field of the current draft."
   :type 'boolean

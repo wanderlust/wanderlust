@@ -1,3 +1,13 @@
+2001-11-30  Tatsuya Kinoshita  <tats@iris.ne.jp>
+
+	* wl-vars.el (wl-draft-add-references): Set default value as nil.
+	(wl-draft-add-in-reply-to): New variable.
+	* wl-draft.el (wl-draft-add-references, wl-draft-add-in-reply-to):
+	Divided from `wl-draft-add-references'; add support `In-Reply-To'.
+	(wl-draft-yank-from-mail-reply-buffer): Use
+	`wl-draft-add-in-reply-to'.
+	(wl-draft-insert-current-message): Ditto.
+
 2001-12-01  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-vars.el (wl-folder-process-duplicates-alist): Fixed
