@@ -71,9 +71,9 @@
   (dolist (fld (elmo-multi-folder-children-internal folder))
     (elmo-folder-close-internal fld)))
 
-(luna-define-method elmo-folder-close :after ((folder elmo-multi-folder))
+(luna-define-method elmo-folder-close :around ((folder elmo-multi-folder))
   (dolist (fld (elmo-multi-folder-children-internal folder))
-    (elmo-folder-set-msgdb-internal fld nil)))
+    (elmo-folder-close fld)))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-multi-folder))

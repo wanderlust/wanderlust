@@ -129,7 +129,7 @@ if MARK is nil, mark is removed."
 		      ((not (member cur-mark (elmo-msgdb-unread-marks)))
 		       'read)))
 	 (cur-cached (not (member cur-mark (elmo-msgdb-uncached-marks)))))
-    (unless (eq cached cur-cached)
+    (unless (eq (not cached) (not cur-cached))
       (case cur-status
 	(read
 	 (elmo-msgdb-set-mark msgdb number
@@ -145,8 +145,7 @@ if MARK is nil, mark is removed."
 	 (elmo-msgdb-set-mark msgdb number
 			      (if cached
 				  elmo-msgdb-unread-cached-mark
-				elmo-msgdb-unread-uncached-mark))))
-      (elmo-folder-set-mark-modified-internal folder t))))
+				elmo-msgdb-unread-uncached-mark)))))))
 
 (defun elmo-msgdb-set-status (msgdb folder number status)
   "Set message status.
@@ -209,27 +208,22 @@ STATUS is a symbol which is one of the following:
 		       'answered)
 		      ((not (member cur-mark (elmo-msgdb-unread-marks)))
 		       'read)))
-	 (cur-cached (not (member cur-mark (elmo-msgdb-uncached-marks))))
-	 mark-modified)
+	 (cur-cached (not (member cur-mark (elmo-msgdb-uncached-marks)))))
     (case status
       (read
-       (when (eq cur-status 'read)
-	 (elmo-msgdb-set-mark msgdb number
-			      (if (and cur-cached use-cache)
-				  elmo-msgdb-unread-cached-mark
-				elmo-msgdb-unread-uncached-mark))
-	 (setq mark-modified t)))
+       (if (eq cur-status 'read)
+	   (elmo-msgdb-set-mark msgdb number
+				(if (and cur-cached use-cache)
+				    elmo-msgdb-unread-cached-mark
+				  elmo-msgdb-unread-uncached-mark))))
       (important
-       (when (eq cur-status 'important)
-	 (elmo-msgdb-set-mark msgdb number nil)
-	 (setq mark-modified t)))
+       (if (eq cur-status 'important)
+	   (elmo-msgdb-set-mark msgdb number nil)))
       (answered
-       (when (eq cur-status 'answered)
-	 (elmo-msgdb-set-mark msgdb number
-			      (if (and cur-cached (not use-cache))
-				  elmo-msgdb-read-uncached-mark))
-	 (setq mark-modified t))))
-    (if mark-modified (elmo-folder-set-mark-modified-internal folder t))))
+       (if (eq cur-status 'answered)
+	   (elmo-msgdb-set-mark msgdb number
+				(if (and cur-cached (not use-cache))
+				    elmo-msgdb-read-uncached-mark)))))))
 
 (defvar elmo-msgdb-unread-marks-internal nil)
 (defsubst elmo-msgdb-unread-marks ()
