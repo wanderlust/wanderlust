@@ -466,6 +466,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "u"    'wl-summary-unmark)
   (define-key wl-summary-mode-map "U"    'wl-summary-unmark-all)
   (define-key wl-summary-mode-map "D"    'wl-summary-delete)
+  (define-key wl-summary-mode-map "~"    'wl-summary-resend)
 
   ;; thread commands
   (define-key wl-summary-mode-map "t"	(make-sparse-keymap))
@@ -477,6 +478,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "tO" 'wl-thread-copy)
   (define-key wl-summary-mode-map "td" 'wl-thread-dispose)
   (define-key wl-summary-mode-map "tD" 'wl-thread-delete)
+  (define-key wl-summary-mode-map "t~" 'wl-thread-resend)
   (define-key wl-summary-mode-map "tu" 'wl-thread-unmark)
   (define-key wl-summary-mode-map "t!" 'wl-thread-mark-as-unread)
   (define-key wl-summary-mode-map "t$" 'wl-thread-mark-as-important)
@@ -486,14 +488,18 @@ See also variable `wl-use-petname'."
   ;; target-mark commands
   (define-key wl-summary-mode-map "m"	  (make-sparse-keymap))
   (define-key wl-summary-mode-map "mi"   'wl-summary-target-mark-prefetch)
-  (define-key wl-summary-mode-map "mR"   'wl-summary-target-mark-mark-as-read)
   (define-key wl-summary-mode-map "mo"   'wl-summary-target-mark-refile)
   (define-key wl-summary-mode-map "mO"   'wl-summary-target-mark-copy)
-  (define-key wl-summary-mode-map "md"   'wl-summary-target-mark-delete)
+  (define-key wl-summary-mode-map "md"   'wl-summary-target-mark-dispose)
+  (define-key wl-summary-mode-map "mD"   'wl-summary-target-mark-delete)
+  (define-key wl-summary-mode-map "m~"   'wl-summary-target-mark-resend)
+
+  (define-key wl-summary-mode-map "mu"   'wl-summary-delete-all-temp-marks)
+
   (define-key wl-summary-mode-map "my"   'wl-summary-target-mark-save)
+  (define-key wl-summary-mode-map "mR"   'wl-summary-target-mark-mark-as-read)
   (define-key wl-summary-mode-map "m!"   'wl-summary-target-mark-mark-as-unread)
   (define-key wl-summary-mode-map "m$"   'wl-summary-target-mark-mark-as-important)
-  (define-key wl-summary-mode-map "mu"   'wl-summary-delete-all-temp-marks)
   (define-key wl-summary-mode-map "mU"   'wl-summary-target-mark-uudecode)
   (define-key wl-summary-mode-map "ma"   'wl-summary-target-mark-all)
   (define-key wl-summary-mode-map "mt"   'wl-summary-target-mark-thread)
@@ -502,7 +508,6 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "m?"   'wl-summary-target-mark-pick)
   (define-key wl-summary-mode-map "m#"   'wl-summary-target-mark-print)
   (define-key wl-summary-mode-map "m|"   'wl-summary-target-mark-pipe)
-  (define-key wl-summary-mode-map "mD"   'wl-summary-target-mark-delete)
 
   ;; region commands
   (define-key wl-summary-mode-map "r"    (make-sparse-keymap))
@@ -515,6 +520,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "rO"   'wl-summary-copy-region)
   (define-key wl-summary-mode-map "rd"   'wl-summary-dispose-region)
   (define-key wl-summary-mode-map "rD"   'wl-summary-delete-region)
+  (define-key wl-summary-mode-map "r~"   'wl-summary-resend-region)
   (define-key wl-summary-mode-map "ru"   'wl-summary-unmark-region)
   (define-key wl-summary-mode-map "r!"   'wl-summary-mark-as-unread-region)
   (define-key wl-summary-mode-map "r$"   'wl-summary-mark-as-important-region)

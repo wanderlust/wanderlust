@@ -274,12 +274,12 @@ Matched address lists are append to CL."
       (setq entries (cdr entries)))
     (append result cl)))
 
-(defun wl-complete-field-to ()
+(defun wl-complete-field-to (prompt)
   (interactive)
   (let ((cl wl-address-completion-list))
     (if cl
-	(completing-read "To: " cl)
-      (read-string "To: "))))
+	(completing-read (or prompt "To: ") cl)
+      (read-string (or prompt "To: ")))))
 
 (defalias 'wl-address-quote-specials 'elmo-address-quote-specials)
 

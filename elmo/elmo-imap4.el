@@ -2087,7 +2087,11 @@ If optional argument REMOVE is non-nil, remove FLAG."
 (luna-define-method elmo-folder-delete-messages-plugged
   ((folder elmo-imap4-folder) numbers)
   (let ((session (elmo-imap4-get-session folder)))
-    (elmo-imap4-set-flag folder numbers "\\Deleted")
+    (elmo-imap4-session-select-mailbox
+     session
+     (elmo-imap4-folder-mailbox-internal folder))
+    (unless (elmo-imap4-set-flag folder numbers "\\Deleted")
+      (error "Failed to set deleted flag"))
     (elmo-imap4-send-command session "expunge")))
 
 (defmacro elmo-imap4-detect-search-charset (string)

@@ -346,14 +346,14 @@ If nil, never search search parent by subject."
      nil
      wl-summary-register-temp-mark
      wl-summary-exec-action-dispose
-     wl-highlight-summary-deleted-face
+     wl-highlight-summary-disposed-face
      "dispose messages according to `wl-dispose-folder-alist'.")
     ("D"
      delete
      nil
      wl-summary-register-temp-mark
      wl-summary-exec-action-delete
-     wl-highlight-summary-erased-face
+     wl-highlight-summary-deleted-face
      "delete messages immediately.")
     ("o"
      refile
@@ -375,7 +375,14 @@ If nil, never search search parent by subject."
      wl-summary-register-temp-mark
      wl-summary-exec-action-prefetch
      wl-highlight-summary-prefetch-face
-     "prefetch messages."))
+     "prefetch messages.")
+    ("~"
+     resend
+     wl-summary-get-resend-address
+     wl-summary-register-temp-mark
+     wl-summary-exec-action-resend
+     wl-highlight-summary-resend-face
+     ))
   "A variable to define Mark & Action.
 Each element of the list should be a list of
 \(MARK

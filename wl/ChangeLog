@@ -1,5 +1,22 @@
 2003-07-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-vars.el (wl-summary-mark-action-list): Define resend action.
+
+	* wl-summary.el (wl-summary-mode-map): Bind resend action.
+
+	* wl-highlight.el (wl-highlight-summary-disposed-face): New face
+	(Renamed from wl-highlight-summary-deleted-face).
+	(wl-highlight-summary-resend-face): New face.
+
+	(wl-highlight-summary-deleted-face): Renamed from
+	wl-highlight-summary-erased-face.
+
+	* wl-address.el (wl-complete-field-to): Added optional argument prompt.
+
+	* wl-action.el (wl-summary-get-resend-address): New function.
+	(wl-summary-exec-action-resend): Ditto.
+	(wl-summary-exec-action-resend-subr): Ditto.
+
 	* w-thread.el (wl-thread-copy): Removed definition.
 	(wl-thread-refile): Ditto.
 	(wl-thread-delete): Ditto.

@@ -555,6 +555,75 @@ Return number if put mark succeed"
       (message "Prefetching...done")
       0)))
 
+;; Resend.
+(defun wl-summary-get-resend-address (action number)
+  "Decide resend address."
+  (wl-complete-field-to "Resend message to: "))
+
+(defun wl-summary-exec-action-resend (mark-list)
+  (let ((failure 0))
+    (dolist (mark-info mark-list)
+      (if (condition-case nil
+	      (progn
+		(wl-summary-exec-action-resend-subr (car mark-info)
+						    (nth 2 mark-info))
+		t)
+	    (error))
+	  (wl-summary-unmark (car mark-info))
+	(incf failure)))
+    failure))
+
+(defun wl-summary-exec-action-resend-subr (number address)
+  "Resend the message with NUMBER to ADDRESS."
+  (message "Resending message to %s..." address)
+  (let ((folder wl-summary-buffer-elmo-folder))
+    (save-excursion
+      ;; We first set up a normal mail buffer.
+      (set-buffer (get-buffer-create " *wl-draft-resend*"))
+      (buffer-disable-undo (current-buffer))
+      (erase-buffer)
+      (setq wl-sent-message-via nil)
+      ;; Insert our usual headers.
+      (wl-draft-insert-from-field)
+      (wl-draft-insert-date-field)
+      (insert "To: " address "\n")
+      (goto-char (point-min))
+      ;; Rename them all to "Resent-*".
+      (while (re-search-forward "^[A-Za-z]" nil t)
+	(forward-char -1)
+	(insert "Resent-"))
+      (widen)
+      (forward-line)
+      (delete-region (point) (point-max))
+      (let ((beg (point)))
+	;; Insert the message to be resent.
+	(insert
+	 (with-temp-buffer
+	   (elmo-message-fetch folder number
+			       (elmo-make-fetch-strategy 'entire)
+			       nil (current-buffer) 'unread)
+	   (buffer-string)))
+	(goto-char (point-min))
+	(search-forward "\n\n")
+	(forward-char -1)
+	(save-restriction
+	  (narrow-to-region beg (point))
+	  (wl-draft-delete-fields wl-ignored-resent-headers)
+	  (goto-char (point-max)))
+	(insert mail-header-separator)
+	;; Rename all old ("Previous-")Resent headers.
+	(while (re-search-backward "^\\(Previous-\\)*Resent-" beg t)
+	  (beginning-of-line)
+	  (insert "Previous-"))
+	;; Quote any "From " lines at the beginning.
+	(goto-char beg)
+	(when (looking-at "From ")
+	  (replace-match "X-From-Line: ")))
+      ;; Send it.
+      (wl-draft-dispatch-message)
+      (kill-buffer (current-buffer)))
+    (message "Resending message to %s...done" address)))
+
 ;;;
 (defun wl-summary-remove-destination ()
   (save-excursion

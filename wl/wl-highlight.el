@@ -250,7 +250,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-deleted-face
+(wl-defface wl-highlight-summary-disposed-face
   '(
     (((type tty)
       (background dark))
@@ -261,11 +261,11 @@
     (((class color)
       (background light))
      (:foreground "DarkKhaki")))
-  "Face used for displaying messages mark as deleted."
+  "Face used for displaying messages mark as disposed."
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-erased-face
+(wl-defface wl-highlight-summary-deleted-face
   '(
     (((type tty)
       (background dark))
@@ -276,7 +276,7 @@
     (((class color)
       (background light))
      (:foreground "SteelBlue")))
-  "Face used for displaying messages mark as erased."
+  "Face used for displaying messages mark as deleted."
   :group 'wl-summary-faces
   :group 'wl-faces)
 
@@ -292,6 +292,21 @@
       (background light))
      (:foreground "brown")))
   "Face used for displaying messages mark as deleted."
+  :group 'wl-summary-faces
+  :group 'wl-faces)
+
+(wl-defface wl-highlight-summary-resend-face
+  '(
+    (((type tty)
+      (background dark))
+     (:foreground "Yellow"))
+    (((class color)
+      (background dark))
+     (:foreground "orange3"))
+    (((class color)
+      (background light))
+     (:foreground "orange3")))
+  "Face used for displaying messages mark as resend."
   :group 'wl-summary-faces
   :group 'wl-faces)
 
