@@ -1,3 +1,7 @@
+2005-03-25  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* 2.14.0 is released.
+
 2005-03-21  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-rescan-message): Call
