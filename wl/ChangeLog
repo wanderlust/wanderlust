@@ -1,3 +1,11 @@
+2003-10-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-rescan): Added optional argument
+	disable-thread.
+	(wl-summary-sync): Call wl-summary-rescan with argument
+	disable-thread.
+	(wl-summary-input-range): Added new range `rescan-thread'.
+
 2003-10-16  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-util.el (wl-get-assoc-list-value): Fixed last change.

@@ -924,7 +924,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (interactive)
   (wl-summary-rescan "list-info"))
 
-(defun wl-summary-rescan (&optional sort-by disable-killed)
+(defun wl-summary-rescan (&optional sort-by disable-killed disable-thread)
   "Rescan current folder without updating."
   (interactive)
   (let ((elmo-mime-charset wl-summary-buffer-mime-charset)
@@ -935,9 +935,12 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	(buffer-read-only nil)
 	(numbers (elmo-folder-list-messages wl-summary-buffer-elmo-folder
 					    (not disable-killed) t)) ; in-msgdb
-	(wl-thread-saved-entity-hashtb-internal wl-thread-entity-hashtb)
-	wl-summary-search-parent-by-subject-regexp
-	wl-summary-divide-thread-when-subject-changed
+	(wl-thread-saved-entity-hashtb-internal (and (not disable-thread)
+						     wl-thread-entity-hashtb))
+	(wl-summary-search-parent-by-subject-regexp
+	 (and disable-thread wl-summary-search-parent-by-subject-regexp))
+	(wl-summary-divide-thread-when-subject-changed
+	 (and disable-thread wl-summary-divide-thread-when-subject-changed))
 	expunged)
     (erase-buffer)
     (message "Re-scanning...")
@@ -1201,7 +1204,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 				     nil
 				   wl-use-scoring)))
 	     (wl-summary-rescan nil
-				(string-match "noscore" range))
+				(string-match "noscore" range)
+				(string-match "thread" range))
 	     (and msg (wl-summary-jump-to-msg msg))))
 	  ((string= range "mark")
 	   (let ((msg (wl-summary-message-number)))
@@ -3391,6 +3395,7 @@ Return non-nil if the mark is updated"
 			    "mark"
 			    "rescan"
 			    "rescan-noscore"
+			    "rescan-thread"
 			    "update"
 			    "update-entirely"
 			    "all"
