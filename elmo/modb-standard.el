@@ -189,7 +189,8 @@ When non-nil, redundunt message-id string are not saved."
      ((null ret)
       ;; Garbage entity.
       (elmo-clear-hash-val (modb-standard-key number)
-			   (modb-standard-entity-map-internal msgdb)))
+			   (modb-standard-entity-map-internal msgdb))
+      nil)				; return nil.
      (t (error "Internal error: invalid msgdb status")))))
 
 (defun modb-standard-load-entity (modb path &optional section)
