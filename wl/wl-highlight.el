@@ -986,38 +986,44 @@ Variables used:
   wl-highlight-summary-refiled-regexp   matches messages mark as refiled
   wl-highlight-summary-copied-regexp    matches messages mark as copied
   wl-highlight-summary-new-regexp       matches new messages
-
-If HACK-SIG is true,then we search backward from END for something that
-looks like the beginning of a signature block, and don't consider that a
-part of the message (this is because signatures are often incorrectly
-interpreted as cited text.)"
+"
   (if (< end start)
       (let ((s start)) (setq start end end s)))
-  (let* ((lines (count-lines start end))
-	 (too-big (and wl-highlight-max-summary-lines
-		       (> lines wl-highlight-max-summary-lines)))
-	 (real-end end)
-	 gc-message
-	 e p hend i percent)
+  (let (lines too-big gc-message e p hend i percent)
     (save-excursion
-      (save-restriction
-	(widen)
-	(narrow-to-region start end)
-	(if (not too-big)
-	    (save-restriction
-	      (goto-char start)
-	      (setq i 0)
-	      (while (not (eobp))
-		(wl-highlight-summary-current-line nil nil wl-summary-scored)
-		(when (> lines elmo-display-progress-threshold)
-		  (setq i (+ i 1))
-		  (setq percent (/ (* i 100) lines))
-		  (if (or (zerop (% percent 5)) (= i lines))
-		      (elmo-display-progress
-		       'wl-highlight-summary "Highlighting..."
-		       percent)))
-		(forward-line 1))
-	      (message "Highlighting...done")))))))
+      (unless wl-summary-lazy-highlight
+	(setq lines (count-lines start end)
+	      too-big (and wl-highlight-max-summary-lines
+			   (> lines wl-highlight-max-summary-lines))))
+      (goto-char start)
+      (setq i 0)
+      (while (and (not (eobp))
+		  (< (point) end))
+	(wl-highlight-summary-current-line nil nil
+					   (or wl-summary-lazy-highlight
+					       wl-summary-scored))
+	(when (and (not wl-summary-lazy-highlight)
+		   (> lines elmo-display-progress-threshold))
+	  (setq i (+ i 1))
+	  (setq percent (/ (* i 100) lines))
+	  (if (or (zerop (% percent 5)) (= i lines))
+	      (elmo-display-progress
+	       'wl-highlight-summary "Highlighting..."
+	       percent)))
+	(forward-line 1))
+      (unless wl-summary-lazy-highlight
+	(message "Highlighting...done")))))
+
+(defun wl-highlight-summary-window (&optional win beg)
+  "Highlight summary window.
+This function is defined for `window-scroll-functions'"
+  (if wl-summary-highlight
+      (with-current-buffer (window-buffer win)
+	(wl-highlight-summary (window-start win)
+			      (save-excursion
+				(goto-char (window-start win))
+				(forward-line (frame-height))
+				(point))))))
 
 (defun wl-highlight-headers (&optional for-draft)
   (let ((beg (point-min))
