@@ -1,5 +1,7 @@
 2003-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* Version number is increased to 2.11.5.
+
 	* wl-draft.el (wl-draft): Set buffer-undo-list as nil.
 
 2003-08-01  Yoichi NAKAYAMA  <yoichi@geiin.org>

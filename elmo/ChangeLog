@@ -1,5 +1,7 @@
 2003-08-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-version.el (elmo-version): Up to 2.11.5.
+
 	* elmo-multi.el (elmo-folder-search): Use nil for 1st argument of
 	elmo-list-filter.
 
