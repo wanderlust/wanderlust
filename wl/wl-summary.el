@@ -840,6 +840,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	 expunged)
     (fset 'wl-summary-append-message-func-internal
 	  (wl-summary-get-append-message-func))
+    (wl-summary-buffer-number-column-detect nil)
     (erase-buffer)
     (message "Re-scanning...")
     (setq i 0)
