@@ -694,11 +694,11 @@ Reply to author if WITH-ARG is non-nil."
     (message "")))
 
 (defun wl-draft-fcc ()
-  "Add a new FCC field, with file name completion."
+  "Add a new Fcc field, with file name completion."
   (interactive)
-  (or (mail-position-on-field "fcc" t)  ;Put new field after exiting FCC.
+  (or (mail-position-on-field "fcc" t)  ;Put new field after exiting Fcc.
       (mail-position-on-field "to"))
-  (insert "\nFCC: "))
+  (insert "\nFcc: "))
 
 ;; function for wl-sent-message-via
 
@@ -955,15 +955,15 @@ non-nil."
       (let ((session (elmo-pop3-get-session
 		      (list 'pop3
 			    (or wl-pop-before-smtp-user
-				elmo-default-pop3-user)
+				elmo-pop3-default-user)
 			    (or wl-pop-before-smtp-authenticate-type
-				elmo-default-pop3-authenticate-type)
+				elmo-pop3-default-authenticate-type)
 			    (or wl-pop-before-smtp-server
-				elmo-default-pop3-server)
+				elmo-pop3-default-server)
 			    (or wl-pop-before-smtp-port
-				elmo-default-pop3-port)
+				elmo-pop3-default-port)
 			    (or wl-pop-before-smtp-stream-type
-				elmo-default-pop3-stream-type)))))
+				elmo-pop3-default-stream-type)))))
 	(when session (elmo-network-close-session session)))
     (error))
   (wl-draft-send-mail-with-smtp))
@@ -1204,7 +1204,7 @@ If optional argument is non-nil, current draft buffer is killed"
     (or (markerp header-end) (error "header-end must be a marker"))
     (save-excursion
       (goto-char (point-min))
-      (while (re-search-forward "^FCC:[ \t]*" header-end t)
+      (while (re-search-forward "^Fcc:[ \t]*" header-end t)
 	(setq fcc-list
 	      (cons (buffer-substring-no-properties
 		     (point)
@@ -1347,7 +1347,7 @@ If optional argument is non-nil, current draft buffer is killed"
 	(insert "Reply-To: " mail-default-reply-to "\n"))
     (wl-draft-insert-ccs "Bcc: " (or wl-bcc
 			       (and mail-self-blind (user-login-name))))
-    (wl-draft-insert-ccs "FCC: " wl-fcc)
+    (wl-draft-insert-ccs "Fcc: " wl-fcc)
     (if wl-organization
 	(insert "Organization: " wl-organization "\n"))
     (and wl-auto-insert-x-face
@@ -1426,21 +1426,21 @@ If optional argument is non-nil, current draft buffer is killed"
 
 (defun wl-draft-elmo-nntp-send ()
   (let ((elmo-nntp-post-pre-hook wl-news-send-pre-hook)
-	(elmo-default-nntp-user
-	 (or wl-nntp-posting-user elmo-default-nntp-user))
-	(elmo-default-nntp-server
-	 (or wl-nntp-posting-server elmo-default-nntp-server))
-	(elmo-default-nntp-port
-	 (or wl-nntp-posting-port elmo-default-nntp-port))
-	(elmo-default-nntp-stream-type
-	 (or wl-nntp-posting-stream-type elmo-default-nntp-stream-type)))
-    (if (not (elmo-plugged-p elmo-default-nntp-server elmo-default-nntp-port))
+	(elmo-nntp-default-user
+	 (or wl-nntp-posting-user elmo-nntp-default-user))
+	(elmo-nntp-default-server
+	 (or wl-nntp-posting-server elmo-nntp-default-server))
+	(elmo-nntp-default-port
+	 (or wl-nntp-posting-port elmo-nntp-default-port))
+	(elmo-nntp-default-stream-type
+	 (or wl-nntp-posting-stream-type elmo-nntp-default-stream-type)))
+    (if (not (elmo-plugged-p elmo-nntp-default-server elmo-nntp-default-port))
  	(wl-draft-set-sent-message 'news 'unplugged
- 				   (cons elmo-default-nntp-server
- 					 elmo-default-nntp-port))
-      (elmo-nntp-post elmo-default-nntp-server (current-buffer))
+ 				   (cons elmo-nntp-default-server
+ 					 elmo-nntp-default-port))
+      (elmo-nntp-post elmo-nntp-default-server (current-buffer))
       (wl-draft-set-sent-message 'news 'sent)
-      (wl-draft-write-sendlog 'ok 'nntp elmo-default-nntp-server
+      (wl-draft-write-sendlog 'ok 'nntp elmo-nntp-default-server
  			      (std11-field-body "Newsgroups")
  			      (std11-field-body "Message-ID")))))
 

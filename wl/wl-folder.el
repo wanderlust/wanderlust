@@ -1455,6 +1455,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	(switch-to-buffer  wl-folder-buffer-name)
       (switch-to-buffer (get-buffer-create wl-folder-buffer-name))
       (wl-folder-mode)
+      (sit-for 0)
       (wl-folder-init)
       (set-buffer wl-folder-buffer-name)
       (let ((inhibit-read-only t)
@@ -1964,7 +1965,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
       (elmo-set-plugged wl-plugged
 			wl-nntp-posting-server
 			wl-nntp-posting-stream-type
-			elmo-default-nntp-port
+			elmo-nntp-default-port
 			nil nil "nntp" add))
     (run-hooks 'wl-make-plugged-hook)))
 

@@ -339,6 +339,20 @@ Return value is a cons cell of (STRUCTURE . REST)"
 					  (cdr tmp)))))))
   lst)
 
+(defun elmo-list-insert (list element after)
+  "Insert an ELEMENT to the LIST, just after AFTER."
+  (let ((li list)
+	(curn 0)
+	p pn)
+    (while li
+      (if (eq (car li) after)
+	  (setq p li pn curn li nil)
+	(incf curn))
+      (setq li (cdr li)))
+    (if pn
+	(setcdr (nthcdr pn list) (cons element (cdr p)))
+      (nconc list (list element)))))
+
 (defun elmo-string-partial-p (string)
   (and (stringp string) (string-match "message/partial" string)))
 
@@ -1096,10 +1110,10 @@ the value of `foo'."
 		(list 'error-message doc
 		      'error-conditions (cons error conds))))))
 
-(cond ((fboundp 'lprogress-display)
-       (defalias 'elmo-display-progress 'lprogress-display))
-      ((fboundp 'progress-feedback-with-label)
+(cond ((fboundp 'progress-feedback-with-label)
        (defalias 'elmo-display-progress 'progress-feedback-with-label))
+      ((fboundp 'lprogress-display)
+       (defalias 'elmo-display-progress 'lprogress-display))
       (t
        (defun elmo-display-progress (label format &optional value &rest args)
 	 "Print a progress message."
@@ -1347,6 +1361,51 @@ NUMBER-SET is altered."
       (setq list (cons (substring string (match-beginning matchn)
                                   (match-end matchn)) list)))
     (nreverse list)))
+
+(defconst elmo-warning-buffer-name "*elmo warning*")
+
+(defun elmo-warning (&rest args)
+  "Display a warning, making warning message by passing all args to `insert'."
+  (with-current-buffer (get-buffer-create elmo-warning-buffer-name)
+    (goto-char (point-max))
+    (apply 'insert (append args '("\n")))
+    (recenter 1))
+  (display-buffer elmo-warning-buffer-name))
+
+(defvar elmo-obsolete-variable-alist nil)
+(defvar elmo-obsolete-variable-show-warnings nil)
+
+(defun elmo-define-obsolete-variable (obsolete var)
+  "Define obsolete variable.
+OBSOLETE is a symbol for obsolete variable.
+VAR is a symbol for new variable.
+Definition is stored in `elmo-obsolete-variable-alist'."
+  (let ((pair (assq var elmo-obsolete-variable-alist)))
+    (if pair
+	(setcdr pair obsolete)
+      (setq elmo-obsolete-variable-alist
+	    (cons (cons var obsolete)
+		  elmo-obsolete-variable-alist)))))
+
+(defun elmo-resque-obsolete-variable (obsolete var)
+  "Resque obsolete variable OBSOLETE as VAR.
+If `elmo-obsolete-variable-show-warnings' is non-nil, show warning message."
+  (when (boundp obsolete)
+    (set var (symbol-value obsolete))
+    (if elmo-obsolete-variable-show-warnings
+	(elmo-warning (format "%s is obsolete. Use %s instead."
+			      (symbol-name obsolete)
+			      (symbol-name var))))))
+
+(defun elmo-resque-obsolete-variables (&optional alist)
+  "Resque obsolete variables in ALIST.
+ALIST is a list of cons cell of
+\(OBSOLETE-VARIABLE-SYMBOL . NEW-VARIABLE-SYMBOL\).
+If ALIST is nil, `elmo-obsolete-variable-alist' is used."
+  (dolist (pair elmo-obsolete-variable-alist)
+    (elmo-resque-obsolete-variable (cdr pair)
+				   (car pair))))
+
 
 (require 'product)
 (product-provide (provide 'elmo-util) (require 'elmo-version))

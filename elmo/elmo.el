@@ -900,7 +900,17 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
   "Get mark of the message.
 FOLDER is the ELMO folder structure.
 NUMBER is a number of the message."
-  (cdr (assq number (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))))
+  (cadr (assq number (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))))
+
+(defun elmo-folder-list-messages-mark-match (folder mark-regexp)
+  "List messages in the FOLDER which have a mark that matches MARK-REGEXP"
+  (let ((case-fold-search nil)
+	matched)
+    (if mark-regexp
+	(dolist (elem (elmo-msgdb-get-mark-alist (elmo-folder-msgdb folder)))
+	  (if (string-match mark-regexp (cadr elem))
+	      (setq matched (cons (car elem) matched)))))
+    matched))
 
 (defun elmo-message-field (folder number field)
   "Get message field value in the msgdb.
@@ -1203,7 +1213,7 @@ Return a hashtable for newsgroups."
     (dolist (group groups)
       (or (elmo-get-hash-val group hashtb)
 	  (elmo-set-hash-val group nil hashtb)))
-    hashtb))
+    (setq elmo-newsgroups-hashtb hashtb)))
 
 (defvar elmo-crosspost-message-alist-modified nil)
 (defun elmo-crosspost-message-alist-load ()
@@ -1239,8 +1249,15 @@ Return a hashtable for newsgroups."
     (elmo-make-directory temp-dir)
     temp-dir))
 
+(defun elmo-init ()
+  "Initialize ELMO module."
+  (elmo-crosspost-message-alist-load)
+  (elmo-resque-obsolete-variables))
+
 (defun elmo-quit ()
   "Quit and cleanup ELMO."
+;  (setq elmo-newsgroups-hashtb nil)
+  (elmo-crosspost-message-alist-save)
   ;; Not implemented yet.
   (let ((types elmo-folder-type-alist)
 	class)
