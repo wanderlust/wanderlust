@@ -1,3 +1,12 @@
+2003-08-26  Tetsurou Okazaki  <okazaki@be.to>
+
+	* WL-MK (wl-texinfo-info-file, wl-texinfo-texi-file,
+	wl-texinfo-check-newer): New functions.
+	(wl-texinfo-install-file): Use `wl-texifo-info-file'.
+	(wl-primary-info-file): Likewise.
+	(wl-texinfo-format-file): Use `wl-texinfo-check-newer'
+	and `wl-texinfo-texi-file'.  Remove unused local variable `beg'.
+
 2003-07-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* doc/.cvsignore: New file.
