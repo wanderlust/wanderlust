@@ -1,3 +1,9 @@
+2000-09-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* utils/ptexinfmt.el (texinfo-multitable-widths): Fix
+	broken-facility probrem when use multitable unsupported
+	texinfmt.el.
+
 2000-09-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* utils/ptexinfmt.el (texinfo-format-printindex): Use (featurep

@@ -96,14 +96,17 @@
 ;; @multitable
 (broken-facility texinfo-multitable-widths
   "texinfo-multitable-widths unsupport wide-char."
-  (with-temp-buffer
-    (let ((str "幅広文字"))
-      (texinfo-mode)
-      (insert (format " {%s}\n" str))
-      (goto-char (point-min))
-      (if (= (car (texinfo-multitable-widths)) (length str))
-	  nil
-	t)))
+  (if (fboundp 'texinfo-multitable-widths)
+      (with-temp-buffer
+	(let ((str "幅広文字"))
+	  (texinfo-mode)
+	  (insert (format " {%s}\n" str))
+	  (goto-char (point-min))
+	  (if (= (car (texinfo-multitable-widths)) (length str))
+	      nil
+	    t)))
+    ;; function definition is void
+    t)
   ptexinfmt-disable-broken-notice)
 
 (broken-facility texinfo-multitable-item
