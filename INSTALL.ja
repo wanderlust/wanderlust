@@ -16,31 +16,30 @@ MIME用モジュールの選択
   SEMI には APEL, FLIM と呼ばれるパッケージも必要です。主な Emacsen につ
   いて推奨される APEL, FLIM, SEMI の組合せを以下に示します。
 
-  (a) XEmacs 21.1 以降
+(a) XEmacs 21.1 以降
 
 	APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
 
-    可能ならば XEmacs のパッケージとしてインストールすることをお勧めします。
+  可能ならば XEmacs のパッケージとしてインストールすることをお勧めします。
 
-  (b) Emacs 20.4 以降
+(b) Emacs 20.4 以降
 
 	APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
 
-  (c) Emacs 20.1〜20.3
+(c) Emacs 20.1〜20.3
 
 	APEL 10.3, CLIME 1.14.0, SEMI 1.14.3
 
-    FLIM が動きませんので、代わりに CLIME をインストールしてください。
+  FLIM が動きませんので、代わりに CLIME をインストールしてください。
 
-  (d) Emacs 19.34 (Mule 2.3)
+(d) Emacs 19.34 (Mule 2.3)
 
 	APEL 10.3, CLIME 1.14.0, SEMI 1.14.3
 
-    Emacs 19.34 ベースの Mule では SEMI を動作させることが可能です。下記
-    のページが参考になります。
+  Emacs 19.34 ベースの Mule では SEMI を動作させることが可能です。下記の
+  ページが参考になります。
 
 	http://www.jpl.org/elips/INSTALL-SEMI-ja.html
-
 
 MIME用モジュールのインストール
 ==============================
@@ -67,10 +66,6 @@ MIME用モジュールのインストール
 	APEL 10.2, Chao 1.14.1, REMI 1.14.2
 	APEL 10.2, SLIM 1.14.3, EMY 1.13.9
 
-  APEL, FLIM, SEMI のバージョンアップを行った場合は、Wanderlust をインス
-  トールし直してください。
-
-
 通常のインストール
 ==================
 
@@ -78,8 +73,8 @@ MIME用モジュールのインストール
 
   Makefile は、EMACS, LISPDIR の部分を編集してください。
 
-	EMACS     使用している Emacs のコマンド名を指定
-	LISPDIR   インストール先を指定
+	EMACS       使用している Emacs のコマンド名を指定
+	LISPDIR    インストール先を指定
 
   LISPDIR は特に指定しなくても (NONE のままでも) 自動的にインストール
   先を検出します。
@@ -91,7 +86,8 @@ MIME用モジュールのインストール
 	% make
 	% make install
 
-  このとき、subdirs.el のない Emacs では、
+  このとき、Emacs 19.28 ベースの Mule 2.3 など subdirs.el のない Emacs 
+  では、
 
 	Cannot open load file: mime-setup
 

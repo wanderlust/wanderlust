@@ -1,25 +1,3 @@
-2001-09-12  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
-
-	* wl-draft.el (wl-draft-config-exec-sub): Fixed problem when
-	config is an anonymous lambda expression.
-
-2001-09-11  Katsumi Yamaoka  <yamaoka@jpl.org>
-
-	* wl-vars.el (wl-biff-state-indicator-on): Use `*iso-2022-jp*'
-	when Mule 2 is running.
-
-2001-09-11  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-e21.el (wl-highlight-folder-current-line): Fixed regexp.
-
-2001-09-10  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* wl-draft.el (wl-draft-std11-parse-addresses): Ignore trailing
-	spaces (Adviced by NAKAJIMA Mikio <minakaji@osaka.email.ne.jp>).
-
-	* wl-address.el (wl-address-specials-regexp): Eliminated.
-	(wl-address-quote-specials): Rewrite.
-
 2001-09-05  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-xmas.el (wl-highlight-folder-current-line): Use Perl style

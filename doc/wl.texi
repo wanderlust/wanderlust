@@ -138,7 +138,7 @@ The main features of Wanderlust:
 @item Folder Mode shows the list of subscribed folders.
 @item Message Cache, Disconnected Operation (Read Only).
 @item MH-like FCC. (FCC: %Backup and FCC: $Backup is allowed).
-@item MIME compliant (by SEMI).
+@item MIME compliant (by SEMI or tm).
 @item Transmission of news and mail are unified by Message transmitting draft.
 @item Graphical list of folders (XEmacs and Emacs 21).
 @item View a part of message without retrieving the whole message (IMAP4).
@@ -160,6 +160,7 @@ Wanderlust is supposed to run on following Emacsen:
 @item Emacs 20.2 or later
 @item XEmacs 20.4 or later
 @item Meadow 1.00 or later
+@item Mule for Windows v1.22
 @item NTEmacs 20.4 or later
 @item PMMule
 @end itemize
@@ -169,20 +170,15 @@ Wanderlust:
 
 @itemize @bullet
 @item UW imapd 4.1--4.7, 4.7a, 4.7b, 4.7c, 2000 or later
-@item Cyrus imapd 1.4, 1.5.19, 1.6.22--1.6.24, 2.0.5 or later
-@item Courier-IMAP 1.3.2 or later
+@item Cyrus imapd 1.4, 1.5.19, 1.6.22, 2.0.5 or later
 @item AIR MAIL (AIRC imapd release 2.00)
 @item Express Mail
 @item Microsoft Exchange Server 5.5
-@item Sun Internet Mail Server 3.5, 3.5.alpha, 4.0
+@item Sun Internet Mail Server 4.0
 @end itemize
 
-LDAP connectivity with following LDAPd are confirmed to work with
-Wanderlust:
-
-@itemize @bullet
-@item OpenLDAP 2.0.6 or later
-@end itemize
+@c LDAP connectivity with following LDAPd are confirmed to work with
+@c Wanderlust:
 
 
 @node Start Me Up, Folders, Introduction, Top
@@ -488,7 +484,7 @@ The minimal requirement for settings is as the following.
 
 @lisp
 @group
-;; @r{The setting to use SEMI}
+;; @r{The setting to use SEMI/tm}
 (load "mime-setup")
 
 ;; @r{autoload configuration}
@@ -3611,7 +3607,7 @@ Following is an example (hide duplicated messages in multi folders)
 @node Message, Draft, Summary, Top
 @chapter Message Buffer
 
-Message Buffers utilize MIME-View mode of SEMI.  For operational
+Message Buffers utilize MIME-View mode of SEMI/tm.  For operational
 procedures and key bindings, refer to respective documents.
 @xref{MIME-View, , ,mime-ui-en, a MIME user interface for GNU Emacs}.
 
@@ -3709,9 +3705,9 @@ the message is saved when it is sent.
 
 @subsection Editing Messages
 
-Multi-part editing utilize MIME edit mode of SEMI.  For procedures of
-editing, refer to respective documents.  @xref{MIME-Edit, , ,mime-ui-en,
-a MIME user interface for GNU Emacs}.
+Multi-part editing utilize MIME edit mode of SEMI/tm.  For procedures of
+editing, refer to respective documents.
+@xref{MIME-Edit, , ,mime-ui-en, a MIME user interface for GNU Emacs}.
 
 @subsection Dynamic Modification of Messages
 @vindex wl-draft-config-alist
@@ -4053,11 +4049,12 @@ Selects a template.
 
 @item C-c C-a
 @kindex C-c C-a (Draft)
-@findex wl-addrmgr
-Enter Address Manager.
-@xref{Address Manager}.
+@findex wl-draft-insert-x-face-field
+Inserts the content of a file @file{~/.xface} (the value of the variable
+@code{wl-x-face-file}) as an @samp{X-Face:} field in the draft buffer.
 
-(@code{wl-addrmgr})
+There should be encoded X-Face strings as a content of a file @file{~/.xface}.
+(@code{wl-draft-insert-x-face-field})
 @end table
 
 @section Customizable Variables
@@ -4099,7 +4096,8 @@ field is automatically inserted in the draft buffer.
 The initial setting is @code{t}.  If non-nil and there is an encoded
 X-Face string in a file @file{~/.xface} (the value of the variable
 @code{wl-x-face-file}), inserts it as an @samp{X-Face:} field in the
-draft buffer.  If @code{nil}, it is not automatically inserted.
+draft buffer.  If @code{nil}, it is not automatically inserted. Press
+@kbd{C-c C-a} to insert.
 
 @item wl-insert-message-id
 @vindex wl-insert-message-id
@@ -6073,7 +6071,7 @@ value of the variable @code{wl-x-face-file}), it is inserted as a
 If you embed @file{dired-dd-mime.el} in the dired-dd package, you can
 compose multi-part by simple Drag-and-Drop from dired to the draft
 buffer being edited in GNU Emacs (this feature is not Wanderlust
-specific, but general-purpose for SEMI).
+specific, but general-purpose for tm/SEMI).
 
 @lisp
 @group

@@ -342,7 +342,7 @@ corresponding to the mode line clicked."
        (;; basic folder
 	(and (setq fld-name (wl-folder-get-folder-name-by-id
 			     (get-text-property (point) 'wl-folder-entity-id)))
-	     (looking-at "[[:blank:]]+\\([^[:blank:]\n]+\\)"))
+	     (looking-at "[[:blank:]]+\\([[:blank:]\n]+\\)"))
 	(setq start (match-beginning 1)
 	      end (match-end 1))
 	(let (image)

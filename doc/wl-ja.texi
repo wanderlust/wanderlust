@@ -163,7 +163,7 @@ Wanderlust $B$N<g$JFCD'(B/$BFCD9$O0J2<$NDL$j$G$9!#(B
 @item $B9XFI%U%)%k%@$N0lMw$rI=<($9$k%U%)%k%@%b!<%I!#(B
 @item $B%a%C%;!<%8%-%c%C%7%e!"(BDisconnected Operation ($B8=:_$OI=<($N$_(B)$B!#(B
 @item MH $BE*(B FCC$B!#(B(@samp{FCC: %Backup} $B$d(B @samp{FCC: $Backup} $B$b2D(B)$B!#(B
-@item MIME $BBP1~(B (by SEMI)$B!#(B
+@item MIME $BBP1~(B (by SEMI or tm)$B!#(B
 @item $B%K%e!<%9(B/$B%a!<%k$NAw?.$rE}9g$7$?%a%C%;!<%8Aw?.%I%i%U%H!#(B
 @item $B%U%)%k%@0lMw$N%"%$%3%sI=<((B (XEmacs $B$H(B Emacs 21)$B!#(B
 @item $BBg$-$J%Q!<%H$r<h$j4s$;$:$KI=<((B(IMAP4)$B!#(B
@@ -185,6 +185,7 @@ Wanderlust $B$O0J2<$N(B Emacsen $B$GF0:n$9$k$3$H$,3NG'$5$l$F$$$^$9!#(B
 @item Emacs 20.2 $B0J9_(B
 @item XEmacs 20.4 $B0J9_(B
 @item Meadow 1.00 $B0J9_(B
+@item Mule for Windows v1.22
 @item NTEmacs 20.4 $B0J9_(B
 @item PMMule
 @end itemize
@@ -194,20 +195,15 @@ Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B IMAP $B%5!<%P$O0J2<$NDL
 
 @itemize @bullet
 @item UW imapd 4.1$B!A(B4.7, 4.7a, 4.7b, 4.7c, 2000 $B0J9_(B
-@item Cyrus imapd 1.4, 1.5.19, 1.6.22$B!A(B1.6.24, 2.0.5 $B0J9_(B
-@item Courier-IMAP 1.3.2 $B0J9_(B
+@item Cyrus imapd 1.4, 1.5.19, 1.6.22, 2.0.5 $B0J9_(B
 @item AIR MAIL (AIRC imapd release 2.00)
 @item Express Mail
 @item Microsoft Exchange Server 5.5
-@item Sun Internet Mail Server 3.5, 3.5.alpha, 4.0
+@item Sun Internet Mail Server 4.0
 @end itemize
 
-Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B LDAP $B%5!<%P$O0J2<$NDL(B
-$B$j$G$9!#(B
-
-@itemize @bullet
-@item OpenLDAP 2.0.6 $B0J9_(B
-@end itemize
+@c Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B LDAP $B%5!<%P$O0J2<$NDL(B
+@c $B$j$G$9!#(B
 
 
 @node Start Me Up, Folders, Introduction, Top
@@ -216,8 +212,7 @@ Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B LDAP $B%5!<%P$O0J2<$NDL
 
 Wanderlust $B$r5/F0$9$k$^$G$KI,MW$J<j=g$r=gHV$K@bL@$7$^$9!#(B
 
-($BEvA3$N$3$H$J$,$i!"$3$l$i$h$j$b@h$K!"%a!<%k(B/$B%K%e!<%9$rFI$`$3$H$N$G$-$k4D(B
-$B6-$,$"$i$+$8$aI,MW$G$9!#(B)
+($BEvA3$N$3$H$J$,$i!"$3$l$i$h$j$b@h$K!"%a!<%k(B/$B%K%e!<%9$rFI$`$3$H$N$G$-$k4D6-$,$"$i$+$8$aI,MW$G$9!#(B)
 
 @menu
 * MIME Modules::      MIME $BMQ%b%8%e!<%k$N%$%s%9%H!<%k(B
@@ -521,7 +516,7 @@ Wanderlust $B$NF0:n$r%+%9%?%^%$%:$G$-$^$9!#(B
 
 @lisp
 @group
-;; @r{SEMI $B$r;H$&$?$a$N@_Dj(B}
+;; @r{SEMI/tm $B$r;H$&$?$a$N@_Dj(B}
 (load "mime-setup")
 
 ;; @r{autoload $B$N@_Dj(B}
@@ -3604,7 +3599,7 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 @node Message, Draft, Summary, Top
 @chapter $B%a%C%;!<%8%P%C%U%!(B
 
-$B%a%C%;!<%8%P%C%U%!$O(B SEMI $B$N(B MIME-View mode $B$G$9!#(B
+$B%a%C%;!<%8%P%C%U%!$O(B SEMI/tm $B$N(B MIME-View mode $B$G$9!#(B
 $BA`:n$NJ}K!!"%-!<%P%$%s%I$O$=$l$>$l$N%I%-%e%a%s%H$r;2>H$7$F$/$@$5$$!#(B
 @xref{MIME-View, , ,mime-ui-ja, a MIME user interface for GNU Emacs}.
 
@@ -3701,7 +3696,7 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 
 @subsection $B%a%C%;!<%8$NJT=8(B
 
-$B%^%k%A%Q!<%H$NJT=8$O(B SEMI $B$N(B MIME $BJT=8%b!<%I$rMxMQ$7$F$$$^$9!#(B
+$B%^%k%A%Q!<%H$NJT=8$O(B SEMI/tm $B$N(B MIME $BJT=8%b!<%I$rMxMQ$7$F$$$^$9!#(B
 $BJT=8$NJ}K!$O3F%Q%C%1!<%8IUB0$N%I%-%e%a%s%H$r;2>H$7$F$/$@$5$$!#(B
 @xref{MIME-Edit, , ,mime-ui-ja, a MIME user interface for GNU Emacs}.
 
@@ -4037,11 +4032,13 @@ Wanderlust $B$N%*%U%i%$%s%b!<%I(B/$B%*%s%i%$%s%b!<%I$r%H%0%k$7$^$9!#(B
 
 @item C-c C-a
 @kindex C-c C-a (Draft)
-@findex wl-addrmgr
-$B%"%I%l%9%^%M!<%8%c$r5/F0$7$^$9!#(B
-@xref{Address Manager}.
+@findex wl-draft-insert-x-face-field
+$B%U%!%$%k(B @file{~/.xface} ($BJQ?t(B @code{wl-x-face-file} $B$NCM(B) $B$NFbMF$r(B
+$B%I%i%U%H%P%C%U%!$K(B @samp{X-Face:} $B%U%#!<%k%I$H$7$FA^F~$7$^$9!#(B
 
-(@code{wl-addrmgr})
+$B%(%s%3!<%I$5$l$?(B X-Face $BJ8;zNs$r$"$i$+$8$a%U%!%$%k(B @file{~/.xface}
+$B$NFbMF$KMQ0U$7$F$*$/I,MW$,$"$j$^$9!#(B
+(@code{wl-draft-insert-x-face-field})
 @end table
 
 @section $B%+%9%?%^%$%:JQ?t(B
@@ -4081,7 +4078,8 @@ Wanderlust $B$N%*%U%i%$%s%b!<%I(B/$B%*%s%i%$%s%b!<%I$r%H%0%k$7$^$9!#(B
 $B=i4|@_Dj$O(B @code{t}$B!#(BNon-nil $B$G$+$D!"%(%s%3!<%I$5$l$?(B X-Face $BJ8;zNs$r(B 
 @file{~/.xface} ($BJQ?t(B @code{wl-x-face-file} $B$NCM(B)$B$NFbMF$KMQ0U$7$F$*$/$H!"(B
 $B%I%i%U%H$,=`Hw$5$l$k$H$-$K<+F0E*$K(B @samp{X-Face:} $B%U%#!<%k%I$H$7$FA^F~$5(B
-$B$l$^$9!#(B@code{nil} $B$N>l9g$O<+F0E*$K$OA^F~$5$l$^$;$s!#(B
+$B$l$^$9!#(B@code{nil} $B$N>l9g$O<+F0E*$K$OA^F~$5$l$^$;$s$,!"(B@kbd{C-c C-a} $B$r(B
+$B2!$9$H%X%C%@It$KA^F~$5$l$^$9!#(B
 
 @item wl-insert-message-id
 @vindex wl-insert-message-id
@@ -5761,9 +5759,9 @@ LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
 @section $B%"%I%l%9%^%M!<%8%c(B
 @cindex Address Manager
 
-@kbd{C-c C-a} $B$H$9$k$H%"%I%l%9%^%M!<%8%c$r5/F0$5$l$^$9!#%"%I%l%9%^%M!<%8%c(B
-$B$G$O%"%I%l%9D"$NJT=8$r9T$&$3$H$,=PMh$k$N$K2C$($F!"%"%I%l%9%^%M!<%8%c$G;X(B
-$BDj$7$?%"%I%l%9$r%I%i%U%H%P%C%U%!$XA^F~$9$k$3$H$,$G$-$^$9!#(B
+@kbd{C-c C-a} $B$H$9$k$H%"%I%l%9%^%M!<%8%c$r5/F0$5$l$^$9!#%"%I%l%9%^%M!<%8%c$G$O(B
+$B%"%I%l%9D"$NJT=8$r9T$&$3$H$,=PMh$k$N$K2C$($F!"%"%I%l%9%^%M!<%8%c$G;XDj$7$?%"%I%l%9$r(B
+$B%I%i%U%H%P%C%U%!$XA^F~$9$k$3$H$,$G$-$^$9!#(B
 
 @subsection $B%-!<%P%$%s%I(B
 
@@ -6001,8 +5999,8 @@ bitmap-mule 8.0$B0J9_$KIUB0$N(B @file{x-face-mule.el}
 
 dired-dd $B%Q%C%1!<%8$K4^$^$l$k(B @file{dired-dd-mime.el} $B$rAH$_9~$a$P!"(BGNU
 Emacs $B$GJT=8Cf$NAp9F%P%C%U%!$X(B dired $B$+$i%I%i%C%0(B&$B%I%m%C%W$9$k$@$1$G4JC1(B
-$B$K%^%k%A%Q!<%H$r:n@.$G$-$^$9(B($B$b$C$H$b!"(BWanderlust $B@lMQ$G$O$J$/(B SEMI $BHFMQ(B
-$B$G$9$,(B)$B!#(B
+$B$K%^%k%A%Q!<%H$r:n@.$G$-$^$9(B($B$b$C$H$b!"(BWanderlust $B@lMQ$G$O$J$/(B tm/SEMI 
+$BHFMQ$G$9$,(B)$B!#(B
 
 @lisp
 @group
