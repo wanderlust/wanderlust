@@ -101,7 +101,6 @@
 (defvar wl-summary-buffer-exit-function nil)
 (defvar wl-summary-buffer-next-message-function nil)
 (defvar wl-summary-buffer-number-list nil)
-(defvar wl-summary-buffer-msgdb nil)
 (defvar wl-summary-buffer-folder-name nil)
 (defvar wl-summary-buffer-line-formatter nil)
 (defvar wl-summary-buffer-line-format nil)
@@ -171,7 +170,6 @@
 (make-variable-buffer-local 'wl-summary-buffer-exit-function)
 (make-variable-buffer-local 'wl-summary-buffer-next-message-function)
 (make-variable-buffer-local 'wl-summary-buffer-number-list)
-(make-variable-buffer-local 'wl-summary-buffer-msgdb)
 (make-variable-buffer-local 'wl-summary-buffer-folder-name)
 (make-variable-buffer-local 'wl-summary-buffer-line-formatter)
 (make-variable-buffer-local 'wl-summary-buffer-line-format)
@@ -1871,7 +1869,6 @@ If ARG is non-nil, checking is omitted."
 				  wl-summary-partial-highlight-above-lines
 				  wl-summary-highlight-partial-threshold)))
 		(wl-highlight-summary (point) (point-max))))))
-      (setq wl-summary-buffer-msgdb (elmo-folder-msgdb folder))
       (wl-delete-all-overlays)
       (set-buffer-modified-p nil)
       (if mes (message "%s" mes)))))
@@ -2064,7 +2061,6 @@ If ARG, without confirm."
 		   wl-summary-buffer-message-modified
 		   wl-summary-buffer-thread-modified
 		   wl-summary-buffer-number-list
-		   wl-summary-buffer-msgdb
 		   wl-summary-buffer-folder-name
 		   wl-summary-buffer-line-formatter)
 		 (and (eq wl-summary-buffer-view 'thread)
@@ -2142,7 +2138,6 @@ If ARG, without confirm."
     (unwind-protect
 	(elmo-folder-open folder 'load-msgdb)
       ;; For compatibility
-      (setq wl-summary-buffer-msgdb (elmo-folder-msgdb folder))
       (setq wl-summary-buffer-folder-name (elmo-folder-name-internal
 					   folder)))))
 
