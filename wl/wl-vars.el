@@ -113,18 +113,18 @@
 
 (defvar wl-cs-noconv
   (cond (wl-on-mule3 'binary)
-        (wl-on-mule  '*noconv*)
-        (t           nil)))
+	(wl-on-mule  '*noconv*)
+	(t           nil)))
 
 (defvar wl-cs-autoconv
   (cond (wl-on-mule3 'undecided)
-        (wl-on-mule  '*autoconv*)
-        (t           nil)))
+	(wl-on-mule  '*autoconv*)
+	(t           nil)))
 
 (defvar wl-cs-local
   (cond (wl-on-mule3  'junet)
-        (wl-on-mule   '*junet*)
-        (t           nil)))
+	(wl-on-mule   '*junet*)
+	(t           nil)))
 
 (defvar wl-cs-cache wl-cs-local)
 
@@ -154,7 +154,7 @@ If you don't have multiple e-mail addresses, you don't have to set this."
 (defcustom wl-organization (getenv "ORGANIZATION")
   "Organization name."
   :type '(choice (const :tag "none" nil)
-                 string)
+		 string)
   :group 'wl
   :group 'wl-setting)
 
@@ -287,7 +287,7 @@ If nil, default smtp connection type is used."
 (defcustom wl-smtp-posting-user nil
   "*SMTP authentication user."
   :type '(choice (const :tag "none" nil)
-                 string)
+		 string)
   :group 'wl
   :group 'wl-setting)
 
@@ -302,7 +302,7 @@ If nil, default smtp connection type is used."
   "*SMTP port number in `wl-smtp-posting-server'.
 If nil, default SMTP port number(25) is used."
   :type '(choice (const :tag "Default (25)" nil)
-                 integer)
+		 integer)
   :group 'wl
   :group 'wl-setting)
 
@@ -323,7 +323,7 @@ If nil, `elmo-pop3-default-user' is used.
 To use POP-before-SMTP,
 \(setq wl-draft-send-mail-function 'wl-draft-send-mail-with-pop-before-smtp\)"
   :type '(choice (const :tag "none" nil)
-                 string)
+		 string)
   :group 'wl
   :group 'wl-setting)
 
@@ -331,7 +331,7 @@ To use POP-before-SMTP,
   "*POP3 server for POP-before-SMTP.
 If nil, `elmo-pop3-default-server' is used."
   :type '(choice (const :tag "none" nil)
-                 string)
+		 string)
   :group 'wl
   :group 'wl-setting)
 
@@ -362,7 +362,7 @@ If nil, `elmo-pop3-default-authenticate-type' is used."
   "*NNTP server name to post news.
 If nil, `elmo-nntp-default-server' is used."
   :type '(choice (const :tag "none" nil)
-                 string)
+		 string)
   :group 'wl
   :group 'wl-setting)
 (defcustom wl-nntp-posting-user nil
@@ -370,7 +370,7 @@ If nil, `elmo-nntp-default-server' is used."
 If nil, `elmo-nntp-default-user' is used.
 If nil, don't authenticate."
   :type '(choice (const :tag "none" nil)
-                 string)
+		 string)
   :group 'wl
   :group 'wl-setting)
 (defcustom wl-nntp-posting-port nil
@@ -498,7 +498,7 @@ reasons of system internal to accord facilities for the Emacs variants.")
   "A hook called when exit wanderlust.")
 (defvar wl-folder-suspend-hook nil
   "A hook called when suspend wanderlust.")
-(defvar wl-biff-notify-hook '(beep)
+(defvar wl-biff-notify-hook '(ding)
   "A hook called when a biff-notification is invoked.")
 (defvar wl-biff-unnotify-hook nil
   "A hook called when a biff-notification is removed.")
@@ -769,7 +769,7 @@ Default is for 'followup-to-me'."
   :group 'wl-summary)
 
 (defcustom wl-summary-fix-timezone nil
-  "*Time zone of the date string in summary mode. 
+  "*Time zone of the date string in summary mode.
 If nil, it is adjust to the default time zone information
 \(system's default time zone or environment variable TZ\)."
   :type '(choice (const :tag "Default time zone" nil)
@@ -1148,13 +1148,13 @@ Allowed situations are:
   "*Domain part of this client (without hostname).
 Set this if (system-name) does not return FQDN."
   :type '(choice (const :tag "Use System Name" nil)
-                 string)
+		 string)
   :group 'wl-pref)
 
 (defcustom wl-message-id-domain nil
   "*Specific domain part of Message-ID."
   :type '(choice (const :tag "Use System Name" nil)
-                 string)
+		 string)
   :group 'wl-pref)
 
 (defcustom wl-break-pages t
@@ -1259,14 +1259,14 @@ with wl-highlight-folder-many-face."
 (defcustom wl-fcc nil
   "*Folder Carbon Copy."
   :type '(choice (const :tag "disable" nil)
-                 string function)
+		 string function)
   :group 'wl-draft
   :group 'wl-pref)
 
 (defcustom wl-bcc nil
   "*Blind Carbon Copy."
   :type '(choice (const :tag "disable" nil)
-                 string)
+		 string)
   :group 'wl-draft
   :group 'wl-pref)
 
