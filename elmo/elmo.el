@@ -1393,7 +1393,7 @@ If optional DISABLE-KILLED is non-nil, killed messages are also synchronized.
 If optional IGNORE-MSGDB is non-nil, current msgdb is thrown away except
 flag status.
 If NO-CHECK is non-nil, rechecking folder is skipped.
-Return a list of a cross-posted message number.
+Return amount of cross-posted messages.
 If update process is interrupted, return nil.")
 
 (luna-define-method elmo-folder-synchronize ((folder elmo-folder)
