@@ -1,3 +1,8 @@
+2001-03-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-next-message):
+	Return next message number when wl-summary-move-order is nil.
+
 2001-02-28  Akihiro MOTOKI <mokkun@iname.com>
 
 	* wl-summary.el (wl-summary-move-spec-plugged-alist): Renamed from
