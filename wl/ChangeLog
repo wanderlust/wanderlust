@@ -1,3 +1,8 @@
+2002-05-30  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-line-list-count): Use ".0f" for ml-count
+	formatting.
+
 2002-05-26  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-highlight.el (wl-highlight-summary): Added optional `lazy'

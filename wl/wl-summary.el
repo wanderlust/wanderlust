@@ -4185,7 +4185,7 @@ If ARG, exit virtual folder."
 				 return-path)
 		   (match-string 1 return-path))))
     (if ml-count
-	(format "%d" (string-to-int ml-count))
+	(format "%.0f" (string-to-number ml-count))
       "")))
 
 (defun wl-summary-line-attached ()
