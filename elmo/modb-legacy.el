@@ -373,7 +373,7 @@ Return a list of message numbers which have duplicated message-ids."
 (luna-define-method elmo-msgdb-set-flag ((msgdb modb-legacy)
 					 number flag)
   (unless (modb-legacy-supported-flag-p flag)
-    (error "Flag `%s' is not supproted by this msgdb type"
+    (error "Flag `%s' is not supported by this msgdb type"
 	   (capitalize (symbol-name flag))))
   (case flag
     (read
@@ -397,8 +397,9 @@ Return a list of message numbers which have duplicated message-ids."
 
 (luna-define-method elmo-msgdb-unset-flag ((msgdb modb-legacy)
 					   number flag)
-  (unless (modb-legacy-supported-flag-p flag)
-    (error "Flag `%s' is not supproted by this msgdb type"
+  (unless (or (modb-legacy-supported-flag-p flag)
+	      (eq flag 'all))
+    (error "Flag `%s' is not supported by this msgdb type"
 	   (capitalize (symbol-name flag))))
   (case flag
     (read
