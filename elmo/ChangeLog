@@ -1,7 +1,9 @@
 2000-04-20  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* elmo2.el (elmo-read-msg-no-cache): Added `force-reload' argument.
-	(elmo-read-msg): Pass `force-reload' argument to
+	* elmo2.el (elmo-read-msg-no-cache):
+	Eliminated arguments after `outbuf'.
+	Don't use cache even if it exists.
+	(elmo-read-msg): Don't pass arguments after `outbuf' to
 	`elmo-read-msg-no-cache'.
 
 2000-04-15  Yuuichi Teranishi  <teranisi@elmo.dq.isl.ntt.co.jp>
