@@ -11,7 +11,7 @@ System Requirements
   Wanderlust supports following Emacsen:
 
 	Mule 2.3 based on Emacs 19.34
-	Emacs 20.2 or later
+	Emacs 20.1 or later
 	XEmacs 20.4 or later
 
   Before installing Wanderlust, please install the following MIME

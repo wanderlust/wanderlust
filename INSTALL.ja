@@ -11,7 +11,7 @@
   Wanderlust がサポートする Emacsen を以下に示します。
 
 	Mule 2.3 based on Emacs 19.34
-	Emacs 20.2 以降
+	Emacs 20.1 以降
 	XEmacs 20.4 以降
 
   Wanderlust を使うためには、以下に示すMIME用モジュールをインストールし
