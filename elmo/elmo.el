@@ -193,7 +193,9 @@ If optional KEEP-KILLED is non-nil, killed-list is not cleared.")
   "Get diff of FOLDER.
 If optional NUMBERS is set, it is used as current NUMBERS.
 Otherwise, saved status for folder is used for comparison.
-Return value is a cons cell of NEWS and MESSAGES.")
+Return value is cons cell or list:
+ - a cons cell (NEWS . MESSAGES)
+ - a list (RECENT UNSEEN MESSAGES) ; RECENT means NEWS, UNSEEN means UNREAD.")
 
 (luna-define-generic elmo-folder-status (folder)
   "Returns a cons cell of (MAX-NUMBER . MESSAGES) in the FOLDER.")

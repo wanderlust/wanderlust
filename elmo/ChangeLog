@@ -1,3 +1,8 @@
+2001-12-10  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo.el (elmo-folder-diff): Fixed docstring for IMAP4
+	(RECENT UNSEEN MESSAGES) extension.
+
 2001-12-07  Mito <mito@mxa.nes.nec.co.jp>
 
 	* elmo-nntp.el (elmo-nntp-create-msgdb-from-overview-string):
