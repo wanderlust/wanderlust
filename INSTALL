@@ -27,7 +27,7 @@ Select MIME Module
 
 	APEL 10.3, FLIM 1.14.3, SEMI 1.14.3
 
-(c) Emacs 20.1 through 20.3
+(c) Emacs 20.1 to 20.3
 
 	APEL 10.3, CLIME 1.14.3, SEMI 1.14.3
 
@@ -200,6 +200,6 @@ Sample configuration file
   To get full information, please read Info file.
 
 
-Local Variables:
+Local Variables: 
 fill-column: 72
 End:
