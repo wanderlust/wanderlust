@@ -1,3 +1,8 @@
+2002-04-12  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-util.el (wl-display-bytes): Fixed probrem when num <
+	1000 return "0B".
+
 2002-04-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl.el (wl-check-environment): Cause error when wl-from is nil,
@@ -40,6 +45,7 @@
 	* wl-addrmgr.el (wl-addrmgr-quit-yes): Call get-buffer-window with
 	2nd argument.
 
+>>>>>>> 1.489
 2002-03-24  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-draft.el (wl-draft-create-contents): Don't take neither
@@ -171,7 +177,7 @@
 	message is not displayed yet.
 	(wl-summary-prev-page): Ditto.
 
-2002-03-11  J.AŽérŽôme Marant <jerome.marant@free.fr>
+2002-03-11  J.AŽ,Ai(BrŽ,At(Bme Marant <jerome.marant@free.fr>
 
 	* wl-folder.el (wl-folder-mode-menu-spec): Fixed typo.
 

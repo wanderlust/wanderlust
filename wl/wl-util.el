@@ -217,7 +217,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
       (if (> remain 400)
 	  (setq result (+ 1 result)))
       (format "%dK" result))
-     (t (format "%dB" result)))))
+     (t (format "%dB" num)))))
 
 (defun wl-mode-line-buffer-identification (&optional id)
   (let ((priorities '(biff plug title)))
