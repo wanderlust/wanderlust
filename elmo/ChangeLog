@@ -1,5 +1,10 @@
 2000-10-28  Kenichi OKADA  <okada@opaopa.org>
 
+	* elmo-imap4.el (elmo-network-initialize-session): Check capability.
+	* elmo-pop3.el (elmo-network-initialize-session): Ditto.
+
+2000-10-28  Kenichi OKADA  <okada@opaopa.org>
+
 	* elmo-imap4.el (elmo-network-initialize-session): Fix.
 
 2000-10-28  Kenichi OKADA  <okada@opaopa.org>

@@ -197,8 +197,8 @@ Wanderlust $B$,@\B3$7$FF0:n$9$k$3$H$,3NG'$5$l$F$$$k(B IMAP $B%5!<%P$O0J2<$NDL
 $B$j$G$9!#(B
 
 @itemize @bullet
-@item UW imapd 4.1$B!A(B4.7, 4.7a, 4.7b, 4.7c
-@item Cyrus imapd 1.4, 1.5.19, 1.6.22, 2.0.5
+@item UW imapd 4.1$B!A(B4.7, 4.7a, 4.7b, 4.7c, 2000 $B0J9_(B
+@item Cyrus imapd 1.4, 1.5.19, 1.6.22, 2.0.5 $B0J9_(B
 @item AIR MAIL (AIRC imapd release 2.00)
 @item Express Mail
 @item Microsoft Exchange Server 5.5

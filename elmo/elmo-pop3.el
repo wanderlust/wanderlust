@@ -303,7 +303,7 @@
 (luna-define-method elmo-network-initialize-session ((session
 						      elmo-pop3-session))
   (let ((process (elmo-network-session-process-internal session))
-	response capability mechanism)
+	response mechanism)
     (with-current-buffer (process-buffer process)
       (set-process-filter process 'elmo-pop3-process-filter)
       (setq elmo-pop3-read-point (point-min))

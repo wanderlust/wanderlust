@@ -1185,8 +1185,7 @@ If optional argument UNMARK is non-nil, unmark."
 
 (luna-define-method elmo-network-initialize-session ((session
 						      elmo-imap4-session))
-  (let ((process (elmo-network-session-process-internal session))
-	capability)
+  (let ((process (elmo-network-session-process-internal session)))
     (with-current-buffer (process-buffer process)
       ;; Skip garbage output from process before greeting.
       (while (and (memq (process-status process) '(open run))
@@ -1212,7 +1211,8 @@ If optional argument UNMARK is non-nil, unmark."
       (when (eq (elmo-network-stream-type-symbol
 		 (elmo-network-session-stream-type-internal session))
 		'starttls)
-	(or (memq 'starttls capability)
+	(or (memq 'starttls
+		  (elmo-imap4-session-capability-internal session))
 	    (signal 'elmo-open-error
 		    '(elmo-imap4-starttls-error)))
 	(elmo-imap4-send-command-wait session "starttls")
