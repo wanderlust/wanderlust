@@ -820,8 +820,8 @@ the closed parent will be opened."
 			     (mapcar
 			      (function
 			       (lambda (message)
-				 (wl-thread-get-children-msgs message t))
-			       children)))))
+				 (wl-thread-get-children-msgs message t)))
+			      children))))
 	      (wl-thread-entity-set-children
 	       parent (append older-brothers children younger-brothers))
 	      ;; If chidren and younger-brothers not exists,

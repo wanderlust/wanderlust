@@ -1,3 +1,6 @@
+2000-10-08   Mikio Nakajima <minakaji@osaka.email.ne.jp>
+
+	* wl-thread.el (wl-thread-delete-message): Fix parentheses.
 
 2000-10-07  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
