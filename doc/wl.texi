@@ -3665,6 +3665,12 @@ Pipe content of each message with target mark @samp{*} to some specified
 external process.
 (@code{wl-summary-target-mark-pipe})
 
+@item D
+@kindex D (Summary)
+@findex wl-summary-erase
+Actually erase the message at once, without moving it to trash.
+(@code{wl-summary-erase})
+
 @item M-t
 @kindex M-t (Summary)
 @findex wl-toggle-plugged

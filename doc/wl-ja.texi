@@ -3648,6 +3648,12 @@ prefix argument つきならば既にキャッシュされているメッセージも
 指定した他のプロセスにパイプ経由で引き渡します。
 (@code{wl-summary-target-mark-pipe})
 
+@item D
+@kindex D (Summary)
+@findex wl-summary-erase
+ごみ箱に移動せずに、その場で実際にメッセージを削除します。
+(@code{wl-summary-erase})
+
 @item M-t
 @kindex M-t (Summary)
 @findex wl-toggle-plugged
