@@ -12,14 +12,17 @@
 ;;; [[ 個人情報の設定 ]]
 
 ;; From の設定
-;(setq wl-from "Your Name <e-mail-address>")
+;(setq wl-from "Your Name <e-mail@example.com>")
 ;; Organization の設定
 ;(setq wl-organization "")
 
-;;; [[ 基本的な設定 ]]
+;; 自分のメールアドレスのリスト
+(setq wl-user-mail-address-list
+      (list (wl-address-header-extract-address wl-from)
+	    ;;"e-mail2@example.com" ...
+	    ))
 
-;; メッセージデータベースを作るディレクトリ
-(setq elmo-msgdb-dir "~/.elmo")
+;;; [[ 基本的な設定 ]]
 
 ;; MH (localdir) のホーム
 (setq elmo-localdir-folder-path "~/Mail")
@@ -202,6 +205,13 @@
 
 ;;; [[ 特殊な設定 ]]
 
+;; 自分の参加しているメーリングリストのリスト
+(setq wl-subscribed-mailing-list
+      '("wl@lists.airs.net"
+	"apel-ja@m17n.org"
+	;;"ml@example.com" ...
+	))
+
 ;; jka-compr を利用して ~/elmo/SPEC/ 以下のデータベースを圧縮する
 ;(setq elmo-msgdb-overview-filename "overview.gz")
 ;(setq elmo-msgdb-number-filename "number.gz")
@@ -214,19 +224,6 @@
 	  '(lambda ()
 	     (wl-folder-open-unread-folder entity)
 	     ))
-
-;; 自分のメールアドレスのリスト
-(setq wl-user-mail-address-list
-      (list (wl-address-header-extract-address wl-from)
-	    ;;"e-mail2@bbb.com" ...
-	    ))
-
-;; 自分の参加しているメーリングリストのリスト
-(setq wl-subscribed-mailing-list
-      '("wl@lists.airs.net"
-	"apel-ja@m17n.org"
-	;;"ml@example.com" ...
-	))
 
 ;; サマリ表示関数を変更する
 

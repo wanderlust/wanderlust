@@ -1,3 +1,8 @@
+2001-01-19  Akihiro MOTOKI <mokkun@iname.com>
+
+	* wl-expire.el (wl-expire-hide):
+	Call `wl-expire-delete-reserve-marked-msgs-from-list'.
+
 2001-01-19  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-draft.el (wl-draft-reply): Use `mime-find-field-decoder' to

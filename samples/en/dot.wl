@@ -12,14 +12,17 @@
 ;;; [[ Private Setting ]]
 
 ;; Header From 
-;(setq wl-from "Your Name <e-mail-address>")
+;(setq wl-from "Your Name <e-mail@example.com>")
 ;; Organization
 ;(setq wl-organization "")
 
-;;; [[ Basic Setting ]]
+;; User's mail addresses.
+(setq wl-user-mail-address-list
+      (list (wl-address-header-extract-address wl-from)
+	    ;;"e-mail2@example.com" ...
+	    ))
 
-;; A directory for message database.
-(setq elmo-msgdb-dir "~/.elmo")
+;;; [[ Basic Setting ]]
 
 ;; Home directory for MH (localdir) 
 (setq elmo-localdir-folder-path "~/Mail")
@@ -201,6 +204,13 @@
 
 ;;; [[ Special Setting ]]
 
+;; Subscribed mailing list.
+(setq wl-subscribed-mailing-list
+      '("wl@lists.airs.net"
+	"apel-ja@m17n.org"
+	;;"ml@example.com" ...
+	))
+
 ;; compress ~/elmo  using jka-compr.
 ;(setq elmo-msgdb-overview-filename "overview.gz")
 ;(setq elmo-msgdb-number-filename "number.gz")
@@ -213,19 +223,6 @@
 	  '(lambda ()
 	     (wl-folder-open-unread-folder entity)
 	     ))
-
-;; User's mail addresses.
-(setq wl-user-mail-address-list
-      (list (wl-address-header-extract-address wl-from)
-	    ;;"e-mail2@bbb.com" ...
-	    ))
-
-;; Subscribed mailing list
-(setq wl-subscribed-mailing-list
-      '("wl@lists.airs.net"
-	"apel-ja@m17n.org"
-	;;"ml@example.com" ...
-	))
 
 ;; Change summary display function.
 
