@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-03-03 00:59:01 teranisi>
+;; Time-stamp: <00/06/12 13:41:52 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -31,6 +31,7 @@
 ;; 
 
 (require 'wl-util)
+(require 'wl-vars)
 (require 'std11)
 
 (defvar wl-address-complete-header-regexp "^\\(To\\|From\\|Cc\\|Bcc\\|Mail-Followup-To\\|Reply-To\\|Return-Receipt-To\\):")
@@ -39,6 +40,26 @@
 (defvar wl-address-list nil)
 (defvar wl-address-completion-list nil)
 (defvar wl-address-petname-hash nil)
+
+(defun wl-ldap-search (pat &optional cl)
+  "make completion-list by ldap search"
+  (let ((ldap-pat (concat "mail=" pat "*"))
+	(ret cl)
+	addr)
+    (with-temp-buffer
+      (call-process "ldapsearch" nil (current-buffer)
+		    t "-L" "-b" wl-ldap-base
+		    "-h" wl-ldap-server ldap-pat "mail")
+      (goto-char (point-min))
+      (while (re-search-forward "^\\(mail: \\)\\(.*\\)$" nil t)
+	(progn
+	  (setq addr (match-string 2))
+	  (setq addr (cons addr addr))
+	  (if ret
+	      (setq ret (append ret (list addr)))
+	    (setq ret (list addr))))))
+    ret))
+
 
 (defun wl-complete-field-to ()
   (interactive)
@@ -51,6 +72,7 @@
   (interactive)
   (let ((case-fold-search t)
 	epand-char skip-chars
+	(use-ldap nil)
 	completion-list)
     (if (wl-draft-on-field-p)
 	(wl-complete-field)
@@ -62,11 +84,14 @@
 		(point)))
 	   (save-excursion
 	     (beginning-of-line)
+	     (setq use-ldap nil)
 	     (while (and (looking-at "^[ \t]")
 			 (not (= (point) (point-min))))
 	       (forward-line -1))
 	     (cond ((looking-at wl-address-complete-header-regexp)
 		    (setq completion-list wl-address-completion-list)
+		    (if wl-use-ldap
+			(setq use-ldap t))
 		    (setq epand-char ?@))
 		   ((looking-at wl-folder-complete-header-regexp)
 		    (setq completion-list wl-folder-entity-hashtb)
@@ -74,7 +99,7 @@
 		   ((looking-at wl-newsgroups-complete-header-regexp)
 		    (setq completion-list wl-folder-newsgroups-hashtb)))))
 	  (wl-complete-field-body completion-list 
-				  epand-char skip-chars)
+				  epand-char skip-chars use-ldap)
 	(indent-for-tab-command)))))
 
 (defvar wl-completion-buf-name "*Completions*")
@@ -150,7 +175,7 @@
 	      (if (setq comp-win (get-buffer-window comp-buf))
 		  (delete-window comp-win)))))))
 
-(defun wl-complete-field-body (completion-list &optional epand-char skip-chars)
+(defun wl-complete-field-body (completion-list &optional epand-char skip-chars use-ldap)
   (interactive)
   (let* ((end (point))
 	 (start (save-excursion
@@ -162,8 +187,15 @@
 	 (pattern (buffer-substring start end))
 	 (len (length pattern))
 	 (cl completion-list))
+    (if use-ldap
+	(progn
+	  (setq completion-list (wl-ldap-search pattern cl))
+	  (setq cl completion-list)))
     (if (null cl)
-	nil
+	(if use-ldap
+	    (progn
+	      (message "Can't find completion for \"%s\"" pattern)
+	      (ding)))
       (setq completion (try-completion pattern cl))
       (cond ((eq completion t)
 	     (wl-complete-insert start end pattern completion-list)
@@ -340,7 +372,7 @@ If already registerd, change it."
     (setq the-petname
 	  (read-from-minibuffer (format "Petname: ") default-petname))
     (if (string= the-petname "")
-	(setq the-petname default-petname))
+	(setq the-petname (or default-petname the-email)))
 
     ;; setup output "realname"
     (setq the-realname

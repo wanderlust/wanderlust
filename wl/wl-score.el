@@ -5,7 +5,7 @@
 
 ;; Author: Masahiro MURATA <muse@ba2.so-net.ne.jp>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/14 19:35:28 teranisi>
+;; Time-stamp: <00/06/12 13:22:49 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -339,7 +339,7 @@ See `wl-score-simplify-buffer-fuzzy' for details."
   (let* (score-list
          (spec (elmo-folder-get-spec folder))
          (method (symbol-name (car spec)))
-         (fld-name (car (cdr spec))))
+         (fld-name (elmo-string (car (cdr spec)))))
     (when (stringp fld-name)
       (while (string-match "[\\/:,;*?\"<>|]" fld-name)
         (setq fld-name (replace-match "." t nil fld-name)))

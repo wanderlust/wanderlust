@@ -1,5 +1,26 @@
+2000-06-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-address.el (wl-ldap-search): Use `with-temp-buffer'.
+	Use `let' instead of `let*'.
+	Require 'wl-vars.
+
+	* wl-vars.el (wl-ldap-server): Moved from wl-address.el.
+	Define as defcustom.
+	(wl-ldap-base): Ditto.
+	(wl-use-ldap): Ditto.
+
+2000-06-09  Takeshi Chiba <chiba@d3.bs1.fc.nec.co.jp>
+
+	* wl-address.el (wl-ldap-search): New function.
+	(wl-complete-field-body): Use `wl-ldap-search'.
+	(wl-ldap-server): New variable.
+	(wl-ldap-base): Ditto.
+	(wl-use-ldap): Ditto.
+
 2000-06-08  OKAZAKI Tetsurou  <okazaki@be.to>
 
+	* wl-score.el (wl-score-guess-like-gnus): Use `elmo-string'
+	(Pointed out by Mito <mit@nines.nec.co.jp>).
 	* wl-summary.el (wl-summary-redisplay-no-mime): Update
 	buffer-local variables like `wl-summary-redisplay-internal'.
 	(wl-summary-redisplay-all-header): Likewise.  Update

@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <2000-05-18 17:04:43 teranisi>
+;; Time-stamp: <00/06/12 13:43:58 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -584,6 +584,21 @@ Default is for 'reply-to-all'."
 (defcustom wl-alias-file "~/.im/Aliases"
   "*Alias file for completion"
   :type 'file
+  :group 'wl)
+
+(defcustom wl-ldap-server "localhost"
+  "*LDAP server."
+  :type '(string :tag "Server")
+  :group 'wl)
+
+(defcustom wl-ldap-base "c=US"
+  "*LDAP base."
+  :type '(string :tag "Base")
+  :group 'wl)
+
+(defcustom wl-use-ldap nil
+  "*If non-nil, use LDAP for address completion."
+  :type 'boolean
   :group 'wl)
 
 (defcustom wl-folder-info-save t
