@@ -296,7 +296,7 @@ even when invalid character is contained."
 	   (,@ body)))))
    (t
     (defmacro wl-as-coding-system (coding-system &rest body)
-      (` (eval (,@ body)))))))
+      (` (progn (,@ body)))))))
 
 (defmacro wl-as-mime-charset (mime-charset &rest body)
   (` (wl-as-coding-system (mime-charset-to-coding-system (, mime-charset))
