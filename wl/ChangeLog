@@ -1,5 +1,9 @@
 2000-10-17  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-vars.el (wl-draft-use-cache): Default `nil'.
+
+2000-10-17  Kenichi OKADA  <okada@opaopa.org>
+
 	* wl-expire.el (wl-expire-hide): New function.
 	(wl-summary-expire): Add `hide'.
 

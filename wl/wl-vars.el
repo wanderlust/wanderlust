@@ -919,7 +919,7 @@ ex.
   :group 'wl-draft
   :group 'wl-pref)
 
-(defcustom wl-draft-use-cache t
+(defcustom wl-draft-use-cache nil
   "*If non-nil, sending message is cached."
   :type 'boolean
   :group 'wl-draft
