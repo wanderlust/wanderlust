@@ -182,7 +182,7 @@
 
 ;; Change summary display function.
 
-;; Set extra filed use with `elmo-msgdb-overview-entity-get-extra-field'.
+;; Set extra field use with `elmo-msgdb-overview-entity-get-extra-field'.
 ;; And use with auto-refile.
 (setq elmo-msgdb-extra-fields
       '("newsgroups"
