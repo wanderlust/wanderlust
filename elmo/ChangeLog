@@ -1,5 +1,8 @@
 2003-08-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo-filter.el (elmo-folder-set-message-modified): Set 
+	message-modified slot of itself if it does not require target msgdb.
+
 	* elmo-mime.el (elmo-mime-message-display): Display message entirely
 	if folder length is zero.
 	(elmo-mime-display-as-is): Ditto.

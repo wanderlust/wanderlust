@@ -82,7 +82,8 @@
 						      modified)
   (if (elmo-filter-folder-require-msgdb-internal folder)
       (elmo-folder-set-message-modified-internal
-       (elmo-filter-folder-target-internal folder) modified)))
+       (elmo-filter-folder-target-internal folder) modified)
+    (elmo-folder-set-message-modified-internal folder modified)))
 
 (luna-define-method elmo-folder-commit :around ((folder elmo-filter-folder))
   ;; Save target msgdb if it is used.
