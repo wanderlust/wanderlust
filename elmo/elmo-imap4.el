@@ -1872,15 +1872,16 @@ Return nil if no complete line has arrived."
   (let* ((root (elmo-imap4-folder-mailbox-internal folder))
 	 (session (elmo-imap4-get-session folder))
 	 (prefix (elmo-folder-prefix-internal folder))
-	 (delim (or
-		 (cdr
+	 (namespace-assoc
 		  (elmo-string-matched-assoc
 		   root
 		   (with-current-buffer (elmo-network-session-buffer session)
 		     elmo-imap4-server-namespace)))
+	 (delim (or (cdr namespace-assoc)
 		 elmo-imap4-default-hierarchy-delimiter))
 	 ;; Append delimiter when root with namespace.
-	 (root (if (and (match-end 1)
+	 (root (if (and namespace-assoc
+			(match-end 1)
 			(string= (substring root (match-end 1))
 				 ""))
 		   (concat root delim)
