@@ -508,16 +508,11 @@
 	  (setq buffer-read-only nil)
 	  (erase-buffer)
 	  (if (or (eq (elmo-folder-number-get-type folder number) 'localdir)
-		  (not (and (not 
-			     (setq wl-message-cache-used
-				  (or
-				   (elmo-buffer-cache-hit
-				    (list folder number message-id))
-				   (elmo-cache-exists-p message-id
-							folder number))))
-			    (integerp size)
+		  (not (and (integerp size)
 			    wl-fetch-confirm-threshold
 			    (>= size wl-fetch-confirm-threshold)
+			    (not (elmo-cache-exists-p message-id
+						      folder number))
 			    (not (y-or-n-p
 				  (format "Fetch entire message? (%dbytes)"
 					  size))))))
