@@ -3,6 +3,7 @@
 	* wl-summary.el (wl-summary-read-folder): Fixed problem when
 	petname folder default was selected.
 	(Fix by HIROSE Yuuji <yuuji@gentei.org>)
+	(wl-summary-auto-refile): Use `wl-folder-get-realname'.
 
 2000-10-31  Yuuichi Teranishi  <teranisi@gohome.org>
 

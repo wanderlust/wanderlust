@@ -3606,9 +3606,10 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	(when (and (not (wl-summary-no-auto-refile-message-p number
 							     mark-alist))
 		   (setq dst
-			 (wl-refile-guess-by-rule
-			  (elmo-msgdb-overview-get-entity
-			   number wl-summary-buffer-msgdb)))
+			 (wl-folder-get-realname
+			  (wl-refile-guess-by-rule
+			   (elmo-msgdb-overview-get-entity
+			    number wl-summary-buffer-msgdb))))
 		   (not (equal dst spec)))
 	  (when (not (member dst checked-dsts))
 	    (wl-folder-confirm-existence dst)
