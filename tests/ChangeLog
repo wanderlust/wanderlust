@@ -1,24 +1,4 @@
-2001-08-30  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* test-env.el: Removed (Separated to check-*.el).
-
-	* check-base64.el: New file.
-
-	* check-modules.el: Ditto.
-
-	* test-env.el (test-base64-encode-string-has-no-line-break-argument,
-	test-base64-encode-region-has-no-line-break-argument): New functions.
-	(test-base64-encode-4, test-base64-encode-5): Use them.
-
-2001-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* test-env.el (test-base64-encode-4, test-base64-encode-5):
-	New testcases.
-
 2001-08-29  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* test-utf7.el: New file.
-	(test-utf7-encode-string, test-utf7-decode-string): New testcases.
 
 	* test-env.el: New file.
 	(test-apel-version, test-base64-encode-1)
