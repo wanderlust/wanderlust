@@ -1,3 +1,8 @@
+2002-03-05  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-mark-as-important): Refetch if cache is
+	not entire.
+
 2002-03-04  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-summary.el (wl-summary-mode-map): Bind wl-summary-save-status
