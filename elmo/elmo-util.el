@@ -667,7 +667,11 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defun elmo-uniq-list (lst)
   "Distractively uniqfy elements of LST."
   (let ((tmp lst))
-    (while tmp (setq tmp (setcdr tmp (and (cdr tmp) (delete (car tmp) (cdr tmp)))))))
+    (while tmp (setq tmp
+		     (setcdr tmp
+			     (and (cdr tmp)
+				  (delete (car tmp)
+					  (cdr tmp)))))))
   lst)
 
 (defun elmo-string-partial-p (string)
@@ -1550,6 +1554,15 @@ the value of `foo'."
   (` (let ((obj (copy-sequence (, string))))
        (set-text-properties 0 (length obj) nil obj)
        obj)))
+
+(defun elmo-flatten (list-of-list)
+  "Flatten LIST-OF-LIST."
+  (unless (null list-of-list)
+    (append (if (and (car list-of-list)
+		     (listp (car list-of-list)))
+		(car list-of-list)
+	      (list (car list-of-list)))
+	    (elmo-flatten (cdr list-of-list)))))
 
 (defun elmo-y-or-n-p (prompt &optional auto default)
   "Same as `y-or-n-p'.
