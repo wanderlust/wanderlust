@@ -2,6 +2,21 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 * Changes in 2.12.0 from 2.10.1
 
+** SPAM filter module is added.
+
+** Batch processing module is added.
+
+** The structure of the message database is improved.
+
+** Draft save function is improved.
+   Now you can set wl-draft-folder to IMAP folder, Maildir folder, and so on.
+
+** 'mark folder is renamed to 'flag folder.
+   Related to this, new variable wl-use-flag-folder-help-echo
+   (default value is nil) is added.
+   If it is non-nil, original message location is displayed as help-echo
+   in the 'flag folder.
+
 ** New mark, 'A' and '&' is added for answered messages.
    Now answered messages have its own mark in the summary mode.
    'A' is displayed for uncached messages and '&' is for cached messages.
