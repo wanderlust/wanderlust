@@ -88,16 +88,18 @@
   :group 'wl)
 
 ;;; Emacsen
-(defconst wl-on-emacs20 (> emacs-major-version 19))
-
 (defconst wl-on-xemacs (featurep 'xemacs))
+
+(defconst wl-on-emacs21 (and (not wl-on-xemacs)
+			     (>= emacs-major-version 21)))
 
 (defconst wl-on-nemacs (fboundp 'nemacs-version))
 
 (defconst wl-on-mule (featurep 'mule))
 
 (defconst wl-on-mule3
-  (and wl-on-mule (or wl-on-xemacs wl-on-emacs20)))
+  (and wl-on-mule (or wl-on-xemacs
+		      (> emacs-major-version 19))))
 
 (require 'elmo-vars)
 
@@ -1898,16 +1900,18 @@ This variable can also be a regex. "
   :group 'wl-highlight)
   
 ;; highilght about mouse
-(defcustom wl-use-highlight-mouse-line (and wl-on-xemacs window-system)
+(defcustom wl-use-highlight-mouse-line (and (or wl-on-xemacs wl-on-emacs21)
+					    window-system)
   "*Highlight mouse line, if non nil."
   :type 'boolean
   :group 'wl-highlight)
  
 ;; highilght about folder
 (defcustom wl-highlight-folder-with-icon
-  (and (featurep 'xemacs)
-       (featurep 'xpm))
-  "*Highlight folder with icon(XEmacs)."
+  (or (and (featurep 'xemacs)
+	   (featurep 'xpm))
+      wl-on-emacs21)
+  "*Highlight folder with icon(XEmacs or Emacs 21)."
   :type 'boolean
   :group 'wl-highlight)
 (defcustom wl-highlight-group-folder-by-numbers t

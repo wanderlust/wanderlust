@@ -1,3 +1,21 @@
+2000-09-08  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl.el: Require `wl-e21' when Emacs 21 is running.
+
+	* wl-vars.el (wl-highlight-folder-with-icon): Activate it by
+	default when Emacs 21 is running.
+	(wl-use-highlight-mouse-line): Ditto.
+	(wl-on-emacs21): New constant.
+	(wl-on-emacs20): Removed.
+
+	* wl-summary.el (wl-summary-mode): Call `wl-e21-setup-summary' when
+	Emacs 21 is running.
+
+	* wl-folder.el (wl-folder-mode): Call `wl-e21-setup-folder' when
+	Emacs 21 is running.
+
+	* wl-e21.el: New file.
+
 2000-09-08   Daiki Ueno  <ueno@unixuser.org>
 
 	* wl.el (wl-plugged-init): Refer `wl-plug-state-indicator-on' indirectly.

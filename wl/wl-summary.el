@@ -751,6 +751,11 @@ Returns nil if selecting folder was in failure."
 	 (regexp-quote wl-thread-space-str-internal)))
   (run-hooks 'wl-summary-buffer-set-folder-hook))
 
+;; Avoid byte-compile warning.
+(eval-when-compile
+  (unless wl-on-emacs21
+    (defalias 'wl-e21-setup-summary 'ignore)))
+
 (defun wl-summary-mode ()
   "Major mode for reading threaded messages.
 The keys that are defined for this mode are:\\<wl-summary-mode-map>
@@ -814,7 +819,11 @@ q	Goto folder mode.
 	    'wl-mmelmo-message-redisplay)
     (setq wl-summary-buffer-message-redisplay-func
 	  'wl-normal-message-redisplay))
-  (wl-xmas-setup-summary) ; setup toolbar, dnd, etc.
+  ;; setup toolbar, dnd, etc.
+  (cond (wl-on-xemacs
+	 (wl-xmas-setup-summary))
+	(wl-on-emacs21
+	 (wl-e21-setup-summary)))
   (setq mode-line-buffer-identification
 	(wl-mode-line-buffer-identification
 	 (append

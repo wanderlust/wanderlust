@@ -42,11 +42,14 @@
 (require 'wl-vars)
 (require 'wl-util)
 
-(if wl-on-xemacs
-    (require 'wl-xmas)
-  (if wl-on-nemacs
-      (require 'wl-nemacs)
-    (require 'wl-mule)))
+(cond (wl-on-xemacs
+       (require 'wl-xmas))
+      (wl-on-emacs21
+       (require 'wl-e21))
+      (wl-on-nemacs
+       (require 'wl-nemacs))
+      (t
+       (require 'wl-mule)))
 
 (provide 'wl) ; circular dependency
 (require 'wl-folder)

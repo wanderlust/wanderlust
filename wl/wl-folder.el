@@ -1402,6 +1402,11 @@ If current line is group folder, all subfolders are marked."
       (message "No more unread folder")
       nil)))
 
+;; Avoid byte-compile warning.
+(eval-when-compile
+  (unless wl-on-emacs21
+    (defalias 'wl-e21-setup-folder 'ignore)))
+
 (defun wl-folder-mode ()
   "Major mode for Wanderlust Folder.
 See info under Wanderlust for full documentation.
@@ -1426,7 +1431,10 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	     '("" wl-plug-state-indicator "Wanderlust: %12b")
 	   '("Wanderlust: %12b"))))
   (easy-menu-add wl-folder-mode-menu)
-  (wl-xmas-setup-folder)
+  (cond (wl-on-xemacs
+	 (wl-xmas-setup-folder))
+	(wl-on-emacs21
+	 (wl-e21-setup-folder)))
   (run-hooks 'wl-folder-mode-hook))
 
 (defun wl-folder-append-petname (realname petname)
