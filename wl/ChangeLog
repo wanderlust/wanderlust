@@ -1,3 +1,8 @@
+2004-01-15  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-draft.el (wl-draft-highlight-and-recenter): Redraw frame just
+	before calling `recenter' in order to cope with an XEmacs bug.
+
 2004-01-12  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-vars.el (wl-folder-hierarchy-access-folders): Add "^'$"
