@@ -1,5 +1,7 @@
 2004-02-21  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* test-rfc2368.el: New file.
+
 	* test-elmo-util.el (test-elmo-number-set-member-1): Use `equal'.
 	(test-elmo-number-set-member-2): New testcase.
 
