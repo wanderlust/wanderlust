@@ -5,7 +5,6 @@
 @c @documentlanguage ja
 @c @documentencoding iso-2022-jp
 @c %**end of header
-@set updated $Date$
 @set version 2.3.0
 @synindex pg cp
 @finalout

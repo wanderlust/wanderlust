@@ -2,7 +2,6 @@
  Wanderlust -- Yet Another Message Interface on Emacsen
                       by Yuuichi Teranishi <teranisi@gohome.org>
 
-	$Date$
 
 Wanderlust is a mail/news management system with IMAP4rev1 support for Emacs.
 

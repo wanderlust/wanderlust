@@ -4,7 +4,6 @@
 @settitle Wanderlust -- Yet Another Message Interface On Emacsen --
 @c @documentlanguage en
 @c %**end of header
-@set updated $Date$
 @set version 2.3.0
 @synindex pg cp
 @finalout
