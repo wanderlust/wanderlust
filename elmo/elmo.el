@@ -378,7 +378,8 @@ FOLDER is the ELMO folder structure.")
 FOLDER is the destination folder(ELMO folder structure).
 FLAG is the status of appended message.
 If optional argument NUMBER is specified, the new message number is set
-\(if possible\).")
+\(if possible\).
+Return nil on failure.")
 
 (luna-define-generic elmo-folder-append-messages (folder
 						  src-folder

@@ -1,3 +1,16 @@
+2004-04-11  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo.el (elmo-folder-append-buffer): Add note on return value.
+	* elmo-cache.el (elmo-folder-append-buffer): Return nil on failure.
+	* elmo-localdir.el (elmo-folder-append-buffer): Ditto.
+	* elmo-split.el (elmo-split-subr): Check return value of
+	elmo-folder-append-buffer.
+
+	* elmo-localdir.el (elmo-folder-append-buffer): Create flag-table.
+
+	* elmo-cache.el (elmo-folder-append-buffer): Check existence of
+	message-id.
+
 2004-04-10  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-split.el (elmo-split-subr): Append message with flag.

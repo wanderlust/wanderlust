@@ -202,9 +202,16 @@
 		   folder
 		   (or number
 		       (1+ (car (elmo-folder-status folder)))))))
-    (when (file-writable-p filename)
+    (when (and (file-writable-p filename)
+	       (not (file-exists-p filename)))
       (write-region-as-binary
        (point-min) (point-max) filename nil 'no-msg)
+      (let* ((path (elmo-folder-msgdb-path folder))
+	     (table (elmo-flag-table-load path))
+	     (msgid (std11-field-body "message-id")))
+	(when msgid
+	  (elmo-flag-table-set table msgid flag)
+	  (elmo-flag-table-save path table)))
       t)))
 
 (luna-define-method elmo-folder-append-messages :around

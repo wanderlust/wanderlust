@@ -348,7 +348,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 					 action)))
 				    (elmo-folder-create target-folder)))
 				(elmo-folder-open-internal target-folder)
-				(elmo-folder-append-buffer target-folder (or flags '(read)))
+				(setq failure (not (elmo-folder-append-buffer target-folder (or flags '(read)))))
 				(elmo-folder-close-internal target-folder))
 			    (error (setq failure t)
 				   (incf fcount)))
