@@ -29,7 +29,7 @@
 ;;; Code:
 
 (defconst wl-demo-copyright-notice
-  "Copyright (C) 1998-2003 Yuuichi Teranishi <teranisi@gohome.org>"
+  "Copyright (C) 1998-2004 Yuuichi Teranishi <teranisi@gohome.org>"
   "A declaration of the copyright on Wanderlust.")
 
 (eval-when-compile
