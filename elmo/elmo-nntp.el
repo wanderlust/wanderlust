@@ -181,21 +181,27 @@ Don't cache if nil.")
 
 (luna-define-method elmo-network-initialize-session ((session
 						      elmo-nntp-session))
-  (set-process-filter (elmo-network-session-process-internal session)
-		      'elmo-nntp-process-filter)
-  (with-current-buffer (elmo-network-session-buffer session)
-    (setq elmo-nntp-read-point (point-min))
-    (or (elmo-nntp-read-response session t)
-	(error "Cannot open network"))
-    (when (eq (elmo-network-stream-type-symbol
-	       (elmo-network-session-stream-type-internal session))
-	      'starttls)
-      (elmo-nntp-send-command session "starttls")
-      (or (elmo-nntp-read-response session)
-	  (error "Cannot open starttls session"))
-      (starttls-negotiate
-       (elmo-network-session-process-internal session)))))
-
+  (let ((process (elmo-network-session-process-internal session)))
+    (set-process-filter (elmo-network-session-process-internal session)
+			'elmo-nntp-process-filter)
+    (with-current-buffer (elmo-network-session-buffer session)
+      (setq elmo-nntp-read-point (point-min))
+      ;; Skip garbage output from process before greeting.
+      (while (and (memq (process-status process) '(open run))
+                  (goto-char (point-max))
+                  (forward-line -1)
+                  (not (looking-at "20[01]")))
+        (accept-process-output process 1))
+      (setq elmo-nntp-read-point (point))
+      (or (elmo-nntp-read-response session t)
+	  (error "Cannot open network"))
+      (when (eq (elmo-network-stream-type-symbol
+		 (elmo-network-session-stream-type-internal session))
+		'starttls)
+	(elmo-nntp-send-command session "starttls")
+	(or (elmo-nntp-read-response session)
+	    (error "Cannot open starttls session"))
+	(starttls-negotiate process)))))
 
 (luna-define-method elmo-network-authenticate-session ((session
 							elmo-nntp-session))
