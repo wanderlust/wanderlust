@@ -51,6 +51,45 @@
 ;;; Code:
 (eval-when-compile (require 'cl))
 
+;;; User options.
+(defcustom elmo-imap4-default-mailbox "inbox"
+  "*Default IMAP4 mailbox."
+  :type 'string
+  :group 'elmo)
+
+(defcustom elmo-imap4-default-server "localhost"
+  "*Default IMAP4 server."
+  :type 'string
+  :group 'elmo)
+
+(defcustom elmo-imap4-default-authenticate-type 'login
+  "*Default Authentication type for IMAP4."
+  :type 'symbol
+  :group 'elmo)
+
+(defcustom elmo-imap4-default-user (or (getenv "USER")
+				       (getenv "LOGNAME")
+				       (user-login-name))
+  "*Default username for IMAP4."
+  :type 'string
+  :group 'elmo)
+
+(defcustom elmo-imap4-default-port 143
+  "*Default Port number of IMAP."
+  :type 'integer
+  :group 'elmo)
+
+(defcustom elmo-imap4-default-stream-type nil
+  "*Default stream type for IMAP4.
+Any symbol value of `elmo-network-stream-type-alist' or
+`elmo-imap4-stream-type-alist'."
+  :type 'symbol
+  :group 'elmo)
+
+(defvar elmo-imap4-stream-type-alist nil
+  "*Stream bindings for IMAP4.
+This is taken precedence over `elmo-network-stream-type-alist'.")
+
 (defvar elmo-imap4-disuse-server-flag-mailbox-regexp "^#mh" ; UW imapd
   "Regexp to match IMAP4 mailbox names whose message flags on server should be ignored.
 (Except `\\Deleted' flag).")
