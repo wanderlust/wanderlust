@@ -482,23 +482,26 @@
     (message "Sorting...done")
     msgdb))
 
-(luna-define-method elmo-msgdb-message-entity ((msgdb modb-standard) key)
-  (let ((ret (and key
-		  (elmo-get-hash-val
-		   (cond ((stringp key) key)
-			 ((numberp key) (modb-standard-key key)))
-		   (modb-standard-entity-map-internal msgdb)))))
-    (if (eq 'autoload (car-safe ret))
+(defun modb-standard-message-entity (msgdb key load)
+  (let ((ret (elmo-get-hash-val
+	      key
+	      (modb-standard-entity-map-internal msgdb))))
+    (if (and (eq 'autoload (car-safe ret)) load)
 	(when modb-standard-divide-number
 	  (modb-standard-load-entity
 	   msgdb
 	   (elmo-msgdb-location msgdb)
 	   (/ (nth 1 ret) modb-standard-divide-number))
-	  (elmo-get-hash-val
-	   (cond ((stringp key) key)
-		 ((numberp key) (modb-standard-key key)))
-	   (modb-standard-entity-map-internal msgdb)))
+	  (modb-standard-message-entity msgdb key nil))
       ret)))
+
+(luna-define-method elmo-msgdb-message-entity ((msgdb modb-standard) key)
+  (when key
+    (modb-standard-message-entity
+     msgdb
+     (cond ((stringp key) key)
+	   ((numberp key) (modb-standard-key key)))
+     'autoload)))
 
 (require 'product)
 (product-provide (provide 'modb-standard) (require 'elmo-version))
