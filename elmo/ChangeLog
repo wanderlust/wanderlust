@@ -1,3 +1,7 @@
+2001-06-06  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-pop3-process-filter): Show retrieve progress.
+
 2001-03-27  Kenichi OKADA  <okada@opaopa.org>
 
 	* elmo-imap4.el (elmo-imap4-list-folders): Fixed problem when
