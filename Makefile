@@ -43,6 +43,33 @@ update-version:
 	$(EMACS) $(FLAGS) -l WL-MK -f update-version \
 		$(LISPDIR) $(PIXMAPDIR)
 
+compile-strict: clean-elc
+	@args="$(FLAGS)";\
+	args="$$args -L elmo -L wl";\
+	echo "=============================================";\
+	echo "Compiling the 1st stage-----without elc files";\
+	echo "=============================================";\
+	for i in `$(EMACS) $(FLAGS) -l WL-MK -f wl-examine-modules 2>/dev/null`;\
+	  do\
+	  j=`echo $$i| sed 's/elc$$/el/g'`;\
+	  echo "$(EMACS) ARGS -f batch-byte-compile $$j";\
+	  $(EMACS) $$args -f batch-byte-compile $$j;\
+	  mv $$i $$j"x";\
+	done;\
+	for i in `echo elmo/*.elx wl/*.elx utils/*.elx`; do\
+	  j=`echo $$i| sed 's/elx$$/elc/g'`;\
+	  mv $$i $$j;\
+	done;\
+	echo "==============================================";\
+	echo "Compiling the 2nd stage-----with all elc files";\
+	echo "==============================================";\
+	for i in `$(EMACS) $(FLAGS) -l WL-MK -f wl-examine-modules 2>/dev/null`;\
+	  do\
+	  j=`echo $$i| sed 's/elc$$/el/g'`;\
+	  echo "$(EMACS) ARGS -f batch-byte-compile $$j";\
+	  $(EMACS) $$args -f batch-byte-compile $$j;\
+	done
+
 install-elc:
 	$(EMACS) $(FLAGS) -l WL-MK -f install-wl-package \
 		$(LISPDIR) $(PIXMAPDIR)

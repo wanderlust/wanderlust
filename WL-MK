@@ -234,6 +234,15 @@
    objs))
 
 
+(defun wl-examine-modules ()
+  "Examine wl modules should be byte-compile'd."
+  (config-wl-package-subr)
+  (make-wl-news)
+  (dolist (module modules-alist)
+    (dolist (filename (cdr module))
+      (princ (format "%s/%s.elc " (car module) filename)))))
+
+
 (defun compile-wl-package ()
   (config-wl-package)
   (make-wl-news)
