@@ -967,11 +967,7 @@ Optional argument ARG is repeart count."
 	  (wl-highlight-folder-path wl-folder-buffer-cur-path)
 	  (and wl-folder-move-cur-folder
 	       wl-folder-buffer-cur-point
-	       (goto-char wl-folder-buffer-cur-point))))
-    (if (eq (current-buffer) buf)
-	(and wl-folder-move-cur-folder
-	     wl-folder-buffer-cur-point
-	     (goto-char wl-folder-buffer-cur-point)))))
+	       (goto-char wl-folder-buffer-cur-point))))))
 
 (defun wl-folder-check-current-entity ()
   "Check folder at position.
