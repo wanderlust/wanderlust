@@ -69,7 +69,7 @@
 	   bbdb-wl-folder-regexp
 	   (with-current-buffer
 	       wl-message-buffer-cur-summary-buffer
-	     (wl-summary-buffer-folder-name))))
+	     wl-summary-buffer-folder-name)))
       (with-current-buffer (wl-message-get-original-buffer)
 	(bbdb-wl-update-record)
 	(run-hooks 'bbdb-wl-get-update-record-hook))))
