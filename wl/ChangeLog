@@ -1,3 +1,8 @@
+2004-08-25  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-folder.el (wl-folder-set-folder-updated): Initialize the local
+	variable `buf' with `let' instead of `setq'.
+
 2004-08-21  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-mime.el (wl-message-delete-current-part): If filename exists,
