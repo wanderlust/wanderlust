@@ -1553,7 +1553,8 @@ Derived from `message-save-drafts' in T-gnus."
 '(function  ;; funcall
   string    ;; insert string
   (symbol . string)    ;;  insert symbol-value: string
-  (symbol . function)  ;;  insert symbol-value: (funcall)
+  (symbol . function)  ;;  (funcall) and if it returns string,
+                       ;;  insert symbol-value: string
   (symbol . nil)       ;;  insert nothing
   (function . (arg1 arg2 ..))  ;; call function with argument
   nil                  ;;  insert nothing
@@ -1578,14 +1579,19 @@ Derived from `message-save-drafts' in T-gnus."
 	  (cond
 	   ((stringp value) (insert (symbol-name field) ": " value "\n"))
 	   ((functionp value)
-	    (insert (symbol-name field) ": " (funcall value) "\n"))
+	    (let ((value-return (funcall value)))
+	      (when (stringp value-return)
+		(insert (symbol-name field) ": " value-return "\n"))))
 	   ((not value))
 	   (t
 	    (debug))))
 	 ((stringp field)
 	  (cond
 	   ((stringp value) (insert field value "\n"))
-	   ((functionp value) (insert field (funcall value) "\n"))
+	   ((functionp value)
+	    (let ((value-return (funcall value)))
+	      (when (stringp value-return)
+		(insert field value-return "\n"))))
 	   ((not value))
 	   (t
 	    (debug))))

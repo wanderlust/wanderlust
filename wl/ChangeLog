@@ -1,3 +1,9 @@
+2002-03-24  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-draft.el (wl-draft-create-contents): For the case of
+	(symbol-or-string . function) insert header only when the function
+	returns string value.
+
 2002-03-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-vars.el (wl-draft-fields): "FCC" -> "Fcc".
