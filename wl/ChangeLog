@@ -1,3 +1,7 @@
+2005-04-04  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-action.el (wl-summary-exec): Reduce loop strength in a dolist loop.
+
 2005-04-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-thread.el (wl-thread-delete-message): Delete descendant
