@@ -1,3 +1,8 @@
+2000-12-06  Taro Kawagishi <taro.kawagishi@nokia.com>
+
+	* wl-summary.el (wl-summary-edit-addresses-subr): Call `try-completion'
+	to get existing e-mail address string.
+
 2000-12-13  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-version.el (wl-generate-user-agent-string): Commentary.

@@ -1288,8 +1288,12 @@ q	Goto folder mode."
 	   the-email
 	   (elmo-get-hash-val the-email wl-address-petname-hash)
 	   (wl-address-header-extract-realname
-	    (cdr (assoc (downcase the-email)
-			wl-address-completion-list))) t)
+	    (cdr (assoc
+		  (let ((completion-ignore-case t) comp)
+		    (setq comp
+			  (try-completion the-email wl-address-completion-list))
+		    (if (equal comp t) the-email comp))
+		  wl-address-completion-list))) t)
 	  "edited")
 	 ((eq char ?d)
 	  ;; Delete Addresses
