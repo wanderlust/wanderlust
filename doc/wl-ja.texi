@@ -1678,22 +1678,23 @@ Wanderlust の内部に保持したメッセージを閲覧するためのフォルダです。
 
 @example
 @group
-'mark
-'sendlog
-'cache/00〜1F
+@samp{'flag/} @var{global-flag}
+@samp{'sendlog}
+@samp{'cache/00} 〜 @samp{'cache/1F}
 @end group
 @end example
 
-@samp{'mark} というフォルダは、後述の重要マーク(@samp{$})がついたメッセー
-ジを扱う特別な仮想フォルダです。重要マークをメッセージにつけておいて、
-あとから見直したいときなどに便利です。
+@samp{'flag} というフォルダは、@var{global-flag} で指定したフラグの
+付いたメッセージを集めた仮想フォルダです。
 
-このフォルダでメッセージを削除すると、そのメッセージについていた 
-@samp{$}マークが削除されます。また、このフォルダにメッセージを追加すると、
-そのメッセージには @samp{$} マークが付けられます。
+現在は、@var{global-flag} として @samp{important} フラグがサポートされて
+います。このフラグは、後述の重要マーク(@samp{$})を付けることでメッセージ
+に付加されます。重要マークをメッセージにつけておいて、あとから見直したい
+ときなどに便利です。
 
-(現在、@samp{'mark} フォルダからは IMAP サーバ上のマークを消せません。
-IMAP フォルダで直接消した場合だけサーバ上のマークが消えます。)
+このフォルダでメッセージを削除すると、そのメッセージについていた
+@var{global-flag} が削除されます。また、このフォルダにメッセージを追加す
+ると、そのメッセージには @var{global-flag} が付けられます。
 
 
 @samp{'sendlog} は @file{~/.elmo/sendlog} に記載されているメッセージのうち
@@ -3899,6 +3900,12 @@ petname でも補完ができます。
 @vindex  wl-summary-width
 初期設定は 80。サマリの表示幅を設定された値に切り詰めます。@code{nil} な
 ら表示幅を切り詰めません。
+
+@item wl-summary-print-argument-within-window
+@vindex wl-summary-print-argument-within-window
+初期設定は @code{nil}。Non-nil なら @code{wl-summary-width} が 
+@code{nil} であってもウィンドウの右端に揃えて、アクション引数を表示しま
+す。
 
 @item wl-summary-from-width
 @vindex wl-summary-from-width

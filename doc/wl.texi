@@ -1651,25 +1651,22 @@ Format:
 
 @example
 @group
-'mark
-'sendlog
-'cache/00 - 1F
+@samp{'flag/} @var{global-flag}
+@samp{'sendlog}
+@samp{'cache/00} - @samp{'cache/1F}
 @end group
 @end example
 
-A folder named @samp{'mark} is a special virtual folder which collects
-messages which have important mark @samp{$}.
+A folder named @samp{'flag} is a special virtual folder which collects
+messages which have @var{global-flag}.
 
-You can review important messages at once after you put important marks
-on the messages in the different folders.
+Now, @samp{important} flag is supported as @var{global-flag}.  You can
+review important messages at once after you put important marks on the
+messages in the different folders.
 
-In this folder, if you delete message, important mark @samp{$} put on
-the message is removed.  If you append messages to this folder, the
-message will have @samp{$} mark.
-
-(Can't remove important mark @samp{$} on IMAP server from @samp{'mark}
-folder.  If you want IMAP folder's message remove from @samp{'mark}
-folder, remove important mark at IMAP Folder.)
+In this folder, if you delete message, @var{global-flag} put on the
+message is removed.  If you append messages to this folder, the message
+will have @var{global-flag}.
 
 
 A folder named @samp{'sendlog} is a virtual folder which collects
@@ -3905,6 +3902,12 @@ want to aware of reading direction, set this to @code{t}.
 @vindex  wl-summary-width
 The initial setting is 80.
 Width of summary line. If @code{nil}, summary line's width is as is.
+
+@item wl-summary-print-argument-within-window
+@vindex wl-summary-print-argument-within-window
+The initial setting is @code{nil}.
+If non-nil, the action argument is always printed on right side of
+window.
 
 @item wl-summary-from-width
 @vindex wl-summary-from-width
