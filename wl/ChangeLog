@@ -1,3 +1,8 @@
+2000-11-02  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-folder.el (wl-folder-guess-mailing-list-by-refile-rule):
+	Fixed problem when no rule was matched.
+
 2000-11-01  Akihiro MOTOKI  <motoki@da.jp.nec.com>
 
 	* wl-summary.el (wl-summary-get-mark): Fixed

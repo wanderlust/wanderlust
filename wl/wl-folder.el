@@ -2038,12 +2038,8 @@ Don't care multi."
 						 'case-ignore)))
 	    (setq toalist (append toalist (cdr (car rules)))))
 	(setq rules (cdr rules)))
-      (when toalist
-	(setq tokey (car (rassoc folder toalist)))
+      (setq tokey (car (rassoc folder toalist)))
 ;;;     (setq histkey (car (rassoc folder wl-refile-alist)))
-	(elmo-string-matched-member tokey
-				    wl-subscribed-mailing-list t))
-
       ;; case-ignore search `wl-subscribed-mailing-list'
       (if (stringp tokey)
 	  (list
