@@ -16,13 +16,13 @@ read-cached       なら ' '
 
 * filter, search の検索条件
 
-mark:unread
-mark:important
-mark:answered
-mark:any
+flag:unread
+flag:important
+flag:answered
+flag:digest
+flag:any
 
 という条件をかけるようにする。
-/mark:any/ がいわゆる 'news letter' モード。
 
 * msgdb のマーク処理
 
