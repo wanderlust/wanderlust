@@ -1,3 +1,10 @@
+2000-12-01  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nntp.el (elmo-nntp-get-folders-info):
+	Fixed problem when '\' character is contained in user-id.
+	(Reported by Yoichiro Okabe <okabe@wizsoft.co.jp>)
+
+
 2000-11-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-delete-folder):
