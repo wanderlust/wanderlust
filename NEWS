@@ -1,8 +1,13 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust.
 
-** Fixed a problem that cache file is included in the important mark.
+** Fixed a problem that cache file is not protected even if it is marked
+   as important.
 
-** Fixed a problem that remove password when SMTP AUTH non-auth failed.
+** Fixed a problem that %# in wl-summary-line-format cannot handle large
+   number.
+
+** Fixed a problem to remove password even if SMTP AUTH failed at non-auth
+   phase.
 
 ** Default value of wl-message-buffer-prefetch-folder-type-list,
    wl-message-buffer-prefetch-idle-time, and
