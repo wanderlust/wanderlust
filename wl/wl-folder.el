@@ -61,7 +61,6 @@
 
 (defvar wl-folder-newsgroups-hashtb nil)
 (defvar wl-folder-info-alist-modified nil)
-(defvar wl-folder-completion-function nil)
 
 (defvar wl-folder-mode-map nil)
 
@@ -2916,6 +2915,73 @@ Call `wl-summary-write-current-folder' with current folder name."
     (if (get-buffer-window (car (wl-collect-summary)))
 	(switch-to-buffer-other-window (car (wl-collect-summary))))
     (wl-summary-previous-buffer)))
+
+;;;
+;; Completion
+(defvar wl-folder-complete-folder-candidate nil)
+
+(defun wl-folder-complete-folder (string predicate flag)
+  (cond ((or (string-match "^\\(/[^/]*/\\)\\(.*\\)$" string) ; filter
+	     (string-match "^\\(\*\\|\*.*,\\)\\([^,]*\\)$" string) ; multi
+	     (string-match "^\\(|[^|]*|:?\\)\\(.*\\)$" string) ;pipe-src
+	     (string-match "^\\(|\\)\\([^|]*\\)$" string)) ;pipe-dst
+	 (let* ((str1 (match-string 1 string))
+		(str2 (match-string 2 string))
+		(str2-comp (wl-folder-complete-folder str2 predicate flag)))
+	   (cond
+	    ((listp str2-comp) ; flag=t
+	     (mapcar (lambda (x) (concat str1 x)) str2-comp))
+	    ((stringp str2-comp)
+	     (concat str1 str2-comp))
+	    (t
+	     str2-comp))))
+	((string-match "^\\(/\\)\\([^/]*\\)$" string) ; filter-condition
+	 (let* ((str1 (match-string 1 string))
+		(str2 (match-string 2 string))
+		(str2-comp
+		 (wl-folder-complete-filter-condition str2 predicate flag)))
+	   (cond
+	    ((listp str2-comp) ; flag=t
+	     (mapcar (lambda (x) (concat str1 x)) str2-comp))
+	    ((stringp str2-comp)
+	     (concat str1 str2-comp))
+	    (t
+	     str2-comp))))
+	(t
+	 (let ((candidate
+		(or wl-folder-complete-folder-candidate
+		    (if (memq 'read-folder wl-use-folder-petname)
+			(wl-folder-get-entity-with-petname)
+		      wl-folder-entity-hashtb))))
+	   (if (not flag)
+	       (try-completion string candidate)
+	     (all-completions string candidate))))))
+
+(defun wl-folder-complete-filter-condition (string predicate flag)
+  (cond
+   ((string-match "^\\(.*|\\|.*&\\|.*!\\|.*(\\)\\([^:]*\\)$" string)
+    (let* ((str1 (match-string 1 string))
+	   (str2 (match-string 2 string))
+	   (str2-comp
+	    (wl-folder-complete-filter-condition str2 predicate flag)))
+      (cond
+       ((listp str2-comp) ; flag=t
+	(mapcar (lambda (x) (concat str1 x)) str2-comp))
+       ((stringp str2-comp)
+	(concat str1 str2-comp))
+       (t
+	str2-comp))))
+   (t
+    (let ((candidate
+	   (mapcar (lambda (x) (list (concat (downcase x) ":")))
+		   (append '("last" "first"
+			     "from" "subject" "to" "cc" "body"
+			     "since" "before" "tocc")
+			   elmo-msgdb-extra-fields))))
+      (if (not flag)
+	  (try-completion string candidate)
+	(all-completions string candidate))))))
+
 
 (require 'product)
 (product-provide (provide 'wl-folder) (require 'wl-version))

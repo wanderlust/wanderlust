@@ -810,7 +810,7 @@ return value is diffs '(-new -unread -all)."
     (beginning-of-line)
     (let ((ret-val nil)
 	  (inhibit-read-only t)
-	  (wl-folder-completion-function
+	  (wl-folder-complete-folder-candidate
 	   (if wl-fldmgr-add-complete-with-current-folder-list
 	       (function wl-fldmgr-add-completion-subr)))
 	  tmp indent path diffs)

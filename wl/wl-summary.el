@@ -3164,10 +3164,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
   (let ((fld (completing-read
 	      (format "Folder name %s(%s): " (or purpose "")
 		      default)
-	      (or wl-folder-completion-function
-		  (if (memq 'read-folder wl-use-folder-petname)
-		      (wl-folder-get-entity-with-petname)
-		    wl-folder-entity-hashtb))
+	      'wl-folder-complete-folder
 	      nil nil (or init wl-default-spec)
 	      'wl-read-folder-hist)))
     (if (or (string= fld wl-default-spec)

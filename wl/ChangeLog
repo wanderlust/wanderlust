@@ -1,3 +1,12 @@
+2003-02-12  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-folder.el (wl-folder-complete-folder-candidate): New variable.
+	(wl-folder-completion-function): Abolished.
+	(wl-folder-complete-folder): New function.
+	(wl-folder-complete-filter-condition): Ditto.
+	* wl-summary.el (wl-summary-read-folder): Change accordingly.
+	* wl-fldmgr.el (wl-fldmgr-add): Ditto.
+
 2003-02-11  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-draft.el (wl-draft-send-confirm): New function.
