@@ -28,6 +28,12 @@
 ;;; Code:
 ;;
 
+(cond
+ ((and (featurep 'xemacs)
+       (module-installed-p 'xemacs-ucs))
+  (require 'xemacs-ucs))
+ ((module-installed-p 'un-define)
+  (require 'un-define)))
 (require 'custom)
 (require 'cus-edit)
 (require 'wl-vars)
@@ -35,14 +41,6 @@
 (require 'elmo-vars)
 (require 'acap)
 (require 'slp)
-
-(eval-and-compile
-  (cond
-   ((and (featurep 'xemacs)
-	 (module-installed-p 'xemacs-ucs))
-    (require 'xemacs-ucs))
-   ((module-installed-p 'un-define)
-    (require 'un-define))))
 
 (defconst wl-acap-dataset-class "vendor.wanderlust")
 (defconst wl-acap-entry-name "settings")

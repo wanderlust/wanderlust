@@ -1,5 +1,8 @@
 2001-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-acap.el (toplevel): Require 'un-define before 'wl;
+	Don't enclose with `eval-and-compile'.
+
 	* wl.el (wl): Call `elmo-init' and `wl-folder-init' unless
 	wl-init is non-nil.
 
