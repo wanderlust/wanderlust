@@ -1,3 +1,15 @@
+2000-12-12  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-summary.el (wl-summary-sync-all-init): New inline function.
+	(wl-summary-sync): Enclose `wl-summary-sync-update3' with
+	condition-case; Remove initialization.
+	(wl-summary-confirm-appends): Don't enclose with `condition-case'.
+	(wl-summary-sync-update3): Added argument `sync-all';
+	Eliminated local variable `msgdb';
+	Call `wl-summary-sync-all-init' when `sync-all' is non-nil.
+	Call `wl-summary-confirm-appends' before `wl-summary-sync-all-init'.
+	(Pointed out by "HIROSE, Masaaki" <hirose31@t3.rim.or.jp>)
+
 2000-12-12  KOGURO Naoki  <koguro@dd.iij4u.or.jp>
 
 	* wl-draft.el (wl-draft-send-mail-with-pop-before-smtp): Close POP
