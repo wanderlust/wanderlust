@@ -363,15 +363,15 @@ Reply to author if WITH-ARG is non-nil."
 	(setq r-list (cdr r-list)))
       (error "No match field: check your `wl-draft-reply-%s-argument-list'"
 	     (if with-arg "with" "without")))
-    (setq subject (wl-draft-reply-make-subject
-		   (elmo-decoded-field-body "Subject")))
+    (setq subject (std11-field-body "Subject"))
     (setq to (wl-parse-addresses to)
 	  cc (wl-parse-addresses cc))
     (with-temp-buffer			; to keep raw buffer unibyte.
       (set-buffer-multibyte default-enable-multibyte-characters)
-;      (setq decoder (mime-find-field-decoder 'Subject 'plain))
-;      (setq subject (if (and subject decoder)
-;			(funcall decoder subject) subject))
+      (setq decoder (mime-find-field-decoder 'Subject 'plain))
+      (setq subject (wl-draft-reply-make-subject
+		     (if (and subject decoder)
+			 (funcall decoder subject) subject)))
       (setq to-alist
 	    (mapcar
 	     (lambda (addr)
