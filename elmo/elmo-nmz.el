@@ -238,9 +238,12 @@ If the value is a list, all elements are used as index paths for namazu."
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-nmz-folder)
 						 &optional one-level)
   (mapcar (lambda (name) (elmo-recover-string-from-filename name))
-	  (elmo-list-subdirectories (expand-file-name "nmz"
-						      elmo-msgdb-directory)
-				    "" t)))
+	  (directory-files (expand-file-name "nmz" elmo-msgdb-directory)
+			   nil
+			   (concat
+			    "^"
+			    (regexp-quote
+			     (elmo-folder-prefix-internal folder))))))
 
 (require 'product)
 (product-provide (provide 'elmo-nmz) (require 'elmo-version))
