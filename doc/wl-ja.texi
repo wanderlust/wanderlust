@@ -3588,7 +3588,7 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 
 @code{confirm} $B$J$i(B @code{elmo-nntp-default-*} $B$G;XDj$5$l$?%5!<%P$+$i8!(B
 $B:w$9$k$+!"%5!<%P$r;XDj$9$k$+$r3NG'$7$^$9!#$3$N>l9g!"%5!<%P$N%[%9%HL>!"$b(B
-$B$7$/$O(B @samp{-:username@@servername:119!}  $B$N$h$&$K(B NTTP $B%U%)%k%@7A<0$G$N(B
+$B$7$/$O(B @samp{-:username@@servername:119!}  $B$N$h$&$K(B NNTP $B%U%)%k%@7A<0$G$N(B
 $B;XDj$,2DG=$G$9!#(B
 
 @item wl-summary-keep-cursor-command
