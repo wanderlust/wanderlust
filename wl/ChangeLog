@@ -1,3 +1,8 @@
+2000-04-17  Yoshiki Hayashi  <yoshiki@xemacs.org>
+
+	* wl-summary.el (wl-summary-sync-marks): Remove progress gauge
+	when display is finished.
+
 2000-04-17  HARAGUCHI Shuugou <haraguti@nd.net.fujitsu.co.jp>
 
 	* wl-summary.el (wl-summary-goto-folder-subr):
