@@ -1036,11 +1036,11 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	;; delete message window if displayed.
 	(if (and wl-message-buffer (get-buffer-window wl-message-buffer))
 	    (delete-window (get-buffer-window wl-message-buffer)))
-	(if (and wl-folder-use-frame
+	(if (and wl-summary-use-frame
 		 (> (length (visible-frame-list)) 1))
 	    (delete-frame))
 	(if (setq folder-buf (get-buffer wl-folder-buffer-name))
-	    (if wl-folder-use-frame
+	    (if wl-summary-use-frame
 		(let (select-frame)
 		  (save-selected-window
 		    (dolist (frame (visible-frame-list))
