@@ -1,5 +1,7 @@
 2001-08-28  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* slp.el (slp-exec-wait): Use `slp-program-arguments'.
+
 	* acap.el (acap-parse-return-metadata-or-return-metalist): Fix for
 	parsing NIL.
 	(acap-parse-return-metadata): Ditto.
