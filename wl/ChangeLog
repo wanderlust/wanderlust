@@ -1,3 +1,9 @@
+2001-02-20  Katsumi Yamaoka    <yamaoka@jpl.org>
+
+	* wl-vars.el (wl-demo-display-logo): Add `bitmap' to the selection.
+
+	* wl-demo.el: Work also with BITMAP-MULE under Emacs 21.
+
 2001-02-19  Katsumi Yamaoka    <yamaoka@jpl.org>
 
 	* wl-e21.el (wl-biff-init-icons): Don't generate icons if the
