@@ -1,3 +1,8 @@
+2002-01-23  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl.el (wl): Enclose `wl-check-environment' with `condition-case'
+	again (Reverted the change on 2002-01-17 by OKADA san).
+
 2002-01-23  Kenichi OKADA  <okada@opaopa.org>
 
 	* wl-draft.el (wl-draft): Rewrite.
