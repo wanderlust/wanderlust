@@ -1,3 +1,8 @@
+2005-03-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-nntp.el (elmo-nntp-create-msgdb-from-overview-string): Decode
+	encoded words in `from' and `subject' field.
+
 2005-03-20  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb.el (elmo-msgdb-message-field): Add argument `type'.

@@ -753,10 +753,14 @@ Don't cache if nil.")
 		      :number     num
 		      :references (elmo-msgdb-get-last-message-id
 				    (aref ov-entity 5))
-		      :from       (elmo-delete-char  ?\"
-						     (or (aref ov-entity 2)
-							 elmo-no-from))
-		      :subject    (or (aref ov-entity 1)
+		      :from       (elmo-with-enable-multibyte
+				    (eword-decode-string
+				     (elmo-delete-char  ?\"
+							(or (aref ov-entity 2)
+							    elmo-no-from))))
+		      :subject    (or (elmo-with-enable-multibyte
+					(eword-decode-string
+					 (aref ov-entity 1)))
 				      elmo-no-subject)
 		      :date       (aref ov-entity 3)
 		      :size       (string-to-int (aref ov-entity 6))))
