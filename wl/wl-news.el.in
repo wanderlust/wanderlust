@@ -37,6 +37,7 @@
 (require 'wl-address)
 (require 'wl-draft)
 (require 'wl-folder)
+(require 'wl-mime)
 
 (defvar wl-news-version-file-name "previous-version")
 (defvar wl-news-default-previous-version '(2 0 0))
@@ -46,7 +47,8 @@
 	(current-version (product-version (product-find 'wl-version))))
     (if (and (< 0 (product-version-compare
 		   current-version previous-version))
-	     (wl-news-append-news-to-folder previous-version))
+	     wl-news-lang
+	     (wl-news-send-news previous-version))
 	(wl-news-previous-version-save current-version))))
 
 
@@ -91,36 +93,40 @@
 	(message "%s is not writable." filename))
       (kill-buffer tmp-buffer))))
 
-(defun wl-news-append-news-to-folder (previous-version)
-  (let ((news-list wl-news-news-alist)
-	(news-list-ja wl-news-news-ja-alist))
-    (with-temp-buffer
-      (insert "Subject: Wanderlust NEWS\n"
-	      "From: \"WL Release 'Bot\"\n"
-	      "To: " (wl-address-header-extract-address wl-from) "\n"
-	      "Date: " (wl-make-date-string) "\n"
-	      "Message-ID: " (funcall wl-message-id-function) "\n"
-	      "Content-Type: multipart/mixed;\n\tboundary=Multipart\n\n"
-	      "--Multipart\n"
-	      "Content-Type: text/plain\n\n")
-      (while (< 0
-		(product-version-compare
-		 (car (car news-list))
-		 previous-version))
-	(insert (cdr (car news-list)) "\n\n")
-	(setq news-list (cdr news-list)))
-      (insert "--Multipart\n")
-      (insert "Content-Type: text/plain; charset=ISO-2022-JP\n\n")
-      (while (< 0
-		(product-version-compare
-		 (car (car news-list-ja))
-		 previous-version))
-	(insert (cdr (car news-list-ja)) "\n\n")
-	(setq news-list-ja (cdr news-list-ja)))
-      (encode-coding-region (point-min) (point-max) 'iso-2022-7bit)
-      (if (elmo-folder-writable-p (wl-folder-get-elmo-folder wl-draft-folder))
-	  (elmo-folder-append-buffer
-	   (wl-folder-get-elmo-folder wl-default-folder) t)))))
+(defun wl-news-append-news (lang previous-version)
+  (let* ((news-list (cdr (assoc lang wl-news-news-alist))))
+    (mime-edit-insert-tag "text" "plain" "" "")
+    (while (< 0
+	      (product-version-compare
+	       (car (car news-list))
+	       previous-version))
+      (insert (cdr (car news-list)) "\n\n")
+      (setq news-list (cdr news-list)))))
+
+(defun wl-news-send-news (previous-version)
+  (let ((lang (if (listp wl-news-lang)
+		  wl-news-lang
+		(list wl-news-lang))))
+    (save-window-excursion
+      (wl-draft-create-buffer)
+      (wl-draft-create-contents
+	   (list (cons 'From "WL Release 'Bot <wl@lists.airs.net>")
+		 (cons 'To (wl-draft-eword-encode-address-list wl-from) )
+		 (cons 'Subject "Wanderlust NEWS")
+		 (cons 'User-Agent wl-generate-mailer-string-function)
+		 (cons 'Organization wl-organization)
+		 (and wl-auto-insert-x-face
+		      (file-exists-p wl-x-face-file)
+		      'wl-draft-insert-x-face-field-here)))
+      (wl-draft-insert-mail-header-separator)
+      (wl-draft-prepare-edit)
+      (goto-char (point-max))
+      (while (car lang)
+	(wl-news-append-news
+	 (car lang) previous-version)
+	(setq lang (cdr lang)))
+      (let (wl-interactive-send)
+	(wl-draft-send 'kill-when-done)))))
 
 (require 'product)
 (product-provide (provide 'wl-news) (require 'wl-version))

@@ -1,5 +1,16 @@
 2002-12-20  Kenichi OKADA  <okada@opaopa.org>
 
+	* WL-MK (wl-news-lang): New variable.
+	(wl-news-news-file): Merge `wl-news-news-file'
+	and `wl-news-news-file-ja'.
+	(wl-news-search-regexp): New variable.
+	(wl-news-news-file): New function.
+	(wl-news-parse-news): Merge `wl-news-parse-news'
+	and `wl-news-parse-news-ja'.
+	(wl-news-parse-news-subr): New function.
+
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
 	* WL-CFG (wl-news-lang): New variable.
 
 2002-12-20  Kenichi OKADA  <okada@opaopa.org>

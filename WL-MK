@@ -32,8 +32,13 @@
   "The language of info file (\"ja\" or \"en\").")
 
 ;;; NEWS
-(defconst wl-news-news-file "NEWS")
-(defconst wl-news-news-file-ja "NEWS.ja")
+(defvar wl-news-lang '("ja" "en")
+  "The language of news file (\"ja\" or \"en\").")
+(defconst wl-news-news-file '(("en" "NEWS")
+			      ("ja" "NEWS.ja")))
+(defconst wl-news-search-regexp
+  '(("en" "^\\* Changes in \\([0-9.]*\\) from")
+    ("ja" "^\\* [0-9.]* から \\([0-9.]*\\) への変更点")))
 (defconst wl-news-filename "wl-news.el")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -443,14 +448,29 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; wl-news stuff
 
+(defun wl-news-news-file (lang)
+  (cadr (assoc lang wl-news-news-file)))
+
+(defun wl-news-check-newer (out-filename news-lang)
+  (let ((lang news-lang)
+	ret)
+    (while (car lang)
+      (if (file-newer-than-file-p
+	   (wl-news-news-file (car lang)) out-filename)
+	  (setq ret t))
+      (setq lang (cdr lang)))
+    ret))
+
 (defun make-wl-news ()
   (let ((in-filename
 	 (expand-file-name (concat wl-news-filename ".in") WLDIR))
 	(out-filename
-	 (expand-file-name wl-news-filename WLDIR)))
+	 (expand-file-name wl-news-filename WLDIR))
+	(wl-news-lang (if (listp wl-news-lang)
+			  wl-news-lang
+			(list wl-news-lang))))
     (if (or (file-newer-than-file-p in-filename out-filename)
-	    (file-newer-than-file-p wl-news-news-file out-filename)
-	    (file-newer-than-file-p wl-news-news-file-ja out-filename))
+	    (wl-news-check-newer out-filename wl-news-lang))
 	(with-temp-buffer
 	  (save-excursion
 	    (insert-file-contents in-filename)
@@ -458,54 +478,45 @@
 	    (unless (re-search-forward "^;;; -\\*- news-list -\\*-" nil t)
 	      (error "Invalid wl-news.el.in"))
 	    (forward-line 2)
+	    (insert "(defvar wl-news-lang '")
+	    (prin1 wl-news-lang (current-buffer))
+	    (insert ")\n")
 	    (insert "(defconst wl-news-news-alist\n  '")
-	    (prin1 (wl-news-parse-news) (current-buffer))
-	    (insert ")\n\n")
-	    (insert "(defconst wl-news-news-ja-alist\n  '")
-	    (prin1 (wl-news-parse-news-ja) (current-buffer))
+	    (prin1 (wl-news-parse-news wl-news-lang) (current-buffer))
 	    (insert ")\n")
 	    (write-region (point-min) (point-max) out-filename))))))
 
-(defun wl-news-parse-news ()
+(defun wl-news-parse-news (lang)
   (let (news-list)
-    (with-temp-buffer
-      (insert-file-contents wl-news-news-file)
-      (while (re-search-forward "^\\* Changes in \\([0-9.]*\\) from" nil t)
-	(let ((beg (match-beginning 0))
-	      (version-tmp (split-string (match-string 1) "\\."))
-	       version news-string end)
-	  (while version-tmp
-	    (setq version (append version (list (string-to-int (car version-tmp)))))
-	    (setq version-tmp (cdr version-tmp)))
-	  (re-search-forward "^\\(\\* \\|\\)" nil t)
-	  (goto-char (- (match-beginning 0) 1))
-	  (setq end (point))
-	  (setq news-string (buffer-substring beg end))
-	  (setq news-list
-		(append news-list
-			(list (cons version news-string)))))))
-    news-list))
+  (while (car lang)
+    (setq news-list (cons
+			(cons (car lang) (wl-news-parse-news-subr (car lang)))
+			news-list))
+    (setq lang (cdr lang)))
+  news-list))
 
-(defun wl-news-parse-news-ja ()
-  (let (news-list)
-    (with-temp-buffer
-      (insert-file-contents wl-news-news-file-ja)
-      (while (re-search-forward "^\\* [0-9.]* から \\([0-9.]*\\) への変更点" nil t)
-	(let ((beg (match-beginning 0))
-	      (version-tmp (split-string (match-string 1) "\\."))
-	       version news-string end)
-	  (while version-tmp
-	    (setq version (append version (list (string-to-int (car version-tmp)))))
-	    (setq version-tmp (cdr version-tmp)))
-	  (re-search-forward "^\\(\\* \\|\\)" nil t)
-	  (goto-char (- (match-beginning 0) 1))
-	  (setq end (point))
-	  (setq news-string (buffer-substring beg end))
-	  (setq news-list
-		(append news-list
-			(list (cons version news-string)))))))
+(defun wl-news-parse-news-subr (lang)
+  (let ((filename (wl-news-news-file lang))
+	(reg (cadr (assoc lang wl-news-search-regexp)))
+	news-list)
+    (if (and filename reg)
+	(with-temp-buffer
+	  (insert-file-contents filename)
+	  (while (re-search-forward reg nil t)
+	    (let ((beg (match-beginning 0))
+		  (version-tmp (split-string (match-string 1) "\\."))
+		  version news-string end)
+	      (while version-tmp
+		(setq version (append version (list (string-to-int (car version-tmp)))))
+		(setq version-tmp (cdr version-tmp)))
+	      (re-search-forward "^\\(\\* \\|\\)" nil t)
+	      (goto-char (- (match-beginning 0) 1))
+	      (setq end (point))
+	      (setq news-string (buffer-substring beg end))
+	      (setq news-list
+		    (append news-list
+			    (list (cons version news-string))))))))
     news-list))
-
 
 
 

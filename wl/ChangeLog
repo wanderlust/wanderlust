@@ -1,5 +1,11 @@
 2002-12-20  Kenichi OKADA  <okada@opaopa.org>
 
+	* wl-news.el.in (wl-news-check): Fix for `wl-news-lang'.
+	(wl-news-append-news): New function.
+	(wl-news-send-news): New function.
+
+2002-12-20  Kenichi OKADA  <okada@opaopa.org>
+
 	* Version number is increased to 2.11.1.
 
 2002-12-19  Kenichi OKADA  <okada@opaopa.org>
