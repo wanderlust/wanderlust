@@ -1,3 +1,8 @@
+2002-10-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (toplevel): Fixed last change; use defvar instead of
+	defvar-maybe. Removed unused bind.
+
 2002-10-21  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
 
 	* wl-draft.el (wl-draft-forward): If wl-draft-use-frame, select
