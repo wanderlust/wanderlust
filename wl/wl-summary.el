@@ -494,6 +494,7 @@
   (define-key wl-summary-mode-map "mA"   'wl-summary-target-mark-reply-with-citation)
   (define-key wl-summary-mode-map "mf"   'wl-summary-target-mark-forward)
   (define-key wl-summary-mode-map "m?"   'wl-summary-target-mark-pick)
+  (define-key wl-summary-mode-map "m#"   'wl-summary-target-mark-print)
 
   ;; region commands
   (define-key wl-summary-mode-map "r"    (make-sparse-keymap))
@@ -5616,6 +5617,17 @@ If ASK-CODING is non-nil, coding-system for the message is asked."
 
 (if (featurep 'ps-print) ; ps-print is available.
     (fset 'wl-summary-print-message 'wl-summary-print-message-with-ps-print))
+
+(defun wl-summary-target-mark-print ()
+  (interactive)
+  (if (null wl-summary-buffer-target-mark-list)
+      (message "No marked message.")
+    (when (y-or-n-p "Print all marked messages. OK? ")
+      (while (car wl-summary-buffer-target-mark-list)
+	(let ((num (car wl-summary-buffer-target-mark-list)))
+	  (wl-thread-jump-to-msg num)
+	  (wl-summary-print-message)
+	  (wl-summary-unmark num))))))
 
 (defun wl-summary-folder-info-update ()
   (let ((folder (elmo-string (wl-summary-buffer-folder-name)))
