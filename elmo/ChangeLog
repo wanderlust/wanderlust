@@ -6,6 +6,9 @@
 	(elmo-imap4-set-flag): Treat \Deleted flag as an exception.
 	(elmo-imap4-disuse-server-flag-mailbox-regexp): Abolish.
 	(elmo-folder-use-flag-p): Always return t.
+	(elmo-imap4-session-select-mailbox): Use value of `flags' if
+	`permanentflags' does not exist.
+	(elmo-folder-open): Ditto.
 
 2003-10-06  Yuuichi Teranishi  <teranisi@gohome.org>
 

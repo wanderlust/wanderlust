@@ -692,7 +692,8 @@ Returns response value if selecting folder succeed. "
 	       (nth 1 (assq 'read-only (assq 'ok response))))
 	      (elmo-imap4-session-set-flags-internal
 	       session
-	       (nth 1 (assq 'permanentflags response))))
+	       (nth 1 (or (assq 'permanentflags response)
+			  (assq 'flags response)))))
 	  (elmo-imap4-session-set-current-mailbox-internal session nil)
 	  (if (and (eq no-error 'notify-bye)
 		   (elmo-imap4-response-bye-p response))
@@ -2462,7 +2463,8 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		     (nth 1 (assq 'read-only (assq 'ok response))))
 		    (elmo-imap4-session-set-flags-internal
 		     session
-		     (nth 1 (assq 'permanentflags response))))
+		     (nth 1 (or (assq 'permanentflags response)
+				(assq 'flags response)))))
 		(elmo-imap4-session-set-current-mailbox-internal session nil)
 		(if (elmo-imap4-response-bye-p response)
 		    (elmo-imap4-process-bye session)
