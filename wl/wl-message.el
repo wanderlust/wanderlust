@@ -861,7 +861,7 @@ Returns non-nil if bottom of message."
     (select-window (posn-window (event-start event)))
     (let* ((win (selected-window))
 	   (wpos (window-start win))
-	   (pos (posn-point (event-start event)))
+	   (pos (mouse-set-point event))
 	   (ovs (overlays-in (1- pos) (1+ pos)))	;; Uum...
 	   ov)
       (while (and ovs (not (overlayp ov)))

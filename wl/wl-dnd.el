@@ -71,7 +71,7 @@
       (set-buffer (wl-summary-get-buffer src-fld))
       (save-match-data
 	(wl-summary-jump-to-msg number))
-      (wl-summary-refile target number)
+      (funcall (symbol-function 'wl-summary-refile) number target)
       (select-window (get-buffer-window (current-buffer)))
       ))
   t)

@@ -1,5 +1,10 @@
 2004-02-10  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl-dnd.el (wl-dnd-drop-func): Fix.
+
+	* wl-message.el (wl-message-header-narrowing-widen-at-mouse): Use
+	mouse-set-point instead of posn-point.
+
 	* wl-xmas.el (wl-completing-read-multiple): Define as function.
 
 	* wl-mule.el (wl-completing-read-multiple): Ditto.
