@@ -1351,16 +1351,21 @@ If optional argument UNMARK is non-nil, unmark."
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-fetch-callback nil)
       (setq elmo-imap4-fetch-callback-data nil))
-    (elmo-delete-cr
-     (elmo-imap4-response-bodydetail-text
-      (elmo-imap4-response-value-all
-       (elmo-imap4-send-command-wait session
-				     (format
-				      (if elmo-imap4-use-uid
-					  "uid fetch %s body.peek[%s]"
-					"fetch %s body.peek[%s]")
-				      msg part))
-       'fetch)))))
+    (setq elmo-imap4-display-literal-progress t)
+    (prog1
+	(unwind-protect
+	    (elmo-delete-cr
+	     (elmo-imap4-response-bodydetail-text
+	      (elmo-imap4-response-value-all
+	       (elmo-imap4-send-command-wait session
+					     (format
+					      (if elmo-imap4-use-uid
+						  "uid fetch %s body.peek[%s]"
+						"fetch %s body.peek[%s]")
+					      msg part))
+	       'fetch)))
+	  (setq elmo-imap4-display-literal-progress nil))
+      (message "Retrieving...done."))))
 
 (defun elmo-imap4-prefetch-msg (spec msg outbuf)
   (elmo-imap4-read-msg spec msg outbuf nil 'unseen))
@@ -1374,15 +1379,19 @@ If optional argument UNMARK is non-nil, unmark."
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-fetch-callback nil)
       (setq elmo-imap4-fetch-callback-data nil))
-    (setq response
-	  (elmo-imap4-send-command-wait session
-					(format
-					 (if elmo-imap4-use-uid
-					     "uid fetch %s body%s[]"
-					   "fetch %s body%s[]")
-					 msg
-					 (if leave-seen-flag-untouched
-					     ".peek" ""))))
+    (setq elmo-imap4-display-literal-progress t)
+    (unwind-protect
+	(setq response
+	      (elmo-imap4-send-command-wait session
+					    (format
+					     (if elmo-imap4-use-uid
+						 "uid fetch %s body%s[]"
+					       "fetch %s body%s[]")
+					     msg
+					     (if leave-seen-flag-untouched
+						 ".peek" ""))))
+      (setq elmo-imap4-display-literal-progress nil))
+    (message "Retrieving...done.")
     (and (setq response (elmo-imap4-response-bodydetail-text
 			 (elmo-imap4-response-value-all
 			  response 'fetch )))
@@ -1571,6 +1580,8 @@ If optional argument UNMARK is non-nil, unmark."
 (defvar elmo-imap4-client-eol "\r\n"
   "The EOL string we send to the server.")
 
+(defvar elmo-imap4-display-literal-progress nil)
+
 (defun elmo-imap4-find-next-line ()
   "Return point at end of current line, taking into account literals.
 Return nil if no complete line has arrived."
@@ -1579,7 +1590,12 @@ Return nil if no complete line has arrived."
 			   nil t)
     (if (match-string 1)
 	(if (< (point-max) (+ (point) (string-to-number (match-string 1))))
-	    nil
+	    (progn
+	      (if elmo-imap4-display-literal-progress
+		  (message "Retrieving...(%d/%d bytes)"
+			   (- (point-max) (point))
+			   (string-to-number (match-string 1))))
+	      nil)
 	  (goto-char (+ (point) (string-to-number (match-string 1))))
 	  (elmo-imap4-find-next-line))
       (point))))
