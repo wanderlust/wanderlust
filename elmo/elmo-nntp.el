@@ -389,7 +389,8 @@ Don't cache if nil.")
       (with-current-buffer outbuf
 	(erase-buffer)
 	(insert-buffer-substring (elmo-network-session-buffer session)
-				 start (- end 3))))))
+				 start (- end 3))))
+    t))
 
 (defun elmo-nntp-select-group (session group &optional force)
   (let (response)
@@ -963,12 +964,14 @@ Don't cache if nil.")
       (with-current-buffer (elmo-network-session-buffer session)
 	(std11-field-body "Newsgroups")))))
 
-(luna-define-method elmo-message-fetch-with-cache-process :after
+(luna-define-method elmo-message-fetch-with-cache-process :around
   ((folder elmo-nntp-folder) number strategy &optional section unread)
-  (elmo-nntp-setup-crosspost-buffer folder number)
-  (unless unread
-    (elmo-nntp-folder-update-crosspost-message-alist
-     folder (list number))))
+  (when (luna-call-next-method)
+    (elmo-nntp-setup-crosspost-buffer folder number)
+    (unless unread
+      (elmo-nntp-folder-update-crosspost-message-alist
+       folder (list number)))
+    t))
 
 (luna-define-method elmo-message-fetch-plugged ((folder elmo-nntp-folder)
 						number strategy

@@ -431,7 +431,8 @@ update overview when message is fetched."
 	(when (setq shimbun-id
 		    (elmo-shimbun-header-extra-field header "x-shimbun-id"))
 	  (goto-char (point-min))
-	  (insert (format "X-Shimbun-Id: %s\n" shimbun-id))))
+	  (insert (format "X-Shimbun-Id: %s\n" shimbun-id)))
+	t)
     (error "Unplugged")))
 
 (luna-define-method elmo-message-encache :around ((folder

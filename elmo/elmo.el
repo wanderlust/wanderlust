@@ -889,29 +889,35 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-MARK-ALIST).")
       (while numbers
 	(setq failure nil)
 	(condition-case nil
-	    (progn
-	      (elmo-message-fetch
-	       src-folder (car numbers)
-	       (if (and (not (elmo-folder-plugged-p src-folder))
-			elmo-enable-disconnected-operation
-			(setq cache (elmo-file-cache-get
-				     (elmo-message-field
-				      src-folder (car numbers)
-				      'message-id)))
-			(eq (elmo-file-cache-status cache) 'entire))
-		   (elmo-make-fetch-strategy
-		    'entire t nil (elmo-file-cache-path cache))
-		 (elmo-make-fetch-strategy 'entire t))
-	       nil (current-buffer)
-	       'unread)
-	      (unless (eq (buffer-size) 0)
-		(setq failure (not
-			       (elmo-folder-append-buffer
-				folder
-				(setq unseen (member (elmo-message-mark
-						      src-folder (car numbers))
-						     unread-marks))
-				(if same-number (car numbers)))))))
+	    (setq cache (elmo-file-cache-get
+			 (elmo-message-field src-folder
+					     (car numbers)
+					     'message-id))
+		  failure
+		  (not
+		   (and
+		    (elmo-message-fetch
+		     src-folder (car numbers)
+		     (if (elmo-folder-plugged-p src-folder)
+			 (elmo-make-fetch-strategy
+			  'entire 'maybe nil
+			  (and cache (elmo-file-cache-path cache)))
+		       (or (and elmo-enable-disconnected-operation
+				cache
+				(eq (elmo-file-cache-status cache) 'entire)
+				(elmo-make-fetch-strategy
+				 'entire t nil
+				 (elmo-file-cache-path cache)))
+			   (error "Unplugged")))
+		     nil (current-buffer)
+		     'unread)
+		    (> (buffer-size) 0)
+		    (elmo-folder-append-buffer
+		     folder
+		     (setq unseen (member (elmo-message-mark
+					   src-folder (car numbers))
+					  unread-marks))
+		     (if same-number (car numbers))))))
 	  (error (setq failure t)))
 	;; FETCH & APPEND finished
 	(unless failure
@@ -1158,8 +1164,7 @@ FIELD is a symbol of the field."
       (with-current-buffer outbuf
 	(erase-buffer)
 	(elmo-message-fetch-with-cache-process folder number
-					       strategy section unread)
-	t)
+					       strategy section unread))
     (with-temp-buffer
       (elmo-message-fetch-with-cache-process folder number
 					     strategy section unread)
@@ -1169,24 +1174,26 @@ FIELD is a symbol of the field."
 							   number strategy
 							   &optional
 							   section unread)
-  (let (cache-path cache-file)
-    (if (and (elmo-fetch-strategy-use-cache strategy)
-	     (setq cache-path (elmo-fetch-strategy-cache-path strategy))
-	     (setq cache-file (elmo-file-cache-expand-path
-			       cache-path
-			       section))
-	     (file-exists-p cache-file)
-	     (or (not (elmo-cache-path-section-p cache-file))
-		 (not (eq (elmo-fetch-strategy-entireness strategy) 'entire))))
-	(insert-file-contents-as-binary cache-file)
-      (elmo-message-fetch-internal folder number strategy section unread)
-      (elmo-delete-cr-buffer)
-      (when (and (> (buffer-size) 0)
-		 (elmo-fetch-strategy-save-cache strategy)
-		 (elmo-fetch-strategy-cache-path strategy))
-	(elmo-file-cache-save
-	 (elmo-fetch-strategy-cache-path strategy)
-	 section)))))
+  (let ((cache-path (elmo-fetch-strategy-cache-path strategy))
+	err)
+    (or (and (eq (elmo-fetch-strategy-use-cache strategy) t)
+	     (elmo-file-cache-load cache-path section))
+	(when (and (condition-case error
+		       (elmo-message-fetch-internal folder number
+						    strategy
+						    section
+						    unread)
+		     (error (setq err error) nil))
+		   (> (buffer-size) 0))
+	  (elmo-delete-cr-buffer)
+	  (when (and (elmo-fetch-strategy-save-cache strategy)
+		     cache-path)
+	    (elmo-file-cache-save cache-path section))
+	  t)
+	(and (eq (elmo-fetch-strategy-use-cache strategy) 'maybe)
+	     (elmo-file-cache-load cache-path section))
+	(and err
+	     (signal (car err) (cdr err))))))
 
 (luna-define-method elmo-folder-clear ((folder elmo-folder)
 				       &optional keep-killed)

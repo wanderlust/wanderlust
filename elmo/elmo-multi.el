@@ -104,13 +104,6 @@
       (setq children (cdr children)))
     match))
 
-(luna-define-method elmo-message-use-cache-p ((folder elmo-multi-folder)
-					     number)
-  (elmo-message-use-cache-p
-   (nth (- (/ number (elmo-multi-folder-divide-number-internal folder)) 1)
-	(elmo-multi-folder-children-internal folder))
-   (% number (elmo-multi-folder-divide-number-internal folder))))
-
 (luna-define-method elmo-message-folder ((folder elmo-multi-folder)
 					 number)
   (nth (- (/ number (elmo-multi-folder-divide-number-internal folder)) 1)
@@ -564,7 +557,7 @@
 (luna-define-method elmo-message-file-name ((folder elmo-multi-folder) number)
   (let ((pair (elmo-multi-real-folder-number folder number)))
     (elmo-message-file-name (car pair) (cdr pair))))
-  
+
 (luna-define-method elmo-folder-plugged-p ((folder elmo-multi-folder))
   (let ((flds (elmo-multi-folder-children-internal folder)))
     (catch 'plugged

@@ -1610,6 +1610,24 @@ Return t if cache is saved successfully."
     ;; ignore error
     (error)))
 
+(defun elmo-file-cache-load (cache-path section)
+  "Load cache on PATH into the current buffer.
+Return t if cache is loaded successfully."
+  (condition-case nil
+      (let (cache-file)
+	(when (and cache-path
+		   (if (elmo-cache-path-section-p cache-path)
+		       section
+		     (null section))
+		   (setq cache-file (elmo-file-cache-expand-path
+				     cache-path
+				     section))
+		   (file-exists-p cache-file))
+	  (insert-file-contents-as-binary cache-file)
+	  t))
+    ;; igore error
+    (error)))
+
 (defun elmo-cache-path-section-p (path)
   "Return non-nil when PATH is `section' cache path."
   (file-directory-p path))
