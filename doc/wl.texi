@@ -1,11 +1,11 @@
-\input texinfo @c -*-texinfo -*- coding: iso-2022-jp -*-
+\input texinfo @c -*-texinfo -*-
 @c %**start of header
 @setfilename wl.info
 @settitle Wanderlust -- Yet Another Message Interface On Emacsen --
 @c @documentlanguage en
 @c %**end of header
 @c texinfo of Wanderlust
-@set Time-stamp: <2000-06-15 19:55:00 kaoru>
+@set Time-stamp: <2000-06-16 01:21:37 kaoru>
 @set version 2.3.0
 @synindex pg cp
 @finalout
@@ -296,6 +296,9 @@ Extract the obtained package to your working directory:
 @end example
 
 @subsection To use SSL (Secure Socket Layer)
+@cindex SSL
+@pindex OpenSSL
+@pindex starttls
 
 SSL (Secure Socket Layer) can be used for 
 SMTP, IMAP, NNTP and POP connections in Wanderlust.
@@ -339,7 +342,7 @@ Then, please execute following commands.
 @end example
 
 Destination directory is auto-probed if you leave @code{LISPDIR}
-in @file{Makefile} as is. (That is, leave it as NONE)
+in @file{Makefile} as is. (That is, leave it as @samp{NONE})
 
 If you are using an Emacs variant which does not merge specified directory
 to load-path (e.g. Mule 2.3 based on Emacs 19.28), 
@@ -351,8 +354,8 @@ Cannot open load file: mime-setup
 
 @noindent
 In this case, either add destination directories of custom, apel, flim and semi
-to environmental variable EMACSLOADPATH, or define load-path in @file{WL-CFG}
-in extracted directory.
+to environmental variable @code{EMACSLOADPATH}, or define load-path in
+@file{WL-CFG} in extracted directory.
 
 If you want to use BBDB, then the necessary modules are byte-compiled and
 installed when BBDB directory is added to load-path.
@@ -424,8 +427,8 @@ if package is extracted in @file{~/work}, Wanderlust can be invoked with
 following setting in @file{.emacs}.
 
 @lisp
-(add-to-list 'load-path "~/work/wl-(@var{version})")
-(add-to-list 'load-path "~/work/wl-(@var{version})/elmo")
+(add-to-list 'load-path "~/work/wl-@var{version}/wl")
+(add-to-list 'load-path "~/work/wl-@var{version}/elmo")
 @end lisp
 
 @node Minimal Settings, Mail Addresses, Install, Start Me Up
@@ -452,21 +455,21 @@ of environmental variables which begins with @code{elmo-} and @code{wl-}.
 The minimal requirement for settings is as the following.
 
 @lisp
-;; The setting to use SEMI/tm
+;; @r{The setting to use SEMI/tm}
 (load "mime-setup")
 
-;; autoload configuration
-;; (These are not required if Wanderlust is installed as XEmacs package)
+;; @r{autoload configuration}
+;; @r{(These are not required if Wanderlust is installed as XEmacs package)}
 (autoload 'wl "wl" "Wanderlust" t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
 
-;; Directory where icons are placed (XEmacs Only). Default value is nil.
-;; (This is not required if Wanderlust is installed as XEmacs package)
+;; @r{Directory where icons are placed (XEmacs Only). Default value is @code{nil}.}
+;; @r{(This is not required if Wanderlust is installed as XEmacs package)}
 (setq wl-icon-dir "~/work/wl/etc")
 
-;; SMTP server for mail posting. Default: "localhost"
+;; @r{SMTP server for mail posting. Default: @code{nil}}
 (setq wl-smtp-posting-server "your.smtp.server.com")
-;; NNTP server for news posting. Default: "localhost"
+;; @r{NNTP server for news posting. Default: @code{nil}}
 (setq wl-nntp-posting-server "your.nntp.server.com")
 @end lisp
 
@@ -703,9 +706,9 @@ For example, you can specify a folder as @samp{foo%imap@@geteway} even
 if you have to go through a firewall.
 
 SSL (Secure Socket Layer) connection will be used if a folder name
-ends with '!'. Or, if the value of @code{elmo-default-imap4-ssl} is non-nil,
+ends with @samp{!}. Or, if the value of @code{elmo-default-imap4-ssl} is non-nil,
 SSL will be the default connection.
-If a folder name ends with '!!', STARTTLS connection will be established.
+If a folder name ends with @samp{!!}, STARTTLS connection will be established.
 if the value of @code{elmo-default-imap4-ssl} is 'starttls,
 STARTTLS will be the default connection.
 
@@ -727,6 +730,11 @@ Example: %inbox     -> IMAP mailbox "inbox"
 @end example
 
 @subsection International mailbox names (Modified UTF7)
+@cindex Modified UTF7
+@cindex UTF7
+@cindex UTF8
+@pindex Mule-UCS
+@pindex ucs-conv
 
 You can use international mailbox names in 'IMAP mailbox' part, if you
 are using Emacs which can treat unicode and
@@ -787,8 +795,8 @@ port      -> The value of @code{elmo-default-nntp-port}.
 
 AUTHINFO is used as authentication method if the username is non-nil.
 SSL will be default method if @code{elmo-default-nntp-ssl} is non-nil even
-if the folder name doesn't end with '!'
-If a folder name ends with '!!', STARTTLS connection will be established.
+if the folder name doesn't end with @samp{!}.
+If a folder name ends with @samp{!!}, STARTTLS connection will be established.
 if the value of @code{elmo-default-nntp-ssl} is 'starttls,
 STARTTLS will be the default connection.
 
@@ -1101,8 +1109,8 @@ as authenticate-type.
 
 default:
 username   -> The value of @code{elmo-default-pop3-user}.
-              Initial setting is `USER' environment variable or
-             `LOGNAME' environment variable or return value of
+              Initial setting is @code{USER} environment variable or
+             @code{LOGNAME} environment variable or return value of
              (user-login-name).
 authenticate-type -> The value of @code{elmo-default-pop3-authenticate-type}.
               Initial setting is "user".
@@ -1126,11 +1134,11 @@ http://www.cs.indiana.edu/elisp/w3/docs.html
 
 or LCD archive (GPL2).
 
-If the last character of the folder name is '!', Wanderlust connects to
+If the last character of the folder name is @samp{!}, Wanderlust connects to
 the POP server via SSL (Secure Socket Layer).  If you set non-nil
-value to @code{elmo-default-pop-ssl}, you don't have to put '!' in the
+value to @code{elmo-default-pop-ssl}, you don't have to put @samp{!} in the
 end of the folder name to use SSL. 
-If a folder name ends with '!!', STARTTLS connection will be established.
+If a folder name ends with @samp{!!}, STARTTLS connection will be established.
 if the value of @code{elmo-default-pop-ssl} is 'starttls,
 STARTTLS will be the default connection.
 
@@ -1147,7 +1155,7 @@ multiple folders virtually.
 @example
 Format: '*' 'folder' [',' 'folder'] ... [',' 'folder']
 
-After '*' character, specify multiple folders you want to collect 
+After @samp{*} character, specify multiple folders you want to collect 
 separated by ',' like folder1,folder2,@dots{},folderN.
 
 Example:
@@ -1157,7 +1165,6 @@ Example:
 
   *+inbox,-fj.rec.tv,%inbox
   -> +inbox, -fj.rec.tv and %inbox are treated as one folder.
-
 @end example
 
 
@@ -1557,7 +1564,7 @@ Start Wanderlust's plug-status manager.
 @table @code
 @item wl-folders-file
 @vindex wl-folders-file
-The initial setting is "~/.folders".
+The initial setting is @file{~/.folders}.
 Subscribed folders are described (saved) in this file.
 
 @item wl-folder-info-save
@@ -3478,7 +3485,7 @@ The format of @code{wl-template-alist} is almost the same as
 @end lisp
 
 As you can see, the only difference is item (template) names such as
-"default" and "report", instead of a regexp of header.
+@samp{default} and @samp{report}, instead of a regexp of header.
 Because definition of each item is the same as
 @code{wl-draft-config-alist}, you can call another template, like (a).
 
@@ -3498,7 +3505,7 @@ If @code{wl-template-visible-select} is nil, you should type the name of
 the template in the mini buffer.
 
 As shown in the example in @code{wl-draft-config-alist}, you can select
-"default" template by writing:
+@samp{default} template by writing:
 
 @example
 (template . "default")
@@ -4084,7 +4091,7 @@ hosta, and in the dop queue there are one for @samp{%inbox} and two for
 If you change (wl-plugged) in the second line, the variable
 @code{wl-plugged} is changed, so that the mode line indicator and
 plugged states of all ports are affected.
-If you change plugged states of any servers or ports, wl-plugged in the
+If you change plugged states of any servers or ports, (wl-plugged) in the
 second line is affected depending on @code{elmo-plugged-condition}
 settings and the plugged state of each port.
 
@@ -4122,7 +4129,7 @@ the beginning.
 
 @item wl-queue-folder
 @vindex wl-queue-folder
-The initial setting is "+queue".
+The initial setting is @samp{+queue}.
 This is the folder in which messages in the transmission queue are
 accumulated.
 
@@ -4141,7 +4148,7 @@ If non-nil, off-line operations are carried out.
 
 @item elmo-lost+found-folder
 @vindex elmo-lost+found-folder
-The initial setting is "+lost+found".
+The initial setting is @samp{+lost+found}.
 This is the folder to which messages are saved when they fails to be
 appended while the off-line re-file/copy queue is processed.
 
@@ -5512,13 +5519,13 @@ You can change its value by editing
 
 @item wl-highlight-message-important-header-contents2
 The face for secondly important parts of message headers.
-Per default, this face is used for bodies of From and To fields.
+Per default, this face is used for bodies of @samp{From} and @samp{To} fields.
 You can change its value by editing
 @code{wl-highlight-message-header-alist}.
 
 @item wl-highlight-message-unimportant-header-contents
 The face for unimportant parts of message headers.
-Per default, this face is used for bodies of X- fields User-Agent fields.
+Per default, this face is used for bodies of @samp{X-} fields @samp{User-Agent} fields.
 You can change its value by editing
 @code{wl-highlight-message-header-alist}.
 
@@ -5527,7 +5534,7 @@ The face for headers of quoted messages.
 
 @item wl-highlight-message-cited-text-*
 The face for texts of quoted messages.
-The last "*" is a single figure so that 10 different colors can be used
+The last @samp{*} is a single figure so that 10 different colors can be used
 according to citation levels.
 
 @item wl-highlight-message-signature
@@ -5647,8 +5654,8 @@ following settings:
 @end lisp
 
 @noindent
-(Only if there are both of "X-ML-Name" and "Reply-To" fields in the
-original message, Reply-To: field in the original is copied to To:
+(Only if there are both of @samp{X-ML-Name} and @samp{Reply-To} fields in the
+original message, @samp{Reply-To} field in the original is copied to @samp{To:}
 field.)
 
 @node Thread Format, User-Agent Header, Draft for Reply, Advanced Settings
@@ -5696,9 +5703,9 @@ If you do not want to see branches, do the following:
 @node User-Agent Header,  , Thread Format, Advanced Settings
 @subsection User-Agent
 
-If you are eccentric enough to elaborate X-Mailer or User-Agent fields,
-define a function that inserts appropriate strings as you like, and set
-it to @code{wl-generate-mailer-string-func}.
+If you are eccentric enough to elaborate @samp{X-Mailer} or @samp{User-Agent}
+fields, define a function that inserts appropriate strings as you like,
+and set it to @code{wl-generate-mailer-string-func}.
 
 The following is an example.
 
@@ -5718,17 +5725,17 @@ Customizable variables that have not been described yet:
 @table @code
 @item wl-default-folder
 @vindex wl-default-folder
-The initial setting is "%inbox".  This is the default value for moving to
+The initial setting is @samp{%inbox}.  This is the default value for moving to
 a folder and the like.
 
 @item wl-draft-folder
 @vindex wl-draft-folder
-The initial setting is "+draft".  It is the folder to which drafts are
+The initial setting is @samp{+draft}.  It is the folder to which drafts are
 saved.  It must be a localdir folder.
 
 @item wl-trash-folder
 @vindex wl-trash-folder
-The initial setting is "+trash".  It is the wastebasket folder.
+The initial setting is @samp{+trash}.  It is the wastebasket folder.
 If you changed this variable, you had better restart Wanderlust.
 
 @item wl-interactive-exit
@@ -5842,8 +5849,7 @@ The initial setting is the list shown below:
 '(("^-alt\\.chinese" . big5)
   ("^-relcom\\." . koi8-r)
   ("^-tw\\." . big5)
-  ("^-han\\." . euc-kr)
-  )
+  ("^-han\\." . euc-kr))
 @end lisp
 
 This is an associative list of regular expressions of folder names and
@@ -5885,7 +5891,7 @@ Each item in the list is a cons cell of a folder and copy or move.
 
 @item wl-x-face-file
 @vindex wl-x-face-file
-The initial setting is "~/.xface".
+The initial setting is @file{~/.xface}.
 The name of the file that contains encoded X-Face strings.
 @xref{x-face-mule}.
 
@@ -5900,8 +5906,8 @@ XEmacs (t for XEmacs with dbm).
 If non-nil, Message-ID is controlled by dbm.
 
 @item elmo-passwd-alist-file-name
-@vindex  elmo-passwd-alist-file-name
-The initial setting is "passwd".
+@vindex elmo-passwd-alist-file-name
+The initial setting is @file{passwd}.
 This is the name of the file in which passwords are saved.
 @code{elmo-passwd-alist-save} saves current passwords to the file.
 
