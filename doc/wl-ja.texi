@@ -3625,6 +3625,29 @@ Non-nil $B$J$i(B @code{wl-summary-jump-to-msg-by-message-id} $B$G!"%a%C%;!<%8
 @vindex elmo-pop3-use-cache
 $B=i4|@_Dj$O(B @code{t}$B!#(BNon-nil $B$J$i!"(BPOP3 $B$GFI$s$@%a%C%;!<%8$r%-%c%C%7%e$7(B
 $B$^$9!#(B
+
+@item wl-folder-process-duplicates-alist
+@vindex wl-folder-process-duplicates-alist
+$B=i4|@_Dj$O(B @code{nil}$B!#=EJ#$7$?%a%C%;!<%8$,F1$8%U%)%k%@$K$"$k>l9g$NF0:n(B
+$B$r;XDj$7$^$9!#3F9`L\$O!"%U%)%k%@L>$N@55,I=8=$HF0:n$+$i$J$j$^$9!#(B
+$BF0:n$H$7$F$O0J2<$N$b$N$,;XDj$G$-$^$9!#(B
+
+@example
+@code{nil} : $B=EJ#%a%C%;!<%8$KBP$7!$2?$b$7$J$$!%(B
+@code{hide} : $B=EJ#%a%C%;!<%8$r%5%^%j$KI=<($7$J$$!%(B
+@code{read} : $B=EJ#%a%C%;!<%8$r4{FI$K$9$k!%(B
+@end example
+
+@noindent
+$BNc$($P0J2<$N$h$&$K@_Dj$7$^$9(B ($B%^%k%A%U%)%k%@$G=EJ#%a%C%;!<%8$r1#$9>l9g(B)
+
+@lisp
+@group
+(setq wl-folder-process-duplicates-alist
+                 '(("^\\+draft$" . nil) ("^\\+trash$" . nil)
+                   ("^\\*.*" . hide) (".*" . read)))
+@end group
+@end lisp
 @end table
 
 

@@ -150,13 +150,15 @@ set as non-nil.")
 (defvar elmo-pop3-size-hash nil) ; number -> size
 (defvar elmo-pop3-uidl-done nil)
 (defvar elmo-pop3-list-done nil)
+(defvar elmo-pop3-lock nil)
 
 (defvar elmo-pop3-local-variables '(elmo-pop3-read-point
 				    elmo-pop3-uidl-number-hash
 				    elmo-pop3-number-uidl-hash
 				    elmo-pop3-uidl-done
 				    elmo-pop3-size-hash
-				    elmo-pop3-list-done))
+				    elmo-pop3-list-done
+				    elmo-pop3-lock))
 
 (luna-define-method elmo-network-close-session ((session elmo-pop3-session))
   (when (elmo-network-session-process-internal session)
@@ -189,6 +191,7 @@ set as non-nil.")
       (erase-buffer))
     (goto-char (point-min))
     (setq elmo-pop3-read-point (point))
+    (elmo-pop3-lock)
     (process-send-string process command)
     (process-send-string process "\r\n")))
 
@@ -230,6 +233,7 @@ set as non-nil.")
 		      (concat return-value "\n" response-string)
 		    response-string)))
 	  (setq elmo-pop3-read-point match-end)))
+      (elmo-pop3-unlock)
       return-value)))
 
 (defun elmo-pop3-process-filter (process output)
@@ -426,8 +430,7 @@ set as non-nil.")
 	(elmo-pop3-parse-uidl-response response)))))
 
 (defun elmo-pop3-read-contents (buffer process)
-  (save-excursion
-    (set-buffer buffer)
+  (with-current-buffer buffer
     (let ((case-fold-search nil)
 	  match-end)
       (goto-char elmo-pop3-read-point)
@@ -435,6 +438,7 @@ set as non-nil.")
 	(accept-process-output process)
 	(goto-char elmo-pop3-read-point))
       (setq match-end (point))
+      (elmo-pop3-unlock)      
       (elmo-delete-cr
        (buffer-substring elmo-pop3-read-point
 			 (- match-end 3))))))
@@ -612,6 +616,19 @@ set as non-nil.")
       nil))
    (t
     nil)))
+
+(defun elmo-pop3-lock ()
+  "Lock pop3 process."
+  (setq elmo-pop3-lock t))
+
+(defun elmo-pop3-unlock ()
+  "Unlock pop3 process."
+  (setq elmo-pop3-lock nil))
+
+(defun elmo-pop3-locked-p (process)
+  "Return t if pop3 PROCESS is locked."
+  (with-current-buffer (process-buffer process)
+    elmo-pop3-lock))
      
 (defun elmo-pop3-retrieve-headers (buffer tobuffer process articles)
   (save-excursion
@@ -914,8 +931,10 @@ set as non-nil.")
 (luna-define-method elmo-folder-check ((folder elmo-pop3-folder))
   (if (elmo-folder-plugged-p folder)
       (let ((session (elmo-pop3-get-session folder 'if-exists)))
-	(and session
-	     (elmo-network-close-session session)))))
+	(when (and session
+		   (not (elmo-pop3-locked-p
+			 (elmo-network-session-process-internal session))))
+	  (elmo-network-close-session session)))))
 
 (require 'product)
 (product-provide (provide 'elmo-pop3) (require 'elmo-version))
