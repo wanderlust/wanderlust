@@ -1619,7 +1619,7 @@ If optional argument is non-nil, checking is omitted."
 		  (wl-summary-mark-as-read t) ; mark itself.
 		  (setq children (wl-thread-get-children-msgs number))
 		  (while children
-		    (wl-thread-msg-mark-as-read (car children))
+		    (wl-summary-mark-as-read t nil nil (car children))
 		    (setq children (cdr children))))
 		(forward-line 1))))
 	(while (not (eobp))
@@ -1650,7 +1650,7 @@ If optional argument is non-nil, checking is omitted."
 		  (setq children
 			(delq number (wl-thread-get-children-msgs number)))
 		  (while children
-		    (wl-thread-msg-mark-as-unread (car children))
+		    (wl-summary-mark-as-unread (car children))
 		    (setq children (cdr children))))
 		(forward-line 1))))
 	(while (not (eobp))
@@ -2111,7 +2111,7 @@ If optional argument is non-nil, checking is omitted."
 	(setq diffs (cadr diff))
 	(setq mes (concat mes (format "(-%d" (length diffs))))
 	(while diffs
-	  (wl-summary-mark-as-read t 'no-server nil (car diffs) 'no-cache)
+	  (wl-summary-mark-as-read t 'no-server nil (car diffs))
 	  (setq diffs (cdr diffs)))
 	(setq diffs (car diff)) ; unread-appends
 	(setq mes (concat mes (format "/+%d) unread mark(s)." (length diffs))))
@@ -3137,8 +3137,9 @@ If optional argument is non-nil, checking is omitted."
 				 wl-summary-unread-uncached-mark))))
 	    ;; server side mark
 	    (unless no-server-update
-	      (elmo-mark-as-unread folder (list number)
-				   msgdb))
+	      (unless (elmo-mark-as-unread folder (list number)
+					   msgdb)
+		(error "Setting mark failed")))
 	    (when visible
 	      (delete-region (match-beginning 2) (match-end 2))
 	      (insert new-mark))
@@ -4085,7 +4086,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 		    (delq number wl-summary-buffer-target-mark-list)))))
       (setq mlist wl-summary-buffer-target-mark-list)
       (while mlist
-	(wl-thread-msg-mark-as-read (car mlist))
+	(wl-summary-mark-as-read t nil nil (car mlist))
 	(setq wl-summary-buffer-target-mark-list
 	      (delq (car mlist) wl-summary-buffer-target-mark-list))
 	(setq mlist (cdr mlist)))
@@ -4115,7 +4116,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
       (setq mlist wl-summary-buffer-target-mark-list)
       (while mlist
 	(wl-summary-mark-as-unread (car mlist))
-	(wl-thread-msg-mark-as-unread (car mlist))
+	;; (wl-thread-msg-mark-as-unread (car mlist))
 	(setq wl-summary-buffer-target-mark-list
 	      (delq (car mlist) wl-summary-buffer-target-mark-list))
 	(setq mlist (cdr mlist)))
@@ -4179,7 +4180,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 					  leave-server-side-mark-untouched
 					  displayed
 					  number
-					  no-cache)
+					  cached)
   (interactive)
   (save-excursion
     (let* (eol
@@ -4190,7 +4191,7 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	   (mark-alist (elmo-msgdb-get-mark-alist msgdb))
 	   ;;(number-alist (elmo-msgdb-get-number-alist msgdb))
 	   (case-fold-search nil)
-	   mark unread visible uncached new-mark)
+	   mark stat visible uncached new-mark marked)
       (if number
 	  (progn
 	    (setq visible (wl-summary-jump-to-msg number))
@@ -4209,50 +4210,59 @@ If optional argument NUMBER is specified, mark message specified by NUMBER."
 	    (when mark
 	      (cond
 	       ((string= mark wl-summary-new-mark) ; N
-		(setq wl-summary-buffer-new-count
-		      (- wl-summary-buffer-new-count 1))
-		(setq uncached t)
-		(setq unread t))
+		(setq stat 'new)
+		(setq uncached t))
 	       ((string= mark wl-summary-unread-uncached-mark) ; U
-		(setq wl-summary-buffer-unread-count
-		      (- wl-summary-buffer-unread-count 1))
-		(setq uncached t)
-		(setq unread t))
+		(setq stat 'unread)
+		(setq uncached t))
 	       ((string= mark wl-summary-unread-cached-mark)  ; !
-		(setq wl-summary-buffer-unread-count
-		      (- wl-summary-buffer-unread-count 1))
-		(setq unread t))
+		(setq stat 'unread))
 	       (t
 		;; no need to mark server.
-		(setq leave-server-side-mark-untouched t)))
-	      (wl-summary-update-modeline)
-	      (wl-folder-update-unread
-	       folder
-	       (+ wl-summary-buffer-unread-count
-		  wl-summary-buffer-new-count)))
+		(setq leave-server-side-mark-untouched t))))
 	    (setq number (or number (string-to-int (wl-match-buffer 1))))
 	    ;; set server side mark...
-	    (setq new-mark (if (and uncached no-cache)
+	    (setq new-mark (if (and uncached
+				    (if (elmo-use-cache-p folder number)
+					(not (elmo-folder-local-p folder)))
+				    (not cached))
 			       wl-summary-read-uncached-mark
 			     nil))
 	    (if (not leave-server-side-mark-untouched)
-		(elmo-mark-as-read folder
-				   (list number) msgdb))
-	    (when visible
-	      (goto-char (match-end 2))
-	      (delete-region (match-beginning 2) (match-end 2))
-	      (insert (or new-mark " ")))
-	    (setq mark-alist
-		  (elmo-msgdb-mark-set mark-alist number new-mark))
-	    (elmo-msgdb-set-mark-alist msgdb mark-alist)
-	    (wl-summary-set-mark-modified)
-	    (if (and visible wl-summary-highlight)
-		(wl-highlight-summary-current-line nil nil t))
-	    (if (not notcrosses)
-		(wl-summary-set-crosspost nil (and wl-summary-buffer-disp-msg
-                                                   (interactive-p))))))
+		(setq marked (elmo-mark-as-read folder
+						(list number) msgdb)))
+	    (if (or leave-server-side-mark-untouched
+		    marked)
+		(progn
+		  (cond ((eq stat 'unread)
+			 (setq wl-summary-buffer-unread-count
+			       (1- wl-summary-buffer-unread-count)))
+			((eq stat 'new)
+			 (setq wl-summary-buffer-new-count
+			       (1- wl-summary-buffer-new-count))))
+		  (wl-summary-update-modeline)
+		  (wl-folder-update-unread
+		   folder
+		   (+ wl-summary-buffer-unread-count
+		      wl-summary-buffer-new-count))
+		  (when (or stat cached)
+		    (when visible
+		      (goto-char (match-end 2))
+		      (delete-region (match-beginning 2) (match-end 2))
+		      (insert (or new-mark " ")))
+		    (setq mark-alist
+			  (elmo-msgdb-mark-set mark-alist number new-mark))
+		    (elmo-msgdb-set-mark-alist msgdb mark-alist)
+		    (wl-summary-set-mark-modified))
+		  (if (and visible wl-summary-highlight)
+		      (wl-highlight-summary-current-line nil nil t))
+		  (if (not notcrosses)
+		      (wl-summary-set-crosspost nil
+						(and wl-summary-buffer-disp-msg
+						     (interactive-p)))))
+	      (if mark (message "Warning: Changing mark failed.")))))
       (set-buffer-modified-p nil)
-      (if unread
+      (if stat
 	  (run-hooks 'wl-summary-unread-message-hook))
       number ;return value
       )))
@@ -5413,7 +5423,10 @@ Reply to author if invoked with argument."
 					      (elmo-folder-plugged-p
 					       wl-summary-buffer-folder-name))
 					     'leave))
-				       t) ; displayed
+				       t ; displayed
+				       nil
+				       'cached ; cached by reading.
+				       )
 	    )
 	  (setq wl-summary-buffer-current-msg num)
 	  (when wl-summary-recenter
@@ -5777,7 +5790,7 @@ Reply to author if invoked with argument."
 		(setq crossed (1+ crossed)))
 	    (if (wl-summary-jump-to-msg num)
 		(wl-summary-mark-as-read t);; opened
-	      (wl-thread-msg-mark-as-read num)));; closed
+	      (wl-summary-mark-as-read t nil nil num)));; closed
 	  ;; delete if message does't exists.
 	  (elmo-crosspost-message-delete (caar alist) ngs)
 	  (setq wl-crosspost-alist-modified t))

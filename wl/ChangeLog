@@ -1,3 +1,21 @@
+2000-10-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-thread.el (wl-thread-msg-mark-as-read): Abolished.
+	(wl-thread-msg-mark-as-unread): Ditto.
+
+	* wl-summary.el (wl-summary-sync-marks): Delete argument 'no-cache.
+	(wl-summary-mark-as-unread): Check return value of `elmo-mark-as-read'.
+	(wl-summary-mark-as-read): Invert the meaning of 6 th argument.
+	Don't set mark in summary if return value of `elmo-mark-as-read'
+	is nil.
+	Use `wl-summary-mark-as-read' instead of `wl-thread-msg-mark-as-read'.
+	(wl-summary-mark-as-read-region):  Use `wl-summary-mark-as-read'
+	instead of `wl-thread-msg-mark-as-read'.
+	(wl-summary-mark-as-unread-region): Ditto.
+	(wl-summary-target-mark-mark-as-read): Ditto.
+
+	* wl-score.el (wl-summary-score-update-all-lines): Ditto.
+
 2000-10-12  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-xmas.el (wl-highlight-folder-current-line): Remove previous face.

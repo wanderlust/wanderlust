@@ -1231,10 +1231,9 @@ See `wl-score-simplify-buffer-fuzzy' for details."
 	       (wl-push num dels))
 	      ((< score wl-summary-mark-below)
 	       (if visible
-		   (wl-summary-mark-as-read
-		    t nil nil nil (elmo-use-cache-p folder num));; opened
+		   (wl-summary-mark-as-read t); opened
 		 (setq update-unread t)
-		 (wl-thread-msg-mark-as-read num)));; closed
+		 (wl-summary-mark-as-read t nil nil num))) ; closed
 	      ((and wl-summary-important-above
 		    (> score wl-summary-important-above))
 	       (if (wl-thread-jump-to-msg num);; force open

@@ -1049,51 +1049,6 @@ Message is inserted to the summary buffer."
   (interactive "P")
   (wl-thread-call-region-func 'wl-summary-prefetch-region arg))
 
-(defun wl-thread-msg-mark-as-read (msg)
-  "Set mark as read for invisible MSG. Modeline is not changed."
-  (let* ((msgdb wl-summary-buffer-msgdb)
-	 (mark-alist (elmo-msgdb-get-mark-alist msgdb))
-	 cur-mark)
-    (setq cur-mark (cadr (assq msg mark-alist)))
-    (cond ((or (string= cur-mark wl-summary-new-mark)
-	       (string= cur-mark wl-summary-unread-uncached-mark))
-	   ;; N,U -> u or " "
-	   (setq mark-alist
-		 (elmo-msgdb-mark-set mark-alist
-				      msg
-				      (if (elmo-use-cache-p
-					   wl-summary-buffer-folder-name
-					   msg)
-					  wl-summary-read-uncached-mark)))
-	   (elmo-msgdb-set-mark-alist msgdb mark-alist)
-	   (wl-summary-set-mark-modified))
-	  ((string= cur-mark wl-summary-unread-cached-mark)
-	   ;; "!" -> " "
-	   (setq mark-alist (elmo-msgdb-mark-set mark-alist msg nil))
-	   (elmo-msgdb-set-mark-alist msgdb mark-alist)
-	   (wl-summary-set-mark-modified)))))
-
-(defun wl-thread-msg-mark-as-unread (msg)
-  "Set mark as unread for invisible MSG. Modeline is not changed."
-  (let* ((msgdb wl-summary-buffer-msgdb)
-	 (mark-alist (elmo-msgdb-get-mark-alist msgdb))
-	 cur-mark)
-    (setq cur-mark (cadr (assq msg mark-alist)))
-    (cond ((string= cur-mark wl-summary-read-uncached-mark)
-	   ;; u -> U
-	   (setq mark-alist
-		 (elmo-msgdb-mark-set mark-alist
-				      msg
-				      wl-summary-unread-uncached-mark))
-	   (elmo-msgdb-set-mark-alist msgdb mark-alist)
-	   (wl-summary-set-mark-modified))
-	  ((null cur-mark)
-	   ;; " " -> "!"
-	   (setq mark-alist (elmo-msgdb-mark-set mark-alist msg
-				      wl-summary-unread-cached-mark))
-	   (elmo-msgdb-set-mark-alist msgdb mark-alist)
-	   (wl-summary-set-mark-modified)))))
-
 (defun wl-thread-msg-mark-as-important (msg)
   "Set mark as important for invisible MSG. Modeline is not changed."
   (let* ((msgdb wl-summary-buffer-msgdb)
