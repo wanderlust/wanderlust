@@ -2204,12 +2204,11 @@ e.x.
   :group 'wl-pref)
 
 (defcustom wl-folder-sync-range-alist
-  (list (cons (concat "^" (regexp-quote wl-draft-folder) "$\\|^"
-		      (regexp-quote wl-queue-folder) "$")
-	      "all")
+  (list (cons 'wl-require-update-all-folder-p "all")
 	(cons "^'flag" "all"))
   "*Default sync range alist.  If no matches, `wl-default-sync-range' is used."
-  :type '(repeat (cons (regexp :tag "Folder Regexp")
+  :type '(repeat (cons (choice (regexp :tag "Folder Regexp")
+			       (symbol :tag "A function"))
 		       (choice (const "update")
 			       (const "all")
 			       (const "rescan")

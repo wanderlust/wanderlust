@@ -362,6 +362,17 @@ Returned value is searched from `elmo-network-stream-type-alist'."
       (elmo-folder-status-dop folder)
     (error "Unplugged")))
 
+(luna-define-method elmo-folder-next-message-number ((folder elmo-net-folder))
+  (if (elmo-folder-plugged-p folder)
+      (elmo-folder-send folder 'elmo-folder-next-message-number-plugged)
+    (elmo-folder-send folder 'elmo-folder-next-message-number-unplugged)))
+
+(luna-define-method elmo-folder-next-message-number-unplugged
+  ((folder elmo-net-folder))
+  (if elmo-enable-disconnected-operation
+      (elmo-folder-next-message-number-dop folder)
+    (error "Unplugged")))
+
 (luna-define-method elmo-folder-list-messages-internal
   ((folder elmo-net-folder) &optional nohide)
   (elmo-net-folder-list-messages-internal folder nohide))

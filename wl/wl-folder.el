@@ -323,12 +323,25 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
   (` (elmo-set-hash-val (, name) (, folder)
 			(or (, hashtb) wl-folder-elmo-folder-hashtb))))
 
+(defun wl-draft-get-folder ()
+  "A function to obtain `opened' draft elmo folder structure."
+  (if (and wl-draft-folder-internal
+	   (string= (elmo-folder-name-internal wl-draft-folder-internal)
+		    wl-draft-folder))
+      wl-draft-folder-internal
+    (setq wl-draft-folder-internal (elmo-make-folder wl-draft-folder))
+    (wl-folder-confirm-existence wl-draft-folder-internal)
+    (elmo-folder-open wl-draft-folder-internal 'load-msgdb)
+    wl-draft-folder-internal))
+
 (defmacro wl-folder-get-elmo-folder (entity &optional no-cache)
   "Get elmo folder structure from ENTITY."
-  (` (if (, no-cache)
-	 (elmo-make-folder (elmo-string (, entity)))
-       (or (wl-folder-elmo-folder-cache-get (, entity))
-	   (let* ((name (elmo-string (, entity)))
+  `(if ,no-cache
+       (elmo-make-folder (elmo-string ,entity))
+     (if (string= (elmo-string ,entity) wl-draft-folder)
+	 (wl-draft-get-folder)
+       (or (wl-folder-elmo-folder-cache-get ,entity)
+	   (let* ((name (elmo-string ,entity))
 		  (folder (elmo-make-folder name)))
 	     (wl-folder-elmo-folder-cache-put name folder)
 	     folder)))))

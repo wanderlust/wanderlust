@@ -1,3 +1,8 @@
+2003-10-15  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* im-wl.el (wl-draft-send-with-imput-async): Follow the changes
+	in draft (Not tested).
+
 2003-09-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-addrbook.el (wl-summary-addrbook-from): Use

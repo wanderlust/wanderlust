@@ -296,6 +296,17 @@ FOLDER is the folder structure."
     (setq max-num (or (car number-list) 0))
     (cons (+ max-num spool-length) (+ (length number-list) spool-length))))
 
+(defun elmo-folder-next-message-number-dop (folder)
+  (let ((number-list (sort (elmo-folder-list-messages folder nil 'in-msgdb) '>))
+	(spool-folder (elmo-dop-spool-folder folder))
+	spool-length
+	max-num)
+    (setq spool-length (or (if (elmo-folder-exists-p spool-folder)
+			       (car (elmo-folder-status spool-folder)))
+			   0))
+    (setq max-num (or (car number-list) 0))
+    (+ max-num spool-length)))
+
 ;;; Delayed operation (executed at online status).
 (defun elmo-folder-append-buffer-dop-delayed (folder flag number set-number)
   (let ((spool-folder (elmo-dop-spool-folder folder))
@@ -332,17 +343,19 @@ FOLDER is the folder structure."
       t)))
 
 (defun elmo-folder-delete-messages-dop-delayed (folder number-alist)
-  (elmo-folder-delete-messages
-   folder
-   ;; messages are deleted only if message-id is not changed.
-   (mapcar 'car
-	   (elmo-delete-if
-	    (lambda (pair)
-	      (not (string=
-		    (cdr pair)
-		    (elmo-message-fetch-field folder (car pair)
-					      'message-id))))
-	    number-alist))))
+  (ignore-errors
+    (elmo-folder-delete-messages
+     folder
+     ;; messages are deleted only if message-id is not changed.
+     (mapcar 'car
+	     (elmo-delete-if
+	      (lambda (pair)
+		(not (string=
+		      (cdr pair)
+		      (elmo-message-fetch-field folder (car pair)
+						'message-id))))
+	      number-alist)))
+    t)) ; Always success (If failure, just remain)
 
 (defun elmo-folder-create-dop-delayed (folder)
   (unless (elmo-folder-exists-p folder)

@@ -730,8 +730,6 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	  (queue-folder (wl-folder-get-elmo-folder wl-queue-folder))
 	  (lost+found-folder (wl-folder-get-elmo-folder
 			      elmo-lost+found-folder)))
-      (if (not (elmo-folder-message-file-p draft-folder))
-	  (error "%s is not allowed for draft folder" wl-draft-folder))
       (unless (elmo-folder-exists-p draft-folder)
 	(if (y-or-n-p
 	     (format "Draft Folder %s does not exist, create it? "

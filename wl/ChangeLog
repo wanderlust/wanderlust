@@ -1,5 +1,35 @@
 2003-10-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl.el (wl-check-environment): Don't check wl-draft-folder is file.
+
+	* wl-vars.el (wl-folder-sync-range-alist): Changed default value.
+
+	* wl-util.el (wl-require-update-all-folder-p): New function.
+	(wl-get-assoc-list-value): Added `function' to match directive.
+	(wl-collect-draft): Rewrite.
+
+	* wl-summary.el (wl-summary-sync-update): Clear faces
+	when both wl-summary-lazy-highlight and wl-summary-lazy-update-mark
+	are non-nil.
+	(wl-summary-get-sync-range): Call wl-get-assoc-list-value with match
+	argument as function.
+	(wl-summary-input-range): Ditto.
+
+	* wl-folder.el (wl-draft-get-folder): New function.
+	(wl-folder-get-elmo-folder): Consider draft folder.
+
+	* wl-draft.el (wl-draft-buf-name, wl-draft-buffer-file-name): Abolish.
+	(wl-draft-buffer-message-number): New buffer local variable.
+	(wl-draft-folder-internal): New internal variable.
+	(wl-draft-delete): Rewrite.
+	(wl-draft-save): Ditto.
+	(wl-draft-create-buffer): Use wl-draft-get-folder instead of
+	wl-folder-get-elmo-folder.
+	(wl-draft-config-info-operation): Ditto.
+	(wl-jump-to-draft-folder): Ditto.
+	(wl-draft-prepare-edit): Set up auto-save-file-name-transforms.
+	(wl-draft-reedit): Rewrite.
+
 	* Version number is increased to 2.11.19.
 	
 2003-10-09  Tetsurou Okazaki  <okazaki@be.to>

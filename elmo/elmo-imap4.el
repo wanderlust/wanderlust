@@ -2596,6 +2596,28 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	    (string= (elmo-net-folder-user-internal (, folder1))
 		     (elmo-net-folder-user-internal (, folder2)))))))
 
+(luna-define-method elmo-folder-next-message-number-plugged
+  ((folder elmo-imap4-folder))
+  (let ((session (elmo-imap4-get-session folder))
+	messages new unread response killed uidnext)
+    (with-current-buffer (elmo-network-session-buffer session)
+      (setq elmo-imap4-status-callback nil)
+      (setq elmo-imap4-status-callback-data nil))
+    (if elmo-imap4-use-select-to-update-status
+	(elmo-imap4-session-select-mailbox
+	 session
+	 (elmo-imap4-folder-mailbox-internal folder)))
+    (setq response
+	  (elmo-imap4-send-command-wait session
+					(list
+					 "status "
+					 (elmo-imap4-mailbox
+					  (elmo-imap4-folder-mailbox-internal
+					   folder))
+					 " (uidnext)"))
+	  response (elmo-imap4-response-value response 'status))
+    (elmo-imap4-response-value response 'uidnext)))
+
 (luna-define-method elmo-folder-append-messages :around
   ((folder elmo-imap4-folder) src-folder numbers &optional same-number)
   (if (and (eq (elmo-folder-type-internal src-folder) 'imap4)

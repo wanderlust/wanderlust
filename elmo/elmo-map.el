@@ -116,7 +116,9 @@
   (let ((numbers (mapcar
 		  'car
 		  (elmo-map-folder-location-alist-internal folder))))
-    (setq numbers (elmo-living-messages numbers (elmo-folder-killed-list-internal folder)))
+    (setq numbers (elmo-living-messages
+		   numbers
+		   (elmo-folder-killed-list-internal folder)))
     (prog1
 	(cons (elmo-max-of-list numbers)
 	      (length numbers))
@@ -246,11 +248,14 @@
 (luna-define-method elmo-folder-close-internal ((folder elmo-map-folder))
   (elmo-map-folder-set-location-alist-internal folder nil)
   (elmo-map-folder-set-location-hash-internal folder nil))
-  
+
 (luna-define-method elmo-folder-check ((folder elmo-map-folder))
   (elmo-map-folder-update-locations
    folder
    (elmo-map-folder-list-message-locations folder)))
+
+(luna-define-method elmo-folder-next-message-number ((folder elmo-map-folder))
+  (1+ (elmo-map-folder-number-max-internal folder)))
 
 (luna-define-method elmo-folder-clear :around ((folder elmo-map-folder)
 					       &optional keep-killed)
@@ -358,7 +363,10 @@
 	    (concat "#" (int-to-string number))
 	    (elmo-map-folder-location-hash-internal
 	     folder))
-	   (elmo-map-folder-location-alist-internal folder))))
+	   (elmo-map-folder-location-alist-internal folder)))
+    (elmo-clear-hash-val (concat "#" (int-to-string number))
+			 (elmo-map-folder-location-hash-internal
+			  folder)))
   t) ; success
 
 (require 'product)

@@ -1,5 +1,20 @@
 2003-10-15  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el (elmo-folder-next-message-number): New API.
+	(elmo-folder-next-message-number): Define.
+	(elmo-message-field): Don't check folder length.
+
+	* elmo-net.el (elmo-folder-next-message-number): Define.
+	(elmo-folder-next-message-number-unplugged): Define.
+
+	* elmo-map.el (elmo-folder-next-message-number): Define.
+	(elmo-folder-delete-messages): Clear hash value.
+
+	* elmo-imap4.el (elmo-folder-next-message-number-plugged): Define.
+
+	* elmo-dop.el (elmo-folder-next-message-number-dop): New function.
+	(elmo-folder-delete-messages-dop-delayed): Always return t.
+
 	* elmo-version.el (elmo-version): Up to 2.11.19.
 
 2003-10-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

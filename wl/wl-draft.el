@@ -43,6 +43,7 @@
 (defvar mail-from-style)
 
 (eval-when-compile
+  (require 'static)
   (require 'elmo-pop3)
   (defalias-maybe 'x-face-insert 'ignore)
   (defalias-maybe 'x-face-insert-version-header 'ignore)
@@ -52,8 +53,7 @@
 (eval-and-compile
   (autoload 'wl-addrmgr "wl-addrmgr"))
 
-(defvar wl-draft-buf-name "Draft")
-(defvar wl-draft-buffer-file-name nil)
+(defvar wl-draft-buffer-message-number nil)
 (defvar wl-draft-field-completion-list nil)
 (defvar wl-draft-verbose-send t)
 (defvar wl-draft-verbose-msg nil)
@@ -109,7 +109,7 @@ e.g.
     (template		. wl-draft-config-sub-template)
     (x-face		. wl-draft-config-sub-x-face)))
 
-(make-variable-buffer-local 'wl-draft-buffer-file-name)
+(make-variable-buffer-local 'wl-draft-buffer-message-number)
 (make-variable-buffer-local 'wl-draft-buffer-cur-summary-buffer)
 (make-variable-buffer-local 'wl-draft-config-variables)
 (make-variable-buffer-local 'wl-draft-config-exec-flag)
@@ -119,6 +119,9 @@ e.g.
 (make-variable-buffer-local 'wl-draft-reply-buffer)
 (make-variable-buffer-local 'wl-draft-parent-folder)
 (make-variable-buffer-local 'wl-draft-parent-number)
+
+(defvar wl-draft-folder-internal nil
+  "Internal variable for caching `opened' draft folder.")
 
 (defsubst wl-smtp-password-key (user mechanism server)
   (format "SMTP:%s/%s@%s"
@@ -740,15 +743,12 @@ Reply to author if WITH-ARG is non-nil."
   (save-excursion
     (when editing-buffer
       (set-buffer editing-buffer)
-      (if wl-draft-buffer-file-name
-	  (progn
-	    (if (file-exists-p wl-draft-buffer-file-name)
-		(delete-file wl-draft-buffer-file-name))
-	    (let ((msg (and wl-draft-buffer-file-name
-			    (string-match "[0-9]+$" wl-draft-buffer-file-name)
-			    (string-to-int
-			     (match-string 0 wl-draft-buffer-file-name)))))
-	      (wl-draft-config-info-operation msg 'delete))))
+      (when wl-draft-buffer-message-number
+	(elmo-folder-delete-messages (wl-draft-get-folder)
+				     (list
+				      wl-draft-buffer-message-number))
+	(wl-draft-config-info-operation wl-draft-buffer-message-number
+					'delete))
       (set-buffer-modified-p nil)		; force kill
       (kill-buffer editing-buffer))))
 
@@ -1404,39 +1404,48 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	    (let (wl-interactive-send)
 	      (wl-draft-send 'kill-when-done))))))))
 
-;; Derived from `message-save-drafts' in T-gnus.
 (defun wl-draft-save ()
   "Save current draft."
   (interactive)
   (if (buffer-modified-p)
       (progn
-	(message "Saving %s..." wl-draft-buffer-file-name)
-	(let ((msg (buffer-substring-no-properties (point-min) (point-max))))
-	  (with-temp-file wl-draft-buffer-file-name
+	(message "Saving...")
+	(let ((msg (buffer-substring-no-properties (point-min) (point-max)))
+	      next-number)
+	  (when wl-draft-buffer-message-number
+	    (elmo-folder-delete-messages (wl-draft-get-folder)
+					 (list wl-draft-buffer-message-number))
+	    (wl-draft-config-info-operation wl-draft-buffer-message-number
+					    'delete))
+	  (elmo-folder-check (wl-draft-get-folder))
+	  ;; If no header separator, insert it.
+	  (with-temp-buffer
 	    (insert msg)
-	    ;; If no header separator, insert it.
-	    (save-excursion
+	    (goto-char (point-min))
+	    (unless (re-search-forward
+		     (concat "^" (regexp-quote mail-header-separator) "$")
+		     nil t)
 	      (goto-char (point-min))
-	      (unless (re-search-forward
-		       (concat "^" (regexp-quote mail-header-separator) "$")
-		       nil t)
-		(goto-char (point-min))
-		(if (re-search-forward "\n\n" nil t)
-		    (replace-match (concat "\n" mail-header-separator "\n"))
-		  (goto-char (point-max))
-		  (insert (if (eq (char-before) ?\n) "" "\n")
-			  mail-header-separator "\n"))))
+	      (if (re-search-forward "\n\n" nil t)
+		  (replace-match (concat "\n" mail-header-separator "\n"))
+		(goto-char (point-max))
+		(insert (if (eq (char-before) ?\n) "" "\n")
+			mail-header-separator "\n")))
 	    (let ((mime-header-encode-method-alist
 		   '((eword-encode-unstructured-field-body))))
 	      (mime-edit-translate-buffer))
-	    (wl-draft-get-header-delimiter t)))
-	(set-buffer-modified-p nil)
-	(wl-draft-config-info-operation
-	 (and (string-match "[0-9]+$" wl-draft-buffer-file-name)
-	      (string-to-int
-	       (match-string 0 wl-draft-buffer-file-name)))
-	 'save)
-	(message "Saving %s...done" wl-draft-buffer-file-name))
+	    (wl-draft-get-header-delimiter t)
+	    (setq next-number
+		  (elmo-folder-next-message-number (wl-draft-get-folder)))
+	    (elmo-folder-append-buffer (wl-draft-get-folder)))
+	  (elmo-folder-check (wl-draft-get-folder))
+	  (elmo-folder-commit (wl-draft-get-folder))
+	  (setq wl-draft-buffer-message-number next-number)
+	  (rename-buffer (format "%s/%d" wl-draft-folder next-number))
+	  (setq buffer-file-name (buffer-name))
+	  (set-buffer-modified-p nil)
+	  (wl-draft-config-info-operation wl-draft-buffer-message-number 'save)
+	  (message "Saving...done")))
     (message "(No changes need to be saved)")))
 
 (defun wl-draft-mimic-kill-buffer ()
@@ -1620,10 +1629,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (wl-init)) ; returns immediately if already initialized.
 
 
-  (let (buf-name header-alist-internal)
-    (setq buf-name
-	  (wl-draft-create-buffer parent-folder))
-
+  (let (buffer header-alist-internal)
+    (setq buffer (wl-draft-create-buffer parent-folder))
     (unless (cdr (assq 'From header-alist))
       (setq header-alist
 	    (append (list (cons 'From wl-from)) header-alist)))
@@ -1663,10 +1670,10 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	   (mail-position-on-field "To"))
 	  (t
 	   (goto-char (point-max))))
-    buf-name))
+    buffer))
 
 (defun wl-draft-create-buffer (&optional parent-folder)
-  (let* ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
+  (let* ((draft-folder (wl-draft-get-folder))
 	 (parent-folder (or parent-folder (wl-summary-buffer-folder-name)))
 	 (summary-buf (wl-summary-get-buffer parent-folder))
 	 (reply-or-forward
@@ -1675,37 +1682,26 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	      (eq this-command 'wl-summary-forward)
 	      (eq this-command 'wl-summary-target-mark-forward)
 	      (eq this-command 'wl-summary-target-mark-reply-with-citation)))
-	 buf-name file-name num change-major-mode-hook)
-    (if (not (elmo-folder-message-file-p draft-folder))
-	(error "%s folder cannot be used for draft folder" wl-draft-folder))
-    (setq num (elmo-max-of-list
-	       (or (elmo-folder-list-messages draft-folder) '(0))))
-    (setq num (+ 1 num))
-    ;; To get unused buffer name.
-    (while (get-buffer (concat wl-draft-folder "/" (int-to-string num)))
-      (setq num (+ 1 num)))
-    (setq buf-name (find-file-noselect
-		    (setq file-name
-			  (elmo-message-file-name
-			   (wl-folder-get-elmo-folder wl-draft-folder)
-			   num))))
+	 (buffer (generate-new-buffer "*draft*")) ; Just for initial name.
+	 change-major-mode-hook)
+    (set-buffer buffer)
     ;; switch-buffer according to draft buffer style.
     (if wl-draft-use-frame
-	(switch-to-buffer-other-frame buf-name)
+	(switch-to-buffer-other-frame buffer)
       (if reply-or-forward
 	  (case wl-draft-reply-buffer-style
 	    (split
 	     (split-window-vertically)
 	     (other-window 1)
-	     (switch-to-buffer buf-name))
+	     (switch-to-buffer buffer))
 	    (keep
-	     (switch-to-buffer buf-name))
+	     (switch-to-buffer buffer))
 	    (full
 	     (delete-other-windows)
-	     (switch-to-buffer buf-name))
+	     (switch-to-buffer buffer))
 	    (t
 	     (if (functionp wl-draft-reply-buffer-style)
-		 (funcall wl-draft-reply-buffer-style buf-name)
+		 (funcall wl-draft-reply-buffer-style buffer)
 	       (error "Invalid value for wl-draft-reply-buffer-style"))))
 	(case wl-draft-buffer-style
 	  (split
@@ -1713,19 +1709,15 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	     (wl-summary-toggle-disp-msg 'off))
 	   (split-window-vertically)
 	   (other-window 1)
-	   (switch-to-buffer buf-name))
+	   (switch-to-buffer buffer))
 	  (keep
-	   (switch-to-buffer buf-name))
+	   (switch-to-buffer buffer))
 	  (full
 	   (delete-other-windows)
-	   (switch-to-buffer buf-name))
+	   (switch-to-buffer buffer))
 	  (t (if (functionp wl-draft-buffer-style)
-		 (funcall wl-draft-buffer-style buf-name)
+		 (funcall wl-draft-buffer-style buffer)
 	       (error "Invalid value for wl-draft-buffer-style"))))))
-    (set-buffer buf-name)
-    (if (not (string-match (regexp-quote wl-draft-folder)
-			   (buffer-name)))
-	(rename-buffer (concat wl-draft-folder "/" (int-to-string num))))
     (auto-save-mode -1)
     (wl-draft-mode)
     (make-local-variable 'truncate-partial-width-windows)
@@ -1733,12 +1725,11 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (setq truncate-lines wl-draft-truncate-lines)
     (setq wl-sent-message-via nil)
     (setq wl-sent-message-queued nil)
-    (setq wl-draft-buffer-file-name file-name)
     (setq wl-draft-config-exec-flag t)
     (setq wl-draft-parent-folder (or parent-folder ""))
     (or (eq this-command 'wl-folder-write-current-folder)
 	(setq wl-draft-buffer-cur-summary-buffer summary-buf))
-    buf-name))
+    buffer))
 
 (defun wl-draft-create-contents (header-alist)
   "header-alist' sample
@@ -1789,6 +1780,17 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (error "`wl-draft-create-header' must be use in wl-draft-mode"))
   (let (change-major-mode-hook)
     (wl-draft-editor-mode)
+    (static-when (boundp 'auto-save-file-name-transforms)
+      (make-local-variable 'auto-save-file-name-transforms)
+      (setq auto-save-file-name-transforms
+	    (cons (list (concat (regexp-quote wl-draft-folder)
+				"/\\([0-9]+\\)")
+			(concat (expand-file-name
+				 "auto-save-"
+				 (elmo-folder-msgdb-path
+				  (wl-draft-get-folder)))
+				"\\1"))
+		  auto-save-file-name-transforms)))
     (when wl-draft-write-file-function
       (add-hook 'local-write-file-hooks wl-draft-write-file-function))
     (wl-draft-overload-functions)
@@ -1954,68 +1956,55 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (delete-region (point-at-bol)(1+ (point-at-eol)))))
 
 (defun wl-draft-reedit (number)
-  (let ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
+  (let ((draft-folder (wl-draft-get-folder))
 	(wl-draft-reedit t)
-	buffer file-name change-major-mode-hook body-top)
-    (setq file-name (elmo-message-file-name draft-folder number))
-    (unless (file-exists-p file-name)
-      (error "File %s does not exist" file-name))
-    (if (setq buffer (get-buffer
-		      (concat wl-draft-folder "/"
-			      (number-to-string number))))
-	(progn
-	  (if wl-draft-use-frame
-	      (switch-to-buffer-other-frame buffer)
-	    (switch-to-buffer buffer))
-	  (set-buffer buffer))
-      (setq buffer (get-buffer-create (number-to-string number)))
-      ;; switch-buffer according to draft buffer style.
-      (if wl-draft-use-frame
-	  (switch-to-buffer-other-frame buffer)
-	(case wl-draft-buffer-style
-	  (split
-	   (split-window-vertically)
-	   (other-window 1)
-	   (switch-to-buffer buffer))
-	  (keep
-	   (switch-to-buffer buffer))
-	  (full
-	   (delete-other-windows)
-	   (switch-to-buffer buffer))
-	  (t (if (functionp wl-draft-buffer-style)
-		 (funcall wl-draft-buffer-style buffer)
-	       (error "Invalid value for wl-draft-buffer-style")))))
-      (set-buffer buffer)
-      (setq wl-draft-parent-folder "")
-      (insert-file-contents-as-binary file-name)
-      (elmo-delete-cr-buffer)
-      (let((mime-edit-again-ignored-field-regexp
-	    "^\\(Content-.*\\|Mime-Version\\):"))
-	(wl-draft-decode-message-in-buffer))
-      (setq body-top (wl-draft-insert-mail-header-separator))
-      (if (not (string-match (regexp-quote wl-draft-folder)
-			     (buffer-name)))
-	  (rename-buffer (concat wl-draft-folder "/" (buffer-name))))
-      (auto-save-mode -1)
-      (wl-draft-mode)
-      (setq buffer-file-name file-name)
-      (make-local-variable 'truncate-partial-width-windows)
-      (setq truncate-partial-width-windows nil)
-      (setq truncate-lines wl-draft-truncate-lines)
-      (setq wl-sent-message-via nil)
-      (setq wl-sent-message-queued nil)
-      (setq wl-draft-buffer-file-name file-name)
-      (wl-draft-config-info-operation number 'load)
-      (goto-char (point-min))
-      (wl-draft-overload-functions)
-      (wl-draft-editor-mode)
-      (when wl-draft-write-file-function
-	(add-hook 'local-write-file-hooks wl-draft-write-file-function))
-      (wl-highlight-headers 'for-draft)
-      (goto-char body-top)
-      (run-hooks 'wl-draft-reedit-hook)
-      (goto-char (point-max))
-      buffer)))
+	(num 0)
+	buffer change-major-mode-hook body-top)
+    (setq buffer (get-buffer-create (format "%s/%d" wl-draft-folder
+					    number)))
+    (if wl-draft-use-frame
+	(switch-to-buffer-other-frame buffer)
+      (switch-to-buffer buffer))
+    (set-buffer buffer)
+    (elmo-message-fetch draft-folder number (elmo-make-fetch-strategy 'entire)
+			nil (current-buffer))
+    (elmo-delete-cr-buffer)
+    (let ((mime-edit-again-ignored-field-regexp
+	   "^\\(Content-.*\\|Mime-Version\\):"))
+      (wl-draft-decode-message-in-buffer))
+    (setq body-top (wl-draft-insert-mail-header-separator))
+    (auto-save-mode -1)
+    (wl-draft-mode)
+    (make-local-variable 'truncate-partial-width-windows)
+    (setq truncate-partial-width-windows nil)
+    (setq truncate-lines wl-draft-truncate-lines)
+    (setq wl-sent-message-via nil)
+    (setq wl-sent-message-queued nil)
+    (wl-draft-config-info-operation number 'load)
+    (goto-char (point-min))
+    (wl-draft-overload-functions)
+    (wl-draft-editor-mode)
+    (static-when (boundp 'auto-save-file-name-transforms)
+      (make-local-variable 'auto-save-file-name-transforms)
+      (setq auto-save-file-name-transforms
+	    (cons (list (concat (regexp-quote wl-draft-folder)
+				"/\\([0-9]+\\)")
+			(concat (expand-file-name
+				 "auto-save-"
+				 (elmo-folder-msgdb-path
+				  (wl-draft-get-folder)))
+				"\\1"))
+		  auto-save-file-name-transforms)))
+    (setq buffer-file-name (buffer-name)
+	  wl-draft-parent-folder ""
+	  wl-draft-buffer-message-number number)
+    (when wl-draft-write-file-function
+      (add-hook 'local-write-file-hooks wl-draft-write-file-function))
+    (wl-highlight-headers 'for-draft)
+    (goto-char body-top)
+    (run-hooks 'wl-draft-reedit-hook)
+    (goto-char (point-max))
+    buffer))
 
 (defmacro wl-draft-body-goto-top ()
   (` (progn
@@ -2236,8 +2225,7 @@ Automatically applied in draft sending time."
 	    (insert (concat field ": " content "\n"))))))))
 
 (defun wl-draft-config-info-operation (msg operation)
-  (let* ((msgdb-dir (elmo-folder-msgdb-path (wl-folder-get-elmo-folder
-					     wl-draft-folder)))
+  (let* ((msgdb-dir (elmo-folder-msgdb-path (wl-draft-get-folder)))
 	 (filename
 	  (expand-file-name
 	   (format "%s-%d" wl-draft-config-save-filename msg)
@@ -2409,8 +2397,7 @@ Automatically applied in draft sending time."
 	(switch-to-buffer buf))))))
 
 (defun wl-jump-to-draft-folder ()
-  (let ((msgs (reverse (elmo-folder-list-messages (wl-folder-get-elmo-folder
-						   wl-draft-folder))))
+  (let ((msgs (reverse (elmo-folder-list-messages (wl-draft-get-folder))))
 	(mybuf (buffer-name))
 	msg buf)
     (if (not msgs)

@@ -75,12 +75,20 @@ This is most commonly `imput(impost)' or `inews-nifty4u'.")
   (let (buffer-process process-connection-type watch-buffer
 	(sending-buffer (current-buffer))
 	(error-msg-regexp im-wl-dispatcher-error-msg)
-	(msg (save-excursion
-	       (set-buffer editing-buffer)
-	       (or wl-draft-buffer-file-name
-		   (setq wl-draft-buffer-file-name
-			 (expand-file-name
-			  im-wl-default-temp-file-name))))))
+	(number wl-draft-buffer-message-number)
+	msg)
+    (with-current-buffer editing-buffer
+      (if (elmo-message-file-p
+	   (wl-folder-get-elmo-folder wl-draft-folder)
+	   number)
+	  (setq msg
+		(elmo-message-file-name
+		 (wl-folder-get-elmo-folder wl-draft-folder)
+		 number))
+	(with-temp-file (setq msg (make-temp-file "im-wl"))
+	  (elmo-message-fetch (wl-folder-get-elmo-folder wl-draft-folder)
+			      number (elmo-make-fetch-strategy 'entire)
+			      nil (current-buffer)))))
     ;; current buffer is raw buffer.
     (save-excursion
       (goto-char (point-max))

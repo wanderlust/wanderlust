@@ -380,6 +380,10 @@ If IS-LOCAL is non-nil, only the local flag is updated.")
 FOLDER is the ELMO folder structure.
 If IS-LOCAL is non-nil, only the local flag is updated.")
 
+(luna-define-generic elmo-folder-next-message-number (folder)
+  "The next message number that will be assigned to a new message.
+FOLDER is the ELMO folder structure.")
+
 (luna-define-generic elmo-folder-append-buffer (folder &optional flag
 						       number)
   "Append current buffer as a new message.
@@ -955,6 +959,10 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 (luna-define-method elmo-folder-contains-type ((folder elmo-folder) type)
   (eq (elmo-folder-type-internal folder) type))
 
+(luna-define-method elmo-folder-next-message-number ((folder elmo-folder))
+  (+ 1 (elmo-max-of-list (or (elmo-folder-list-messages folder)
+			     '(0)))))
+
 (luna-define-method elmo-folder-append-messages ((folder elmo-folder)
 						 src-folder
 						 numbers
@@ -1195,8 +1203,6 @@ NUMBER is a number of the message.
 FIELD is a symbol of the field.")
 
 (luna-define-method elmo-message-field ((folder elmo-folder) number field)
-  (when (zerop (elmo-folder-length folder))
-    (error "Cannot treat this folder correctly."))
   (elmo-message-entity-field (elmo-message-entity folder number) field))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-folder) number)

@@ -164,6 +164,11 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 	  (funcall func))
       (wl-push (cdr keve) unread-command-events))))
 
+(defun wl-require-update-all-folder-p (name)
+  "Return non-nil if NAME is draft or queue folder."
+  (or (string= name wl-draft-folder)
+      (string= name wl-queue-folder)))
+
 ;(defalias 'wl-make-hash 'elmo-make-hash)
 ;;(make-obsolete 'wl-make-hash 'elmo-make-hash)
 
@@ -260,13 +265,17 @@ even when invalid character is contained."
 	  value pair)
       (while alist
 	(setq pair (car alist))
-	(if (string-match (car pair) folder)
-	    (cond ((eq match 'all)
-		   (setq value (append value (list (cdr pair)))))
-		  ((eq match 'all-list)
-		   (setq value (append value (cdr pair))))
-		  ((not match)
-		   (throw 'found (cdr pair)))))
+	(if (and (eq match 'function)
+		 (functionp (car pair)))
+	    (when (funcall (car pair) folder)
+	      (throw 'found (cdr pair)))
+	  (if (string-match (car pair) folder)
+	      (cond ((eq match 'all)
+		     (setq value (append value (list (cdr pair)))))
+		    ((eq match 'all-list)
+		     (setq value (append value (cdr pair))))
+		    ((not match)
+		     (throw 'found (cdr pair))))))
 	(setq alist (cdr alist)))
       value)))
 
@@ -570,16 +579,14 @@ that `read' can handle, whenever this is possible."
 
 (defun wl-collect-draft ()
   (let ((draft-regexp (concat
-		       "^" (regexp-quote
-			    (elmo-localdir-folder-directory-internal
-			     (wl-folder-get-elmo-folder wl-draft-folder)))))
+		       "^" (regexp-quote wl-draft-folder)))
 	result buf)
     (mapcar
      (function (lambda (x)
-		 (if (and
-		      (setq buf (with-current-buffer x
-				  wl-draft-buffer-file-name))
-		      (string-match draft-regexp buf))
+		 (if (with-current-buffer x
+		       (and (eq major-mode 'wl-draft-mode)
+			    (buffer-name)
+			    (string-match draft-regexp (buffer-name))))
 		     (setq result (nconc result (list x))))))
      (buffer-list))
     result))

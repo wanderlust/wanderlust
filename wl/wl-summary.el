@@ -1821,6 +1821,11 @@ This function is defined for `window-scroll-functions'"
 		  (wl-summary-delete-messages-on-buffer delete-list))
 		(unless wl-summary-lazy-update-mark
 		  (wl-summary-update-status-marks (point-min) (point-max)))
+		(when (and wl-summary-lazy-highlight
+			   wl-summary-lazy-update-mark)
+		  (let (buffer-read-only)
+		    (put-text-property (point-min) (point-max) 'face nil))
+		  (run-hooks 'wl-summary-buffer-window-scroll-functions))
 		(setq num (length append-list))
 		(setq i 0)
 		(setq wl-summary-delayed-update nil)
@@ -3356,7 +3361,8 @@ Return non-nil if the mark is updated"
 	       (elmo-folder-plugged-p folder)
 	       (wl-get-assoc-list-value
 		wl-folder-sync-range-alist
-		(elmo-folder-name-internal folder)))
+		(elmo-folder-name-internal folder)
+		'function))
 	      wl-default-sync-range)))
 
 ;; redefined for wl-summary-sync-update
@@ -3376,7 +3382,8 @@ Return non-nil if the mark is updated"
 			    "all-entirely"))
 	(default (or (wl-get-assoc-list-value
 		      wl-folder-sync-range-alist
-		      folder)
+		      folder
+		      'function)
 		     wl-default-sync-range))
 	range)
     (setq range
