@@ -2482,6 +2482,14 @@ If ARG, without confirm."
 			   (wl-summary-buffer-msgdb))))
 	     wl-summary-important-mark))))
 
+(defsubst wl-summary-open-folder (folder)
+  ;; Select folder
+  (unwind-protect
+      (elmo-folder-open folder 'load-msgdb)
+    ;; For compatibility
+    (setq wl-summary-buffer-msgdb (elmo-folder-msgdb folder))
+    (setq wl-summary-buffer-folder-name (elmo-folder-name-internal folder))))
+
 (defun wl-summary-goto-folder-subr (&optional name scan-type other-window
 					      sticky interactive scoring)
   "Display target folder on summary."
@@ -2529,12 +2537,6 @@ If ARG, without confirm."
 	  (let ((case-fold-search nil)
 		(inhibit-read-only t)
 		(buffer-read-only nil))
-	    ;; Select folder
-	    (elmo-folder-open folder 'load-msgdb)
-	    ;; For compatibility
-	    (setq wl-summary-buffer-msgdb (elmo-folder-msgdb folder))
-	    (setq wl-summary-buffer-folder-name (elmo-folder-name-internal
-						 folder))
 	    (erase-buffer)
 	    ;; Resume summary view
 	    (if wl-summary-cache-use
@@ -2551,17 +2553,19 @@ If ARG, without confirm."
 		  (when (file-exists-p view)
 		    (setq wl-summary-buffer-view
 			  (wl-summary-load-file-object view)))
-		  (if (eq wl-summary-buffer-view 'thread)
-		      (wl-thread-resume-entity folder)
-		    (wl-summary-make-number-list)))
+		  (wl-thread-resume-entity folder)
+		  (wl-summary-open-folder folder))
 	      (setq wl-summary-buffer-view
 		    (wl-summary-load-file-object
 		     (expand-file-name wl-summary-view-file
 				       (elmo-folder-msgdb-path folder))))
+	      (wl-summary-open-folder folder)
 	      (wl-summary-rescan))
 	    (wl-summary-count-unread
 	     (elmo-msgdb-get-mark-alist (wl-summary-buffer-msgdb)))
 	    (wl-summary-update-modeline)))
+      (unless (eq wl-summary-buffer-view 'thread)
+	(wl-summary-make-number-list))
       (wl-summary-buffer-number-column-detect t)
       (wl-summary-toggle-disp-msg (if wl-summary-buffer-disp-msg 'on 'off))
       (unless (and reuse-buf keep-cursor)
@@ -4015,6 +4019,7 @@ If ARG, exit virtual folder."
 	  (progn
 	    (setq visible (wl-summary-jump-to-msg number))
 	    (setq mark (cadr (assq number mark-alist))))
+	;; interactive
 	(setq visible t))
       (beginning-of-line)
       (if (or (not visible)
@@ -4114,9 +4119,10 @@ If ARG, exit virtual folder."
 	  (setq eol (point))
 	  (re-search-backward (concat "^" wl-summary-buffer-number-regexp
 				      "..../..") nil t)) ; set cursor line
-	)
-      (beginning-of-line)
-      (if (re-search-forward "^ *\\(-?[0-9]+\\)[^0-9]\\([^0-9]\\)" eol t)
+	(beginning-of-line))
+      (if (or (and (not visible)
+		   (assq number (elmo-msgdb-get-number-alist msgdb)))
+	      (re-search-forward "^ *\\(-?[0-9]+\\)[^0-9]\\([^0-9]\\)" eol t))
 	  (progn
 	    (setq number (or number (string-to-int (wl-match-buffer 1))))
 	    (setq mark (or mark (wl-match-buffer 2)))
@@ -4153,10 +4159,11 @@ If ARG, exit virtual folder."
 		(insert wl-summary-important-mark))
 	      (setq mark-alist
 		    (elmo-msgdb-mark-set mark-alist
-					 (string-to-int (wl-match-buffer 1))
+					 number
 					 wl-summary-important-mark))
-	      ;; Force cache message!!
-	      (elmo-message-encache folder number)
+	      (unless (elmo-file-cache-exists-p message-id)
+		;; Force cache message.
+		(elmo-message-encache folder number))
 	      (unless no-server-update
 		(elmo-msgdb-global-mark-set message-id
 					    wl-summary-important-mark)))
