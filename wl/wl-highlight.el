@@ -973,7 +973,7 @@ This function is defined for `window-scroll-functions'"
       (when (eq major-mode 'wl-summary-mode)
 	(let ((start (window-start win))
 	      (end (condition-case nil
-		       (window-end win t) ;; old emacsen doesn't support 3rd arg.
+		       (window-end win t) ;; old emacsen doesn't support 2nd arg.
 		     (error (window-end win)))))
 	  (wl-highlight-summary start
 				end
