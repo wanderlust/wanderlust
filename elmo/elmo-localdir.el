@@ -339,48 +339,30 @@
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-localdir-folder))
   (let* ((dir (elmo-localdir-folder-directory-internal folder))
 	 (msgdb (elmo-folder-msgdb folder))
-	 (onum-alist (elmo-msgdb-get-number-alist msgdb))
-	 (omark-alist (elmo-msgdb-get-mark-alist msgdb))
-	 (new-number 1)			; first ordinal position in localdir
-	 flist onum mark new-mark-alist total)
-    (setq flist
-	  (if elmo-pack-number-check-strict
-	      (elmo-folder-list-messages folder) ; allow localnews
-	    (mapcar 'car onum-alist)))
-    (setq total (length flist))
-    (while flist
-      (when (> total elmo-display-progress-threshold)
-	(elmo-display-progress
-	 'elmo-folder-pack-numbers "Packing..."
-	 (/ (* new-number 100) total)))
-      (setq onum (car flist))
-      (when (not (eq onum new-number))		; why \=() is wrong..
-	(elmo-bind-directory
-	 dir
-	 ;; xxx  nfs,hardlink
-	 (rename-file (int-to-string onum) (int-to-string new-number) t))
-	;; update overview
-	(elmo-msgdb-overview-entity-set-number
-	 (elmo-msgdb-overview-get-entity onum msgdb)
-	 new-number)
-	;; update number-alist
-	(and (assq onum onum-alist)
-	     (setcar (assq onum onum-alist) new-number)))
-      ;; update mark-alist
-      (when (setq mark (cadr (assq onum omark-alist)))
-	(setq new-mark-alist
-	      (elmo-msgdb-mark-append
-	       new-mark-alist
-	       new-number mark)))
-      (setq new-number (1+ new-number))
-      (setq flist (cdr flist)))
+	 (new-msgdb (elmo-make-msgdb))
+	 (numbers (elmo-folder-list-messages
+		   folder
+		   (not elmo-pack-number-check-strict)))
+	 (new-number 1)		  ; first ordinal position in localdir
+	 total entity)
+    (elmo-msgdb-set-path new-msgdb (elmo-folder-msgdb-path folder))
+    (setq total (length numbers))
+    (elmo-with-progress-display (> total elmo-display-progress-threshold)
+	(elmo-folder-pack-numbers total "Packing...")
+      (dolist (old-number numbers)
+	(setq entity (elmo-msgdb-message-entity msgdb old-number))
+	(when (not (eq old-number new-number)) ; why \=() is wrong..
+	  (elmo-bind-directory
+	   dir
+	   ;; xxx  nfs,hardlink
+	   (rename-file (int-to-string old-number)
+			(int-to-string new-number) t))
+	  (elmo-msgdb-overview-entity-set-number entity new-number))
+	(elmo-msgdb-append-entity new-msgdb entity
+				  (elmo-msgdb-get-mark msgdb old-number))
+	(setq new-number (1+ new-number))))
     (message "Packing...done")
-    (elmo-folder-set-msgdb-internal
-     folder
-     (elmo-make-msgdb
-      (elmo-msgdb-get-overview msgdb)
-      onum-alist
-      new-mark-alist))))
+    (elmo-folder-set-msgdb-internal folder new-msgdb)))
 
 (luna-define-method elmo-folder-message-file-p ((folder elmo-localdir-folder))
   t)

@@ -1222,6 +1222,23 @@ If optional DELETE-FUNCTION is speficied, it is used as delete procedure."
 	(when (>= new-rate 100)
 	  (elmo-progress-clear label))))))
 
+(put 'elmo-with-progress-display 'lisp-indent-function '2)
+(def-edebug-spec elmo-with-progress-display
+  (form (symbolp form &rest form) &rest form))
+
+(defmacro elmo-with-progress-display (condition spec &rest body)
+  "Evaluate BODY with progress gauge if CONDITION is non-nil.
+SPEC is a list as followed (LABEL MAX-VALUE [FORMAT])."
+  (let ((label (car spec))
+	(max-value (cadr spec))
+	(fmt (caddr spec)))
+    `(unwind-protect
+	 (progn
+	   (when ,condition
+	     (elmo-progress-set (quote ,label) ,max-value ,fmt))
+	   ,@body)
+       (elmo-progress-clear (quote ,label)))))
+
 (defun elmo-time-expire (before-time diff-time)
   (let* ((current (current-time))
 	 (rest (when (< (nth 1 current) (nth 1 before-time))

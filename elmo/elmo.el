@@ -408,7 +408,7 @@ Caller should make sure FOLDER is `writable'.
 SRC-FOLDER is the source ELMO folder structure.
 NUMBERS is the message numbers to be appended in the SRC-FOLDER.
 If second optional argument SAME-NUMBER is specified,
-message number is preserved (if possible).")
+message number is preserved \(if possible\).")
 
 (luna-define-generic elmo-folder-pack-numbers (folder)
   "Pack message numbers of FOLDER.")
