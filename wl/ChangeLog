@@ -1,3 +1,9 @@
+2002-10-09  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
+
+	* wl-vars.el (wl-summary-line-format): Change default value.
+	(wl-summary-subject-length-limit): Abolished.
+	* wl-summary.el (wl-summary-line-subject): Ditto.
+
 2002-10-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-template.el (wl-template-select): Added optional argument.
