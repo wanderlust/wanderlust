@@ -1,5 +1,11 @@
 2001-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* elmo.el: Moved obsolete variable definitions from
+	elmo-imap4.el, elmo-nntp.el and elmo-pop3.el.
+
+	* sb-asahi.el (shimbun-asahi-groups): Deleted "feneral" and "personal"
+	groups.
+
 	* shimbun.el: New file.
 
 	* elmo-shimbun.el: New file.

@@ -1,5 +1,7 @@
 2001-04-02  Yuuichi Teranishi  <teranisi@gohome.org>
 
+	* wl.el (wl): Changed position of `elmo-init'.
+
 	* wl-draft.el (wl-default-draft-cite): Use date field
 	on the citation buffer.
 

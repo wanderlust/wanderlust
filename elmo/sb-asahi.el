@@ -36,8 +36,7 @@
 
 (defvar shimbun-asahi-url "http://spin.asahi.com/")
 (defvar shimbun-asahi-groups '("national" "business" "politics"
-			       "international" "sports" "personal"
-			       "feneral"))
+			       "international" "sports"))
 (defvar shimbun-asahi-coding-system (static-if (boundp 'MULE) '*sjis*
 				      'shift_jis))
 (defvar shimbun-asahi-from-address "webmaster@www.asahi.com")
