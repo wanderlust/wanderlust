@@ -1023,7 +1023,8 @@ This function is defined for `window-scroll-functions'"
 			      (save-excursion
 				(goto-char (window-start win))
 				(forward-line (frame-height))
-				(point))))))
+				(point)))
+	(set-buffer-modified-p nil))))
 
 (defun wl-highlight-headers (&optional for-draft)
   (let ((beg (point-min))

@@ -1,4 +1,56 @@
+2001-02-22  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* Version number is increased to 2.5.8.
+
+	* wl-thread.el (toplevel): require 'cl.
+	(wl-thread-resume-entity): Call wl-thread-make-number-list.
+	(wl-thread-make-number-list): New function.
+	(wl-thread-entity-make-number-list-from-children): Ditt.
+	(wl-thread-entity-insert-as-top): Update wl-summary-buffer-number-list.
+	(wl-thread-entity-insert-as-children): Likewise.
+	(wl-thread-delete-message): Likewise.
+	(wl-meaning-of-mark): Eliminated.
+	(wl-thread-next-failure-mark-p): Ditto.
+	(wl-thread-entity-get-mark): Ditto.
+	(wl-thread-meaning-alist-get-result): Ditto.
+	(wl-thread-entity-check-prev-mark): Ditto.
+	(wl-thread-entity-check-next-mark): Ditto.
+	(wl-thread-entity-check-prev-mark-from-older-brother): Ditto.
+	(wl-thread-entity-get-prev-marked-entity): Ditto.
+	(wl-thread-get-prev-unread): Ditto.
+	(wl-thread-jump-to-prev-unread): Ditto.
+	(wl-thread-get-next-unread): Ditto.
+	(wl-thread-jump-to-next-unread): Ditto.
+	(wl-thread-entity-check-next-mark-from-younger-brother): Ditto.
+	(wl-thread-entity-get-next-marked-entity): Ditto.
+
+	* wl-summary.el (wl-summary-buffer-number-list):
+	New bufer-local variable.
+	(wl-summary-switch-to-clone-buffer): Clone
+	`wl-summary-buffer-number-list'.
+	(wl-summary-goto-folder-subr): Use `wl-summary-next-message'.
+	(wl-summary-cursor-move-regex): Eliminated.
+	(wl-summary-cursor-up): Rewrite.
+	(wl-summary-cursor-down): Ditto.
+	(wl-summary-mode-spec-alist): New variable.
+	(wl-summary-next-message): New inline function.
+	(wl-summary-cursor-move): New function.
+	(wl-summary-default-get-next-msg): Rewrite.
+	(wl-summary-sync-all-init): Setup `wl-summary-number-list'.
+	(wl-summary-rescan): Ditto.
+	(wl-summary-sync-all-init): Ditto.
+	(wl-summary-goto-folder-subr): Call `wl-summary-make-number-list' if
+	summary is not thread view.
+	(wl-summary-sync-update3): Ditto.
+	(wl-summary-rescan): Ditto.
+	(wl-summary-make-number-list): New function.
+
+	* wl-draft.el: "FCC" -> "Fcc".
+
 2001-02-21  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* wl-highlight.el (wl-highlight-summary-window):
+	Call `set-buffer-modified-p'.
 
 	* wl-vars.el (wl-summary-lazy-highlight): New variable.
 
