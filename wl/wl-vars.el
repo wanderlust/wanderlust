@@ -1342,7 +1342,9 @@ e.x.
 (defcustom wl-summary-always-sticky-folder-list nil
   "All folders that match this list has sticky summary.
 Each elements are regexp of folder name."
-  :type '(repeat (regexp :tag "Folder Regexp"))
+  :type '(radio (const :tag "none" nil)
+		(const :tag "all" t)
+		(repeat (regexp :tag "Folder Regexp")))
   :group 'wl-pref)
 
 (defcustom wl-no-save-folder-list '("^/.*$")

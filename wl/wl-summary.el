@@ -2572,8 +2572,9 @@ If optional argument is non-nil, checking is omitted."
       (get-buffer (wl-summary-sticky-buffer-name fld))
     (not (string= wl-summary-buffer-name (buffer-name)))))
 
-(defmacro wl-summary-always-sticky-folder-p (fld)
-  (` (wl-string-match-member (, fld) wl-summary-always-sticky-folder-list)))
+(defun wl-summary-always-sticky-folder-p (fld)
+  (or (eq t wl-summary-always-sticky-folder-list)
+      (wl-string-match-member fld wl-summary-always-sticky-folder-list)))
 
 (defun wl-summary-stick (&optional force)
   "Make current summary buffer sticky."

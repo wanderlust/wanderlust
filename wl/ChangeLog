@@ -1,3 +1,10 @@
+2000-05-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-vars.el (wl-summary-always-sticky-folder-list): `t' means all
+	folder always-sticky.
+	* wl-summary.el (wl-summary-always-sticky-folder-p): defun instead of
+	defmacro.
+
 2000-05-18  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* wl-vars.el (wl-draft-add-references): New user option.
