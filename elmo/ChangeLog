@@ -1,3 +1,8 @@
+2000-10-25  OKAZAKI Tetsurou  <okazaki@be.to>
+
+	* elmo-imap4.el (elmo-imap4-client-eol): Remove duplicated defvar
+	of `elmo-imap4-status' and `elmo-imap4-reached-tag'.
+
 2000-10-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo-imap4.el (elmo-imap4-session-select-mailbox): Added argument
