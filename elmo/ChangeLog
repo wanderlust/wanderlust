@@ -1,3 +1,7 @@
+2000-08-12  Kenichi OKADA <okada@opaopa.org>
+
+	* elmo-pop3.el (elmo-pop3-get-connection): Add `signal'.
+
 2000-08-08  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* elmo2.el (elmo-move-msgs): Set value of `unseen'.

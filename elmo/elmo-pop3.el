@@ -125,7 +125,7 @@
     (if (and entry
 	     (memq (setq proc-stat
 			 (process-status (cadr (cdr entry))))
-		   '(closed exit)))
+		   '(closed exit signal)))
 	;; connection is closed...
 	(let ((buffer (car (cdr entry))))
 	  (if buffer (kill-buffer buffer))
