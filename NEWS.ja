@@ -6,7 +6,7 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust. 10 May 2
 2.3.0 以降は、第二番号が偶数なら安定版、奇数なら開発版となります。
 
 公開 CVS サーバ cvs.m17n.org 上 では、幹が beta (開発)版，
-枝が stable 版 (枝名は，2.4.x なら wl-2_4) となります。
+枝が stable (安定)版 (枝名は，2.4.x なら wl-2_4) となります。
 
 ** インストール
 
@@ -114,6 +114,10 @@ draft-ietf-drums-msg-fmt-09.txt に従うようになりました。
 ** その他の変更点
 
 *** スレッドの高速化と多くのバグフィックス。
+
+*** 変数名の変更。
+wl-refile-guess-func-list => wl-refile-guess-functions
+wl-summary-temp-above => wl-summary-target-above
 
 *** wl-fcc に関数を設定できます。
 月毎にフォルダを変えたい場合などに使用できます。
