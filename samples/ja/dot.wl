@@ -336,9 +336,6 @@
 ;	("^-"
 ;	 "news.SCORE")))
 
-;; スコアファイルを保存するディレクトリ
-; (setq wl-score-files-directory "~/.elmo/")
-
 
 ;; 自動リファイルのルール設定
 ;(setq wl-refile-rule-alist
