@@ -1,18 +1,23 @@
+* 2.9.x の TODO 
 
-オフライン処理の最適化
-フォルダとアイコンファイルの対応
-Shimbun の killed-list 対応
+** elmo.el でフォルダのアイコンを定義できるようにする
+** サマリ行の表示を自由にカスタマイズできるようにする(WL:8748)
+** msgdb の構造を見直し、高速化をはかる
+** プリフェッチ予約マークを増やす
+** 返事済み、フォワード済みマークを増やす
+** 重要マークの管理をまじめにやる
+   'mark フォルダでメッセージを消すと、もとのメッセージの '$' マークが
+   消えるなど
 
-NNTP 関連(wl-folder-check-entity-async)
-msgdb 構造の見直しと obarray 化
-重要マークの管理
-サマリフォーマット自由化(WL:8748)
-プリフェッチ予約マーク
-返事済み、フォワード済みマーク
-virtual 間で msgdb 共有
-MIME Bcc
-wl-summary-other-frame-list
-rfc2192, rfc2193, rfc2221 (imap referral の処理)
-あやしげなコードをへらしたい
-too many arguments for wl-draft(WL:8475)
-パートの削除(受け取ったメイル)
+* その他の TODO
+
+** wl-folder-check-entity-async のあたりで NNTP が特別扱いになっているのを
+   どうにかする
+** MIME Bcc に対応する
+** wl-summary-other-frame-list のような変数を設け、マッチしたサマリは
+   別フレームで開くようにする
+** パイプフォルダに、新規メールチェック時にダウンロードまでやってしまう
+   オプションを設ける
+** rfc2192, rfc2193, rfc2221 (imap referral の処理) への対応
+** 受け取ったメールの添付ファイル部分を削除できるようにする
+** コードの整理
