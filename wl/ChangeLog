@@ -1,3 +1,8 @@
+2005-01-01  Ron Isaacson  <Ron.Isaacson@morganstanley.com>
+
+	* wl-util.el (wl-save-drafts): Avoid error on redisplaying
+	message.
+
 2004-12-24  Yuuichi Teranishi  <teranisi@gohome.org>
 
 	* 2.12.0 is released.

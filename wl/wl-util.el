@@ -586,7 +586,7 @@ that `read' can handle, whenever this is possible."
 	(set-buffer (car buffers))
 	(if (buffer-modified-p) (wl-draft-save))
 	(setq buffers (cdr buffers))))
-    (message msg)))
+    (message "%s" (or msg ""))))
 
 (static-if (fboundp 'read-directory-name)
     (defun wl-read-directory-name (prompt dir)
