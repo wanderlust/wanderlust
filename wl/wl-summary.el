@@ -1588,9 +1588,9 @@ If ARG is non-nil, checking is omitted."
 	  (while (not (eobp))
 	    (wl-summary-update-persistent-mark)
 	    (forward-line 1)))
-	(wl-folder-update-unread (wl-summary-buffer-folder-name) 0)
 	(setq wl-summary-buffer-unread-count 0)
 	(setq wl-summary-buffer-new-count    0)
+	(wl-summary-update-folder-info)
 	(wl-summary-update-modeline)
 	(message "Setting all msgs as read...done"))))
 
