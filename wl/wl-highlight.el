@@ -1000,12 +1000,13 @@ interpreted as cited text.)"
 	      (setq i 0)
 	      (while (not (eobp))
 		(wl-highlight-summary-current-line nil nil wl-summary-scored)
-		(setq i (+ i 1))
-		(setq percent (/ (* i 100) lines))
-		(if (eq (% percent 5) 0)
-		    (elmo-display-progress
-		     'wl-highlight-summary "Highlighting..."
-		     percent))
+		(when (> lines elmo-display-progress-threshold)
+		  (setq i (+ i 1))
+		  (setq percent (/ (* i 100) lines))
+		  (if (or (eq (% percent 5) 0) (= i lines))
+		      (elmo-display-progress
+		       'wl-highlight-summary "Highlighting..."
+		       percent)))
 		(forward-line 1))
 	      (message "Highlighting...done.")))))))
 

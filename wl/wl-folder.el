@@ -4,7 +4,7 @@
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: mail, net news
-;; Time-stamp: <00/03/25 16:30:59 teranisi>
+;; Time-stamp: <00/04/28 14:26:38 teranisi>
 
 ;; This file is part of Wanderlust (Yet Another Message Interface on Emacsen).
 
@@ -456,16 +456,16 @@
 	(wl-auto-select-first nil)
 	(wl-plugged t)
 	emptied)
+    (if elmo-enable-disconnected-operation
+	(elmo-dop-queue-flush 'force)) ; Try flushing all queue.
     (if (not (elmo-list-folder wl-queue-folder))
-	(error "No queue exists")
+	(message "No sending queue exists.")
       (if wl-stay-folder-window
 	  (wl-folder-select-buffer 
 	   (wl-summary-get-buffer-create wl-queue-folder)))
       (wl-summary-goto-folder-subr wl-queue-folder 'force-update nil)
       (unwind-protect
 	  (wl-draft-queue-flush)
-	(if wl-summary-cache-use (wl-summary-save-view-cache))
-	(wl-summary-msgdb-save)
 	(if (get-buffer-window cur-buf)
 	    (select-window (get-buffer-window cur-buf)))
 	(set-buffer cur-buf)
@@ -1649,14 +1649,13 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 		  (setq new    (+ (or new 0) (or (nth 0 ret-val) 0)))
 		  (setq unread (+ (or unread 0) (or (nth 1 ret-val) 0)))
 		  (setq all    (+ (or all 0) (or (nth 2 ret-val) 0)))
-		  (when mes
+		  (when (and mes
+			     (> len elmo-display-progress-threshold))
 		    (setq i (1+ i))
-		    (and (zerop (% i 10))
-			 (elmo-display-progress
-			  'wl-folder-insert-entity "Inserting group %s..."
-			  (/ (* i 100) len) (car entity))))
-		  (setq flist (cdr flist)))
-		(when mes (message "")))
+		    (elmo-display-progress
+		     'wl-folder-insert-entity "Inserting group %s..."
+		     (/ (* i 100) len) (car entity)))
+		  (setq flist (cdr flist))))
 	      (save-excursion
 		(goto-char group-name-end)
 		(delete-region (point) (save-excursion (end-of-line)
@@ -2361,12 +2360,13 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 					 (point))
 			 (save-excursion (end-of-line)
 					 (+ 1 (point))))
-	  (setq i (1+ i))
-	  (and (zerop (% i 10))
-	       (elmo-display-progress
-		'wl-folder-open-all "Opening all folders..."
-		(/ (* i 100) len))))))
-    (message "Opening all folders...done")
+	  (when (> len elmo-display-progress-threshold)
+	    (setq i (1+ i))
+	    (if (or (zerop (% i 5)) (= i len))
+		(elmo-display-progress
+		 'wl-folder-open-all "Opening all folders..."
+		 (/ (* i 100) len)))))))
+    (message "Opening all folders...done.")
     (set-buffer-modified-p nil)))
 
 (defun wl-folder-close-all ()
@@ -2453,11 +2453,12 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	    (setq diff t)))
 	 (t
 	  (wl-append removes (list folder))))))
-      (setq i (1+ i))
-      (and (zerop (% i 10))
-	   (elmo-display-progress
-	    'wl-folder-update-access-group "Updating access group..."
-	    (/ (* i 100) len)))
+      (when (> len elmo-display-progress-threshold)
+	(setq i (1+ i))
+	(if (or (zerop (% i 10)) (= i len))
+	    (elmo-display-progress
+	     'wl-folder-update-access-group "Updating access group..."
+	     (/ (* i 100) len))))
       (setq flist (cdr flist)))
     ;; check unsubscribed groups
     (while unsubscribes
@@ -2470,11 +2471,12 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	(when (member (car unsubscribes) new-flist)
 	  (setq new-flist (delete (car unsubscribes) new-flist))
 	  (wl-append new-unsubscribes (list (car unsubscribes))))))
-      (setq i (1+ i))
-      (and (zerop (% i 10))
-	   (elmo-display-progress
-	    'wl-folder-update-access-group "Updating access group..."
-	    (/ (* i 100) len)))
+      (when (> len elmo-display-progress-threshold)
+	(setq i (1+ i))
+	(if (or (zerop (% i 10)) (= i len))
+	    (elmo-display-progress
+	     'wl-folder-update-access-group "Updating access group..."
+	     (/ (* i 100) len))))
       (setq unsubscribes (cdr unsubscribes)))
     ;;
     (if (or new-flist removes)
@@ -2510,7 +2512,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	(setq new-list (cdr new-list))))
     (if new-flist
 	(message "%d new folder(s)." (length new-flist))
-      (message "Updating access group...done"))
+      (message "Updating access group...done."))
     (wl-append new-flist subscribed-list)	;; new is first
     (run-hooks 'wl-folder-update-access-group-hook)
     (setcdr (cdr entity) (list new-flist new-unsubscribes))
