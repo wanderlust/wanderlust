@@ -3,6 +3,9 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 * Changes in 2.10.1 from 2.10.0
   Version 2.10.1 is a bug fix version of 2.10.0.
 
+** Fixed the problem that msgdb be destroyed when print-length or
+   print-level has Non-nil value.
+
 ** wl-summary-pack-number in pipe folder is disabled temporarily
    since it didn't work. Invoke it in destination folder instead.
 
