@@ -1,3 +1,14 @@
+2004-02-16  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo.el (elmo-message-fetch-bodystructure): New method.
+	(elmo-message-fetch-bodystructure): Define default.
+
+	* elmo-imap4.el (mime-imap-location-bodystructure): Call
+	elmo-message-fetch-bodystructure.
+	(elmo-message-fetch-bodystructure): Define.
+
+	* elmo-filter.el (elmo-message-fetch-bodystructure): Define.
+
 2004-02-15  Tetsurou Okazaki  <okazaki@be.to>
 
 	* elmo-filter.el (elmo-message-folder): Define.

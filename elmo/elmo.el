@@ -577,6 +577,9 @@ If READ is non-nil, message is flaged as read.")
      nil nil (not read))
     path))
 
+(luna-define-generic elmo-message-fetch-bodystructure (folder number strategy)
+  "Fetch bodystructure of the message in FOLDER with NUMBER using STRATEGY.")
+
 (luna-define-generic elmo-message-fetch (folder number strategy
 						&optional
 						section
@@ -1295,6 +1298,10 @@ If Optional LOCAL is non-nil, don't update server flag."
 	       (not elmo-folder-update-confirm))
 	  (nthcdr (max (- len elmo-folder-update-threshold) 0) appends)
 	appends))))
+
+(luna-define-method elmo-message-fetch-bodystructure ((folder elmo-folder)
+						      number strategy)
+  nil)
 
 (luna-define-method elmo-message-fetch ((folder elmo-folder)
 					number strategy

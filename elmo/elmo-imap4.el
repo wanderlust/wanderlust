@@ -457,7 +457,7 @@ If response is not `OK' response, causes error with IMAP response text."
 
 (luna-define-method mime-imap-location-bodystructure
   ((location mime-elmo-imap-location))
-  (elmo-imap4-fetch-bodystructure
+  (elmo-message-fetch-bodystructure
    (mime-elmo-imap-location-folder-internal location)
    (mime-elmo-imap-location-number-internal location)
    (mime-elmo-imap-location-strategy-internal location)))
@@ -618,8 +618,9 @@ BUFFER must be a single-byte buffer."
 	       (car (nth 1 entry))))
 	 response)))
 
-(defun elmo-imap4-fetch-bodystructure (folder number strategy)
-  "Fetch BODYSTRUCTURE for the message in the FOLDER with NUMBER using STRATEGY."
+(luna-define-method elmo-message-fetch-bodystructure ((folder
+						       elmo-imap4-folder)
+						      number strategy)
   (if (elmo-fetch-strategy-use-cache strategy)
       (elmo-object-load
        (elmo-file-cache-expand-path

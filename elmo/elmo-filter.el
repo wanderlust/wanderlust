@@ -146,6 +146,13 @@
    (elmo-filter-folder-target-internal folder)
    flag number))
 
+(luna-define-method elmo-message-fetch-bodystructure ((folder
+						       elmo-filter-folder)
+						      number strategy)
+  (elmo-message-fetch-bodystructure
+   (elmo-filter-folder-target-internal folder)
+   number strategy))
+
 (luna-define-method elmo-message-fetch ((folder elmo-filter-folder)
 					number strategy
 					&optional section outbuf unseen)
