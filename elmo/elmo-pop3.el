@@ -33,19 +33,46 @@
 
 (require 'elmo-msgdb)
 (require 'elmo-net)
-
 (eval-when-compile
-  (require 'elmo-util))
-
-(eval-and-compile
-  (autoload 'md5 "md5"))
+  (require 'elmo-util)
+  (condition-case nil
+      (progn
+	(require 'starttls)
+	(require 'sasl))
+    (error))
+  (defun-maybe md5 (a))
+  (defun-maybe sasl-digest-md5-digest-response
+    (digest-challenge username passwd serv-type host &optional realm))
+  (defun-maybe sasl-scram-md5-client-msg-1
+    (authenticate-id &optional authorize-id))
+  (defun-maybe sasl-scram-md5-client-msg-2
+    (server-msg-1 client-msg-1 salted-pass))
+  (defun-maybe sasl-scram-md5-make-salted-pass
+    (server-msg-1 passphrase))
+  (defun-maybe sasl-cram-md5 (username passphrase challenge))
+  (defun-maybe sasl-scram-md5-authenticate-server
+    (server-msg-1 server-msg-2 client-msg-1 salted-pass))
+  (defun-maybe starttls-negotiate (a)))
+(condition-case nil
+    (progn
+      (require 'sasl))
+  (error))
 
 (defvar elmo-pop3-use-uidl t
   "*If non-nil, use UIDL.")
 
 (defvar elmo-pop3-exists-exactly t)
 
-(luna-define-class elmo-pop3-session (elmo-network-session) ())
+(defvar elmo-pop3-authenticator-alist
+  '((user        elmo-pop3-auth-user)
+    (apop        elmo-pop3-auth-apop)
+    (cram-md5    elmo-pop3-auth-cram-md5)
+    (scram-md5   elmo-pop3-auth-scram-md5)
+    (digest-md5  elmo-pop3-auth-digest-md5))
+  "Definition of authenticators.")
+
+(eval-and-compile
+  (luna-define-class elmo-pop3-session (elmo-network-session) ()))
 
 ;; buffer-local
 (defvar elmo-pop3-read-point nil)
@@ -164,6 +191,7 @@
 		    (elmo-network-session-greeting-internal session))
       ;; good, APOP ready server
       (progn
+	(require 'md5)
 	(elmo-pop3-send-command
 	 (elmo-network-session-process-internal session)
 	 (format "apop %s %s"
@@ -179,8 +207,97 @@
 	     t)
 	    (signal 'elmo-authenticate-error
 		    '(elmo-pop3-auth-apop))))
-    (signal 'elmo-open-error '(elmo-pop3-auth-apop))))
+    (signal 'elmo-open-error '(elmo-pop-auth-user))))
     
+(defun elmo-pop3-auth-cram-md5 (session)
+  (let ((process (elmo-network-session-process-internal session))
+	response)
+    (elmo-pop3-send-command  process "auth cram-md5")
+    (or (setq response
+	      (elmo-pop3-read-response process t))
+	(signal 'elmo-open-error '(elmo-pop-auth-cram-md5)))
+    (elmo-pop3-send-command
+     process
+     (elmo-base64-encode-string
+      (sasl-cram-md5 (elmo-network-session-user-internal session)
+		     (elmo-get-passwd
+		      (elmo-network-session-password-key session))
+		     (elmo-base64-decode-string
+		      (cadr (split-string response " "))))))
+    (or (elmo-pop3-read-response process t)
+	(signal 'elmo-authenticate-error
+		'(elmo-pop-auth-cram-md5)))))
+
+(defun elmo-pop3-auth-scram-md5 (session)
+  (let ((process (elmo-network-session-process-internal session))
+	server-msg-1 server-msg-2 client-msg-1 client-msg-2
+	salted-pass response)
+    (elmo-pop3-send-command
+     process
+     (format "auth scram-md5 %s"
+	     (elmo-base64-encode-string
+	      (setq client-msg-1
+		    (sasl-scram-md5-client-msg-1
+		     (elmo-network-session-user-internal session))))))
+    (or (elmo-pop3-read-response process t)
+	(signal 'elmo-open-error '(elmo-pop-auth-scram-md5)))
+    (setq server-msg-1
+	  (elmo-base64-decode-string (cadr (split-string response " "))))
+    (elmo-pop3-send-command
+     process
+     (elmo-base64-encode-string
+      (sasl-scram-md5-client-msg-2
+       server-msg-1
+       client-msg-1
+       (setq salted-pass
+	     (sasl-scram-md5-make-salted-pass
+	      server-msg-1
+	      (elmo-get-passwd
+	       (elmo-network-session-password-key session)))))))
+    (or (setq response (elmo-pop3-read-response process t))
+	(signal 'elmo-authenticate-error
+		'(elmo-pop-auth-scram-md5)))
+    (setq server-msg-2 (elmo-base64-decode-string
+			(cadr (split-string response " "))))
+    (or (sasl-scram-md5-authenticate-server server-msg-1
+					    server-msg-2
+					    client-msg-1
+					    salted-pass)
+	(signal 'elmo-authenticate-error
+		'(elmo-pop-auth-scram-md5)))
+    (elmo-pop3-send-command process "")
+    (or (setq response (elmo-pop3-read-response process t))
+	(signal 'elmo-authenticate-error
+		'(elmo-pop-auth-scram-md5)))))
+
+(defun elmo-pop3-auth-digest-md5 (session)
+  (let ((process (elmo-network-session-process-internal session))
+	response)
+    (elmo-pop3-send-command process "auth digest-md5")
+    (or (setq response
+	      (elmo-pop3-read-response process t))
+	(signal 'elmo-open-error
+		'(elmo-pop-auth-digest-md5)))
+    (elmo-pop3-send-command
+     process
+     (elmo-base64-encode-string
+      (sasl-digest-md5-digest-response
+       (elmo-base64-decode-string
+	(cadr (split-string response " ")))
+       (elmo-network-session-user-internal session)
+       (elmo-get-passwd
+	(elmo-network-session-password-key session))
+       "pop"
+       (elmo-network-session-host-internal session))
+      'no-line-break))
+    (or (elmo-pop3-read-response process t)
+	(signal 'elmo-authenticate-error
+		'(elmo-pop-auth-digest-md5)))
+    (elmo-pop3-send-command process "")
+    (or (elmo-pop3-read-response process t)
+	(signal 'elmo-open-error
+		'(elmo-pop-auth-digest-md5)))))
+
 (luna-define-method elmo-network-initialize-session-buffer :after
   ((session elmo-pop3-session) buffer)
   (with-current-buffer buffer
@@ -217,72 +334,16 @@
 
 (luna-define-method elmo-network-authenticate-session ((session
 							elmo-pop3-session))
-  (with-current-buffer (process-buffer 
-			(elmo-network-session-process-internal session))
-    (let* ((process (elmo-network-session-process-internal session))
-	   (auth (elmo-network-session-auth-internal session))
-	   (auth (mapcar '(lambda (mechanism) (upcase (symbol-name mechanism)))
-			 (if (listp auth) auth (list auth))))
-	   client name step response mechanism
-	   sasl-read-passphrase)
-      (or (and (string= "USER" (car auth))
-	       (elmo-pop3-auth-user session))
-	  (and (string= "APOP" (car auth))
-	       (elmo-pop3-auth-apop session))
-	  (progn
-	    (setq mechanism (sasl-find-mechanism auth))
-	    (unless mechanism
-	      (signal 'elmo-authenticate-error '(elmo-pop3-auth-no-mechanisms)))
-	    (setq client
-		  (sasl-make-client
-		   mechanism
-		   (elmo-network-session-user-internal session)
-		   "pop"
-		   (elmo-network-session-host-internal session)))
-;;;	    (if elmo-pop3-auth-user-realm
-;;;		(sasl-client-set-property client 'realm elmo-pop3-auth-user-realm))
-	    (setq name (sasl-mechanism-name mechanism))
-	    (elmo-network-session-set-auth-internal session
-						    (intern (downcase name)))
-	    (setq sasl-read-passphrase
-		  (function
-		   (lambda (prompt)
-		     (elmo-get-passwd
-		      (elmo-network-session-password-key session)))))
-	    (setq step (sasl-next-step client nil))
-	    (elmo-pop3-send-command
-	     process
-	     (concat "AUTH " name
-		     (and (sasl-step-data step)
-			  (concat 
-			   " "
-			   (elmo-base64-encode-string
-			    (sasl-step-data step) 'no-line-break))))) ;)
-	    (catch 'done
-	      (while t
-		(unless (setq response (elmo-pop3-read-response process t))
-		  (signal 'elmo-authenticate-error
-			  (list (intern
-				 (concat "elmo-pop3-auth-"
-					 (downcase name))))))
-		(if (string-match "^\+OK" response)
-		    (if (sasl-next-step client step)
-			(signal 'elmo-authenticate-error
-				(list (intern
-				       (concat "elmo-pop3-auth-"
-					       (downcase name)))))
-		      (throw 'done nil)))
-		(sasl-step-set-data
-		 step
-		 (elmo-base64-decode-string 
-		  (cadr (split-string response " "))))
-		(setq step (sasl-next-step client step))
-		(elmo-pop3-send-command
-		 process
-		 (if (sasl-step-data step)
-		     (elmo-base64-encode-string (sasl-step-data step)
-						'no-line-break)
-		   "")))))))))
+  (let (authenticator)
+    ;; defaults to 'user.
+    (unless (elmo-network-session-auth-internal session)
+      (elmo-network-session-set-auth-internal session 'user))
+    (setq authenticator
+	  (nth 1 (assq (elmo-network-session-auth-internal session)
+		       elmo-pop3-authenticator-alist)))
+    (unless authenticator (error "There's no authenticator for %s"
+				 (elmo-network-session-auth-internal session)))
+    (funcall authenticator session)))
 
 (luna-define-method elmo-network-setup-session ((session
 						 elmo-pop3-session))
