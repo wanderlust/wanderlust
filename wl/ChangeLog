@@ -1,3 +1,13 @@
+2003-11-19  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-prefetch-msg): Undo the last change.
+	(wl-summary-mark-as-read-all): Ditto.
+	(wl-summary-delete-messages-on-buffer): Ditto.
+	(wl-summary-sync-update): Ditto.
+	(wl-summary-mark-as-read-internal): Ditto.
+	(wl-summary-mark-as-answered-internal): Ditto.
+	(wl-summary-update-folder-info): Abolished.
+
 2003-11-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-mark-as-read-all): Use
