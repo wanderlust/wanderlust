@@ -1,16 +1,7 @@
-2001-08-29  Yuuichi Teranishi  <teranisi@gohome.org>
-
-	* WL-ELS (WL-MODULES): Added wl-acap.
-
-2001-08-28  Katsumi Yamaoka   <yamaoka@jpl.org>
-
-	* WL-MK: Byte-optimize the function `char-after' for old Emacsen.
-
-2001-08-28  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+2001-08-29  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* Makefile (check): New rule
 	* WL-MK (check-wl): New function.
-	* tests: New directory.
 	* tests/ChangeLog: New file.
 
 	* utils/ChangeLog: New file.

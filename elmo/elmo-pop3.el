@@ -40,10 +40,44 @@
 (eval-and-compile
   (autoload 'md5 "md5"))
 
+;; POP3
+(defcustom elmo-pop3-default-user (or (getenv "USER")
+				      (getenv "LOGNAME")
+				      (user-login-name))
+  "*Default username for POP3."
+  :type 'string
+  :group 'elmo)
+
+(defcustom elmo-pop3-default-server  "localhost"
+  "*Default POP3 server."
+  :type 'string
+  :group 'elmo)
+
+(defcustom elmo-pop3-default-authenticate-type 'user
+  "*Default Authentication type for POP3."
+  :type 'symbol
+  :group 'elmo)
+
+(defcustom elmo-pop3-default-port 110
+  "*Default POP3 port."
+  :type 'integer
+  :group 'elmo)
+
+(defcustom elmo-pop3-default-stream-type nil
+  "*Default stream type for POP3.
+Any symbol value of `elmo-network-stream-type-alist' or
+`elmo-pop3-stream-type-alist'."
+  :type 'symbol
+  :group 'elmo)
+
 (defcustom elmo-pop3-default-use-uidl t
   "If non-nil, use UIDL on POP3."
   :type 'boolean
   :group 'elmo)
+
+(defvar elmo-pop3-stream-type-alist nil
+  "*Stream bindings for POP3.
+This is taken precedence over `elmo-network-stream-type-alist'.")
 
 (defvar elmo-pop3-use-uidl-internal t
   "(Internal switch for using UIDL on POP3).")
