@@ -1,4 +1,26 @@
+2001-06-13  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-pop3.el (elmo-pop3-lock): New buffer local variable.
+	(elmo-pop3-send-command): Call elmo-pop3-lock.
+	(elmo-pop3-read-response): Call elmo-pop3-unlock.
+	(elmo-pop3-read-contents): Ditto.
+	(elmo-pop3-lock): New function.
+	(elmo-pop3-unlock): Ditto.
+	(elmo-pop3-locked-p): Ditto.
+	(elmo-folder-check): Don't delete process if elmo-pop3-locked-p
+	returns t.
+
 2001-06-11  Yuuichi Teranishi  <teranisi@gohome.org>
+
+	* elmo-shimbun.el (elmo-shimbun-msgdb-to-headers): Inverted logic.
+
+	* elmo-util.el (elmo-file-field-primitive-condition-match):
+	New inline function (Don't fetch file content if "first" or "last").
+	(elmo-file-field-condition-match): Use
+	elmo-file-field-primitive-condition-match.
+
+	* elmo-localdir.el (elmo-folder-search): Speed up simple "last" and
+	"first".
 
 	* elmo-pop3.el (elmo-pop3-process-filter): Don't use floor nor float.
 	(elmo-message-fetch-plugged): Fixed.
