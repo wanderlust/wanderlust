@@ -256,15 +256,16 @@
       (substring subject (match-end 0))
     subject))
 
-(defun wl-draft-reply-list-symbol (from no-arg)
-  "Check FROM and NO-ARG, return symbol `wl-draft-reply-*-argument-list'.
-Return symbol, not list.  Use symbol-name"
-  (if (wl-address-user-mail-address-p from)
+(defun wl-draft-reply-list-symbol (no-arg &optional from)
+  "Select `wl-draft-reply-*-argument-list' from condition NO-ARG and FROM.
+Return symbol `wl-draft-reply-*-argument-list' (not value).
+When FROM is nil, use (std11-field-body \"From\") instead."
+  (if (wl-address-user-mail-address-p (or from (std11-field-body "From")))
       (if no-arg
-          'wl-draft-reply-myself-without-argument-list
-        'wl-draft-reply-myself-with-argument-list)
+	  'wl-draft-reply-myself-without-argument-list
+	'wl-draft-reply-myself-with-argument-list)
     (if no-arg
-        'wl-draft-reply-without-argument-list
+	'wl-draft-reply-without-argument-list
       'wl-draft-reply-with-argument-list)))
 
 (defun wl-draft-reply (buf no-arg summary-buf)
@@ -276,8 +277,8 @@ Return symbol, not list.  Use symbol-name"
     (set-buffer buf)
     (setq from (wl-address-header-extract-address (std11-field-body "From")))
     ;; symbol-name use in error message
-    (setq r-list-name (symbol-name (wl-draft-reply-list-symbol from no-arg)))
-    (setq r-list (symbol-value (wl-draft-reply-list-symbol from no-arg)))
+    (setq r-list-name (symbol-name (wl-draft-reply-list-symbol no-arg from)))
+    (setq r-list (symbol-value r-list-name))
     (catch 'done
       (while r-list
 	(when (let ((condition (car (car r-list))))

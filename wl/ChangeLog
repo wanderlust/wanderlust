@@ -1,3 +1,9 @@
+2001-01-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-draft-reply-list-symbol): Change argument order.
+	FROM was optional argument.
+	(wl-draft-reply): Fixed `wl-draft-reply-list-symbol' call point.
+
 2001-01-23  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-version.el (wl-version-show): Removed.
