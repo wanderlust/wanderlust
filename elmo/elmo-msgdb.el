@@ -88,7 +88,7 @@
 ;; FIELD-VALUE elmo-msgdb-get-field MSGDB NUMBER FIELD
 ;; MSGDB elmo-msgdb-append MSGDB MSGDB-APPEND
 ;; MSGDB elmo-msgdb-clear MSGDB
-;; elmo-msgdb-delete-msgs MSGDB NUMBERS
+;; elmo-msgdb-delete-messages MSGDB NUMBERS
 ;; elmo-msgdb-sort-by-date MSGDB
 
 ;;;
@@ -488,7 +488,7 @@ FLAG is a symbol which is one of the following:
 	msgdb)
     (elmo-make-msgdb)))
 
-(defun elmo-msgdb-delete-msgs (msgdb msgs)
+(defun elmo-msgdb-delete-messages (msgdb msgs)
   "Delete MSGS from MSGDB
 content of MSGDB is changed."
   (let* ((overview (car msgdb))
