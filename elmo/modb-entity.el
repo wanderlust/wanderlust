@@ -338,8 +338,8 @@ If each field is t, function is set as default converter."
    (lambda (element)
      (if (stringp element)
 	 (elmo-with-enable-multibyte
-	   (encode-mime-charset-string element elmo-mime-charset)))
-       element)
+	   (encode-mime-charset-string element elmo-mime-charset))
+       element))
    value))
 
 (defun modb-entity-create-field-indices (slots)
