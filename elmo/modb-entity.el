@@ -326,26 +326,21 @@ If each field is t, function is set as default converter."
       (mapconcat 'identity value ", "))))
 
 (defun modb-entity-decode-string-recursive (field value)
-  (cond ((stringp value)
-	 (elmo-msgdb-get-decoded-cache value))
-	((consp value)
-	 (setcar value (modb-entity-decode-string-recursive field (car value)))
-	 (setcdr value (modb-entity-decode-string-recursive field (cdr value)))
-	 value)
-	(t
-	 value)))
+  (elmo-map-recursive
+   (lambda (element)
+     (if (stringp element)
+	 (elmo-msgdb-get-decoded-cache element)
+       element))
+   value))
 
 (defun modb-entity-encode-string-recursive (field value)
-  (cond ((stringp value)
+  (elmo-map-recursive
+   (lambda (element)
+     (if (stringp element)
 	 (elmo-with-enable-multibyte
-	   (encode-mime-charset-string value elmo-mime-charset)))
-	((consp value)
-	 (setcar value (modb-entity-encode-string-recursive field (car value)))
-	 (setcdr value (modb-entity-encode-string-recursive field (cdr value)))
-	 value)
-	(t
-	 value)))
-
+	   (encode-mime-charset-string element elmo-mime-charset)))
+       element)
+   value))
 
 (defun modb-entity-create-field-indices (slots)
   (let ((index 0)

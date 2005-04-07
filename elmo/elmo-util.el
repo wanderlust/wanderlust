@@ -1594,6 +1594,16 @@ NUMBER-SET is altered."
 	   (t (funcall func x))))
    list-of-list))
 
+(defun elmo-map-recursive (function object)
+  (let* ((prev (list 'dummy))
+	 (result prev))
+    (while (consp object)
+      (setq prev (setcdr prev (list (elmo-map-recursive function (car object))))
+	    object (cdr object)))
+    (when object
+      (setcdr prev (funcall function object)))
+    (cdr result)))
+
 (defun elmo-parse (string regexp &optional matchn)
   (or matchn (setq matchn 1))
   (let (list)
