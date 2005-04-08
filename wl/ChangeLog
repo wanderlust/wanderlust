@@ -1,3 +1,8 @@
+2005-04-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-print-message-with-ps-print): Call
+	`elmo-message-entity-field' with 2nd argument `type'.
+
 2005-04-04  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-action.el (wl-summary-exec): Reduce loop strength in a dolist loop.

@@ -4853,16 +4853,14 @@ If ARG is numeric number, decode message as following:
 			      wl-summary-buffer-elmo-folder
 			      (wl-summary-message-number))))
 		   (wl-ps-subject
-		    (and entity
-			 (or (elmo-message-entity-field entity 'subject)
-			     "")))
+		    (or (elmo-message-entity-field entity 'subject 'string)
+			""))
 		   (wl-ps-from
-		    (and entity
-			 (or (elmo-message-entity-field entity 'from) "")))
+		    (or (elmo-message-entity-field entity 'from 'string)
+			""))
 		   (wl-ps-date
-		    (and entity
-			 (or (elmo-time-make-date-string
-			      (elmo-message-entity-field entity 'date)) ""))))
+		    (or (elmo-message-entity-field entity 'date 'string)
+			"")))
 	      (run-hooks 'wl-ps-preprint-hook)
 	      (set-buffer wl-message-buffer)
 	      (copy-to-buffer buffer (point-min) (point-max))
