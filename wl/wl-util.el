@@ -447,12 +447,6 @@ that `read' can handle, whenever this is possible."
       (wl-get-date-iso8601 date)
     (error "")))
 
-(defun wl-day-number (date)
-  (let ((dat (mapcar '(lambda (s) (and s (string-to-int s)) )
-		     (timezone-parse-date date))))
-    (timezone-absolute-from-gregorian
-     (nth 1 dat) (nth 2 dat) (car dat))))
-
 (defun wl-url-news (url &rest args)
   (interactive "sURL: ")
   (if (string-match "^news:\\(.*\\)$" url)

@@ -367,7 +367,7 @@ Set `wl-score-cache' nil."
 (defun wl-score-headers (scores &optional force-msgs not-add)
   (let* ((elmo-mime-charset wl-summary-buffer-mime-charset)
 	 (folder wl-summary-buffer-elmo-folder)
-	 (now (wl-day-number (current-time-string)))
+	 (now (elmo-time-to-days (current-time)))
 	 (expire (and wl-score-expiry-days
 		      (- now wl-score-expiry-days)))
 	 (wl-score-stop-add-entry not-add)
@@ -754,10 +754,9 @@ Set `wl-score-cache' nil."
 			       expire
 			       (< expire
 				  (setq day
-					(wl-day-number
-					 (elmo-time-make-date-string
-					  (elmo-message-entity-field
-					   (car art) 'date)))))))
+					(elmo-time-to-days
+					 (elmo-message-entity-field
+					  (car art) 'date))))))
 		  (when (setq new (wl-score-add-followups
 				   (car art) score all-scores alist thread
 				   day))
@@ -793,7 +792,7 @@ Set `wl-score-cache' nil."
 	     (setq dont t)))
       (unless dont
 	(let ((entry (list id score
-			   (or day (wl-day-number (current-time-string))) 's)))
+			   (or day (elmo-time-to-days (current-time))) 's)))
 	  (unless (or thread wl-score-stop-add-entry)
 	    (wl-score-update-score-entry "references" entry alist))
 	  (wl-score-set 'touched '(t) alist)
@@ -893,7 +892,7 @@ Set `wl-score-cache' nil."
     (wl-summary-score-effect (car entry) list (eq (nth 2 list) 'now)))))
 
 (defun wl-score-get-latest-msgs ()
-  (let* ((now (wl-day-number (current-time-string)))
+  (let* ((now (elmo-time-to-days (current-time)))
 	 (expire (and wl-score-expiry-days
 		      (- now wl-score-expiry-days)))
 	 (rnumbers (reverse wl-summary-buffer-number-list))
@@ -903,12 +902,10 @@ Set `wl-score-cache' nil."
 				   nil t)
       (catch 'break
 	(while rnumbers
-	  (if (< (wl-day-number
-		  (elmo-time-make-date-string
-		   (elmo-message-entity-field
-		    (elmo-message-entity wl-summary-buffer-elmo-folder
-					 (car rnumbers))
-		    'date)))
+	  (if (< (elmo-time-to-days
+		  (elmo-message-entity-field wl-summary-buffer-elmo-folder
+					     (car rnumbers)
+					     'date))
 		 expire)
 	      (throw 'break t))
 	  (wl-push (car rnumbers) msgs)
@@ -1077,7 +1074,7 @@ Set `wl-score-cache' nil."
 	   (perm (cond ((eq perm 'perm)
 			nil)
 		       ((eq perm 'temp)
-			(wl-day-number (current-time-string)))
+			(elmo-time-to-days (current-time)))
 		       ((eq perm 'now)
 			perm)))
 	   (new (list match score perm type extra)))
@@ -1323,7 +1320,7 @@ Entering Score mode calls the value of `wl-score-mode-hook'."
 (defun wl-score-edit-insert-date ()
   "Insert date in numerical format."
   (interactive)
-  (princ (wl-day-number (current-time-string)) (current-buffer)))
+  (princ (elmo-time-to-days (current-time)) (current-buffer)))
 
 (defun wl-score-pretty-print ()
   "Format the current score file."

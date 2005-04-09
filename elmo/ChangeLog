@@ -1,3 +1,7 @@
+2005-04-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-date.el (elmo-time-to-days): New function.
+
 2005-04-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-util.el (elmo-map-recursive): Call `function' if `object'

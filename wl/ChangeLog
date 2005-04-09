@@ -1,3 +1,15 @@
+2005-04-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-util.el (wl-day-number): Abolish.
+
+	* wl-score.el (wl-score-headers): Use `elmo-time-to-days' instead
+	of `wl-day-number'.
+	(wl-score-followup): Ditto.
+	(wl-score-add-followups): Ditto.
+	(wl-score-get-latest-msgs): Ditto.
+	(wl-score-get-header-entry): Ditto.
+	(wl-score-edit-insert-date): Ditto.
+
 2005-04-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-print-message-with-ps-print): Call

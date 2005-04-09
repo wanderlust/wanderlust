@@ -235,6 +235,11 @@ Otherwise treat \\ in NEWTEXT string as special:
 	   (setq rhs nil))))
   (not (null rhs)))
 
+(defun elmo-time-to-days (time)
+  (let ((date (decode-time time)))
+    (timezone-absolute-from-gregorian
+     (nth 4 date) (nth 3 date) (nth 5 date))))
+
 (require 'product)
 (product-provide (provide 'elmo-date) (require 'elmo-version))
 
