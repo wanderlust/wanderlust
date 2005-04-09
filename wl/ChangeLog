@@ -1,5 +1,11 @@
 2005-04-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-summary.el (wl-summary-create-line): Use
+	`elmo-time-to-datevec'.
+
+	* wl-expire.el (wl-expire-archive-date): Ditto.
+	(wl-expire-localdir-date): Ditto.
+
 	* wl-util.el (wl-day-number): Abolish.
 
 	* wl-score.el (wl-score-headers): Use `elmo-time-to-days' instead

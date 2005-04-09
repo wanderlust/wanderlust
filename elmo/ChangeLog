@@ -1,5 +1,9 @@
 2005-04-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo-date.el (elmo-time-less-p): Renamed from `elmo-time<'.
+	(elmo-time<): Define as alias of `elmo-time-less-p'.
+	(elmo-time-to-datevec): New function.
+
 	* elmo-date.el (elmo-time-to-days): New function.
 
 2005-04-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

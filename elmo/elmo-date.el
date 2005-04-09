@@ -224,7 +224,7 @@ Otherwise treat \\ in NEWTEXT string as special:
   (let ((system-time-locale "C"))
     (format-time-string "%a, %d %b %Y %T %z" time)))
 
-(defun elmo-time< (lhs rhs)
+(defun elmo-time-less-p (lhs rhs)
   (while (and (car lhs) (car rhs))
     (cond ((< (car lhs) (car rhs))
 	   (setq lhs nil))
@@ -235,10 +235,54 @@ Otherwise treat \\ in NEWTEXT string as special:
 	   (setq rhs nil))))
   (not (null rhs)))
 
+(defalias 'elmo-time< 'elmo-time-less-p)
+
 (defun elmo-time-to-days (time)
   (let ((date (decode-time time)))
     (timezone-absolute-from-gregorian
      (nth 4 date) (nth 3 date) (nth 5 date))))
+
+;; from timezone-fix-time in `timezone.el'
+(defun elmo-time-to-datevec (time &optional timezone)
+  (when time
+    (let* ((date   (decode-time time))
+	   (year   (nth 5 date))
+	   (month  (nth 4 date))
+	   (day    (nth 3 date))
+	   (hour   (nth 2 date))
+	   (minute (nth 1 date))
+	   (second (nth 0 date))
+	   (local  (nth 8 date))
+	   (timezone
+	    (or timezone
+		(timezone-time-zone-from-absolute
+		 (timezone-absolute-from-gregorian month day year)
+		 (+ second (* 60 (+ minute (* 60 hour)))))))
+	   (diff   (- (timezone-zone-to-minute timezone) (/ local 60)))
+	   (minute (+ minute diff))
+	   (hour-fix (floor minute 60)))
+      (setq hour (+ hour hour-fix))
+      (setq minute (- minute (* 60 hour-fix)))
+      ;; HOUR may be larger than 24 or smaller than 0.
+      (cond ((<= 24 hour)			;24 -> 00
+	     (setq hour (- hour 24))
+	     (setq day  (1+ day))
+	     (when (< (timezone-last-day-of-month month year) day)
+	       (setq month (1+ month))
+	       (setq day 1)
+	       (when (< 12 month)
+		 (setq month 1)
+		 (setq year (1+ year)))))
+	    ((> 0 hour)
+	     (setq hour (+ hour 24))
+	     (setq day  (1- day))
+	     (when (> 1 day)
+	       (setq month (1- month))
+	       (when (> 1 month)
+		 (setq month 12)
+		 (setq year (1- year)))
+	       (setq day (timezone-last-day-of-month month year)))))
+      (vector year month day hour minute second timezone))))
 
 (require 'product)
 (product-provide (provide 'elmo-date) (require 'elmo-version))

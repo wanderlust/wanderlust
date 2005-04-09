@@ -455,12 +455,9 @@ Refile to archive folder followed message date."
       (wl-append deleted-list (car (wl-expire-delete folder dels))))
     (setq delete-list (car tmp))
     (while (setq msg (wl-pop delete-list))
-      (setq date (elmo-time-make-date-string
-		  (elmo-message-field folder msg 'date)))
-      (setq time
-	    (condition-case nil
-		(timezone-fix-time date nil nil)
-	      (error [0 0 0 0 0 0 0])))
+      (setq time (or (elmo-time-to-datevec
+		      (elmo-message-field folder msg 'date))
+		     (make-vector 7 0)))
       (if (= (aref time 1) 0)	;; if (month == 0)
 	  (aset time 0 0))	;;    year = 0
       (setq dst-folder (format dst-folder-fmt
@@ -540,12 +537,9 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 	 msg arcmsg-alist arcmsg-list
 	 deleted-list ret-val)
     (while (setq msg (wl-pop delete-list))
-      (setq date (elmo-time-make-date-string
-		  (elmo-message-field folder msg 'date)))
-      (setq time
-	    (condition-case nil
-		(timezone-fix-time date nil nil)
-	      (error [0 0 0 0 0 0 0])))
+      (setq time (or (elmo-time-to-datevec
+		      (elmo-message-field folder msg 'date))
+		     (make-vector 7 0)))
       (if (= (aref time 1) 0)	;; if (month == 0)
 	  (aset time 0 0))	;;    year = 0
       (setq dst-folder (format dst-folder-fmt

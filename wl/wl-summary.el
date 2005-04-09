@@ -3559,13 +3559,10 @@ Return non-nil if the mark is updated"
 			     wl-cached))
 	(elmo-mime-charset wl-summary-buffer-mime-charset)
 	(elmo-lang wl-summary-buffer-weekday-name-lang)
-	(wl-datevec (or (ignore-errors
-			 (timezone-fix-time
-			  (elmo-time-make-date-string
-			   (elmo-message-entity-field wl-message-entity 'date))
-			  nil
-			  wl-summary-fix-timezone))
-			(make-vector 5 0)))
+	(wl-datevec (or (elmo-time-to-datevec
+			 (elmo-message-entity-field wl-message-entity 'date)
+			 wl-summary-fix-timezone)
+			(make-vector 7 0)))
 	(entity wl-message-entity) ; backward compatibility.
 	line mark)
     (if (and wl-thr-indent-string
