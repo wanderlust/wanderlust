@@ -1,3 +1,9 @@
+2005-04-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-action.el (wl-summary-exec-action-refile): Simplify.
+	(wl-summary-exec-action-copy): Ditto.
+	(wl-summary-auto-refile): Check existence of temporary mark.
+
 2005-04-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-create-line): Use

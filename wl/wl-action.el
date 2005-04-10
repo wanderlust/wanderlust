@@ -449,34 +449,28 @@ Return number if put mark succeed"
     (let ((start (point))
 	  (failures 0)
 	  (refile-len (length mark-list))
-	  dst-msgs ; loop counter
-	  result)
+	  dst-msgs)
       ;; begin refile...
-      (setq dst-msgs
-	    (wl-summary-make-destination-numbers-list mark-list))
+      (setq dst-msgs (wl-summary-make-destination-numbers-list mark-list))
       (goto-char start)	; avoid moving cursor to the bottom line.
       (when (> refile-len elmo-display-progress-threshold)
 	(elmo-progress-set 'elmo-folder-move-messages
 			   refile-len "Refiling messages..."))
-      (while dst-msgs
-	(setq result nil)
-	(condition-case nil
-	    (setq result (elmo-folder-move-messages
-			  wl-summary-buffer-elmo-folder
-			  (cdr (car dst-msgs))
-			  (wl-folder-get-elmo-folder (car (car dst-msgs)))))
-	  (error nil))
-	(if result		; succeeded.
+      (dolist (pair dst-msgs)
+	(if (condition-case nil
+		(elmo-folder-move-messages
+		 wl-summary-buffer-elmo-folder
+		 (cdr pair)
+		 (wl-folder-get-elmo-folder (car pair)))
+	      (error nil))
 	    (progn
 	      ;; update buffer.
-	      (wl-summary-delete-messages-on-buffer (cdr (car dst-msgs)))
+	      (wl-summary-delete-messages-on-buffer (cdr pair))
 	      (setq wl-summary-buffer-temp-mark-list
 		    (wl-delete-associations
-		     (cdr (car dst-msgs))
+		     (cdr pair)
 		     wl-summary-buffer-temp-mark-list)))
-	  (setq failures
-		(+ failures (length (cdr (car dst-msgs))))))
-	(setq dst-msgs (cdr dst-msgs)))
+	  (setq failures (+ failures (length (cdr pair))))))
       (elmo-progress-clear 'elmo-folder-move-messages)
       (if (<= failures 0)
 	  (message "Refiling messages...done"))
@@ -491,8 +485,7 @@ Return number if put mark succeed"
     (let ((start (point))
 	  (failures 0)
 	  (refile-len (length mark-list))
-	  dst-msgs ; loop counter
-	  result)
+	  dst-msgs)
       ;; begin refile...
       (setq dst-msgs
 	    (wl-summary-make-destination-numbers-list mark-list))
@@ -500,26 +493,22 @@ Return number if put mark succeed"
       (when (> refile-len elmo-display-progress-threshold)
 	(elmo-progress-set 'elmo-folder-move-messages
 			   refile-len "Copying messages..."))
-      (while dst-msgs
-	(setq result nil)
-	(condition-case nil
-	    (setq result (elmo-folder-move-messages
-			  wl-summary-buffer-elmo-folder
-			  (cdr (car dst-msgs))
-			  (wl-folder-get-elmo-folder (car (car dst-msgs)))
-			  'no-delete))
-	  (error nil))
-	(if result		; succeeded.
+      (dolist (pair dst-msgs)
+	(if (condition-case nil
+		(elmo-folder-move-messages
+		 wl-summary-buffer-elmo-folder
+		 (cdr pair)
+		 (wl-folder-get-elmo-folder (car pair))
+		 'no-delete)
+	      (error nil))
 	    (progn
 	      ;; update buffer.
-	      (wl-summary-delete-copy-marks-on-buffer (cdr (car dst-msgs)))
+	      (wl-summary-delete-copy-marks-on-buffer (cdr pair))
 	      (setq wl-summary-buffer-temp-mark-list
 		    (wl-delete-associations
-		     (cdr (car dst-msgs))
+		     (cdr pair)
 		     wl-summary-buffer-temp-mark-list)))
-	  (setq failures
-		(+ failures (length (cdr (car dst-msgs))))))
-	(setq dst-msgs (cdr dst-msgs)))
+	  (setq failures (+ failures (length (cdr pair))))))
       (elmo-progress-clear 'elmo-folder-move-messages)
       (if (<= failures 0)
 	  (message "Copying messages...done"))
@@ -858,8 +847,9 @@ Return number if put mark succeed"
 					       (wl-thread-get-entity number))))
 				   (wl-thread-entity-get-descendant
 				    thr-entity))))
-	  (when (and (not (wl-summary-no-auto-refile-message-p
-			   number))
+	  (when (and (not (wl-summary-no-auto-refile-message-p number))
+		     (not (wl-summary-reserve-temp-mark-p
+			   (nth 1 (wl-summary-registered-temp-mark number))))
 		     (setq dst
 			   (wl-folder-get-realname
 			    (wl-refile-guess
