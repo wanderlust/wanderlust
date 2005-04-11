@@ -181,7 +181,7 @@ File content is decoded with MIME-CHARSET."
       nil
     (with-temp-buffer
       (insert-file-contents-as-binary filename)
-      (let ((coding-system (or (elmo-set-auto-coding filename)
+      (let ((coding-system (or (elmo-set-auto-coding)
 			       (mime-charset-to-coding-system
 				mime-charset))))
 	(when coding-system
