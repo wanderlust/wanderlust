@@ -98,6 +98,82 @@
 (put 'elmo-with-enable-multibyte 'lisp-indent-function 0)
 (def-edebug-spec elmo-with-enable-multibyte t)
 
+(eval-when-compile
+  (unless (fboundp 'coding-system-base)
+    (defalias 'coding-system-base 'ignore))
+  (unless (fboundp 'coding-system-name)
+    (defalias 'coding-system-name 'ignore))
+  (unless (fboundp 'find-file-coding-system-for-read-from-filename)
+    (defalias 'find-file-coding-system-for-read-from-filename 'ignore))
+  (unless (fboundp 'find-operation-coding-system)
+    (defalias 'find-operation-coding-system 'ignore)))
+
+(defun elmo-set-auto-coding (&optional filename)
+  "Find coding system used to decode the contents of the current buffer.
+This function looks for the coding system magic cookie or examines the
+coding system specified by `file-coding-system-alist' being associated
+with FILENAME which defaults to `buffer-file-name'."
+  (cond
+   ((boundp 'set-auto-coding-function) ;; Emacs
+    (if filename
+	(or (funcall (symbol-value 'set-auto-coding-function)
+		     filename (- (point-max) (point-min)))
+	    (car (find-operation-coding-system 'insert-file-contents
+					       filename)))
+      (let (auto-coding-alist)
+	(condition-case nil
+	    (funcall (symbol-value 'set-auto-coding-function)
+		     nil (- (point-max) (point-min)))
+	  (error nil)))))
+   ((featurep 'file-coding) ;; XEmacs
+    (let ((case-fold-search t)
+	  (end (point-at-eol))
+	  codesys start)
+      (or
+       (and (re-search-forward "-\\*-+[\t ]*" end t)
+	    (progn
+	      (setq start (match-end 0))
+	      (re-search-forward "[\t ]*-+\\*-" end t))
+	    (progn
+	      (setq end (match-beginning 0))
+	      (goto-char start)
+	      (or (looking-at "coding:[\t ]*\\([^\t ;]+\\)")
+		  (re-search-forward
+		   "[\t ;]+coding:[\t ]*\\([^\t ;]+\\)"
+		   end t)))
+	    (find-coding-system (setq codesys
+				      (intern (match-string 1))))
+	    codesys)
+       (and (re-search-forward "^[\t ]*;+[\t ]*Local[\t ]+Variables:"
+			       nil t)
+	    (progn
+	      (setq start (match-end 0))
+	      (re-search-forward "^[\t ]*;+[\t ]*End:" nil t))
+	    (progn
+	      (setq end (match-beginning 0))
+	      (goto-char start)
+	      (re-search-forward
+	       "^[\t ]*;+[\t ]*coding:[\t ]*\\([^\t\n\r ]+\\)"
+	       end t))
+	    (find-coding-system (setq codesys
+				      (intern (match-string 1))))
+	    codesys)
+       (and (progn
+	      (goto-char (point-min))
+	      (setq case-fold-search nil)
+	      (re-search-forward "^;;;coding system: "
+				 ;;(+ (point-min) 3000) t))
+				 nil t))
+	    (looking-at "[^\t\n\r ]+")
+	    (find-coding-system
+	     (setq codesys (intern (match-string 0))))
+	    codesys)
+       (and filename
+	    (setq codesys
+		  (find-file-coding-system-for-read-from-filename
+		   filename))
+	    (coding-system-name (coding-system-base codesys))))))))
+
 (defun elmo-object-load (filename &optional mime-charset no-err)
   "Load OBJECT from the file specified by FILENAME.
 File content is decoded with MIME-CHARSET."
@@ -105,9 +181,7 @@ File content is decoded with MIME-CHARSET."
       nil
     (with-temp-buffer
       (insert-file-contents-as-binary filename)
-      (let ((coding-system (or (funcall set-auto-coding-function
-					filename
-					(- (point-max) (point-min)))
+      (let ((coding-system (or (elmo-set-auto-coding filename)
 			       (mime-charset-to-coding-system
 				mime-charset))))
 	(when coding-system

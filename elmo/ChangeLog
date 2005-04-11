@@ -1,3 +1,8 @@
+2005-04-11  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* elmo-util.el (elmo-set-auto-coding): New function.
+	(elmo-object-load): Use it.
+
 2005-04-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-date.el (elmo-time-less-p): Renamed from `elmo-time<'.
