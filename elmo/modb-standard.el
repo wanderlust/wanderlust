@@ -176,16 +176,15 @@
 	      (modb-standard-key number)
 	      (modb-standard-entity-map-internal msgdb))))
     (cond
-     ((and ret (eq (car-safe ret) 'autoload))
-      (cdr (cdr ret))) ; message-id.
-     ((and ret (stringp (car-safe ret)))
-      ;; Already loaded.
-      (car ret))
      ((null ret)
       ;; Garbage entity.
       (elmo-clear-hash-val (modb-standard-key number)
 			   (modb-standard-entity-map-internal msgdb))
       nil)				; return nil.
+     ((eq (car-safe ret) 'autoload)
+      (cdr (cdr ret)))			; message-id.
+     ((elmo-msgdb-message-entity-field (elmo-message-entity-handler ret)
+				       ret 'message-id)) ; Already loaded.
      (t (error "Internal error: invalid msgdb status")))))
 
 (defun modb-standard-load-entity (modb path &optional section)
