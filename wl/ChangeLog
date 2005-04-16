@@ -1,3 +1,7 @@
+2005-04-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-default-from): Simplify.
+
 2005-04-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-action.el (wl-summary-exec-action-refile): Simplify.

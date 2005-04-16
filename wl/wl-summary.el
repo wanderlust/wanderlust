@@ -211,38 +211,25 @@ summary's folder name matches with `wl-summary-showto-folder-regexp'
 and (2) sender address is yours.
 
 See also variable `wl-use-petname'."
-  (let (retval tos ng)
-    (unless
-	(and (eq major-mode 'wl-summary-mode)
+  (let ((translator (if wl-use-petname
+			(lambda (string)
+			  (or (funcall wl-summary-get-petname-function string)
+			      (car (std11-extract-address-components string))
+			      string))
+		      #'identity))
+	to ng)
+    (or (and (eq major-mode 'wl-summary-mode)
 	     (stringp wl-summary-showto-folder-regexp)
 	     (string-match wl-summary-showto-folder-regexp
 			   (wl-summary-buffer-folder-name))
 	     (wl-address-user-mail-address-p from)
 	     (cond
-	      ((setq tos (elmo-message-entity-field wl-message-entity 'to))
-	       (setq retval
-		     (concat "To:"
-			     (mapconcat
-			      (lambda (to)
-				(if wl-use-petname
-				    (or
-				     (funcall
-				      wl-summary-get-petname-function to)
-				     (car
-				      (std11-extract-address-components to))
-				     to)
-				  to))
-			      tos
-			      ","))))
-	      ((setq ng (elmo-message-entity-field
-			 wl-message-entity 'newsgroups))
-	       (setq retval (concat "Ng:" ng)))))
-      (if wl-use-petname
-	  (setq retval (or (funcall wl-summary-get-petname-function from)
-			   (car (std11-extract-address-components from))
-			   from))
-	(setq retval from)))
-    retval))
+	      ((setq to (elmo-message-entity-field wl-message-entity 'to))
+	       (concat "To:" (mapconcat translator to ",")))
+	      ((setq ng (elmo-message-entity-field wl-message-entity
+						   'newsgroups))
+	       (concat "Ng:" ng))))
+	(funcall translator from))))
 
 (defun wl-summary-simple-from (string)
   (if wl-use-petname
