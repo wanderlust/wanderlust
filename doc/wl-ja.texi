@@ -4869,7 +4869,6 @@ POP-before-SMTP $BMQ$NJQ?t(B (@code{wl-pop-before-smtp-*})$B$r@_Dj$7$F$$$J$$>
 
 @example
 @group
-http://spam.ayamura.org/tools/smPbS.html
 http://www.iecc.com/pop-before-smtp.html
 @end group
 @end example
@@ -5220,6 +5219,11 @@ Non-nil $B$J$i!"<+J,08$F$N%a!<%k$KJV?.$9$k>l9g!">o$K(B @samp{To:},
 @vindex wl-draft-delete-myself-from-bcc-fcc
 Non-nil $B$G!"(B@samp{To:}, @samp{Cc:} $B$,(B $BJQ?t(B @code{wl-subscribed-mailing-list} $B$K(B
 $B4^$^$l$F$$$k>l9g!"(B@samp{Bcc:} , @samp{Fcc:} $B$r$D$1$^$;$s!%(B
+
+@item wl-draft-send-mail-function
+@vindex wl-draft-send-mail-function
+$B=i4|@_Dj$O(B @code{wl-draft-send-mail-with-smtp}$B!#(B
+$B%a!<%kAw?.$K;H$&4X?t$G$9!#(B
 
 @item wl-smtp-posting-server
 @vindex wl-smtp-posting-server
