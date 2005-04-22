@@ -1,3 +1,8 @@
+2005-04-22  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-spam.el (wl-summary-test-spam): Fix typo.
+	(wl-message-check-spam): Ditto.
+
 2005-04-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-default-from): Simplify.
