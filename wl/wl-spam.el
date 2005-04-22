@@ -182,11 +182,11 @@ See `wl-summary-mark-action-list' for the detail of element."
   (let ((folder (or folder wl-summary-buffer-elmo-folder))
 	(number (or number (wl-summary-message-number)))
 	spam)
-    (message "Cheking spam...")
+    (message "Checking spam...")
     (when (setq spam (elmo-spam-message-spam-p (elmo-spam-processor)
 					       folder number))
       (wl-summary-spam number))
-    (message "Cheking spam...done")
+    (message "Checking spam...done")
     (when (interactive-p)
       (message "No: %d is %sa spam message." number (if spam "" "not ")))))
 
@@ -318,11 +318,11 @@ See `wl-summary-mark-action-list' for the detail of element."
   (let ((original (wl-message-get-original-buffer))
 	(number wl-message-buffer-cur-number)
 	spam)
-    (message "Cheking spam...")
+    (message "Checking spam...")
     (when (setq spam (elmo-spam-buffer-spam-p (elmo-spam-processor) original))
       (with-current-buffer wl-message-buffer-cur-summary-buffer
 	(wl-summary-spam number)))
-    (message "Cheking spam...done")
+    (message "Checking spam...done")
     (message "No: %d is %sa spam message." number (if spam "" "not "))))
 
 (defun wl-refile-guess-by-spam (entity)
