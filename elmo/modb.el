@@ -242,16 +242,16 @@ If optional argument TYPE is specified, return converted value.")
       (let ((flags (elmo-msgdb-flags msgdb number)))
 	(cond ((string= (elmo-filter-value condition) "any")
 	       (and flags (not (equal flags '(cached)))))
-	     ((string= (elmo-filter-value condition) "digest")
-	      (catch 'found
-		(dolist (flag flags)
-		  (when (or (memq flag elmo-digest-flags)
-			    (elmo-global-flag-p flag))
-		    (throw 'found t)))))
-	     ((string= (elmo-filter-value condition) "read")
-	      (not (memq 'read flags)))
-	     (t
-	      (memq (intern (elmo-filter-value condition)) flags)))))
+	      ((string= (elmo-filter-value condition) "digest")
+	       (catch 'found
+		 (dolist (flag flags)
+		   (when (or (memq flag elmo-digest-flags)
+			     (elmo-global-flag-p flag))
+		     (throw 'found t)))))
+	      ((string= (elmo-filter-value condition) "read")
+	       (not (memq 'read flags)))
+	      (t
+	       (memq (intern (elmo-filter-value condition)) flags)))))
      (t
       (elmo-msgdb-message-match-condition (elmo-message-entity-handler entity)
 					  condition entity)))))
