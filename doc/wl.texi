@@ -4522,6 +4522,7 @@ with those if possible.
 Basically it is Emacs-standard mail mode.
 
 @menu
+* Parameters for Sending::
 * Editing Header::
 * Editing Message Body and Sending::
 * Dynamical Message Re-arrangement::
@@ -4529,7 +4530,55 @@ Basically it is Emacs-standard mail mode.
 * POP-before-SMTP::
 @end menu
 
-@node Editing Header, Editing Message Body and Sending, Usage of Draft Mode, Usage of Draft Mode
+@node Parameters for Sending, Editing Header, Usage of Draft Mode, Usage of Draft Mode
+@subsection Parameters for Sending
+
+According to the information of servers to send messages, configure
+following variables.
+
+@table @code
+@item wl-smtp-posting-server
+The name of the SMTP server used for mail transmission.
+
+@item wl-smtp-posting-port
+The SMTP port number for mail transmission.
+Without configuration, use default SMTP port number (25).
+
+@item wl-nntp-posting-server
+The name of NNTP server used for news submission.
+Without configuration, use @code{elmo-nntp-default-server}.
+
+@item wl-nntp-posting-port
+The NNTP port number for news submission.
+Without configuration, use @code{elmo-nntp-default-port}.
+@end table
+
+You may configure following variables on demand. See section
+Variables of Draft Mode for detail @xref{Variables of Draft Mode}.
+
+@table @code
+@item wl-smtp-posting-user
+User name for authentication by SMTP AUTH.
+
+@item wl-smtp-authenticate-type
+The authentication method for SMTP AUTH.
+Without configuration, authentication will not be carried out.
+
+@item wl-smtp-authenticate-realm
+The authentication realm for SMTP AUTH.
+Without configuration, authentication realm will not be specified.
+
+@item wl-smtp-connection-type
+Specify how to establish SMTP connections.
+
+@item wl-nntp-posting-user
+User name for AUTHINFO authentication on news submission.
+
+@item wl-nntp-posting-stream-type
+Specify how to establish NNTP connections.
+@end table
+
+@node Editing Header, Editing Message Body and Sending, Parameters for Sending, Usage of Draft Mode
 @subsection Editing Message Header
 
 You can freely edit header region above @samp{--text follows this line--},
@@ -4824,14 +4873,15 @@ As shown in the example in @code{wl-draft-config-alist}, you can select
 @subsection Sending mail by POP-before-SMTP
 @cindex POP-before-SMTP
 
-You can send mail by POP-before-SMTP with this single line:
+You can send mail by POP-before-SMTP. Necessary setting is
 
 @lisp
 (setq wl-draft-send-mail-function 'wl-draft-send-mail-with-pop-before-smtp)
 @end lisp
 
 @noindent
-Configure the following variables if you need.
+to change mail posting function from its default value @code{wl-draft-send-mail-with-smtp}.
+Also you would configure following variables on demand.
 
 @table @code
 @item wl-pop-before-smtp-user
@@ -5236,7 +5286,8 @@ or @samp{Cc:} field, do not insert @samp{Bcc:} or @samp{Fcc:} field.
 @item wl-draft-send-mail-function
 @vindex wl-draft-send-mail-function
 The initial setting is @code{wl-draft-send-mail-with-smtp}.
-This is the function to post mails.
+This is the function to post mails. To use POP-before-SMTP, set this to
+@code{wl-draft-send-mail-with-pop-before-smtp}.
 
 @item wl-smtp-posting-server
 @vindex wl-smtp-posting-server
@@ -5295,7 +5346,7 @@ If it is still @code{nil}, AUTHINFO authentication will not be carried out.
 @vindex wl-nntp-posting-port
 The initial setting is @code{nil}.
 This is the port number of the NNTP server used for news submission.
-If @code{nil}, @code{elmo-nntp-default-server} is used.
+If @code{nil}, @code{elmo-nntp-default-port} is used.
 
 @item wl-nntp-posting-stream-type
 @vindex wl-nntp-posting-stream-type

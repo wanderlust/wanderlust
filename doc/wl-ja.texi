@@ -4527,6 +4527,7 @@ Non-nil $B$J$i(B MIME $B%a%G%#%"%?%$%W$,(B message/partial $B$N%a%C%;!<%8$r
 $B4pK\$O(B Emacs $BI8=`$N%a!<%k%b!<%I$G$9!#(B
 
 @menu
+* Parameters for Sending::              $BAw?.$N0Y$N%Q%i%a!<%?(B
 * Editing Header::                      $B%X%C%@$NJT=8(B
 * Editing Message Body and Sending::    $B%a%C%;!<%8$NJT=8$HAw?.(B
 * Dynamical Message Re-arrangement::    $B%a%C%;!<%8$NF0E*$JJQ99(B
@@ -4534,8 +4535,55 @@ Non-nil $B$J$i(B MIME $B%a%G%#%"%?%$%W$,(B message/partial $B$N%a%C%;!<%8$r
 * POP-before-SMTP::                     POP-before-SMTP $B$K$h$k%a!<%k$NAw?.(B
 @end menu
 
+@node Parameters for Sending, Editing Header, Usage of Draft Mode, Usage of Draft Mode
+@subsection $BAw?.$N0Y$N%Q%i%a!<%?(B
 
-@node Editing Header, Editing Message Body and Sending, Usage of Draft Mode, Usage of Draft Mode
+$B%a%C%;!<%8$NAw?.$K;H$&%5!<%P$N>pJs$K1h$C$F0J2<$NJQ?t$r@_Dj$7$F2<$5$$!#(B
+
+@table @code
+@item wl-smtp-posting-server
+$B%a!<%kAw?.;~$N(B SMTP $B%5!<%PL>$G$9!#(B
+
+@item wl-smtp-posting-port
+$B%a!<%kAw?.;~$N(B SMTP $B%]!<%HHV9f$G$9!#(B
+$B@_Dj$7$F$$$J$$>l9g$O%G%U%)%k%H$N(B SMTP $B%]!<%HHV9f(B(25)$B$r;H$$$^$9!#(B
+
+@item wl-nntp-posting-server
+$B%K%e!<%9Ej9F;~$N(B NNTP $B%5!<%PL>$G$9!#(B
+$B@_Dj$7$F$$$J$$>l9g$O(B @code{elmo-nntp-default-server} $B$r;H$$$^$9!#(B
+
+@item wl-nntp-posting-port
+$B%K%e!<%9Ej9F;~$N(B NNTP $B%5!<%P$N%]!<%HHV9f$G$9!#(B
+$B@_Dj$7$F$$$J$$>l9g$O(B @code{elmo-nntp-default-port} $B$r;H$$$^$9!#(B
+@end table
+
+$BI,MW$K1~$8$F0J2<$NJQ?t$b@_Dj$7$F2<$5$$!#>\:Y$O%+%9%?%^%$%:JQ?t$N@a$r;2>H(B
+$B$7$F2<$5$$!#(B
+@xref{Variables of Draft Mode}.
+
+@table @code
+@item wl-smtp-posting-user
+SMTP AUTH $B$K$h$kG'>Z$r9T$J$&$H$-$N%f!<%6L>$G$9!#(B
+
+@item wl-smtp-authenticate-type
+SMTP AUTH $B$K$h$kG'>Z$r9T$J$&$H$-$NG'>ZJ}<0$G$9!#(B
+$B@_Dj$7$F$$$J$$>l9g$OG'>Z$r9T$$$^$;$s!#(B
+
+@item wl-smtp-authenticate-realm
+SMTP AUTH $B$K$h$kG'>Z$r9T$J$&$H$-$N%l%k%`(B(realm)$B$r;XDj$7$^$9!#(B
+$B@_Dj$7$F$$$J$$>l9g$O%l%k%`$N;XDj$r9T$$$^$;$s!#(B
+
+@item wl-smtp-connection-type
+SMTP $B$N%3%M%/%7%g%s$r$I$N$h$&$KD%$k$+$r;XDj$7$^$9!#(B
+
+@item wl-nntp-posting-user
+$B%K%e!<%9Ej9F;~$K(B AUTHINFO $B$K$h$kG'>Z$r9T$J$&$H$-$N%f!<%6L>$G$9!#(B
+
+@item wl-nntp-posting-stream-type
+NNTP $B$N%3%M%/%7%g%s$r$I$N$h$&$KD%$k$+$r;XDj$7$^$9!#(B
+@end table
+
+@node Editing Header, Editing Message Body and Sending, Parameters for Sending, Usage of Draft Mode
 @subsection $B%X%C%@$NJT=8(B
 
 $B<B:]$KAw?.A`:n$r9T$J$&$^$G$G$"$l$P!"(B@samp{--text follows this line--}
@@ -4827,14 +4875,15 @@ Field $B$NCM$,(B @code{nil} $B$J$i$P$=$N(B Field $B$r:o=|$7$^$9!#(B
 @cindex SMTP-after-POP
 
 POP-before-SMTP $B$K$h$k%a!<%k$NAw?.$,$G$-$^$9!#(B
-$B@_Dj$O!"(B
+$B$=$N$?$a$KI,MW$J@_Dj$O!"%a!<%kAw?.$KMQ$$$k4X?t$r%G%U%)%k%H$N(B
+@code{wl-draft-send-mail-with-smtp} $B$+$iJQ99$9$k(B
 
 @lisp
 (setq wl-draft-send-mail-function 'wl-draft-send-mail-with-pop-before-smtp)
 @end lisp
 
 @noindent
-$B$N(B1$B9T$N$_$G$9$,!"I,MW$K1~$8$F0J2<$NJQ?t$r@_Dj$7$F$/$@$5$$!#(B
+$B$H9g$o$;$F!"I,MW$K1~$8$F0J2<$NJQ?t$r@_Dj$7$F$/$@$5$$!#(B
 
 @table @code
 @item wl-pop-before-smtp-user
@@ -5223,7 +5272,8 @@ Non-nil $B$G!"(B@samp{To:}, @samp{Cc:} $B$,(B $BJQ?t(B @code{wl-subscribed
 @item wl-draft-send-mail-function
 @vindex wl-draft-send-mail-function
 $B=i4|@_Dj$O(B @code{wl-draft-send-mail-with-smtp}$B!#(B
-$B%a!<%kAw?.$K;H$&4X?t$G$9!#(B
+$B%a!<%kAw?.$K;H$&4X?t$G$9!#(BPOP-before-SMTP $B$rMxMQ$9$k>l9g$O(B
+@code{wl-draft-send-mail-with-pop-before-smtp} $B$K@_Dj$7$^$9!#(B
 
 @item wl-smtp-posting-server
 @vindex wl-smtp-posting-server
@@ -5281,7 +5331,7 @@ SMTP $B$N%3%M%/%7%g%s$r$I$N$h$&$KD%$k$+$r%7%s%\%k$G;XDj$7$^$9!#(B
 @vindex wl-nntp-posting-port
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 $B%K%e!<%9Ej9F;~$N(B NNTP $B%5!<%P$N%]!<%HHV9f!#(B
-@code{nil} $B$J$i(B @code{elmo-nntp-default-server} $B$r;H$$$^$9!#(B
+@code{nil} $B$J$i(B @code{elmo-nntp-default-port} $B$r;H$$$^$9!#(B
 
 @item wl-nntp-posting-stream-type
 @vindex wl-nntp-posting-stream-type
