@@ -1,3 +1,7 @@
+2005-05-10  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-fldmgr.el (wl-fldmgr-add): Undo the last change.
+
 2005-04-22  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-spam.el (wl-summary-test-spam): Fix typo.
