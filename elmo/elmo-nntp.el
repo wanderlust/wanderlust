@@ -1187,10 +1187,16 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 						      from-msgs)))
 	    result (sort result '<))))))
 
+(defun elmo-nntp-use-server-search-p (condition)
+  (if (vectorp condition)
+      (not (string= "body" (elmo-filter-key condition)))
+    (and (elmo-nntp-use-server-search-p (nth 1 condition))
+	 (elmo-nntp-use-server-search-p (nth 2 condition)))))
+
 (luna-define-method elmo-folder-search :around ((folder elmo-nntp-folder)
 						condition &optional from-msgs)
   (if (and (elmo-folder-plugged-p folder)
-	   (not (string= "body" (elmo-filter-key condition))))
+	   (elmo-nntp-use-server-search-p condition))
       (elmo-nntp-search-internal folder condition from-msgs)
     (luna-call-next-method)))
 
