@@ -7052,6 +7052,12 @@ non-spam としての学習に加えて、spam に行なった学習を削除します。
 カーソル行のメッセージをテストし、spam と判定された場合に spam マークを
 付けます。
 
+@item r k c
+@kindex r k c (Summary)
+@findex wl-summary-test-spam-region
+指定リージョンにあるメッセージをテストし、spam と判定された場合に spam マークを
+付けます。
+
 @item k C
 @kindex k C (Summary)
 @findex wl-summary-mark-spam

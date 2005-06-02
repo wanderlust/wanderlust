@@ -7108,6 +7108,11 @@ Put spam mark (@samp{s}) on current message.
 @findex wl-summary-test-spam
 Test current message and put spam mark if judged as spam.
 
+@item r k c
+@kindex r k c (Summary)
+@findex wl-summary-test-spam-region
+Test messages in the specified region and put spam mark if judged as spam.
+
 @item k C
 @kindex k C (Summary)
 @findex wl-summary-mark-spam
