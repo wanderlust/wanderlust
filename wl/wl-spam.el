@@ -190,6 +190,16 @@ See `wl-summary-mark-action-list' for the detail of element."
     (when (interactive-p)
       (message "No: %d is %sa spam message." number (if spam "" "not ")))))
 
+(defun wl-summary-test-spam-region (beg end)
+  (interactive "r")
+  (let ((numbers (wl-summary-collect-numbers-region beg end)))
+    (cond (numbers
+	   (wl-spam-map-spam-messages wl-summary-buffer-elmo-folder
+				      numbers
+				      #'wl-summary-spam))
+	  ((interactive-p)
+	   (message "No message to test.")))))
+
 (defun wl-summary-mark-spam (&optional all)
   "Set spam mark to messages which is spam classification."
   (interactive "P")
@@ -353,6 +363,8 @@ See `wl-summary-mark-action-list' for the detail of element."
 	    (cons (wl-summary-action-mark action)
 		  wl-summary-skip-mark-list))))
   (define-key wl-summary-mode-map "k" wl-summary-spam-map)
+  (define-key
+    wl-summary-mode-map "rkc" 'wl-summary-test-spam-region)
   (define-key
     wl-summary-mode-map "mk" 'wl-summary-target-mark-spam)
   (define-key
