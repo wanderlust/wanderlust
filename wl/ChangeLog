@@ -1,3 +1,9 @@
+2005-06-04  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-message-verify-pgp-nonmime): Verify encoded
+	contents in message buffer instead of original buffer. If optional
+	argument specified, ask coding system for encode.
+
 2005-06-02  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-spam.el (wl-summary-test-spam-region): New function.

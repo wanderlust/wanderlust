@@ -495,47 +495,47 @@ It calls following-method selected from variable
 	    (message "Cannot find pgp encrypted region")))
       (message "Cannot find pgp encrypted region"))))
 
-(defun wl-message-verify-pgp-nonmime ()
-  "Verify PGP signed region"
-  (interactive)
+(defun wl-message-verify-pgp-nonmime (&optional arg)
+  "Verify PGP signed region.
+With ARG, ask coding system and encode the region with it before verifying."
+  (interactive "P")
   (require 'pgg)
   (save-excursion
     (beginning-of-line)
-    (if (and (or (re-search-forward "^-+END PGP SIGNATURE-+$" nil t)
-		 (re-search-backward "^-+END PGP SIGNATURE-+$" nil t))
-	     (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t))
-	(let (status)
-	  (let* ((beg (point))
-		 (situation (mime-preview-find-boundary-info))
-		 (p-end (aref situation 1))
-		 (entity (aref situation 2))
-		 (count 0))
-	    (goto-char p-end)
-	    (while (< beg (point))
-	      (if (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)
-		  (setq count (+ count 1))
-		(debug)))
-	    (with-temp-buffer
-	      (set-buffer-multibyte nil)
-	      (insert (mime-entity-body entity))
-	      (goto-char (point-max))
-	      (while (> count 0)
-		(if (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)
-		    (setq count (- count 1))
-		  (debug)))
-	      (let ((r-beg (point))
-		    (r-end (re-search-forward "^-+END PGP SIGNATURE-+$" nil t)))
-		(if r-end
-		    (setq status (pgg-verify-region r-beg r-end nil 'fetch))
-		  (debug)))))
-	  (mime-show-echo-buffer)
-	  (set-buffer mime-echo-buffer-name)
-	  (set-window-start
-	   (get-buffer-window mime-echo-buffer-name)
-	   (point-max))
-	  (insert-buffer-substring
-	   (if status pgg-output-buffer pgg-errors-buffer)))
-      (message "Cannot find pgp signed region"))))
+    (let ((message-buffer (current-buffer))
+	  beg end coding-system verify-ok m-beg)
+      (setq end (and (or (re-search-forward "^-+END PGP SIGNATURE-+$" nil t)
+			 (re-search-backward "^-+END PGP SIGNATURE-+$" nil t)
+			 (error "Cannot find pgp signed region"))
+		     (match-end 0)))
+      (setq beg (or (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)
+		    (error "Cannot find pgp signed region")))
+      (setq coding-system
+	    (or (let* ((situation (mime-preview-find-boundary-info))
+		       (entity (aref situation 2)))
+		  (mime-charset-to-coding-system
+		   (mime-content-type-parameter
+		    (mime-entity-content-type entity)
+		    "charset")))
+		buffer-file-coding-system))
+      (when arg
+	(setq coding-system (read-coding-system
+			     (format "Coding system (%S): " coding-system)
+			     coding-system)))
+      (with-temp-buffer
+	(insert-buffer-substring message-buffer beg end)
+	(encode-coding-region (point-min) (point-max) coding-system)
+	(setq verify-ok (pgg-verify-region (point-min) (point-max) nil 'fetch)))
+      (mime-show-echo-buffer)
+      (set-buffer mime-echo-buffer-name)
+      (set-window-start
+       (get-buffer-window mime-echo-buffer-name)
+       (point-max))
+      (let ((beg (point)))
+	(insert-buffer-substring
+	 (if verify-ok pgg-output-buffer pgg-errors-buffer))
+	(encode-coding-region beg (point) buffer-file-coding-system)
+	(decode-coding-region beg (point) wl-cs-autoconv)))))
 
 ;; XXX: encrypted multipart isn't represented as multipart
 (defun wl-mime-preview-application/pgp (parent-entity entity situation)
