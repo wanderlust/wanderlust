@@ -1,3 +1,23 @@
+2005-06-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-util.el (elmo-quoted-specials-list): New constant.
+	(elmo-quoted-token): New function.
+
+	* elmo-net.el (elmo-net-quote-chars-regexp): New constant.
+	(elmo-net-format-quoted): New function.
+	(elmo-net-parse-network): Ditto.
+	(elmo-folder-initialize): Use it.
+
+	* elmo-nntp.el (elmo-folder-initialize): Use
+	`elmo-net-parse-network' to parse network specification instead of
+	`elmo-folder-initialize#elmo-net'.
+
+	* elmo-pop3.el (elmo-folder-initialize): Ditto.
+
+	* elmo-imap4.el (elmo-folder-initialize): Ditto.
+	(elmo-folder-list-subfolders): Quote folder name by
+	`elmo-net-format-quoted'.
+
 2005-05-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-nntp.el (elmo-nntp-use-server-search-p): New function.

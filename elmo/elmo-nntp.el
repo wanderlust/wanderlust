@@ -87,9 +87,7 @@ Debug information is inserted in the buffer \"*NNTP DEBUG*\"")
 		     (group temp-crosses reads))
   (luna-define-internal-accessors 'elmo-nntp-folder))
 
-(luna-define-method elmo-folder-initialize :around ((folder
-						     elmo-nntp-folder)
-						    name)
+(luna-define-method elmo-folder-initialize ((folder elmo-nntp-folder) name)
   (let ((elmo-network-stream-type-alist
 	 (if elmo-nntp-stream-type-alist
 	     (setq elmo-network-stream-type-alist
@@ -97,18 +95,19 @@ Debug information is inserted in the buffer \"*NNTP DEBUG*\"")
 			   elmo-network-stream-type-alist))
 	   elmo-network-stream-type-alist))
 	explicit-user parse)
-    (setq name (luna-call-next-method))
-    (setq parse (elmo-parse-token name ":"))
+    (setq parse (elmo-parse-token name ":@"))
     (elmo-nntp-folder-set-group-internal folder
 					 (elmo-nntp-encode-group-string
 					  (car parse)))
     (setq explicit-user (eq ?: (string-to-char (cdr parse))))
-    (setq parse (elmo-parse-prefixed-element ?: (cdr parse)))
+    (setq parse (elmo-parse-prefixed-element ?: (cdr parse) "@"))
     (elmo-net-folder-set-user-internal folder
 				       (if (eq (length (car parse)) 0)
 					   (unless explicit-user
 					     elmo-nntp-default-user)
 					 (car parse)))
+    ;; network
+    (elmo-net-parse-network folder (cdr parse))
     (unless (elmo-net-folder-server-internal folder)
       (elmo-net-folder-set-server-internal folder
 					   elmo-nntp-default-server))

@@ -1450,6 +1450,13 @@ ELT must be a string.  Upper-case and lower-case letters are treated as equal."
       newtext)))
 
 ;;; Folder parser utils.
+(defconst elmo-quoted-specials-list '(?\\ ?\"))
+
+(defun elmo-quoted-token (string)
+  (concat "\""
+	  (std11-wrap-as-quoted-pairs string elmo-quoted-specials-list)
+	  "\""))
+
 (defun elmo-parse-token (string &optional seps)
   "Parse atom from STRING using SEPS as a string of separator char list."
   (let ((len (length string))

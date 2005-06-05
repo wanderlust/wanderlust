@@ -87,34 +87,33 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 		     (use-uidl location-alist))
   (luna-define-internal-accessors 'elmo-pop3-folder))
 
-(luna-define-method elmo-folder-initialize :around ((folder
-						     elmo-pop3-folder)
-						    name)
+(luna-define-method elmo-folder-initialize ((folder elmo-pop3-folder) name)
   (let ((elmo-network-stream-type-alist
 	 (if elmo-pop3-stream-type-alist
 	     (append elmo-pop3-stream-type-alist
 		     elmo-network-stream-type-alist)
 	   elmo-network-stream-type-alist))
 	parse)
-    (setq name (luna-call-next-method))
     ;; user
-    (setq parse (elmo-parse-token name "/:"))
+    (setq parse (elmo-parse-token name "/:@"))
     (elmo-net-folder-set-user-internal folder
 				       (if (eq (length (car parse)) 0)
 					   elmo-pop3-default-user
 					 (car parse)))
     ;; auth
-    (setq parse (elmo-parse-prefixed-element ?/ (cdr parse) ":"))
+    (setq parse (elmo-parse-prefixed-element ?/ (cdr parse) ":@"))
     (elmo-net-folder-set-auth-internal folder
 				       (if (eq (length (car parse)) 0)
 					   elmo-pop3-default-authenticate-type
 					 (intern (downcase (car parse)))))
     ;; uidl
-    (setq parse (elmo-parse-prefixed-element ?: (cdr parse)))
+    (setq parse (elmo-parse-prefixed-element ?: (cdr parse) "@"))
     (elmo-pop3-folder-set-use-uidl-internal folder
 					    (if (eq (length (car parse)) 0)
 						elmo-pop3-default-use-uidl
 					      (string= (car parse) "uidl")))
+    ;; network
+    (elmo-net-parse-network folder (cdr parse))
     (unless (elmo-net-folder-server-internal folder)
       (elmo-net-folder-set-server-internal folder
 					   elmo-pop3-default-server))

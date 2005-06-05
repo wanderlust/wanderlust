@@ -1836,9 +1836,7 @@ Return nil if no complete line has arrived."
 	(elmo-imap4-forward)
 	(nreverse body)))))
 
-(luna-define-method elmo-folder-initialize :around ((folder
-						     elmo-imap4-folder)
-						    name)
+(luna-define-method elmo-folder-initialize ((folder elmo-imap4-folder) name)
   (let ((default-user	elmo-imap4-default-user)
 	(default-server elmo-imap4-default-server)
 	(default-port	elmo-imap4-default-port)
@@ -1853,25 +1851,26 @@ Return nil if no complete line has arrived."
       ;; "hoge%imap.server@gateway".
       (setq default-user (elmo-match-string 1 default-server))
       (setq default-server (elmo-match-string 2 default-server)))
-    (setq name (luna-call-next-method))
     ;; mailbox
-    (setq parse (elmo-parse-token name ":"))
+    (setq parse (elmo-parse-token name ":/@"))
     (elmo-imap4-folder-set-mailbox-internal folder
 					    (elmo-imap4-encode-folder-string
 					     (car parse)))
     ;; user
-    (setq parse (elmo-parse-prefixed-element ?: (cdr parse) "/"))
+    (setq parse (elmo-parse-prefixed-element ?: (cdr parse) "/@"))
     (elmo-net-folder-set-user-internal folder
 				       (if (eq (length (car parse)) 0)
 					   default-user
 					 (car parse)))
     ;; auth
-    (setq parse (elmo-parse-prefixed-element ?/ (cdr parse)))
+    (setq parse (elmo-parse-prefixed-element ?/ (cdr parse) "@"))
     (elmo-net-folder-set-auth-internal
      folder
      (if (eq (length (car parse)) 0)
 	 (or elmo-imap4-default-authenticate-type 'clear)
        (intern (car parse))))
+    ;; network
+    (elmo-net-parse-network folder (cdr parse))
     (unless (elmo-net-folder-server-internal folder)
       (elmo-net-folder-set-server-internal folder default-server))
     (unless (elmo-net-folder-port-internal folder)
@@ -2041,7 +2040,8 @@ Return nil if no complete line has arrived."
 				      fld))
 				  (cdr result)))
 		  folder (concat prefix
-				 (elmo-imap4-decode-folder-string folder)
+				 (elmo-net-format-quoted
+				  (elmo-imap4-decode-folder-string folder))
 				 (and append-serv
 				      (eval append-serv)))
 		  ret (append ret (if has-child-p
@@ -2049,7 +2049,9 @@ Return nil if no complete line has arrived."
 				    (list folder)))))
 	  ret)
       (mapcar (lambda (fld)
-		(concat prefix (elmo-imap4-decode-folder-string fld)
+		(concat prefix
+			(elmo-net-format-quoted
+			 (elmo-imap4-decode-folder-string fld))
 			(and append-serv
 			     (eval append-serv))))
 	      result))))
