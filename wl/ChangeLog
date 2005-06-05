@@ -1,3 +1,7 @@
+2005-06-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-message-verify-pgp-nonmime): Fix the last change.
+
 2005-06-04  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-mime.el (wl-message-verify-pgp-nonmime): Verify encoded

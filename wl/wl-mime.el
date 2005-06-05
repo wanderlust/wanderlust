@@ -503,7 +503,7 @@ With ARG, ask coding system and encode the region with it before verifying."
   (save-excursion
     (beginning-of-line)
     (let ((message-buffer (current-buffer))
-	  beg end coding-system verify-ok m-beg)
+	  beg end coding-system success)
       (setq end (and (or (re-search-forward "^-+END PGP SIGNATURE-+$" nil t)
 			 (re-search-backward "^-+END PGP SIGNATURE-+$" nil t)
 			 (error "Cannot find pgp signed region"))
@@ -525,17 +525,14 @@ With ARG, ask coding system and encode the region with it before verifying."
       (with-temp-buffer
 	(insert-buffer-substring message-buffer beg end)
 	(encode-coding-region (point-min) (point-max) coding-system)
-	(setq verify-ok (pgg-verify-region (point-min) (point-max) nil 'fetch)))
+	(setq success (pgg-verify-region (point-min) (point-max) nil 'fetch)))
       (mime-show-echo-buffer)
       (set-buffer mime-echo-buffer-name)
       (set-window-start
        (get-buffer-window mime-echo-buffer-name)
        (point-max))
-      (let ((beg (point)))
-	(insert-buffer-substring
-	 (if verify-ok pgg-output-buffer pgg-errors-buffer))
-	(encode-coding-region beg (point) buffer-file-coding-system)
-	(decode-coding-region beg (point) wl-cs-autoconv)))))
+      (insert-buffer-substring
+       (if success pgg-output-buffer pgg-errors-buffer)))))
 
 ;; XXX: encrypted multipart isn't represented as multipart
 (defun wl-mime-preview-application/pgp (parent-entity entity situation)
