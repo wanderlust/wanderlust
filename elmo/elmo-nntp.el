@@ -95,12 +95,13 @@ Debug information is inserted in the buffer \"*NNTP DEBUG*\"")
 			   elmo-network-stream-type-alist))
 	   elmo-network-stream-type-alist))
 	explicit-user parse)
-    (setq parse (elmo-parse-token name ":@"))
+    (setq parse (elmo-parse-token name ":@!"))
     (elmo-nntp-folder-set-group-internal folder
 					 (elmo-nntp-encode-group-string
 					  (car parse)))
     (setq explicit-user (eq ?: (string-to-char (cdr parse))))
-    (setq parse (elmo-parse-prefixed-element ?: (cdr parse) "@"))
+    (setq parse (elmo-parse-prefixed-element ?: (cdr parse) "@:!"
+					     "^[A-Za-z]+"))
     (elmo-net-folder-set-user-internal folder
 				       (if (eq (length (car parse)) 0)
 					   (unless explicit-user

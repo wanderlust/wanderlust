@@ -1457,7 +1457,14 @@ ELT must be a string.  Upper-case and lower-case letters are treated as equal."
 	  (std11-wrap-as-quoted-pairs string elmo-quoted-specials-list)
 	  "\""))
 
-(defun elmo-parse-token (string &optional seps)
+(defun elmo-token-valid-p (token requirement)
+  (cond ((null requirement))
+	((stringp requirement)
+	 (string-match requirement token))
+	((functionp requirement)
+	 (funcall requirement token))))
+
+(defun elmo-parse-token (string &optional seps requirement)
   "Parse atom from STRING using SEPS as a string of separator char list."
   (let ((len (length string))
 	(seps (and seps (string-to-char-list seps)))
@@ -1483,14 +1490,21 @@ ELT must be a string.  Upper-case and lower-case letters are treated as equal."
 	 (t (setq content (cons c content)
 		  i (1+ i)))))
       (if in (error "Parse error in quoted"))
-      (cons (if (null content) "" (char-list-to-string (nreverse content)))
-	    (substring string i)))))
+      (let ((atom (if (null content)
+		      ""
+		    (char-list-to-string (nreverse content)))))
+	(if (elmo-token-valid-p atom requirement)
+	    (cons atom (substring string i))
+	  (cons "" string))))))
 
-(defun elmo-parse-prefixed-element (prefix string &optional seps)
-  (if (and (not (eq (length string) 0))
-	   (eq (aref string 0) prefix))
-      (elmo-parse-token (substring string 1) seps)
-    (cons "" string)))
+(defun elmo-parse-prefixed-element (prefix string &optional seps requirement)
+  (let (parsed)
+    (if (and (not (eq (length string) 0))
+	     (eq (aref string 0) prefix)
+	     (setq parsed (elmo-parse-token (substring string 1) seps))
+	     (elmo-token-valid-p (car parsed) requirement))
+	parsed
+      (cons "" string))))
 
 ;;; Number set defined by OKAZAKI Tetsurou <okazaki@be.to>
 ;;

@@ -1852,18 +1852,19 @@ Return nil if no complete line has arrived."
       (setq default-user (elmo-match-string 1 default-server))
       (setq default-server (elmo-match-string 2 default-server)))
     ;; mailbox
-    (setq parse (elmo-parse-token name ":/@"))
+    (setq parse (elmo-parse-token name ":@:!"))
     (elmo-imap4-folder-set-mailbox-internal folder
 					    (elmo-imap4-encode-folder-string
 					     (car parse)))
     ;; user
-    (setq parse (elmo-parse-prefixed-element ?: (cdr parse) "/@"))
+    (setq parse (elmo-parse-prefixed-element ?: (cdr parse) "/@:!"
+					     "^[A-Za-z]+"))
     (elmo-net-folder-set-user-internal folder
 				       (if (eq (length (car parse)) 0)
 					   default-user
 					 (car parse)))
     ;; auth
-    (setq parse (elmo-parse-prefixed-element ?/ (cdr parse) "@"))
+    (setq parse (elmo-parse-prefixed-element ?/ (cdr parse) "@:!"))
     (elmo-net-folder-set-auth-internal
      folder
      (if (eq (length (car parse)) 0)
@@ -1990,7 +1991,9 @@ Return nil if no complete line has arrived."
 			    elmo-imap4-default-user))
 	      (not (eq (elmo-net-folder-auth-internal folder)
 		       (or elmo-imap4-default-authenticate-type 'clear))))
-      (setq append-serv (concat ":" (elmo-net-folder-user-internal folder))))
+      (setq append-serv (concat ":"
+				(elmo-net-format-quoted
+				 (elmo-net-folder-user-internal folder) "/"))))
     (unless (eq (elmo-net-folder-auth-internal folder)
 		(or elmo-imap4-default-authenticate-type 'clear))
       (setq append-serv
@@ -2041,7 +2044,7 @@ Return nil if no complete line has arrived."
 				  (cdr result)))
 		  folder (concat prefix
 				 (elmo-net-format-quoted
-				  (elmo-imap4-decode-folder-string folder))
+				  (elmo-imap4-decode-folder-string folder) ":")
 				 (and append-serv
 				      (eval append-serv)))
 		  ret (append ret (if has-child-p
@@ -2051,7 +2054,7 @@ Return nil if no complete line has arrived."
       (mapcar (lambda (fld)
 		(concat prefix
 			(elmo-net-format-quoted
-			 (elmo-imap4-decode-folder-string fld))
+			 (elmo-imap4-decode-folder-string fld) ":")
 			(and append-serv
 			     (eval append-serv))))
 	      result))))

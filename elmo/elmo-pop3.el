@@ -95,19 +95,19 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 	   elmo-network-stream-type-alist))
 	parse)
     ;; user
-    (setq parse (elmo-parse-token name "/:@"))
+    (setq parse (elmo-parse-token name "/@:!"))
     (elmo-net-folder-set-user-internal folder
 				       (if (eq (length (car parse)) 0)
 					   elmo-pop3-default-user
 					 (car parse)))
     ;; auth
-    (setq parse (elmo-parse-prefixed-element ?/ (cdr parse) ":@"))
+    (setq parse (elmo-parse-prefixed-element ?/ (cdr parse) ":@!"))
     (elmo-net-folder-set-auth-internal folder
 				       (if (eq (length (car parse)) 0)
 					   elmo-pop3-default-authenticate-type
 					 (intern (downcase (car parse)))))
     ;; uidl
-    (setq parse (elmo-parse-prefixed-element ?: (cdr parse) "@"))
+    (setq parse (elmo-parse-prefixed-element ?: (cdr parse) "@:!" "^[a-z]+"))
     (elmo-pop3-folder-set-use-uidl-internal folder
 					    (if (eq (length (car parse)) 0)
 						elmo-pop3-default-use-uidl

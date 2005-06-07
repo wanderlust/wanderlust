@@ -1,3 +1,22 @@
+2005-06-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-util.el (elmo-token-valid-p): New function.
+	(elmo-parse-token): Add optional argument `requirement'.
+	(elmo-parse-prefixed-element): Likewise.
+
+	* elmo-net.el (elmo-net-quote-chars): Renamed from
+	`elmo-net-quote-chars-regexp'.
+	(elmo-net-format-quoted): Add optional argument `extra-chars'.
+
+	* elmo-pop3.el (elmo-folder-initialize): Fix the token separators
+	by info document. Check token `uidl' is started an alphabet.
+
+	* elmo-nntp.el (elmo-folder-initialize): Fix the token separators
+	by info document. Check token `user' is started an alphabet.
+
+	* elmo-imap4.el (elmo-folder-initialize): Ditto.
+	(elmo-folder-list-subfolders): Quote user.
+
 2005-06-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-util.el (elmo-quoted-specials-list): New constant.

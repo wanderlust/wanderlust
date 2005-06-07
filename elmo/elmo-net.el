@@ -310,10 +310,11 @@ Returned value is searched from `elmo-network-stream-type-alist'."
       (setq alist (cdr alist)))
     spec))
 
-(defconst elmo-net-quote-chars-regexp "[@:!]")
+(defconst elmo-net-quote-chars "@:!")
 
-(defun elmo-net-format-quoted (string)
-  (if (string-match elmo-net-quote-chars-regexp string)
+(defun elmo-net-format-quoted (string &optional extra-chars)
+  (if (string-match (concat "[" elmo-net-quote-chars extra-chars "]")
+		    string)
       (elmo-quoted-token string)
     string))
 
