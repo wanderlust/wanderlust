@@ -174,6 +174,11 @@ REGEXP should have a grouping for namespace prefix.")
 				  (personal "$Personal")
 				  (shouldreply "$ShouldReply")))
 
+(defconst elmo-imap4-folder-name-syntax
+  `(mailbox
+    (?: [user "^[A-Za-z]"] (?/ [auth ".+"]))
+    ,@elmo-net-folder-name-syntax))
+
 ;; For debugging.
 (defvar elmo-imap4-debug nil
   "Non-nil forces IMAP4 folder as debug mode.
@@ -1845,41 +1850,38 @@ Return nil if no complete line has arrived."
 	     (append elmo-imap4-stream-type-alist
 		     elmo-network-stream-type-alist)
 	   elmo-network-stream-type-alist))
-	parse)
+	tokens)
     (when (string-match "\\(.*\\)@\\(.*\\)" default-server)
       ;; case: imap4-default-server is specified like
       ;; "hoge%imap.server@gateway".
       (setq default-user (elmo-match-string 1 default-server))
       (setq default-server (elmo-match-string 2 default-server)))
+    (setq tokens (car (elmo-parse-separated-tokens
+		       name
+		       elmo-imap4-folder-name-syntax)))
     ;; mailbox
-    (setq parse (elmo-parse-token name ":@:!"))
     (elmo-imap4-folder-set-mailbox-internal folder
 					    (elmo-imap4-encode-folder-string
-					     (car parse)))
+					     (cdr (assq 'mailbox tokens))))
     ;; user
-    (setq parse (elmo-parse-prefixed-element ?: (cdr parse) "/@:!"
-					     "^[A-Za-z]+"))
     (elmo-net-folder-set-user-internal folder
-				       (if (eq (length (car parse)) 0)
-					   default-user
-					 (car parse)))
+				       (or (cdr (assq 'user tokens))
+					   default-user))
     ;; auth
-    (setq parse (elmo-parse-prefixed-element ?/ (cdr parse) "@:!"))
     (elmo-net-folder-set-auth-internal
      folder
-     (if (eq (length (car parse)) 0)
-	 (or elmo-imap4-default-authenticate-type 'clear)
-       (intern (car parse))))
+     (let ((auth (cdr (assq 'auth tokens))))
+       (or (and auth (intern auth))
+	   elmo-imap4-default-authenticate-type
+	   'clear)))
     ;; network
-    (elmo-net-parse-network folder (cdr parse))
-    (unless (elmo-net-folder-server-internal folder)
-      (elmo-net-folder-set-server-internal folder default-server))
-    (unless (elmo-net-folder-port-internal folder)
-      (elmo-net-folder-set-port-internal folder default-port))
-    (unless (elmo-net-folder-stream-type-internal folder)
-      (elmo-net-folder-set-stream-type-internal
-       folder
-       (elmo-get-network-stream-type elmo-imap4-default-stream-type)))
+    (elmo-net-folder-set-parameters
+     folder
+     tokens
+     (list :server	default-server
+	   :port	default-port
+	   :stream-type
+	   (elmo-get-network-stream-type elmo-imap4-default-stream-type)))
     folder))
 
 ;;; ELMO IMAP4 folder
@@ -1992,8 +1994,9 @@ Return nil if no complete line has arrived."
 	      (not (eq (elmo-net-folder-auth-internal folder)
 		       (or elmo-imap4-default-authenticate-type 'clear))))
       (setq append-serv (concat ":"
-				(elmo-net-format-quoted
-				 (elmo-net-folder-user-internal folder) "/"))))
+				(elmo-quote-syntactical-element
+				 (elmo-net-folder-user-internal folder)
+				 'user elmo-imap4-folder-name-syntax))))
     (unless (eq (elmo-net-folder-auth-internal folder)
 		(or elmo-imap4-default-authenticate-type 'clear))
       (setq append-serv
@@ -2043,8 +2046,9 @@ Return nil if no complete line has arrived."
 				      fld))
 				  (cdr result)))
 		  folder (concat prefix
-				 (elmo-net-format-quoted
-				  (elmo-imap4-decode-folder-string folder) ":")
+				 (elmo-quote-syntactical-element
+				  (elmo-imap4-decode-folder-string folder)
+				  'mailbox elmo-imap4-folder-name-syntax)
 				 (and append-serv
 				      (eval append-serv)))
 		  ret (append ret (if has-child-p
@@ -2053,8 +2057,9 @@ Return nil if no complete line has arrived."
 	  ret)
       (mapcar (lambda (fld)
 		(concat prefix
-			(elmo-net-format-quoted
-			 (elmo-imap4-decode-folder-string fld) ":")
+			(elmo-quote-syntactical-element
+			 (elmo-imap4-decode-folder-string fld)
+			 'mailbox elmo-imap4-folder-name-syntax)
 			(and append-serv
 			     (eval append-serv))))
 	      result))))

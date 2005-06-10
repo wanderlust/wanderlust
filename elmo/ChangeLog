@@ -1,3 +1,30 @@
+2005-06-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-util.el (elmo-collect-separators): New function.
+	(elmo-collect-separators-internal): Ditto.
+	(elmo-collect-trail-separators): Ditto.
+	(elmo-parse-separated-tokens): Ditto.
+	(elmo-parse-separated-tokens-internal): Ditto.
+	(elmo-quote-syntactical-element): Ditto.
+
+	* elmo-pop3.el (elmo-pop3-folder-name-syntax): New constant.
+	(elmo-folder-initialize): Rewrite by `elmo-parse-separated-tokens'.
+
+	* elmo-nntp.el (elmo-nntp-folder-name-syntax): New constant.
+	(elmo-folder-initialize): Rewrite by `elmo-parse-separated-tokens'.
+	(elmo-nntp-folder-list-subfolders): Quote a user name.
+
+	* elmo-net.el (elmo-net-folder-name-syntax): New constant.
+	(elmo-net-parse-network): Abolish.
+	(elmo-net-folder-set-parameters): New function.
+	(elmo-folder-initialize): Follow the above change.
+
+	* elmo-imap4.el (elmo-imap4-folder-name-syntax): New constant.
+	(elmo-folder-initialize): Rewrite by `elmo-parse-separated-tokens'.
+	(elmo-folder-list-subfolders): Use
+	`elmo-quote-syntactical-element' instead of
+	`elmo-net-format-quoted' to quote mailbox and user name.
+
 2005-06-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-util.el (elmo-token-valid-p): New function.

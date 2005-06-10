@@ -837,7 +837,7 @@ Format:
 
 @example
 @group
-@samp{-} @var{newsgroup} [[@samp{:} @var{username}][@samp{@@} @var{hostname}][@samp{:} @var{port}]][@samp{!}]
+@samp{-} @var{newsgroup} [@samp{:} @var{username}][@samp{@@} @var{hostname}][@samp{:} @var{port}][@samp{!}]
 @end group
 @end example
 
@@ -1226,7 +1226,7 @@ Format:
 
 @example
 @group
-@samp{&} [@var{username}][[@samp{/} @var{authenticate-type}][@samp{:} @var{numbering-method}][@samp{@@} @var{hostname}][@samp{:} @var{port}]][@samp{!}]
+@samp{&} [@var{username}][@samp{/} @var{authenticate-type}][@samp{:} @var{numbering-method}][@samp{@@} @var{hostname}][@samp{:} @var{port}][@samp{!}]
 @end group
 @end example
 

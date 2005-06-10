@@ -37,6 +37,10 @@
 ;;; Code:
 ;;
 
+(defconst elmo-net-folder-name-syntax '((?@ [server ".+"])
+					(?: [port "^[0-9]+$"])
+					(?! stream-type)))
+
 ;;; ELMO net folder
 (eval-and-compile
   (luna-define-class elmo-net-folder
@@ -318,25 +322,34 @@ Returned value is searched from `elmo-network-stream-type-alist'."
       (elmo-quoted-token string)
     string))
 
-(defun elmo-net-parse-network (folder network)
-  (let (parse)
+(defun elmo-net-folder-set-parameters (folder tokens &optional defaults)
+  (let ((port (cdr (assq 'port tokens)))
+	(stream-type (cdr (assq 'stream-type tokens))))
     ;; server
-    (setq parse (elmo-parse-prefixed-element ?@ network ":!"))
-    (when (> (length (car parse)) 0)
-      (elmo-net-folder-set-server-internal folder (car parse)))
+    (elmo-net-folder-set-server-internal
+     folder
+     (or (cdr (assq 'server tokens))
+	 (plist-get defaults :server)))
     ;; port
-    (setq parse (elmo-parse-prefixed-element ?: (cdr parse) "!"))
-    (when (> (length (car parse)) 0)
-      (elmo-net-folder-set-port-internal folder (string-to-int (car parse))))
+    (elmo-net-folder-set-port-internal
+     folder
+     (or (and port (string-to-int port))
+	 (plist-get defaults :port)))
     ;; stream-type
     (elmo-net-folder-set-stream-type-internal
      folder
-     (assoc (cdr parse) elmo-network-stream-type-alist))))
+     (or (and stream-type (assoc (concat "!" stream-type)
+				 elmo-network-stream-type-alist))
+	 (plist-get defaults :stream-type)))))
 
 (luna-define-method elmo-folder-initialize ((folder elmo-net-folder) name)
   ;; user and auth should be set in subclass.
   (when (string-match "\\(@[^@:/!]+\\)?\\(:[0-9]+\\)?\\(!.*\\)?$" name)
-    (elmo-net-parse-network folder (substring name (match-beginning 0))))
+    (elmo-net-folder-set-parameters
+     folder
+     (car (elmo-parse-separated-tokens
+	   (substring name (match-beginning 0))
+	   elmo-net-folder-name-syntax))))
   folder)
 
 (luna-define-method elmo-net-port-info ((folder elmo-net-folder))

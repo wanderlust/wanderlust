@@ -869,7 +869,7 @@ cvs -d :pserver:anonymous@@cvs.m17n.org:/cvs/root checkout ucs-conv
 
 @example
 @group
-@samp{-} @var{$B%K%e!<%9%0%k!<%WL>(B} [[@samp{:} @var{$B%f!<%6L>(B}][@samp{@@} @var{$B%[%9%HL>(B}][@samp{:} @var{$B%]!<%HHV9f(B}]][@samp{!}]
+@samp{-} @var{$B%K%e!<%9%0%k!<%WL>(B} [@samp{:} @var{$B%f!<%6L>(B}][@samp{@@} @var{$B%[%9%HL>(B}][@samp{:} @var{$B%]!<%HHV9f(B}][@samp{!}]
 @end group
 @end example
 
@@ -1251,7 +1251,7 @@ RFC 1939 $B$G5,Dj$5$l$F$$$k(B POP3 $B$rMxMQ$7$F%a!<%k$rFI$`$?$a$N%U%)%k%@$G$9
 
 @example
 @group
-@samp{&} [@var{$B%f!<%6L>(B}][[@samp{/} @var{$BG'>ZK!(B}][@samp{:} @var{$BHV9f$N?6$jJ}(B}][@samp{@@} @var{$B%[%9%HL>(B}][@samp{:} @var{$B%]!<%HHV9f(B}]][@samp{!}]
+@samp{&} [@var{$B%f!<%6L>(B}][@samp{/} @var{$BG'>ZK!(B}][@samp{:} @var{$BHV9f$N?6$jJ}(B}][@samp{@@} @var{$B%[%9%HL>(B}][@samp{:} @var{$B%]!<%HHV9f(B}][@samp{!}]
 @end group
 @end example
 

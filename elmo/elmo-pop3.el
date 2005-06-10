@@ -61,6 +61,11 @@ set as non-nil.")
   :type 'boolean
   :group 'elmo)
 
+(defconst elmo-pop3-folder-name-syntax `(([user ".+"])
+					 (?/ [auth ".+"])
+					 (?: [uidl "^[A-Za-z]+$"])
+					 ,@elmo-net-folder-name-syntax))
+
 (defvar sasl-mechanism-alist)
 
 (defvar elmo-pop3-total-size nil)
@@ -93,38 +98,34 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 	     (append elmo-pop3-stream-type-alist
 		     elmo-network-stream-type-alist)
 	   elmo-network-stream-type-alist))
-	parse)
+	tokens auth uidl)
+    (setq tokens (car (elmo-parse-separated-tokens
+		       name
+		       elmo-pop3-folder-name-syntax)))
     ;; user
-    (setq parse (elmo-parse-token name "/@:!"))
     (elmo-net-folder-set-user-internal folder
-				       (if (eq (length (car parse)) 0)
-					   elmo-pop3-default-user
-					 (car parse)))
+				       (or (cdr (assq 'user tokens))
+					   elmo-pop3-default-user))
     ;; auth
-    (setq parse (elmo-parse-prefixed-element ?/ (cdr parse) ":@!"))
+    (setq auth (cdr (assq 'auth tokens)))
     (elmo-net-folder-set-auth-internal folder
-				       (if (eq (length (car parse)) 0)
-					   elmo-pop3-default-authenticate-type
-					 (intern (downcase (car parse)))))
+				       (if auth
+					   (intern (downcase auth))
+					 elmo-pop3-default-authenticate-type))
     ;; uidl
-    (setq parse (elmo-parse-prefixed-element ?: (cdr parse) "@:!" "^[a-z]+"))
+    (setq uidl (cdr (assq 'uidl tokens)))
     (elmo-pop3-folder-set-use-uidl-internal folder
-					    (if (eq (length (car parse)) 0)
-						elmo-pop3-default-use-uidl
-					      (string= (car parse) "uidl")))
+					    (if uidl
+						(string= uidl "uidl")
+					      elmo-pop3-default-use-uidl))
     ;; network
-    (elmo-net-parse-network folder (cdr parse))
-    (unless (elmo-net-folder-server-internal folder)
-      (elmo-net-folder-set-server-internal folder
-					   elmo-pop3-default-server))
-    (unless (elmo-net-folder-port-internal folder)
-      (elmo-net-folder-set-port-internal folder
-					 elmo-pop3-default-port))
-    (unless (elmo-net-folder-stream-type-internal folder)
-      (elmo-net-folder-set-stream-type-internal
-       folder
-       (elmo-get-network-stream-type
-	elmo-pop3-default-stream-type)))
+    (elmo-net-folder-set-parameters
+     folder
+     tokens
+     (list :server	elmo-pop3-default-server
+	   :port	elmo-pop3-default-port
+	   :stream-type
+	   (elmo-get-network-stream-type elmo-pop3-default-stream-type)))
     folder))
 
 ;;; POP3 session

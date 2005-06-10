@@ -1506,6 +1506,91 @@ ELT must be a string.  Upper-case and lower-case letters are treated as equal."
 	parsed
       (cons "" string))))
 
+(defun elmo-collect-separators (spec)
+  (when (listp spec)
+    (let ((result (elmo-collect-separators-internal spec)))
+      (and result
+	   (char-list-to-string (elmo-uniq-list result #'delq))))))
+
+(defun elmo-collect-separators-internal (specs)
+  (let (separators)
+    (while specs
+      (let ((spec (car specs)))
+	(cond
+	 ((listp spec)
+	  (setq separators (nconc (elmo-collect-separators-internal spec)
+				  separators)
+		specs (cdr specs)))
+	 ((characterp spec)
+	  (setq separators (cons spec separators)
+		specs nil))
+	 (t
+	  (setq specs nil)))))
+    separators))
+
+(defun elmo-collect-trail-separators (element specs)
+  (cond
+   ((symbolp specs)
+    (eq specs element))
+   ((vectorp specs)
+    (eq (aref specs 0) element))
+   ((listp specs)
+    (let (spec result)
+      (while (setq spec (car specs))
+	(if (setq result (elmo-collect-trail-separators element spec))
+	    (setq result (concat (if (stringp result) result)
+				 (elmo-collect-separators (cdr specs)))
+		  specs nil)
+	  (setq specs (cdr specs))))
+      result))))
+
+(defun elmo-parse-separated-tokens (string spec)
+  (let ((result (elmo-parse-separated-tokens-internal string spec)))
+    (if (eq (car result) t)
+	(cons nil (cdr result))
+      result)))
+
+(defun elmo-parse-separated-tokens-internal (string spec &optional separators)
+  (cond
+   ((symbolp spec)
+    (let ((parse (elmo-parse-token string separators)))
+      (cons (list (cons spec (car parse))) (cdr parse))))
+   ((vectorp spec)
+    (let ((parse (elmo-parse-token string separators)))
+      (if (elmo-token-valid-p (car parse) (aref spec 1))
+	  (cons (list (cons (aref spec 0) (car parse))) (cdr parse))
+	(cons nil string))))
+   ((characterp spec)
+    (if (and (> (length string) 0)
+	     (eq (aref string 0) spec))
+	(cons t (substring string 1))
+      (cons nil string)))
+   ((listp spec)
+    (catch 'unmatch
+      (let ((rest string)
+	    result tokens)
+	(while spec
+	  (setq result (elmo-parse-separated-tokens-internal
+			rest
+			(car spec)
+			(concat (elmo-collect-separators (cdr spec))
+				separators)))
+	  (cond ((null (car result))
+		 (throw 'unmatch (cons t string)))
+		((eq t (car result)))
+		(t
+		 (setq tokens (nconc (car result) tokens))))
+	  (setq rest (cdr result)
+		spec (cdr spec)))
+	(cons (or tokens t) rest))))))
+
+(defun elmo-quote-syntactical-element (value element syntax)
+  (let ((separators (elmo-collect-trail-separators element syntax)))
+    (if (and separators
+	     (string-match (concat "[" separators "]") value))
+	(elmo-quoted-token value)
+      value)))
+
 ;;; Number set defined by OKAZAKI Tetsurou <okazaki@be.to>
 ;;
 ;; number          ::= [0-9]+

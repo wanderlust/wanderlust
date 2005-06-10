@@ -55,6 +55,10 @@
 (defvar elmo-nntp-group-coding-system nil
   "A coding system for newsgroup string.")
 
+(defconst elmo-nntp-folder-name-syntax `(group
+					 (?: [user "^\\([A-Za-z]\\|$\\)"])
+					 ,@elmo-net-folder-name-syntax))
+
 (defsubst elmo-nntp-encode-group-string (string)
   (if elmo-nntp-group-coding-system
       (encode-coding-string string elmo-nntp-group-coding-system)
@@ -94,32 +98,28 @@ Debug information is inserted in the buffer \"*NNTP DEBUG*\"")
 		   (append elmo-nntp-stream-type-alist
 			   elmo-network-stream-type-alist))
 	   elmo-network-stream-type-alist))
-	explicit-user parse)
-    (setq parse (elmo-parse-token name ":@!"))
+	tokens)
+    (setq tokens (car (elmo-parse-separated-tokens
+		       name
+		       elmo-nntp-folder-name-syntax)))
+    ;; group
     (elmo-nntp-folder-set-group-internal folder
 					 (elmo-nntp-encode-group-string
-					  (car parse)))
-    (setq explicit-user (eq ?: (string-to-char (cdr parse))))
-    (setq parse (elmo-parse-prefixed-element ?: (cdr parse) "@:!"
-					     "^[A-Za-z]+"))
+					  (cdr (assq 'group tokens))))
+    ;; user
     (elmo-net-folder-set-user-internal folder
-				       (if (eq (length (car parse)) 0)
-					   (unless explicit-user
-					     elmo-nntp-default-user)
-					 (car parse)))
+				       (let ((user (cdr (assq 'user tokens))))
+					 (if user
+					     (and (> (length user) 0) user)
+					   elmo-nntp-default-user)))
     ;; network
-    (elmo-net-parse-network folder (cdr parse))
-    (unless (elmo-net-folder-server-internal folder)
-      (elmo-net-folder-set-server-internal folder
-					   elmo-nntp-default-server))
-    (unless (elmo-net-folder-port-internal folder)
-      (elmo-net-folder-set-port-internal folder
-					 elmo-nntp-default-port))
-    (unless (elmo-net-folder-stream-type-internal folder)
-      (elmo-net-folder-set-stream-type-internal
-       folder
-       (elmo-get-network-stream-type
-	elmo-nntp-default-stream-type)))
+    (elmo-net-folder-set-parameters
+     folder
+     tokens
+     (list :server	elmo-nntp-default-server
+	   :port	elmo-nntp-default-port
+	   :stream-type
+	   (elmo-get-network-stream-type elmo-nntp-default-stream-type)))
     folder))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder elmo-nntp-folder))
@@ -587,17 +587,16 @@ Don't cache if nil.")
 	  (elmo-display-progress
 	   'elmo-nntp-list-folders "Parsing active..." 100))))
 
-    (setq username (elmo-net-folder-user-internal folder))
-    (when (and username
-	       elmo-nntp-default-user
-	       (string= username elmo-nntp-default-user))
-      (setq username nil))
-
-    (when (or username ; XXX: ad-hoc fix against username includes "@"
-	      (not (string= (elmo-net-folder-server-internal folder)
-			    elmo-nntp-default-server)))
-      (setq append-serv (concat "@" (elmo-net-folder-server-internal
-				     folder))))
+    (setq username (or (elmo-net-folder-user-internal folder) ""))
+    (unless (string= username (or elmo-nntp-default-user ""))
+      (setq append-serv (concat append-serv
+				":" (elmo-quote-syntactical-element
+				     username
+				     'user elmo-nntp-folder-name-syntax))))
+    (unless (string= (elmo-net-folder-server-internal folder)
+		     elmo-nntp-default-server)
+      (setq append-serv (concat append-serv
+				"@" (elmo-net-folder-server-internal folder))))
     (unless (eq (elmo-net-folder-port-internal folder) elmo-nntp-default-port)
       (setq append-serv (concat append-serv
 				":" (int-to-string
@@ -609,20 +608,11 @@ Don't cache if nil.")
 	    (concat append-serv
 		    (elmo-network-stream-type-spec-string
 		     (elmo-net-folder-stream-type-internal folder)))))
-    (mapcar '(lambda (fld)
-	       (if (consp fld)
-		   (list (concat "-" (elmo-nntp-decode-group-string (car fld))
-				 (and username
-				      (concat
-				       ":"
-				       username))
-				 (and append-serv
-				      (concat append-serv))))
-		 (concat "-" (elmo-nntp-decode-group-string fld)
-			 (and username
-			      (concat ":" username))
-			 (and append-serv
-			      (concat append-serv)))))
+    (mapcar (lambda (fld)
+	      (if (consp fld)
+		  (list (concat "-" (elmo-nntp-decode-group-string (car fld))
+				append-serv))
+		(concat "-" (elmo-nntp-decode-group-string fld) append-serv)))
 	    ret-val)))
 
 (defun elmo-nntp-make-msglist (beg-str end-str)
