@@ -60,7 +60,7 @@
      folder
      (nconc (elmo-multi-folder-children-internal
 	     folder)
-	    (list (elmo-make-folder (car name)))))
+	    (list (elmo-get-folder (car name)))))
     (setq name (cdr name))
     (when (and (> (length name) 0)
 	       (eq (aref name 0) ?,))

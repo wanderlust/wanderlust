@@ -336,10 +336,8 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
 	   (string= (elmo-folder-name-internal wl-draft-folder-internal)
 		    wl-draft-folder))
       wl-draft-folder-internal
-    (setq wl-draft-folder-internal (elmo-make-folder
-				    wl-draft-folder
-				    nil
-				    (wl-folder-mime-charset wl-draft-folder)))
+    (setq wl-draft-folder-internal (wl-folder-make-elmo-folder
+				    wl-draft-folder))
     (wl-folder-confirm-existence wl-draft-folder-internal)
     (elmo-folder-open wl-draft-folder-internal 'load-msgdb)
     wl-draft-folder-internal))
@@ -348,17 +346,18 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
   (or (wl-get-assoc-list-value wl-folder-mime-charset-alist folder-name)
       wl-mime-charset))
 
+(defun wl-folder-make-elmo-folder (folder-name)
+  (elmo-make-folder folder-name nil (wl-folder-mime-charset folder-name)))
+
 (defsubst wl-folder-get-elmo-folder (entity &optional no-cache)
   "Get elmo folder structure from ENTITY."
   (let ((name (elmo-string entity)))
     (if no-cache
-	(elmo-make-folder name nil (wl-folder-mime-charset name))
+	(wl-folder-make-elmo-folder name)
       (if (string= name wl-draft-folder)
 	  (wl-draft-get-folder)
 	(or (wl-folder-elmo-folder-cache-get name)
-	    (let ((folder (elmo-make-folder name
-					    nil
-					    (wl-folder-mime-charset name))))
+	    (let ((folder (wl-folder-make-elmo-folder name)))
 	      (wl-folder-elmo-folder-cache-put name folder)
 	      folder))))))
 
@@ -2895,19 +2894,16 @@ Call `wl-summary-write-current-folder' with current folder name."
       (kill-buffer bufname))))
 
 (defun wl-folder-create-subr (folder)
-  (if (elmo-folder-creatable-p folder)
-      (if (y-or-n-p (format "Folder %s does not exist, create it? "
-			    (elmo-folder-name-internal folder)))
-	  (progn
-	    (message "")
-	    (setq wl-folder-entity-hashtb
-		  (wl-folder-create-entity-hashtb
-		   (elmo-folder-name-internal folder)
-		   wl-folder-entity-hashtb))
-	    (unless (elmo-folder-create folder)
-	      (error "Create folder failed")))
-	(error "Folder %s is not created" (elmo-folder-name-internal folder)))
-    (error "Folder %s does not exist" (elmo-folder-name-internal folder))))
+  (let ((name (elmo-folder-name-internal folder)))
+    (unless (elmo-folder-creatable-p folder)
+      (error "Folder %s does not exist" name))
+    (unless (y-or-n-p (format "Folder %s does not exist, create it? " name))
+      (error "Folder %s is not created" name))
+    (message "")
+    (setq wl-folder-entity-hashtb
+	  (wl-folder-create-entity-hashtb name wl-folder-entity-hashtb))
+    (unless (elmo-folder-create folder)
+      (error "Create folder failed"))))
 
 (defun wl-folder-confirm-existence (folder &optional force)
   (if force

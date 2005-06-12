@@ -190,6 +190,13 @@ encode and decode a multibyte string."
     (save-match-data
       (elmo-folder-send folder 'elmo-folder-initialize name))))
 
+(defvar elmo-get-folder-function nil)
+
+(defun elmo-get-folder (name)
+  (or (and elmo-get-folder-function
+	   (funcall elmo-get-folder-function name))
+      (elmo-make-folder name)))
+
 ;; Note that this function is for internal use only.
 (luna-define-generic elmo-folder-msgdb (folder)
   "Return the msgdb of FOLDER (on-demand loading).
@@ -777,13 +784,16 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
     t))
 
 (luna-define-method elmo-folder-rename ((folder elmo-folder) new-name)
-  (let* ((new-folder (elmo-make-folder new-name)))
+  (let* ((new-folder (elmo-make-folder
+		      new-name
+		      nil
+		      (elmo-folder-mime-charset-internal folder))))
     (unless (eq (elmo-folder-type-internal folder)
 		(elmo-folder-type-internal new-folder))
       (error "Not same folder type"))
-    (if (or (file-exists-p (elmo-folder-msgdb-path new-folder))
-	    (elmo-folder-exists-p new-folder))
-	(error "Already exists folder: %s" new-name))
+    (when (or (file-exists-p (elmo-folder-msgdb-path new-folder))
+	      (elmo-folder-exists-p new-folder))
+      (error "Already exists folder: %s" new-name))
     (elmo-folder-send folder 'elmo-folder-rename-internal new-folder)
     (elmo-msgdb-rename-path folder new-folder)))
 

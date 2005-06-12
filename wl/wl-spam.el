@@ -275,7 +275,7 @@ See `wl-summary-mark-action-list' for the detail of element."
   (let ((domain (wl-spam-domain (elmo-folder-name-internal
 				 wl-summary-buffer-elmo-folder)))
 	(total (length mark-list)))
-    (wl-folder-confirm-existence (elmo-make-folder wl-spam-folder))
+    (wl-folder-confirm-existence (wl-folder-get-elmo-folder wl-spam-folder))
     (when (memq domain '(undecided good))
       (message "Registering spam...")
       (elmo-with-progress-display (> total elmo-display-progress-threshold)

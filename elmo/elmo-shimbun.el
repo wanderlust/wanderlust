@@ -473,15 +473,10 @@ If it is the symbol `all', update overview for all shimbun folders."
 	       (setq folders
 		     (append folders
 			     (mapcar
-			      (lambda (fld) (concat prefix server "." fld))
+			      (lambda (group) (concat prefix server "." group))
 			      (shimbun-groups
-			       (shimbun-open server
-					     (let ((fld
-						    (elmo-make-folder
-						     (concat prefix server))))
-					       (luna-make-entity
-						'shimbun-elmo-mua
-						:folder fld))))))))
+			       (elmo-shimbun-folder-shimbun-internal
+				(elmo-get-folder (concat prefix server))))))))
 	     folders)))))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-shimbun-folder))

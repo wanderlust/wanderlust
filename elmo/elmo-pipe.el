@@ -45,10 +45,10 @@
 					    name)
   (when (string-match "^\\([^|]*\\)|\\(:?\\)\\(.*\\)$" name)
     (elmo-pipe-folder-set-src-internal folder
-				       (elmo-make-folder
+				       (elmo-get-folder
 					(elmo-match-string 1 name)))
     (elmo-pipe-folder-set-dst-internal folder
-				       (elmo-make-folder
+				       (elmo-get-folder
 					(elmo-match-string 3 name)))
     (elmo-pipe-folder-set-copy-internal folder
 					(string= ":"
@@ -306,7 +306,7 @@
   (elmo-folder-pack-numbers (elmo-pipe-folder-dst-internal folder)))
 
 (luna-define-method elmo-folder-rename ((folder elmo-pipe-folder) new-name)
-  (let* ((new-folder (elmo-make-folder new-name)))
+  (let* ((new-folder (elmo-get-folder new-name)))
     (unless (string= (elmo-folder-name-internal
 		      (elmo-pipe-folder-src-internal folder))
 		     (elmo-folder-name-internal
@@ -317,14 +317,9 @@
 		(elmo-folder-type-internal
 		 (elmo-pipe-folder-dst-internal new-folder)))
       (error "Not same folder type"))
-    (if (or (file-exists-p (elmo-folder-msgdb-path
-			    (elmo-pipe-folder-dst-internal new-folder)))
-	    (elmo-folder-exists-p
-	     (elmo-pipe-folder-dst-internal new-folder)))
-	(error "Already exists folder: %s" new-name))
-    (elmo-folder-send (elmo-pipe-folder-dst-internal folder)
-		      'elmo-folder-rename-internal
-		      (elmo-pipe-folder-dst-internal new-folder))
+    (elmo-folder-rename (elmo-pipe-folder-dst-internal folder)
+			(elmo-folder-name-internal
+			 (elmo-pipe-folder-dst-internal new-folder)))
     (elmo-msgdb-rename-path folder new-folder)))
 
 (luna-define-method elmo-folder-synchronize ((folder elmo-pipe-folder)

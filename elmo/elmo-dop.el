@@ -108,7 +108,7 @@ Saved queue is old version(2.6).  Clear all pending operations? ")
 	len)
     (while queue-all
       (if (elmo-folder-plugged-p
-	   (elmo-make-folder (elmo-dop-queue-fname (car queue-all))))
+	   (elmo-get-folder (elmo-dop-queue-fname (car queue-all))))
 	  (setq queue (append queue (list (car queue-all)))))
       (setq queue-all (cdr queue-all)))
     (setq count (length queue))
@@ -134,7 +134,7 @@ Saved queue is old version(2.6).  Clear all pending operations? ")
 		      (apply (elmo-dop-queue-method (car queue))
 			     (prog1
 				 (setq folder
-				       (elmo-make-folder
+				       (elmo-get-folder
 					(elmo-dop-queue-fname (car queue))))
 			       (elmo-folder-open folder)
 			       (unless (elmo-folder-plugged-p folder)
@@ -161,7 +161,7 @@ Saved queue is old version(2.6).  Clear all pending operations? ")
 			  'elmo-folder-append-buffer-dop-delayed)
 		  (elmo-folder-delete-messages
 		   (elmo-dop-spool-folder
-		    (elmo-make-folder (elmo-dop-queue-fname (car queue))))
+		    (elmo-get-folder (elmo-dop-queue-fname (car queue))))
 		   (list (nth 1 (elmo-dop-queue-arguments (car queue))))))
 		(setq elmo-dop-queue (delq (car queue) elmo-dop-queue))
 		(setq queue (cdr queue)))
@@ -197,12 +197,13 @@ Saved queue is old version(2.6).  Clear all pending operations? ")
     (setq elmo-dop-queue new-queue)))
 
 ;;; dop spool folder
-(defmacro elmo-dop-spool-folder (folder)
+(defsubst elmo-dop-spool-folder (folder)
   "Return a spool folder for disconnected operations
 which is corresponded to the FOLDER."
-  (` (elmo-make-folder
-      (concat "+" (expand-file-name "spool" (elmo-folder-msgdb-path
-					     (, folder)))))))
+  (elmo-make-folder
+   (concat "+" (expand-file-name "spool" (elmo-folder-msgdb-path folder)))
+   nil
+   (elmo-folder-mime-charset-internal folder)))
 
 (defun elmo-dop-spool-folder-append-buffer (folder flags)
   "Append current buffer content to the dop spool folder.
@@ -357,7 +358,7 @@ FOLDER is the folder structure."
 		    (error))
 		  ;; Append failed...
 		  (elmo-folder-append-buffer
-		   (elmo-make-folder elmo-lost+found-folder)
+		   (elmo-get-folder elmo-lost+found-folder)
 		   flags))
 	  (elmo-folder-delete-messages spool-folder (list number)))))
     ;; ignore failure (already dequed)

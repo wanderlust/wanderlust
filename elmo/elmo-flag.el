@@ -153,7 +153,7 @@
 			     (elmo-flag-folder-minfo-hash-internal
 			      folder))
 	(unless keep-referrer
-	  (setq target-folder (elmo-make-folder (car pair)))
+	  (setq target-folder (elmo-get-folder (car pair)))
 	  (elmo-folder-open target-folder 'load-msgdb)
 	  ;; Unset the flag of the original folder.
 	  ;; (XXX Should the message-id checked?)
@@ -235,7 +235,7 @@
 (defmacro elmo-flag-get-folder (flag)
   "Get the flag folder structure for FLAG."
   `(when (memq ,flag elmo-global-flags)
-     (elmo-make-folder (concat  "'flag/" (symbol-name ,flag)))))
+     (elmo-get-folder (concat  "'flag/" (symbol-name ,flag)))))
 
 (defun elmo-flag-folder-referrer (folder number)
   "Return a list of referrer message information.

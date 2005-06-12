@@ -297,7 +297,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 	(fcount 0)
 	ret)
     (dolist (folder folders)
-      (setq ret (elmo-split-subr (elmo-make-folder folder) arg)
+      (setq ret (elmo-split-subr (elmo-get-folder folder) arg)
 	    count (+ count (car ret))
 	    fcount (+ fcount (cdr ret))))
     (run-hooks 'elmo-split-hook)
@@ -358,7 +358,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 			 ((stringp action)
 			  (condition-case nil
 			      (progn
-				(setq target-folder (elmo-make-folder action))
+				(setq target-folder (elmo-get-folder action))
 				(unless (elmo-folder-exists-p target-folder)
 				  (when
 				      (and

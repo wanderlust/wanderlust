@@ -718,6 +718,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
        (make-face (intern
 		   (format "wl-highlight-summary-%s-flag-face" (car spec))))
        (nth 1 spec)))
+    (setq elmo-get-folder-function #'wl-folder-make-elmo-folder)
     (setq elmo-no-from wl-summary-no-from-message)
     (setq elmo-no-subject wl-summary-no-subject-message)
     (elmo-global-flags-initialize (mapcar 'car wl-summary-flag-alist))

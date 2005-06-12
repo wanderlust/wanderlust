@@ -1,3 +1,40 @@
+2005-06-12  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-get-folder-function): New variable.
+	(elmo-get-folder): New function.
+	(elmo-folder-rename): Call `elmo-make-folder' with specified
+	mime-charset.
+
+	* elmo-split.el (elmo-split): Use `elmo-get-folder' instead of
+	`elmo-make-folder'.
+	(elmo-split-subr): Ditto.
+
+	* elmo-multi.el (elmo-folder-initialize): Ditto.
+
+	* elmo-internal.el (elmo-folder-list-subfolders): Ditto.
+
+	* elmo-flag.el (elmo-flag-folder-delete-message): Ditto.
+	(elmo-flag-get-folder): Ditto.
+
+	* elmo-filter.el (elmo-folder-initialize): Ditto.
+
+	* elmo-access.el (elmo-folder-initialize): Ditto.
+	(elmo-access-folder-update-children): Ditto.
+
+	* elmo-dop.el (elmo-dop-queue-flush): Ditto.
+	(elmo-dop-queue-flush): Ditto.
+	(elmo-folder-append-buffer-dop-delayed): Ditto.
+	(elmo-dop-spool-folder): Call `elmo-make-folder' with specified
+	mime-charset.
+
+	* elmo-pipe.el (elmo-folder-initialize): Use `elmo-get-folder'
+	instead of `elmo-make-folder'.
+	(elmo-folder-rename): Ditto.  Use `elmo-folder-rename' to
+	destination folder instead of send `elmo-folder-rename-internal'.
+
+	* elmo-shimbun.el (elmo-folder-list-subfolders): Use `shimbun'
+	slot of subfolder instead of create it.
+
 2005-06-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-util.el (elmo-collect-separators): New function.

@@ -42,10 +42,10 @@
 (luna-define-method elmo-folder-initialize ((folder elmo-access-folder) name)
   (elmo-access-folder-set-base-folder-internal
    folder
-   (elmo-make-folder name))
+   (elmo-get-folder name))
   (elmo-multi-folder-set-children-internal
    folder
-   (mapcar #'elmo-make-folder
+   (mapcar #'elmo-get-folder
 	   (elmo-object-load
 	    (expand-file-name elmo-access-folder-list-filename
 			      (elmo-folder-msgdb-path folder)))))
@@ -89,7 +89,7 @@
 	 (if subfolders
 	     (nconc children
 		    (mapcar (lambda (name)
-			      (let ((folder (elmo-make-folder name)))
+			      (let ((folder (elmo-get-folder name)))
 				(when open
 				  (elmo-folder-open-internal folder))
 				folder))
