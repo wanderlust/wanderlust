@@ -1146,7 +1146,6 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	     (inhibit-read-only t))
 	(if (eq wl-summary-buffer-view 'thread)
 	    (let* ((thread-entity (wl-thread-get-entity number))
-		   (descendant (wl-thread-entity-get-descendant thread-entity))
 		   (thread-parent (wl-thread-entity-get-parent thread-entity))
 		   (entity-parent (elmo-message-entity-number
 				   (elmo-message-entity-parent folder entity)))
@@ -1156,18 +1155,22 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 		  (progn
 		    (wl-thread-entity-set-linked thread-entity nil)
 		    (wl-thread-update-line-on-buffer-sub nil number))
-		(wl-thread-delete-message number 'deep 'update)
-		(dolist (number (cons number descendant))
-		  (setq update-top-list
-			(nconc
-			 update-top-list
-			 (wl-summary-insert-thread
-			  (elmo-message-entity folder number)
-			  folder
-			  'update))))
-		(when update-top-list
-		  (wl-thread-update-indent-string-thread
-		   (elmo-uniq-list update-top-list)))))
+		(let ((replacements
+		       (cons number
+			     (wl-thread-entity-get-descendant thread-entity))))
+		  (wl-thread-delete-message number 'deep 'update)
+		  (wl-thread-cleanup-symbols replacements)
+		  (dolist (number replacements)
+		    (setq update-top-list
+			  (nconc
+			   update-top-list
+			   (wl-summary-insert-thread
+			    (elmo-message-entity folder number)
+			    folder
+			    'update))))
+		  (when update-top-list
+		    (wl-thread-update-indent-string-thread
+		     (elmo-uniq-list update-top-list))))))
 	    (delete-region (point-at-bol) (1+ (point-at-eol)))
 	    (wl-summary-insert-line
 	     (wl-summary-create-line entity nil
