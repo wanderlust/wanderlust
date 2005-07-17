@@ -722,16 +722,16 @@ Return number if put mark succeed"
 				      fld))))
     fld))
 
-(defun wl-summary-print-argument (msg-num folder)
+(defun wl-summary-print-argument (msg-num data)
   "Print action argument on line."
-  (when folder
+  (when data
     (wl-summary-remove-argument)
     (save-excursion
       (let ((inhibit-read-only t)
-	    (folder (copy-sequence folder))
+	    (data (copy-sequence data))
 	    (buffer-read-only nil)
 	    len rs re c)
-	(setq len (string-width folder))
+	(setq len (string-width data))
 	(if (< len 1) ()
 	  ;;(end-of-line)
 	  (beginning-of-line)
@@ -744,7 +744,8 @@ Return number if put mark succeed"
 			      (1- (window-width)))))
 		(c (current-column))
 		(padding 0))
-	    (if (and width (> (+ c len) width))
+	    (if (and width
+		     (> (+ c len) width))
 		(progn
 		  (move-to-column width)
 		  (setq c (current-column))
@@ -752,18 +753,17 @@ Return number if put mark succeed"
 		    (forward-char -1)
 		    (setq c (current-column)))
 		  (when (< (+ c len) width)
-		    (setq folder (concat " " folder)))
+		    (setq data (concat " " data)))
 		  (setq rs (point))
 		  (put-text-property rs re 'invisible t))
 	      (when (and width
 			 (> (setq padding (- width len c)) 0))
-		(setq folder (concat (make-string padding ?\ )
-				     folder)))
+		(setq data (concat (make-string padding ?\ ) data)))
 	      (setq rs (1- re))))
 	  (put-text-property rs re 'wl-summary-action-argument t)
 	  (goto-char re)
-	  (wl-highlight-action-argument-string folder)
-	  (insert folder)
+	  (wl-highlight-action-argument-string data)
+	  (insert data)
 	  (set-buffer-modified-p nil))))))
 
 (defsubst wl-summary-reserve-temp-mark-p (mark)

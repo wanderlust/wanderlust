@@ -1,3 +1,14 @@
+2005-07-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-draft-additional-header-alist): Add into the
+	customize group `wl-draft'.
+	(wl-draft-add-in-reply-to): Move customize group from `wl' to
+	`wl-draft'.
+	(wl-draft-add-references): Ditto.
+
+	* wl-action.el (wl-summary-print-argument): Rename argument from
+	`folder' to `data'.
+
 2005-06-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-rescan-message): Call

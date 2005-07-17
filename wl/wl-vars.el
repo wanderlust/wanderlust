@@ -524,21 +524,22 @@ If nil, `wl-from' is used."
   "*Additional headers in the draft."
   :type '(repeat (cons (symbol :tag "Field Name")
 		       (choice (string :tag "String")
-			       (function :tag "Function")))))
+			       (function :tag "Function"))))
+  :group 'wl-draft)
 
 (defcustom wl-draft-add-in-reply-to t
   "*If non-nil, message-id of the cited message is inserted to the
 in-reply-to field of the current draft.
 Note: default value follows RFC2822."
   :type 'boolean
-  :group 'wl)
+  :group 'wl-draft)
 
 (defcustom wl-draft-add-references nil
   "*If non-nil, message-id of the cited message is inserted to the
 references field of the current draft.
 Note: default value follows RFC2822."
   :type 'boolean
-  :group 'wl)
+  :group 'wl-draft)
 
 (defcustom wl-draft-cite-function 'wl-default-draft-cite
   "*A function for citation."
