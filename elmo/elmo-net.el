@@ -314,14 +314,6 @@ Returned value is searched from `elmo-network-stream-type-alist'."
       (setq alist (cdr alist)))
     spec))
 
-(defconst elmo-net-quote-chars "@:!")
-
-(defun elmo-net-format-quoted (string &optional extra-chars)
-  (if (string-match (concat "[" elmo-net-quote-chars extra-chars "]")
-		    string)
-      (elmo-quoted-token string)
-    string))
-
 (defun elmo-net-folder-set-parameters (folder tokens &optional defaults)
   (let ((port (cdr (assq 'port tokens)))
 	(stream-type (cdr (assq 'stream-type tokens))))
