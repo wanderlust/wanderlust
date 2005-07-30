@@ -1,3 +1,8 @@
+2005-07-30  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-util.el (elmo-safe-filename): Rewrite to replace
+	`"' (double quote) into "_Q_".
+
 2005-07-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-net.el (elmo-net-quote-chars): Abolish.

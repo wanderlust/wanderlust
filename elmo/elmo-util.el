@@ -1041,12 +1041,25 @@ Emacs 19.28 or earlier does not have `unintern'."
 	    (setq dest (cons (cons name body) dest))))
       dest)))
 
-(defun elmo-safe-filename (folder)
-  (elmo-replace-in-string
-   (elmo-replace-in-string
-    (elmo-replace-in-string folder "/" " ")
-    ":" "__")
-   "|" "_or_"))
+(defun elmo-safe-filename (filename)
+  (let* ((replace-alist '(("/" . " ")
+			  (":" . "__")
+			  ("|" . "_or_")
+			  ("\"" . "_Q_")))
+	 (regexp (concat "["
+			 (regexp-quote (mapconcat 'car replace-alist ""))
+			 "]"))
+	 (rest filename)
+	 converted)
+    (while (string-match regexp rest)
+      (setq converted (concat converted
+			      (substring rest 0 (match-beginning 0))
+			      (cdr (assoc (substring rest
+						     (match-beginning 0)
+						     (match-end 0))
+					  replace-alist)))
+	    rest (substring rest (match-end 0))))
+    (concat converted rest)))
 
 (defvar elmo-filename-replace-chars nil)
 
