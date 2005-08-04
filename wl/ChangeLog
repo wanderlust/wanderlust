@@ -1,3 +1,7 @@
+2005-08-04  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-vars.el (wl-summary-showto-folder-regexp): Update docstring.
+
 2005-07-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-vars.el (wl-draft-additional-header-alist): Add into the

@@ -2467,7 +2467,8 @@ already existing summary."
 
 (defcustom wl-summary-showto-folder-regexp nil
   "Regexp specifying the folder that shows the To (or Newsgroups) field as
-Sender information in summary mode."
+Sender information in summary mode. It is effective when the value of
+`wl-summary-from-function' is `wl-summary-default-from'"
   :type '(choice (const :tag "none" nil)
 		 regexp)
   :group 'wl-summary)
