@@ -553,36 +553,10 @@ The keys that are defined for this mode are:
 ;;; Show nick name of Addrbook in summary.
 ;;;
 
-(defsubst wl-addrbook-get-names (names)
-  (let (addrs)
-    (mapconcat
-     (function
-      (lambda (name)
-	(or (wl-addrbook-nickname-get
-	     (wl-address-header-extract-address name))
-	    (and (setq addrs (std11-extract-address-components name))
-		 (or (car addrs) (cadr addrs))))))
-     (wl-parse-addresses names)
-     ",")))
-
-(eval-when-compile (defvar-maybe entity nil)) ; silence byte compiler.
-(defun wl-summary-addrbook-from (from)
-  "A candidate for wl-summary-from-function.
-Show destination in summary matched by `wl-summary-show-dest-folder-regexp'.
-And use Addrbook for get user name."
-  (let ((fromaddr (wl-address-header-extract-address from))
-	dest)
-    (or
-     (and (eq major-mode 'wl-summary-mode)
-	  (string-match wl-summary-showto-folder-regexp
-			wl-summary-buffer-folder-name)
-	  (wl-address-user-mail-address-p fromaddr)
-	  (cond ((setq dest (elmo-message-entity-field entity 'to))
-		 (concat "To:" (eword-decode-string (wl-addrbook-get-names dest))))
-		((setq dest (elmo-message-entity-field entity 'newsgroups))
-		 (concat "Ng:" dest))))
-     (wl-addrbook-nickname-get fromaddr)
-     from)))
+(defun wl-addrbook-get-nickname (mailbox)
+  "For `wl-summary-get-petname-function'."
+  (wl-addrbook-nickname-get
+   (wl-address-header-extract-address mailbox)))
 
 (provide 'wl-addrbook)
 

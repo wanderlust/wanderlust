@@ -1,3 +1,9 @@
+2005-08-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-addrbook.el (wl-addrbook-get-names): Abolish.
+	(wl-summary-addrbook-from): Ditto.
+	(wl-addrbook-get-nickname): New function.
+
 2005-02-24  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* ptexinfmt.el (texinfo-multitable-widths): Reverse the logic that
