@@ -137,7 +137,7 @@ If nil,  the old 'user' entry remains.")
   (setq wl-address-init-function 'wl-addrbook-init)
   ;;
   (when wl-summary-use-addrbook-from-func
-    (setq wl-summary-from-function 'wl-summary-addrbook-from))
+    (setq wl-summary-get-petname-function 'wl-addrbook-get-nickname))
   (define-key wl-summary-mode-map "\C-c\C-a" 'wl-summary-addrbook-add)
   (define-key wl-draft-mode-map "\C-i"     'wl-draft-addrbook-header-comp-or-tab)
   (define-key wl-draft-mode-map "\e\t"     'wl-draft-addrbook-expand)
