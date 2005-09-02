@@ -1,3 +1,9 @@
+2005-09-02  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-util.el (wl-read-search-condition-internal): Add "Larger" and
+	"Smaller".
+	* wl-folder.el (wl-folder-complete-filter-condition): Ditto.
+
 2005-08-04  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-vars.el (wl-summary-showto-folder-regexp): Update docstring.

@@ -1004,7 +1004,8 @@ is enclosed by at least one regexp grouping construct."
   (let* ((completion-ignore-case t)
 	 (denial-fields (nconc (mapcar 'capitalize elmo-msgdb-extra-fields)
 			       '("Flag" "Since" "Before"
-				 "From" "Subject" "To" "Cc" "Body" "ToCc")))
+				 "From" "Subject" "To" "Cc" "Body" "ToCc"
+				 "Larger" "Smaller")))
 	 (field (completing-read
 		 (format "%s (%s): " prompt default)
 		 (mapcar 'list

@@ -554,6 +554,13 @@ If each field is t, function is set as default converter."
 	(if (string= key "since")
 	    (not (elmo-time< field-date specified-date))
 	  (elmo-time< field-date specified-date))))
+     ((or (string= key "larger")
+	  (string= key "smaller"))
+      (let ((bytes (elmo-msgdb-message-entity-field handler entity 'size))
+	    (threshold (string-to-int (elmo-filter-value condition))))
+	(if (string= key "larger")
+	    (> bytes threshold)
+	  (< bytes threshold))))
      ((setq field-value (elmo-msgdb-message-entity-field handler
 							 entity
 							 (intern key)

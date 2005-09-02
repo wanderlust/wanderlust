@@ -1,3 +1,8 @@
+2005-09-02  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* modb-entity.el (elmo-msgdb-message-match-condition): Add new
+	condition `larger' and `smaller'.
+
 2005-07-30  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-util.el (elmo-safe-filename): Rewrite to replace
