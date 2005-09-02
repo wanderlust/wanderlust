@@ -51,6 +51,7 @@
 ;;  @definfoenclose
 ;;  @deftypeivar
 ;;  @deftypeop
+;;  @allowcodebreaks
 
 ;;; Code:
 
@@ -202,6 +203,7 @@ DOCSTRING will be printed if ASSERTION is nil and
 (put 'setcontentsaftertitlepage 'texinfo-format 'texinfo-discard-line)
 (put 'setshortcontentsaftertitlepage 'texinfo-format 'texinfo-discard-line)
 (put 'novalidate 'texinfo-format 'texinfo-discard-line-with-args)
+(put 'frenchspacing 'texinfo-format 'texinfo-discard-line-with-args)
 
 ;; head & foot
 (put 'headings 'texinfo-format 'texinfo-discard-line-with-args)
@@ -218,6 +220,9 @@ DOCSTRING will be printed if ASSERTION is nil and
 
 ;; @slanted{} (makeinfo 4.8 or later)
 (put 'slanted 'texinfo-format 'texinfo-format-noop)
+
+;; @sansserif{} (makeinfo 4.8 or later)
+(put 'sansserif 'texinfo-format 'texinfo-format-noop)
 
 ;; @tie{} (makeinfo 4.3 or later)
 (put 'tie 'texinfo-format 'texinfo-format-tie)
@@ -412,6 +417,12 @@ For example, @verb\{|@|\} results in @ and
   (insert "(R)"))
 
 ;;; Accents and Special characters
+;; @euro{}	==>	Euro
+(put 'euro 'texinfo-format 'texinfo-format-euro)
+(ptexinfmt-defun-if-void texinfo-format-euro ()
+  (texinfo-parse-arg-discard)
+  (insert "Euro "))
+
 ;; @pounds{}	==>	#	Pounds Sterling
 (put 'pounds 'texinfo-format 'texinfo-format-pounds)
 (ptexinfmt-defun-if-void texinfo-format-pounds ()
@@ -422,7 +433,7 @@ For example, @verb\{|@|\} results in @ and
 (put 'ordf 'texinfo-format 'texinfo-format-ordf)
 (ptexinfmt-defun-if-void texinfo-format-ordf ()
   (texinfo-parse-arg-discard)
-  (insert "o"))
+  (insert "a"))
 
 ;; @ordm{}	==>	o	Spanish masculine
 (put 'ordm 'texinfo-format 'texinfo-format-ordm)

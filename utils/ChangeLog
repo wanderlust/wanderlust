@@ -1,3 +1,8 @@
+2005-09-02  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* ptexinfmt.el: Support @frenchspacing, @euro, @sansserif.
+	(texinfo-format-ordf): Fix typo.
+
 2005-08-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-addrbook.el (wl-addrbook-setup): Set
