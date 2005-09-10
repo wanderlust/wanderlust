@@ -1,3 +1,7 @@
+2005-09-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* WL-ELS (ELMO-MODULES): Added elmo-search.
+
 2005-02-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* WL-MK (wl-news-search-regexp): Allow ".x" at the

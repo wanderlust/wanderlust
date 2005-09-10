@@ -1,3 +1,7 @@
+2005-09-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-search.el: New file.
+
 2005-09-02  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* modb-entity.el (elmo-msgdb-message-match-condition): Add new
