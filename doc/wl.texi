@@ -673,7 +673,7 @@ supported by ELMO.
 
 As of version @value{VERSION}, 15 types of folders are predefined. These
 are IMAP, NNTP, LocalDir(MH), Maildir, News Spool, Archive, POP,
-Shimbun, Namazu, Multi, Filter, Pipe, File, Access and Internal folder
+Shimbun, Search, Multi, Filter, Pipe, File, Access and Internal folder
 types.
 
 @menu
@@ -685,7 +685,7 @@ types.
 * Archive Folder::              @samp{$} -- Archive folder
 * POP Folder::                  @samp{&} -- POP folder
 * Shimbun Folder::              @samp{@@} -- Shimbun Folder
-* Namazu Folder::               @samp{[} -- Namazu Folder
+* Search Folder::               @samp{[} -- Search Folder
 * Multi Folder::                @samp{*} -- Multi folder
 * Filter Folder::               @samp{/} -- Filter folder
 * Pipe Folder::                 @samp{|} -- Pipe folder
@@ -1280,7 +1280,7 @@ normal connection in these cases, add @samp{!direct} at the end of
 folder name.
 
 
-@node Shimbun Folder, Namazu Folder, POP Folder, Folders
+@node Shimbun Folder, Search Folder, POP Folder, Folders
 @section Shimbun Folder
 @cindex @samp{@@}
 @cindex Shimbun Folder
@@ -1332,30 +1332,56 @@ Example:
       '("^@@airs\\." "^@@namazu\\."))
 @end example
 
-@kbd{s rescan} is needed after fetching to update summary view.
+Update summary view automatically after fetching.
 @end table
 
 
-@node Namazu Folder, Multi Folder, Shimbun Folder, Folders
-@section Namazu Folder
+@node Search Folder, namazu, Shimbun Folder, Folders
+@section Search Folder
 @cindex @samp{[}
-@cindex Namazu Folder
-@cindex Folder, Namazu
+@cindex Search Folder
+@cindex Folder, Search
 @cindex Folder, Text Search
-@pindex Namazu
-@pindex nmz
-A folder to access messages found in namazu-index with some condition.
-It uses namazu (@uref{http://www.namazu.org/}) for search.
+
+A folder to access messages found by an external program with some
+condition.
 
 Format:
 
 @example
 @group
-@samp{[} @var{search condition} @samp{]} [ @var{absolute path of namazu index} ]
+@samp{[} @var{search condition} @samp{]} [ @var{search target} [ @samp{!} @var{search engine} ] ]
 @end group
 @end example
 
-Default value of the path of namazu index can be assigned by @code{elmo-nmz-default-index-path}.
+The format of the @var{search condition} and @var{search target} depend
+on the @var{search engine}.
+
+@subsection Supported search engines
+
+Supported search engines are following ones.  Default search engine can
+be assigned by @code{elmo-search-default-engine}.
+
+@menu
+* namazu::      namazu
+* grep::        grep
+@end menu
+
+
+@node namazu, grep, Search Folder, Folders
+@section namazu
+@pindex namazu
+
+The messages registered in the namazu-index is found by using namazu
+(@uref{http://www.namazu.org/}).
+
+@var{search condition} is a query of namazu.  Please refer to the
+document of the attached to namazu for details.
+
+@var{search target} is a namazu-index used for search.  The directory
+with the index or the alias that explain in the following can be
+specified.  Default value of the path of namazu index can be assigned by
+@code{elmo-search-namazu-default-index-path}.
 
 Example:
 
@@ -1381,7 +1407,7 @@ You can define an alias name for index.
 Example:
 
 @example
-(setq elmo-nmz-index-alias-alist
+(setq elmo-search-namazu-index-alias-alist
       '(("cache" . "~/.elmo/cache")
         ("docs" . "~/documents")))
 @end example
@@ -1398,15 +1424,15 @@ directory @file{~/.elmo/cache}.
 
 @subsubsection Multiple indices
 
-You can specify a list for @code{elmo-nmz-default-index-path} and
-@code{elmo-nmz-index-alias-alist}.
+You can specify a list for @code{elmo-search-namazu-default-index-path} and
+@code{elmo-search-namazu-index-alias-alist}.
 When list is specified, all index contained in the list is used as the 
 namazu indices.
 
 Example:
 
 @example
-(setq elmo-nmz-index-alias-alist
+(setq elmo-search-namazu-index-alias-alist
       '(("all" . ("~/.elmo/cache" "~/documents"))
         ("cache" . "~/.elmo/cache")))
 @end example
@@ -1420,7 +1446,32 @@ Using above alias setting, you can specify
 to execute a namazu search with keyword @samp{wanderlust} using indices in the 
 directory @file{~/.elmo/cache} and @file{~/documents}.
 
-@node Multi Folder, Filter Folder, Namazu Folder, Folders
+@node grep, Multi Folder, namazu, Folders
+@section grep
+@pindex grep
+
+The files that exists in the directory specified with the @var{search
+target} are found by using grep.
+
+@var{search condition} is a regular expression of grep.  The directory
+as @var{search target} cannot be omitted.
+
+Example:
+
+@example
+@group
+[wanderlust]~/Mail/inbox!grep
+    -> search messages matched with "wanderlust"
+       from the directory "~/Mail/inbox"
+
+["[sr]emi"]~/Mail/semi!grep
+    -> If @samp{]} is included in regular expression,
+       @var{search condition} should be enclosed with @samp{"}.
+@end group
+@end example
+
+
+@node Multi Folder, Filter Folder, grep, Folders
 @section Multi Folder
 @cindex @samp{*}
 @cindex Multi Folder

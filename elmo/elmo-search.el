@@ -94,6 +94,13 @@ Returns non-nil if fetching was succeed.")
 	   :param param
 	   (cdr spec))))
 
+(defun elmo-search-register-engine (name class &rest properties)
+  (let ((cell (assq name elmo-search-engine-alist))
+	(spec (cons class properties)))
+    (if cell
+	(setcdr cell spec)
+      (setq elmo-search-engine-alist
+	    (cons (cons name spec) elmo-search-engine-alist)))))
 
 ;; ELMO search folder
 (eval-and-compile
@@ -340,6 +347,7 @@ If the value is a list, all elements are used as index paths for namazu."
     (if (listp index)
 	(mapcar 'expand-file-name index)
       (expand-file-name index))))
+
 
 ;; grep
 (defun elmo-search-grep-target (engine)

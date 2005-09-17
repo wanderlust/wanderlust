@@ -1772,7 +1772,7 @@ Return a hashtable for newsgroups."
 (elmo-define-folder ?|  'pipe)
 (elmo-define-folder ?.  'maildir)
 (elmo-define-folder ?'  'internal)
-(elmo-define-folder ?\[  'nmz)
+(elmo-define-folder ?\[  'search)
 (elmo-define-folder ?@  'shimbun)
 
 ;;; Obsolete variables.
@@ -1812,6 +1812,13 @@ Return a hashtable for newsgroups."
 			       'elmo-msgdb-directory)
 (elmo-define-obsolete-variable 'elmo-global-flag-list
 			       'elmo-global-flags)
+(elmo-define-obsolete-variable 'elmo-nmz-default-index-path
+			       'elmo-search-namazu-default-index-path)
+(elmo-define-obsolete-variable 'elmo-nmz-index-alias-alist
+			       'elmo-search-namazu-index-alias-alist)
+(elmo-define-obsolete-variable 'elmo-nmz-use-drive-letter
+			       'elmo-search-use-drive-letter)
+
 
 ;; Obsolete functions.
 ;; 2001-12-11: *-dir -> *-directory

@@ -1,5 +1,9 @@
 Wanderlust NEWS -- User-visible changes in Wanderlust.
 
+* Changes in 2.16.0 from 2.14.x
+
+** A folder type `namazu' is abolished.  New folder type `search' is added instead.
+
 * Changes in 2.14.1 from 2.14.0
   Version 2.14.1 is a bug fix version of 2.14.0.
 
