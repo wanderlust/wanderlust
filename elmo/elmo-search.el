@@ -42,20 +42,12 @@
 		 (other :tag "Use" t))
   :group 'elmo)
 
-(defcustom elmo-search-engine-alist
-  '((namazu local-file
-	    :prog "namazu"
-	    :args ("--all" "--list" "--early" pattern elmo-search-namazu-index)
-	    :charset 'iso-2022-jp)
-    (grep local-file
-	  :prog "grep"
-	  :args ("-l" "-e" pattern elmo-search-grep-target)))
+(defvar elmo-search-engine-alist nil
   "*An alist of search engines.
 Each element looks like (ENGINE CLASS PROPERTIES...)
 ENGINE is a symbol, the name of the search engine.
 CLASS is a symbol, the class name that performs a search.
-PROPERTIES is a plist, it configure an engine with the CLASS."
-  :group 'elmo)
+PROPERTIES is a plist, it configure an engine with the CLASS.")
 
 (defcustom elmo-search-default-engine 'namazu
   "*Default search engine for elmo-search folder."
@@ -358,6 +350,20 @@ If the value is a list, all elements are used as index paths for namazu."
 	(setq files (cons (expand-file-name filename dirname) files))))
     files))
 
+
+;;; Setup `elmo-search-engine-alist'
+(unless noninteractive
+  (or (assq 'namazu elmo-search-engine-alist)
+      (elmo-search-register-engine
+       'namazu 'local-file
+       :prog "namazu"
+       :args '("--all" "--list" "--early" pattern elmo-search-namazu-index)
+       :charset 'iso-2022-jp))
+  (or (assq 'grep elmo-search-engine-alist)
+      (elmo-search-register-engine
+       'grep 'local-file
+       :prog "grep"
+       :args '("-l" "-e" pattern elmo-search-grep-target))))
 
 (require 'product)
 (product-provide (provide 'elmo-search) (require 'elmo-version))
