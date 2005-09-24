@@ -1046,6 +1046,40 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (interactive "P")
   (wl-summary-rescan "size" reverse))
 
+(defun wl-summary-sort-function-from-spec (spec reverse)
+  (let (funtion)
+    (when (string-match "^!\\(.+\\)$" spec)
+      (setq spec (match-string 1 spec)
+	    reverse (not reverse)))
+    (setq funtion
+	  (intern (format "wl-summary-overview-entity-compare-by-%s" spec)))
+    (if reverse
+	`(lambda (x y) (not (,funtion x y)))
+      funtion)))
+
+(defun wl-summary-sort-messages (numbers sort-by reverse)
+  (let* ((functions (mapcar
+		     (lambda (spec)
+		       (wl-summary-sort-function-from-spec spec reverse))
+		     (if (listp sort-by) sort-by (list sort-by))))
+	 (predicate (if (= (length functions) 1)
+			(car functions)
+		      (lambda (x y)
+			(let ((functions functions))
+			  (catch 'done
+			    (dolist (function functions)
+			      (when (funcall function x y)
+				(throw 'done t))
+			      (when (funcall function y x)
+				(throw 'done nil)))))))))
+    (mapcar #'elmo-message-entity-number
+	    (sort (mapcar (lambda (number)
+			    (elmo-message-entity
+			     wl-summary-buffer-elmo-folder
+			     number))
+			  numbers)
+		  predicate))))
+
 (defun wl-summary-rescan (&optional sort-by reverse disable-killed disable-thread)
   "Rescan current folder without updating."
   (interactive)
@@ -1061,26 +1095,16 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	 (and disable-thread wl-summary-search-parent-by-subject-regexp))
 	(wl-summary-divide-thread-when-subject-changed
 	 (and disable-thread wl-summary-divide-thread-when-subject-changed))
-	(predicate (and sort-by
-			(intern (format "wl-summary-overview-entity-compare-by-%s"
-					sort-by))))
-	(sort-label (if reverse "Reverse sorting" "Sorting"))
 	(i 0)
 	num
 	expunged)
     (erase-buffer)
     (message "Re-scanning...")
-    (when sort-by
-      (message "%s by %s..." sort-label sort-by)
-      (setq numbers
-	    (sort numbers
-		  (lambda (x y)
-		    (funcall
-		     predicate
-		     (elmo-message-entity wl-summary-buffer-elmo-folder x)
-		     (elmo-message-entity wl-summary-buffer-elmo-folder y)))))
-      (if reverse (setq numbers (nreverse numbers)))
-      (message "%s by %s...done" sort-label sort-by))
+    (when (and sort-by numbers)
+      (let ((action  (if reverse "Reverse sorting" "Sorting")))
+	(message "%s by %s..." action sort-by)
+	(setq numbers (wl-summary-sort-messages numbers sort-by reverse))
+	(message "%s by %s...done" action sort-by)))
     (setq num (length numbers))
     (setq wl-thread-entity-hashtb (elmo-make-hash (* num 2))
 	  wl-thread-entity-list nil
@@ -1891,13 +1915,15 @@ This function is defined for `window-scroll-functions'"
   "Sort summary lines into the selected order; argument means descending order."
   (interactive "P")
   (wl-summary-rescan
-   (completing-read
+   (wl-completing-read-multiple
     (format "%s by (%s): "
 	    (if reverse "Reverse sort" "Sort")
 	    (symbol-name wl-summary-default-sort-spec))
-    (mapcar (lambda (spec)
-	      (list (symbol-name spec)))
-	    wl-summary-sort-specs)
+    (nconc
+     (mapcar (lambda (spec) (list (symbol-name spec)))
+	     wl-summary-sort-specs)
+     (mapcar (lambda (spec) (list (concat "!" (symbol-name spec))))
+	     wl-summary-sort-specs))
     nil t nil nil (symbol-name wl-summary-default-sort-spec))
    reverse))
 

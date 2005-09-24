@@ -1,3 +1,11 @@
+2005-09-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-sort-function-from-spec): New function.
+	(wl-summary-sort-messages): Ditto.
+	(wl-summary-rescan): Use it.
+	(wl-summary-sort): Use `wl-completing-read-multiple' instead of
+	`completing-read'; Append candidates for reverse order.
+
 2005-09-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* Version number is increased to 2.15.2.
