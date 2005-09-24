@@ -1914,18 +1914,19 @@ This function is defined for `window-scroll-functions'"
 (defun wl-summary-sort (reverse)
   "Sort summary lines into the selected order; argument means descending order."
   (interactive "P")
-  (wl-summary-rescan
-   (wl-completing-read-multiple
-    (format "%s by (%s): "
-	    (if reverse "Reverse sort" "Sort")
-	    (symbol-name wl-summary-default-sort-spec))
-    (nconc
-     (mapcar (lambda (spec) (list (symbol-name spec)))
-	     wl-summary-sort-specs)
-     (mapcar (lambda (spec) (list (concat "!" (symbol-name spec))))
-	     wl-summary-sort-specs))
-    nil t nil nil (symbol-name wl-summary-default-sort-spec))
-   reverse))
+  (let ((spec (wl-completing-read-multiple
+	       (format "%s by (%s): "
+		       (if reverse "Reverse sort" "Sort")
+		       (symbol-name wl-summary-default-sort-spec))
+	       (nconc
+		(mapcar (lambda (spec) (list (symbol-name spec)))
+			wl-summary-sort-specs)
+		(mapcar (lambda (spec) (list (concat "!" (symbol-name spec))))
+			wl-summary-sort-specs))
+	       nil t)))
+    (wl-summary-rescan
+     (if (equal spec '("")) (symbol-name wl-summary-default-sort-spec) spec)
+     reverse)))
 
 (defun wl-summary-get-available-flags (&optional include-specials)
   (let ((flags (elmo-uniq-list
