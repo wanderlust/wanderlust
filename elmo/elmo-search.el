@@ -330,12 +330,12 @@ If the value is a list, all elements are used as index paths for namazu."
 
 (defun elmo-search-namazu-index (engine)
   (let* ((param (elmo-search-engine-param-internal engine))
-	 (index (cond ((cdr (assoc param
-				   elmo-search-namazu-index-alias-alist)))
-		      ((eq (length param) 0)
-		       elmo-search-namazu-default-index-path)
-		      (t
-		       param))))
+	 (index (cond
+		 ((cdr (assoc param elmo-search-namazu-index-alias-alist)))
+		 ((and param (> (length param) 0))
+		  param)
+		 (t
+		  elmo-search-namazu-default-index-path))))
     (if (listp index)
 	(mapcar 'expand-file-name index)
       (expand-file-name index))))
