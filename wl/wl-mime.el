@@ -224,21 +224,24 @@ It calls following-method selected from variable
       (kill-buffer buffer))))
 
 (defun wl-draft-attribute-recipients ()
-  (concat (mapconcat
-	   'identity
-	   (wl-draft-deduce-address-list
-	    (current-buffer)
-	    (point-min)
-	    (save-excursion
-	      (goto-char (point-min))
-	      (re-search-forward
-	       (concat
-		"^"
-		(regexp-quote mail-header-separator)
-		"$")
-	       nil t)
-	      (point)))
-	   ", ")))
+  (let (wl-draft-remove-group-list-contents)
+    (mapconcat
+     'identity
+     (nconc
+      (wl-draft-deduce-address-list
+       (current-buffer)
+       (point-min)
+       (save-excursion
+	 (goto-char (point-min))
+	 (re-search-forward
+	  (concat
+	   "^"
+	   (regexp-quote mail-header-separator)
+	   "$")
+	  nil t)
+	 (point)))
+      (wl-draft-parse-mailbox-list wl-draft-mime-bcc-field-name))
+     ", ")))
 
 (defun wl-draft-attribute-envelope-from ()
   (or wl-envelope-from

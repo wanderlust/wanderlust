@@ -1,3 +1,9 @@
+2005-10-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-draft-attribute-recipients): Added mime-bcc field
+	value into recipients; Bind `wl-draft-remove-group-list-contents'
+	as nil.
+
 2005-09-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-sort): Fixed the last change.
