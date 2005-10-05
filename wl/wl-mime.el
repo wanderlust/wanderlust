@@ -283,7 +283,7 @@ It calls following-method selected from variable
 
 (defun wl-draft-attribute-nntp-posting-port ()
   (wl-draft-nntp-attribute
-   'point
+   'port
    '(wl-nntp-posting-port elmo-nntp-default-port)))
 
 (defun wl-draft-attribute-value (attr)
