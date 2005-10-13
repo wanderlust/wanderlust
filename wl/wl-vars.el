@@ -2518,7 +2518,7 @@ ex.
 			       (string :tag "Folder"))))
   :group 'wl-folder)
 
-(defcustom wl-folder-hierarchy-access-folders '("^-[^\\.]*\\(:\\|@\\|$\\)"
+(defcustom wl-folder-hierarchy-access-folders '("^-[^.]*\\(:\\|@\\|$\\)"
 						"^@$" "^'$")
   "*Access group REGEXPs to make hierarchy structure."
   :type '(repeat (string :tag "Regexp"))
