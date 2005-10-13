@@ -329,6 +329,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
     (unwind-protect
 	(progn
 	  (with-temp-buffer
+	    (set-buffer-multibyte nil)
 	    (dolist (msg msgs)
 	      (erase-buffer)
 	      (when (ignore-errors

@@ -597,6 +597,7 @@ With ARG, ask coding system and encode the region with it before verifying."
 	   (setq entity
 		 (car (mime-entity-children message-entity)))
 	   (with-temp-buffer
+	     (set-buffer-multibyte nil)
 	     (insert (mime-entity-body message-entity))
 	     (elmo-folder-append-buffer target))))
     number))
