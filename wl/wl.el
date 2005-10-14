@@ -673,7 +673,6 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (when wl-use-acap (funcall (symbol-function 'wl-acap-exit)))
     (wl-biff-stop)
     (elmo-clear-signal-slots)
-    (elmo-passwd-alist-clear)
     (run-hooks 'wl-exit-hook)
     (wl-save-status)
     (wl-folder-cleanup-variables)
@@ -691,6 +690,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 ;;	(delete-frame))
     (setq wl-init nil)
     (remove-hook 'kill-emacs-hook 'wl-save-status)
+    (elmo-passwd-alist-clear)
     t)
   (message "") ; empty minibuffer.
   )

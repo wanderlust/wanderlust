@@ -1,5 +1,9 @@
 2005-10-14  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* wl.el (wl-exit): Call elmo-passwd-alist-clear at the end.
+
+2005-10-14  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
 	* wl-vars.el (wl-folder-hierarchy-access-folders): Fix regexp.
 
 2005-10-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
