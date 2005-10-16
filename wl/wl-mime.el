@@ -680,11 +680,11 @@ With ARG, ask destination folder."
 	(with-current-buffer mother
 	  (mime-store-message/partial-piece entity situation)
 	  (setq wl-message-buffer-cur-summary-buffer summary-buf)
-	  (make-variable-buffer-local 'mime-preview-over-to-next-method-alist)
+	  (make-local-variable 'mime-preview-over-to-next-method-alist)
 	  (setq mime-preview-over-to-next-method-alist
 		(cons (cons 'mime-show-message-mode 'wl-message-exit)
 		      mime-preview-over-to-next-method-alist))
-	  (make-variable-buffer-local 'mime-preview-over-to-previous-method-alist)
+	  (make-local-variable 'mime-preview-over-to-previous-method-alist)
 	  (setq mime-preview-over-to-previous-method-alist
 		(cons (cons 'mime-show-message-mode 'wl-message-exit)
 		      mime-preview-over-to-previous-method-alist)))
