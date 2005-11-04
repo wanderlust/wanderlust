@@ -77,15 +77,15 @@ CVS:
 
   To get Wanderlust from stable branch, do following instead of above
 
-    % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r wl-2_12 wanderlust
+    % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r wl-2_14 wanderlust
 
   You can also view CVS repository via
 
-	http://cvs.m17n.org/cgi-bin/viewcvs/wanderlust/
+	http://cvs.m17n.org/viewcvs/root/wanderlust/
 
-  If you want to receive CVS commit log via e-mail, send empty mail to
+  If you want to receive CVS commit log via e-mail, follow instructions in
 
-	cvs-info-help@cvs.m17n.org
+	http://cvs.m17n.org/
 
 Development:
 

@@ -1,3 +1,8 @@
+2005-11-04  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* README, README.ja: Update stable branch.
+	Update information on viewcvs and cvs commit mail.
+
 2005-09-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* WL-ELS (ELMO-MODULES): Removed elmo-nmz.

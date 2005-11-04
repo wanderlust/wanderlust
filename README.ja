@@ -79,16 +79,15 @@ CVS:
 
   安定版の枝から Wanderlust を取り出す場合は、以下の様にしてください。
 
-    % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r wl-2_12 wanderlust
+    % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r wl-2_14 wanderlust
 
   CVS repository は以下からも参照できます。
 
-	http://cvs.m17n.org/cgi-bin/viewcvs/wanderlust/
+	http://cvs.m17n.org/viewcvs/root/wanderlust/
 
-  CVS の commit log をメールで受け取りたい方は、次のアドレスに空の
-  メールを送ってください。
+  CVS の commit log をメールで受け取りたい方は、以下の所にある指示に従って下さい。
 
-	cvs-info-help@cvs.m17n.org
+	http://cvs.m17n.org/
 
 Development:
 
