@@ -1,3 +1,19 @@
+2005-11-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-util.el (wl-collect-draft): Rewrite with `dolist'.
+	(wl-inhibit-save-drafts): New internal variable.
+	(wl-disable-auto-save): Ditto.
+	(wl-save-drafts): Treat above variables.
+	(wl-auto-save-drafts): New function.
+	(wl-set-save-drafts): Split to `wl-start-save-drafts' and
+	`wl-stop-save-drafts'.
+	(wl-start-save-drafts): New function.
+	(wl-stop-save-drafts): Ditto.
+	(wl-set-auto-save-draft): New command.
+
+	* wl-draft.el (wl-draft): Use `wl-start-save-drafts' instead of
+	`wl-set-save-drafts'.
+
 2005-10-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-mime.el (wl-mime-combine-message/partial-pieces): Use

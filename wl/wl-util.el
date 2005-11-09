@@ -517,28 +517,35 @@ that `read' can handle, whenever this is possible."
     result))
 
 (defun wl-collect-draft ()
-  (let ((draft-regexp (concat
-		       "^" (regexp-quote wl-draft-folder)))
-	result buf)
-    (mapcar
-     (function (lambda (x)
-		 (if (with-current-buffer x
-		       (and (eq major-mode 'wl-draft-mode)
-			    (buffer-name)
-			    (string-match draft-regexp (buffer-name))))
-		     (setq result (nconc result (list x))))))
-     (buffer-list))
-    result))
+  (let ((draft-regexp (concat "^" (regexp-quote wl-draft-folder)))
+	result)
+    (dolist (buffer (buffer-list))
+      (when (with-current-buffer buffer
+	      (and (eq major-mode 'wl-draft-mode)
+		   (buffer-name)
+		   (string-match draft-regexp (buffer-name))))
+	(setq result (cons buffer result))))
+    (nreverse result)))
+
+(defvar wl-inhibit-save-drafts nil)
+(defvar wl-disable-auto-save nil)
+(make-variable-buffer-local 'wl-disable-auto-save)
 
 (defun wl-save-drafts ()
-  (let ((msg (current-message))
-	(buffers (wl-collect-draft)))
-    (save-excursion
-      (while buffers
-	(set-buffer (car buffers))
-	(if (buffer-modified-p) (wl-draft-save))
-	(setq buffers (cdr buffers))))
-    (message "%s" (or msg ""))))
+  "Save all drafts. Return nil if there is no draft buffer."
+  (if wl-inhibit-save-drafts
+      'inhibited
+    (let ((wl-inhibit-save-drafts t)
+	  (msg (current-message))
+	  (buffers (wl-collect-draft)))
+      (save-excursion
+	(dolist (buffer buffers)
+	  (set-buffer buffer)
+	  (when (and (not wl-disable-auto-save)
+		     (buffer-modified-p))
+	    (wl-draft-save))))
+      (message "%s" (or msg ""))
+      buffers)))
 
 (static-if (fboundp 'read-directory-name)
     (defun wl-read-directory-name (prompt dir)
@@ -670,32 +677,54 @@ that `read' can handle, whenever this is possible."
 	max))))
 
 ;; Draft auto-save
+(defun wl-auto-save-drafts ()
+  (unless (wl-save-drafts)
+    (wl-stop-save-drafts)))
+
 (static-cond
  (wl-on-xemacs
   (defvar wl-save-drafts-timer-name "wl-save-drafts")
 
-  (defun wl-set-save-drafts ()
-    (if (numberp wl-auto-save-drafts-interval)
-	(unless (get-itimer wl-save-drafts-timer-name)
-	  (start-itimer wl-save-drafts-timer-name 'wl-save-drafts
-			wl-auto-save-drafts-interval wl-auto-save-drafts-interval
-			t))
-      (when (get-itimer wl-save-drafts-timer-name)
-	(delete-itimer wl-save-drafts-timer-name)))))
+  (defun wl-start-save-drafts ()
+    (when (numberp wl-auto-save-drafts-interval)
+      (unless (get-itimer wl-save-drafts-timer-name)
+	(start-itimer wl-save-drafts-timer-name
+		      'wl-auto-save-drafts
+		      wl-auto-save-drafts-interval
+		      wl-auto-save-drafts-interval
+		      t))))
+
+  (defun wl-stop-save-drafts ()
+    (when (get-itimer wl-save-drafts-timer-name)
+      (delete-itimer wl-save-drafts-timer-name))))
  (t
-  (defun wl-set-save-drafts ()
-    (if (numberp wl-auto-save-drafts-interval)
-	(progn
-	  (require 'timer)
-	  (if (get 'wl-save-drafts 'timer)
-	      (progn (timer-set-idle-time (get 'wl-save-drafts 'timer)
-					  wl-auto-save-drafts-interval t)
-		     (timer-activate-when-idle (get 'wl-save-drafts 'timer)))
-	    (put 'wl-save-drafts 'timer
-		 (run-with-idle-timer
-		  wl-auto-save-drafts-interval t 'wl-save-drafts))))
-      (when (get 'wl-save-drafts 'timer)
-	(cancel-timer (get 'wl-save-drafts 'timer)))))))
+  (defun wl-start-save-drafts ()
+    (when (numberp wl-auto-save-drafts-interval)
+      (require 'timer)
+      (if (get 'wl-save-drafts 'timer)
+	  (progn
+	    (timer-set-idle-time (get 'wl-save-drafts 'timer)
+				 wl-auto-save-drafts-interval t)
+	    (timer-activate-when-idle (get 'wl-save-drafts 'timer)))
+	(put 'wl-save-drafts 'timer
+	     (run-with-idle-timer
+	      wl-auto-save-drafts-interval t 'wl-auto-save-drafts)))))
+
+  (defun wl-stop-save-drafts ()
+    (when (get 'wl-save-drafts 'timer)
+      (cancel-timer (get 'wl-save-drafts 'timer))))))
+
+(defun wl-set-auto-save-draft (&optional arg)
+  (interactive "P")
+  (unless (setq wl-disable-auto-save
+		(cond
+		 ((null arg) (not wl-disable-auto-save))
+		 ((< (prefix-numeric-value arg) 0) t)
+		 (t nil)))
+    (wl-start-save-drafts))
+  (when (interactive-p)
+    (message "Auto save is %s (in this buffer)"
+	     (if wl-disable-auto-save "disabled" "enabled"))))
 
 ;; Biff
 (static-cond
