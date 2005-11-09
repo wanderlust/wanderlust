@@ -314,13 +314,13 @@ Returned value is searched from `elmo-network-stream-type-alist'."
       (setq alist (cdr alist)))
     spec))
 
-(defun elmo-net-folder-set-parameters (folder tokens &optional defaults)
-  (let ((port (cdr (assq 'port tokens)))
-	(stream-type (cdr (assq 'stream-type tokens))))
+(defun elmo-net-folder-set-parameters (folder params &optional defaults)
+  (let ((port (cdr (assq 'port params)))
+	(stream-type (cdr (assq 'stream-type params))))
     ;; server
     (elmo-net-folder-set-server-internal
      folder
-     (or (cdr (assq 'server tokens))
+     (or (cdr (assq 'server params))
 	 (plist-get defaults :server)))
     ;; port
     (elmo-net-folder-set-port-internal
@@ -330,8 +330,8 @@ Returned value is searched from `elmo-network-stream-type-alist'."
     ;; stream-type
     (elmo-net-folder-set-stream-type-internal
      folder
-     (or (and stream-type (assoc (concat "!" stream-type)
-				 elmo-network-stream-type-alist))
+     (or (and stream-type
+	      (assoc (concat "!" stream-type) elmo-network-stream-type-alist))
 	 (plist-get defaults :stream-type)))))
 
 (luna-define-method elmo-folder-initialize ((folder elmo-net-folder) name)
