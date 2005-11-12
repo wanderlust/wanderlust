@@ -1,3 +1,12 @@
+2005-11-12  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-e21.el (wl-e21-find-image): New function.
+	(wl-e21-setup-toolbar): Use it instead of `find-image'.
+	(wl-e21-highlight-folder-group-line): Ditto.
+	(wl-folder-init-icons): Ditto.
+	(wl-plugged-init-icons): Ditto.
+	(wl-biff-init-icons): Ditto.
+
 2005-11-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-util.el (wl-collect-draft): Rewrite with `dolist'.

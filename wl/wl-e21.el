@@ -174,11 +174,19 @@
     '(and wl-highlight-folder-with-icon
 	  (image-type-available-p 'xpm))))
 
+(eval-and-compile
+  (if (boundp 'image-load-path)
+      (defun wl-e21-find-image (specs)
+	(let ((image-load-path (cons 'wl-icon-directory image-load-path)))
+	  (find-image specs)))
+    (defun wl-e21-find-image (specs)
+      (let ((load-path (cons wl-icon-directory load-path)))
+	(find-image specs)))))
+
 (defun wl-e21-setup-toolbar (bar)
   (when (and wl-use-toolbar
 	     (wl-e21-display-image-p))
-    (let ((load-path (cons wl-icon-directory load-path))
-	  (props '(:type xpm :ascent center
+    (let ((props '(:type xpm :ascent center
 			 :color-symbols (("backgroundToolBarColor" . "None"))
 			 :file))
 	  (success t)
@@ -187,11 +195,12 @@
 	(setq icon (aref (pop bar) 0))
 	(unless (boundp icon)
 	  (setq name (symbol-name icon)
-		up (find-image `((,@props ,(concat name "-up.xpm")))))
+		up (wl-e21-find-image `((,@props ,(concat name "-up.xpm")))))
 	  (if up
 	      (progn
-		(setq down (find-image `((,@props ,(concat name "-down.xpm"))))
-		      disabled (find-image
+		(setq down (wl-e21-find-image
+			    `((,@props ,(concat name "-down.xpm"))))
+		      disabled (wl-e21-find-image
 				`((,@props ,(concat name "-disabled.xpm")))))
 		(set icon (vector down up disabled disabled)))
 	    (setq bar nil
@@ -261,10 +270,9 @@
 	  (setq image (get icon 'image))
 	  (unless image
 	    (let ((name (symbol-value
-			 (cdr (assq icon wl-folder-toggle-icon-list))))
-		  (load-path (cons wl-icon-directory load-path)))
-	      (setq image (find-image `((:type xpm :file ,name
-					       :ascent center))))))
+			 (cdr (assq icon wl-folder-toggle-icon-list)))))
+	      (setq image (wl-e21-find-image
+			   `((:type xpm :file ,name :ascent center))))))
 	  (overlay-put overlay 'display image)))
       (when (and wl-use-highlight-mouse-line (display-mouse-p))
 	(let ((inhibit-read-only t))
@@ -449,13 +457,13 @@
 
 (defun wl-folder-init-icons ()
   (when (wl-e21-display-image-p)
-    (let ((load-path (cons wl-icon-directory load-path))
-	  (icons wl-folder-internal-icon-list)
+    (let ((icons wl-folder-internal-icon-list)
 	  icon name image)
       (while (setq icon (pop icons))
 	(unless (get (car icon) 'image)
 	  (setq name (symbol-value (cdr icon))
-		image (find-image `((:type xpm :file ,name :ascent center))))
+		image (wl-e21-find-image
+		       `((:type xpm :file ,name :ascent center))))
 	  (when image
 	    (put (car icon) 'image image)))))))
 
@@ -467,15 +475,14 @@
     (if (wl-e21-display-image-p)
 	(progn
 	  (unless wl-plugged-image
-	    (let ((load-path (cons wl-icon-directory load-path)))
-	      (setq wl-plugged-image (find-image
+	    (setq wl-plugged-image (wl-e21-find-image
+				    `((:type xpm
+					     :file ,wl-plugged-icon
+					     :ascent center)))
+		  wl-unplugged-image (wl-e21-find-image
 				      `((:type xpm
-					       :file ,wl-plugged-icon
-					       :ascent center)))
-		    wl-unplugged-image (find-image
-					`((:type xpm
-						 :file ,wl-unplugged-icon
-						 :ascent center))))))
+					       :file ,wl-unplugged-icon
+					       :ascent center)))))
 	  (setq wl-modeline-plug-state-on
 		(apply 'propertize wl-plug-state-indicator-on
 		       `(display ,wl-plugged-image ,@props))
@@ -498,15 +505,14 @@
     (if (wl-e21-display-image-p)
 	(progn
 	  (unless wl-biff-mail-image
-	    (let ((load-path (cons wl-icon-directory load-path)))
-	      (setq wl-biff-mail-image (find-image
+	    (setq wl-biff-mail-image (wl-e21-find-image
+				      `((:type xpm
+					       :file ,wl-biff-mail-icon
+					       :ascent center)))
+		  wl-biff-nomail-image (wl-e21-find-image
 					`((:type xpm
-						 :file ,wl-biff-mail-icon
-						 :ascent center)))
-		    wl-biff-nomail-image (find-image
-					  `((:type xpm
-						   :file ,wl-biff-nomail-icon
-						   :ascent center))))))
+						 :file ,wl-biff-nomail-icon
+						 :ascent center)))))
 	  (setq wl-modeline-biff-state-on
 		(apply 'propertize wl-biff-state-indicator-on
 		       `(display ,wl-biff-mail-image ,@props))
