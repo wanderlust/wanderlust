@@ -1003,7 +1003,9 @@ Emacs 19.28 or earlier does not have `unintern'."
   (and string
        (elmo-with-enable-multibyte
 	 (encode-mime-charset-string
-	  (eword-decode-and-unfold-unstructured-field-body string)
+	  (or (ignore-errors
+	       (eword-decode-and-unfold-unstructured-field-body string))
+	      string)
 	  elmo-mime-charset))))
 
 (defsubst elmo-collect-field (beg end downcase-field-name)
@@ -1280,8 +1282,10 @@ SPEC is a list as followed (LABEL MAX-VALUE [FORMAT])."
 (defun elmo-decoded-field-body (field-name &optional mode)
   (let ((field-body (elmo-field-body field-name)))
     (and field-body
-	 (elmo-with-enable-multibyte
-	   (mime-decode-field-body field-body field-name mode)))))
+	 (or (ignore-errors
+	      (elmo-with-enable-multibyte
+		(mime-decode-field-body field-body field-name mode)))
+	     field-body))))
 
 (defun elmo-address-quote-specials (word)
   "Make quoted string of WORD if needed."

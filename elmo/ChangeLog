@@ -1,3 +1,13 @@
+2005-11-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-mime.el (elmo-mime-header-max-column): Set default value as
+	symbol `fill-column'.
+	(elmo-mime-insert-header-from-buffer): Rewrite; ignore errors in
+	decode field value.
+
+	* elmo-util.el (elmo-mime-string): Ignore errors in eword decode.
+	(elmo-decoded-field-body): Ditto.
+
 2005-11-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-net.el (elmo-net-folder-set-parameters): Rename argument
