@@ -478,7 +478,7 @@
 	  (msg-id (elmo-msgdb-message-entity-field
 		   (elmo-message-entity-handler entity) entity 'message-id))
 	  duplicate)
-      (when msg-id
+      (when (and number msg-id)
 	;; number-list
 	(modb-standard-set-number-list-internal
 	 msgdb

@@ -284,7 +284,6 @@ CODE is one of the following:
      nil 'no-log)
     (setq response (elmo-pop3-read-response process t))
     (unless (eq (car response) 'ok)
-      (delete-process process)
       (signal 'elmo-open-error '(elmo-pop-auth-user)))
     (elmo-pop3-send-command  process
 			     (format
@@ -293,53 +292,44 @@ CODE is one of the following:
 			       (elmo-network-session-password-key session)))
 			     nil 'no-log)
     (setq response (elmo-pop3-read-response process t))
-    (unless (eq (car response) 'ok)
-      (delete-process process)
-      (unless (eq 'ok (car response))
-	(if (or (eq (car response) 'in-use)
-		(eq (car response) 'login-delay))
-	    (error (cond ((eq (car response) 'in-use)
-			  "Maildrop is currently in use")
-			 ((eq (car response) 'login-delay)
-			  "Not allowed to login \
-until the login delay period has expired")))
-	  (signal 'elmo-authenticate-error
-		  '(elmo-pop-auth-user)))))
+    (case (car response)
+      (ok)
+      (in-use
+       (error "Maildrop is currently in use"))
+      (login-delay
+       (error "Not allowed to login until the login delay period has expired"))
+      (t
+       (signal 'elmo-authenticate-error '(elmo-pop-auth-user))))
     (car response)))
 
 (defun elmo-pop3-auth-apop (session)
-  (if (string-match "^\+OK .*\\(<[^\>]+>\\)"
-		    (elmo-network-session-greeting-internal session))
-      ;; good, APOP ready server
-      (progn
-	(elmo-pop3-send-command
-	 (elmo-network-session-process-internal session)
-	 (format "apop %s %s"
-		 (elmo-network-session-user-internal session)
-		 (md5
-		  (concat (match-string
-			   1
-			   (elmo-network-session-greeting-internal session))
-			  (elmo-get-passwd
-			   (elmo-network-session-password-key session)))))
-	 nil 'no-log)
-	(let ((response (elmo-pop3-read-response
-			 (elmo-network-session-process-internal session)
-			 t)))
-	  (unless (eq (car response) 'ok)
-	    (delete-process (elmo-network-session-process-internal session))
-	    (unless (eq 'ok (car response))
-	      (if (or (eq (car response) 'in-use)
-		      (eq (car response) 'login-delay))
-		  (error (cond ((eq (car response) 'in-use)
-				"Maildrop is currently in use")
-			       ((eq (car response) 'login-delay)
-				"Not allowed to login \
-until the login delay period has expired")))
-		(signal 'elmo-authenticate-error
-			'(elmo-pop-auth-apop)))))
-	  (car response)))
-    (signal 'elmo-open-error '(elmo-pop3-auth-apop))))
+  (unless (string-match "^\+OK .*\\(<[^\>]+>\\)"
+			(elmo-network-session-greeting-internal session))
+    (signal 'elmo-open-error '(elmo-pop3-auth-apop)))
+  ;; good, APOP ready server
+  (elmo-pop3-send-command
+   (elmo-network-session-process-internal session)
+   (format "apop %s %s"
+	   (elmo-network-session-user-internal session)
+	   (md5
+	    (concat (match-string
+		     1
+		     (elmo-network-session-greeting-internal session))
+		    (elmo-get-passwd
+		     (elmo-network-session-password-key session)))))
+   nil 'no-log)
+  (let ((response (elmo-pop3-read-response
+		   (elmo-network-session-process-internal session)
+		   t)))
+    (case (car response)
+      (ok)
+      (in-use
+       (error "Maildrop is currently in use"))
+      (login-delay
+       (error "Not allowed to login until the login delay period has expired"))
+      (t
+       (signal 'elmo-authenticate-error '(elmo-pop-auth-apop))))
+    (car response)))
 
 (luna-define-method elmo-network-initialize-session-buffer :after
   ((session elmo-pop3-session) buffer)
@@ -379,16 +369,15 @@ until the login delay period has expired")))
 			(elmo-network-session-process-internal session))
     (let* ((process (elmo-network-session-process-internal session))
 	   (auth (elmo-network-session-auth-internal session))
-	   (auth (mapcar '(lambda (mechanism) (upcase (symbol-name mechanism)))
-			 (if (listp auth) auth (list auth))))
-	   sasl-mechanisms
-	   client name step response mechanism
-	   sasl-read-passphrase)
+	   (auth (mapcar (lambda (mechanism) (upcase (symbol-name mechanism)))
+			 (if (listp auth) auth (list auth)))))
       (or (and (string= "USER" (car auth))
 	       (elmo-pop3-auth-user session))
 	  (and (string= "APOP" (car auth))
 	       (elmo-pop3-auth-apop session))
-	  (progn
+	  (let (sasl-mechanisms
+		client name step response mechanism
+		sasl-read-passphrase)
 	    (require 'sasl)
 	    (setq sasl-mechanisms (mapcar 'car sasl-mechanism-alist))
 	    (setq mechanism (sasl-find-mechanism auth))
@@ -406,10 +395,9 @@ until the login delay period has expired")))
 	    (elmo-network-session-set-auth-internal session
 						    (intern (downcase name)))
 	    (setq sasl-read-passphrase
-		  (function
-		   (lambda (prompt)
-		     (elmo-get-passwd
-		      (elmo-network-session-password-key session)))))
+		  (lambda (prompt)
+		    (elmo-get-passwd
+		     (elmo-network-session-password-key session))))
 	    (setq step (sasl-next-step client nil))
 	    (elmo-pop3-send-command
 	     process
@@ -423,17 +411,17 @@ until the login delay period has expired")))
 	    (catch 'done
 	      (while t
 		(setq response (elmo-pop3-read-response process t))
-		(unless (eq 'ok (car response))
-		  (if (or (eq (car response) 'in-use)
-			  (eq (car response) 'login-delay))
-		      (error (cond ((eq (car response) 'in-use)
-				    "Maildrop is currently in use")
-				   ((eq (car response) 'login-delay)
-				    "Not allowed to login \
-until the login delay period has expired")))
-		    (signal 'elmo-authenticate-error
-			    (list (intern (concat "elmo-pop3-auth-"
-						  (downcase name)))))))
+		(case (car response)
+		  (ok)
+		  (in-use
+		   (error "Maildrop is currently in use"))
+		  (login-delay
+		   (error "Not allowed to login \
+until the login delay period has expired"))
+		  (t
+		   (signal 'elmo-authenticate-error
+			   (list (intern (concat "elmo-pop3-auth-"
+						 (downcase name)))))))
 		(if (sasl-next-step client step)
 		    ;; Bogus server?
 		    (signal 'elmo-authenticate-error
