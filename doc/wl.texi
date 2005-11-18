@@ -3115,7 +3115,7 @@ are displayed in the following list.
 %#  mailing list information (`(' ML-name [ ` ' ML-number ] `)')
 %l  number in the mailing list
 %@@ `@@' only if the first MIME part is multipart/mixed
-%~  ` ' only if previous column is empty
+%~  ` ' only if previous column is not empty
 @end group
 @end example
 
