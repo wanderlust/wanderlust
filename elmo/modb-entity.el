@@ -723,13 +723,6 @@ If each field is t, function is set as default converter."
 	entity content-type charset)
     (save-excursion
       (set-buffer-multibyte default-enable-multibyte-characters)
-      (and (setq content-type (elmo-decoded-field-body
-			       "content-type" 'summary))
-	   (setq charset (mime-content-type-parameter
-			  (mime-parse-Content-Type content-type) "charset"))
-	   (setq charset (intern-soft charset))
-	   (mime-charset-p charset)
-	   (setq default-mime-charset charset))
       (setq entity
 	    (modb-standard-make-message-entity
 	     handler
@@ -765,7 +758,7 @@ If each field is t, function is set as default converter."
 		  (mime-decode-field-body field-body "cc" 'summary))
 		(elmo-multiple-field-body "cc") ",")
 	       :content-type
-	       content-type
+	       (elmo-decoded-field-body "content-type" 'summary)
 	       :size
 	       (let ((size (elmo-field-body "content-length")))
 		 (if size
