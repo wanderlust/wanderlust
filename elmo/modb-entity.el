@@ -719,8 +719,7 @@ If each field is t, function is set as default converter."
 
 (luna-define-method elmo-msgdb-create-message-entity-from-buffer
   ((handler modb-standard-entity-handler) number args)
-  (let ((default-mime-charset default-mime-charset)
-	entity content-type charset)
+  (let (entity)
     (save-excursion
       (set-buffer-multibyte default-enable-multibyte-characters)
       (setq entity

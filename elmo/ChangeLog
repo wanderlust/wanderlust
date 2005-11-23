@@ -2,6 +2,8 @@
 
 	* modb-entity.el (elmo-msgdb-create-message-entity-from-buffer):
 	Does not bind `default-mime-charset'.
+	(elmo-msgdb-create-message-entity-from-buffer): Removed
+	unnecessary local bind.
 
 	* modb-entity.el (modb-entity-extract-ml-info-from-mailman): New
 	function.
