@@ -821,10 +821,19 @@ If each field is t, function is set as default converter."
 			     mailing-list))
       (cons (match-string 2 mailing-list) nil))))
 
+(defun modb-entity-extract-ml-info-from-mailman ()
+  (when (elmo-field-body "x-mailman-version")
+    (let ((list-id (elmo-decoded-field-body "list-id" 'summary)))
+      (when (and list-id
+		 (or (string-match "<\\([^.]+\\)\\." list-id)
+		     (string-match "^\\([^.]+\\)\\." list-id)))
+	(cons (match-string 1 list-id) nil)))))
+
 (defvar modb-entity-extract-mailing-list-info-functions
   '(modb-entity-extract-ml-info-from-x-sequence
     modb-entity-extract-ml-info-from-subject
     modb-entity-extract-ml-info-from-return-path
+    modb-entity-extract-ml-info-from-mailman
     modb-entity-extract-ml-info-from-delivered-to
     modb-entity-extract-ml-info-from-mailing-list))
 
