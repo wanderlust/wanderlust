@@ -122,6 +122,8 @@ If optional argument RESTORE is non-nil, unregister from spam list.")
 ;; for internal use
 (defun elmo-spam-message-fetch (folder number)
   (let (elmo-message-fetch-threshold)
+    (when enable-multibyte-characters
+      (set-buffer-multibyte nil))
     (elmo-message-fetch
      folder number
      (elmo-find-fetch-strategy folder number nil 'entire)
