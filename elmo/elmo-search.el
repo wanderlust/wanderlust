@@ -80,7 +80,7 @@ Returns non-nil if fetching was succeed.")
 (defun elmo-make-search-engine (type &optional param)
   (let ((spec (or (cdr (assq type elmo-search-engine-alist))
 		  (error "Undefined search engine `%s'" type))))
-    (require (intern (format "else-%s" (car spec))))
+    (require (intern (format "elmo-search-%s" (car spec))))
     (apply 'luna-make-entity
 	   (intern (format "elmo-search-engine-%s" (car spec)))
 	   :param param
@@ -214,35 +214,47 @@ Returns non-nil if fetching was succeed.")
 
 ;;; Search engine
 
-;; search engine for local files
+;; external program search engine
 (eval-and-compile
-  (luna-define-class elmo-search-engine-local-file (elmo-search-engine)
+  (luna-define-class elmo-search-engine-extprog (elmo-search-engine)
 		     (prog args charset parser))
-  (luna-define-internal-accessors 'elmo-search-engine-local-file))
+  (luna-define-internal-accessors 'elmo-search-engine-extprog))
 
 (luna-define-method elmo-search-engine-do-search
-  ((engine elmo-search-engine-local-file) pattern)
+  ((engine elmo-search-engine-extprog) pattern)
   (with-temp-buffer
-    (let* ((charset (elmo-search-engine-local-file-charset-internal engine))
-	   (pattern (if charset
-			(encode-mime-charset-string pattern charset)
-		      pattern))
-	   (parser (or (elmo-search-engine-local-file-parser-internal engine)
-		       #'elmo-search-parse-filename-list)))
+    (let ((charset (elmo-search-engine-extprog-charset-internal engine))
+	  (parser (or (elmo-search-engine-extprog-parser-internal engine)
+		      #'elmo-search-parse-filename-list)))
       (apply 'call-process
-	     (elmo-search-engine-local-file-prog-internal engine)
+	     (elmo-search-engine-extprog-prog-internal engine)
 	     nil t t
-	     (elmo-flatten
-	      (mapcar
-	       (lambda (arg)
-		 (cond ((stringp arg) arg)
-		       ((functionp arg)
-			(funcall arg engine))
-		       ((and (symbolp arg)
-			     (boundp arg))
-			(symbol-value arg))))
-	       (elmo-search-engine-local-file-args-internal engine))))
+	     (delq
+	      nil
+	      (elmo-flatten
+	       (mapcar
+		(lambda (arg)
+		  (cond ((stringp arg) arg)
+			((eq arg 'pattern)
+			 (if charset
+			     (encode-mime-charset-string pattern charset)
+			   pattern))
+			((functionp arg)
+			 (condition-case nil
+			     (funcall arg engine pattern)
+			   (wrong-number-of-arguments
+			    (funcall arg engine))))
+			((and (symbolp arg)
+			      (boundp arg))
+			 (symbol-value arg))))
+		(elmo-search-engine-extprog-args-internal engine)))))
       (funcall parser))))
+
+;; search engine for local files
+(eval-and-compile
+  (luna-define-class elmo-search-engine-local-file
+		     (elmo-search-engine-extprog))
+  (luna-define-internal-accessors 'elmo-search-engine-local-file))
 
 (defun elmo-search-parse-filename-list ()
   (let (bol locations)
@@ -266,26 +278,27 @@ Returns non-nil if fetching was succeed.")
   ((engine elmo-search-engine-local-file) handler folder number)
   (let ((filename (elmo-message-file-name folder number))
 	entity uid)
-    (setq entity (elmo-msgdb-create-message-entity-from-file
-		  handler number filename))
-    (unless (or (elmo-message-entity-field entity 'to)
-		(elmo-message-entity-field entity 'cc)
-		(not (string= (elmo-message-entity-field entity 'subject)
-			      elmo-no-subject)))
-      (elmo-message-entity-set-field entity 'subject
-				     (file-name-nondirectory filename))
-      (setq uid (nth 2 (file-attributes filename)))
-      (elmo-message-entity-set-field entity 'from
-				     (concat
-				      (user-full-name uid)
-				      " <"(user-login-name uid) "@"
-				      (system-name) ">")))
-    entity))
+    (when (and filename
+	       (setq entity (elmo-msgdb-create-message-entity-from-file
+			     handler number filename)))
+      (unless (or (elmo-message-entity-field entity 'to)
+		  (elmo-message-entity-field entity 'cc)
+		  (not (string= (elmo-message-entity-field entity 'subject)
+				elmo-no-subject)))
+	(elmo-message-entity-set-field entity 'subject
+				       (file-name-nondirectory filename))
+	(setq uid (nth 2 (file-attributes filename)))
+	(elmo-message-entity-set-field entity 'from
+				       (concat
+					(user-full-name uid)
+					" <"(user-login-name uid) "@"
+					(system-name) ">")))
+      entity)))
 
 (luna-define-method elmo-search-engine-fetch-message
   ((engine elmo-search-engine-local-file) location)
   (let ((filename (elmo-search-location-to-filename location)))
-    (when (file-exists-p filename)
+    (when (and filename (file-exists-p filename))
       (prog1
 	  (insert-file-contents-as-binary filename)
 	(unless (or (std11-field-body "To")
@@ -311,7 +324,7 @@ Returns non-nil if fetching was succeed.")
 	    (encode-mime-charset-region (point-min) (point-max) charset)
 	    (set-buffer-multibyte nil)))))))
 
-(provide 'else-local-file)
+(provide 'elmo-search-local-file)
 
 ;; namazu
 (defcustom elmo-search-namazu-default-index-path "~/Mail"
@@ -328,7 +341,7 @@ If the value is a list, all elements are used as index paths for namazu."
 			       (repeat (directory :tag "Index Path")))))
   :group 'elmo)
 
-(defun elmo-search-namazu-index (engine)
+(defun elmo-search-namazu-index (engine pattern)
   (let* ((param (elmo-search-engine-param-internal engine))
 	 (index (cond
 		 ((cdr (assoc param elmo-search-namazu-index-alias-alist)))
@@ -342,7 +355,7 @@ If the value is a list, all elements are used as index paths for namazu."
 
 
 ;; grep
-(defun elmo-search-grep-target (engine)
+(defun elmo-search-grep-target (engine pattern)
   (let ((dirname (expand-file-name (elmo-search-engine-param-internal engine)))
 	(files (list null-device)))
     (dolist (filename (directory-files dirname))

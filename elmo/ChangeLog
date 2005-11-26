@@ -1,3 +1,17 @@
+2005-11-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-search.el (elmo-make-search-engine): Use prefix
+	`elmo-search-' for require symbol instead of `else-'.
+	(elmo-search-engine-extprog): New class.
+	(elmo-search-engine-do-search): Remove nil from argument
+	list. Added argument pattern to evaluate element as function.
+	(elmo-search-engine-local-file): Derived from
+	`elmo-search-engine-extprog'.
+	(elmo-search-engine-create-message-entity): Check existance of file.
+	(elmo-search-engine-fetch-message): Ditto.
+	(elmo-search-namazu-index): Follow the API change.
+	(elmo-search-grep-target): Ditto.
+
 2005-11-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-spam.el (elmo-spam-message-fetch): Disable multibyte
