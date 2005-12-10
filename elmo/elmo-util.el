@@ -1319,11 +1319,14 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
 
 (defun elmo-string-member (string slist)
   (catch 'found
-    (while slist
-      (if (and (stringp (car slist))
-	       (string= string (car slist)))
-	  (throw 'found t))
-      (setq slist (cdr slist)))))
+    (dolist (element slist)
+      (cond ((null element))
+	    ((stringp element)
+	     (when (string= string element)
+	       (throw 'found t)))
+	    ((symbolp element)
+	     (when (string= string (symbol-value element))
+	       (throw 'found t)))))))
 
 (static-cond ((fboundp 'member-ignore-case)
        (defalias 'elmo-string-member-ignore-case 'member-ignore-case))

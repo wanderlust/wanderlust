@@ -336,6 +336,14 @@ changing the value of `foo'."
     (setq keys (cdr keys)))
   alist)
 
+(defun wl-filter-associations (keys alist)
+  (let (entry result)
+    (while keys
+      (when (setq entry (assq (car keys) alist))
+	(setq result (cons entry result)))
+      (setq keys (cdr keys)))
+    result))
+
 (defun wl-inverse-alist (keys alist)
   "Inverse ALIST, copying.
 Return an association list represents the inverse mapping of ALIST,
