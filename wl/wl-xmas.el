@@ -567,14 +567,6 @@ Special commands:
 	       (event-to-character event))
 	  event)))
 
-(defun wl-completing-read-multiple (prompt
-				    table
-				    &optional predicate
-				    require-match initial-input)
-  "Read multiple strings in the minibuffer"
-  (split-string (completing-read prompt table predicate require-match
-				 initial-input) ","))
-
 (require 'product)
 (product-provide (provide 'wl-xmas) (require 'wl-version))
 

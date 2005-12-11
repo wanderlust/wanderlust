@@ -1099,6 +1099,56 @@ is enclosed by at least one regexp grouping construct."
 	(setq value (prin1-to-string value)))
       (concat (downcase field) ":" value)))))
 
+
+;; read multiple strings with completion
+(defun wl-completing-read-multiple-1 (prompt
+				      table
+				      &optional predicate
+				      require-match initial-input
+				      hist def inherit-input-method)
+    "Read multiple strings in the minibuffer"
+    (split-string
+     (completing-read prompt table predicate nil
+		      initial-input hist def inherit-input-method)
+     ","))
+
+(static-when (fboundp 'completing-read-multiple)
+  (eval-when-compile
+    (require 'crm))
+  (defun wl-completing-read-multiple-2 (prompt
+					table
+					&optional predicate
+					require-match initial-input
+					hist def inherit-input-method)
+    "Read multiple strings in the minibuffer"
+    (let ((ret (completing-read-multiple prompt table predicate
+					 require-match initial-input
+					 hist def inherit-input-method)))
+      (if (and def (equal ret '("")))
+	  (split-string def crm-separator)
+	ret))))
+
+(static-cond
+ ((not (fboundp 'completing-read-multiple))
+  (defalias 'wl-completing-read-multiple 'wl-completing-read-multiple-1))
+ ((< emacs-major-version 22)
+  (defun wl-completing-read-multiple (prompt
+				      table
+				      &optional predicate
+				      require-match initial-input
+				      hist def inherit-input-method)
+    "Read multiple strings in the minibuffer"
+    (if require-match
+	(wl-completing-read-multiple-1 prompt table predicate
+				       nil initial-input
+				       hist def inherit-input-method)
+      (wl-completing-read-multiple-2 prompt table predicate
+				     nil initial-input
+				     hist def inherit-input-method))))
+ (t
+  (defalias 'wl-completing-read-multiple 'wl-completing-read-multiple-2)))
+
+
 (require 'product)
 (product-provide (provide 'wl-util) (require 'wl-version))
 
