@@ -882,8 +882,12 @@ the directory becomes empty after deletion."
 	  ))))
 
 (defun elmo-list-filter (l1 l2)
-  "Rerurn a list from L2 in which each element is a member of L1."
-  (elmo-delete-if (lambda (x) (not (memq x l1))) l2))
+  "Return a list from L2 in which each element is a member of L1."
+  (let (result)
+    (dolist (element l2)
+      (if (memq element l1)
+	(setq result (cons element result))))
+    (nreverse result)))
 
 (defsubst elmo-list-delete-if-smaller (list number)
   (let ((ret-val (copy-sequence list)))
