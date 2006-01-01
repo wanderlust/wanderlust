@@ -1,3 +1,7 @@
+2006-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-demo.el (wl-demo-copyright-notice): Add 2006.
+
 2005-05-10  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-fldmgr.el (wl-fldmgr-add): Undo the last change.
