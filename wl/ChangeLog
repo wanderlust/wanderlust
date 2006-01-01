@@ -1,3 +1,7 @@
+2006-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-demo.el (wl-demo-copyright-notice): Add 2006.
+
 2005-12-11  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-util.el (wl-completing-read-multiple-1): New internal function.
