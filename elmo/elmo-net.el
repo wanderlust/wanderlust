@@ -68,6 +68,14 @@ If nil, network cache is reused."
   :type '(choice number (const nil))
   :group 'elmo)
 
+(defcustom elmo-network-session-retry-count nil
+  "Retry count for authentication when open network session.
+If nil, just once. If t, until success."
+  :type '(choice (integer :tag "Times")
+		 (const :tag "Just once" nil)
+		 (const :tag "Until success" t))
+  :group 'elmo)
+
 ;;; Code:
 ;;
 (eval-and-compile
@@ -155,6 +163,16 @@ If nil, network cache is reused."
     (elmo-network-close-session (cdr pair)))
   (setq elmo-network-session-cache nil))
 
+(defsubst elmo-network-session-buffer-name (session)
+  (format " *%s session for %s@%s:%d%s"
+	  (elmo-network-session-name-internal session)
+	  (elmo-network-session-user-internal session)
+	  (elmo-network-session-server-internal session)
+	  (elmo-network-session-port-internal session)
+	  (or (elmo-network-stream-type-spec-string
+	       (elmo-network-session-stream-type-internal session))
+	      "")))
+
 (defmacro elmo-network-session-buffer (session)
   "Get buffer for SESSION."
   (` (process-buffer (elmo-network-session-process-internal
@@ -214,6 +232,15 @@ if making session failed, returns nil."
 		    elmo-network-session-cache))
 	session))))
 
+(defun elmo-network-session-buffer-create (session)
+  (let ((buffer-name (elmo-network-session-buffer-name session))
+	buffer)
+    (when (get-buffer buffer-name)
+      (kill-buffer buffer-name))
+    (setq buffer (get-buffer-create buffer-name))
+    (elmo-network-initialize-session-buffer session buffer)
+    buffer))
+
 (defun elmo-network-open-session (class name server port user auth
 					stream-type)
   "Open an authenticated network session.
@@ -235,41 +262,41 @@ Returns a process object.  if making session failed, returns nil."
 			   :stream-type stream-type
 			   :process nil
 			   :greeting nil
-			   :last-accessed (current-time)
-			   ))
-	(buffer (format " *%s session for %s@%s:%d%s"
-			name
-			user
-			server
-			port
-			(or (elmo-network-stream-type-spec-string stream-type)
-			    "")))
-	process)
-    (condition-case error
-	(progn
-	  (if (get-buffer buffer) (kill-buffer buffer))
-	  (setq buffer (get-buffer-create buffer))
-	  (elmo-network-initialize-session-buffer session buffer)
-	  (elmo-network-session-set-process-internal
-	   session
-	   (setq process (elmo-open-network-stream
-			  (elmo-network-session-name-internal session)
-			  buffer server port stream-type)))
-	  (when process
+			   :last-accessed (current-time)))
+	(retry elmo-network-session-retry-count)
+	success)
+    (while (not success)
+      (condition-case error
+	  (when (elmo-network-session-set-process-internal
+		 session
+		 (elmo-open-network-stream
+		  (elmo-network-session-name-internal session)
+		  (elmo-network-session-buffer-create session)
+		  server port stream-type))
 	    (elmo-network-initialize-session session)
 	    (elmo-network-authenticate-session session)
-	    (elmo-network-setup-session session)))
-      (error
-       (when (eq (car error) 'elmo-open-error)
+	    (elmo-network-setup-session session)
+	    (setq success t))
+	(elmo-authenticate-error
+	 (elmo-remove-passwd (elmo-network-session-password-key session))
+	 (message "Authetication is failed")
+	 (sit-for 1)
+	 (elmo-network-close-session session)
+	 (unless (if (numberp retry)
+		     (> (setq retry (1- retry)) 0)
+		   retry)
+	   (signal (car error) (cdr error))))
+	(elmo-open-error
 	 (elmo-set-plugged nil server port
 			   (elmo-network-stream-type-symbol stream-type)
 			   (current-time))
 	 (message "Auto plugged off at %s:%d :%s" server port (cadr error))
-	 (sit-for 1))
-       (when (eq (car error) 'elmo-authenticate-error)
-	 (elmo-remove-passwd (elmo-network-session-password-key session)))
-       (elmo-network-close-session session)
-       (signal (car error)(cdr error))))
+	 (sit-for 1)
+	 (elmo-network-close-session session)
+	 (signal (car error) (cdr error)))
+	(error
+	 (elmo-network-close-session session)
+	 (signal (car error) (cdr error)))))
     session))
 
 (defun elmo-open-network-stream (name buffer server service stream-type)

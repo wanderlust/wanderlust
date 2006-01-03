@@ -1,3 +1,11 @@
+2006-01-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-net.el (elmo-network-session-retry-count): New user option.
+	(elmo-network-session-buffer-name): New internal function.
+	(elmo-network-session-buffer-create): Ditto.
+	(elmo-network-open-session): Retry open network session
+	`elmo-network-session-retry-count' times.
+
 2005-12-16  Tetsurou Okazaki  <okazaki@be.to>
 
 	* elmo-util.el (elmo-list-filter): Rewritten.
