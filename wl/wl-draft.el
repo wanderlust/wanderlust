@@ -1275,7 +1275,7 @@ If FORCE-MSGID, insert message-id regardless of `wl-insert-message-id'."
     result))
 
 (defcustom wl-draft-send-confirm-with-preview t
-  "Non-nil to invoke preview through confirmation of sending.
+  "*Non-nil to invoke preview through confirmation of sending.
 This variable is valid when `wl-interactive-send' has non-nil value."
   :type 'boolean
   :group 'wl-draft)
@@ -1283,7 +1283,7 @@ This variable is valid when `wl-interactive-send' has non-nil value."
 (defun wl-draft-send-confirm ()
   (let (answer)
     (unwind-protect
-	(condition-case quit
+	(condition-case nil
 	    (progn
 	      (when wl-draft-send-confirm-with-preview
 		(wl-draft-preview-message))
@@ -1293,26 +1293,15 @@ This variable is valid when `wl-interactive-send' has non-nil value."
 		  (while t
 		    (discard-input)
 		    (message "Send current draft? <y/n/j(down)/k(up)> ")
-		    (setq answer (let ((cursor-in-echo-area t)) (read-char)))
-		    (cond
-		     ((or (eq answer ?y)
-			  (eq answer ?Y)
-			  (eq answer ? ))
-		  (throw 'done t))
-		     ((or (eq answer ?v)
-			  (eq answer ?j)
-			  (eq answer ?J))
-		      (condition-case err
-			  (scroll-up)
-			(error nil)))
-		     ((or (eq answer ?^)
-			  (eq answer ?k)
-			  (eq answer ?K))
-		      (condition-case err
-			  (scroll-down)
-			(error nil)))
-		     (t
-		      (throw 'done nil)))))))
+		    (case (let ((cursor-in-echo-area t)) (read-char))
+		      ((?y ?Y)
+		       (throw 'done t))
+		      ((?v ?j ?J ? )
+		       (ignore-errors (scroll-up)))
+		      ((?^ ?k ?K ?)
+		       (ignore-errors (scroll-down)))
+		      (t
+		       (throw 'done nil)))))))
 	  (quit nil))
       (when (and wl-draft-send-confirm-with-preview
 		 (eq major-mode 'mime-view-mode))

@@ -1,3 +1,7 @@
+2006-01-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-draft.el (wl-draft-send-confirm): Scroll up/down by SPC/BS.
+
 2006-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-demo.el (wl-demo-copyright-notice): Add 2006.
