@@ -999,11 +999,12 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	       (or ml-count (setq ml-count (match-string 2 return-path)))))
 	(or ml-name
 	    (and (setq list-post (elmo-message-entity-field entity 'list-post))
-		 (string-match "<mailto:\\(.+\\)@.+>" list-post)
+		 (string-match "<mailto:\\(.+\\)@" list-post)
 		 (setq ml-name (match-string 1 list-post))))
 	(or ml-name
 	    (and (setq list-id (elmo-message-entity-field entity 'list-id))
-		 (string-match "<\\([^.]+\\).*>" list-id)
+		 (or (string-match "<\\([^.]+\\)\\." list-id)
+		     (string-match "^\\([^.]+\\)\\." list-id))
 		 (setq ml-name (match-string 1 list-id))))
 	(or ml-name
 	    (and (setq delivered-to
