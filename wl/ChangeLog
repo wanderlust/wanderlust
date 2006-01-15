@@ -1,3 +1,8 @@
+2006-01-15  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-get-list-info): Optimize.
+	Use List-Id and List-Post also.
+
 2006-01-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-draft.el (wl-draft-send-confirm): Scroll up/down by SPC/BS.

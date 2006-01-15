@@ -974,7 +974,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   "Returns (\"ML-name\" . ML-count) of ENTITY."
   (or (elmo-message-entity-field entity 'ml-info)
       (let (sequence ml-name ml-count subject
-		     return-path delivered-to mailing-list)
+		     return-path delivered-to mailing-list
+		     list-post list-id)
 	(setq sequence (elmo-message-entity-field entity 'x-sequence)
 	      ml-name (or (elmo-message-entity-field entity 'x-ml-name)
 			  (and sequence
@@ -996,16 +997,26 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	     (progn
 	       (or ml-name (setq ml-name (match-string 1 return-path)))
 	       (or ml-count (setq ml-count (match-string 2 return-path)))))
-	(and (setq delivered-to
-		   (elmo-message-entity-field entity 'delivered-to))
-	     (string-match "^mailing list \\([^@]+\\)@" delivered-to)
-	     (or ml-name (setq ml-name (match-string 1 delivered-to))))
-	(and (setq mailing-list
-		   (elmo-message-entity-field entity 'mailing-list))
-	     ;; *-help@, *-owner@, etc.
-	     (string-match "\\(^\\|; \\)contact \\([^@]+\\)-[^-@]+@"
-			   mailing-list)
-	     (or ml-name (setq ml-name (match-string 2 mailing-list))))
+	(or ml-name
+	    (and (setq list-post (elmo-message-entity-field entity 'list-post))
+		 (string-match "<mailto:\\(.+\\)@.+>" list-post)
+		 (setq ml-name (match-string 1 list-post))))
+	(or ml-name
+	    (and (setq list-id (elmo-message-entity-field entity 'list-id))
+		 (string-match "<\\([^.]+\\).*>" list-id)
+		 (setq ml-name (match-string 1 list-id))))
+	(or ml-name
+	    (and (setq delivered-to
+		       (elmo-message-entity-field entity 'delivered-to))
+		 (string-match "^mailing list \\([^@]+\\)@" delivered-to)
+		 (setq ml-name (match-string 1 delivered-to))))
+	(or ml-name
+	    (and (setq mailing-list
+		       (elmo-message-entity-field entity 'mailing-list))
+		 ;; *-help@, *-owner@, etc.
+		 (string-match "\\(^\\|; \\)contact \\([^@]+\\)-[^-@]+@"
+			       mailing-list)
+		 (setq ml-name (match-string 2 mailing-list))))
 	(cons (and ml-name (car (split-string ml-name " ")))
 	      (and ml-count (string-to-int ml-count))))))
 
