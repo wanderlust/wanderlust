@@ -1,3 +1,23 @@
+2006-01-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-vars.el (elmo-mailing-list-name-spec-list): New user option.
+	(elmo-mailing-list-count-spec-list): Ditto.
+
+	* elmo-util.el (elmo-map-until-success): New function.
+	(elmo-string-match-substring): Ditto.
+	(elmo-find-list-match-value): Ditto.
+
+	* modb-entity.el (modb-entity-extract-ml-info-from-x-sequence):
+	Removed.
+	(modb-entity-extract-ml-info-from-subject): Ditto.
+	(modb-entity-extract-ml-info-from-return-path): Ditto.
+	(modb-entity-extract-ml-info-from-delivered-to): Ditto.
+	(modb-entity-extract-ml-info-from-mailing-list): Ditto.
+	(modb-entity-extract-ml-info-from-mailman): Ditto.
+	(modb-entity-extract-mailing-list-info-functions): Ditto.
+	(modb-entity-extract-mailing-list-info): Rewrite with
+	`elmo-find-list-match-value'.
+
 2006-01-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-net.el (elmo-network-session-retry-count): New user option.

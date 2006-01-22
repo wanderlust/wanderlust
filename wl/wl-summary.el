@@ -973,53 +973,16 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-get-list-info (entity)
   "Returns (\"ML-name\" . ML-count) of ENTITY."
   (or (elmo-message-entity-field entity 'ml-info)
-      (let (sequence ml-name ml-count subject
-		     return-path delivered-to mailing-list
-		     list-post list-id)
-	(setq sequence (elmo-message-entity-field entity 'x-sequence)
-	      ml-name (or (elmo-message-entity-field entity 'x-ml-name)
-			  (and sequence
-			       (car (split-string sequence " "))))
-	      ml-count (or (elmo-message-entity-field entity 'x-mail-count)
-			   (elmo-message-entity-field entity 'x-ml-count)
-			   (and sequence
-				(cadr (split-string sequence " ")))))
-	(and (setq subject (elmo-message-entity-field entity 'subject))
-	     (setq subject (elmo-delete-char ?\n subject))
-	     (string-match "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
-			   subject)
-	     (progn
-	       (or ml-name (setq ml-name (match-string 1 subject)))
-	       (or ml-count (setq ml-count (match-string 2 subject)))))
-	(and (setq return-path
-		   (elmo-message-entity-field entity 'return-path))
-	     (string-match "^<\\([^@>]+\\)-return-\\([0-9]+\\)-" return-path)
-	     (progn
-	       (or ml-name (setq ml-name (match-string 1 return-path)))
-	       (or ml-count (setq ml-count (match-string 2 return-path)))))
-	(or ml-name
-	    (and (setq list-post (elmo-message-entity-field entity 'list-post))
-		 (string-match "<mailto:\\(.+\\)@" list-post)
-		 (setq ml-name (match-string 1 list-post))))
-	(or ml-name
-	    (and (setq list-id (elmo-message-entity-field entity 'list-id))
-		 (or (string-match "<\\([^.]+\\)\\." list-id)
-		     (string-match "^\\([^.]+\\)\\." list-id))
-		 (setq ml-name (match-string 1 list-id))))
-	(or ml-name
-	    (and (setq delivered-to
-		       (elmo-message-entity-field entity 'delivered-to))
-		 (string-match "^mailing list \\([^@]+\\)@" delivered-to)
-		 (setq ml-name (match-string 1 delivered-to))))
-	(or ml-name
-	    (and (setq mailing-list
-		       (elmo-message-entity-field entity 'mailing-list))
-		 ;; *-help@, *-owner@, etc.
-		 (string-match "\\(^\\|; \\)contact \\([^@]+\\)-[^-@]+@"
-			       mailing-list)
-		 (setq ml-name (match-string 2 mailing-list))))
-	(cons (and ml-name (car (split-string ml-name " ")))
-	      (and ml-count (string-to-int ml-count))))))
+      (lexical-let ((entity entity))
+	(let* ((getter (lambda (field)
+			 (elmo-message-entity-field entity field)))
+	       (name (elmo-find-list-match-value
+		      elmo-mailing-list-name-spec-list
+		      getter))
+	       (count (elmo-find-list-match-value
+		       elmo-mailing-list-count-spec-list
+		       getter)))
+	  (cons name (and count (string-to-int count)))))))
 
 (defun wl-summary-overview-entity-compare-by-list-info (x y)
   "Compare entity X and Y by mailing-list info."

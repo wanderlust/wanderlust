@@ -442,6 +442,39 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
   :type 'symbol
   :group 'elmo)
 
+(defcustom elmo-mailing-list-name-spec-list
+  '(x-ml-name
+    (x-sequence "^\\([^ ]+\\)")
+    (subject "^\\s(\\(\\S)+\\)[ :][0-9]+\\s)[ \t]*")
+    (list-post "<mailto:\\(.+\\)@")
+    (list-id ("\\(<\\|^\\)\\([^.]+\\)\\." . 2))
+    (mailing-list ("\\(^\\|; \\)contact \\([^@]+\\)-[^-@]+@" . 2))
+    (return-path "^<\\([^@>]+\\)-return-[0-9]+-")
+    (delivered-to "^mailing list \\([^@]+\\)@"))
+  "*List of spec to extract mailing list name from field value."
+  :type '(repeat
+	  (choice (symbol :tag "Field Name")
+		  (list (symbol :tag "Field Name")
+			(choice regexp
+				(cons regexp
+				      (integer :tag "Match Index"))))))
+  :group 'elmo)
+
+(defcustom elmo-mailing-list-count-spec-list
+  '(x-mail-count
+    x-ml-count
+    (x-sequence "^[^ ]+ \\([^ ]+\\)")
+    (subject "^\\s(\\S)+[ :]\\([0-9]+\\)\\s)[ \t]*")
+    (return-path "^<[^@>]+-return-\\([0-9]+\\)-"))
+  "*List of spec to extract mailing list count from field value."
+  :type '(repeat
+	  (choice (symbol :tag "Field Name")
+		  (list (symbol :tag "Field Name")
+			(choice regexp
+				(cons regexp
+				      (integer :tag "Match Index"))))))
+  :group 'elmo)
+
 (require 'product)
 (product-provide (provide 'elmo-vars) (require 'elmo-version))
 

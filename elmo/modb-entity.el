@@ -777,75 +777,17 @@ If each field is t, function is set as default converter."
 
 
 ;; mailing list info handling
-(defun modb-entity-extract-ml-info-from-x-sequence ()
-  (let ((sequence (elmo-decoded-field-body "x-sequence" 'summary))
-	name count)
-    (when sequence
-      (elmo-set-list '(name count) (split-string sequence " "))
-      (cons name count))))
-
-(defun modb-entity-extract-ml-info-from-subject ()
-  (let ((subject (elmo-decoded-field-body "subject" 'summary)))
-    (when (and subject
-	       (string-match "^\\s(\\(\\S)+\\)[ :]\\([0-9]+\\)\\s)[ \t]*"
-			     subject))
-      (cons (match-string 1 subject) (match-string 2 subject)))))
-
-(defun modb-entity-extract-ml-info-from-return-path ()
-  (let ((return-path (elmo-decoded-field-body "return-path" 'summary)))
-    (when (and return-path
-	       (string-match "^<\\([^@>]+\\)-return-\\([0-9]+\\)-"
-			     return-path))
-      (cons (match-string 1 return-path)
-	    (match-string 2 return-path)))))
-
-(defun modb-entity-extract-ml-info-from-delivered-to ()
-  (let ((delivered-to (elmo-decoded-field-body "delivered-to" 'summary)))
-    (when (and delivered-to
-	       (string-match "^mailing list \\([^@]+\\)@" delivered-to))
-      (cons (match-string 1 delivered-to) nil))))
-
-(defun modb-entity-extract-ml-info-from-mailing-list ()
-  (let ((mailing-list (elmo-decoded-field-body "mailing-list" 'summary)))
-    ;; *-help@, *-owner@, etc.
-    (when (and mailing-list
-	       (string-match "\\(^\\|; \\)contact \\([^@]+\\)-[^-@]+@"
-			     mailing-list))
-      (cons (match-string 2 mailing-list) nil))))
-
-(defun modb-entity-extract-ml-info-from-mailman ()
-  (when (elmo-field-body "x-mailman-version")
-    (let ((list-id (elmo-decoded-field-body "list-id" 'summary)))
-      (when (and list-id
-		 (or (string-match "<\\([^.]+\\)\\." list-id)
-		     (string-match "^\\([^.]+\\)\\." list-id)))
-	(cons (match-string 1 list-id) nil)))))
-
-(defvar modb-entity-extract-mailing-list-info-functions
-  '(modb-entity-extract-ml-info-from-x-sequence
-    modb-entity-extract-ml-info-from-subject
-    modb-entity-extract-ml-info-from-return-path
-    modb-entity-extract-ml-info-from-mailman
-    modb-entity-extract-ml-info-from-delivered-to
-    modb-entity-extract-ml-info-from-mailing-list))
-
 (defun modb-entity-extract-mailing-list-info (field)
-  (let ((ml-name (elmo-decoded-field-body "x-ml-name" 'summary))
-	(ml-count (or (elmo-decoded-field-body "x-mail-count" 'summary)
-		      (elmo-decoded-field-body "x-ml-count" 'summary)))
-	(functions modb-entity-extract-mailing-list-info-functions)
-	result)
-    (while (and functions
-		(or (null ml-name) (null ml-count)))
-      (when (setq result (funcall (car functions)))
-	(unless ml-name
-	  (setq ml-name (car result)))
-	(unless ml-count
-	  (setq ml-count (cdr result))))
-      (setq functions (cdr functions)))
-    (when (or ml-name ml-count)
-      (cons (and ml-name (car (split-string ml-name " ")))
-	    (and ml-count (string-to-int ml-count))))))
+  (let* ((getter (lambda (field)
+		   (elmo-decoded-field-body (symbol-name field) 'summary)))
+	 (name (elmo-find-list-match-value
+		elmo-mailing-list-name-spec-list
+		getter))
+	 (count (elmo-find-list-match-value
+		  elmo-mailing-list-count-spec-list
+		  getter)))
+    (when (or name count)
+      (cons name (and count (string-to-number count))))))
 
 (defun modb-entity-make-mailing-list-info-string (field value)
   (when (car value)

@@ -1811,6 +1811,18 @@ NUMBER-SET is altered."
 	(cdr result))
     (funcall function object)))
 
+(defun elmo-map-until-success (function sequence)
+  (let (result)
+    (while (and (null result)
+		sequence)
+      (setq result (funcall function (car sequence))
+	    sequence (cdr sequence)))
+    result))
+
+(defun elmo-string-match-substring (regexp string &optional matchn)
+  (when (string-match regexp string)
+    (match-string (or matchn 1) string)))
+
 (defun elmo-parse (string regexp &optional matchn)
   (or matchn (setq matchn 1))
   (let (list)
@@ -1819,6 +1831,26 @@ NUMBER-SET is altered."
       (setq list (cons (substring string (match-beginning matchn)
 				  (match-end matchn)) list)))
     (nreverse list)))
+
+(defun elmo-find-list-match-value (specs getter)
+  (lexical-let ((getter getter))
+    (elmo-map-until-success
+     (lambda (spec)
+       (cond
+	((symbolp spec)
+	 (funcall getter spec))
+	((consp spec)
+	 (lexical-let ((value (funcall getter (car spec))))
+	   (when value
+	     (elmo-map-until-success
+	      (lambda (rule)
+		(cond
+		 ((stringp rule)
+		  (elmo-string-match-substring rule value))
+		 ((consp rule)
+		  (elmo-string-match-substring (car rule) value (cdr rule)))))
+	      (cdr spec)))))))
+     specs)))
 
 ;;; File cache.
 (defmacro elmo-make-file-cache (path status)
