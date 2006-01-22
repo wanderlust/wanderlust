@@ -1,5 +1,9 @@
 2006-01-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo-vars.el (elmo-mailing-list-name-spec-list): Fixed
+	customization type.
+	(elmo-mailing-list-count-spec-list): Ditto.
+
 	* elmo-vars.el (elmo-mailing-list-name-spec-list): Merge entries
 	for `list-id'.
 

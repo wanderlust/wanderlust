@@ -455,9 +455,11 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
   :type '(repeat
 	  (choice (symbol :tag "Field Name")
 		  (list (symbol :tag "Field Name")
-			(choice regexp
-				(cons regexp
-				      (integer :tag "Match Index"))))))
+			(repeat
+			 :inline symbol
+			 (choice regexp
+				 (cons regexp
+				       (integer :tag "Match Index")))))))
   :group 'elmo)
 
 (defcustom elmo-mailing-list-count-spec-list
@@ -470,9 +472,11 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
   :type '(repeat
 	  (choice (symbol :tag "Field Name")
 		  (list (symbol :tag "Field Name")
-			(choice regexp
-				(cons regexp
-				      (integer :tag "Match Index"))))))
+			(repeat
+			 :inline symbol
+			 (choice regexp
+				 (cons regexp
+				       (integer :tag "Match Index")))))))
   :group 'elmo)
 
 (require 'product)
