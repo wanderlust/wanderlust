@@ -1,3 +1,8 @@
+2006-01-22  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-vars.el (elmo-mailing-list-name-spec-list): Fix list-id
+	handling.
+
 2006-01-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-vars.el (elmo-mailing-list-name-spec-list): New user option.
