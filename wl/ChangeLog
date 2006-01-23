@@ -1,3 +1,13 @@
+2006-01-23  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-vars.el (wl-message-buffer-prefetch-folder-type-list): Follow
+	the change of elmo-nmz -> elmo-search.
+	(wl-highlight-summary-line-help-echo-alist): Ditto.
+	(wl-search-folder-icon): Renamed from `wl-nmz-folder-icon'.
+	(wl-nmz-folder-icon): Define as obsolete.
+	* wl-e21.el (wl-folder-internal-icon-list): Follow it.
+	* wl-xmas.el (wl-folder-internal-icon-list): Ditto.
+
 2006-01-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-get-list-info): Rewrite with

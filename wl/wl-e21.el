@@ -446,7 +446,7 @@
     (wl-folder-archive-image      . wl-archive-folder-icon)
     (wl-folder-pipe-image	  . wl-pipe-folder-icon)
     (wl-folder-maildir-image      . wl-maildir-folder-icon)
-    (wl-folder-nmz-image	  . wl-nmz-folder-icon)
+    (wl-folder-search-image	  . wl-search-folder-icon)
     (wl-folder-shimbun-image      . wl-shimbun-folder-icon)
     (wl-folder-file-image	  . wl-file-folder-icon)
     (wl-folder-access-image	  . wl-access-folder-icon)

@@ -2267,7 +2267,7 @@ and reserved buffer cache."
 		      (const nntp)
 		      (const pop3)
 		      (const shimbun)
-		      (const nmz)
+		      (const search)
 		      (const archive)
 		      (const mark)
 		      (const cache)))
@@ -2850,7 +2850,7 @@ This variable can also be a regex."
 
 (defcustom wl-highlight-summary-line-help-echo-alist
   '((flag wl-highlight-flag-folder-help-echo)
-    (nmz elmo-message-file-name))
+    (search elmo-message-file-name))
   "*Alist to display help-echo in summary buffer.
 Each element is (folder-type handler(function)).
 Handler take two arguments elmo-folder and message number and return string."
@@ -2967,8 +2967,8 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
   "*Icon file for archive folder.")
 (defvar wl-pipe-folder-icon "pipe.xpm"
   "*Icon file for pipe folder.")
-(defvar wl-nmz-folder-icon "nmz.xpm"
-  "*Icon file for namazu folder.")
+(defvar wl-search-folder-icon "nmz.xpm"
+  "*Icon file for search folder.")
 (defvar wl-shimbun-folder-icon "shimbun.xpm"
   "*Icon file for shimbun folder.")
 (defvar wl-file-folder-icon "file.xpm"
@@ -3009,6 +3009,10 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (defvar wl-plugged-queue-status-column 25)
 
 ;;;; Obsolete variables.
+
+;; 2005-01-23
+(elmo-define-obsolete-variable 'wl-nmz-folder-icon
+			       'wl-search-folder-icon)
 
 ;; 2003-11-05
 (elmo-define-obsolete-variable 'wl-summary-new-mark
