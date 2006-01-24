@@ -211,6 +211,11 @@ Returns non-nil if fetching was succeed.")
 		    (concat "^" (regexp-quote
 				 (elmo-folder-prefix-internal folder))))))
 
+(luna-define-method elmo-folder-delete-messages ((folder elmo-search-folder)
+						 numbers)
+  (elmo-folder-kill-messages folder numbers)
+  t)
+
 
 ;;; Search engine
 
