@@ -1452,7 +1452,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	  (elmo-folder-check (wl-draft-get-folder))
 	  (elmo-folder-commit (wl-draft-get-folder))
 	  (setq wl-draft-buffer-message-number next-number)
-	  (rename-buffer (format "%s/%d" wl-draft-folder next-number))
+	  (rename-buffer (format "%s/%d" wl-draft-folder next-number) t)
 	  (setq buffer-file-name (buffer-name))
 	  (set-buffer-modified-p nil)
 	  (wl-draft-config-info-operation wl-draft-buffer-message-number 'save)
@@ -2632,7 +2632,7 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 (defun wl-draft-buffer-change-number (old-number new-number)
   (when (eq wl-draft-buffer-message-number old-number)
     (setq wl-draft-buffer-message-number new-number)
-    (rename-buffer (format "%s/%d" wl-draft-folder new-number))
+    (rename-buffer (format "%s/%d" wl-draft-folder new-number) t)
     (setq buffer-file-name (buffer-name))
     (set-buffer-modified-p nil)))
 
