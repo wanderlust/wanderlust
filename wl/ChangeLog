@@ -1,4 +1,4 @@
-2006-01-26  Yoichi NAKAYAMA  <yoichi@alcoholic.local-net>
+2006-01-26  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-draft.el (wl-draft-save, wl-draft-buffer-change-number):
 	Avoid error when the buffer name is already used.
