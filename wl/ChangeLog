@@ -1,3 +1,12 @@
+2006-01-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-draft-send-confirm-type): New user option.
+
+	* wl-util.el (wl-y-or-n-p-with-scroll): New function.
+
+	* wl-draft.el (wl-draft-send-confirm): Confirmation by
+	`wl-draft-send-confirm-type'
+
 2006-01-26  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-draft.el (wl-draft-save, wl-draft-buffer-change-number):

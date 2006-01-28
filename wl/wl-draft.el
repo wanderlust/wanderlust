@@ -1281,31 +1281,25 @@ This variable is valid when `wl-interactive-send' has non-nil value."
   :group 'wl-draft)
 
 (defun wl-draft-send-confirm ()
-  (let (answer)
-    (unwind-protect
-	(condition-case nil
-	    (progn
-	      (when wl-draft-send-confirm-with-preview
-		(wl-draft-preview-message))
-	      (save-excursion
-		(goto-char (point-min)) ; to show recipients in header
-		(catch 'done
-		  (while t
-		    (discard-input)
-		    (message "Send current draft? <y/n/j(down)/k(up)> ")
-		    (case (let ((cursor-in-echo-area t)) (read-char))
-		      ((?y ?Y)
-		       (throw 'done t))
-		      ((?v ?j ?J ? )
-		       (ignore-errors (scroll-up)))
-		      ((?^ ?k ?K ?)
-		       (ignore-errors (scroll-down)))
-		      (t
-		       (throw 'done nil)))))))
-	  (quit nil))
-      (when (and wl-draft-send-confirm-with-preview
-		 (eq major-mode 'mime-view-mode))
-	(wl-mime-quit-preview)))))
+  (unwind-protect
+      (condition-case nil
+	  (progn
+	    (when wl-draft-send-confirm-with-preview
+	      (wl-draft-preview-message))
+	    (save-excursion
+	      (goto-char (point-min)) ; to show recipients in header
+	      (funcall
+	       (if (functionp wl-draft-send-confirm-type)
+		   wl-draft-send-confirm-type
+		 (lambda (prompt)
+		   (wl-y-or-n-p-with-scroll
+		    prompt
+		    (eq wl-draft-send-confirm-type 'scroll-by-SPC/BS))))
+	       "Send current draft? ")))
+	(quit nil))
+    (when (and wl-draft-send-confirm-with-preview
+	       (eq major-mode 'mime-view-mode))
+      (wl-mime-quit-preview))))
 
 (defun wl-draft-send (&optional kill-when-done mes-string)
   "Send current draft message.

@@ -1099,6 +1099,28 @@ is enclosed by at least one regexp grouping construct."
 	(setq value (prin1-to-string value)))
       (concat (downcase field) ":" value)))))
 
+(defun wl-y-or-n-p-with-scroll (prompt &optional scroll-by-SPC)
+  (let ((prompt (concat prompt (if scroll-by-SPC
+				   "<y/n/SPC(down)/BS(up)> "
+				 "<y/n/j(down)/k(up)> "))))
+    (catch 'done
+      (while t
+	(discard-input)
+	(case (let ((cursor-in-echo-area t))
+		(read-event prompt))
+	  ((?y ?Y)
+	   (throw 'done t))
+	  (? 
+	   (if scroll-by-SPC
+	       (ignore-errors (scroll-up))
+	     (throw 'done t)))
+	  ((?v ?j ?J next)
+	   (ignore-errors (scroll-up)))
+	  ((?^ ?k ?K prior backspace)
+	   (ignore-errors (scroll-down)))
+	  (t
+	   (throw 'done nil)))))))
+
 
 ;; read multiple strings with completion
 (defun wl-completing-read-multiple-1 (prompt

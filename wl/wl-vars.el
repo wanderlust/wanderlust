@@ -895,6 +895,16 @@ Prepared candidates are 'wl-draft-send-mail-with-smtp,
 		(function :tag "Other"))
   :group 'wl-draft)
 
+(defcustom wl-draft-send-confirm-type 'scroll-by-j/k
+  "*Confirmation type or function to use when send a message."
+  :type '(choice
+	  (const :tag "y or n with scroll (j/k)" scroll-by-j/k)
+	  (const :tag "y or n with scroll (SPC/BS)" scroll-by-SPC/BS)
+	  (function-item y-or-n-p)
+	  (function-item yes-or-no-p)
+	  (function :tag "Other function"))
+  :group 'wl-draft)
+
 (defcustom wl-draft-reply-with-argument-list
   '(("From" . (("Reply-To" "Mail-Reply-To" "From")
 	       ("Mail-Followup-To" "To" "Cc")
