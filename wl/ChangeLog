@@ -1,3 +1,7 @@
+2006-01-30  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-vars.el (wl-draft-send-confirm-type): Change default value.
+
 2006-01-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-vars.el (wl-draft-send-confirm-type): New user option.
