@@ -554,9 +554,9 @@ Special commands:
 
 (defalias 'wl-defface 'defface)
 
-(defun wl-read-event-char ()
+(defun wl-read-event-char (&optional prompt)
   "Get the next event."
-  (let ((event (next-command-event)))
+  (let ((event (next-command-event nil prompt)))
     (sit-for 0)
     ;; We junk all non-key events.  Is this naughty?
     (while (not (or (key-press-event-p event)

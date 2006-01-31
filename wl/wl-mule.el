@@ -303,9 +303,9 @@ Warning: Unknown req `%S' with options `%S'" req options)
 			     nil))))
 	match)))))
 
-(defun wl-read-event-char ()
+(defun wl-read-event-char (&optional prompt)
   "Get the next event."
-  (let ((event (read-event)))
+  (let ((event (read-event prompt)))
     (cons (and (numberp event) event) event)))
 
 (require 'product)

@@ -1,3 +1,14 @@
+2006-01-31  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-util.el (wl-y-or-n-p-with-scroll): Use `wl-read-event-char'
+	instead of `read-event'.
+
+	* wl-xmas.el (wl-read-event-char): Add optional argument `prompt'.
+
+	* wl-mule.el (wl-read-event-char): Ditto.
+
+	* wl-e21.el (wl-read-event-char): Ditto.
+
 2006-01-30  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-vars.el (wl-draft-send-confirm-type): Change default value.

@@ -1107,10 +1107,10 @@ is enclosed by at least one regexp grouping construct."
       (while t
 	(discard-input)
 	(case (let ((cursor-in-echo-area t))
-		(read-event prompt))
+		(cdr (wl-read-event-char prompt)))
 	  ((?y ?Y)
 	   (throw 'done t))
-	  (? 
+	  (?\ 
 	   (if scroll-by-SPC
 	       (ignore-errors (scroll-up))
 	     (throw 'done t)))

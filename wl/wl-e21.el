@@ -672,9 +672,9 @@ Special commands:
 
 (defalias 'wl-defface 'defface)
 
-(defun wl-read-event-char ()
+(defun wl-read-event-char (&optional prompt)
   "Get the next event."
-  (let ((event (read-event)))
+  (let ((event (read-event prompt)))
     (cons (and (numberp event) event) event)))
 
 (put 'wl-modeline-biff-state-on 'risky-local-variable t)
