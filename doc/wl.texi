@@ -5377,7 +5377,7 @@ If @code{nil}, authentication realm is not specified in the authentication.
 The initial setting is @code{nil}.
 This symbol-valued variable specifies how to establish SMTP connections.
 If @code{nil}, use default connection type.
-If it is @code{starttls}, use STARTTLS (RFC2595).
+If it is @code{starttls}, use STARTTLS (RFC3207).
 If it is @code{ssl}, use SSL.
 
 @item wl-nntp-posting-server

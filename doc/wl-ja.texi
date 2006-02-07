@@ -5361,7 +5361,7 @@ SMTP AUTH $B$K$h$kG'>Z$r9T$J$&$H$-$N%l%k%`(B(realm)$B$rJ8;zNs$G;XDj$7$^$9!#(
 $B=i4|@_Dj$O(B @code{nil}$B!#(B
 SMTP $B$N%3%M%/%7%g%s$r$I$N$h$&$KD%$k$+$r%7%s%\%k$G;XDj$7$^$9!#(B
 @code{nil} $B$J$i%G%U%)%k%H$N@\B37?<0$rMxMQ$7$^$9!#(B
-@code{starttls} $B$J$i(B STARTTLS (RFC2595)$B$rMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#(B
+@code{starttls} $B$J$i(B STARTTLS (RFC3207)$B$rMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#(B
 @code{ssl} $B$J$i(B SSL $B$rMxMQ$7$^$9!#(B
 
 @item wl-nntp-posting-server
