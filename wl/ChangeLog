@@ -1,3 +1,7 @@
+2006-02-09  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-smtp-extension-bind): Don't bind smtp-end-of-line.
+	
 2006-01-31  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-util.el (wl-y-or-n-p-with-scroll): Use `wl-read-event-char'
