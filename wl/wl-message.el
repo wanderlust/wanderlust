@@ -453,6 +453,31 @@ Returns non-nil if bottom of message."
 	wl-message-buffer-cur-display-type)
     wl-message-buffer-cur-display-type))
 
+(defun wl-message-flag-indicator (flags)
+  (if (null flags)
+      ""
+    (concat
+     " ("
+     (mapconcat
+      (lambda (flag)
+	(let ((indicator (capitalize (symbol-name flag)))
+	      face)
+	  (when (and (assq flag wl-summary-flag-alist)
+		     (facep
+		      (setq face (intern
+				  (format "wl-highlight-summary-%s-flag-face"
+					  flag)))))
+	    (put-text-property 0 (length indicator) 'face face indicator))
+	  indicator))
+      (sort (elmo-get-global-flags flags)
+	    (lambda (l r)
+	      (> (length (memq (assq l wl-summary-flag-alist)
+			       wl-summary-flag-alist))
+		 (length (memq (assq r wl-summary-flag-alist)
+			       wl-summary-flag-alist)))))
+      ", ")
+     ")")))
+
 (defun wl-message-redisplay (folder number display-type &optional force-reload)
   (let* ((default-mime-charset wl-mime-charset)
 	 (buffer-read-only nil)
@@ -474,32 +499,7 @@ Returns non-nil if bottom of message."
     (setq wl-message-buffer-cur-folder (elmo-folder-name-internal folder))
     (setq wl-message-buffer-cur-number number)
     (setq wl-message-buffer-flag-indicator
-	  (if (setq flags (elmo-get-global-flags (elmo-message-flags
-						  folder number)))
-	      (let ((fl wl-summary-flag-alist)
-		    flag-strings flag-string face)
-		(while fl
-		  (when (memq (car (car fl)) flags)
-		    (setq flag-string (capitalize
-				       (symbol-name (car (car fl))))
-			  flags (delq (car (car fl)) flags))
-		    (when (facep (setq face
-				       (intern
-					(format
-					 "wl-highlight-summary-%s-flag-face"
-					 (car (car fl))))))
-		      (put-text-property 0 (length flag-string)
-					 'face face flag-string))
-		    (setq flag-strings (nconc flag-strings
-					      (list flag-string))))
-		  (setq fl (cdr fl)))
-		(setq flag-strings
-		      (nconc flag-strings
-			     (mapcar (lambda (flag)
-				       (capitalize (symbol-name flag)))
-				     flags)))
-		(concat " (" (mapconcat 'identity flag-strings ", ") ")"))
-	    ""))
+	  (wl-message-flag-indicator (elmo-message-flags folder number)))
     (wl-line-formatter-setup
      wl-message-buffer-mode-line-formatter
      wl-message-mode-line-format
