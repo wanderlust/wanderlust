@@ -139,8 +139,7 @@ Returns non-nil if fetching was succeed.")
 		      folder number))
 	(when entity
 	  (elmo-msgdb-append-entity new-msgdb entity '(new unread)))
-	(elmo-progress-notify 'elmo-folder-msgdb-create)
-	(setq numbers (cdr numbers))))
+	(elmo-progress-notify 'elmo-folder-msgdb-create)))
     (message "Creating msgdb...done")
     new-msgdb))
 
@@ -174,12 +173,12 @@ Returns non-nil if fetching was succeed.")
 							 &optional
 							 start-number)
   (let ((temp-dir (elmo-folder-make-temporary-directory folder))
-	(cur-number (if start-number 0)))
+	(cur-number 0))
     (dolist (number numbers)
       (elmo-copy-file
        (elmo-message-file-name folder number)
        (expand-file-name
-	(int-to-string (if start-number (incf cur-number) number))
+	(number-to-string (if start-number (incf cur-number) number))
 	temp-dir)))
     temp-dir))
 

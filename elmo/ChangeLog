@@ -1,3 +1,10 @@
+2006-02-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-search.el (elmo-folder-msgdb-create): Remove an unnecessary
+	assignment.
+	(elmo-folder-message-make-temp-files): Use `number-to-string'
+	instead of `int-to-string'.
+
 2006-01-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-search.el (elmo-folder-delete-messages): Define.
