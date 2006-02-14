@@ -293,6 +293,7 @@ ENTITY is returned."
       (cdr (memq (car entity) wl-thread-entity-list)))))
 
 (defun wl-thread-jump-to-msg (&optional number)
+  "Jump to the message with specified number in the current summary."
   (interactive)
   (let ((num (or number
 		 (string-to-int

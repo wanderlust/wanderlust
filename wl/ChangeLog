@@ -1,3 +1,7 @@
+2006-02-14  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-thread.el (wl-thread-jump-to-msg): Add docstring.
+
 2006-02-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-message.el (wl-message-flag-indicator): New function.
