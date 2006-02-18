@@ -91,22 +91,21 @@ This function is for internal use only."
   (let ((i 0)
 	bindings)
     (when (car arg-list)
-      (setq bindings (list (list (car arg-list) listener))))
+      (setq bindings (cons (list (car arg-list) listener) bindings)))
     (when (setq arg-list (cdr arg-list))
-      (setq bindings (nconc bindings
-			    (list (list (car arg-list) source)))))
+      (setq bindings (cons (list (car arg-list) source) bindings)))
     (while (and (setq arg-list (cdr arg-list))
 		(not (eq (car arg-list) '&optional)))
-      (setq bindings (nconc bindings
-			    (list (list (car arg-list) (list 'nth i args))))
+      (setq bindings (cons (list (car arg-list) (list 'nth i args)) bindings)
 	    i (1+ i)))
     (when (and handback
 	       (setq arg-list (cdr arg-list)))
-      (setq bindings (nconc bindings
-			    (list (list (car arg-list) handback)))))
+      (setq bindings (cons (list (car arg-list) handback) bindings)))
     bindings))
 
 (defmacro elmo-define-signal-handler (args &rest body)
+  "Define a signal handler.
+ARGS is a symbol list as (LISTENER SOURCE ARG... &optional HANDBACK)."
   (let ((source   (make-symbol "--source--"))
 	(listener (make-symbol "--listener--"))
 	(argument (make-symbol "--argument--"))
@@ -121,6 +120,8 @@ This function is for internal use only."
 	   def-body))
 
 (defmacro elmo-define-signal-filter (args &rest body)
+  "Define a signal filter.
+ARGS is a symbol list as (LISTENER SOURCE ARG...)."
   (let ((source   (make-symbol "--source--"))
 	(listener (make-symbol "--listener--"))
 	(argument (make-symbol "--argument--")))

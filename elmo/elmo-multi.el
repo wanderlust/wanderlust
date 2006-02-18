@@ -91,7 +91,7 @@
    nil 'cache-changed folder
    (elmo-define-signal-handler (folder child number)
      (elmo-emit-signal
-      'flag-changed folder
+      'cache-changed folder
       (car (elmo-multi-map-numbers folder child (list number)))))
    (elmo-define-signal-filter (folder sender)
      (memq sender (elmo-multi-folder-children-internal folder))))
