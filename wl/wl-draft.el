@@ -303,70 +303,70 @@ e.g.
   "Return t when From address in the current message is user's self one or not."
   (wl-address-user-mail-address-p (or (elmo-field-body "From") "")))
 
+(defun wl-draft-find-reply-headers (rule-symbol)
+  (let ((rule-list (symbol-value rule-symbol))
+	(condition-match-p
+	 (lambda (condition)
+	   (cond ((stringp condition)
+		  (std11-field-body condition))
+		 ((symbolp condition)
+		  (funcall condition))
+		 ((consp condition)
+		  (and (funcall condition-match-p (car condition))
+		       (funcall condition-match-p (cdr condition))))
+		 ((null condition))
+		 (t
+		  (error "Unkown condition in `%s'" rule-symbol)))))
+	result)
+    (while (and (null result) rule-list)
+      (let ((rule (car rule-list)))
+	(when (funcall condition-match-p (car rule))
+	  (setq result (cdr rule)))
+	(setq rule-list (cdr rule-list))))
+    result))
+
 (defun wl-draft-reply (buf with-arg summary-buf &optional number)
   "Reply to BUF buffer message.
 Reply to author if WITH-ARG is non-nil."
 ;;;(save-excursion
-  (let (r-list
+  (let ((rule-list (if with-arg
+		       'wl-draft-reply-with-argument-list
+		     'wl-draft-reply-without-argument-list))
+	reply-headers
 	to mail-followup-to cc subject in-reply-to references newsgroups
 	to-alist cc-alist decoder parent-folder)
     (when (buffer-live-p summary-buf)
       (with-current-buffer summary-buf
 	(setq parent-folder (wl-summary-buffer-folder-name))))
     (set-buffer (or buf mime-mother-buffer))
-    (setq r-list (if with-arg wl-draft-reply-with-argument-list
-		   wl-draft-reply-without-argument-list))
-    (catch 'done
-      (while r-list
-	(when (let ((condition (car (car r-list))))
-		(cond ((stringp condition)
-		       (std11-field-body condition))
-		      ((listp condition)
-		       (catch 'done
-			 (while condition
-			   (cond
-			    ((stringp (car condition))
-			     (or (std11-field-body (car condition))
-				 (throw 'done nil)))
-			    ((symbolp (car condition))
-			     (or (funcall (car condition))
-				 (throw 'done nil)))
-			    (t
-			     (debug)))
-			   (setq condition (cdr condition)))
-			 t))
-		      ((symbolp condition)
-		       (funcall condition))))
-	  (let ((r-to-list (nth 0 (cdr (car r-list))))
-		(r-cc-list (nth 1 (cdr (car r-list))))
-		(r-ng-list (nth 2 (cdr (car r-list)))))
-	    (when (and (member "Followup-To" r-ng-list)
-		       (string= (std11-field-body "Followup-To") "poster"))
-	      (setq r-to-list (cons "From" r-to-list))
-	      (setq r-ng-list (delete "Followup-To"
-				      (copy-sequence r-ng-list))))
-	    (if (and r-to-list (symbolp r-to-list))
-		(setq to (wl-concat-list (funcall r-to-list) ","))
-	      (setq to (wl-concat-list (cons to
-					     (elmo-multiple-fields-body-list
-					      r-to-list))
-				       ",")))
-	    (if (and r-cc-list (symbolp r-cc-list))
-		(setq cc (wl-concat-list (funcall r-cc-list) ","))
-	      (setq cc (wl-concat-list (cons cc
-					     (elmo-multiple-fields-body-list
-					      r-cc-list))
-				       ",")))
-	    (if (and r-ng-list (symbolp r-ng-list))
-		(setq newsgroups (wl-concat-list (funcall r-ng-list) ","))
-	      (setq newsgroups (wl-concat-list (cons newsgroups
-						     (std11-field-bodies
-						      r-ng-list))
-					       ","))))
-	  (throw 'done nil))
-	(setq r-list (cdr r-list)))
-      (error "No match field: check your `wl-draft-reply-%s-argument-list'"
-	     (if with-arg "with" "without")))
+    (setq reply-headers
+	  (or (wl-draft-find-reply-headers rule-list)
+	      (error "No match field: check your `%s'" rule-list)))
+    (let ((r-to-list (nth 0 reply-headers))
+	  (r-cc-list (nth 1 reply-headers))
+	  (r-ng-list (nth 2 reply-headers)))
+      (setq to (wl-concat-list
+		(nconc
+		 (if (functionp r-to-list)
+		     (funcall r-to-list)
+		   (elmo-multiple-fields-body-list r-to-list))
+		 (and (member "Followup-To" r-ng-list)
+		      (string= (std11-field-body "Followup-To") "poster")
+		      (progn
+			(setq r-ng-list (delete "Followup-To"
+						(copy-sequence r-ng-list)))
+			(elmo-multiple-fields-body-list '("From")))))
+		","))
+      (setq cc (wl-concat-list
+		(if (functionp r-cc-list)
+		    (funcall r-cc-list)
+		  (elmo-multiple-fields-body-list r-cc-list))
+		","))
+      (setq newsgroups (wl-concat-list
+			(if (functionp r-ng-list)
+			    (funcall r-ng-list)
+			  (std11-field-bodies r-ng-list))
+			",")))
     (setq subject (std11-field-body "Subject"))
     (setq to (wl-parse-addresses to)
 	  cc (wl-parse-addresses cc))
