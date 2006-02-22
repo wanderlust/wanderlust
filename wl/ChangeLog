@@ -3,6 +3,7 @@
 	* wl-draft.el (wl-draft-find-reply-headers): New function (extract
 	from `wl-draft-reply').
 	(wl-draft-reply): Use it.
+	(wl-draft-find-reply-headers): Avoid compile warning.
 
 2006-02-14  Yoichi NAKAYAMA  <yoichi@geiin.org>
 

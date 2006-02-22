@@ -305,19 +305,19 @@ e.g.
 
 (defun wl-draft-find-reply-headers (rule-symbol)
   (let ((rule-list (symbol-value rule-symbol))
-	(condition-match-p
-	 (lambda (condition)
-	   (cond ((stringp condition)
-		  (std11-field-body condition))
-		 ((symbolp condition)
-		  (funcall condition))
-		 ((consp condition)
-		  (and (funcall condition-match-p (car condition))
-		       (funcall condition-match-p (cdr condition))))
-		 ((null condition))
-		 (t
-		  (error "Unkown condition in `%s'" rule-symbol)))))
-	result)
+	condition-match-p result)
+    (setq condition-match-p
+	  (lambda (condition)
+	    (cond ((stringp condition)
+		   (std11-field-body condition))
+		  ((symbolp condition)
+		   (funcall condition))
+		  ((consp condition)
+		   (and (funcall condition-match-p (car condition))
+			(funcall condition-match-p (cdr condition))))
+		  ((null condition))
+		  (t
+		   (error "Unkown condition in `%s'" rule-symbol)))))
     (while (and (null result) rule-list)
       (let ((rule (car rule-list)))
 	(when (funcall condition-match-p (car rule))
