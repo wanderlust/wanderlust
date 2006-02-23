@@ -75,7 +75,7 @@
 (defvar wl-summary-buffer-disp-msg    nil)
 (defvar wl-summary-buffer-disp-folder nil)
 (defvar wl-summary-buffer-temp-mark-list nil)
-(defvar wl-summary-buffer-last-displayed-msg nil)
+(defvar wl-summary-buffer-message-ring nil)
 (defvar wl-summary-buffer-current-msg nil)
 (defvar wl-summary-buffer-unread-count 0)
 (defvar wl-summary-buffer-new-count    0)
@@ -142,7 +142,7 @@
 (make-variable-buffer-local 'wl-summary-buffer-disp-folder)
 (make-variable-buffer-local 'wl-summary-buffer-target-mark-list)
 (make-variable-buffer-local 'wl-summary-buffer-temp-mark-list)
-(make-variable-buffer-local 'wl-summary-buffer-last-displayed-msg)
+(make-variable-buffer-local 'wl-summary-buffer-message-ring)
 (make-variable-buffer-local 'wl-summary-buffer-unread-count)
 (make-variable-buffer-local 'wl-summary-buffer-new-count)
 (make-variable-buffer-local 'wl-summary-buffer-answered-count)
@@ -580,6 +580,27 @@ See also variable `wl-use-petname'."
   (or (eq wl-summary-buffer-view 'sequence)
       (not (wl-thread-entity-parent-invisible-p
 	    (wl-thread-get-entity number)))))
+
+(defun wl-summary-push-message (number)
+  (when (and number
+	     (not (equal number (car wl-summary-buffer-message-ring))))
+    (setq wl-summary-buffer-message-ring
+	  (cons number wl-summary-buffer-message-ring))
+    (when (> (length wl-summary-buffer-message-ring)
+	     wl-summary-message-ring-max)
+      (setcdr (nthcdr (1- wl-summary-message-ring-max)
+		      wl-summary-buffer-message-ring)
+	      nil))))
+
+(defun wl-summary-pop-message (&optional current-number)
+  (when wl-summary-buffer-message-ring
+    (when current-number
+      (setq wl-summary-buffer-message-ring
+	    (nconc wl-summary-buffer-message-ring (list current-number))))
+    (prog1
+	(car wl-summary-buffer-message-ring)
+      (setq wl-summary-buffer-message-ring
+	    (cdr wl-summary-buffer-message-ring)))))
 
 (defun wl-summary-update-mark-and-highlight-window (&optional win beg)
   "A function to be called as window-scroll-functions."
@@ -2417,7 +2438,7 @@ If ARG, without confirm."
 		    'as-is
 		  'mime))
 	  (setq wl-summary-buffer-disp-msg nil)
-	  (setq wl-summary-buffer-last-displayed-msg nil)
+	  (setq wl-summary-buffer-message-ring nil)
 	  (setq wl-summary-buffer-current-msg nil)
 	  (setq wl-summary-buffer-persistent-mark-version 0)
 	  (let ((inhibit-read-only t)
@@ -4461,17 +4482,37 @@ Use function list is `wl-summary-write-current-folder-functions'."
 		"No more unread messages. Type SPC to go to %s."
 		(wl-summary-entity-info-msg next-entity finfo)))))))))
 
-(defun wl-summary-goto-last-displayed-msg ()
+(defun wl-summary-pop-to-last-message ()
+  "Jump to last displayed message, and pop a new massage off the ring."
   (interactive)
-  (unless wl-summary-buffer-last-displayed-msg
-    (setq wl-summary-buffer-last-displayed-msg
-	  wl-summary-buffer-current-msg))
-  (if wl-summary-buffer-last-displayed-msg
-      (progn
-	(wl-summary-jump-to-msg wl-summary-buffer-last-displayed-msg)
-	(if wl-summary-buffer-disp-msg
-	    (wl-summary-redisplay)))
-    (message "No last message.")))
+  (let ((number (wl-summary-pop-message (wl-summary-message-number))))
+    (unless number
+      (error "Empty message ring"))
+    (wl-summary-jump-to-msg number)
+    (when wl-summary-buffer-disp-msg
+      (let (wl-summary-buffer-message-ring)
+	(wl-summary-redisplay)))))
+
+(defun wl-summary-goto-last-displayed-msg (&optional arg)
+  "Jump to last displayed message."
+  (interactive "P")
+  (cond
+   ((eq last-command 'wl-summary-pop-to-last-message)
+    (setq this-command 'wl-summary-pop-to-last-message)
+    (wl-summary-pop-to-last-message))
+   (arg
+    (setq this-command 'wl-summary-pop-to-last-message)
+    (wl-summary-pop-to-last-message))
+   (t
+    (let ((current (wl-summary-message-number))
+	  (number (wl-summary-pop-message)))
+      (if number
+	  (progn
+	    (wl-summary-jump-to-msg number)
+	    (if wl-summary-buffer-disp-msg
+		(wl-summary-redisplay)
+	      (wl-summary-push-message current)))
+	(message "No last message."))))))
 
 (defun wl-summary-message-display-type ()
   (when (and wl-summary-buffer-disp-msg
@@ -4579,8 +4620,7 @@ If ARG is numeric number, decode message as following:
     (if num
 	(progn
 	  (setq wl-summary-buffer-disp-msg t)
-	  (setq wl-summary-buffer-last-displayed-msg
-		wl-summary-buffer-current-msg)
+	  (wl-summary-push-message wl-summary-buffer-current-msg)
 	  ;; hide folder window
 	  (if (and (not wl-stay-folder-window)
 		   (setq fld-buf (get-buffer wl-folder-buffer-name)))

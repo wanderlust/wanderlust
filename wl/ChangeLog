@@ -1,3 +1,21 @@
+2006-02-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-buffer-message-ring): New internal
+	variable.
+	(wl-summary-buffer-last-displayed-msg): Abolish.
+	(wl-summary-push-message): New function.
+	(wl-summary-pop-message): Ditto.
+	(wl-summary-goto-folder-subr): Reset
+	`wl-summary-buffer-message-ring'.
+	(wl-summary-pop-to-last-message): New command.
+	(wl-summary-goto-last-displayed-msg): Call
+	wl-summary-pop-to-last-message if optional argument is non-nil or
+	the last command is itself.
+	(wl-summary-redisplay-internal): Push last message number into
+	`wl-summary-buffer-message-ring'.
+
+	* wl-vars.el (wl-summary-message-ring-max): New user option.
+
 2006-02-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-draft.el (wl-draft-find-reply-headers): New function (extract
