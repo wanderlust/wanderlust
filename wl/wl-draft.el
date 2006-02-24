@@ -310,7 +310,7 @@ e.g.
 	  (lambda (condition)
 	    (cond ((stringp condition)
 		   (std11-field-body condition))
-		  ((symbolp condition)
+		  ((functionp condition)
 		   (funcall condition))
 		  ((consp condition)
 		   (and (funcall condition-match-p (car condition))
