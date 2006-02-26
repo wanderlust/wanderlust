@@ -1,5 +1,7 @@
 2006-02-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-summary.el (wl-summary-message-status): New macro.
+
 	* wl-vars.el (wl-summary-persistent-mark-priority-list): Add `killed'.
 	(wl-summary-killed-mark): New user option.
 
