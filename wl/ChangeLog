@@ -1,3 +1,7 @@
+2006-02-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* Version number is increased to 2.15.3.
+
 2006-02-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-draft.el (wl-draft-find-reply-headers): Use functionp instead
