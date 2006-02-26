@@ -609,20 +609,13 @@ See also variable `wl-use-petname'."
       (let ((beg (or beg (window-start win)))
 	    (end (condition-case nil
 		     (window-end win t)	; old emacsen doesn't support 2nd arg.
-		   (error (window-end win))))
-	    number flags)
+		   (error (window-end win)))))
 	(save-excursion
 	  (goto-char beg)
 	  (while (and (< (point) end) (not (eobp)))
 	    (when (or (null (get-text-property (point) 'face))
 		      (wl-summary-persistent-mark-invalid-p))
-	      (setq number (wl-summary-message-number))
-	      (when number
-		(setq flags (elmo-message-flags wl-summary-buffer-elmo-folder
-						number)))
-	      (let (wl-summary-highlight)
-		(wl-summary-update-persistent-mark number flags))
-	      (wl-highlight-summary-current-line number flags))
+	      (wl-summary-update-persistent-mark (wl-summary-message-number)))
 	    (forward-line 1)))))
     (set-buffer-modified-p nil)))
 
@@ -691,10 +684,10 @@ See also variable `wl-use-petname'."
        (wl-summary-update-persistent-mark-on-event buffer numbers)))
     (elmo-connect-signal
      wl-summary-buffer-elmo-folder
-     'cache-changed
+     'status-changed
      (current-buffer)
-     (elmo-define-signal-handler (buffer folder number)
-       (wl-summary-update-persistent-mark-on-event buffer (list number))))
+     (elmo-define-signal-handler (buffer folder numbers)
+       (wl-summary-update-persistent-mark-on-event buffer numbers)))
     (elmo-connect-signal
      wl-summary-buffer-elmo-folder
      'update-overview
@@ -707,7 +700,7 @@ See also variable `wl-use-petname'."
   (when (and (eq major-mode 'wl-summary-mode)
 	     wl-summary-buffer-elmo-folder)
     (elmo-disconnect-signal 'flag-changed (current-buffer))
-    (elmo-disconnect-signal 'cache-changed (current-buffer))
+    (elmo-disconnect-signal 'status-changed (current-buffer))
     (elmo-disconnect-signal 'update-overview (current-buffer))))
 
 (defun wl-status-update ()
@@ -819,11 +812,12 @@ you."
 (defun wl-summary-detect-mark-position ()
   (let ((column wl-summary-buffer-number-column)
 	(formatter wl-summary-buffer-line-formatter)
+	(lang wl-summary-buffer-weekday-name-lang)
+	(dummy-number 10000)
 	(dummy-temp (char-to-string 200))
 	;; bind only for the check.
 	(wl-summary-new-uncached-mark (char-to-string 201))
 	(wl-summary-persistent-mark-priority-list '(new))     ; ditto.
-	(lang wl-summary-buffer-weekday-name-lang)
 	wl-summary-highlight
 	temp persistent)
     (with-temp-buffer
@@ -834,14 +828,16 @@ you."
        (wl-summary-create-line
 	(elmo-msgdb-make-message-entity
 	 (luna-make-entity 'modb-entity-handler)
-	 :number 10000
+	 :number dummy-number
 	 :from "foo"
 	 :subject "bar"
 	 :size 100)
 	nil
 	dummy-temp
-	'(new)
-	nil))
+	(let ((status (elmo-message-status nil dummy-number)))
+	  (elmo-message-status-set-flags status '(new))
+	  (elmo-message-status-set-killed status nil)
+	  status)))
       (goto-char (point-min))
       (setq temp (save-excursion
 		   (when (search-forward dummy-temp nil t)
@@ -1195,8 +1191,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	    (wl-summary-insert-line
 	     (wl-summary-create-line entity nil
 				     (wl-summary-temp-mark number)
-				     (elmo-message-flags folder number)
-				     (elmo-message-cached-p folder number)))))
+				     (elmo-message-status folder number)))))
       (when (and wl-summary-buffer-disp-msg
 		 wl-summary-buffer-current-msg)
 	(save-excursion
@@ -1664,8 +1659,8 @@ If ARG is non-nil, checking is omitted."
 	(message "Collecting marks...")
 	(goto-char (point-min))
 	(while (not (eobp))
-	  (setq mark (wl-summary-persistent-mark)
-		msg (wl-summary-message-number))
+	  (setq msg (wl-summary-message-number))
+	  (setq mark (wl-summary-persistent-mark msg))
 	  (if (or (and (null prefetch-marks)
 		       msg
 		       (null (elmo-file-cache-exists-p
@@ -1788,6 +1783,15 @@ If ARG is non-nil, checking is omitted."
 					       nil nil (interactive-p))
       (wl-summary-count-unread)
       (wl-summary-update-modeline))))
+
+(defun wl-summary-recover-messages-region (beg end)
+  "Recover killed messages in region."
+  (interactive "r")
+  (let ((number-list (wl-summary-number-list-from-region beg end)))
+    (if (null number-list)
+	(message "No message.")
+      (elmo-folder-recover-messages wl-summary-buffer-elmo-folder
+				    number-list))))
 
 (defun wl-summary-mark-as-read-all ()
   (interactive)
@@ -2639,12 +2643,7 @@ If ARG, without confirm."
       (goto-char (point-max))
       (wl-summary-insert-line
        (wl-summary-create-line entity nil nil
-			       (elmo-message-flags
-				wl-summary-buffer-elmo-folder
-				number)
-			       (elmo-message-cached-p
-				wl-summary-buffer-elmo-folder
-				number)))
+			       (elmo-message-status folder number)))
       (setq wl-summary-buffer-number-list
 	    (wl-append wl-summary-buffer-number-list
 		       (list (elmo-message-entity-number entity))))
@@ -2851,8 +2850,7 @@ If ARG, without confirm."
 	  entity
 	  parent-entity
 	  nil
-	  (elmo-message-flags wl-summary-buffer-elmo-folder number)
-	  (elmo-message-cached-p wl-summary-buffer-elmo-folder number)
+	  (wl-summary-message-status number)
 	  (wl-thread-maybe-get-children-num number)
 	  (wl-thread-make-indent-string thr-entity)
 	  (wl-thread-entity-get-linked thr-entity)))))))
@@ -2977,60 +2975,60 @@ If ARG, exit virtual folder."
   (setq wl-summary-buffer-persistent-mark-version
 	(1+ wl-summary-buffer-persistent-mark-version)))
 
-(defsubst wl-summary-persistent-mark-string (folder flags cached)
+(defsubst wl-summary-persistent-mark-string (folder status)
   "Return the persistent mark string.
-The mark is decided according to the FOLDER, FLAGS and CACHED."
+The mark is decided according to the FOLDER and STATUS."
   (let ((priorities wl-summary-persistent-mark-priority-list)
+	(flags (elmo-message-status-flags status))
+	(cached (elmo-message-status-cached-p status))
 	mark)
     (while (and (null mark) priorities)
-      (if (and (eq (car priorities) 'flag)
-	       (elmo-get-global-flags flags 'ignore-preserved))
-	  (let ((specs wl-summary-flag-alist)
+      (let ((flag (car priorities)))
+	(cond
+	 ((eq flag 'flag)
+	  (let ((flags (elmo-get-global-flags flags 'ignore-preserved))
+		(specs wl-summary-flag-alist)
 		spec)
-	    (while (setq spec (car specs))
-	      (if (memq (car spec) flags)
-		  (setq mark (or (nth 2 spec) wl-summary-flag-mark)
-			specs nil)
-		(setq specs (cdr specs))))
-	    (unless mark
-	      (setq mark wl-summary-flag-mark)))
-	(when (memq (car priorities) flags)
+	    (when flags
+	      (while (setq spec (car specs))
+		(if (memq (car spec) flags)
+		    (setq mark (or (nth 2 spec) wl-summary-flag-mark)
+			  specs nil)
+		  (setq specs (cdr specs))))
+	      (unless mark
+		(setq mark wl-summary-flag-mark)))))
+	 ((eq flag 'killed)
+	  (when (elmo-message-status-killed-p status)
+	    (setq mark wl-summary-killed-mark)))
+	 ((memq flag flags)
 	  (setq mark
-		(let ((var
-		       (intern
-			(if cached
+		(let ((var (intern-soft
 			    (format
-			     "wl-summary-%s-cached-mark" (car priorities))
-			  (format
-			   "wl-summary-%s-uncached-mark" (car priorities))))))
-		  (if (and (boundp var)
-			   (symbol-value var))
-		      (symbol-value var)
-		    (if cached
-			(downcase (substring (symbol-name (car priorities))
-					     0 1))
-		      (upcase (substring (symbol-name (car priorities))
-					 0 1))))))))
-      (setq priorities (cdr priorities)))
+			     (if cached
+				 "wl-summary-%s-cached-mark"
+			       "wl-summary-%s-uncached-mark")
+			     flag))))
+		  (or (and var (boundp var) (symbol-value var))
+		      (funcall (if cached #'downcase #'upcase)
+			       (substring (symbol-name flag) 0 1)))))))
+	(setq priorities (cdr priorities))))
     (or mark
 	(if (or cached (elmo-folder-local-p folder))
 	    nil
 	  wl-summary-uncached-mark))))
 
-(defsubst wl-summary-message-mark (folder number &optional flags)
+(defsubst wl-summary-message-mark (folder number &optional status)
   "Return mark of the message."
   (ignore-errors
     (wl-summary-persistent-mark-string
      folder
-     (or flags (setq flags (elmo-message-flags folder number)))
-     (memq 'cached flags) ; XXX for speed-up.
-     )))
+     (or status (elmo-message-status folder number)))))
 
-(defsubst wl-summary-persistent-mark (&optional number flags)
+(defsubst wl-summary-persistent-mark (&optional number status)
   "Return persistent-mark string of current line."
   (or (wl-summary-message-mark wl-summary-buffer-elmo-folder
 			       (or number (wl-summary-message-number))
-			       flags)
+			       status)
       " "))
 
 (defun wl-summary-put-temp-mark (mark)
@@ -3127,6 +3125,19 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
       (wl-summary-count-unread)
       (wl-summary-update-modeline))))
 
+(defun wl-summary-target-mark-recover ()
+  "Recover killed messages which have target mark."
+  (interactive)
+  (wl-summary-check-target-mark)
+  (save-excursion
+    (let ((inhibit-read-only t)
+	  (buffer-read-only nil)
+	  wl-summary-buffer-disp-msg)
+      (elmo-folder-recover-messages wl-summary-buffer-elmo-folder
+				    wl-summary-buffer-target-mark-list)
+      (dolist (number wl-summary-buffer-target-mark-list)
+	(wl-summary-unset-mark number)))))
+
 (defun wl-summary-target-mark-save ()
   (interactive)
   (wl-summary-check-target-mark)
@@ -3146,29 +3157,30 @@ The mark is decided according to the FOLDER, FLAGS and CACHED."
   (wl-summary-check-target-mark)
   (wl-summary-pick wl-summary-buffer-target-mark-list 'delete))
 
-(defun wl-summary-update-persistent-mark (&optional number flags)
+(defun wl-summary-update-persistent-mark (&optional number)
   "Synch up persistent mark of current line with msgdb's.
 Return non-nil if the mark is updated"
   (interactive)
-  (prog1
-      (when wl-summary-buffer-persistent-mark-column
-	(save-excursion
-	  (move-to-column wl-summary-buffer-persistent-mark-column)
-	  (let ((inhibit-read-only t)
-		(buffer-read-only nil)
-		(mark (buffer-substring (- (point) 1) (point)))
-		(new-mark (wl-summary-persistent-mark number flags)))
-	    (prog1
-		(unless (string= new-mark mark)
-		  (delete-backward-char 1)
-		  (insert new-mark)
-		  (wl-summary-set-message-modified)
-		  t)
-	      (wl-summary-validate-persistent-mark (point-at-bol)
-						   (point-at-eol))))))
-    (when wl-summary-highlight
-      (wl-highlight-summary-current-line))
-    (set-buffer-modified-p nil)))
+  (let ((status (wl-summary-message-status number)))
+    (prog1
+	(when wl-summary-buffer-persistent-mark-column
+	  (save-excursion
+	    (move-to-column wl-summary-buffer-persistent-mark-column)
+	    (let ((inhibit-read-only t)
+		  (buffer-read-only nil)
+		  (mark (buffer-substring (- (point) 1) (point)))
+		  (new-mark (wl-summary-persistent-mark number status)))
+	      (prog1
+		  (unless (string= new-mark mark)
+		    (delete-backward-char 1)
+		    (insert new-mark)
+		    (wl-summary-set-message-modified)
+		    t)
+		(wl-summary-validate-persistent-mark (point-at-bol)
+						     (point-at-eol))))))
+      (when wl-summary-highlight
+	(wl-highlight-summary-current-line number status))
+      (set-buffer-modified-p nil))))
 
 (defsubst wl-summary-mark-as-read-internal (inverse
 					    number-or-numbers
@@ -3433,6 +3445,14 @@ Return non-nil if the mark is updated"
      'important
      nil nil nil (interactive-p))))
 
+(defun wl-summary-recover-message (number)
+  "Recover current message if it is killed."
+  (interactive (list (wl-summary-message-number)))
+  (if (null number)
+      (message "No message.")
+    (elmo-folder-recover-messages wl-summary-buffer-elmo-folder
+				  (list number))))
+
 ;;; Summary line.
 (defvar wl-summary-line-formatter nil)
 
@@ -3557,8 +3577,7 @@ Return non-nil if the mark is updated"
 (defun wl-summary-create-line (wl-message-entity
 			       wl-parent-message-entity
 			       wl-temp-mark
-			       wl-flags
-			       wl-cached
+			       wl-status
 			       &optional
 			       wl-thr-children-number
 			       wl-thr-indent-string
@@ -3567,8 +3586,7 @@ Return non-nil if the mark is updated"
   (let ((wl-mime-charset wl-summary-buffer-mime-charset)
 	(wl-persistent-mark (wl-summary-persistent-mark-string
 			     wl-summary-buffer-elmo-folder
-			     wl-flags
-			     wl-cached))
+			     wl-status))
 	(elmo-mime-charset wl-summary-buffer-mime-charset)
 	(elmo-lang wl-summary-buffer-weekday-name-lang)
 	(wl-datevec (or (elmo-time-to-datevec
@@ -3599,7 +3617,7 @@ Return non-nil if the mark is updated"
 	(wl-highlight-summary-line-string
 	 (elmo-message-entity-number wl-message-entity)
 	 line
-	 wl-flags
+	 wl-status
 	 wl-temp-mark
 	 wl-thr-indent-string))
     line))

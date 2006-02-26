@@ -88,11 +88,10 @@
    (elmo-define-signal-filter (folder sender)
      (memq sender (elmo-multi-folder-children-internal folder))))
   (elmo-connect-signal
-   nil 'cache-changed folder
-   (elmo-define-signal-handler (folder child number)
-     (elmo-emit-signal
-      'cache-changed folder
-      (car (elmo-multi-map-numbers folder child (list number)))))
+   nil 'status-changed folder
+   (elmo-define-signal-handler (folder child numbers)
+     (elmo-emit-signal 'status-changed folder
+		       (elmo-multi-map-numbers folder child numbers)))
    (elmo-define-signal-filter (folder sender)
      (memq sender (elmo-multi-folder-children-internal folder))))
   (elmo-connect-signal
@@ -136,6 +135,10 @@
   (elmo-generic-folder-close folder)
   (dolist (fld (elmo-multi-folder-children-internal folder))
     (elmo-folder-close fld)))
+
+(luna-define-method elmo-message-killed-p ((folder elmo-multi-folder) number)
+  (let ((pair (elmo-multi-real-folder-number folder number)))
+    (elmo-message-killed-p (car pair) (cdr pair))))
 
 (luna-define-method elmo-folder-synchronize ((folder elmo-multi-folder)
 					     &optional
@@ -520,6 +523,12 @@
 	    (setcdr element (+ (cdr element) (cdr pair)))
 	  (setq flag-alist (cons pair flag-alist)))))
     flag-alist))
+
+(luna-define-method elmo-folder-recover-messages ((folder elmo-multi-folder)
+						  numbers)
+  (dolist (element (elmo-multi-split-numbers folder numbers))
+    (when (cdr element)
+      (elmo-folder-recover-messages (car element) (cdr element)))))
 
 (require 'product)
 (product-provide (provide 'elmo-multi) (require 'elmo-version))

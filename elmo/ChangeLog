@@ -1,5 +1,33 @@
 2006-02-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo.el (cache-changed): Abolish.
+	(status-changed): New signal.
+	(elmo-message-killed-p): New generic function and define for
+	elmo-folder.
+	(elmo-folder-recover-messages): Ditto.
+	(elmo-message-set-cached): Emit signal `status-changed' instead of
+	`cache-changed'.
+	(elmo-message-status): New macro.
+	(elmo-message-status-folder): Ditto.
+	(elmo-message-status-number): Ditto.
+	(elmo-message-status-set-flags): Ditto.
+	(elmo-message-status-set-killed): Ditto.
+	(elmo-message-status-flags): New function.
+	(elmo-message-status-cached-p): Ditto.
+	(elmo-message-status-killed-p): Ditto.
+
+	* elmo-pipe.el (elmo-pipe-connect-signals): Connect to signal
+	`status-changed' instead of `cache-changed'.
+	(elmo-folder-recover-messages): Define.
+	(elmo-message-killed-p): Ditto.
+
+	* elmo-filter.el (elmo-filter-connect-signals): Connect to signal
+	`status-changed' instead of `cache-changed'.
+
+	* elmo-multi.el (elmo-multi-connect-signals): Ditto.
+	(elmo-message-killed-p): Define.
+	(elmo-folder-recover-messages): Ditto.
+
 	* elmo-version.el (elmo-version): Up to 2.15.3.
 
 2006-02-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

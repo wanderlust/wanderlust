@@ -386,10 +386,7 @@ ENTITY is returned."
 	      (elmo-message-entity wl-summary-buffer-elmo-folder
 				   parent-msg)
 	      temp-mark
-	      (elmo-message-flags wl-summary-buffer-elmo-folder
-				  msg)
-	      (elmo-message-cached-p wl-summary-buffer-elmo-folder
-				     msg)
+	      (elmo-message-status wl-summary-buffer-elmo-folder msg)
 	      (if wl-thread-insert-force-opened
 		  nil
 		(wl-thread-maybe-get-children-num msg))
@@ -766,6 +763,11 @@ Message is inserted to the summary buffer."
   (interactive "P")
   (wl-thread-call-region-func 'wl-summary-mark-as-answered-region arg))
 
+(defun wl-thread-recover-messages (&optional arg)
+  "Recover killed messages which are contained current thread."
+  (interactive "P")
+  (wl-thread-call-region-func 'wl-summary-recover-messages-region arg))
+
 (defun wl-thread-unmark (&optional arg)
   (interactive "P")
   (wl-thread-call-region-func 'wl-summary-unmark-region arg))
@@ -839,10 +841,7 @@ Message is inserted to the summary buffer."
 	  (elmo-message-entity wl-summary-buffer-elmo-folder
 			       (nth 0 parent-entity))
 	  temp-mark
-	  (elmo-message-flags wl-summary-buffer-elmo-folder
-			      msg-num)
-	  (elmo-message-cached-p wl-summary-buffer-elmo-folder
-				 msg-num)
+	  (elmo-message-status wl-summary-buffer-elmo-folder msg-num)
 	  (if wl-thread-insert-force-opened
 	      nil
 	    (wl-thread-maybe-get-children-num msg-num))

@@ -218,6 +218,19 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
+(wl-defface wl-highlight-summary-killed-face
+  '((((type tty)
+      (background dark))
+     (:foreground "blue"))
+    (((class color)
+      (background dark))
+     (:foreground "gray"))
+    (((class color))
+     (:foreground "LightSlateGray")))
+  "Face used for displaying killed messages."
+  :group 'wl-summary-faces
+  :group 'wl-faces)
+
 (wl-defface wl-highlight-summary-displaying-face
   '((t
      (:underline t :bold t)))
@@ -859,23 +872,28 @@
     (and (find-face face)
 	 face)))
 
-(defsubst wl-highlight-summary-line-face-spec (flags temp-mark indent)
+(defsubst wl-highlight-summary-line-face-spec (status temp-mark indent)
   "Return a cons cell of (face . argument)."
-  (let (action)
-    (if (setq action (assoc temp-mark wl-summary-mark-action-list))
-	(cons (nth 5 action) (nth 2 action))
-      (cond
-       ((and (string= temp-mark wl-summary-score-over-mark)
-	     (or (memq 'new flags) (memq 'unread flags)))
-	'(wl-highlight-summary-high-unread-face))
-       ((and (string= temp-mark wl-summary-score-below-mark)
-	     (or (memq 'new flags) (memq 'unread flags)))
-	'(wl-highlight-summary-low-unread-face))
-       ((let ((priorities wl-summary-persistent-mark-priority-list)
-	      (fl wl-summary-flag-alist)
-	      face result global-flags)
-	  (while (and (null result) priorities)
-	    (if (eq (car priorities) 'flag)
+  (or (let (action)
+	(and (setq action (assoc temp-mark wl-summary-mark-action-list))
+	     (cons (nth 5 action) (nth 2 action))))
+      (let ((flags (elmo-message-status-flags status)))
+	(cond
+	 ((and (string= temp-mark wl-summary-score-over-mark)
+	       (or (memq 'new flags) (memq 'unread flags)))
+	  '(wl-highlight-summary-high-unread-face))
+	 ((and (string= temp-mark wl-summary-score-below-mark)
+	       (or (memq 'new flags) (memq 'unread flags)))
+	  '(wl-highlight-summary-low-unread-face))
+	 ((let ((priorities wl-summary-persistent-mark-priority-list)
+		(fl wl-summary-flag-alist)
+		face result global-flags)
+	    (while (and (null result) priorities)
+	      (cond
+	       ((eq (car priorities) 'killed)
+		(when (elmo-message-status-killed-p status)
+		  (setq result '(wl-highlight-summary-killed-face))))
+	       ((eq (car priorities) 'flag)
 		(when (setq global-flags
 			    (elmo-get-global-flags flags 'ignore-preserved))
 		  (while fl
@@ -888,22 +906,22 @@
 			    fl nil))
 		    (setq fl (cdr fl)))
 		  (unless result
-		    (setq result (list 'wl-highlight-summary-flagged-face))))
-	      (when (memq (car priorities) flags)
+		    (setq result (list 'wl-highlight-summary-flagged-face)))))
+	       ((memq (car priorities) flags)
 		(setq result
 		      (list (or (wl-highlight-get-face-by-name
 				 "wl-highlight-summary-%s-face"
 				 (car priorities))
 				'wl-summary-persistent-mark-face)))))
-	    (setq priorities (cdr priorities)))
-	  result))
-       ((string= temp-mark wl-summary-score-below-mark)
-	'(wl-highlight-summary-low-read-face))
-       ((string= temp-mark wl-summary-score-over-mark)
-	'(wl-highlight-summary-high-read-face))
-       (t (if indent
-	      '(wl-highlight-summary-normal-face)
-	    '(wl-highlight-summary-thread-top-face)))))))
+	      (setq priorities (cdr priorities)))
+	    result))
+	 ((string= temp-mark wl-summary-score-below-mark)
+	  '(wl-highlight-summary-low-read-face))
+	 ((string= temp-mark wl-summary-score-over-mark)
+	  '(wl-highlight-summary-high-read-face))
+	 (t (if indent
+		'(wl-highlight-summary-normal-face)
+	      '(wl-highlight-summary-thread-top-face)))))))
 
 (autoload 'elmo-flag-folder-referrer "elmo-flag")
 (defun wl-highlight-flag-folder-help-echo (folder number)
@@ -927,9 +945,9 @@
 			     message
 			     string)))))
 
-(defun wl-highlight-summary-line-string (number line flags temp-mark indent)
+(defun wl-highlight-summary-line-string (number line status temp-mark indent)
   (let ((fsymbol (car (wl-highlight-summary-line-face-spec
-		       flags
+		       status
 		       temp-mark
 		       (> (length indent) 0)))))
     (put-text-property 0 (length line) 'face fsymbol line))
@@ -938,7 +956,7 @@
   (when wl-highlight-summary-line-help-echo-alist
     (wl-highlight-summary-line-help-echo number 0 (length line) line)))
 
-(defun wl-highlight-summary-current-line (&optional number flags)
+(defun wl-highlight-summary-current-line (&optional number status)
   (interactive)
   (save-excursion
     (let ((inhibit-read-only t)
@@ -952,9 +970,7 @@
 	(beginning-of-line)
 	(setq bol (point))
 	(setq spec (wl-highlight-summary-line-face-spec
-		    (or flags
-			(elmo-message-flags wl-summary-buffer-elmo-folder
-					    number))
+		    (or status (wl-summary-message-status number))
 		    (wl-summary-temp-mark number)
 		    (wl-thread-entity-get-parent-entity
 		     (wl-thread-get-entity number))))

@@ -1,5 +1,39 @@
 2006-02-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-vars.el (wl-summary-persistent-mark-priority-list): Add `killed'.
+	(wl-summary-killed-mark): New user option.
+
+	* wl-thread.el (wl-thread-update-line-on-buffer-sub): Follow the
+	API change.
+	(wl-thread-insert-entity-sub): Ditto.
+	(wl-thread-recover-messages): New command.
+
+	* wl-summary.el (wl-summary-update-mark-and-highlight-window):
+	Don't call `wl-highlight-summary-current-line' directly.
+	(wl-summary-buffer-attach): Connect to signal `status-changed'
+	instead of `cache-changed'.
+	(wl-summary-buffer-detach): Follow the above change.
+	(wl-summary-detect-mark-position): Follow the API change.
+	(wl-summary-rescan-message): Ditto.
+	(wl-summary-insert-sequential): Ditto.
+	(wl-summary-update-thread): Ditto.
+	(wl-summary-message-mark): Ditto.
+	(wl-summary-persistent-mark): Ditto.
+	(wl-summary-create-line): Ditto.
+	(wl-summary-prefetch-region-no-mark): Call
+	`wl-summary-persistent-mark' with number.
+	(wl-summary-recover-messages-region): New command.
+	(wl-summary-target-mark-recover): Ditto.
+	(wl-summary-recover-message): Ditto.
+	(wl-summary-persistent-mark-string): Add argument `status' instead
+	of remove arguments `flags' and `cached'.  Treat killed status.
+	(wl-summary-update-persistent-mark): Remove optional argument `flags'.
+
+	* wl-highlight.el (wl-highlight-summary-displaying-face): New face.
+	(wl-highlight-summary-line-face-spec): Treat killed status.
+	(wl-highlight-summary-line-string): Follow the API change.
+	(wl-highlight-summary-current-line): Ditto.
+
 	* Version number is increased to 2.15.3.
 
 2006-02-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

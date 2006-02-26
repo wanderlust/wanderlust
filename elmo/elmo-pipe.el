@@ -66,9 +66,9 @@
    (elmo-define-signal-handler (folder dst numbers)
      (elmo-emit-signal 'flag-changed folder numbers)))
   (elmo-connect-signal
-   destination 'cache-changed folder
-   (elmo-define-signal-handler (folder dst number)
-     (elmo-emit-signal 'cache-changed folder number)))
+   destination 'status-changed folder
+   (elmo-define-signal-handler (folder dst numbers)
+     (elmo-emit-signal 'status-changed folder numbers)))
   (elmo-connect-signal
    destination 'update-overview folder
    (elmo-define-signal-handler (folder dst number)
@@ -234,6 +234,11 @@
 (luna-define-method elmo-folder-writable-p ((folder elmo-pipe-folder))
   (elmo-folder-writable-p (elmo-pipe-folder-dst-internal folder)))
 
+(luna-define-method elmo-folder-recover-messages ((folder elmo-pipe-folder)
+						  numbers)
+  (elmo-folder-recover-messages
+   (elmo-pipe-folder-dst-internal folder) numbers))
+
 (luna-define-method elmo-folder-create ((folder elmo-pipe-folder))
   (if (and (not (elmo-folder-exists-p (elmo-pipe-folder-src-internal folder)))
 	   (elmo-folder-creatable-p (elmo-pipe-folder-src-internal folder)))
@@ -374,6 +379,9 @@
 		      number
 		      field
 		      type))
+
+(luna-define-method elmo-message-killed-p ((folder elmo-pipe-folder) number)
+  (elmo-message-killed-p (elmo-pipe-folder-dst-internal folder) number))
 
 (luna-define-method elmo-message-set-cached ((folder elmo-pipe-folder)
 					     number cached)

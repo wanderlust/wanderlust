@@ -1047,7 +1047,8 @@ cdr of each cons cell is used for preparing headers of draft message."
   :type 'boolean
   :group 'wl-folder)
 
-(defcustom wl-summary-persistent-mark-priority-list '(flag
+(defcustom wl-summary-persistent-mark-priority-list '(killed
+						      flag
 						      new
 						      answered
 						      forwarded
@@ -1073,6 +1074,11 @@ Example:
 		       (choice (string :tag "mark")
 			       (const :tag "Default mark" nil))))
   :group 'wl-summary)
+
+(defcustom wl-summary-killed-mark "X"
+  "Mark for killed message."
+  :type '(string :tag "Mark")
+  :group 'wl-summary-marks)
 
 (defcustom wl-summary-uncached-mark "!"
   "Mark for uncached message with no flag."

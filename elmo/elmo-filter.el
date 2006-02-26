@@ -80,11 +80,13 @@
        (when filterd
 	 (elmo-emit-signal 'flag-changed folder filterd)))))
   (elmo-connect-signal
-   target 'cache-changed folder
-   (elmo-define-signal-handler (folder target number)
-     (elmo-emit-signal 'cache-changed folder number))
-   (elmo-define-signal-filter (folder target number)
-     (memq number (elmo-folder-list-messages folder nil t))))
+   target 'status-changed folder
+   (elmo-define-signal-handler (folder target numbers)
+     (let ((filterd (elmo-list-filter
+		     (elmo-folder-list-messages folder nil t)
+		     numbers)))
+       (when filterd
+	 (elmo-emit-signal 'status-changed folder filterd)))))
   (elmo-connect-signal
    target 'update-overview folder
    (elmo-define-signal-handler (folder target number)

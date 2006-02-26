@@ -95,8 +95,8 @@ Otherwise, entire fetching of the message is aborted without confirmation."
 (elmo-define-signal flag-changed (numbers)
   "Notify the change flag of the messages with NUMBERS.")
 
-(elmo-define-signal cache-changed (number)
-  "Notify the change cache status of the message with NUMBER.")
+(elmo-define-signal status-changed (numbers)
+  "Notify the change status of the message with NUMBERS.")
 
 (elmo-define-signal update-overview (number)
   "Notify update overview of the message with NUMBER.")
@@ -1204,6 +1204,14 @@ If optional argument IF-EXISTS is nil, load on demand.
 (luna-define-method elmo-message-cached-p ((folder elmo-folder) number)
   (elmo-message-flagged-p folder number 'cached))
 
+(luna-define-generic elmo-message-killed-p (folder number)
+  "Return non-nil if the message is killed.")
+
+(luna-define-method elmo-message-killed-p ((folder elmo-folder) number)
+  (let ((killed-list (elmo-folder-killed-list-internal folder)))
+    (and killed-list
+	 (elmo-number-set-member number killed-list))))
+
 (defun elmo-message-accessible-p (folder number)
   "Get accessibility of the message.
 Return non-nil when message is accessible."
@@ -1223,7 +1231,7 @@ If CACHED is t, message is set as cached.")
   (if cached
       (elmo-msgdb-set-flag (elmo-folder-msgdb folder) number 'cached)
     (elmo-msgdb-unset-flag (elmo-folder-msgdb folder) number 'cached))
-  (elmo-emit-signal 'cache-changed folder number))
+  (elmo-emit-signal 'status-changed folder (list number)))
 
 (defun elmo-message-copy-entity (entity)
   (elmo-msgdb-copy-message-entity (elmo-message-entity-handler entity)
@@ -1535,6 +1543,23 @@ If Optional LOCAL is non-nil, don't update server flag."
     numbers))
   (elmo-folder-unset-flag folder numbers 'all 'local-only))
 
+(luna-define-generic elmo-folder-recover-messages (folder numbers)
+  "Recover killed messages in the FOLDER with NUMBERS.")
+
+(luna-define-method elmo-folder-recover-messages ((folder elmo-folder) numbers)
+  (let ((msgdb (elmo-folder-msgdb folder)))
+    (elmo-folder-set-killed-list-internal
+     folder
+     (elmo-number-set-delete-list
+      (elmo-folder-killed-list-internal folder)
+      numbers))
+    (dolist (number numbers)
+      (if (elmo-file-cache-exists-p
+	   (elmo-message-field folder number 'message-id))
+	  (elmo-msgdb-set-flag msgdb number 'cached)
+	(elmo-msgdb-unset-flag msgdb number 'cached)))
+    (elmo-emit-signal 'status-changed folder numbers)))
+
 (luna-define-method elmo-folder-clear ((folder elmo-folder)
 				       &optional keep-killed)
   (unless keep-killed
@@ -1729,6 +1754,42 @@ Return a hashtable for newsgroups."
 		    "elmo"))))
     (elmo-make-directory temp-dir)
     temp-dir))
+
+;; ELMO status structure.
+(defmacro elmo-message-status (folder number &optional flags killed)
+  "Make ELMO status structure from FOLDER and NUMBER.
+A value in this structure is cached at first access."
+  `(vector ,folder ,number ,flags ,killed))
+
+(defmacro elmo-message-status-folder (status)
+  `(aref ,status 0))
+
+(defmacro elmo-message-status-number (status)
+  `(aref ,status 1))
+
+(defmacro elmo-message-status-set-flags (status flags)
+  `(aset ,status 2 (or ,flags '(read))))
+
+(defsubst elmo-message-status-flags (status)
+  (or (aref status 2)
+      (elmo-message-status-set-flags
+       status
+       (elmo-message-flags (elmo-message-status-folder status)
+			   (elmo-message-status-number status)))))
+
+(defsubst elmo-message-status-cached-p (status)
+  (memq 'cached (elmo-message-status-flags status)))
+
+(defmacro elmo-message-status-set-killed (status killed)
+  `(aset ,status 3 (if ,killed 'killed 'living)))
+
+(defsubst elmo-message-status-killed-p (status)
+  (eq 'killed
+      (or (aref status 3)
+	  (elmo-message-status-set-killed
+	   status
+	   (elmo-message-killed-p (elmo-message-status-folder status)
+				  (elmo-message-status-number status))))))
 
 ;;;
 (defun elmo-init ()
