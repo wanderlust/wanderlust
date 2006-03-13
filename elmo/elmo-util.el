@@ -1535,21 +1535,19 @@ ELT must be a string.  Upper-case and lower-case letters are treated as equal."
       (and result
 	   (char-list-to-string (elmo-uniq-list result #'delq))))))
 
-(defun elmo-collect-separators-internal (specs)
-  (let (separators)
-    (while specs
-      (let ((spec (car specs)))
-	(cond
-	 ((listp spec)
-	  (setq separators (nconc (elmo-collect-separators-internal spec)
-				  separators)
-		specs (cdr specs)))
-	 ((characterp spec)
-	  (setq separators (cons spec separators)
-		specs nil))
-	 (t
-	  (setq specs nil)))))
-    separators))
+(defun elmo-collect-separators-internal (specs &optional separators)
+  (while specs
+    (let ((spec (car specs)))
+      (cond
+       ((listp spec)
+	(setq separators (elmo-collect-separators-internal spec separators)
+	      specs (cdr specs)))
+       ((characterp spec)
+	(setq separators (cons spec separators)
+	      specs nil))
+       (t
+	(setq specs nil)))))
+  separators)
 
 (defun elmo-collect-trail-separators (element specs)
   (cond
