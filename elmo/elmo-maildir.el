@@ -112,6 +112,7 @@ LOCATION."
   (let* ((cur-dir (expand-file-name (or child-dir "cur") dir))
 	 (cur (directory-files cur-dir
 			       nil "^[^.].*$" t))
+	 (regexp (elmo-maildir-adjust-separator "^\\(.+\\):[12],\\(.*\\)$"))
 	 unread-locations flagged-locations answered-locations
 	 sym locations flag-list x-time y-time)
     (setq cur (sort cur
@@ -129,9 +130,7 @@ LOCATION."
     (setq locations
 	  (mapcar
 	   (lambda (x)
-	     (if (string-match
-		  (elmo-maildir-adjust-separator "^\\([^:]+\\):\\([^:]+\\)$")
-		  x)
+	     (if (string-match regexp x)
 		 (progn
 		   (setq sym (elmo-match-string 1 x)
 			 flag-list (string-to-char-list
@@ -300,7 +299,7 @@ LOCATION."
 (defun elmo-maildir-set-mark (filename mark)
   "Mark the FILENAME file in the maildir.  MARK is a character."
   (if (string-match
-       (elmo-maildir-adjust-separator "^\\([^:]+:[12],\\)\\(.*\\)$")
+       (elmo-maildir-adjust-separator "^\\(.+:[12],\\)\\(.*\\)$")
        filename)
       (let ((flaglist (string-to-char-list (elmo-match-string
 					    2 filename))))
@@ -318,7 +317,7 @@ LOCATION."
 
 (defun elmo-maildir-delete-mark (filename mark)
   "Mark the FILENAME file in the maildir.  MARK is a character."
-  (if (string-match (elmo-maildir-adjust-separator "^\\([^:]+:2,\\)\\(.*\\)$")
+  (if (string-match (elmo-maildir-adjust-separator "^\\(.+:2,\\)\\(.*\\)$")
 		    filename)
       (let ((flaglist (string-to-char-list (elmo-match-string
 					    2 filename))))
