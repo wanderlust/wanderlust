@@ -2071,7 +2071,8 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
     (when wl-smtp-posting-server
       (elmo-set-plugged wl-plugged
 			wl-smtp-posting-server  ; server
-			(or (and (boundp 'smtp-service) smtp-service)
+			(or wl-smtp-posting-port
+			    (and (boundp 'smtp-service) smtp-service)
 			    "smtp")	; port
 			wl-smtp-connection-type
 			nil nil "smtp" add))
@@ -2079,8 +2080,8 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
     (when wl-nntp-posting-server
       (elmo-set-plugged wl-plugged
 			wl-nntp-posting-server
-			wl-nntp-posting-stream-type
 			wl-nntp-posting-port
+			wl-nntp-posting-stream-type
 			nil nil "nntp" add))
     (run-hooks 'wl-make-plugged-hook)))
 

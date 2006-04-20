@@ -137,7 +137,8 @@
 (defvar wl-plugged-port-label-alist
   (list (cons 119 "nntp")
 	(cons 143 "imap4")
-	(cons 110 "pop3")))
+	(cons 110 "pop3")
+	(cons 25 "smtp")))
 	;;(cons elmo-pop-before-smtp-port "pop3")
 
 (defconst wl-plugged-switch-variables
