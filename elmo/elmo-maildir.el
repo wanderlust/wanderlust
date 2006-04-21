@@ -110,42 +110,44 @@ LOCATION."
 
 (defsubst elmo-maildir-list-location (dir &optional child-dir)
   (let* ((cur-dir (expand-file-name (or child-dir "cur") dir))
-	 (cur (directory-files cur-dir
-			       nil "^[^.].*$" t))
+	 (cur (mapcar (lambda (x)
+			(cons x (elmo-get-last-modification-time
+				 (expand-file-name x cur-dir))))
+		      (directory-files cur-dir
+				       nil "^[^.].*$" t)))
 	 (regexp (elmo-maildir-adjust-separator "^\\(.+\\):[12],\\(.*\\)$"))
 	 unread-locations flagged-locations answered-locations
 	 sym locations flag-list x-time y-time)
     (setq cur (sort cur
 		    (lambda (x y)
-		      (setq x-time (elmo-get-last-modification-time
-				    (expand-file-name x cur-dir))
-			    y-time (elmo-get-last-modification-time
-				    (expand-file-name y cur-dir)))
+		      (setq x-time (cdr x)
+			    y-time (cdr y))
 		      (cond
 		       ((< x-time y-time)
 			t)
 		       ((eq x-time y-time)
-			(< (elmo-maildir-sequence-number x)
-			   (elmo-maildir-sequence-number y)))))))
+			(< (elmo-maildir-sequence-number (car x))
+			   (elmo-maildir-sequence-number (car y))))))))
     (setq locations
 	  (mapcar
 	   (lambda (x)
-	     (if (string-match regexp x)
-		 (progn
-		   (setq sym (elmo-match-string 1 x)
-			 flag-list (string-to-char-list
-				    (elmo-match-string 2 x)))
-		   (when (memq ?F flag-list)
-		     (setq flagged-locations
-			   (cons sym flagged-locations)))
-		   (when (memq ?R flag-list)
-		     (setq answered-locations
-			   (cons sym answered-locations)))
-		   (unless (memq ?S flag-list)
-		     (setq unread-locations
-			   (cons sym unread-locations)))
-		   sym)
-	       x))
+	     (let ((name (car x)))
+	       (if (string-match regexp name)
+		   (progn
+		     (setq sym (elmo-match-string 1 name)
+			   flag-list (string-to-char-list
+				      (elmo-match-string 2 name)))
+		     (when (memq ?F flag-list)
+		       (setq flagged-locations
+			     (cons sym flagged-locations)))
+		     (when (memq ?R flag-list)
+		       (setq answered-locations
+			     (cons sym answered-locations)))
+		     (unless (memq ?S flag-list)
+		       (setq unread-locations
+			     (cons sym unread-locations)))
+		     sym)
+		 name)))
 	   cur))
     (list locations unread-locations flagged-locations answered-locations)))
 
