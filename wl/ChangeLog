@@ -1,3 +1,11 @@
+2006-05-04  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-mime-pgp-decrypt-region): New function.
+	(wl-mime-pgp-verify-region): Ditto.
+	(wl-message-decrypt-pgp-nonmime): Use the above function.
+	(wl-message-verify-pgp-nonmime): Likewise.
+	(wl-mime-preview-application/pgp): Likewise.
+
 2006-04-20  Kenichi Okada  <okada@opaopa.org>
 
 	* wl-folder.el (wl-make-plugged-alist): Add `wl-smtp-posting-port'.

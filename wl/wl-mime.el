@@ -34,11 +34,6 @@
 (require 'elmo)
 (require 'wl-vars)
 
-(eval-when-compile
-  (defalias-maybe 'pgg-decrypt-region 'ignore)
-  (defalias-maybe 'pgg-display-output-buffer 'ignore)
-  (defalias-maybe 'pgg-verify-region 'ignore))
-
 ;;; Draft
 
 (defalias 'wl-draft-editor-mode 'mime-edit-mode)
@@ -480,10 +475,79 @@ It calls following-method selected from variable
 	  (setq wl-message-buffer nil)
 	  (wl-summary-sync nil "update"))))))
 
+;; PGP
+(static-cond
+ ((require 'epg nil t)
+  (defun wl-mime-pgp-decrypt-region (beg end &optional no-decode)
+    (require 'epg)
+    (let ((plain (decode-coding-string
+		  (epg-decrypt-string
+		   (epg-make-context)
+		   (buffer-substring beg end))
+		  (if no-decode 'raw-text wl-cs-autoconv))))
+      (delete-region beg end)
+      (insert plain)))
+
+  (defun wl-mime-pgp-verify-region (beg end &optional coding-system)
+    (require 'epg)
+    (let ((message-buffer (current-buffer))
+	  (context (epg-make-context)))
+      (epg-verify-string
+       context
+       (with-temp-buffer
+	 (insert-buffer-substring message-buffer beg end)
+	 (when coding-system
+	   (encode-coding-region (point-min) (point-max) coding-system))
+	 (goto-char (point-min))
+	 (while (search-forward "\n" nil t)
+	   (replace-match "\r\n"))
+	 (buffer-substring (point-min) (point-max))))
+      (message "%s"
+	       (epg-verify-result-to-string
+		(epg-context-result-for context 'verify))))))
+
+ ((require 'pgg nil t)
+  (defun wl-mime-pgp-decrypt-region (beg end &optional no-decode)
+    (require 'pgg)
+    (let ((buffer-file-coding-system wl-cs-autoconv)
+	  status)
+      (setq status (pgg-decrypt-region beg end))
+      (if no-decode
+	  (when status
+	    (delete-region beg end)
+	    (insert-buffer-substring pgg-output-buffer))
+	(pgg-display-output-buffer beg end status))
+      (unless status
+	(error "Decryption is failed"))))
+
+  (defun wl-mime-pgp-verify-region (beg end &optional coding-system)
+    (require 'pgg)
+    (let ((message-buffer (current-buffer))
+	  success)
+      (with-temp-buffer
+	(insert-buffer-substring message-buffer beg end)
+	(when coding-system
+	  (encode-coding-region (point-min) (point-max) coding-system))
+	(setq success (pgg-verify-region (point-min) (point-max) nil 'fetch)))
+      (mime-show-echo-buffer)
+      (set-buffer mime-echo-buffer-name)
+      (set-window-start
+       (get-buffer-window mime-echo-buffer-name)
+       (point-max))
+      (insert-buffer-substring
+       (if success
+	   pgg-output-buffer
+	 pgg-errors-buffer)))))
+ (t
+  (defun wl-mime-pgp-decrypt-region (beg end &optional no-decode)
+    (error "Does not support PGP decryption"))
+
+  (defun wl-mime-pgp-verify-region (beg end &optional coding-system)
+    (error "Does not support PGP verification"))))
+
 (defun wl-message-decrypt-pgp-nonmime ()
   "Decrypt PGP encrypted region"
   (interactive)
-  (require 'pgg)
   (save-excursion
     (beginning-of-line)
     (if (or (re-search-forward "^-+END PGP MESSAGE-+$" nil t)
@@ -491,10 +555,8 @@ It calls following-method selected from variable
 	(let (beg end status)
 	  (setq end (match-end 0))
 	  (if (setq beg (re-search-backward "^-+BEGIN PGP MESSAGE-+$" nil t))
-	      (let ((inhibit-read-only t)
-		    (buffer-file-coding-system wl-cs-autoconv))
-		(setq status (pgg-decrypt-region beg end))
-		(pgg-display-output-buffer beg end status))
+	      (let ((inhibit-read-only t))
+		(wl-mime-pgp-decrypt-region beg end))
 	    (message "Cannot find pgp encrypted region")))
       (message "Cannot find pgp encrypted region"))))
 
@@ -502,7 +564,6 @@ It calls following-method selected from variable
   "Verify PGP signed region.
 With ARG, ask coding system and encode the region with it before verifying."
   (interactive "P")
-  (require 'pgg)
   (save-excursion
     (beginning-of-line)
     (let ((message-buffer (current-buffer))
@@ -525,21 +586,10 @@ With ARG, ask coding system and encode the region with it before verifying."
 	(setq coding-system (read-coding-system
 			     (format "Coding system (%S): " coding-system)
 			     coding-system)))
-      (with-temp-buffer
-	(insert-buffer-substring message-buffer beg end)
-	(encode-coding-region (point-min) (point-max) coding-system)
-	(setq success (pgg-verify-region (point-min) (point-max) nil 'fetch)))
-      (mime-show-echo-buffer)
-      (set-buffer mime-echo-buffer-name)
-      (set-window-start
-       (get-buffer-window mime-echo-buffer-name)
-       (point-max))
-      (insert-buffer-substring
-       (if success pgg-output-buffer pgg-errors-buffer)))))
+      (wl-mime-pgp-verify-region beg end coding-system))))
 
 ;; XXX: encrypted multipart isn't represented as multipart
 (defun wl-mime-preview-application/pgp (parent-entity entity situation)
-  (require 'pgg)
   (goto-char (point-max))
   (let ((p (point))
 	raw-buf to-buf representation-type child-entity)
@@ -553,9 +603,7 @@ With ARG, ask coding system and encode the region with it before verifying."
 	(when (progn
 		(goto-char (point-min))
 		(re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t))
-	  (pgg-decrypt-region (point-min)(point-max))
-	  (delete-region (point-min) (point-max))
-	  (insert-buffer pgg-output-buffer)
+	  (wl-mime-pgp-decrypt-region (point-min) (point-max) 'no-decode)
 	  (setq representation-type 'elmo-buffer))
 	(setq child-entity (mime-parse-message
 			    (mm-expand-class-name representation-type)
