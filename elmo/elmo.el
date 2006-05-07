@@ -1445,13 +1445,15 @@ If Optional LOCAL is non-nil, don't update server flag."
 	(length duplicates))
     0))
 
-(defun elmo-folder-confirm-appends (appends)
+(defun elmo-folder-confirm-appends (folder appends)
   (let ((len (length appends))
 	in)
     (if (and elmo-folder-update-threshold
 	     (> len elmo-folder-update-threshold)
 	     elmo-folder-update-confirm)
-	(if (y-or-n-p (format "Too many messages(%d).  Update all? " len))
+	(if (y-or-n-p (format
+		       "Too many messages(%d) in %s.  Update all? "
+		       len (elmo-folder-name-internal folder)))
 	    appends
 	  (setq in elmo-folder-update-threshold)
 	  (catch 'end
@@ -1618,7 +1620,7 @@ If update process is interrupted, return nil.")
 	    (when (and mask (not ignore-msgdb))
 	      (setq diff-new (elmo-list-filter mask diff-new))))
 	  (message "Checking folder diff...done")
-	  (setq new-list (elmo-folder-confirm-appends diff-new))
+	  (setq new-list (elmo-folder-confirm-appends folder diff-new))
 	  ;; Append to killed list as (MIN-OF-DISAPPEARED . MAX-OF-DISAPPEARED)
 	  (when (not (eq (length diff-new)
 			 (length new-list)))
