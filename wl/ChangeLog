@@ -1,3 +1,8 @@
+2006-05-13  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-draft.el (wl-draft-reedit): Don't overwrite
+	wl-draft-parent-folder.
+
 2006-05-04  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-mime.el (wl-mime-pgp-decrypt-region): New function.

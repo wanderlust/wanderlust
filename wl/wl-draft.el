@@ -1994,8 +1994,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 				"\\1"))
 		  auto-save-file-name-transforms)))
     (setq buffer-file-name (buffer-name)
-	  wl-draft-parent-folder ""
 	  wl-draft-buffer-message-number number)
+    (unless wl-draft-parent-folder
+      (setq wl-draft-parent-folder ""))
     (when wl-draft-write-file-function
       (add-hook 'local-write-file-hooks wl-draft-write-file-function))
     (wl-highlight-headers 'for-draft)
