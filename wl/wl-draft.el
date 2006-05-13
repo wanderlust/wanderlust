@@ -1671,8 +1671,6 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 
 (defun wl-draft-create-buffer (&optional parent-folder parent-number)
   (let* ((draft-folder (wl-draft-get-folder))
-	 (parent-folder (or parent-folder (wl-summary-buffer-folder-name)))
-	 (summary-buf (wl-summary-get-buffer parent-folder))
 	 (reply-or-forward
 	  (or (eq this-command 'wl-summary-reply)
 	      (eq this-command 'wl-summary-reply-with-citation)
@@ -1727,7 +1725,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (setq wl-draft-parent-folder (or parent-folder ""))
     (setq wl-draft-parent-number parent-number)
     (or (eq this-command 'wl-folder-write-current-folder)
-	(setq wl-draft-buffer-cur-summary-buffer summary-buf))
+	(setq wl-draft-buffer-cur-summary-buffer
+	      (wl-summary-get-buffer parent-folder)))
     buffer))
 
 (defun wl-draft-create-contents (header-alist)

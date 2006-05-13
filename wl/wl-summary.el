@@ -2360,9 +2360,13 @@ If ARG, without confirm."
       (beginning-of-line))))
 
 (defun wl-summary-get-buffer (folder)
-  (or (and folder
-	   (get-buffer (wl-summary-sticky-buffer-name folder)))
-      (get-buffer wl-summary-buffer-name)))
+  (and folder
+       (or (get-buffer (wl-summary-sticky-buffer-name folder))
+	   (let ((buffer (get-buffer wl-summary-buffer-name)))
+	     (and buffer
+		  (with-current-buffer buffer
+		    (string= (wl-summary-buffer-folder-name) folder))
+		  buffer)))))
 
 (defun wl-summary-get-buffer-create (name &optional force-sticky)
   (if force-sticky
@@ -4278,11 +4282,10 @@ Reply to author if invoked with ARG."
       (with-current-buffer summary-buf (run-hooks 'wl-summary-reply-hook))
       t)))
 
-(defun wl-summary-write ()
+(defun wl-summary-write (folder)
   "Write a new draft from Summary."
-  (interactive)
-  (wl-draft (list (cons 'To ""))
-	    nil nil nil nil (wl-summary-buffer-folder-name))
+  (interactive (list (wl-summary-buffer-folder-name)))
+  (wl-draft (list (cons 'To "")) nil nil nil nil folder)
   (run-hooks 'wl-mail-setup-hook)
   (mail-position-on-field "To"))
 
@@ -4294,12 +4297,10 @@ Reply to author if invoked with ARG."
 Call from `wl-summary-write-current-folder'.
 When guess function return nil, challenge next guess-function.")
 
-(defun wl-summary-write-current-folder (&optional folder)
+(defun wl-summary-write-current-folder (folder)
   "Write message to current FOLDER's newsgroup or mailing-list.
 Use function list is `wl-summary-write-current-folder-functions'."
-  (interactive)
-  ;; default FOLDER is current buffer folder
-  (setq folder (or folder (wl-summary-buffer-folder-name)))
+  (interactive (list (wl-summary-buffer-folder-name)))
   (let ((func-list wl-summary-write-current-folder-functions)
 	guess-list guess-func)
     (while func-list
@@ -4309,7 +4310,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(setq guess-func (car func-list))
 	(setq func-list nil)))
     (if (null guess-func)
-	(wl-summary-write)
+	(wl-summary-write folder)
       (unless (or (stringp (nth 0 guess-list))
 		  (stringp (nth 1 guess-list))
 		  (stringp (nth 2 guess-list)))

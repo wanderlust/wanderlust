@@ -522,9 +522,7 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
 (defun wl-folder-set-persistent-mark (folder number flag)
   "Set a persistent mark which corresponds to the specified flag on message."
   (let ((buffer (wl-summary-get-buffer folder)))
-    (if (and buffer
-	     (with-current-buffer buffer
-	       (string= wl-summary-buffer-folder-name folder)))
+    (if buffer
 	(with-current-buffer buffer
 	  (wl-summary-set-persistent-mark flag number))
       ;; Parent buffer does not exist.
@@ -1417,8 +1415,9 @@ If current line is group folder, all subfolders are marked."
       ;; hide wl-summary window.
       (let ((cur-buf (current-buffer))
 	    (summary-buffer (wl-summary-get-buffer folder)))
-	(wl-folder-select-buffer summary-buffer)
-	(delete-window)
+	(when summary-buffer
+	  (wl-folder-select-buffer summary-buffer)
+	  (delete-window))
 	(select-window (get-buffer-window cur-buf))))
      (t
       (setq wl-folder-buffer-disp-summary
@@ -1434,9 +1433,11 @@ If current line is group folder, all subfolders are marked."
 		(unwind-protect
 		    (wl-summary-goto-folder-subr folder-name 'no-sync nil)
 		  (select-window (get-buffer-window cur-buf))))
-	    (wl-folder-select-buffer (wl-summary-get-buffer folder-name))
-	    (delete-window)
-	    (select-window (get-buffer-window cur-buf)))))))))
+	    (let ((summary-buffer (wl-summary-get-buffer folder-name)))
+	      (when summary-buffer
+		(wl-folder-select-buffer summary-buffer)
+		(delete-window))
+	      (select-window (get-buffer-window cur-buf))))))))))
 
 (defun wl-folder-prev-unsync ()
   "Move cursor to the previous unsync folder."

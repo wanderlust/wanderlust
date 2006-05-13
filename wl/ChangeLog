@@ -1,3 +1,17 @@
+2006-05-13  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-write): Add argument `folder'.
+	(wl-summary-write-current-folder): Change argument `folder' from
+	optional to require.
+	(wl-summary-get-buffer): Return the buffer associated folder only.
+
+	* wl-folder.el (wl-folder-set-persistent-mark): Follow the above
+	change.
+	(wl-folder-toggle-disp-summary): Ditto.
+
+	* wl-draft.el (wl-draft-create-buffer): Don't use folder of
+	current summary as parent-folder.
+
 2006-05-13  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-draft.el (wl-draft-reedit): Don't overwrite
