@@ -37,9 +37,6 @@
 
 (require 'elmo)
 (require 'elmo-msgdb)
-(require 'emu)
-(require 'std11)
-(eval-when-compile (require 'elmo-localdir))
 
 ;;; User vars.
 (defvar elmo-archive-lha-dos-compatible

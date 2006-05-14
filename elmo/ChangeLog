@@ -1,4 +1,7 @@
-2006-05-15  Yoichi NAKAYAMA  <yoichi@geiin.org>
+2006-05-14  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-archive.el (toplevel): Don't require emu, std11
+	and elmo-localdir.
 
 	* elmo-localdir.el (elmo-message-file-name): Remove duplicate
 	definition.
