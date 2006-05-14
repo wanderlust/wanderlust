@@ -356,12 +356,6 @@
 (luna-define-method elmo-folder-message-file-p ((folder elmo-localdir-folder))
   t)
 
-(luna-define-method elmo-message-file-name ((folder elmo-localdir-folder)
-					    number)
-  (expand-file-name
-   (int-to-string number)
-   (elmo-localdir-folder-directory-internal folder)))
-
 (defun elmo-localdir-locked-p ()
   (if elmo-localdir-lockfile-list
       (let ((lock elmo-localdir-lockfile-list))
