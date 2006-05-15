@@ -454,29 +454,30 @@ Returns non-nil if bottom of message."
     wl-message-buffer-cur-display-type))
 
 (defun wl-message-flag-indicator (flags)
-  (if (null flags)
-      ""
-    (concat
-     " ("
-     (mapconcat
-      (lambda (flag)
-	(let ((indicator (capitalize (symbol-name flag)))
-	      face)
-	  (when (and (assq flag wl-summary-flag-alist)
-		     (facep
-		      (setq face (intern
-				  (format "wl-highlight-summary-%s-flag-face"
-					  flag)))))
-	    (put-text-property 0 (length indicator) 'face face indicator))
-	  indicator))
-      (sort (elmo-get-global-flags flags)
-	    (lambda (l r)
-	      (> (length (memq (assq l wl-summary-flag-alist)
-			       wl-summary-flag-alist))
-		 (length (memq (assq r wl-summary-flag-alist)
-			       wl-summary-flag-alist)))))
-      ", ")
-     ")")))
+  (let ((flags (elmo-get-global-flags flags)))
+    (if (null flags)
+	""
+      (concat
+       " ("
+       (mapconcat
+	(lambda (flag)
+	  (let ((indicator (capitalize (symbol-name flag)))
+		face)
+	    (when (and (assq flag wl-summary-flag-alist)
+		       (facep
+			(setq face (intern
+				    (format "wl-highlight-summary-%s-flag-face"
+					    flag)))))
+	      (put-text-property 0 (length indicator) 'face face indicator))
+	    indicator))
+	(sort flags
+	      (lambda (l r)
+		(> (length (memq (assq l wl-summary-flag-alist)
+				 wl-summary-flag-alist))
+		   (length (memq (assq r wl-summary-flag-alist)
+				 wl-summary-flag-alist)))))
+	", ")
+       ")"))))
 
 (defun wl-message-redisplay (folder number display-type &optional force-reload)
   (let* ((default-mime-charset wl-mime-charset)
