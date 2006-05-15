@@ -1,3 +1,8 @@
+2006-05-15  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-flag.el (elmo-folder-expand-msgdb-path): Translate path.
+	(elmo-global-flags-initialize): Ditto.
+
 2006-05-14  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-archive.el (toplevel): Don't require emu, std11

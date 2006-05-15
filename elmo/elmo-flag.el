@@ -116,8 +116,9 @@
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder elmo-flag-folder))
   (expand-file-name (concat "flag/"
-			    (symbol-name
-			     (elmo-flag-folder-flag-internal folder)))
+			    (elmo-replace-string-as-filename
+			     (symbol-name
+			      (elmo-flag-folder-flag-internal folder))))
 		    elmo-msgdb-directory))
 
 (luna-define-method elmo-folder-commit :after ((folder
@@ -451,7 +452,8 @@ If optional IGNORE-PRESERVED is non-nil, preserved flags
 	     elmo-global-flags
 	     additional-flags
 	     (and (file-directory-p dir)
-		  (mapcar 'intern
+		  (mapcar (lambda (x)
+			    (intern (elmo-recover-string-from-filename x)))
 			  (elmo-list-delete
 			   '(".." ".")
 			   (directory-files dir))))))
