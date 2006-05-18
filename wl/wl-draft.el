@@ -1344,8 +1344,11 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	    ;; It causes a huge loss in the IMAP folder.
 	    (when (and parent-flag parent-number
 		       (not (eq (length parent-folder) 0)))
-	      (wl-folder-set-persistent-mark
-	       parent-folder parent-number parent-flag))
+	      (condition-case nil
+		  (wl-folder-set-persistent-mark
+		   parent-folder parent-number parent-flag)
+		(error
+		 (message "Set mark (%s) failed" (symbol-name parent-flag)))))
 	    (funcall wl-draft-send-function editing-buffer kill-when-done)
 	    ;; Now perform actions on successful sending.
 	    (while mail-send-actions
