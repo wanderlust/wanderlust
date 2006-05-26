@@ -490,21 +490,17 @@ It calls following-method selected from variable
 
   (defun wl-mime-pgp-verify-region (beg end &optional coding-system)
     (require 'epg)
-    (let ((message-buffer (current-buffer))
-	  (context (epg-make-context)))
+    (let ((context (epg-make-context)))
       (epg-verify-string
        context
-       (with-temp-buffer
-	 (insert-buffer-substring message-buffer beg end)
-	 (when coding-system
-	   (encode-coding-region (point-min) (point-max) coding-system))
-	 (goto-char (point-min))
-	 (while (search-forward "\n" nil t)
-	   (replace-match "\r\n"))
-	 (buffer-substring (point-min) (point-max))))
-      (message "%s"
-	       (epg-verify-result-to-string
-		(epg-context-result-for context 'verify))))))
+       (encode-coding-string
+	(buffer-substring beg end)
+	(if coding-system
+	    (coding-system-change-eol-conversion coding-system 'dos)
+	  'raw-text-dos)))
+      (when (epg-context-result-for context 'verify)
+	(epa-display-verify-result
+	 (epg-context-result-for context 'verify))))))
 
  ((require 'pgg nil t)
   (defun wl-mime-pgp-decrypt-region (beg end &optional no-decode)

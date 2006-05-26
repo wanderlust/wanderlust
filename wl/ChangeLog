@@ -1,3 +1,8 @@
+2006-05-26  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-mime-pgp-verify-region): Does not use temporary
+	buffer. Use epa-display-verify-result.
+
 2006-05-18  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-draft.el (wl-draft-send): Continue even if setting parent
