@@ -530,18 +530,17 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defvar elmo-passwd-alist nil)
 
 (defun elmo-passwd-alist-load ()
-  (with-temp-buffer
-    (let ((filename (expand-file-name elmo-passwd-alist-file-name
-				      elmo-msgdb-directory))
-	  insert-file-contents-pre-hook	; To avoid autoconv-xmas...
-	  insert-file-contents-post-hook
-	  ret-val)
-      (if (not (file-readable-p filename))
-	  ()
-	(insert-file-contents filename)
-	(condition-case nil
-	    (read (current-buffer))
-	  (error nil nil))))))
+  (let ((filename (expand-file-name elmo-passwd-alist-file-name
+				    elmo-msgdb-directory)))
+    (if (not (file-readable-p filename))
+	()
+      (with-temp-buffer
+	(let (insert-file-contents-pre-hook ; To avoid autoconv-xmas...
+	      insert-file-contents-post-hook)
+	  (insert-file-contents filename)
+	  (goto-char (point-min))
+	  (ignore-errors
+	   (read (current-buffer))))))))
 
 (defun elmo-passwd-alist-clear ()
   "Clear password cache."
