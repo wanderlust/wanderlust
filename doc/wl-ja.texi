@@ -1361,7 +1361,7 @@ emacs-w3m $B$KIUB0$N(B @file{README.shimbun.ja} $B$r;2>H$7$F$/$@$5$$!#(B
 @end table
 
 
-@node Search Folder, namazu, Shimbun Folder, Folders
+@node Search Folder, Multi Folder, Shimbun Folder, Folders
 @section $B8!:w%U%)%k%@(B
 @cindex Search Folder
 @cindex @samp{[}
@@ -1392,8 +1392,8 @@ emacs-w3m $B$KIUB0$N(B @file{README.shimbun.ja} $B$r;2>H$7$F$/$@$5$$!#(B
 @end menu
 
 
-@node namazu, grep, Search Folder, Folders
-@section namazu
+@node namazu, grep, Search Folder, Search Folder
+@subsection namazu
 @pindex namazu
 
 namazu (@uref{http://www.namazu.org/}) $B$r;H$C$F!"%$%s%G%C%/%9$KEPO?$5$l$?(B
@@ -1418,7 +1418,7 @@ namazu (@uref{http://www.namazu.org/}) $B$r;H$C$F!"%$%s%G%C%/%9$KEPO?$5$l$?(B
 @end group
 @end example
 
-@subsection TIPS
+@c @subsection TIPS
 
 @subsubsection $BJ#?t%-!<%o!<%I$NF~NO(B
 
@@ -1468,8 +1468,8 @@ namazu (@uref{http://www.namazu.org/}) $B$r;H$C$F!"%$%s%G%C%/%9$KEPO?$5$l$?(B
 $B$HF~NO$9$l$P!"(B@file{~/.elmo/cache} $B$H(B @file{~/documents} $B$N%$%s%G%C%/%9$r(B
 $BBP>]$H$7$F!"%-!<%o!<%I(B @samp{wanderlust} $B$G8!:w$r9T$$$^$9!#(B
 
-@node grep, Multi Folder, namazu, Folders
-@section grep
+@node grep,  , namazu, Search Folder
+@subsection grep
 @pindex grep
 
 grep $B$r;H$C$F!"8!:wBP>]$G;XDj$5$l$?%G%#%l%/%H%j$K$"$k%U%!%$%k$r8!:w$7$^$9!#(B
@@ -1492,7 +1492,7 @@ grep $B$r;H$C$F!"8!:wBP>]$G;XDj$5$l$?%G%#%l%/%H%j$K$"$k%U%!%$%k$r8!:w$7$^$9!#(
 @end example
 
 
-@node Multi Folder, Filter Folder, grep, Folders
+@node Multi Folder, Filter Folder, Search Folder, Folders
 @section $B%^%k%A%U%)%k%@(B
 @cindex @samp{*}
 @cindex Multi Folder

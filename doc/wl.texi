@@ -1336,7 +1336,7 @@ Update summary view automatically after fetching.
 @end table
 
 
-@node Search Folder, namazu, Shimbun Folder, Folders
+@node Search Folder, Multi Folder, Shimbun Folder, Folders
 @section Search Folder
 @cindex @samp{[}
 @cindex Search Folder
@@ -1368,8 +1368,8 @@ be assigned by @code{elmo-search-default-engine}.
 @end menu
 
 
-@node namazu, grep, Search Folder, Folders
-@section namazu
+@node namazu, grep, Search Folder, Search Folder
+@subsection namazu
 @pindex namazu
 
 The messages registered in the namazu-index is found by using namazu
@@ -1394,7 +1394,7 @@ Example:
 @end group
 @end example
 
-@subsection TIPS
+@c @subsection TIPS
 
 @subsubsection Enter space to separate keywords
 
@@ -1446,8 +1446,8 @@ Using above alias setting, you can specify
 to execute a namazu search with keyword @samp{wanderlust} using indices in the 
 directory @file{~/.elmo/cache} and @file{~/documents}.
 
-@node grep, Multi Folder, namazu, Folders
-@section grep
+@node grep,  , namazu, Search Folder
+@subsection grep
 @pindex grep
 
 The files that exists in the directory specified with the @var{search
@@ -1471,7 +1471,7 @@ Example:
 @end example
 
 
-@node Multi Folder, Filter Folder, grep, Folders
+@node Multi Folder, Filter Folder, Search Folder, Folders
 @section Multi Folder
 @cindex @samp{*}
 @cindex Multi Folder
