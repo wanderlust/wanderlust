@@ -488,7 +488,8 @@ It calls following-method selected from variable
 		  (buffer-substring beg end))
 		 (if no-decode 'raw-text wl-cs-autoconv))
 	      (delete-region beg end)))
-    (message "Decrypting...done"))
+    (message "Decrypting...done")
+    last-coding-system-used)
 
   (defun wl-mime-pgp-verify-region (beg end &optional coding-system)
     (require 'epg)
@@ -518,7 +519,8 @@ It calls following-method selected from variable
 	    (insert-buffer-substring pgg-output-buffer))
 	(pgg-display-output-buffer beg end status))
       (unless status
-	(error "Decryption is failed"))))
+	(error "Decryption is failed"))
+      last-coding-system-used))
 
   (defun wl-mime-pgp-verify-region (beg end &optional coding-system)
     (require 'pgg)
@@ -550,15 +552,19 @@ It calls following-method selected from variable
   (interactive)
   (save-excursion
     (beginning-of-line)
-    (if (or (re-search-forward "^-+END PGP MESSAGE-+$" nil t)
-	    (re-search-backward "^-+END PGP MESSAGE-+$" nil t))
-	(let (beg end status)
-	  (setq end (match-end 0))
-	  (if (setq beg (re-search-backward "^-+BEGIN PGP MESSAGE-+$" nil t))
-	      (let ((inhibit-read-only t))
-		(wl-mime-pgp-decrypt-region beg end))
-	    (message "Cannot find pgp encrypted region")))
-      (message "Cannot find pgp encrypted region"))))
+    (let ((region (wl-find-region "^-+BEGIN PGP MESSAGE-+$"
+				  "^-+END PGP MESSAGE-+$"))
+	  (inhibit-read-only t)
+	  coding-system)
+      (unless region
+	(error "Cannot find pgp encrypted region"))
+      (save-restriction
+	(narrow-to-region (car region) (cdr region))
+	(when (setq coding-system
+		    (wl-mime-pgp-decrypt-region (point-min) (point-max)))
+	  (put-text-property (point-min) (point-max)
+			     'wl-mime-decoded-coding-system
+			     coding-system))))))
 
 (defun wl-message-verify-pgp-nonmime (&optional arg)
   "Verify PGP signed region.
@@ -566,16 +572,12 @@ With ARG, ask coding system and encode the region with it before verifying."
   (interactive "P")
   (save-excursion
     (beginning-of-line)
-    (let ((message-buffer (current-buffer))
-	  beg end coding-system success)
-      (setq end (and (or (re-search-forward "^-+END PGP SIGNATURE-+$" nil t)
-			 (re-search-backward "^-+END PGP SIGNATURE-+$" nil t)
-			 (error "Cannot find pgp signed region"))
-		     (match-end 0)))
-      (setq beg (or (re-search-backward "^-+BEGIN PGP SIGNED MESSAGE-+$" nil t)
-		    (error "Cannot find pgp signed region")))
+    (let ((region (wl-find-region "^-+BEGIN PGP SIGNED MESSAGE-+$"
+				  "^-+END PGP SIGNATURE-+$"))
+	  coding-system)
       (setq coding-system
-	    (or (let* ((situation (mime-preview-find-boundary-info))
+	    (or (get-text-property (car region) 'wl-mime-decoded-coding-system)
+		(let* ((situation (mime-preview-find-boundary-info))
 		       (entity (aref situation 2)))
 		  (mime-charset-to-coding-system
 		   (mime-content-type-parameter
@@ -586,7 +588,7 @@ With ARG, ask coding system and encode the region with it before verifying."
 	(setq coding-system (read-coding-system
 			     (format "Coding system (%S): " coding-system)
 			     coding-system)))
-      (wl-mime-pgp-verify-region beg end coding-system))))
+      (wl-mime-pgp-verify-region (car region) (cdr region) coding-system))))
 
 ;; XXX: encrypted multipart isn't represented as multipart
 (defun wl-mime-preview-application/pgp (parent-entity entity situation)

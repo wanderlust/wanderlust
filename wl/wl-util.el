@@ -1121,6 +1121,13 @@ is enclosed by at least one regexp grouping construct."
 	  (t
 	   (throw 'done nil)))))))
 
+(defun wl-find-region (beg-regexp end-regexp)
+  (if (or (re-search-forward end-regexp nil t)
+	  (re-search-backward end-regexp nil t))
+      (let ((end (match-end 0))
+	    (beg (re-search-backward beg-regexp nil t)))
+	(if beg
+	    (cons beg end)))))
 
 ;; read multiple strings with completion
 (defun wl-completing-read-multiple-1 (prompt

@@ -1,5 +1,14 @@
 2006-06-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-util.el (wl-find-region): New function.
+
+	* wl-mime.el (wl-mime-pgp-decrypt-region): Return the decoded
+	coding system.
+	(wl-message-decrypt-pgp-nonmime): Use wl-find-region. Put text
+	property `wl-mime-decoded-coding-system'.
+	(wl-message-verify-pgp-nonmime): Use wl-find-region. Use text
+	property `wl-mime-decoded-coding-system' to encode text.
+
 	* wl-mime.el (wl-mime-pgp-decrypt-region): Display a progress
 	message.
 	(wl-mime-pgp-verify-region): Ditto.
