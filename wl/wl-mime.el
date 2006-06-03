@@ -480,17 +480,20 @@ It calls following-method selected from variable
  ((require 'epg nil t)
   (defun wl-mime-pgp-decrypt-region (beg end &optional no-decode)
     (require 'epg)
-    (let ((plain (decode-coding-string
-		  (epg-decrypt-string
-		   (epg-make-context)
-		   (buffer-substring beg end))
-		  (if no-decode 'raw-text wl-cs-autoconv))))
-      (delete-region beg end)
-      (insert plain)))
+    (message "Decrypting...")
+    (insert (prog1
+		(decode-coding-string
+		 (epg-decrypt-string
+		  (epg-make-context)
+		  (buffer-substring beg end))
+		 (if no-decode 'raw-text wl-cs-autoconv))
+	      (delete-region beg end)))
+    (message "Decrypting...done"))
 
   (defun wl-mime-pgp-verify-region (beg end &optional coding-system)
     (require 'epg)
     (let ((context (epg-make-context)))
+      (message "Verifying...")
       (epg-verify-string
        context
        (encode-coding-string
@@ -498,6 +501,7 @@ It calls following-method selected from variable
 	(if coding-system
 	    (coding-system-change-eol-conversion coding-system 'dos)
 	  'raw-text-dos)))
+      (message "Verifying...done")
       (when (epg-context-result-for context 'verify)
 	(epa-display-verify-result
 	 (epg-context-result-for context 'verify))))))
