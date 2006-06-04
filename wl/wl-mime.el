@@ -559,12 +559,14 @@ It calls following-method selected from variable
       (unless region
 	(error "Cannot find pgp encrypted region"))
       (save-restriction
-	(narrow-to-region (car region) (cdr region))
-	(when (setq coding-system
-		    (wl-mime-pgp-decrypt-region (point-min) (point-max)))
-	  (put-text-property (point-min) (point-max)
-			     'wl-mime-decoded-coding-system
-			     coding-system))))))
+	(let ((props (text-properties-at (car region))))
+	  (narrow-to-region (car region) (cdr region))
+	  (when (setq coding-system
+		      (wl-mime-pgp-decrypt-region (point-min) (point-max)))
+	    (setq props (plist-put props
+				   'wl-mime-decoded-coding-system
+				   coding-system)))
+	  (set-text-properties (point-min) (point-max) props))))))
 
 (defun wl-message-verify-pgp-nonmime (&optional arg)
   "Verify PGP signed region.

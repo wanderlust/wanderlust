@@ -1,3 +1,8 @@
+2006-06-04  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-message-decrypt-pgp-nonmime): Keep text
+	properties at the decrypting region.
+
 2006-06-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-util.el (wl-find-region): New function.
