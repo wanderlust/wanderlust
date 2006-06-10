@@ -4,7 +4,7 @@
 	(wl-summary-sort-by-date, wl-summary-sort-by-number)
 	(wl-summary-sort-by-subject, wl-summary-sort-by-from)
 	(wl-summary-sort-by-list-info, wl-summary-sort-by-size): Remove;
-	define by `wl-summary-define-sort-command'.
+	define by `wl-summary-define-sort-command' at runtime.
 
 	* wl.el (wl-init): Call wl-summary-define-sort-command.
 
