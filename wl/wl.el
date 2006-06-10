@@ -713,6 +713,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	  (symbol-value 'wl-summary-subject-function))
     (fset 'wl-summary-subject-filter-func-internal
 	  (symbol-value 'wl-summary-subject-filter-function))
+    (wl-summary-define-sort-command)
     (wl-summary-define-mark-action)
     (dolist (spec wl-summary-flag-alist)
       (set-face-foreground

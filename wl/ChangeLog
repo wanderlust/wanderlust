@@ -1,3 +1,13 @@
+2006-06-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-define-sort-command): New function.
+	(wl-summary-sort-by-date, wl-summary-sort-by-number)
+	(wl-summary-sort-by-subject, wl-summary-sort-by-from)
+	(wl-summary-sort-by-list-info, wl-summary-sort-by-size): Remove;
+	define by `wl-summary-define-sort-command'.
+
+	* wl.el (wl-init): Call wl-summary-define-sort-command.
+
 2006-06-04  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-mime.el (wl-message-decrypt-pgp-nonmime): Keep text

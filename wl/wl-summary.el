@@ -1017,30 +1017,19 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
       (string< (or (car list-info-x) "")
 	       (or (car list-info-y) "")))))
 
-(defun wl-summary-sort-by-date (reverse)
-  "Sort summary lines into the order by message date; argument means descending order."
-  (interactive "P")
-  (wl-summary-rescan "date" reverse))
-(defun wl-summary-sort-by-number (reverse)
-  "Sort summary lines into the order by message number; argument means descending order."
-  (interactive "P")
-  (wl-summary-rescan "number" reverse))
-(defun wl-summary-sort-by-subject (reverse)
-  "Sort summary lines into the order by subject; argument means descending order."
-  (interactive "P")
-  (wl-summary-rescan "subject" reverse))
-(defun wl-summary-sort-by-from (reverse)
-  "Sort summary lines into the order by from; argument means descending order."
-  (interactive "P")
-  (wl-summary-rescan "from" reverse))
-(defun wl-summary-sort-by-list-info (reverse)
-  "Sort summary lines into the order by mailing list info; argument means descending order."
-  (interactive "P")
-  (wl-summary-rescan "list-info" reverse))
-(defun wl-summary-sort-by-size (reverse)
-  "Sort summary lines into the order by message size; argument means descending order."
-  (interactive "P")
-  (wl-summary-rescan "size" reverse))
+(defun wl-summary-define-sort-command ()
+  "Define functions to sort summary lines by `wl-summary-sort-specs'."
+  (interactive)
+  (dolist (sort-by wl-summary-sort-specs)
+    (fset (intern (format "wl-summary-sort-by-%s" sort-by))
+	  `(lambda (&optional reverse)
+	     ,(format "\
+Sort summary lines into the order by %s.
+If optional argument REVERSE is non-nil, sort into descending order.
+
+This function is defined by `wl-summary-define-sort-command'." sort-by)
+	     (interactive "P")
+	     (wl-summary-rescan ,(symbol-name sort-by) reverse)))))
 
 (defun wl-summary-sort-function-from-spec (spec reverse)
   (let (funtion)
