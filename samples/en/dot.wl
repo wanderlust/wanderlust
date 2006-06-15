@@ -178,7 +178,11 @@
 
 ;; Set extra field use with `elmo-message-entity-field'.
 ;; And use with auto-refile.
-(setq elmo-msgdb-extra-fields '("ml-info"))
+(setq elmo-msgdb-extra-fields
+      '(;; Use with elsp-header in elmo-spam.
+	"x-spam-flag"
+	;; Virtual field defined by `modb-entity-field-extractor-alist'
+	"ml-info"))
 
 ;; ML message displays ML name and ML sequence number in subject.
 (setq wl-summary-line-format "%n%T%P%M/%D(%W)%h:%m %t%[%17(%c %f%) %] %#%~%s")

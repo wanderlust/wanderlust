@@ -177,7 +177,11 @@
 
 ;; `elmo-message-entity-field' で参照したいフィールド。
 ;; 自動リファイルで参照したいフィールドも設定する。
-(setq elmo-msgdb-extra-fields '("ml-info"))
+(setq elmo-msgdb-extra-fields
+      '(;; elsp-header で参照するフィールド
+	"x-spam-flag"
+	;; `modb-entity-field-extractor-alist' で定義された仮想フィールド
+	"ml-info"))
 
 ;; ML のメッセージであれば，サマリの Subject 表示に
 ;; ML名 や MLにおけるメッセージ番号も表示する
