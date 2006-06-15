@@ -175,12 +175,9 @@
 
 ;; サマリ表示関数を変更する
 
-;; `elmo-msgdb-overview-entity-get-extra-field' で参照したいフィールド。
+;; `elmo-message-entity-field' で参照したいフィールド。
 ;; 自動リファイルで参照したいフィールドも設定する。
-(setq elmo-msgdb-extra-fields
-      '("newsgroups"
-	"list-id" "x-ml-name" "mailing-list"
-	"x-mail-count" "x-ml-count" "x-sequence"))
+(setq elmo-msgdb-extra-fields '("ml-info"))
 
 ;; ML のメッセージであれば，サマリの Subject 表示に
 ;; ML名 や MLにおけるメッセージ番号も表示する

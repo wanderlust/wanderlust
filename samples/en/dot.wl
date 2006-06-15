@@ -176,12 +176,9 @@
 
 ;; Change summary display function.
 
-;; Set extra field use with `elmo-msgdb-overview-entity-get-extra-field'.
+;; Set extra field use with `elmo-message-entity-field'.
 ;; And use with auto-refile.
-(setq elmo-msgdb-extra-fields
-      '("newsgroups"
-	"list-id" "x-ml-name" "mailing-list"
-	"x-mail-count" "x-ml-count" "x-sequence"))
+(setq elmo-msgdb-extra-fields '("ml-info"))
 
 ;; ML message displays ML name and ML sequence number in subject.
 (setq wl-summary-line-format "%n%T%P%M/%D(%W)%h:%m %t%[%17(%c %f%) %] %#%~%s")
