@@ -138,6 +138,23 @@ VALUE is the field value."
 		      :location location
 		      :mime-charset mime-charset)))
 
+(defun elmo-msgdb-extra-fields (&optional non-virtual)
+  (if non-virtual
+      (apply
+       #'nconc
+       (mapcar
+	(lambda (extra)
+	  (let ((spec (assq (intern extra) modb-entity-field-extractor-alist)))
+	    (if spec
+		(let ((real-fields (nth 2 spec)))
+		  (cond ((functionp real-fields)
+			 (funcall real-fields extra))
+			((listp real-fields)
+			 real-fields)))
+	      (list extra))))
+	elmo-msgdb-extra-fields))
+    elmo-msgdb-extra-fields))
+
 (defun elmo-msgdb-sort-by-date (msgdb)
   (elmo-msgdb-sort-entities
    msgdb

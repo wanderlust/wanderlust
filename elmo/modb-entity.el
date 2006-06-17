@@ -46,10 +46,14 @@
   :group 'elmo)
 
 (defcustom modb-entity-field-extractor-alist
-  '((ml-info . modb-entity-extract-mailing-list-info))
+  '((ml-info modb-entity-extract-mailing-list-info
+	     modb-entity-ml-info-real-fields))
   "*An alist of field name and function to extract field body from buffer."
-  :type '(repeat (cons (symbol :tag "Field Name")
-		       (function :tag "Function")))
+  :type '(repeat (list (symbol :tag "Field Name")
+		       (function :tag "Extractor")
+		       (choice :tag "Real Field"
+			       (repeat :tag "Field Name List" string)
+			       (function :tag "Function"))))
   :group 'elmo)
 
 (defvar modb-entity-default-cache-internal nil)
@@ -766,8 +770,8 @@ If each field is t, function is set as default converter."
       (let (field-name field-body extractor)
 	(dolist (extra (cons "newsgroups" elmo-msgdb-extra-fields))
 	  (setq field-name (intern (downcase extra))
-		extractor  (cdr (assq field-name
-				      modb-entity-field-extractor-alist))
+		extractor  (nth 1 (assq field-name
+					modb-entity-field-extractor-alist))
 		field-body (if extractor
 			       (funcall extractor field-name)
 			     (elmo-decoded-field-body extra 'summary)))
@@ -788,6 +792,13 @@ If each field is t, function is set as default converter."
 		  getter)))
     (when (or name count)
       (cons name (and count (string-to-number count))))))
+
+(defun modb-entity-ml-info-real-fields (field)
+  (elmo-uniq-list
+   (mapcar (lambda (entry)
+	     (symbol-name (if (consp entry) (car entry) entry)))
+	   (append elmo-mailing-list-name-spec-list
+		   elmo-mailing-list-count-spec-list))))
 
 (defun modb-entity-make-mailing-list-info-string (field value)
   (when (car value)
@@ -830,8 +841,8 @@ If each field is t, function is set as default converter."
 	  (if (memq field '(number :number))
 	      (car (cdr entity))
 	    (with-current-buffer (cdr (cdr entity))
-	      (let ((extractor (cdr (assq field
-					  modb-entity-field-extractor-alist))))
+	      (let ((extractor
+		     (nth 1 (assq field modb-entity-field-extractor-alist))))
 		(if extractor
 		    (funcall extractor field)
 		  (mapconcat

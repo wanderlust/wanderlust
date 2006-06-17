@@ -2362,10 +2362,11 @@ If optional argument REMOVE is non-nil, remove FLAG."
   (when numbers
     (let ((session (elmo-imap4-get-session folder))
 	  (headers
-	   (append
-	    '("Subject" "From" "To" "Cc" "Date"
-	      "Message-Id" "References" "In-Reply-To")
-	    elmo-msgdb-extra-fields))
+	   (elmo-uniq-list
+	    (append
+	     '("Subject" "From" "To" "Cc" "Date"
+	       "Message-Id" "References" "In-Reply-To")
+	     (mapcar #'capitalize (elmo-msgdb-extra-fields 'non-virtual)))))
 	  (total 0)
 	  (length (length numbers))
 	  print-length print-depth
