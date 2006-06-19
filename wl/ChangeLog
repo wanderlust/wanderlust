@@ -1,3 +1,8 @@
+2006-06-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-util.el (wl-search-condition-fields): Remove "AND","OR".
+	(wl-read-search-condition-internal): Append them.
+
 2006-06-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-vars.el (wl-additional-search-condition-fields):

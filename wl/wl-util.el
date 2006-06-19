@@ -1040,7 +1040,7 @@ is enclosed by at least one regexp grouping construct."
 		'("Flag" "Since" "Before"
 		  "From" "Subject" "To" "Cc" "Body" "ToCc"
 		  "Larger" "Smaller"))))
-    (append '("AND" "OR" "Last" "First")
+    (append '("Last" "First")
 	    denial-fields
 	    (mapcar (lambda (f) (concat "!" f))
 		    denial-fields))))
@@ -1053,7 +1053,8 @@ is enclosed by at least one regexp grouping construct."
   (let* ((completion-ignore-case t)
 	 (field (completing-read
 		 (format "%s (%s): " prompt default)
-		 (mapcar #'list (wl-search-condition-fields))))
+		 (mapcar #'list
+			 (append '("AND" "OR") (wl-search-condition-fields)))))
 	 value)
     (setq field (if (string= field "")
 		    (setq field default)
