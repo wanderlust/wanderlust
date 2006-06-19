@@ -3028,7 +3028,7 @@ Call `wl-summary-write-current-folder' with current folder name."
 
 (defun wl-folder-complete-filter-condition (string predicate flag)
   (cond
-   ((string-match "^\\(.*|\\|.*&\\|.*!\\|.*(\\)\\([^:]*\\)$" string)
+   ((string-match "^\\(.*|\\|.*&\\|.*(\\)\\([^:]*\\)$" string)
     (let* ((str1 (match-string 1 string))
 	   (str2 (match-string 2 string))
 	   (str2-comp
