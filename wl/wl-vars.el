@@ -727,6 +727,12 @@ when `wl-prefetch-confirm' is non-nil."
   :type 'boolean
   :group 'wl-summary)
 
+(defcustom wl-additional-search-condition-fields nil
+  "*A list of field name which is used for candidates of search condition."
+  :type '(repeat (string :tag "Field name"))
+  :group 'wl-pref
+  :group 'wl-setting)
+
 ;;;; Hooks
 (defvar wl-folder-mode-hook nil
   "A hook called when wanderlust folder mode is started.
@@ -1215,7 +1221,7 @@ In sync-all or rescan."
 
 (defcustom wl-score-files-directory (concat elmo-msgdb-directory elmo-path-sep)
   "*Name of the directory where score files will be stored.
-(default \"~/.elmo\")."
+\(default \"~/.elmo\")."
   :type 'directory
   :group 'wl)
 

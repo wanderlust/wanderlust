@@ -1,3 +1,14 @@
+2006-06-19  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-additional-search-condition-fields):
+	New user option.
+
+	* wl-util.el (wl-search-condition-fields): New function; export
+	from `wl-read-search-condition-internal'.
+	(wl-read-search-condition-internal): Use it.
+
+	* wl-folder.el (wl-folder-complete-filter-condition): Ditto.
+
 2006-06-10  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-define-sort-command): New function.

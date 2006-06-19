@@ -3043,11 +3043,7 @@ Call `wl-summary-write-current-folder' with current folder name."
    (t
     (let ((candidate
 	   (mapcar (lambda (x) (list (concat (downcase x) ":")))
-		   (append '("last" "first"
-			     "from" "subject" "to" "cc" "body"
-			     "since" "before" "tocc"
-			     "larger" "smaller")
-			   elmo-msgdb-extra-fields))))
+		   (wl-search-condition-fields))))
       (if (not flag)
 	  (try-completion string candidate)
 	(all-completions string candidate))))))

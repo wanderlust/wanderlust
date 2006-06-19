@@ -1033,23 +1033,27 @@ is enclosed by at least one regexp grouping construct."
 	     (symbol-value variable))))))
 
 ;;; Search Condition
+(defun wl-search-condition-fields ()
+  (let ((denial-fields
+	 (nconc (mapcar 'capitalize elmo-msgdb-extra-fields)
+		(mapcar 'capitalize wl-additional-search-condition-fields)
+		'("Flag" "Since" "Before"
+		  "From" "Subject" "To" "Cc" "Body" "ToCc"
+		  "Larger" "Smaller"))))
+    (append '("AND" "OR" "Last" "First")
+	    denial-fields
+	    (mapcar (lambda (f) (concat "!" f))
+		    denial-fields))))
+
 (defun wl-read-search-condition (default)
   "Read search condition string interactively."
   (wl-read-search-condition-internal "Search by" default))
 
 (defun wl-read-search-condition-internal (prompt default &optional paren)
   (let* ((completion-ignore-case t)
-	 (denial-fields (nconc (mapcar 'capitalize elmo-msgdb-extra-fields)
-			       '("Flag" "Since" "Before"
-				 "From" "Subject" "To" "Cc" "Body" "ToCc"
-				 "Larger" "Smaller")))
 	 (field (completing-read
 		 (format "%s (%s): " prompt default)
-		 (mapcar 'list
-			 (append '("AND" "OR" "Last" "First")
-				 denial-fields
-				 (mapcar (lambda (f) (concat "!" f))
-					 denial-fields)))))
+		 (mapcar #'list (wl-search-condition-fields))))
 	 value)
     (setq field (if (string= field "")
 		    (setq field default)
