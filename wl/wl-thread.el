@@ -782,10 +782,9 @@ Message is inserted to the summary buffer."
 
 (defun wl-thread-force-open (&optional msg-num)
   "force open current folder"
-  (if msg-num
-      (wl-summary-jump-to-msg msg-num))
-  (let ((wl-thread-insert-force-opened t))
-    (wl-thread-open-close)))
+  (when msg-num
+    (wl-summary-jump-to-msg msg-num))
+  (wl-thread-open-close 'force-open))
 
 (defun wl-thread-entity-force-open (entity)
   (let ((wl-thread-insert-force-opened t)

@@ -1,3 +1,7 @@
+2006-06-22  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-thread.el (wl-thread-force-open): Arranged.
+
 2006-06-19  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-folder.el (wl-folder-complete-filter-condition): Remove !
