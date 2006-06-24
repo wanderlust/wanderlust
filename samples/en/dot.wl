@@ -306,6 +306,9 @@
 ;; This value precedes `wl-message-ignored-field-list'
 (setq wl-message-visible-field-list '("^Message-Id:"))
 
+;; Reassemble partial messages automatically in displaying.
+;(setq wl-message-auto-reassemble-message/partial t)
+
 ;; X-Face
 (when window-system
   (cond ((and (featurep 'xemacs)	; for XEmacs

@@ -311,6 +311,8 @@
 ;; 'wl-message-ignored-field-list' より優先される
 (setq wl-message-visible-field-list '("^Message-Id:"))
 
+;; 分割されたメッセージは自動的に結合する
+;(setq wl-message-auto-reassemble-message/partial t)
 
 ;; X-Face を表示する
 (when window-system
