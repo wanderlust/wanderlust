@@ -1,3 +1,15 @@
+2006-07-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-filter.el (elmo-folder-initialize): Set slot `number-list'
+	as 'not-loaded.
+	(elmo-folder-close): Ditto.
+	(elmo-filter-folder-number-list-loaded-p): New function.
+	(elmo-filter-folder-number-list): Check whether loaded or not.
+	(elmo-folder-commit): Use `elmo-filter-folder-number-list' instead
+	of `elmo-filter-folder-number-list-internal'.
+	(elmo-folder-delete-messages): Ditto.
+	(elmo-folder-length): Check whether number-list is loaded or not.
+
 2006-06-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* modb-entity.el (modb-entity-field-extractor-alist): Add 3rd

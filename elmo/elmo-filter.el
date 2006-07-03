@@ -57,6 +57,7 @@
      (elmo-folder-search-requires-msgdb-p
       (elmo-filter-folder-target-internal folder)
       (elmo-filter-folder-condition-internal folder)))
+    (elmo-filter-folder-set-number-list-internal folder 'not-loaded)
     (elmo-filter-connect-signals
      folder
      (elmo-filter-folder-target-internal folder))
@@ -103,11 +104,16 @@
    (expand-file-name elmo-filter-number-filename dir)
    number-list))
 
+(defun elmo-filter-folder-number-list-loaded-p (folder)
+  (listp (elmo-filter-folder-number-list-internal folder)))
+
 (defun elmo-filter-folder-number-list (folder)
-  (or (elmo-filter-folder-number-list-internal folder)
+  (let ((numbers (elmo-filter-folder-number-list-internal folder)))
+    (if (listp numbers)
+	numbers
       (elmo-filter-folder-set-number-list-internal
        folder
-       (elmo-filter-number-list-load (elmo-folder-msgdb-path folder)))))
+       (elmo-filter-number-list-load (elmo-folder-msgdb-path folder))))))
 
 (defsubst elmo-filter-folder-countup-message-flags (folder numbers
 							   &optional delta)
@@ -159,7 +165,7 @@
 
 (luna-define-method elmo-folder-close ((folder elmo-filter-folder))
   (elmo-generic-folder-close folder)
-  (elmo-filter-folder-set-number-list-internal folder nil)
+  (elmo-filter-folder-set-number-list-internal folder 'not-loaded)
   (elmo-filter-folder-set-flag-count-internal folder nil)
   (elmo-folder-close (elmo-filter-folder-target-internal folder)))
 
@@ -172,9 +178,10 @@
     (elmo-msgdb-killed-list-save
      (elmo-folder-msgdb-path folder)
      (elmo-folder-killed-list-internal folder))
-    (elmo-filter-number-list-save
-     (elmo-folder-msgdb-path folder)
-     (elmo-filter-folder-number-list-internal folder))))
+    (when (elmo-filter-folder-number-list-loaded-p folder)
+      (elmo-filter-number-list-save
+       (elmo-folder-msgdb-path folder)
+       (elmo-filter-folder-number-list folder)))))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-filter-folder))
@@ -234,7 +241,7 @@
   (let ((flag-count (elmo-filter-folder-copy-flag-count
 		     (elmo-filter-folder-flag-count-internal folder)))
 	(messages (copy-sequence
-		   (elmo-filter-folder-number-list-internal folder)))
+		   (elmo-filter-folder-number-list folder)))
 	success)
     (elmo-folder-detach-messages folder numbers)
     (unless (setq success
@@ -489,7 +496,8 @@
   t)
 
 (luna-define-method elmo-folder-length ((folder elmo-filter-folder))
-  (length (elmo-filter-folder-number-list-internal folder)))
+  (and (elmo-filter-folder-number-list-loaded-p folder)
+       (length (elmo-filter-folder-number-list-internal folder))))
 
 (require 'product)
 (product-provide (provide 'elmo-filter) (require 'elmo-version))
