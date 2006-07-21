@@ -1390,6 +1390,8 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
 	 (msgdb-dir (elmo-folder-msgdb-path folder))
 	 (range (or force-range (wl-summary-input-range
 				 (elmo-folder-name-internal folder)))))
+    (when (symbolp range)
+      (setq range (symbol-name range)))
     (cond ((string-match "rescan" range)
 	   (let ((msg (wl-summary-message-number))
 		 (wl-use-scoring (if (string-match "noscore" range)

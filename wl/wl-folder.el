@@ -1043,36 +1043,32 @@ If current line is group folder, check all sub entries."
    ((stringp entity)
     (let* ((folder (wl-folder-get-elmo-folder entity))
 	   (nums (wl-folder-get-entity-info entity))
-	   (wl-summary-highlight (if (or (wl-summary-sticky-p folder)
-					 (wl-summary-always-sticky-folder-p
-					  folder))
-				     wl-summary-highlight))
-	   wl-auto-select-first new unread sticky)
-      (setq new (or (car nums) 0))
-      (setq unread (or (cadr nums) 0))
-      (if (or (not unread-only)
-	      (or (< 0 new) (< 0 unread)))
-	  (let ((wl-summary-buffer-name
-		 (if (setq sticky (get-buffer (wl-summary-sticky-buffer-name
-					       (elmo-folder-name-internal
-						folder))))
-		     ;; Sticky folder exists.
-		     (wl-summary-sticky-buffer-name
-		      (elmo-folder-name-internal folder))
-		   (concat
-		    wl-summary-buffer-name
-		    (symbol-name this-command))))
-		(wl-summary-use-frame nil)
-		(wl-summary-always-sticky-folder-list nil))
-	    (save-window-excursion
-	      (save-excursion
-		(wl-summary-goto-folder-subr entity
-					     (wl-summary-get-sync-range
-					      folder)
-					     nil nil nil t)
-		(if sticky
-		    (wl-summary-save-status)
-		  (wl-summary-exit))))))))))
+	   (new (or (car nums) 0))
+	   (unread (or (cadr nums) 0)))
+      (when (or (not unread-only)
+		(or (> new 0) (> unread 0)))
+	(let ((summary (wl-summary-get-buffer entity))
+	      (range (wl-summary-get-sync-range folder)))
+	  (if summary
+	      (save-selected-window
+		(with-current-buffer summary
+		  (let ((win (get-buffer-window summary t)))
+		    (when win
+		      (select-window win)))
+		  (wl-summary-sync 'unset-cursor range)
+		  (wl-summary-save-status)))
+	    (elmo-folder-open folder 'load-msgdb)
+	    (unwind-protect
+		(progn
+		  (elmo-folder-synchronize folder nil (eq range 'all))
+		  (wl-folder-set-folder-updated
+		   entity
+		   (list
+		    0
+		    (or (cdr (assq 'unread (elmo-folder-count-flags folder)))
+			0)
+		    (elmo-folder-length folder))))
+	      (elmo-folder-close folder)))))))))
 
 (defun wl-folder-sync-current-entity (&optional unread-only)
   "Synchronize the folder at position.
@@ -1100,39 +1096,34 @@ If current line is group folder, check all subfolders."
 	(wl-folder-mark-as-read-all-entity (car flist))
 	(setq flist (cdr flist)))))
    ((stringp entity)
-    (let* ((nums (wl-folder-get-entity-info entity))
-	   (folder (wl-folder-get-elmo-folder entity))
-	   (wl-summary-highlight (if (or (wl-summary-sticky-p folder)
-					 (wl-summary-always-sticky-folder-p
-					  folder))
-				     wl-summary-highlight))
-	   wl-auto-select-first new unread sticky)
-      (setq new (or (car nums) 0))
-      (setq unread (or (cadr nums) 0))
-      (if (or (< 0 new) (< 0 unread))
-	  (save-window-excursion
-	    (save-excursion
-	      (let ((wl-summary-buffer-name
-		     (if (setq sticky (get-buffer
-				       (wl-summary-sticky-buffer-name
-					(elmo-folder-name-internal
-					 folder))))
-			 ;; Sticky folder exists.
-			 (wl-summary-sticky-buffer-name
-			  (elmo-folder-name-internal folder))
-		       (concat
-			wl-summary-buffer-name
-			(symbol-name this-command))))
-		    (wl-summary-use-frame nil)
-		    (wl-summary-always-sticky-folder-list nil))
-		(wl-summary-goto-folder-subr entity
-					     (wl-summary-get-sync-range folder)
-					     nil)
-		(wl-summary-mark-as-read-all)
-		(if sticky
-		    (wl-summary-save-status)
-		  (wl-summary-exit)))))
-	(sit-for 0))))))
+    (let* ((folder (wl-folder-get-elmo-folder entity))
+	   (nums (wl-folder-get-entity-info entity))
+	   (new (or (car nums) 0))
+	   (unread (or (cadr nums) 0)))
+      (when (or (> new 0) (> unread 0))
+	(let ((summary (wl-summary-get-buffer entity))
+	      (range (wl-summary-get-sync-range folder)))
+	  (if summary
+	      (save-selected-window
+		(with-current-buffer summary
+		  (let ((win (get-buffer-window summary t)))
+		    (when win
+		      (select-window win)))
+		  (wl-summary-sync 'unset-cursor range)
+		  (wl-summary-mark-as-read-all)
+		  (wl-summary-save-status)))
+	    (elmo-folder-open folder 'load-msgdb)
+	    (unwind-protect
+		(progn
+		  (elmo-folder-synchronize folder nil (eq range 'all))
+		  (elmo-folder-unset-flag
+		   folder
+		   (elmo-folder-list-flagged folder 'unread 'in-msgdb)
+		   'unread)
+		  (wl-folder-set-folder-updated
+		   entity
+		   (list 0 0 (elmo-folder-length folder))))
+	      (elmo-folder-close folder)))))))))
 
 (defun wl-folder-mark-as-read-all-current-entity ()
   "Mark as read all messages in the folder at position.

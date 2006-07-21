@@ -1,3 +1,11 @@
+2006-07-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-folder.el (wl-folder-sync-entity): Rewrite without
+	`wl-summary-goto-folder-subr'.
+	(wl-folder-mark-as-read-all-entity): Likewise.
+
+	* wl-summary.el (wl-summary-sync): Accept symbol for `range.
+
 2006-06-22  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-thread.el (wl-thread-force-open): Arranged.
