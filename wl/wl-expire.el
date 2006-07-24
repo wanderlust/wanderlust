@@ -698,30 +698,27 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 	(setq flist (cdr flist)))))
    ((stringp entity)
     (when (wl-expire-folder-p entity)
-      (let* ((folder (wl-folder-get-elmo-folder entity))
-	     (update-msgdb (cond
+      (let ((folder (wl-folder-get-elmo-folder entity))
+	    (summary (wl-summary-get-buffer entity))
+	    (update-msgdb (cond
 			   ((consp wl-expire-folder-update-msgdb)
 			    (wl-string-match-member
 			     entity
 			     wl-expire-folder-update-msgdb))
 			   (t
-			    wl-expire-folder-update-msgdb)))
-	    (wl-summary-highlight (if (or (wl-summary-sticky-p folder)
-					  (wl-summary-always-sticky-folder-p
-					   folder))
-				      wl-summary-highlight))
-	    wl-auto-select-first ret-val)
-	(save-window-excursion
-	  (save-excursion
-	    (and update-msgdb
-		 (wl-summary-goto-folder-subr entity 'force-update nil))
-	    (setq ret-val (wl-summary-expire folder (not update-msgdb)))
-	    (if update-msgdb
-		(progn
-		  (wl-summary-save-view)
-		  (elmo-folder-commit wl-summary-buffer-elmo-folder))
-	      (if ret-val
-		  (wl-folder-check-entity entity))))))))))
+			    wl-expire-folder-update-msgdb))))
+	(when update-msgdb
+	  (wl-folder-sync-entity entity))
+	(if summary
+	    (save-selected-window
+	      (with-current-buffer summary
+		(let ((win (get-buffer-window summary t)))
+		  (when win
+		    (select-window win)))
+		(when (wl-summary-expire folder)
+		  (wl-summary-save-status))))
+	  (when (wl-summary-expire folder 'no-summary)
+	    (wl-folder-check-entity entity))))))))
 
 ;; Command
 
@@ -738,8 +735,6 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
        (wl-folder-search-entity-by-name entity-name
 					wl-folder-entity
 					type))
-      (if (get-buffer wl-summary-buffer-name)
-	  (kill-buffer wl-summary-buffer-name))
       (message "Expiring %s is done" entity-name))))
 
 ;;; Archive
