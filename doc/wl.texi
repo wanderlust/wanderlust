@@ -7164,6 +7164,13 @@ Test current message and put spam mark if judged as spam.
 @findex wl-summary-test-spam-region
 Test messages in the specified region and put spam mark if judged as spam.
 
+@item t k c
+@kindex t k c (Summary)
+@findex wl-thread-test-spam
+Test messages which are the descendant of the current thread and put spam mark
+if judged as spam.  With prefix argument, it affects on the all messages in
+the thread tree.
+
 @item k C
 @kindex k C (Summary)
 @findex wl-summary-mark-spam
