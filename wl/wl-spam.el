@@ -243,6 +243,10 @@ See `wl-summary-mark-action-list' for the detail of element."
 	  ((interactive-p)
 	   (message "No message to test.")))))
 
+(defun wl-thread-test-spam (&optional arg)
+  (interactive "P")
+  (wl-thread-call-region-func 'wl-summary-test-spam-region arg))
+
 (defun wl-summary-mark-spam (&optional all)
   "Set spam mark to messages which is spam classification."
   (interactive "P")
@@ -402,6 +406,8 @@ See `wl-summary-mark-action-list' for the detail of element."
   (define-key wl-summary-mode-map "k" wl-summary-spam-map)
   (define-key
     wl-summary-mode-map "rkc" 'wl-summary-test-spam-region)
+  (define-key
+    wl-summary-mode-map "tkc" 'wl-thread-test-spam)
   (define-key
     wl-summary-mode-map "mk" 'wl-summary-target-mark-spam)
   (define-key

@@ -1,3 +1,8 @@
+2006-07-26  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-spam.el (wl-thread-test-spam): New function.
+	(wl-spam-setup): Bind "tkc".
+
 2006-07-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-expire.el (wl-folder-expire-entity): Rewite without
