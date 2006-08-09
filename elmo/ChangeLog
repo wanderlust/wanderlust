@@ -1,3 +1,8 @@
+2006-08-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo.el (elmo-folder-rename): Set meta data for global flags
+	follow the rename.
+
 2006-07-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-filter.el (elmo-folder-initialize): Set slot `number-list'

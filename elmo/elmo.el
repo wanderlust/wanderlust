@@ -785,18 +785,31 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
     t))
 
 (luna-define-method elmo-folder-rename ((folder elmo-folder) new-name)
-  (let* ((new-folder (elmo-make-folder
-		      new-name
-		      nil
-		      (elmo-folder-mime-charset-internal folder))))
+  (let ((new-folder (elmo-make-folder
+		     new-name
+		     nil
+		     (elmo-folder-mime-charset-internal folder))))
     (unless (eq (elmo-folder-type-internal folder)
 		(elmo-folder-type-internal new-folder))
       (error "Not same folder type"))
     (when (or (file-exists-p (elmo-folder-msgdb-path new-folder))
 	      (elmo-folder-exists-p new-folder))
       (error "Already exists folder: %s" new-name))
-    (elmo-folder-send folder 'elmo-folder-rename-internal new-folder)
-    (elmo-msgdb-rename-path folder new-folder)))
+    (let ((global-flag-entries
+	   (mapcar (lambda (number)
+		     (list number
+			   (elmo-message-field folder number 'message-id)
+			   (elmo-message-flags folder number)))
+		   (elmo-folder-list-flagged folder 'digest 'in-msgdb))))
+      (elmo-folder-send folder 'elmo-folder-rename-internal new-folder)
+      (elmo-msgdb-rename-path folder new-folder)
+      (dolist (entry global-flag-entries)
+	(let ((number (nth 0 entry))
+	      (message-id (nth 1 entry)))
+	  (dolist (flag (nth 2 entry))
+	    (when (elmo-global-flag-p flag)
+	      (elmo-global-flag-set flag new-folder number message-id)
+	      (elmo-global-flag-detach flag folder number))))))))
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-folder)
 						 numbers)
