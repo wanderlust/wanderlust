@@ -325,6 +325,8 @@
     (elmo-folder-rename (elmo-pipe-folder-dst-internal folder)
 			(elmo-folder-name-internal
 			 (elmo-pipe-folder-dst-internal new-folder)))
+    (elmo-global-flag-replace-referrer (elmo-folder-name-internal folder)
+				       new-name)
     (elmo-msgdb-rename-path folder new-folder)))
 
 (luna-define-method elmo-folder-synchronize ((folder elmo-pipe-folder)

@@ -1,3 +1,17 @@
+2006-08-12  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-flag.el (elmo-flag-folder-set-minfo): New function.
+	(elmo-folder-initialize): Use it.
+	(elmo-global-flag-replace-referrer): New function.
+
+	* elmo.el (toplevel): Added autoload setting for
+	`elmo-global-flag-replace-referrer'.
+	(elmo-folder-rename): Rewrite the last change use
+	`elmo-global-flag-replace-referrer'.
+
+	* elmo-pipe.el (elmo-folder-rename): Call
+	`elmo-global-flag-replace-referrer'.
+
 2006-08-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo.el (elmo-folder-rename): Set meta data for global flags

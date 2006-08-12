@@ -92,27 +92,26 @@
 	    (elmo-flag-folder-set-max-number-internal
 	     folder
 	     (elmo-object-load (expand-file-name "max" msgdb-path))))
-	(if (file-exists-p (expand-file-name ".minfo" msgdb-path))
-	    (elmo-flag-folder-set-minfo-internal
-	     folder
-	     (elmo-object-load (expand-file-name ".minfo" msgdb-path))))
-	(elmo-flag-folder-set-minfo-hash-internal
+	(elmo-flag-folder-set-minfo
 	 folder
-	 (elmo-make-hash (length (elmo-flag-folder-minfo-internal folder))))
-	(dolist (elem (elmo-flag-folder-minfo-internal folder))
-	  (elmo-set-hash-val (nth 1 elem) elem
-			     (elmo-flag-folder-minfo-hash-internal folder))
-	  (elmo-set-hash-val (concat "#" (number-to-string (nth 2 elem)))
-			     elem
-			     (elmo-flag-folder-minfo-hash-internal folder))
-	  (dolist (pair (car elem))
-	    (elmo-set-hash-val (concat (number-to-string (cdr pair))
-				       ":" (car pair))
-			       elem
-			       (elmo-flag-folder-minfo-hash-internal folder))))
+	 (and (file-exists-p (expand-file-name ".minfo" msgdb-path))
+	      (elmo-object-load (expand-file-name ".minfo" msgdb-path))))
 	(setq elmo-global-flag-folder-alist
 	      (cons (cons flag folder) elmo-global-flag-folder-alist))
 	folder)))
+
+(defun elmo-flag-folder-set-minfo (folder minfo)
+  (let ((hash (elmo-make-hash (length minfo))))
+    (dolist (elem minfo)
+      (elmo-set-hash-val (nth 1 elem) elem hash)
+      (elmo-set-hash-val (concat "#" (number-to-string (nth 2 elem)))
+			 elem hash)
+      (dolist (pair (car elem))
+	(elmo-set-hash-val (concat (number-to-string (cdr pair))
+				   ":" (car pair))
+			   elem hash)))
+    (elmo-flag-folder-set-minfo-internal folder minfo)
+    (elmo-flag-folder-set-minfo-hash-internal folder hash)))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder elmo-flag-folder))
   (expand-file-name (concat "flag/"
@@ -423,6 +422,20 @@ the message is not flagged in any folder."
     (dolist (flag elmo-global-flags)
       (dolist (number numbers)
 	(elmo-global-flag-detach flag folder number delete-if-none)))))
+
+(defun elmo-global-flag-replace-referrer (old-folder new-folder)
+  (dolist (flag elmo-global-flags)
+    (let* ((folder (elmo-flag-get-folder flag))
+	   (minfo (elmo-flag-folder-minfo-internal folder))
+	   modified)
+      (dolist (entry minfo)
+	(let ((pair (assoc old-folder (nth 0 entry))))
+	  (when pair
+	    (setcar pair new-folder)
+	    (setq modified t))))
+      (when modified
+	(elmo-flag-folder-set-minfo folder minfo)
+	(elmo-folder-commit folder)))))
 
 (defun elmo-get-global-flags (&optional flags ignore-preserved)
   "Get global flags.
