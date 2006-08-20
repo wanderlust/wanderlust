@@ -1,5 +1,8 @@
 2006-08-20  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* elmo-archive.el (elmo-archive-folder-append-buffer): Remove
+	meaningless unwind-protect.
+
 	* elmo-maildir.el (elmo-folder-message-make-temp-files): Respect
 	start-number correctly.
 	* elmo-search.el (elmo-folder-message-make-temp-files): Ditto.

@@ -604,25 +604,24 @@ TYPE specifies the archiver's symbol."
       (setq newfile (elmo-concat-path
 		     prefix
 		     (int-to-string next-num)))
-      (unwind-protect
-	  (elmo-bind-directory
-	   tmp-dir
-	   (if (and (or (functionp method) (car method))
-		    (file-writable-p newfile))
-	       (progn
-		 (setq dst-buffer (current-buffer))
-		 (with-current-buffer src-buffer
-		   (copy-to-buffer dst-buffer (point-min) (point-max)))
-		 (as-binary-output-file
+      (elmo-bind-directory
+       tmp-dir
+       (if (and (or (functionp method) (car method))
+		(file-writable-p newfile))
+	   (progn
+	     (setq dst-buffer (current-buffer))
+	     (with-current-buffer src-buffer
+	       (copy-to-buffer dst-buffer (point-min) (point-max)))
+	     (as-binary-output-file
 		  (write-region (point-min) (point-max) newfile nil 'no-msg))
-		 (when (elmo-archive-call-method method (list arc newfile))
-		   (elmo-folder-preserve-flags
-		    folder
-		    (with-current-buffer src-buffer
-		      (elmo-msgdb-get-message-id-from-buffer))
-		    flags)
-		   t))
-	     nil))))))
+	     (when (elmo-archive-call-method method (list arc newfile))
+	       (elmo-folder-preserve-flags
+		folder
+		(with-current-buffer src-buffer
+		  (elmo-msgdb-get-message-id-from-buffer))
+		flags)
+	       t))
+	 nil)))))
 
 (luna-define-method elmo-folder-append-messages :around
   ((folder elmo-archive-folder) src-folder numbers &optional same-number)
