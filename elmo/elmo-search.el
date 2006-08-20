@@ -173,13 +173,14 @@ Returns non-nil if fetching was succeed.")
 							 &optional
 							 start-number)
   (let ((temp-dir (elmo-folder-make-temporary-directory folder))
-	(cur-number 0))
+	(cur-number (or start-number 0)))
     (dolist (number numbers)
       (elmo-copy-file
        (elmo-message-file-name folder number)
        (expand-file-name
-	(number-to-string (if start-number (incf cur-number) number))
-	temp-dir)))
+	(number-to-string (if start-number cur-number number))
+	temp-dir))
+      (incf cur-number))
     temp-dir))
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-search-folder)
