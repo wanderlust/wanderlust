@@ -1,5 +1,8 @@
 2006-08-20  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* elmo-archive.el (elmo-folder-append-messages): Delete temp-dir
+	even if some error occurred.
+
 	* elmo-archive.el (elmo-archive-folder-append-buffer): Remove
 	meaningless unwind-protect.
 

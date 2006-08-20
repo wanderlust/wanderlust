@@ -648,30 +648,32 @@ TYPE specifies the archiver's symbol."
 						 folder))
 				 (car (elmo-folder-status folder)) 0)))))
 	    new-dir base-dir files)
-	(setq base-dir temp-dir)
-	(when (> (length prefix) 0)
-	  (when (file-name-directory prefix)
-	    (elmo-make-directory (file-name-directory prefix)))
-	  (rename-file
-	   temp-dir
-	   (setq new-dir
-		 (expand-file-name
-		  prefix
-		  ;; parent of temp-dir..(works in windows?)
-		  (expand-file-name ".." temp-dir))))
-	  ;; now temp-dir has name prefix.
-	  (setq temp-dir new-dir)
-	  ;; parent of prefix becomes base-dir.
-	  (setq base-dir (expand-file-name ".." temp-dir)))
-	(setq files
-	      (mapcar
-	       '(lambda (x) (elmo-concat-path prefix x))
-	       (directory-files temp-dir nil "^[^\\.]")))
-	(if (elmo-archive-append-files folder
-				       base-dir
-				       files)
-	    (elmo-delete-directory temp-dir)
-	  (setq numbers nil)))
+	(unwind-protect
+	    (progn
+	      (setq base-dir temp-dir)
+	      (when (> (length prefix) 0)
+		(when (file-name-directory prefix)
+		  (elmo-make-directory (file-name-directory prefix)))
+		(rename-file
+		 temp-dir
+		 (setq new-dir
+		       (expand-file-name
+			prefix
+			;; parent of temp-dir..(works in windows?)
+			(expand-file-name ".." temp-dir))))
+		;; now temp-dir has name prefix.
+		(setq temp-dir new-dir)
+		;; parent of prefix becomes base-dir.
+		(setq base-dir (expand-file-name ".." temp-dir)))
+	      (setq files
+		    (mapcar
+		     '(lambda (x) (elmo-concat-path prefix x))
+		     (directory-files temp-dir nil "^[^\\.]")))
+	      (unless (elmo-archive-append-files folder
+						 base-dir
+						 files)
+		(setq numbers nil)))
+	  (elmo-delete-directory temp-dir)))
       (elmo-progress-notify 'elmo-folder-move-messages (length numbers))
       numbers)
      (t (luna-call-next-method)))))
