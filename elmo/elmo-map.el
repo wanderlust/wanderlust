@@ -159,50 +159,35 @@
   ;; A subroutine to make location-alist.
   ;; location-alist is existing location-alist.
   ;; locations is the newest locations.
-  (let* ((location-alist (elmo-map-folder-location-alist-internal folder))
-	 (locations-in-db (mapcar 'cdr location-alist))
-	 new-locs new-alist deleted-locs pair i)
-    (setq new-locs
-	  (elmo-delete-if (function
-			   (lambda (x) (member x locations-in-db)))
-			  locations))
-    (setq deleted-locs
-	  (elmo-delete-if (function
-			   (lambda (x) (member x locations)))
-			  locations-in-db))
-    (dolist (location deleted-locs)
-      (setq location-alist
-	    (delq (setq pair
-			(elmo-get-hash-val
-			 location
-			 (elmo-map-folder-location-hash-internal
-			  folder)))
-		  location-alist))
-      (when pair
-	(elmo-clear-hash-val (concat "#" (int-to-string (car pair)))
-			     (elmo-map-folder-location-hash-internal
-			      folder))
-	(elmo-clear-hash-val location
-			     (elmo-map-folder-location-hash-internal
-			      folder))))
-    (setq i (elmo-map-folder-number-max-internal folder))
-    (dolist (location new-locs)
-      (setq i (1+ i))
-      (elmo-map-folder-set-number-max-internal folder i)
-      (setq new-alist (cons (setq pair (cons i location)) new-alist))
-      (setq new-alist (nreverse new-alist))
-      (elmo-set-hash-val (concat "#" (int-to-string i))
-			 pair
-			 (elmo-map-folder-location-hash-internal
-			  folder))
-      (elmo-set-hash-val location
-			 pair
-			 (elmo-map-folder-location-hash-internal
-			  folder)))
-    (setq location-alist
-	  (sort (nconc location-alist new-alist)
-		(lambda (x y) (< (car x) (car y)))))
-    (elmo-map-folder-set-location-alist-internal folder location-alist)))
+  (let ((location-hash (elmo-map-folder-location-hash-internal folder))
+	(exists-hash (elmo-make-hash (length locations)))
+	(number (elmo-map-folder-number-max-internal folder))
+	new-alist)
+    (dolist (location locations)
+      (if (elmo-get-hash-val location location-hash)
+	  (elmo-set-hash-val location t exists-hash)
+	(setq number (1+ number))
+	(let ((pair (cons number location)))
+	  (setq new-alist (cons pair new-alist))
+	  (elmo-set-hash-val (concat "#" (int-to-string number))
+			     pair
+			     location-hash)
+	  (elmo-set-hash-val location pair location-hash))))
+    (elmo-map-folder-set-number-max-internal folder number)
+    (elmo-map-folder-set-location-alist-internal
+     folder
+     (nconc
+      (delq nil
+	    (mapcar
+	     (lambda (pair)
+	       (if (elmo-get-hash-val (cdr pair) exists-hash)
+		   pair
+		 (elmo-clear-hash-val (concat "#" (int-to-string (car pair)))
+				      location-hash)
+		 (elmo-clear-hash-val (cdr pair) location-hash)
+		 nil))
+	     (elmo-map-folder-location-alist-internal folder)))
+      (nreverse new-alist)))))
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-map-folder))
   (elmo-map-folder-location-setup
