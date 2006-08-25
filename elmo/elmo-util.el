@@ -1306,11 +1306,11 @@ SPEC is a list as followed (LABEL MAX-VALUE [FORMAT])."
 
 (defun elmo-flatten (list-of-list)
   "Flatten LIST-OF-LIST."
-  (if list-of-list
-      (apply #'nconc
-	     (mapcar (lambda (element)
-		       (if (consp element) element (list element)))
-		     list-of-list))))
+  (and list-of-list
+       (apply #'append
+	      (mapcar (lambda (element)
+			(if (listp element) element (list element)))
+		      list-of-list))))
 
 (defun elmo-y-or-n-p (prompt &optional auto default)
   "Same as `y-or-n-p'.
