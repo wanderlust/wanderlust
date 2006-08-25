@@ -129,6 +129,27 @@ If optional argument RESTORE is non-nil, unregister from spam list.")
      (elmo-find-fetch-strategy folder number nil 'entire)
      'unread)))
 
+(defun elmo-spam-process-messages-as-mbox (folder numbers number-per-process
+						  function &rest args)
+  (with-temp-buffer
+    (while numbers
+      (let ((count 0))
+	(while (and numbers (< count number-per-process))
+	  (insert "From MAILER-DAEMON@example.com\n")
+	  (let ((begin (point)))
+	    (elmo-spam-message-fetch folder (car numbers))
+	    (goto-char begin)
+	    (while (re-search-forward "^>*From " nil t)
+	      (goto-char (match-beginning 0))
+	      (insert ?>)
+	      (forward-line))
+	    (goto-char (point-max))
+	    (insert "\n\n"))
+	  (setq count (1+ count)
+		numbers (cdr numbers)))
+	(apply function count args)
+	(erase-buffer)))))
+
 ;; generic implement
 (luna-define-method elmo-spam-message-spam-p ((processor elsp-generic)
 					      folder number &optional register)

@@ -1,5 +1,20 @@
 2006-08-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elsp-bsfilter.el (elmo-spam-bsfilter-max-files-per-process)
+	(elmo-spam-bsfilter-max-messages-per-process): New use option.
+	(elmo-spam-bsfilter-debug): Fix a group.
+	(elsp-bsfilter-call-bsfilter): Don't use `delq' and add option
+	`--homedir'.
+	(elmo-spam-buffer-spam-p): Don't specify `--homedir' option.
+	(elsp-bsfilter-list-spam-files): New function.
+	(elmo-spam-list-spam-messages): Define.
+	(elsp-bsfilter-register-buffer): Add an optional argument `mbox'.
+	(elmo-spam-bsfilter-register-messages): New function.
+	(elmo-spam-register-spam-messages): Define.
+	(elmo-spam-register-good-messages): Ditto.
+
+	* elmo-spam.el (elmo-spam-process-messages-as-mbox): New function.
+
 	* elmo-util.el (elmo-flatten): Use `append' and `listp' instead of
 	`nconc' and `consp'.
 

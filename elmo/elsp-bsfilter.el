@@ -67,10 +67,20 @@
 		 (const :tag "Use the default"))
   :group 'elmo-spam-bsfilter)
 
+(defcustom elmo-spam-bsfilter-max-files-per-process 100
+  "Number of files processed at once."
+  :type 'integer
+  :group 'elmo-spam-bsfilter)
+
+(defcustom elmo-spam-bsfilter-max-messages-per-process 30
+  "Number of messages processed at once."
+  :type 'integer
+  :group 'elmo-spam-bsfilter)
+
 (defcustom elmo-spam-bsfilter-debug nil
   "Non-nil to debug elmo bsfilter spam backend."
   :type 'boolean
-  :group 'elmo-spam-bsfilter-debug)
+  :group 'elmo-spam-bsfilter)
 
 (eval-and-compile
   (luna-define-class elsp-bsfilter (elsp-generic)))
@@ -81,28 +91,80 @@
 	 elmo-spam-bsfilter-shell-program
 	 nil (if elmo-spam-bsfilter-debug
 		 (get-buffer-create "*Debug ELMO Bsfilter*"))
-	 nil (delq nil
-		   (append (list elmo-spam-bsfilter-shell-switch
-				 elmo-spam-bsfilter-program)
-			   elmo-spam-bsfilter-args
-			   (elmo-flatten args)))))
+	 nil
+	 (append (if elmo-spam-bsfilter-shell-switch
+		     (list elmo-spam-bsfilter-shell-switch))
+		 (list elmo-spam-bsfilter-program)
+		 elmo-spam-bsfilter-args
+		 (if elmo-spam-bsfilter-database-directory
+		     (list "--homedir" elmo-spam-bsfilter-database-directory))
+		 (elmo-flatten args))))
 
 (luna-define-method elmo-spam-buffer-spam-p ((processor elsp-bsfilter)
 					     buffer &optional register)
   (with-current-buffer buffer
     (= 0 (elsp-bsfilter-call-bsfilter
-	  (if register elmo-spam-bsfilter-update-switch)
-	  (if elmo-spam-bsfilter-database-directory
-	      (list "--homedir" elmo-spam-bsfilter-database-directory))))))
+	  (if register elmo-spam-bsfilter-update-switch)))))
 
-(defsubst elsp-bsfilter-register-buffer (buffer spam restore)
+(defsubst elsp-bsfilter-list-spam-files (targets)
+  (apply
+   #'call-process
+   elmo-spam-bsfilter-shell-program
+   nil
+   (list t (if elmo-spam-bsfilter-debug
+	       (get-buffer-create "*Debug ELMO Bsfilter*")))
+   nil
+   (append (if elmo-spam-bsfilter-shell-switch
+	       (list elmo-spam-bsfilter-shell-switch))
+	   (list elmo-spam-bsfilter-program "--list-spam")
+	   elmo-spam-bsfilter-args
+	   (if elmo-spam-bsfilter-database-directory
+	       (list "--homedir" elmo-spam-bsfilter-database-directory))
+	   targets)))
+
+(luna-define-method elmo-spam-list-spam-messages :around
+  ((processor elsp-bsfilter) folder &optional numbers)
+  (if (not (elmo-folder-message-file-p folder))
+      (luna-call-next-method)
+    (let* ((nth-of-targets (1- (or elmo-spam-bsfilter-max-files-per-process
+				   100)))
+	   (numbers (or numbers (elmo-folder-list-messages folder t t)))
+	   (hash (elmo-make-hash (length numbers)))
+	   (targets (mapcar
+		     (lambda (number)
+		       (let ((filename (elmo-message-file-name folder number)))
+			 (elmo-set-hash-val filename number hash)
+			 filename))
+		     numbers))
+	   results)
+      (with-temp-buffer
+	(while targets
+	  (let* ((last (nthcdr nth-of-targets targets))
+		 (next (cdr last)))
+	    (when last
+	      (setcdr last nil))
+	    (elsp-bsfilter-list-spam-files targets)
+	    (elmo-progress-notify 'elmo-spam-check-spam (length targets))
+	    (setq targets next)))
+	(goto-char (point-min))
+	(while (not (eobp))
+	  (let* ((filename (buffer-substring (point) (save-excursion
+						       (end-of-line)
+						       (point))))
+		 (number (elmo-get-hash-val filename hash)))
+	    (when number
+	      (setq results (cons number results)))
+	    (forward-line))))
+      results)))
+
+
+(defsubst elsp-bsfilter-register-buffer (buffer spam restore &optional mbox)
   (with-current-buffer buffer
     (elsp-bsfilter-call-bsfilter
      "--update"
-     (if elmo-spam-bsfilter-database-directory
-	 (list "--homedir" elmo-spam-bsfilter-database-directory))
      (if restore (if spam "--sub-clean" "--sub-spam"))
-     (if spam "--add-spam" "--add-clean"))))
+     (if spam "--add-spam" "--add-clean")
+     (if mbox "--mbox"))))
 
 (luna-define-method elmo-spam-register-spam-buffer ((processor elsp-bsfilter)
 						    buffer &optional restore)
@@ -111,6 +173,28 @@
 (luna-define-method elmo-spam-register-good-buffer ((processor elsp-bsfilter)
 						    buffer &optional restore)
   (elsp-bsfilter-register-buffer buffer nil restore))
+
+(defsubst elmo-spam-bsfilter-register-messages (folder numbers spam restore)
+  (let ((numbers (or numbers (elmo-folder-list-messages folder t t))))
+    (if (and (> (length numbers) 1)
+	     elmo-spam-bsfilter-max-messages-per-process
+	     (> elmo-spam-bsfilter-max-messages-per-process 0))
+	(elmo-spam-process-messages-as-mbox
+	 folder numbers
+	 elmo-spam-bsfilter-max-messages-per-process
+	 (lambda (count spam restore)
+	   (elsp-bsfilter-register-buffer (current-buffer) spam restore 'mbox)
+	   (elmo-progress-notify 'elmo-spam-register count))
+	 spam restore)
+      (luna-call-next-method))))
+
+(luna-define-method elmo-spam-register-spam-messages :around
+  ((processor elsp-bsfilter) folder &optional numbers restore)
+  (elmo-spam-bsfilter-register-messages folder numbers t restore))
+
+(luna-define-method elmo-spam-register-good-messages :around
+  ((processor elsp-bsfilter) folder &optional numbers restore)
+  (elmo-spam-bsfilter-register-messages folder numbers nil restore))
 
 (require 'product)
 (product-provide (provide 'elsp-bsfilter) (require 'elmo-version))
