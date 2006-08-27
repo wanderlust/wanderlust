@@ -117,8 +117,10 @@
    nil
    (append (if elmo-spam-bsfilter-shell-switch
 	       (list elmo-spam-bsfilter-shell-switch))
-	   (list elmo-spam-bsfilter-program "--list-spam")
+	   (if elmo-spam-bsfilter-program
+	       (list elmo-spam-bsfilter-program))
 	   elmo-spam-bsfilter-args
+	   (list "--list-spam")
 	   (if elmo-spam-bsfilter-database-directory
 	       (list "--homedir" elmo-spam-bsfilter-database-directory))
 	   targets)))

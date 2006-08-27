@@ -2,6 +2,7 @@
 
 	* elsp-bsfilter.el (elsp-bsfilter-call-bsfilter): Remove nil from
 	args.
+	(elsp-bsfilter-list-spam-files): Ditto.
 
 2006-08-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
