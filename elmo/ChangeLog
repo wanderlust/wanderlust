@@ -1,3 +1,8 @@
+2006-08-27  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elsp-bsfilter.el (elsp-bsfilter-call-bsfilter): Remove nil from
+	args.
+
 2006-08-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elsp-bsfilter.el (elmo-spam-bsfilter-max-files-per-process)
