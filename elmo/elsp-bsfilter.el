@@ -92,14 +92,14 @@
 	 nil (if elmo-spam-bsfilter-debug
 		 (get-buffer-create "*Debug ELMO Bsfilter*"))
 	 nil
-	 (delq nil
-	       (append (if elmo-spam-bsfilter-shell-switch
-			   (list elmo-spam-bsfilter-shell-switch))
-		       (list elmo-spam-bsfilter-program)
-		       elmo-spam-bsfilter-args
-		       (if elmo-spam-bsfilter-database-directory
-			   (list "--homedir" elmo-spam-bsfilter-database-directory))
-		       (elmo-flatten args)))))
+	 (append (if elmo-spam-bsfilter-shell-switch
+		     (list elmo-spam-bsfilter-shell-switch))
+		 (if elmo-spam-bsfilter-program
+		     (list elmo-spam-bsfilter-program))
+		 elmo-spam-bsfilter-args
+		 (if elmo-spam-bsfilter-database-directory
+		     (list "--homedir" elmo-spam-bsfilter-database-directory))
+		 (elmo-flatten args))))
 
 (luna-define-method elmo-spam-buffer-spam-p ((processor elsp-bsfilter)
 					     buffer &optional register)
