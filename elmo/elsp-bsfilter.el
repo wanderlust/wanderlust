@@ -108,22 +108,29 @@
 	  (if register elmo-spam-bsfilter-update-switch)))))
 
 (defsubst elsp-bsfilter-list-spam-files (targets)
-  (apply
-   #'call-process
-   elmo-spam-bsfilter-shell-program
-   nil
-   (list t (if elmo-spam-bsfilter-debug
-	       (get-buffer-create "*Debug ELMO Bsfilter*")))
-   nil
-   (append (if elmo-spam-bsfilter-shell-switch
-	       (list elmo-spam-bsfilter-shell-switch))
-	   (if elmo-spam-bsfilter-program
-	       (list elmo-spam-bsfilter-program))
-	   elmo-spam-bsfilter-args
-	   (list "--list-spam")
-	   (if elmo-spam-bsfilter-database-directory
-	       (list "--homedir" elmo-spam-bsfilter-database-directory))
-	   targets)))
+  (let ((temp-file (and elmo-spam-bsfilter-debug
+			(make-temp-file "elsp-bserror"))))
+    (unwind-protect
+	(apply
+	 #'call-process
+	 elmo-spam-bsfilter-shell-program
+	 nil
+	 (list t temp-file)
+	 nil
+	 (append (if elmo-spam-bsfilter-shell-switch
+		     (list elmo-spam-bsfilter-shell-switch))
+		 (if elmo-spam-bsfilter-program
+		     (list elmo-spam-bsfilter-program))
+		 elmo-spam-bsfilter-args
+		 (list "--list-spam")
+		 (if elmo-spam-bsfilter-database-directory
+		     (list "--homedir" elmo-spam-bsfilter-database-directory))
+		 targets))
+      (when (and temp-file (file-exists-p temp-file))
+	(with-current-buffer (get-buffer-create "*Debug ELMO Bsfilter*")
+	  (goto-char (point-max))
+	  (insert-file-contents temp-file))
+	(delete-file temp-file)))))
 
 (luna-define-method elmo-spam-list-spam-messages :around
   ((processor elsp-bsfilter) folder &optional numbers)
