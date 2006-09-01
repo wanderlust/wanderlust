@@ -865,19 +865,16 @@ Optional argument ARG is repeart count."
 		     (if (wl-string-match-member entity wl-strict-diff-folders)
 			 (elmo-strict-folder-diff folder)
 		       (elmo-folder-diff folder)))
+		 (elmo-open-error
+		  (signal (car err) (cdr err)))
 		 (error
 		  ;; maybe not exist folder.
-		  (if (and (not (or (memq 'elmo-open-error
-					  (get (car err) 'error-conditions))
-				    (memq 'elmo-imap4-bye-error
-					  (get (car err) 'error-conditions))))
-			   (not (elmo-folder-exists-p folder)))
+		  (if (not (elmo-folder-exists-p folder))
 		      (wl-folder-create-subr folder)
 		    (signal (car err) (cdr err))))))
 	 (new    (elmo-diff-new nums))
 	 (unread (elmo-diff-unread nums))
-	 (all    (elmo-diff-all nums))
-	 unsync nomif)
+	 (all    (elmo-diff-all nums)))
     (if (and (eq wl-folder-notify-deleted 'sync)
 	     (or (and new    (> 0 new))
 		 (and unread (> 0 unread))
@@ -892,10 +889,11 @@ Optional argument ARG is repeart count."
 	(setq new    (and new    (max 0 new))
 	      unread (and unread (max 0 unread))
 	      all    (and all    (max 0 all))))
-      (setq unread (or (and unread (- unread (or new 0)))
-		       (elmo-folder-get-info-unread folder)
-		       (or (cdr (assq 'unread
-				      (elmo-folder-count-flags folder))) 0)))
+      (setq unread (if unread
+		       (- unread (or new 0))
+		     (or (elmo-folder-get-info-unread folder)
+			 (cdr (assq 'unread (elmo-folder-count-flags folder)))
+			 0)))
       (wl-folder-entity-hashtb-set wl-folder-entity-hashtb entity
 				   (list new unread all)
 				   (get-buffer wl-folder-buffer-name)))

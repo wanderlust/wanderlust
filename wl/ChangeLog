@@ -1,3 +1,7 @@
+2006-09-01  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-folder.el (wl-folder-check-one-entity): Simplify.
+
 2006-08-28  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-message.el (wl-message-buffer-prefetch-timer): Removed unused
