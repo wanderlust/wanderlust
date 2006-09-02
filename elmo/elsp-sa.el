@@ -111,31 +111,17 @@
 						    spam
 						    restore)
   (if (not (< 0 elmo-spam-spamassassin-max-messages-per-process))
-      (error
- "non-positive value for `elmo-spam-spamassassin-max-messages-per-process'"))
-  (with-temp-buffer
-    (while numbers
-      (let ((count 0))
-	(while (and numbers
-		    (< count elmo-spam-spamassassin-max-messages-per-process))
-	  (insert "From MAILER-DAEMON@example.com\n"
-		  (with-temp-buffer
-		    (elmo-spam-message-fetch folder (car numbers))
-		    (goto-char (point-min))
-		    (while (re-search-forward "^>*From " nil t)
-		      (goto-char (match-beginning 0))
-		      (insert ?>)
-		      (forward-line))
-		    (buffer-substring (point-min) (point-max)))
-		  "\n\n")
-	  (setq count (1+ count)
-		numbers (cdr numbers)))
-	(apply 'elmo-spamassassin-call 'learn
-	       (delq nil
-		     (list "--mbox"
-			   (if spam "--spam" "--ham"))))
-	(elmo-progress-notify 'elmo-spam-register count)
-	(erase-buffer)))))
+      (error "\
+non-positive value for `elmo-spam-spamassassin-max-messages-per-process'"))
+  (elmo-spam-process-messages-as-mbox
+   folder numbers elmo-spam-spamassassin-max-messages-per-process
+   (lambda (count spam restore)
+     (apply 'elmo-spamassassin-call 'learn
+	    (delq nil
+		  (list "--mbox"
+			(if spam "--spam" "--ham"))))
+     (elmo-progress-notify 'elmo-spam-register count))
+   spam restore))
 
 (luna-define-method elmo-spam-register-spam-messages :around
   ((processor elsp-sa) folder &optional numbers restore)

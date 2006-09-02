@@ -1,3 +1,10 @@
+2006-09-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elsp-bogofilter.el (elmo-spam-bogofilter-register-messages): Use
+	`elmo-spam-process-messages-as-mbox'.
+
+	* elsp-sa.el (elmo-spam-spamassassin-register-messages): Ditto.
+
 2006-08-27  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elsp-bsfilter.el (elsp-bsfilter-list-spam-files): Fix the

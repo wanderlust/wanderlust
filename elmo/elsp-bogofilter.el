@@ -127,26 +127,12 @@ Must be return a string or list of string."
   (if (not (< 0 elmo-spam-bogofilter-max-messages-per-process))
       (error "\
 non-positive value for `elmo-spam-bogofilter-max-messages-per-process'"))
-  (with-temp-buffer
-    (while numbers
-      (let ((count 0))
-	(while (and numbers
-		    (< count elmo-spam-bogofilter-max-messages-per-process))
-	  (insert "From MAILER-DAEMON\n"
-		  (with-temp-buffer
-		    (elmo-spam-message-fetch folder (car numbers))
-		    (goto-char (point-min))
-		    (while (re-search-forward "^>*From " nil t)
-		      (goto-char (match-beginning 0))
-		      (insert ?>)
-		      (forward-line))
-		    (buffer-substring (point-min) (point-max)))
-		  "\n\n")
-	  (setq count (1+ count)
-		numbers (cdr numbers)))
-	(elsp-bogofilter-register-buffer (current-buffer) spam restore)
-	(elmo-progress-notify 'elmo-spam-register count)
-	(erase-buffer)))))
+  (elmo-spam-process-messages-as-mbox
+   folder numbers elmo-spam-bogofilter-max-messages-per-process
+   (lambda (count spam restore)
+     (elsp-bogofilter-register-buffer (current-buffer) spam restore)
+     (elmo-progress-notify 'elmo-spam-register count))
+   spam restore))
 
 (luna-define-method elmo-spam-register-spam-messages :around
   ((processor elsp-bogofilter) folder &optional numbers restore)
