@@ -1,5 +1,10 @@
 2006-09-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo-vars.el (elmo-use-hardlink): New user option.
+
+	* elmo-util.el (elmo-add-name-to-file): Switch implementations by
+	`elmo-use-hardlink'.
+
 	* elmo-pipe.el (elmo-pipe-folder-list-target-messages): Keep the
 	killed-list.
 	(elmo-pipe-drain): Use `elmo-folder-open' and `elmo-folder-close'

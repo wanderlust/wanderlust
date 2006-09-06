@@ -396,6 +396,12 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
        (and (eq system-type 'windows-nt) (not (featurep 'meadow)))))
   "Your file system has link count, or not.")
 
+(defvar elmo-use-hardlink
+  ;; Any Emacsen may have add-name-to-file(), because loadup.el
+  ;; requires it. :-p Check make-symbolic-link() instead.
+  (fboundp 'make-symbolic-link)
+  "Hardlink is available on your file system, or not.")
+
 (defvar elmo-weekday-name-en '["Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Sat"])
 (defvar elmo-weekday-name-ja '["日" "月" "火" "水" "木" "金" "土"])
 (defvar elmo-weekday-name-fr '["Dim" "Lun" "Mar" "Mer" "Jeu" "Ven" "Sam"])

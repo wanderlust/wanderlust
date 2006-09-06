@@ -60,9 +60,7 @@
 (fset 'elmo-base64-decode-string
       (mel-find-function 'mime-decode-string "base64"))
 
-;; Any Emacsen may have add-name-to-file(), because loadup.el requires it. :-p
-;; Check make-symbolic-link() instead.  -- 981002 by Fuji
-(if (fboundp 'make-symbolic-link)  ;; xxx
+(if elmo-use-hardlink
     (defalias 'elmo-add-name-to-file 'add-name-to-file)
   (defun elmo-add-name-to-file
     (filename newname &optional ok-if-already-exists)
