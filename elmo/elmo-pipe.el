@@ -120,37 +120,30 @@
 (defvar elmo-pipe-drained-hook nil "A hook called when the pipe is flushed.")
 
 (defsubst elmo-pipe-folder-list-target-messages (src &optional ignore-list)
-  (unwind-protect
-      (progn
-	(elmo-folder-set-killed-list-internal src ignore-list)
-	(elmo-folder-list-messages src t))
-    (elmo-folder-set-killed-list-internal src nil)))
+  (let ((killed (elmo-folder-killed-list-internal src)))
+    (elmo-folder-set-killed-list-internal src ignore-list)
+    (unwind-protect
+	(elmo-folder-list-messages src t)
+      (elmo-folder-set-killed-list-internal src killed))))
 
 (defun elmo-pipe-drain (src dst &optional copy ignore-list)
   "Move or copy all messages of SRC to DST."
-  (let ((elmo-inhibit-number-mapping (and (eq (elmo-folder-type-internal
-					       src) 'pop3)
-					  (not copy))) ; No need to use UIDL
-	msgs len)
+  (let ((elmo-inhibit-number-mapping (and (eq (elmo-folder-type-internal src)
+					      'pop3)
+					  (not copy)))) ; No need to use UIDL
     (message "Checking %s..." (elmo-folder-name-internal src))
-    ;; Warnnig: some function requires msgdb
-    ;; but elmo-folder-open-internal do not load msgdb.
-    (elmo-folder-open-internal src)
-    (setq msgs (elmo-pipe-folder-list-target-messages src ignore-list)
-	  len (length msgs))
-    (when (> len elmo-display-progress-threshold)
-      (elmo-progress-set 'elmo-folder-move-messages
-			 len
-			 (if copy
-			     "Copying messages..."
-			   "Moving messages...")))
+    (elmo-folder-open src)
     (unwind-protect
-	(elmo-folder-move-messages src msgs dst copy)
-      (elmo-progress-clear 'elmo-folder-move-messages))
-    (when (and copy msgs)
-      (setq ignore-list (elmo-number-set-append-list ignore-list
-						     msgs)))
-    (elmo-folder-close-internal src)
+	(let* ((msgs (elmo-pipe-folder-list-target-messages src ignore-list))
+	       (len (length msgs)))
+	  (elmo-with-progress-display (> len elmo-display-progress-threshold)
+	      (elmo-folder-move-messages len (if copy
+						 "Copying messages..."
+					       "Moving messages..."))
+	    (elmo-folder-move-messages src msgs dst copy))
+	  (when (and copy msgs)
+	    (setq ignore-list (elmo-number-set-append-list ignore-list msgs))))
+      (elmo-folder-close src))
     (run-hooks 'elmo-pipe-drained-hook)
     ignore-list))
 
