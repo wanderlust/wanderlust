@@ -230,14 +230,14 @@ If it is the symbol `all', update overview for all shimbun folders."
      (elmo-shimbun-folder-shimbun-internal folder)
      (elmo-shimbun-folder-group-internal folder))
     (let ((inhibit-quit t))
-      (unless (elmo-map-folder-location-alist-internal folder)
-	(elmo-map-folder-location-setup
+      (unless (elmo-location-map-alist folder)
+	(elmo-location-map-setup
 	 folder
 	 (elmo-msgdb-location-load (elmo-folder-msgdb-path folder))))
       (when (and (elmo-folder-plugged-p folder)
 		 (elmo-shimbun-headers-check-p folder))
 	(elmo-shimbun-get-headers folder)
-	(elmo-map-folder-update-locations
+	(elmo-location-map-update
 	 folder
 	 (elmo-map-folder-list-message-locations folder))))))
 

@@ -35,29 +35,134 @@
 (eval-when-compile (require 'cl))
 
 (eval-and-compile
-  ;; location-hash: location->number mapping
-  ;; number-hash:   number->location mapping
-  (luna-define-class elmo-map-folder (elmo-folder)
-		     (location-alist number-max location-hash))
-  (luna-define-internal-accessors 'elmo-map-folder))
+  (luna-define-class elmo-location-map ()
+		     (location-alist location-hash max-number)))
 
-(defun elmo-map-folder-numbers-to-locations (folder numbers)
+(defmacro elmo-location-map-alist (entity)
+  `(luna-slot-value ,entity 'location-alist))
+
+(defmacro elmo-location-map-set-alist (entity value)
+  `(luna-set-slot-value ,entity 'location-alist ,value))
+
+(defmacro elmo-location-map-hash (entity)
+  `(luna-slot-value ,entity 'location-hash))
+
+(defmacro elmo-location-map-set-hash (entity value)
+  `(luna-set-slot-value ,entity 'location-hash ,value))
+
+(defmacro elmo-location-map-max-number (entity)
+  `(luna-slot-value ,entity 'max-number))
+
+(defmacro elmo-location-map-set-max-number (entity value)
+  `(luna-set-slot-value ,entity 'max-number ,value))
+
+
+(defmacro elmo-location-map-key (number)
+  `(concat "#" (int-to-string ,number)))
+
+(defun elmo-location-map-load (mapper directory)
+  (elmo-location-map-setup
+   mapper
+   (elmo-msgdb-location-load directory)))
+
+(defun elmo-location-map-save (mapper directory)
+  (let ((alist (elmo-location-map-alist mapper)))
+    (elmo-msgdb-location-save
+     directory
+     (cons (cons (elmo-location-map-max-number mapper) nil)
+	   alist))))
+
+(defun elmo-location-map-setup (mapper locations)
+  (let ((hash (elmo-make-hash (length locations)))
+	(max-number 0))
+    ;; Set number-max and hashtables.
+    (dolist (pair locations)
+      (setq max-number (max max-number (car pair)))
+      (when (cdr pair)
+	(elmo-set-hash-val (cdr pair) pair hash)
+	(elmo-set-hash-val (elmo-location-map-key (car pair)) pair hash)))
+    (let ((inhibit-quit t))
+      (elmo-location-map-set-max-number mapper max-number)
+      (elmo-location-map-set-alist mapper locations)
+      (elmo-location-map-set-hash mapper hash))))
+
+(defun elmo-location-map-teardown (mapper)
+  (elmo-location-map-set-alist mapper nil)
+  (elmo-location-map-set-hash mapper nil))
+
+(defun elmo-location-map-clear (mapper)
+  (elmo-location-map-set-max-number mapper 0)
+  (elmo-location-map-set-alist mapper nil)
+  (elmo-location-map-set-hash mapper (elmo-make-hash)))
+
+(defun elmo-location-map-update (mapper locations)
+  (let ((old-hash (elmo-location-map-hash mapper))
+	(new-hash (elmo-make-hash (length locations)))
+	(number (elmo-location-map-max-number mapper))
+	new-alist)
+    (setq new-alist
+	  (mapcar
+	   (lambda (location)
+	     (let ((entry (or (elmo-get-hash-val location old-hash)
+			      (cons (setq number (1+ number)) location))))
+	       (elmo-set-hash-val (elmo-location-map-key (car entry))
+				  entry
+				  new-hash)
+	       (elmo-set-hash-val location entry new-hash)
+	       entry))
+	   locations))
+    (let ((inhibit-quit t))
+      (elmo-location-map-set-max-number mapper number)
+      (elmo-location-map-set-alist mapper new-alist)
+      (elmo-location-map-set-hash mapper new-hash))))
+
+(defun elmo-location-map-remove-numbers (mapper numbers)
+  (let ((alist (elmo-location-map-alist mapper))
+	(hash (elmo-location-map-hash mapper)))
+    (dolist (number numbers)
+      (let* ((key (elmo-location-map-key number))
+	     (entry (elmo-get-hash-val key hash))
+	     (inhibit-quit t))
+	(elmo-location-map-set-alist
+	 mapper
+	 (setq alist (delq entry alist)))
+	(elmo-clear-hash-val key hash)
+	(elmo-clear-hash-val (cdr entry) hash)))))
+
+(defun elmo-map-message-number (mapper location)
+  "Return number of the message in the MAPPER with LOCATION."
+  (car (elmo-get-hash-val
+	location
+	(elmo-location-map-hash mapper))))
+
+(defun elmo-map-message-location (mapper number)
+  "Return location of the message in the MAPPER with NUMBER."
+  (cdr (elmo-get-hash-val
+	(elmo-location-map-key number)
+	(elmo-location-map-hash mapper))))
+
+(defun elmo-map-numbers-to-locations (mapper numbers)
   (let (locations pair)
     (dolist (number numbers)
       (if (setq pair (elmo-get-hash-val
-		      (concat "#" (int-to-string number))
-		      (elmo-map-folder-location-hash-internal folder)))
+		      (elmo-location-map-key number)
+		      (elmo-location-map-hash mapper)))
 	  (setq locations (cons (cdr pair) locations))))
     (nreverse locations)))
 
-(defun elmo-map-folder-locations-to-numbers (folder locations)
+(defun elmo-map-locations-to-numbers (mapper locations)
   (let (numbers pair)
     (dolist (location locations)
       (if (setq pair (elmo-get-hash-val
 		      location
-		      (elmo-map-folder-location-hash-internal folder)))
+		      (elmo-location-map-hash mapper)))
 	  (setq numbers (cons (car pair) numbers))))
     (nreverse numbers)))
+
+
+(eval-and-compile
+  (luna-define-class elmo-map-folder (elmo-folder elmo-location-map))
+  (luna-define-internal-accessors 'elmo-map-folder))
 
 (luna-define-generic elmo-map-folder-list-message-locations (folder)
   "Return a location list of the FOLDER.")
@@ -85,7 +190,7 @@
    (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder)))
   (let ((numbers (mapcar
 		  'car
-		  (elmo-map-folder-location-alist-internal folder))))
+		  (elmo-location-map-alist folder))))
     (setq numbers (elmo-living-messages
 		   numbers
 		   (elmo-folder-killed-list-internal folder)))
@@ -95,18 +200,6 @@
       ;; Don't close after status.
       (unless (elmo-folder-reserve-status-p folder)
 	(elmo-folder-close-internal folder)))))
-
-(defun elmo-map-message-number (folder location)
-  "Return number of the message in the FOLDER with LOCATION."
-  (car (elmo-get-hash-val
-	location
-	(elmo-map-folder-location-hash-internal folder))))
-
-(defun elmo-map-message-location (folder number)
-  "Return location of the message in the FOLDER with NUMBER."
-  (cdr (elmo-get-hash-val
-	(concat "#" (int-to-string number))
-	(elmo-map-folder-location-hash-internal folder))))
 
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-map-folder))
   (let* ((msgdb (elmo-folder-msgdb folder))
@@ -132,102 +225,40 @@
 	(elmo-emit-signal 'message-number-changed folder old-number number)
 	(setq number (1+ number))))
     (message "Packing...done")
-    (elmo-map-folder-location-setup folder (nreverse location))
+    (elmo-location-map-setup folder (nreverse location))
     (elmo-folder-set-msgdb-internal folder new-msgdb)))
 
-(defun elmo-map-folder-location-setup (folder locations)
-  (elmo-map-folder-set-location-alist-internal
-   folder
-   locations)
-  (elmo-map-folder-set-location-hash-internal
-   folder (elmo-make-hash
-	   (* 2 (length locations))))
-  (elmo-map-folder-set-number-max-internal folder 0)
-  ;; Set number-max and hashtables.
-  (dolist (location-cons locations)
-    (if (< (elmo-map-folder-number-max-internal folder)
-	   (car location-cons))
-	(elmo-map-folder-set-number-max-internal folder (car location-cons)))
-    (elmo-set-hash-val (cdr location-cons)
-		       location-cons
-		       (elmo-map-folder-location-hash-internal folder))
-    (elmo-set-hash-val (concat "#" (int-to-string (car location-cons)))
-		       location-cons
-		       (elmo-map-folder-location-hash-internal folder))))
-
-(defun elmo-map-folder-update-locations (folder locations)
-  ;; A subroutine to make location-alist.
-  ;; location-alist is existing location-alist.
-  ;; locations is the newest locations.
-  (let ((location-hash (elmo-map-folder-location-hash-internal folder))
-	(exists-hash (elmo-make-hash (length locations)))
-	(number (elmo-map-folder-number-max-internal folder))
-	new-alist)
-    (dolist (location locations)
-      (if (elmo-get-hash-val location location-hash)
-	  (elmo-set-hash-val location t exists-hash)
-	(setq number (1+ number))
-	(let ((pair (cons number location)))
-	  (setq new-alist (cons pair new-alist))
-	  (elmo-set-hash-val (concat "#" (int-to-string number))
-			     pair
-			     location-hash)
-	  (elmo-set-hash-val location pair location-hash))))
-    (elmo-map-folder-set-number-max-internal folder number)
-    (elmo-map-folder-set-location-alist-internal
-     folder
-     (nconc
-      (delq nil
-	    (mapcar
-	     (lambda (pair)
-	       (if (elmo-get-hash-val (cdr pair) exists-hash)
-		   pair
-		 (elmo-clear-hash-val (concat "#" (int-to-string (car pair)))
-				      location-hash)
-		 (elmo-clear-hash-val (cdr pair) location-hash)
-		 nil))
-	     (elmo-map-folder-location-alist-internal folder)))
-      (nreverse new-alist)))))
-
 (luna-define-method elmo-folder-open-internal ((folder elmo-map-folder))
-  (elmo-map-folder-location-setup
-   folder
-   (elmo-msgdb-location-load (elmo-folder-msgdb-path folder)))
-  (if (elmo-folder-plugged-p folder)
-      (elmo-map-folder-update-locations
-       folder
-       (elmo-map-folder-list-message-locations folder))))
+  (elmo-location-map-load folder (elmo-folder-msgdb-path folder))
+  (when (elmo-folder-plugged-p folder)
+    (elmo-location-map-update
+     folder
+     (elmo-map-folder-list-message-locations folder))))
 
 (luna-define-method elmo-folder-commit :after ((folder elmo-map-folder))
   (when (elmo-folder-persistent-p folder)
-    (elmo-msgdb-location-save (elmo-folder-msgdb-path folder)
-			      (elmo-map-folder-location-alist-internal
-			       folder))))
+    (elmo-location-map-save folder (elmo-folder-msgdb-path folder))))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-map-folder))
-  (elmo-map-folder-set-location-alist-internal folder nil)
-  (elmo-map-folder-set-location-hash-internal folder nil))
+  (elmo-location-map-teardown folder))
 
 (luna-define-method elmo-folder-check ((folder elmo-map-folder))
-  (elmo-map-folder-update-locations
+  (elmo-location-map-update
    folder
    (elmo-map-folder-list-message-locations folder)))
 
 (luna-define-method elmo-folder-next-message-number ((folder elmo-map-folder))
-  (1+ (elmo-map-folder-number-max-internal folder)))
+  (1+ (elmo-location-map-max-number folder)))
 
 (luna-define-method elmo-folder-clear :around ((folder elmo-map-folder)
 					       &optional keep-killed)
   (unless keep-killed
-    (elmo-map-folder-set-number-max-internal folder 0)
-    (elmo-map-folder-set-location-alist-internal folder nil)
-    ;; clear hashtable.
-    (elmo-map-folder-set-location-hash-internal folder (elmo-make-hash)))
+    (elmo-location-map-clear folder))
   (luna-call-next-method))
 
 (luna-define-method elmo-folder-list-messages-internal
   ((folder elmo-map-folder) &optional nohide)
-  (mapcar 'car (elmo-map-folder-location-alist-internal folder)))
+  (mapcar 'car (elmo-location-map-alist folder)))
 
 (luna-define-method elmo-folder-set-flag :before ((folder elmo-map-folder)
 						  numbers
@@ -236,7 +267,7 @@
   (unless is-local
     (elmo-map-folder-set-flag
      folder
-     (elmo-map-folder-numbers-to-locations folder numbers)
+     (elmo-map-numbers-to-locations folder numbers)
      flag)))
 
 (luna-define-method elmo-folder-unset-flag :before ((folder elmo-map-folder)
@@ -246,7 +277,7 @@
   (unless is-local
     (elmo-map-folder-unset-flag
      folder
-     (elmo-map-folder-numbers-to-locations folder numbers)
+     (elmo-map-numbers-to-locations folder numbers)
      flag)))
 
 (luna-define-method elmo-message-fetch-internal ((folder elmo-map-folder)
@@ -261,7 +292,7 @@
 						       flag)
   (let ((locations (elmo-map-folder-list-flagged folder flag)))
     (if (listp locations)
-	(elmo-map-folder-locations-to-numbers folder locations)
+	(elmo-map-locations-to-numbers folder locations)
       t)))
 
 (luna-define-generic elmo-map-folder-list-flagged (folder flag)
@@ -277,23 +308,13 @@ Return t if the message list is not available.")
 							  numbers)
   (elmo-map-folder-delete-messages
    folder
-   (elmo-map-folder-numbers-to-locations folder numbers)))
+   (elmo-map-numbers-to-locations folder numbers)))
 
 (luna-define-method elmo-folder-detach-messages :around ((folder
 							  elmo-map-folder)
 							 numbers)
   (when (luna-call-next-method)
-    (dolist (number numbers)
-      (elmo-map-folder-set-location-alist-internal
-       folder
-       (delq (elmo-get-hash-val
-	      (concat "#" (int-to-string number))
-	      (elmo-map-folder-location-hash-internal
-	       folder))
-	     (elmo-map-folder-location-alist-internal folder)))
-      (elmo-clear-hash-val (concat "#" (int-to-string number))
-			   (elmo-map-folder-location-hash-internal
-			    folder)))
+    (elmo-location-map-remove-numbers folder numbers)
     t)) ; success
 
 (require 'product)
