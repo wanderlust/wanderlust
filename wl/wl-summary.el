@@ -1260,9 +1260,9 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
   (when wl-summary-buffer-temp-mark-list
     (wl-summary-exec-with-confirmation
      (format "Execute marks in %s? (answer \"n\" to discard them) "
-	     (wl-summary-buffer-folder-name)))
-    (wl-summary-delete-all-temp-marks 'no-msg)
-    (setq wl-summary-scored nil)))
+	     (wl-summary-buffer-folder-name))))
+  (wl-summary-delete-all-temp-marks 'no-msg)
+  (setq wl-summary-scored nil))
 
 ;; a subroutine for wl-summary-exit/wl-save-status
 ;; Note that folder is not commited here.
