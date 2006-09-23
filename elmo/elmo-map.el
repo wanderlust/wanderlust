@@ -60,19 +60,21 @@
 (defmacro elmo-location-map-key (number)
   `(concat "#" (int-to-string ,number)))
 
-(defun elmo-location-map-load (mapper directory)
+(defun elmo-location-map-load (location-map directory)
   (elmo-location-map-setup
-   mapper
+   location-map
    (elmo-msgdb-location-load directory)))
 
-(defun elmo-location-map-save (mapper directory)
-  (let ((alist (elmo-location-map-alist mapper)))
+(defun elmo-location-map-save (location-map directory)
+  (let ((alist (elmo-location-map-alist location-map)))
     (elmo-msgdb-location-save
      directory
-     (cons (cons (elmo-location-map-max-number mapper) nil)
+     (cons (cons (elmo-location-map-max-number location-map) nil)
 	   alist))))
 
-(defun elmo-location-map-setup (mapper locations)
+(defun elmo-location-map-setup (location-map locations)
+  "Setup internal data of LOCATION-MAP by LOCATIONS.
+Return a location alist."
   (let ((hash (elmo-make-hash (length locations)))
 	(max-number 0))
     ;; Set number-max and hashtables.
@@ -82,23 +84,25 @@
 	(elmo-set-hash-val (cdr pair) pair hash)
 	(elmo-set-hash-val (elmo-location-map-key (car pair)) pair hash)))
     (let ((inhibit-quit t))
-      (elmo-location-map-set-max-number mapper max-number)
-      (elmo-location-map-set-alist mapper locations)
-      (elmo-location-map-set-hash mapper hash))))
+      (elmo-location-map-set-max-number location-map max-number)
+      (elmo-location-map-set-hash location-map hash)
+      (elmo-location-map-set-alist location-map locations))))
 
-(defun elmo-location-map-teardown (mapper)
-  (elmo-location-map-set-alist mapper nil)
-  (elmo-location-map-set-hash mapper nil))
+(defun elmo-location-map-teardown (location-map)
+  (elmo-location-map-set-alist location-map nil)
+  (elmo-location-map-set-hash location-map nil))
 
-(defun elmo-location-map-clear (mapper)
-  (elmo-location-map-set-max-number mapper 0)
-  (elmo-location-map-set-alist mapper nil)
-  (elmo-location-map-set-hash mapper (elmo-make-hash)))
+(defun elmo-location-map-clear (location-map)
+  (elmo-location-map-set-max-number location-map 0)
+  (elmo-location-map-set-alist location-map nil)
+  (elmo-location-map-set-hash location-map (elmo-make-hash)))
 
-(defun elmo-location-map-update (mapper locations)
-  (let ((old-hash (elmo-location-map-hash mapper))
+(defun elmo-location-map-update (location-map locations)
+  "Update location alist in LOCATION-MAP by LOCATIONS.
+Return new location alist."
+  (let ((old-hash (elmo-location-map-hash location-map))
 	(new-hash (elmo-make-hash (length locations)))
-	(number (elmo-location-map-max-number mapper))
+	(number (elmo-location-map-max-number location-map))
 	new-alist)
     (setq new-alist
 	  (mapcar
@@ -112,50 +116,50 @@
 	       entry))
 	   locations))
     (let ((inhibit-quit t))
-      (elmo-location-map-set-max-number mapper number)
-      (elmo-location-map-set-alist mapper new-alist)
-      (elmo-location-map-set-hash mapper new-hash))))
+      (elmo-location-map-set-max-number location-map number)
+      (elmo-location-map-set-hash location-map new-hash)
+      (elmo-location-map-set-alist location-map new-alist))))
 
-(defun elmo-location-map-remove-numbers (mapper numbers)
-  (let ((alist (elmo-location-map-alist mapper))
-	(hash (elmo-location-map-hash mapper)))
+(defun elmo-location-map-remove-numbers (location-map numbers)
+  (let ((alist (elmo-location-map-alist location-map))
+	(hash (elmo-location-map-hash location-map)))
     (dolist (number numbers)
       (let* ((key (elmo-location-map-key number))
 	     (entry (elmo-get-hash-val key hash))
 	     (inhibit-quit t))
 	(elmo-location-map-set-alist
-	 mapper
+	 location-map
 	 (setq alist (delq entry alist)))
 	(elmo-clear-hash-val key hash)
 	(elmo-clear-hash-val (cdr entry) hash)))))
 
-(defun elmo-map-message-number (mapper location)
+(defun elmo-map-message-number (location-map location)
   "Return number of the message in the MAPPER with LOCATION."
   (car (elmo-get-hash-val
 	location
-	(elmo-location-map-hash mapper))))
+	(elmo-location-map-hash location-map))))
 
-(defun elmo-map-message-location (mapper number)
+(defun elmo-map-message-location (location-map number)
   "Return location of the message in the MAPPER with NUMBER."
   (cdr (elmo-get-hash-val
 	(elmo-location-map-key number)
-	(elmo-location-map-hash mapper))))
+	(elmo-location-map-hash location-map))))
 
-(defun elmo-map-numbers-to-locations (mapper numbers)
+(defun elmo-map-numbers-to-locations (location-map numbers)
   (let (locations pair)
     (dolist (number numbers)
       (if (setq pair (elmo-get-hash-val
 		      (elmo-location-map-key number)
-		      (elmo-location-map-hash mapper)))
+		      (elmo-location-map-hash location-map)))
 	  (setq locations (cons (cdr pair) locations))))
     (nreverse locations)))
 
-(defun elmo-map-locations-to-numbers (mapper locations)
+(defun elmo-map-locations-to-numbers (location-map locations)
   (let (numbers pair)
     (dolist (location locations)
       (if (setq pair (elmo-get-hash-val
 		      location
-		      (elmo-location-map-hash mapper)))
+		      (elmo-location-map-hash location-map)))
 	  (setq numbers (cons (car pair) numbers))))
     (nreverse numbers)))
 

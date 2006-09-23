@@ -33,6 +33,7 @@
 
 (require 'elmo-msgdb)
 (require 'elmo-net)
+(require 'elmo-map)
 
 (eval-when-compile
   (require 'elmo-util))
@@ -88,9 +89,14 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 
 ;;; ELMO POP3 folder
 (eval-and-compile
-  (luna-define-class elmo-pop3-folder (elmo-net-folder)
-		     (use-uidl location-alist))
+  (luna-define-class elmo-pop3-folder (elmo-net-folder elmo-location-map)
+		     (use-uidl))
   (luna-define-internal-accessors 'elmo-pop3-folder))
+
+(defsubst elmo-pop3-folder-use-uidl (folder)
+  (if elmo-inhibit-number-mapping
+      nil
+    (elmo-pop3-folder-use-uidl-internal folder)))
 
 (luna-define-method elmo-folder-initialize ((folder elmo-pop3-folder) name)
   (let ((elmo-network-stream-type-alist
@@ -168,10 +174,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
   "Get POP3 session for FOLDER.
 If IF-EXISTS is non-nil, don't get new session.
 If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
-  (let ((elmo-pop3-use-uidl-internal (if elmo-inhibit-number-mapping
-					 nil
-				       (elmo-pop3-folder-use-uidl-internal
-					folder))))
+  (let ((elmo-pop3-use-uidl-internal (elmo-pop3-folder-use-uidl folder)))
     (prog1
 	(if (eq if-exists 'any-exists)
 	    (or (elmo-network-get-session 'elmo-pop3-session
@@ -568,32 +571,7 @@ until the login delay period has expired"))
 	(error "POP3: Error in UIDL")))))
 
 (defun elmo-pop3-list-folder-by-location (folder locations)
-  (let* ((location-alist (elmo-pop3-folder-location-alist-internal folder))
-	 (locations-in-db (mapcar 'cdr location-alist))
-	 result new-locs new-alist deleted-locs i)
-    (setq new-locs
-	  (elmo-delete-if (function
-			   (lambda (x) (member x locations-in-db)))
-			  locations))
-    (setq deleted-locs
-	  (elmo-delete-if (function
-			   (lambda (x) (member x locations)))
-			  locations-in-db))
-    (setq i (or (elmo-max-of-list (mapcar 'car location-alist)) 0))
-    (mapcar
-     (function
-      (lambda (x)
-	(setq location-alist
-	      (delq (rassoc x location-alist) location-alist))))
-     deleted-locs)
-    (while new-locs
-      (setq i (1+ i))
-      (setq new-alist (cons (cons i (car new-locs)) new-alist))
-      (setq new-locs (cdr new-locs)))
-    (setq result (nconc location-alist new-alist))
-    (setq result (sort result (lambda (x y) (< (car x)(car y)))))
-    (elmo-pop3-folder-set-location-alist-internal folder result)
-    (mapcar 'car result)))
+  (mapcar #'car (elmo-location-map-update folder locations)))
 
 (defun elmo-pop3-list-by-uidl-subr (folder &optional nonsort)
   (let ((flist (elmo-pop3-list-folder-by-location
@@ -619,8 +597,7 @@ until the login delay period has expired"))
 	(error "POP3: Error in list")))))
 
 (defsubst elmo-pop3-folder-list-messages (folder)
-  (if (and (not elmo-inhibit-number-mapping)
-	   (elmo-pop3-folder-use-uidl-internal folder))
+  (if (elmo-pop3-folder-use-uidl folder)
       (elmo-pop3-list-by-uidl-subr folder)
     (elmo-pop3-list-by-list folder)))
 
@@ -631,15 +608,15 @@ until the login delay period has expired"))
 (luna-define-method elmo-folder-status ((folder elmo-pop3-folder))
   (elmo-folder-open-internal folder)
   (elmo-folder-check folder)
-  (if (elmo-pop3-folder-use-uidl-internal folder)
+  (if (elmo-pop3-folder-use-uidl folder)
       (prog1
 	  (elmo-pop3-list-by-uidl-subr folder 'nonsort)
 	(elmo-folder-close-internal folder))
-    (let* ((process
-	    (elmo-network-session-process-internal
-	     (elmo-pop3-get-session folder)))
-	   (total 0)
-	   response)
+    (let ((process
+	   (elmo-network-session-process-internal
+	    (elmo-pop3-get-session folder)))
+	  (total 0)
+	  response)
       (with-current-buffer (process-buffer process)
 	(elmo-pop3-send-command process "STAT")
 	(setq response (cdr (elmo-pop3-read-response process)))
@@ -715,30 +692,11 @@ until the login delay period has expired"))
   (let ((process (elmo-network-session-process-internal
 		  (elmo-pop3-get-session folder))))
     (with-current-buffer (process-buffer process)
-      (elmo-pop3-sort-msgdb-by-original-number
+      (elmo-pop3-msgdb-create-by-header
        folder
-       (elmo-pop3-msgdb-create-by-header
-	folder
-	process
-	numlist
-	flag-table
-	(if (elmo-pop3-folder-use-uidl-internal folder)
-	    (elmo-pop3-folder-location-alist-internal folder)))))))
-
-(defun elmo-pop3-sort-msgdb-by-original-number (folder msgdb)
-  (let ((location-alist (elmo-pop3-folder-location-alist-internal folder)))
-    (when location-alist
-      (elmo-msgdb-sort-entities
-       msgdb
-       (lambda (ent1 ent2 loc-alist)
-	 (< (elmo-pop3-uidl-to-number
-	     (cdr (assq (elmo-message-entity-number ent1)
-			loc-alist)))
-	    (elmo-pop3-uidl-to-number
-	     (cdr (assq (elmo-message-entity-number ent2)
-			loc-alist)))))
-       location-alist))
-    msgdb))
+       process
+       (sort numlist #'<)
+       flag-table))))
 
 (defun elmo-pop3-uidl-to-number (uidl)
   (string-to-number (elmo-get-hash-val uidl
@@ -749,40 +707,39 @@ until the login delay period has expired"))
 		     elmo-pop3-number-uidl-hash))
 
 (defun elmo-pop3-number-to-size (number)
-  (elmo-get-hash-val (format "#%d" number)
-		     elmo-pop3-size-hash))
+  (string-to-number
+   (elmo-get-hash-val (format "#%d" number) elmo-pop3-size-hash)))
 
 (defun elmo-pop3-msgdb-create-by-header (folder process numlist
-						flag-table
-						loc-alist)
+						flag-table)
   (let ((tmp-buffer (get-buffer-create " *ELMO Overview TMP*")))
-    (with-current-buffer (process-buffer process)
-      (if loc-alist ; use uidl.
-	  (setq numlist
-		(delq
-		 nil
-		 (mapcar
-		  (lambda (number)
-		    (elmo-pop3-uidl-to-number (cdr (assq number loc-alist))))
-		  numlist))))
-      (elmo-pop3-retrieve-headers process tmp-buffer numlist)
-      (prog1
+    (unwind-protect
+	(with-current-buffer (process-buffer process)
+	  (when (elmo-pop3-folder-use-uidl folder)
+	    (setq numlist
+		  (delq
+		   nil
+		   (mapcar
+		    (lambda (number)
+		      (elmo-pop3-uidl-to-number
+		       (elmo-map-message-location folder number)))
+		    numlist))))
+	  (elmo-pop3-retrieve-headers process tmp-buffer numlist)
 	  (elmo-pop3-msgdb-create-message
 	   folder
 	   tmp-buffer
 	   process
 	   (length numlist)
 	   numlist
-	   flag-table loc-alist)
-	(kill-buffer tmp-buffer)))))
+	   flag-table))
+      (kill-buffer tmp-buffer))))
 
 (defun elmo-pop3-msgdb-create-message (folder
 				       buffer
 				       process
 				       num
 				       numlist
-				       flag-table
-				       loc-alist)
+				       flag-table)
   (save-excursion
     (let ((new-msgdb (elmo-make-msgdb))
 	  beg entity i number message-id flags)
@@ -808,16 +765,14 @@ until the login delay period has expired"))
 		(elmo-message-entity-set-field
 		 entity
 		 'size
-		 (string-to-number
-		  (elmo-pop3-number-to-size
-		   (elmo-message-entity-number entity))))
-		(if (setq number
-			  (car
-			   (rassoc
-			    (elmo-pop3-number-to-uidl
-			     (elmo-message-entity-number entity))
-			    loc-alist)))
-		    (elmo-message-entity-set-number entity number)))
+		 (elmo-pop3-number-to-size
+		  (elmo-message-entity-number entity)))
+		(when (setq number
+			    (elmo-map-message-number
+			     folder
+			     (elmo-pop3-number-to-uidl
+			      (elmo-message-entity-number entity))))
+		  (elmo-message-entity-set-number entity number)))
 	      (setq message-id (elmo-message-entity-field entity 'message-id)
 		    flags (elmo-flag-table-get flag-table message-id))
 	      (elmo-global-flags-set flags folder number message-id)
@@ -845,19 +800,16 @@ until the login delay period has expired"))
       t)))
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-pop3-folder))
-  (if (and (not elmo-inhibit-number-mapping)
-	   (elmo-pop3-folder-use-uidl-internal folder))
-      (elmo-pop3-folder-set-location-alist-internal
-       folder (elmo-msgdb-location-load (elmo-folder-msgdb-path folder)))))
+  (when (elmo-pop3-folder-use-uidl folder)
+    (elmo-location-map-load folder (elmo-folder-msgdb-path folder))))
 
 (luna-define-method elmo-folder-commit :after ((folder elmo-pop3-folder))
-  (when (elmo-folder-persistent-p folder)
-    (elmo-msgdb-location-save (elmo-folder-msgdb-path folder)
-			      (elmo-pop3-folder-location-alist-internal
-			       folder))))
+  (when (and (not elmo-inhibit-number-mapping)
+	     (elmo-folder-persistent-p folder))
+    (elmo-location-map-save folder (elmo-folder-msgdb-path folder))))
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-pop3-folder))
-  (elmo-pop3-folder-set-location-alist-internal folder nil)
+  (elmo-location-map-teardown folder)
   ;; Just close connection
   (elmo-folder-check folder))
 
@@ -865,16 +817,14 @@ until the login delay period has expired"))
 						number strategy
 						&optional section
 						outbuf unseen)
-  (let* ((loc-alist (elmo-pop3-folder-location-alist-internal folder))
-	 (process (elmo-network-session-process-internal
-		   (elmo-pop3-get-session folder)))
+  (let ((process (elmo-network-session-process-internal
+		  (elmo-pop3-get-session folder)))
 	size  response errmsg msg)
     (with-current-buffer (process-buffer process)
-      (if loc-alist
-	  (setq number (elmo-pop3-uidl-to-number
-			(cdr (assq number loc-alist)))))
-      (setq size (string-to-number
-		  (elmo-pop3-number-to-size number)))
+      (when (elmo-pop3-folder-use-uidl folder)
+	(setq number (elmo-pop3-uidl-to-number
+		      (elmo-map-message-location folder number))))
+      (setq size (elmo-pop3-number-to-size number))
       (when number
 	(elmo-pop3-send-command process
 				(format "retr %s" number))
@@ -904,29 +854,28 @@ until the login delay period has expired"))
 	(elmo-delete-cr-buffer)
 	response))))
 
-(defun elmo-pop3-delete-msg (process number loc-alist)
-  (with-current-buffer (process-buffer process)
-    (let (response errmsg msg)
-      (if loc-alist
-	  (setq number (elmo-pop3-uidl-to-number
-			(cdr (assq number loc-alist)))))
-      (if number
-	  (progn
-	    (elmo-pop3-send-command process
-				    (format "dele %s" number))
-	    (when (null (setq response (cdr (elmo-pop3-read-response
-					     process t))))
-	      (error "Deleting message failed")))
-	(error "Deleting message failed")))))
+(defun elmo-pop3-delete-msg (process number)
+  (unless number
+    (error "Deleting message failed"))
+  (elmo-pop3-send-command process (format "dele %s" number))
+  (when (null (cdr (elmo-pop3-read-response process t)))
+    (error "Deleting message failed")))
 
 (luna-define-method elmo-folder-delete-messages-plugged ((folder
 							  elmo-pop3-folder)
 							 msgs)
-  (let ((loc-alist (elmo-pop3-folder-location-alist-internal folder))
-	(process (elmo-network-session-process-internal
+  (let ((process (elmo-network-session-process-internal
 		  (elmo-pop3-get-session folder))))
-    (mapcar '(lambda (msg) (elmo-pop3-delete-msg process msg loc-alist))
-	    msgs)))
+    (with-current-buffer (process-buffer process)
+      (dolist (number (if (elmo-pop3-folder-use-uidl folder)
+			  (mapcar
+			   (lambda (number)
+			     (elmo-pop3-uidl-to-number
+			      (elmo-map-message-location folder number)))
+			   msgs)
+			msgs))
+	(elmo-pop3-delete-msg process number))
+      t)))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-pop3-folder) number)
   elmo-pop3-use-cache)
@@ -938,7 +887,7 @@ until the login delay period has expired"))
 (luna-define-method elmo-folder-clear :around ((folder elmo-pop3-folder)
 					       &optional keep-killed)
   (unless keep-killed
-    (elmo-pop3-folder-set-location-alist-internal folder nil))
+    (elmo-location-map-clear folder))
   (luna-call-next-method))
 
 (luna-define-method elmo-folder-check ((folder elmo-pop3-folder))
