@@ -1,5 +1,12 @@
 2006-09-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* elmo-map.el (elmo-location-map-setup): Change an argument
+	`locations' to optional.
+	(elmo-location-map-clear): Abolish.
+	(elmo-folder-clear): Follow the API change.
+
+	* elmo-pop3.el (elmo-folder-clear): Ditto.
+
 	* elmo-pop3.el (toplevel): Require elmo-map.
 	(elmo-pop3-folder): Inherit elmo-location-map and abolish
 	location-alist slot (All other related portions are changed).

@@ -887,7 +887,7 @@ until the login delay period has expired"))
 (luna-define-method elmo-folder-clear :around ((folder elmo-pop3-folder)
 					       &optional keep-killed)
   (unless keep-killed
-    (elmo-location-map-clear folder))
+    (elmo-location-map-setup folder))
   (luna-call-next-method))
 
 (luna-define-method elmo-folder-check ((folder elmo-pop3-folder))

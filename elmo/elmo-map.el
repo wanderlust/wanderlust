@@ -72,7 +72,7 @@
      (cons (cons (elmo-location-map-max-number location-map) nil)
 	   alist))))
 
-(defun elmo-location-map-setup (location-map locations)
+(defun elmo-location-map-setup (location-map &optional locations)
   "Setup internal data of LOCATION-MAP by LOCATIONS.
 Return a location alist."
   (let ((hash (elmo-make-hash (length locations)))
@@ -91,11 +91,6 @@ Return a location alist."
 (defun elmo-location-map-teardown (location-map)
   (elmo-location-map-set-alist location-map nil)
   (elmo-location-map-set-hash location-map nil))
-
-(defun elmo-location-map-clear (location-map)
-  (elmo-location-map-set-max-number location-map 0)
-  (elmo-location-map-set-alist location-map nil)
-  (elmo-location-map-set-hash location-map (elmo-make-hash)))
 
 (defun elmo-location-map-update (location-map locations)
   "Update location alist in LOCATION-MAP by LOCATIONS.
@@ -257,7 +252,7 @@ Return new location alist."
 (luna-define-method elmo-folder-clear :around ((folder elmo-map-folder)
 					       &optional keep-killed)
   (unless keep-killed
-    (elmo-location-map-clear folder))
+    (elmo-location-map-setup folder))
   (luna-call-next-method))
 
 (luna-define-method elmo-folder-list-messages-internal
