@@ -1,5 +1,6 @@
 ** asynchronous access to the folders
 ** improvement of folder mode
+** abbreviation of folder names (consider huge number of folders)
 ** independent cache mark
 ** History Folder (proposal by Tomotaka SUWA)
 ** enable to define folder icons in elmo.el
