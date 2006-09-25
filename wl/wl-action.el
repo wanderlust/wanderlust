@@ -102,6 +102,9 @@ Return number if put mark succeed"
 	      (when data
 		(wl-summary-print-argument number data)))
 	    (set-buffer-modified-p nil)
+	    (when (and (eq wl-summary-buffer-view 'thread)
+		       interactive)
+	      (wl-thread-open-close 'force-open))
 	    ;; Return value.
 	    number))
       ;; Move the cursor.

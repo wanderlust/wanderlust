@@ -1,3 +1,8 @@
+2006-09-25  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-action.el (wl-summary-set-mark): If the cursor is on folded
+	thread, open it (suggested by Greg A. Woods [wl-en:1861]).
+
 2006-09-22  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-cleanup-temp-marks): Cleanup correctly
