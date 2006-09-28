@@ -1004,6 +1004,16 @@ Message is inserted to the summary buffer."
     (delete-char 1) ; delete '\n'
     (wl-thread-print-argument-region beg (point))))
 
+(defun wl-thread-close-children (&optional number)
+  (interactive)
+  (when (eq wl-summary-buffer-view 'thread)
+    (setq number (or number (wl-summary-message-number)))
+    (save-excursion
+      (let ((inhibit-read-only t)
+	    (entity (wl-thread-get-entity number)))
+	(when (wl-thread-entity-get-opened entity)
+	  (wl-thread-close entity))))))
+
 (defun wl-thread-open (entity)
   (let (depth beg)
     (beginning-of-line)
@@ -1018,6 +1028,16 @@ Message is inserted to the summary buffer."
 			      (nth 3 entity)) nil)
     (delete-char 1) ; delete '\n'
     (wl-thread-print-argument-region beg (point))))
+
+(defun wl-thread-open-children (&optional number)
+  (interactive)
+  (when (eq wl-summary-buffer-view 'thread)
+    (setq number (or number (wl-summary-message-number)))
+    (save-excursion
+      (let ((inhibit-read-only t)
+	    (entity (wl-thread-get-entity number)))
+	(unless (wl-thread-entity-get-opened entity)
+	  (wl-thread-open entity))))))
 
 (defun wl-thread-open-close (&optional force-open)
   (interactive "P")

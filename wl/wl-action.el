@@ -100,6 +100,9 @@ Return number if put mark succeed"
 		(wl-highlight-summary-current-line))
 	      (when data
 		(wl-summary-print-argument number data)))
+	    (when (and (eq wl-summary-buffer-view 'thread)
+		       interactive)
+	      (wl-thread-open-children number))
 	    (set-buffer-modified-p nil)
 	    ;; Return value.
 	    number))

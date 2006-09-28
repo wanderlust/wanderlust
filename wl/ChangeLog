@@ -1,5 +1,10 @@
 2006-09-28  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
+	* wl-thread.el (wl-thread-close-children): New function.
+	(wl-thread-open-children): Ditto.
+	* wl-action.el (wl-summary-set-mark): Redo the last change by
+	using it.
+
 	* wl-action.el (wl-summary-set-mark): Undo the last change.
 	Forbid interactive call.
 
