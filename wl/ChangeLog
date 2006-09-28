@@ -1,3 +1,20 @@
+2006-09-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-define-dummy-functions): New macro.
+	(wl-mime-pgp-decrypt-region-with-epg): Renamed from
+	`wl-mime-pgp-decrypt-region'.
+	(wl-mime-pgp-verify-region-with-epg): Renamed from
+	`wl-mime-pgp-verify-region'.
+	(wl-mime-pgp-decrypt-region-with-pgg): Renamed from
+	`wl-mime-pgp-decrypt-region'.
+	(wl-mime-pgp-verify-region-with-pgg): Renamed from
+	`wl-mime-pgp-verify-region'.
+	(wl-mime-pgp-decrypt-region): New function; To select dispatch
+	function at runtime.
+	(wl-mime-pgp-verify-region): Ditto.
+
+	* wl-vars.el (wl-use-pgp-module): New user option.
+
 2006-09-25  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-action.el (wl-summary-set-mark): If the cursor is on folded

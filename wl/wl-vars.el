@@ -2936,6 +2936,19 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
   :type 'string
   :group 'wl-pref)
 
+(defcustom wl-use-pgp-module
+  (condition-case nil
+      (progn
+	(require 'epg-config)
+	(epg-check-configuration (epg-configuration))
+	'epg)
+    (error 'pgg))
+  "*Which PGG library to be used."
+  :type '(choice (const :tag "EasyPG Library" epg)
+		 (const :tag "PGG Library" pgg)
+		 (const :tag "Don't use PGP" nil))
+  :group 'wl-pref)
+
 ;;; Internal variables
 (defvar wl-init nil)
 

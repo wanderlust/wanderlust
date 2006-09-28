@@ -476,76 +476,105 @@ It calls following-method selected from variable
 	  (wl-summary-sync nil "update"))))))
 
 ;; PGP
-(static-cond
- ((require 'epg nil t)
-  (defun wl-mime-pgp-decrypt-region (beg end &optional no-decode)
-    (require 'epg)
-    (message "Decrypting...")
-    (insert (prog1
-		(decode-coding-string
-		 (epg-decrypt-string
-		  (epg-make-context)
-		  (buffer-substring beg end))
-		 (if no-decode 'raw-text wl-cs-autoconv))
-	      (delete-region beg end)))
-    (message "Decrypting...done")
-    last-coding-system-used)
+(eval-when-compile
+  (defmacro wl-define-dummy-functions (&rest symbols)
+    `(dolist (symbol (quote ,symbols))
+       (defalias symbol 'ignore)))
 
-  (defun wl-mime-pgp-verify-region (beg end &optional coding-system)
-    (require 'epg)
-    (let ((context (epg-make-context)))
-      (message "Verifying...")
-      (epg-verify-string
-       context
-       (encode-coding-string
-	(buffer-substring beg end)
-	(if coding-system
-	    (coding-system-change-eol-conversion coding-system 'dos)
-	  'raw-text-dos)))
-      (message "Verifying...done")
-      (when (epg-context-result-for context 'verify)
-	(epa-display-verify-result
-	 (epg-context-result-for context 'verify))))))
+  (condition-case nil
+      (require 'epa)
+    (error
+     (wl-define-dummy-functions epg-make-context
+				epg-decrypt-string
+				epg-verify-string
+				epg-context-result-for
+				epa-display-verify-result)))
+  (condition-case nil
+      (require 'pgg)
+    (error
+     (wl-define-dummy-functions pgg-decrypt-region
+				pgg-verify-region
+				pgg-display-output-buffer))))
 
- ((require 'pgg nil t)
-  (defun wl-mime-pgp-decrypt-region (beg end &optional no-decode)
-    (require 'pgg)
-    (let ((buffer-file-coding-system wl-cs-autoconv)
-	  status)
-      (setq status (pgg-decrypt-region beg end))
-      (if no-decode
-	  (when status
-	    (delete-region beg end)
-	    (insert-buffer-substring pgg-output-buffer))
-	(pgg-display-output-buffer beg end status))
-      (unless status
-	(error "Decryption is failed"))
-      last-coding-system-used))
+(defun wl-mime-pgp-decrypt-region-with-epg (beg end &optional no-decode)
+  (require 'epg)
+  (message "Decrypting...")
+  (insert (prog1
+	      (decode-coding-string
+	       (epg-decrypt-string
+		(epg-make-context)
+		(buffer-substring beg end))
+	       (if no-decode 'raw-text wl-cs-autoconv))
+	    (delete-region beg end)))
+  (message "Decrypting...done")
+  last-coding-system-used)
 
-  (defun wl-mime-pgp-verify-region (beg end &optional coding-system)
-    (require 'pgg)
-    (let ((message-buffer (current-buffer))
-	  success)
-      (with-temp-buffer
-	(insert-buffer-substring message-buffer beg end)
-	(when coding-system
-	  (encode-coding-region (point-min) (point-max) coding-system))
-	(setq success (pgg-verify-region (point-min) (point-max) nil 'fetch)))
-      (mime-show-echo-buffer)
-      (set-buffer mime-echo-buffer-name)
-      (set-window-start
-       (get-buffer-window mime-echo-buffer-name)
-       (point-max))
-      (insert-buffer-substring
-       (if success
-	   pgg-output-buffer
-	 pgg-errors-buffer)))))
- (t
-  (defun wl-mime-pgp-decrypt-region (beg end &optional no-decode)
-    (error "Does not support PGP decryption"))
+(defun wl-mime-pgp-verify-region-with-epg (beg end &optional coding-system)
+  (require 'epa)
+  (let ((context (epg-make-context)))
+    (message "Verifying...")
+    (epg-verify-string
+     context
+     (encode-coding-string
+      (buffer-substring beg end)
+      (if coding-system
+	  (coding-system-change-eol-conversion coding-system 'dos)
+	'raw-text-dos)))
+    (message "Verifying...done")
+    (when (epg-context-result-for context 'verify)
+      (epa-display-verify-result
+       (epg-context-result-for context 'verify)))))
 
-  (defun wl-mime-pgp-verify-region (beg end &optional coding-system)
-    (error "Does not support PGP verification"))))
+(defun wl-mime-pgp-decrypt-region-with-pgg (beg end &optional no-decode)
+  (require 'pgg)
+  (let ((buffer-file-coding-system wl-cs-autoconv)
+	status)
+    (setq status (pgg-decrypt-region beg end))
+    (if no-decode
+	(when status
+	  (delete-region beg end)
+	  (insert-buffer-substring pgg-output-buffer))
+      (pgg-display-output-buffer beg end status))
+    (unless status
+      (error "Decryption is failed"))
+    last-coding-system-used))
+
+(defun wl-mime-pgp-verify-region-with-pgg (beg end &optional coding-system)
+  (require 'pgg)
+  (let ((message-buffer (current-buffer))
+	success)
+    (with-temp-buffer
+      (insert-buffer-substring message-buffer beg end)
+      (when coding-system
+	(encode-coding-region (point-min) (point-max) coding-system))
+      (setq success (pgg-verify-region (point-min) (point-max) nil 'fetch)))
+    (mime-show-echo-buffer)
+    (set-buffer mime-echo-buffer-name)
+    (set-window-start
+     (get-buffer-window mime-echo-buffer-name)
+     (point-max))
+    (insert-buffer-substring
+     (if success
+	 pgg-output-buffer
+       pgg-errors-buffer))))
+
+(defsubst wl-mime-pgp-decrypt-region (beg end &optional no-decode)
+  (case wl-use-pgp-module
+    (epg
+     (wl-mime-pgp-decrypt-region-with-epg beg end no-decode))
+    (pgg
+     (wl-mime-pgp-decrypt-region-with-pgg beg end no-decode))
+    (t
+     (error "Don't support PGP decryption"))))
+
+(defsubst wl-mime-pgp-verify-region (beg end &optional coding-system)
+  (case wl-use-pgp-module
+    (epg
+     (wl-mime-pgp-verify-region-with-epg beg end coding-system))
+    (pgg
+     (wl-mime-pgp-verify-region-with-pgg beg end coding-system))
+    (t
+     (error "Don't support PGP decryption"))))
 
 (defun wl-message-decrypt-pgp-nonmime ()
   "Decrypt PGP encrypted region"
