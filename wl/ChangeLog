@@ -1,6 +1,6 @@
 2006-09-28  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
-	* wl-action.el (wl-summary-set-mark): Fix the last change.
+	* wl-action.el (wl-summary-set-mark): Undo the last change.
 	Forbid interactive call.
 
 2006-09-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>

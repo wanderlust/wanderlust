@@ -103,10 +103,6 @@ Return number if put mark succeed"
 	    (set-buffer-modified-p nil)
 	    ;; Return value.
 	    number))
-      (when (and (eq wl-summary-buffer-view 'thread)
-		 interactive)
-	(wl-thread-open-close 'force-open)
-	(wl-summary-jump-to-msg number))
       ;; Move the cursor.
       (if interactive
 	  (if (eq wl-summary-move-direction-downward nil)
