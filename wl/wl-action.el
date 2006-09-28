@@ -53,7 +53,6 @@
 
 ;; Set mark
 (defun wl-summary-set-mark (&optional set-mark number interactive data)
-  (interactive)
   "Set temporary mark SET-MARK on the message with NUMBER.
 NUMBER is the message number to set the mark on.
 INTERACTIVE is set as t if it have to run interactively.
@@ -102,13 +101,14 @@ Return number if put mark succeed"
 	      (when data
 		(wl-summary-print-argument number data)))
 	    (set-buffer-modified-p nil)
-	    (when (and (eq wl-summary-buffer-view 'thread)
-		       interactive)
-	      (wl-thread-open-close 'force-open))
 	    ;; Return value.
 	    number))
+      (when (and (eq wl-summary-buffer-view 'thread)
+		 interactive)
+	(wl-thread-open-close 'force-open)
+	(wl-summary-jump-to-msg number))
       ;; Move the cursor.
-      (if (or interactive (interactive-p))
+      (if interactive
 	  (if (eq wl-summary-move-direction-downward nil)
 	      (wl-summary-prev)
 	    (wl-summary-next))))))
