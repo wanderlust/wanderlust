@@ -1069,7 +1069,7 @@ If optional argument IF-EXISTS is nil, load on demand.
 (eval-and-compile
   (luna-define-class elmo-file-tag))
 
-(defconst elmo-append-messages-disptch-table
+(defconst elmo-append-messages-dispatch-table
   '(((nil	. null)		. elmo-folder-append-messages-*-null)
     ((filter	. nil)		. elmo-folder-append-messages-filter-*)
     ((nil	. filter)	. elmo-folder-append-messages-*-filter)
@@ -1113,9 +1113,9 @@ If second optional argument SAME-NUMBER is specified,
 message number is preserved \(if possible\).
 Returns a list of message numbers successfully appended."
   (let ((rest (if caller
-		  (cdr (memq (rassq caller elmo-append-messages-disptch-table)
-			     elmo-append-messages-disptch-table))
-		elmo-append-messages-disptch-table))
+		  (cdr (memq (rassq caller elmo-append-messages-dispatch-table)
+			     elmo-append-messages-dispatch-table))
+		elmo-append-messages-dispatch-table))
 	result)
     (while rest
       (let ((types (car (car rest))))
