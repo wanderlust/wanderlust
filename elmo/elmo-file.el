@@ -66,7 +66,8 @@
   :group 'elmo)
 
 (eval-and-compile
-  (luna-define-class elmo-file-folder (elmo-map-folder) (file-path))
+  (luna-define-class elmo-file-folder (elmo-map-folder elmo-file-tag)
+		     (file-path))
   (luna-define-internal-accessors 'elmo-file-folder))
 
 (luna-define-method elmo-folder-initialize ((folder

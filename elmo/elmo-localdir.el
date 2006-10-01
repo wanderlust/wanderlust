@@ -46,7 +46,7 @@
 
 ;;; ELMO Local directory folder
 (eval-and-compile
-  (luna-define-class elmo-localdir-folder (elmo-folder)
+  (luna-define-class elmo-localdir-folder (elmo-folder elmo-file-tag)
 		     (dir-name directory))
   (luna-define-internal-accessors 'elmo-localdir-folder))
 
@@ -213,41 +213,40 @@
        folder (elmo-msgdb-get-message-id-from-buffer) flags)
       t)))
 
-(luna-define-method elmo-folder-append-messages :around
-  ((folder elmo-localdir-folder)
-   src-folder numbers &optional same-number)
-  (if (elmo-folder-message-file-p src-folder)
-      (let ((src-msgdb-exists (not (zerop (elmo-folder-length src-folder))))
-	    (dir (elmo-localdir-folder-directory-internal folder))
-	    (table (elmo-folder-flag-table folder))
-	    (succeeds numbers)
-	    (next-num (1+ (car (elmo-folder-status folder))))
-	    flags id)
-	(while numbers
-	  (setq flags (elmo-message-flags src-folder (car numbers)))
-	  (elmo-copy-file
-	   (elmo-message-file-name src-folder (car numbers))
-	   (expand-file-name
-	    (int-to-string
-	     (if same-number (car numbers) next-num))
-	    dir))
-	  ;; save flag-table only when src folder's msgdb is loaded.
-	  (when (setq id (and src-msgdb-exists
-			      (elmo-message-field src-folder (car numbers)
-						  'message-id)))
-	    (elmo-flag-table-set table id flags))
-	  (elmo-progress-notify 'elmo-folder-move-messages)
-	  (if (and (setq numbers (cdr numbers))
-		   (not same-number))
-	      (setq next-num
-		    (if (elmo-localdir-locked-p)
-			;; MDA is running.
-			(1+ (car (elmo-folder-status folder)))
-		      (1+ next-num)))))
-	(when (elmo-folder-persistent-p folder)
-	  (elmo-folder-close-flag-table folder))
-	succeeds)
-    (luna-call-next-method)))
+(defun elmo-folder-append-messages-*-localdir (folder
+					       src-folder
+					       numbers
+					       same-number)
+  (let ((src-msgdb-exists (not (zerop (elmo-folder-length src-folder))))
+	(dir (elmo-localdir-folder-directory-internal folder))
+	(table (elmo-folder-flag-table folder))
+	(succeeds numbers)
+	(next-num (1+ (car (elmo-folder-status folder))))
+	flags id)
+    (while numbers
+      (setq flags (elmo-message-flags src-folder (car numbers)))
+      (elmo-copy-file
+       (elmo-message-file-name src-folder (car numbers))
+       (expand-file-name
+	(int-to-string
+	 (if same-number (car numbers) next-num))
+	dir))
+      ;; save flag-table only when src folder's msgdb is loaded.
+      (when (setq id (and src-msgdb-exists
+			  (elmo-message-field src-folder (car numbers)
+					      'message-id)))
+	(elmo-flag-table-set table id flags))
+      (elmo-progress-notify 'elmo-folder-move-messages)
+      (if (and (setq numbers (cdr numbers))
+	       (not same-number))
+	  (setq next-num
+		(if (elmo-localdir-locked-p)
+		    ;; MDA is running.
+		    (1+ (car (elmo-folder-status folder)))
+		  (1+ next-num)))))
+    (when (elmo-folder-persistent-p folder)
+      (elmo-folder-close-flag-table folder))
+    succeeds))
 
 (luna-define-method elmo-folder-delete-messages-internal
   ((folder elmo-localdir-folder) numbers)

@@ -37,7 +37,8 @@
 
 ;;; ELMO sendlog folder
 (eval-and-compile
-  (luna-define-class elmo-sendlog-folder (elmo-map-folder) (dir-name directory))
+  (luna-define-class elmo-sendlog-folder (elmo-map-folder elmo-file-tag)
+		     (dir-name directory))
   (luna-define-internal-accessors 'elmo-sendlog-folder))
 
 (luna-define-method elmo-folder-initialize ((folder elmo-sendlog-folder)

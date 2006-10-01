@@ -84,11 +84,22 @@
   (or (elmo-folder-contains-type (elmo-pipe-folder-src-internal folder) type)
       (elmo-folder-contains-type (elmo-pipe-folder-dst-internal folder) type)))
 
-(luna-define-method elmo-folder-append-messages ((folder elmo-pipe-folder)
-						 src-folder numbers
-						 &optional same-number)
-  (elmo-folder-append-messages (elmo-pipe-folder-dst-internal folder)
-			       src-folder numbers
+(defun elmo-folder-append-messages-pipe-* (dst-folder
+					   src-folder
+					   numbers
+					   same-number)
+  (elmo-folder-append-messages dst-folder
+			       (elmo-pipe-folder-dst-internal src-folder)
+			       numbers
+			       same-number))
+
+(defun elmo-folder-append-messages-*-pipe (dst-folder
+					   src-folder
+					   numbers
+					   same-number)
+  (elmo-folder-append-messages (elmo-pipe-folder-dst-internal dst-folder)
+			       src-folder
+			       numbers
 			       same-number))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-pipe-folder)

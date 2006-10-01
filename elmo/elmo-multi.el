@@ -530,6 +530,29 @@
     (when (cdr element)
       (elmo-folder-recover-messages (car element) (cdr element)))))
 
+(defun elmo-folder-append-messages-multi-* (dst-folder
+					    src-folder
+					    numbers
+					    same-number)
+  (if same-number
+      (elmo-folder-append-messages dst-folder src-folder numbers same-number
+				   'elmo-folder-append-messages-multi-*)
+    (let ((divider (elmo-multi-folder-divide-number-internal src-folder))
+	  (cur-number 0)
+	  succeeds)
+      (dolist (element (elmo-multi-split-numbers src-folder numbers))
+	(setq cur-number (+ cur-number 1))
+	(when (cdr element)
+	  (setq succeeds
+		(nconc
+		 succeeds
+		 (mapcar
+		  (lambda (x)
+		    (+ (* divider cur-number) x))
+		  (elmo-folder-append-messages
+		   dst-folder (car element) (cdr element)))))))
+      succeeds)))
+
 (require 'product)
 (product-provide (provide 'elmo-multi) (require 'elmo-version))
 

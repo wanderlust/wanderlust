@@ -67,11 +67,10 @@
 (luna-define-method elmo-folder-writable-p ((folder elmo-null-folder))
   t)
 
-(luna-define-method elmo-folder-append-messages ((folder elmo-null-folder)
-						 src-folder
-						 numbers
-						 &optional
-						 same-number)
+(defun elmo-folder-append-messages-*-null (dst-folder
+					   src-folder
+					   numbers
+					   same-number)
   (elmo-progress-notify 'elmo-folder-move-messages (length numbers))
   numbers)
 

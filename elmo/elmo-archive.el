@@ -623,8 +623,10 @@ TYPE specifies the archiver's symbol."
 	       t))
 	 nil)))))
 
-(luna-define-method elmo-folder-append-messages :around
-  ((folder elmo-archive-folder) src-folder numbers &optional same-number)
+(defun elmo-folder-append-messages-*-archive (folder
+					      src-folder
+					      numbers
+					      same-number)
   (let ((prefix (elmo-archive-folder-archive-prefix-internal folder)))
     (cond
      ((and same-number
@@ -632,9 +634,10 @@ TYPE specifies the archiver's symbol."
 	   (elmo-folder-message-file-p src-folder)
 	   (elmo-folder-message-file-number-p src-folder))
       ;; same-number(localdir, localnews) -> archive
-      (unless (elmo-archive-append-files folder
-					 (elmo-folder-message-file-directory src-folder)
-					 numbers)
+      (unless (elmo-archive-append-files
+	       folder
+	       (elmo-folder-message-file-directory src-folder)
+	       numbers)
 	(setq numbers nil))
       (elmo-progress-notify 'elmo-folder-move-messages (length numbers))
       numbers)
@@ -676,7 +679,9 @@ TYPE specifies the archiver's symbol."
 	  (elmo-delete-directory temp-dir)))
       (elmo-progress-notify 'elmo-folder-move-messages (length numbers))
       numbers)
-     (t (luna-call-next-method)))))
+     (t
+      (elmo-folder-append-messages folder src-folder numbers same-number
+				   'elmo-folder-append-messages-*-archive)))))
 
 (luna-define-method elmo-folder-message-make-temp-file-p
   ((folder elmo-archive-folder))

@@ -36,7 +36,8 @@
 (require 'elmo-map)
 
 (eval-and-compile
-  (luna-define-class elmo-cache-folder (elmo-map-folder) (dir-name directory))
+  (luna-define-class elmo-cache-folder (elmo-map-folder elmo-file-tag)
+		     (dir-name directory))
   (luna-define-internal-accessors 'elmo-cache-folder))
 
 (luna-define-method elmo-folder-initialize ((folder elmo-cache-folder)

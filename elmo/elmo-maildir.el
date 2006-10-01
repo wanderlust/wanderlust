@@ -64,7 +64,7 @@ but some file systems don't support colons in filenames."
 ;;; ELMO Maildir folder
 (eval-and-compile
   (luna-define-class elmo-maildir-folder
-		     (elmo-map-folder)
+		     (elmo-map-folder elmo-file-tag)
 		     (directory unread-locations
 				flagged-locations
 				answered-locations))
@@ -488,36 +488,35 @@ file name for maildir directories."
       (incf cur-number))
     temp-dir))
 
-(luna-define-method elmo-folder-append-messages :around
-  ((folder elmo-maildir-folder)
-   src-folder numbers &optional same-number)
-  (if (elmo-folder-message-file-p src-folder)
-      (let ((src-msgdb-exists (not (zerop (elmo-folder-length src-folder))))
-	    (dir (elmo-maildir-folder-directory-internal folder))
-	    (table (elmo-folder-flag-table folder))
-	    (succeeds numbers)
-	    filename flags id)
-	(dolist (number numbers)
-	  (setq flags (elmo-message-flags src-folder number)
-		filename (elmo-maildir-temporal-filename dir))
-	  (elmo-copy-file
-	   (elmo-message-file-name src-folder number)
-	   filename)
-	  (elmo-maildir-move-file
-	   filename
-	   (expand-file-name
-	    (concat "new/" (file-name-nondirectory filename))
-	    dir))
-	  ;; src folder's msgdb is loaded.
-	  (when (setq id (and src-msgdb-exists
-			      (elmo-message-field src-folder number
-						  'message-id)))
-	    (elmo-flag-table-set table id flags))
-	  (elmo-progress-notify 'elmo-folder-move-messages))
-	(when (elmo-folder-persistent-p folder)
-	  (elmo-folder-close-flag-table folder))
-	succeeds)
-    (luna-call-next-method)))
+(defun elmo-folder-append-messages-*-maildir (folder
+					      src-folder
+					      numbers
+					      same-number)
+  (let ((src-msgdb-exists (not (zerop (elmo-folder-length src-folder))))
+	(dir (elmo-maildir-folder-directory-internal folder))
+	(table (elmo-folder-flag-table folder))
+	(succeeds numbers)
+	filename flags id)
+    (dolist (number numbers)
+      (setq flags (elmo-message-flags src-folder number)
+	    filename (elmo-maildir-temporal-filename dir))
+      (elmo-copy-file
+       (elmo-message-file-name src-folder number)
+       filename)
+      (elmo-maildir-move-file
+       filename
+       (expand-file-name
+	(concat "new/" (file-name-nondirectory filename))
+	dir))
+      ;; src folder's msgdb is loaded.
+      (when (setq id (and src-msgdb-exists
+			  (elmo-message-field src-folder number
+					      'message-id)))
+	(elmo-flag-table-set table id flags))
+      (elmo-progress-notify 'elmo-folder-move-messages))
+    (when (elmo-folder-persistent-p folder)
+      (elmo-folder-close-flag-table folder))
+    succeeds))
 
 (luna-define-method elmo-map-folder-delete-messages
   ((folder elmo-maildir-folder) locations)

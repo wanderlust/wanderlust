@@ -434,21 +434,6 @@ If optional argument NUMBER is specified, the new message number is set
 \(if possible\).
 Return nil on failure.")
 
-(luna-define-generic elmo-folder-append-messages (folder
-						  src-folder
-						  numbers
-						  &optional
-						  same-number)
-  "Append messages from folder.
-FOLDER is the ELMO folder structure.
-Caller should make sure FOLDER is `writable'.
-\(Can be checked with `elmo-folder-writable-p'\).
-SRC-FOLDER is the source ELMO folder structure.
-NUMBERS is the message numbers to be appended in the SRC-FOLDER.
-If second optional argument SAME-NUMBER is specified,
-message number is preserved \(if possible\).
-Returns a list of message numbers successfully appended.")
-
 (luna-define-generic elmo-folder-pack-numbers (folder)
   "Pack message numbers of FOLDER.")
 
@@ -1081,13 +1066,66 @@ If optional argument IF-EXISTS is nil, load on demand.
   (+ 1 (elmo-max-of-list (or (elmo-folder-list-messages folder)
 			     '(0)))))
 
-(luna-define-method elmo-folder-append-messages ((folder elmo-folder)
-						 src-folder
-						 numbers
-						 &optional
-						 same-number)
-  (elmo-generic-folder-append-messages folder src-folder numbers
-				       same-number))
+(eval-and-compile
+  (luna-define-class elmo-file-tag))
+
+(defconst elmo-append-messages-disptch-table
+  '(((nil	. null)		. elmo-folder-append-messages-*-null)
+    ((filter	. nil)		. elmo-folder-append-messages-filter-*)
+    ((nil	. filter)	. elmo-folder-append-messages-*-filter)
+    ((pipe	. nil)		. elmo-folder-append-messages-pipe-*)
+    ((nil	. pipe)		. elmo-folder-append-messages-*-pipe)
+    ((multi	. nil)		. elmo-folder-append-messages-multi-*)
+    ((nil	. flag)		. elmo-folder-append-messages-*-flag)
+    ((imap4	. imap4)	. elmo-folder-append-messages-imap4-imap4)
+    ((elmo-file-tag . localdir)	. elmo-folder-append-messages-*-localdir)
+    ((elmo-file-tag . maildir)	. elmo-folder-append-messages-*-maildir)
+    ((nil	. archive)	. elmo-folder-append-messages-*-archive)
+    ((nil	. nil)		. elmo-generic-folder-append-messages)))
+
+(defun elmo-folder-type-p (folder type)
+  (or (null type)
+      (eq (elmo-folder-type-internal folder) type)
+      (labels ((member-if (predicate list)
+			  (and list
+			       (or (funcall predicate (car list))
+				   (member-if predicate (cdr list)))))
+	       (subtypep (name type)
+			 (or (eq name type)
+			     (let ((class (luna-find-class name)))
+			       (and class
+				    (member-if (lambda (name)
+						 (subtypep name type))
+					       (luna-class-parents class)))))))
+	(subtypep (luna-class-name folder)
+		  (or (intern-soft (format "elmo-%s-folder" type))
+		      type)))))
+
+(defun elmo-folder-append-messages (dst-folder src-folder numbers
+					       &optional same-number caller)
+  "Append messages from folder.
+DST-FOLDER is the ELMO folder structure.
+Caller should make sure DST-FOLDER is `writable'.
+\(Can be checked with `elmo-folder-writable-p'\).
+SRC-FOLDER is the source ELMO folder structure.
+NUMBERS is the message numbers to be appended in the SRC-FOLDER.
+If second optional argument SAME-NUMBER is specified,
+message number is preserved \(if possible\).
+Returns a list of message numbers successfully appended."
+  (let ((rest (if caller
+		  (cdr (memq (rassq caller elmo-append-messages-disptch-table)
+			     elmo-append-messages-disptch-table))
+		elmo-append-messages-disptch-table))
+	result)
+    (while rest
+      (let ((types (car (car rest))))
+	(if (and (elmo-folder-type-p src-folder (car types))
+		 (elmo-folder-type-p dst-folder (cdr types)))
+	    (setq result (funcall (cdr (car rest))
+				  dst-folder src-folder numbers same-number)
+		  rest nil)
+	  (setq rest (cdr rest)))))
+    result))
 
 (defun elmo-generic-folder-append-messages (folder src-folder numbers
 						   same-number)

@@ -223,6 +223,24 @@
    (elmo-filter-folder-target-internal folder)
    flag number))
 
+(defun elmo-folder-append-messages-filter-* (dst-folder
+					     src-folder
+					     numbers
+					     same-number)
+  (elmo-folder-append-messages dst-folder
+			       (elmo-filter-folder-target-internal src-folder)
+			       numbers
+			       same-number))
+
+(defun elmo-folder-append-messages-*-filter (dst-folder
+					     src-folder
+					     numbers
+					     same-number)
+  (elmo-folder-append-messages (elmo-filter-folder-target-internal dst-folder)
+			       src-folder
+			       numbers
+			       same-number))
+
 (luna-define-method elmo-message-fetch-bodystructure ((folder
 						       elmo-filter-folder)
 						      number strategy)

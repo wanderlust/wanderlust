@@ -2676,16 +2676,18 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	  response (elmo-imap4-response-value response 'status))
     (elmo-imap4-response-value response 'uidnext)))
 
-(luna-define-method elmo-folder-append-messages :around
-  ((folder elmo-imap4-folder) src-folder numbers &optional same-number)
-  (if (and (eq (elmo-folder-type-internal src-folder) 'imap4)
-	   (elmo-imap4-identical-system-p folder src-folder)
-	   (elmo-folder-plugged-p folder))
+(defun elmo-folder-append-messages-imap4-imap4 (dst-folder
+						src-folder
+						numbers
+						same-number)
+  (if (and (elmo-imap4-identical-system-p dst-folder src-folder)
+	   (elmo-folder-plugged-p dst-folder))
       ;; Plugged
       (prog1
-	  (elmo-imap4-copy-messages src-folder folder numbers)
+	  (elmo-imap4-copy-messages src-folder dst-folder numbers)
 	(elmo-progress-notify 'elmo-folder-move-messages (length numbers)))
-    (luna-call-next-method)))
+    (elmo-folder-append-messages dst-folder src-folder numbers same-number
+				 'elmo-folder-append-messages-imap4-imap4)))
 
 (luna-define-method elmo-message-deletable-p ((folder elmo-imap4-folder)
 					      number)

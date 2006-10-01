@@ -204,19 +204,16 @@
       (message "Creating msgdb...done")
       new-msgdb)))
 
-(luna-define-method elmo-folder-append-messages ((folder elmo-flag-folder)
-						 src-folder
-						 numbers
-						 &optional same-number)
-  (dolist (number numbers)
-    (elmo-global-flag-set (elmo-flag-folder-flag-internal folder)
-			  src-folder number (elmo-message-field
-					     src-folder
-					     number
-					     'message-id)))
-  (elmo-folder-set-flag src-folder
-			numbers
-			(elmo-flag-folder-flag-internal folder))
+(defun elmo-folder-append-messages-*-flag (dst-folder
+					   src-folder
+					   numbers
+					   same-number)
+  (let ((flag (elmo-flag-folder-flag-internal dst-folder)))
+    (dolist (number numbers)
+      (elmo-global-flag-set flag src-folder number
+			    (elmo-message-field
+			     src-folder number 'message-id)))
+    (elmo-folder-set-flag src-folder numbers flag))
   numbers)
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-flag-folder)
