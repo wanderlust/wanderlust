@@ -1,3 +1,8 @@
+2006-10-02  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-flag.el (elmo-global-flag-set-internal): Use
+	`elmo-copy-file' by priority when the message is a file.
+
 2006-10-01  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo.el: Fix typo: disptch -> dispatch.

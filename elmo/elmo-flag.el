@@ -299,7 +299,7 @@ NUMBER is the message number."
     (error "Cannot treat `%s' as global flag" flag))
   (when message-id
     (let ((flag-folder (elmo-flag-get-folder flag))
-	  cache new-file new-number elem)
+	  filename cache new-file new-number elem)
       (if (setq elem (elmo-get-hash-val
 		      message-id
 		      (elmo-flag-folder-minfo-hash-internal
@@ -331,16 +331,18 @@ NUMBER is the message number."
 		(setq new-number
 		      (elmo-flag-folder-max-number-internal flag-folder)))
 	       (elmo-localdir-folder-directory-internal flag-folder)))
-	(with-temp-buffer
-	  (setq cache (and message-id (elmo-file-cache-get message-id)))
-	  (if (and cache (eq (elmo-file-cache-status cache) 'entire))
-	      (elmo-copy-file (elmo-file-cache-path cache)
-			      new-file)
-	    (when (and folder number)
-	      (elmo-message-fetch folder number
-				  (elmo-make-fetch-strategy 'entire))
-	      (write-region-as-binary (point-min) (point-max) new-file nil
-				      'no-msg))))
+	(cond
+	 ((setq filename (elmo-message-file-name folder number))
+	  (elmo-copy-file filename new-file))
+	 ((and (setq cache (elmo-file-cache-get message-id))
+	       (eq (elmo-file-cache-status cache) 'entire))
+	  (elmo-copy-file (elmo-file-cache-path cache) new-file))
+	 (t
+	  (with-temp-buffer
+	    (elmo-message-fetch folder number
+				(elmo-make-fetch-strategy 'entire))
+	    (write-region-as-binary (point-min) (point-max) new-file nil
+				    'no-msg))))
 	(elmo-flag-folder-set-minfo-internal
 	 flag-folder
 	 (cons
