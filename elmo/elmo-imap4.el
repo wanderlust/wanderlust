@@ -1292,8 +1292,8 @@ Return nil if no complete line has arrived."
 			    elmo-imap4-current-response)))
 		    (t
 		     (message "Unknown state %s in arrival filter"
-			      elmo-imap4-status))))
-	  (delete-region (point-min) (point-max))))))))
+			      elmo-imap4-status)))
+	    (delete-region (point-min) (point-max)))))))))
 
 ;; IMAP parser.
 
