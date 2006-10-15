@@ -1278,21 +1278,18 @@ Return nil if no complete line has arrived."
 	  (delete-backward-char (length elmo-imap4-server-eol))
 	  (goto-char (point-min))
 	  (unwind-protect
-	      (cond ((eq elmo-imap4-status 'initial)
-		     (setq elmo-imap4-current-response
-			   (list
-			    (list 'greeting (elmo-imap4-parse-greeting)))))
-		    ((or (eq elmo-imap4-status 'auth)
-			 (eq elmo-imap4-status 'nonauth)
-			 (eq elmo-imap4-status 'selected)
-			 (eq elmo-imap4-status 'examine))
-		     (setq elmo-imap4-current-response
-			   (cons
-			    (elmo-imap4-parse-response)
-			    elmo-imap4-current-response)))
-		    (t
-		     (message "Unknown state %s in arrival filter"
-			      elmo-imap4-status)))
+	      (case elmo-imap4-status
+		(initial
+		 (setq elmo-imap4-current-response
+		       (list
+			(list 'greeting (elmo-imap4-parse-greeting)))))
+		((auth nonauth selected examine)
+		 (setq elmo-imap4-current-response
+		       (cons (elmo-imap4-parse-response)
+			     elmo-imap4-current-response)))
+		(t
+		 (message "Unknown state %s in arrival filter"
+			  elmo-imap4-status)))
 	    (delete-region (point-min) (point-max)))))))))
 
 ;; IMAP parser.
