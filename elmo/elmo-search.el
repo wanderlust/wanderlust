@@ -127,11 +127,9 @@ Returns non-nil if fetching was succeed.")
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-search-folder)
 					      numbers flag-table)
   (let ((new-msgdb (elmo-make-msgdb))
-	(num (length numbers))
 	entity)
-    (message "Creating msgdb...")
-    (elmo-with-progress-display (> num elmo-display-progress-threshold)
-	(elmo-folder-msgdb-create num "Creating msgdb...")
+    (elmo-with-progress-display (elmo-folder-msgdb-create (length numbers))
+	"Creating msgdb"
       (dolist (number numbers)
 	(setq entity (elmo-search-engine-create-message-entity
 		      (elmo-search-folder-engine-internal folder)
@@ -140,7 +138,6 @@ Returns non-nil if fetching was succeed.")
 	(when entity
 	  (elmo-msgdb-append-entity new-msgdb entity '(new unread)))
 	(elmo-progress-notify 'elmo-folder-msgdb-create)))
-    (message "Creating msgdb...done")
     new-msgdb))
 
 (luna-define-method elmo-folder-message-file-p ((folder elmo-search-folder))

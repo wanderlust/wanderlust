@@ -304,53 +304,34 @@ ENTITY is returned."
 (defun wl-thread-close-all ()
   "Close all top threads."
   (interactive)
-  (message "Closing all threads...")
-  (save-excursion
-    (let ((entities wl-thread-entity-list)
-	  (cur 0)
-	  (len (length wl-thread-entity-list)))
-      (while entities
+  (elmo-with-progress-display
+      (wl-thread-close-all (length wl-thread-entity-list))
+      "Closing all threads"
+    (save-excursion
+      (dolist (entity wl-thread-entity-list)
 	(when (and (wl-thread-entity-get-opened (wl-thread-get-entity
-						 (car entities)))
+						 entity))
 		   (wl-thread-entity-get-children (wl-thread-get-entity
-						   (car entities))))
-	  (wl-summary-jump-to-msg (car entities))
+						   entity)))
+	  (wl-summary-jump-to-msg entity)
 	  (wl-thread-open-close))
-	(when (> len elmo-display-progress-threshold)
-	  (setq cur (1+ cur))
-	  (if (or (zerop (% cur 5)) (= cur len))
-	      (elmo-display-progress
-	       'wl-thread-close-all "Closing all threads..."
-	       (/ (* cur 100) len))))
-	(setq entities (cdr entities)))))
-  (message "Closing all threads...done"))
+	(elmo-progress-notify 'wl-thread-close-all)))))
 
 (defun wl-thread-open-all ()
   "Open all threads."
   (interactive)
-  (message "Opening all threads...")
-  (save-excursion
-    (goto-char (point-min))
-    (let ((len (count-lines (point-min) (point-max)))
-	  (cur 0)
-	  entity)
+  (elmo-with-progress-display
+      (wl-thread-open-all (count-lines (point-min) (point-max)))
+      "Opening all threads"
+    (save-excursion
+      (goto-char (point-min))
       (while (not (eobp))
 	(if (wl-thread-entity-get-opened
-	     (setq entity (wl-thread-get-entity
-			   (wl-summary-message-number))))
+	     (wl-thread-get-entity (wl-summary-message-number)))
 	    (forward-line 1)
 	  (wl-thread-force-open)
 	  (wl-thread-goto-bottom-of-sub-thread))
-	(when (> len elmo-display-progress-threshold)
-	  (setq cur (1+ cur))
-	  (elmo-display-progress
-	   'wl-thread-open-all "Opening all threads..."
-	   (/ (* cur 100) len)))))
-    ;; Make sure to be 100%.
-    (elmo-display-progress
-     'wl-thread-open-all "Opening all threads..."
-     100))
-  (message "Opening all threads...done"))
+	(elmo-progress-notify 'wl-thread-open-all)))))
 
 (defun wl-thread-open-all-unread ()
   (interactive)
@@ -431,28 +412,11 @@ ENTITY is returned."
 		  (wl-thread-get-entity (car msgs)))))))))
    updates))
 
-(defun wl-thread-update-line-msgs (msgs &optional no-msg)
+(defun wl-thread-update-line-msgs (msgs)
   (wl-delete-all-overlays)
-  (let ((i 0)
-	(updates msgs)
-	len)
-;;; (while msgs
-;;;   (setq updates
-;;;	    (append updates
-;;;		    (wl-thread-get-children-msgs (car msgs))))
-;;;   (setq msgs (cdr msgs)))
-;;; (setq updates (elmo-uniq-list updates))
-    (setq len (length updates))
-    (while updates
-      (wl-thread-update-line-on-buffer-sub nil (car updates))
-      (setq updates (cdr updates))
-      (when (and (not no-msg)
-		 (> len elmo-display-progress-threshold))
-	(setq i (1+ i))
-	(if (or (zerop (% i 5)) (= i len))
-	    (elmo-display-progress
-	     'wl-thread-update-line-msgs "Updating deleted thread..."
-	     (/ (* i 100) len)))))))
+  (dolist (message msgs)
+    (wl-thread-update-line-on-buffer-sub nil message)
+    (elmo-progress-notify 'wl-thread-update-line)))
 
 (defun wl-thread-delete-line-from-buffer (msg)
   "Simply delete msg line."
@@ -703,25 +667,19 @@ Message is inserted to the summary buffer."
     ret))
 
 (defun wl-thread-update-indent-string-thread (top-list)
-  (let* ((top-list (wl-thread-get-parent-list top-list))
-	 (num (length top-list))
-	 (i 0)
-	 beg)
-    (while top-list
-      (when (> num elmo-display-progress-threshold)
-	(setq i (1+ i))
-	(when (or (zerop (% i 5)) (= i num))
-	  (elmo-display-progress
-	   'wl-thread-update-indent-string-thread
-	   "Updating thread indent..."
-	   (/ (* i 100) num))))
-      (when (car top-list)
-	(wl-summary-jump-to-msg (car top-list))
-	(setq beg (point))
-	(wl-thread-goto-bottom-of-sub-thread)
-	(wl-thread-update-indent-string-region beg (point)))
-      (setq top-list (cdr top-list)))
-    (message "Updating thread indent...done")))
+  (let ((top-list (wl-thread-get-parent-list top-list))
+	beg)
+    (elmo-with-progress-display
+	(wl-thread-update-indent-string-thread (length top-list))
+	"Updating thread indent"
+      (while top-list
+	(when (car top-list)
+	  (wl-summary-jump-to-msg (car top-list))
+	  (setq beg (point))
+	  (wl-thread-goto-bottom-of-sub-thread)
+	  (wl-thread-update-indent-string-region beg (point)))
+	(elmo-progress-notify 'wl-thread-update-indent-string-thread)
+	(setq top-list (cdr top-list))))))
 
 (defun wl-thread-update-children-number (entity)
   "Update the children number."
@@ -799,22 +757,19 @@ Message is inserted to the summary buffer."
 
 (defun wl-thread-insert-top ()
   (let ((elist wl-thread-entity-list)
-	(len (length wl-thread-entity-list))
-	(cur 0))
-    (wl-delete-all-overlays)
-    (while elist
-      (wl-thread-insert-entity
-       0
-       (wl-thread-get-entity (car elist))
-       nil
-       len)
-      (setq elist (cdr elist))
-      (when (> len elmo-display-progress-threshold)
-	(setq cur (1+ cur))
-	(if (or (zerop (% cur 2)) (= cur len))
-	    (elmo-display-progress
-	     'wl-thread-insert-top "Inserting message..."
-	     (/ (* cur 100) len)))))))
+	(len (length wl-thread-entity-list)))
+    (elmo-with-progress-display
+	(wl-thread-insert-entity (length wl-thread-entity-list))
+	"Inserting message"
+      (wl-delete-all-overlays)
+      (while elist
+	(wl-thread-insert-entity
+	 0
+	 (wl-thread-get-entity (car elist))
+	 nil
+	 len)
+	(elmo-progress-notify 'wl-thread-insert-entity)
+	(setq elist (cdr elist))))))
 
 (defsubst wl-thread-insert-entity-sub (indent entity parent-entity all)
   (let (msg-num
@@ -1176,7 +1131,7 @@ Message is inserted to the summary buffer."
       (wl-thread-entity-set-parent entity dst-parent)
       ;; update thread on buffer
       (wl-thread-make-number-list)
-      (wl-thread-update-line-msgs update-msgs t))))
+      (wl-thread-update-line-msgs update-msgs))))
 
 (require 'product)
 (product-provide (provide 'wl-thread) (require 'wl-version))

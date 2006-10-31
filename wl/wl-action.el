@@ -278,35 +278,30 @@ Return number if put mark succeed"
       (let ((start (point))
 	    (refiles (mapcar 'car mark-list))
 	    (refile-failures 0)
-	    refile-len
 	    dst-msgs			; loop counter
 	    result)
 	;; begin refile...
-	(setq refile-len (length refiles))
 	(goto-char start)		; avoid moving cursor to
 					; the bottom line.
-	(message message)
-	(when (> refile-len elmo-display-progress-threshold)
-	  (elmo-progress-set 'elmo-folder-move-messages
-			     refile-len message))
-	(setq result nil)
-	(condition-case nil
-	    (setq result (elmo-folder-move-messages
-			  wl-summary-buffer-elmo-folder
-			  refiles
-			  (if (eq folder-name 'null)
-			      'null
-			    (wl-folder-get-elmo-folder folder-name))))
-	  (error nil))
-	(when result		; succeeded.
-	  ;; update buffer.
-	  (wl-summary-delete-messages-on-buffer refiles)
-	  ;; update wl-summary-buffer-temp-mark-list.
-	  (dolist (mark-info mark-list)
-	    (setq wl-summary-buffer-temp-mark-list
-		  (delq mark-info wl-summary-buffer-temp-mark-list))))
-	(elmo-progress-clear 'elmo-folder-move-messages)
-	(message (concat message "done"))
+	(elmo-with-progress-display
+	    (elmo-folder-move-messages (length refiles))
+	    message
+	  (setq result nil)
+	  (condition-case nil
+	      (setq result (elmo-folder-move-messages
+			    wl-summary-buffer-elmo-folder
+			    refiles
+			    (if (eq folder-name 'null)
+				'null
+			      (wl-folder-get-elmo-folder folder-name))))
+	    (error nil))
+	  (when result		; succeeded.
+	    ;; update buffer.
+	    (wl-summary-delete-messages-on-buffer refiles)
+	    ;; update wl-summary-buffer-temp-mark-list.
+	    (dolist (mark-info mark-list)
+	      (setq wl-summary-buffer-temp-mark-list
+		    (delq mark-info wl-summary-buffer-temp-mark-list)))))
 	(wl-summary-set-message-modified)
 	;; Return the operation failed message numbers.
 	(if result
@@ -427,13 +422,13 @@ Return number if put mark succeed"
   (wl-summary-move-mark-list-messages mark-list
 				      (wl-summary-get-dispose-folder
 				       (wl-summary-buffer-folder-name))
-				      "Disposing messages..."))
+				      "Disposing messages"))
 
 ;; Delete action.
 (defun wl-summary-exec-action-delete (mark-list)
   (wl-summary-move-mark-list-messages mark-list
 				      'null
-				      "Deleting messages..."))
+				      "Deleting messages"))
 
 ;; Refile action
 (defun wl-summary-set-action-refile (number mark data)
@@ -450,32 +445,28 @@ Return number if put mark succeed"
   (save-excursion
     (let ((start (point))
 	  (failures 0)
-	  (refile-len (length mark-list))
 	  dst-msgs)
       ;; begin refile...
       (setq dst-msgs (wl-summary-make-destination-numbers-list mark-list))
       (goto-char start)	; avoid moving cursor to the bottom line.
-      (when (> refile-len elmo-display-progress-threshold)
-	(elmo-progress-set 'elmo-folder-move-messages
-			   refile-len "Refiling messages..."))
-      (dolist (pair dst-msgs)
-	(if (condition-case nil
-		(elmo-folder-move-messages
-		 wl-summary-buffer-elmo-folder
-		 (cdr pair)
-		 (wl-folder-get-elmo-folder (car pair)))
-	      (error nil))
-	    (progn
-	      ;; update buffer.
-	      (wl-summary-delete-messages-on-buffer (cdr pair))
-	      (setq wl-summary-buffer-temp-mark-list
-		    (wl-delete-associations
-		     (cdr pair)
-		     wl-summary-buffer-temp-mark-list)))
-	  (setq failures (+ failures (length (cdr pair))))))
-      (elmo-progress-clear 'elmo-folder-move-messages)
-      (if (<= failures 0)
-	  (message "Refiling messages...done"))
+      (elmo-with-progress-display
+	  (elmo-folder-move-messages (length mark-list))
+	  "Refiling messages"
+	(dolist (pair dst-msgs)
+	  (if (condition-case nil
+		  (elmo-folder-move-messages
+		   wl-summary-buffer-elmo-folder
+		   (cdr pair)
+		   (wl-folder-get-elmo-folder (car pair)))
+		(error nil))
+	      (progn
+		;; update buffer.
+		(wl-summary-delete-messages-on-buffer (cdr pair))
+		(setq wl-summary-buffer-temp-mark-list
+		      (wl-delete-associations
+		       (cdr pair)
+		       wl-summary-buffer-temp-mark-list)))
+	    (setq failures (+ failures (length (cdr pair)))))))
       failures)))
 
 ;; Copy action
@@ -486,34 +477,30 @@ Return number if put mark succeed"
   (save-excursion
     (let ((start (point))
 	  (failures 0)
-	  (refile-len (length mark-list))
 	  dst-msgs)
       ;; begin refile...
       (setq dst-msgs
 	    (wl-summary-make-destination-numbers-list mark-list))
       (goto-char start)	; avoid moving cursor to the bottom line.
-      (when (> refile-len elmo-display-progress-threshold)
-	(elmo-progress-set 'elmo-folder-move-messages
-			   refile-len "Copying messages..."))
-      (dolist (pair dst-msgs)
-	(if (condition-case nil
-		(elmo-folder-move-messages
-		 wl-summary-buffer-elmo-folder
-		 (cdr pair)
-		 (wl-folder-get-elmo-folder (car pair))
-		 'no-delete)
-	      (error nil))
-	    (progn
-	      ;; update buffer.
-	      (wl-summary-delete-copy-marks-on-buffer (cdr pair))
-	      (setq wl-summary-buffer-temp-mark-list
-		    (wl-delete-associations
-		     (cdr pair)
-		     wl-summary-buffer-temp-mark-list)))
-	  (setq failures (+ failures (length (cdr pair))))))
-      (elmo-progress-clear 'elmo-folder-move-messages)
-      (if (<= failures 0)
-	  (message "Copying messages...done"))
+      (elmo-with-progress-display
+	  (elmo-folder-move-messages (length mark-list))
+	  "Copying messages"
+	(dolist (pair dst-msgs)
+	  (if (condition-case nil
+		  (elmo-folder-move-messages
+		   wl-summary-buffer-elmo-folder
+		   (cdr pair)
+		   (wl-folder-get-elmo-folder (car pair))
+		   'no-delete)
+		(error nil))
+	      (progn
+		;; update buffer.
+		(wl-summary-delete-copy-marks-on-buffer (cdr pair))
+		(setq wl-summary-buffer-temp-mark-list
+		      (wl-delete-associations
+		       (cdr pair)
+		       wl-summary-buffer-temp-mark-list)))
+	    (setq failures (+ failures (length (cdr pair)))))))
       failures)))
 
 ;; Prefetch.

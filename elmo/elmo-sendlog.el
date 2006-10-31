@@ -83,33 +83,26 @@
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-sendlog-folder)
 					      numbers flag-table)
-  (let ((i 0)
-	(len (length numbers))
-	(new-msgdb (elmo-make-msgdb))
+  (let ((new-msgdb (elmo-make-msgdb))
 	entity message-id flags)
-    (message "Creating msgdb...")
-    (while numbers
-      (setq entity
-	    (elmo-msgdb-create-message-entity-from-file
-	     (elmo-msgdb-message-entity-handler new-msgdb) (car numbers)
-	     (elmo-message-file-name folder (car numbers))))
-      (if (null entity)
-	  (elmo-folder-set-killed-list-internal
-	   folder
-	   (nconc
-	    (elmo-folder-killed-list-internal folder)
-	    (list (car numbers))))
-	(setq message-id (elmo-message-entity-field entity 'message-id)
-	      flags (elmo-flag-table-get flag-table message-id))
-	(elmo-global-flags-set flags folder (car numbers) message-id)
-	(elmo-msgdb-append-entity new-msgdb entity flags))
-      (when (> len elmo-display-progress-threshold)
-	(setq i (1+ i))
-	(elmo-display-progress
-	 'elmo-sendlog-folder-msgdb-create "Creating msgdb..."
-	 (/ (* i 100) len)))
-      (setq numbers (cdr numbers)))
-    (message "Creating msgdb...done")
+    (elmo-with-progress-display (elmo-folder-msgdb-create (length numbers))
+	"Creating msgdb"
+      (dolist (number numbers)
+	(setq entity
+	      (elmo-msgdb-create-message-entity-from-file
+	       (elmo-msgdb-message-entity-handler new-msgdb) number
+	       (elmo-message-file-name folder number)))
+	(if (null entity)
+	    (elmo-folder-set-killed-list-internal
+	     folder
+	     (nconc
+	      (elmo-folder-killed-list-internal folder)
+	      (list number)))
+	  (setq message-id (elmo-message-entity-field entity 'message-id)
+		flags (elmo-flag-table-get flag-table message-id))
+	  (elmo-global-flags-set flags folder number message-id)
+	  (elmo-msgdb-append-entity new-msgdb entity flags))
+	(elmo-progress-notify 'elmo-folder-msgdb-create)))
     new-msgdb))
 
 (luna-define-method elmo-message-fetch

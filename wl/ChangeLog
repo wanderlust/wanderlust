@@ -1,5 +1,15 @@
 2006-10-31  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
+	* wl-util.el (wl-simple-display-progress): New function.
+	(wl-display-progress-with-gauge): Ditto.
+	(wl-progress-callback-function): Ditto.
+
+	* wl.el (wl-init): Set `elmo-progress-callback-function' as
+	`wl-progress-callback-function'
+
+	* wl-vars.el (wl-display-progress-threshold): New user option.
+	(wl-display-progress-function): Ditto.
+
 	* Version number is increased to 2.15.5.
 
 2006-09-28  Yoichi NAKAYAMA  <yoichi@geiin.org>

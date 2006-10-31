@@ -153,27 +153,18 @@
   (when numbers
     (let ((dir (elmo-localdir-folder-directory-internal folder))
 	  (new-msgdb (elmo-make-msgdb))
-	  entity message-id
-	  flags
-	  (i 0)
-	  (len (length numbers)))
-      (message "Creating msgdb...")
-      (while numbers
-	(setq entity
-	      (elmo-localdir-msgdb-create-entity
-	       new-msgdb dir (car numbers)))
-	(when entity
-	  (setq message-id (elmo-message-entity-field entity 'message-id)
-		flags (elmo-flag-table-get flag-table message-id))
-	  (elmo-global-flags-set flags folder (car numbers) message-id)
-	  (elmo-msgdb-append-entity new-msgdb entity flags))
-	(when (> len elmo-display-progress-threshold)
-	  (setq i (1+ i))
-	  (elmo-display-progress
-	   'elmo-localdir-msgdb-create-as-numbers "Creating msgdb..."
-	   (/ (* i 100) len)))
-	(setq numbers (cdr numbers)))
-      (message "Creating msgdb...done")
+	  entity message-id flags)
+      (elmo-with-progress-display (elmo-folder-msgdb-create (length numbers))
+	  "Creating msgdb"
+	(dolist (number numbers)
+	  (setq entity (elmo-localdir-msgdb-create-entity
+			new-msgdb dir number))
+	  (when entity
+	    (setq message-id (elmo-message-entity-field entity 'message-id)
+		  flags (elmo-flag-table-get flag-table message-id))
+	    (elmo-global-flags-set flags folder number message-id)
+	    (elmo-msgdb-append-entity new-msgdb entity flags))
+	  (elmo-progress-notify 'elmo-folder-msgdb-create)))
       new-msgdb)))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-localdir-folder)
@@ -332,10 +323,9 @@
 			 (not elmo-pack-number-check-strict))
 			'<))
 	 (new-number 1)		  ; first ordinal position in localdir
-	 total entity)
-    (setq total (length numbers))
-    (elmo-with-progress-display (> total elmo-display-progress-threshold)
-	(elmo-folder-pack-numbers total "Packing...")
+	 entity)
+    (elmo-with-progress-display (elmo-folder-pack-numbers (length numbers))
+	"Packing"
       (dolist (old-number numbers)
 	(setq entity (elmo-msgdb-message-entity msgdb old-number))
 	(when (not (eq old-number new-number)) ; why \=() is wrong..

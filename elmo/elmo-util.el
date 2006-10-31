@@ -932,34 +932,6 @@ the directory becomes empty after deletion."
       (setq list1 (cdr list1)))
     (list clist1 clist2)))
 
-(defun elmo-list-bigger-diff (list1 list2 &optional mes)
-  "Returns a list (- +). + is bigger than max of LIST1, in LIST2."
-  (if (null list2)
-      (cons list1  nil)
-    (let* ((l1 list1)
-	   (l2 list2)
-	   (max-of-l2 (or (nth (max 0 (1- (length l2))) l2) 0))
-	   diff1 num i percent
-	   )
-      (setq i 0)
-      (setq num (+ (length l1)))
-      (while l1
-	(if (memq (car l1) l2)
-	    (if (eq (car l1) (car l2))
-		(setq l2 (cdr l2))
-	      (delq (car l1) l2))
-	  (if (> (car l1) max-of-l2)
-	      (setq diff1 (nconc diff1 (list (car l1))))))
-	(if mes
-	    (progn
-	      (setq i (+ i 1))
-	      (setq percent (/ (* i 100) num))
-	      (if (eq (% percent 5) 0)
-		  (elmo-display-progress
-		   'elmo-list-bigger-diff "%s%d%%" percent mes))))
-	(setq l1 (cdr l1)))
-      (cons diff1 (list l2)))))
-
 (defmacro elmo-get-hash-val (string hashtable)
   (static-if (fboundp 'unintern)
       `(symbol-value (intern-soft ,string ,hashtable))
@@ -1183,82 +1155,89 @@ If optional DELETE-FUNCTION is speficied, it is used as delete procedure."
 		(list 'error-message doc
 		      'error-conditions (cons error conds))))))
 
-(cond ((fboundp 'progress-feedback-with-label)
-       (defalias 'elmo-display-progress 'progress-feedback-with-label))
-      ((fboundp 'lprogress-display)
-       (defalias 'elmo-display-progress 'lprogress-display))
-      (t
-       (defun elmo-display-progress (label format &optional value &rest args)
-	 "Print a progress message."
-	 (if (and (null format) (null args))
-	     (message nil)
-	   (apply (function message) (concat format " %d%%")
-		  (nconc args (list value)))))))
+(defvar elmo-progress-counter nil)
 
-(defvar elmo-progress-counter-alist nil)
+(defalias 'elmo-progress-counter-label 'car-safe)
 
 (defmacro elmo-progress-counter-value (counter)
-  (` (aref (cdr (, counter)) 0)))
-
-(defmacro elmo-progress-counter-all-value (counter)
-  (` (aref (cdr (, counter)) 1)))
-
-(defmacro elmo-progress-counter-format (counter)
-  (` (aref (cdr (, counter)) 2)))
+  `(aref (cdr ,counter) 0))
 
 (defmacro elmo-progress-counter-set-value (counter value)
-  (` (aset (cdr (, counter)) 0 (, value))))
+  `(aset (cdr ,counter) 0 ,value))
 
-(defun elmo-progress-set (label all-value &optional format)
-  (unless (assq label elmo-progress-counter-alist)
-    (setq elmo-progress-counter-alist
-	  (cons (cons label (vector 0 all-value (or format "")))
-		elmo-progress-counter-alist))))
+(defmacro elmo-progress-counter-total (counter)
+  `(aref (cdr ,counter) 1))
 
-(defun elmo-progress-clear (label)
-  (let ((counter (assq label elmo-progress-counter-alist)))
-    (when counter
-      (elmo-display-progress label
-			     (elmo-progress-counter-format counter)
-			     100)
-      (setq elmo-progress-counter-alist
-	    (delq counter elmo-progress-counter-alist)))))
+(defmacro elmo-progress-counter-set-total (counter value)
+  `(aset (cdr ,counter) 1 ,value))
 
-(defun elmo-progress-notify (label &optional value op &rest args)
-  (let ((counter (assq label elmo-progress-counter-alist)))
-    (when counter
-      (let* ((value (or value 1))
-	     (cur-value (elmo-progress-counter-value counter))
-	     (all-value (elmo-progress-counter-all-value counter))
-	     (new-value (if (eq op 'set) value (+ cur-value value)))
-	     (cur-rate (/ (* cur-value 100) all-value))
-	     (new-rate (/ (* new-value 100) all-value)))
-	(elmo-progress-counter-set-value counter new-value)
-	(unless (= cur-rate new-rate)
-	  (apply 'elmo-display-progress
-		 label
-		 (elmo-progress-counter-format counter)
-		 new-rate
-		 args))
-	(when (>= new-rate 100)
-	  (elmo-progress-clear label))))))
+(defmacro elmo-progress-counter-action (counter)
+  `(aref (cdr ,counter) 2))
+
+(defmacro elmo-progress-counter-set-action (counter action)
+  `(aset (cdr ,counter) 2, action))
+
+(defvar elmo-progress-callback-function nil)
+
+(defun elmo-progress-call-callback (counter &optional value)
+  (when elmo-progress-callback-function
+    (funcall elmo-progress-callback-function
+	     (elmo-progress-counter-label counter)
+	     (elmo-progress-counter-action counter)
+	     (or value
+		 (elmo-progress-counter-value counter))
+	     (elmo-progress-counter-total counter))))
+
+(defun elmo-progress-start (label total action)
+  (when (and (> total 0)
+	     (null elmo-progress-counter))
+    (let ((counter (cons label (vector 0 total action))))
+      (elmo-progress-call-callback counter 'start)
+      (setq elmo-progress-counter
+	    (if (elmo-progress-call-callback counter 'query)
+		(progn
+		  (elmo-progress-call-callback counter)
+		  counter)
+	      t)))))
+
+(defun elmo-progress-done (counter)
+  (when counter
+    (when (elmo-progress-counter-label elmo-progress-counter)
+      (when (< (elmo-progress-counter-value counter)
+	       (elmo-progress-counter-total counter))
+	(elmo-progress-call-callback counter 100))
+      (elmo-progress-call-callback counter 'done))
+    (when (eq counter elmo-progress-counter)
+      (setq elmo-progress-counter nil))))
+
+(defun elmo-progress-notify (label &rest params)
+  (when (and elmo-progress-counter
+	     (eq (elmo-progress-counter-label elmo-progress-counter) label))
+    (let ((counter elmo-progress-counter))
+      (elmo-progress-counter-set-value
+       counter
+       (or (plist-get params :set)
+	   (+ (elmo-progress-counter-value counter)
+	      (or (plist-get params :inc)
+		  (car params)
+		  1))))
+      (elmo-progress-call-callback counter))))
+
+(defmacro elmo-with-progress-display (spec message &rest body)
+  "Evaluate BODY with progress gauge if CONDITION is non-nil.
+SPEC is a list as followed (LABEL TOTAL [VAR])."
+  (let ((label (nth 0 spec))
+	(total (nth 1 spec))
+	(var (or (nth 2 spec) (make-symbol "--elmo-progress-temp--"))))
+    `(let ((,var (elmo-progress-start (quote ,label) ,total ,message)))
+       (unwind-protect
+	   (progn
+	     ,@body)
+	 (elmo-progress-done ,var)))))
 
 (put 'elmo-with-progress-display 'lisp-indent-function '2)
 (def-edebug-spec elmo-with-progress-display
-  (form (symbolp form &optional form) &rest form))
-
-(defmacro elmo-with-progress-display (condition spec &rest body)
-  "Evaluate BODY with progress gauge if CONDITION is non-nil.
-SPEC is a list as followed (LABEL MAX-VALUE [FORMAT])."
-  (let ((label (car spec))
-	(max-value (cadr spec))
-	(fmt (caddr spec)))
-    `(unwind-protect
-	 (progn
-	   (when ,condition
-	     (elmo-progress-set (quote ,label) ,max-value ,fmt))
-	   ,@body)
-       (elmo-progress-clear (quote ,label)))))
+  ((symbolp form &optional symbolp) form &rest form))
 
 (defun elmo-time-expire (before-time diff-time)
   (let* ((current (current-time))
@@ -2077,33 +2056,22 @@ If KBYTES is kilo bytes (This value must be float)."
     oldest-entity))
 
 (defun elmo-cache-get-sorted-cache-file-list ()
-  (let ((dirs (directory-files
-	       elmo-cache-directory
-	       t "^[^\\.]"))
-	(i 0) num
-	elist
-	ret-val)
-    (setq num (length dirs))
-    (message "Collecting cache info...")
-    (while dirs
-      (setq elist (mapcar (lambda (x)
-			    (elmo-cache-make-file-entity x (car dirs)))
-			  (directory-files (car dirs) nil "^[^\\.]")))
-      (setq ret-val (append ret-val
-			    (list (cons
-				   (car dirs)
-				   (sort
-				    elist
-				    (lambda (x y)
-				      (< (cdr x)
-					 (cdr y))))))))
-      (when (> num elmo-display-progress-threshold)
-	(setq i (+ i 1))
-	(elmo-display-progress
-	 'elmo-cache-get-sorted-cache-file-list "Collecting cache info..."
-	 (/ (* i 100) num)))
-      (setq dirs (cdr dirs)))
-    (message "Collecting cache info...done")
+  (let ((dirs (directory-files elmo-cache-directory t "^[^\\.]"))
+	elist ret-val)
+    (elmo-with-progress-display (elmo-collecting-cache (length dirs))
+	"Collecting cache info"
+      (dolist (dir dirs)
+	(setq elist (mapcar (lambda (x)
+			      (elmo-cache-make-file-entity x dir))
+			    (directory-files dir nil "^[^\\.]")))
+	(setq ret-val (append ret-val
+			      (list (cons
+				     dir
+				     (sort
+				      elist
+				      (lambda (x y)
+					(< (cdr x)
+					   (cdr y))))))))))
     ret-val))
 
 (defun elmo-cache-expire-by-age (&optional days)

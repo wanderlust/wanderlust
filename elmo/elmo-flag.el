@@ -186,22 +186,15 @@
   (when numbers
     (let ((dir (elmo-localdir-folder-directory-internal folder))
 	  (new-msgdb (elmo-make-msgdb))
-	  entity (i 0)
-	  (len (length numbers)))
-      (message "Creating msgdb...")
-      (while numbers
-	(when (setq entity (elmo-localdir-msgdb-create-entity
-			    new-msgdb dir (car numbers)))
-	  (elmo-msgdb-append-entity new-msgdb entity
-				    (list (elmo-flag-folder-flag-internal
-					   folder))))
-	(when (> len elmo-display-progress-threshold)
-	  (setq i (1+ i))
-	  (elmo-display-progress
-	   'elmo-flag-folder-msgdb-create "Creating msgdb..."
-	   (/ (* i 100) len)))
-	(setq numbers (cdr numbers)))
-      (message "Creating msgdb...done")
+	  (flags (list (elmo-flag-folder-flag-internal folder)))
+	  entity)
+      (elmo-with-progress-display (elmo-folder-msgdb-create (length numbers))
+	  "Creating msgdb"
+	(dolist (number numbers)
+	  (when (setq entity (elmo-localdir-msgdb-create-entity
+			      new-msgdb dir number))
+	    (elmo-msgdb-append-entity new-msgdb entity flags))
+	  (elmo-progress-notify 'elmo-folder-msgdb-create)))
       new-msgdb)))
 
 (defun elmo-folder-append-messages-*-flag (dst-folder

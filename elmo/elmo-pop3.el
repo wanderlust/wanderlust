@@ -69,7 +69,7 @@ set as non-nil.")
 
 (defvar sasl-mechanism-alist)
 
-(defvar elmo-pop3-total-size nil)
+(defvar elmo-pop3-retrieve-progress-reporter nil)
 
 ;; For debugging.
 (defvar elmo-pop3-debug nil
@@ -267,15 +267,8 @@ CODE is one of the following:
       (goto-char (point-max))
       (insert output)
       (elmo-pop3-debug "RECEIVED: %s\n" output)
-      (if (and elmo-pop3-total-size
-	       (> elmo-pop3-total-size
-		  (min elmo-display-retrieval-progress-threshold 100)))
-	  (elmo-display-progress
-	   'elmo-display-retrieval-progress
-	   (format "Retrieving (%d/%d bytes)..."
-		   (buffer-size)
-		   elmo-pop3-total-size)
-	   (/ (buffer-size) (/ elmo-pop3-total-size 100)))))))
+      (when elmo-pop3-retrieve-progress-reporter
+	(elmo-progress-notify 'elmo-retrieve-message :set (buffer-size))))))
 
 (defun elmo-pop3-auth-user (session)
   (let ((process (elmo-network-session-process-internal session))
@@ -648,41 +641,38 @@ until the login delay period has expired"))
   (save-excursion
     (set-buffer (process-buffer process))
     (erase-buffer)
-    (let ((number (length articles))
-	  (count 0)
+    (let ((count 0)
 	  (received 0)
 	  (last-point (point-min)))
-      ;; Send HEAD commands.
-      (while articles
-	(elmo-pop3-send-command process (format
-					 "top %s 0" (car articles))
-				'no-erase)
-;;;	(accept-process-output process 1)
-	(setq articles (cdr articles))
-	(setq count (1+ count))
-	;; Every 200 requests we have to read the stream in
-	;; order to avoid deadlocks.
-	(when (or elmo-pop3-send-command-synchronously
-		  (null articles)	;All requests have been sent.
-		  (zerop (% count elmo-pop3-header-fetch-chop-length)))
-	  (unless elmo-pop3-send-command-synchronously
-	    (accept-process-output process 1))
-	  (discard-input)
-	  (while (progn
-		   (goto-char last-point)
-		   ;; Count replies.
-		   (while (elmo-pop3-next-result-arrived-p)
-		     (setq last-point (point))
-		     (setq received (1+ received)))
-		   (< received count))
-	    (when (> number elmo-display-progress-threshold)
-	      (if (or (zerop (% received 5)) (= received number))
-		  (elmo-display-progress
-		   'elmo-pop3-retrieve-headers "Getting headers..."
-		   (/ (* received 100) number))))
-	    (accept-process-output process 1)
-;;;	    (accept-process-output process)
-	    (discard-input))))
+      (elmo-with-progress-display (elmo-retrieve-header (length articles))
+	  "Getting headers"
+	;; Send HEAD commands.
+	(while articles
+	  (elmo-pop3-send-command process
+				  (format "top %s 0" (car articles))
+				  'no-erase)
+	  ;;;	(accept-process-output process 1)
+	  (setq articles (cdr articles))
+	  (setq count (1+ count))
+	  ;; Every 200 requests we have to read the stream in
+	  ;; order to avoid deadlocks.
+	  (when (or elmo-pop3-send-command-synchronously
+		    (null articles)	;All requests have been sent.
+		    (zerop (% count elmo-pop3-header-fetch-chop-length)))
+	    (unless elmo-pop3-send-command-synchronously
+	      (accept-process-output process 1))
+	    (discard-input)
+	    (while (progn
+		     (goto-char last-point)
+		     ;; Count replies.
+		     (while (elmo-pop3-next-result-arrived-p)
+		       (setq last-point (point))
+		       (setq received (1+ received)))
+		     (< received count))
+	      (elmo-progress-notify 'elmo-retrieve-header :set received)
+	      (accept-process-output process 1)
+	      ;;;	    (accept-process-output process)
+	      (discard-input)))))
       ;; Replace all CRLF with LF.
       (elmo-delete-cr-buffer)
       (copy-to-buffer tobuffer (point-min) (point-max)))))
@@ -742,47 +732,42 @@ until the login delay period has expired"))
 				       flag-table)
   (save-excursion
     (let ((new-msgdb (elmo-make-msgdb))
-	  beg entity i number message-id flags)
+	  beg entity number message-id flags)
       (set-buffer buffer)
       (set-buffer-multibyte default-enable-multibyte-characters)
       (goto-char (point-min))
-      (setq i 0)
-      (message "Creating msgdb...")
-      (while (not (eobp))
-	(setq beg (save-excursion (forward-line 1) (point)))
-	(elmo-pop3-next-result-arrived-p)
-	(save-excursion
-	  (forward-line -1)
-	  (save-restriction
-	    (narrow-to-region beg (point))
-	    (setq entity
-		  (elmo-msgdb-create-message-entity-from-buffer
-		   (elmo-msgdb-message-entity-handler new-msgdb)
-		   (car numlist)))
-	    (setq numlist (cdr numlist))
-	    (when entity
-	      (with-current-buffer (process-buffer process)
-		(elmo-message-entity-set-field
-		 entity
-		 'size
-		 (elmo-pop3-number-to-size
-		  (elmo-message-entity-number entity)))
-		(when (setq number
-			    (elmo-map-message-number
-			     folder
-			     (elmo-pop3-number-to-uidl
-			      (elmo-message-entity-number entity))))
-		  (elmo-message-entity-set-number entity number)))
-	      (setq message-id (elmo-message-entity-field entity 'message-id)
-		    flags (elmo-flag-table-get flag-table message-id))
-	      (elmo-global-flags-set flags folder number message-id)
-	      (elmo-msgdb-append-entity new-msgdb entity flags))))
-	(when (> num elmo-display-progress-threshold)
-	  (setq i (1+ i))
-	  (if (or (zerop (% i 5)) (= i num))
-	      (elmo-display-progress
-	       'elmo-pop3-msgdb-create-message "Creating msgdb..."
-	       (/ (* i 100) num)))))
+      (elmo-with-progress-display (elmo-folder-msgdb-create num)
+	  "Creating msgdb"
+	(while (not (eobp))
+	  (setq beg (save-excursion (forward-line 1) (point)))
+	  (elmo-pop3-next-result-arrived-p)
+	  (save-excursion
+	    (forward-line -1)
+	    (save-restriction
+	      (narrow-to-region beg (point))
+	      (setq entity
+		    (elmo-msgdb-create-message-entity-from-buffer
+		     (elmo-msgdb-message-entity-handler new-msgdb)
+		     (car numlist)))
+	      (setq numlist (cdr numlist))
+	      (when entity
+		(with-current-buffer (process-buffer process)
+		  (elmo-message-entity-set-field
+		   entity
+		   'size
+		   (elmo-pop3-number-to-size
+		    (elmo-message-entity-number entity)))
+		  (when (setq number
+			      (elmo-map-message-number
+			       folder
+			       (elmo-pop3-number-to-uidl
+				(elmo-message-entity-number entity))))
+		    (elmo-message-entity-set-number entity number)))
+		(setq message-id (elmo-message-entity-field entity 'message-id)
+		      flags (elmo-flag-table-get flag-table message-id))
+		(elmo-global-flags-set flags folder number message-id)
+		(elmo-msgdb-append-entity new-msgdb entity flags))))
+	  (elmo-progress-notify 'elmo-folder-msgdb-create)))
       new-msgdb)))
 
 (defun elmo-pop3-read-body (process outbuf)
@@ -826,26 +811,14 @@ until the login delay period has expired"))
 		      (elmo-map-message-location folder number))))
       (setq size (elmo-pop3-number-to-size number))
       (when number
-	(elmo-pop3-send-command process
-				(format "retr %s" number))
-	(unless elmo-inhibit-display-retrieval-progress
-	  (setq elmo-pop3-total-size size)
-	  (elmo-display-progress
-	   'elmo-display-retrieval-progress
-	   (format "Retrieving (0/%d bytes)..." elmo-pop3-total-size)
-	   0))
-	(unwind-protect
-	    (progn
-	      (when (null (setq response (cdr (elmo-pop3-read-response
-					       process t))))
-		(error "Fetching message failed"))
-	      (setq response  (elmo-pop3-read-body process outbuf)))
-	  (setq elmo-pop3-total-size nil))
-	(unless elmo-inhibit-display-retrieval-progress
-	  (elmo-display-progress
-	   'elmo-display-retrieval-progress
-	   "Retrieving..." 100)  ; remove progress bar.
-	  (message "Retrieving...done"))
+	(elmo-with-progress-display
+	    (elmo-retrieve-message size elmo-pop3-retrieve-progress-reporter)
+	    "Retrieving"
+	  (elmo-pop3-send-command process (format "retr %s" number))
+	  (when (null (setq response (cdr (elmo-pop3-read-response
+					   process t))))
+	    (error "Fetching message failed"))
+	  (setq response  (elmo-pop3-read-body process outbuf)))
 	(set-buffer outbuf)
 	(goto-char (point-min))
 	(while (re-search-forward "^\\." nil t)

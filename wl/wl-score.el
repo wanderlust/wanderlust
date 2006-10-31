@@ -1165,65 +1165,59 @@ Set `wl-score-cache' nil."
       (wl-score-headers scores force-msgs not-add))))
 
 (defun wl-summary-score-update-all-lines (&optional update)
-  (let* ((alist wl-summary-scored)
-	 (count (length alist))
-	 (i 0)
-	 (update-unread nil)
-	 wl-summary-unread-message-hook
-	 num score dels visible score-mark mark-alist)
+  (let ((alist wl-summary-scored)
+	(update-unread nil)
+	wl-summary-unread-message-hook
+	num score dels visible score-mark mark-alist)
     (save-excursion
-      (message "Updating score...")
-      (while alist
-	(setq num (caar alist)
-	      score (cdar alist))
-	(when wl-score-debug
-	  (message "Scored %d with %d" score num)
-	  (wl-push (list (elmo-string (wl-summary-buffer-folder-name)) num score)
-		wl-score-trace))
-	(setq score-mark (wl-summary-get-score-mark num))
-	(and (setq visible (wl-summary-jump-to-msg num))
-	     (wl-summary-set-score-mark score-mark))
-	(cond ((and wl-summary-expunge-below
-		    (< score wl-summary-expunge-below))
-	       (wl-push num dels))
-	      ((< score wl-summary-mark-below)
-	       (if visible
-		   (wl-summary-mark-as-read num); opened
-		 (setq update-unread t)
-		 (wl-summary-mark-as-read num))) ; closed
-	      ((and wl-summary-important-above
-		    (> score wl-summary-important-above))
-	       (if (wl-thread-jump-to-msg num);; force open
-		   (wl-summary-set-persistent-mark 'important num)))
-	      ((and wl-summary-target-above
-		    (> score wl-summary-target-above))
-	       (if visible
-		   (wl-summary-set-mark "*"))))
-	(setq alist (cdr alist))
-	(when (> count elmo-display-progress-threshold)
-	  (setq i (1+ i))
-	  (elmo-display-progress
-	   'wl-summary-score-update-all-lines "Updating score..."
-	   (/ (* i 100) count))))
-      (when dels
-	(dolist (del dels)
-	  (elmo-message-unset-flag wl-summary-buffer-elmo-folder
-				   del 'unread))
-	(elmo-folder-kill-messages wl-summary-buffer-elmo-folder dels)
-	(wl-summary-delete-messages-on-buffer dels))
-      (when (and update update-unread)
-	;; Update Folder mode
-	(wl-folder-set-folder-updated (wl-summary-buffer-folder-name)
-				      (list
-				       0
-				       (let ((flag-count
-					      (wl-summary-count-unread)))
-					 (or (cdr (assq 'unread flag-count))
-					     0))
-				       (elmo-folder-length
-					wl-summary-buffer-elmo-folder)))
-	(wl-summary-update-modeline))
-      (message "Updating score...done")
+      (elmo-with-progress-display (wl-update-score (length alist))
+	  "Updating score"
+	(while alist
+	  (setq num (caar alist)
+		score (cdar alist))
+	  (when wl-score-debug
+	    (message "Scored %d with %d" score num)
+	    (wl-push (list (elmo-string (wl-summary-buffer-folder-name)) num score)
+		     wl-score-trace))
+	  (setq score-mark (wl-summary-get-score-mark num))
+	  (and (setq visible (wl-summary-jump-to-msg num))
+	       (wl-summary-set-score-mark score-mark))
+	  (cond ((and wl-summary-expunge-below
+		      (< score wl-summary-expunge-below))
+		 (wl-push num dels))
+		((< score wl-summary-mark-below)
+		 (if visible
+		     (wl-summary-mark-as-read num); opened
+		   (setq update-unread t)
+		   (wl-summary-mark-as-read num))) ; closed
+		((and wl-summary-important-above
+		      (> score wl-summary-important-above))
+		 (if (wl-thread-jump-to-msg num);; force open
+		     (wl-summary-set-persistent-mark 'important num)))
+		((and wl-summary-target-above
+		      (> score wl-summary-target-above))
+		 (if visible
+		     (wl-summary-set-mark "*"))))
+	  (setq alist (cdr alist))
+	  (elmo-progress-notify 'wl-update-score))
+	(when dels
+	  (dolist (del dels)
+	    (elmo-message-unset-flag wl-summary-buffer-elmo-folder
+				     del 'unread))
+	  (elmo-folder-kill-messages wl-summary-buffer-elmo-folder dels)
+	  (wl-summary-delete-messages-on-buffer dels))
+	(when (and update update-unread)
+	  ;; Update Folder mode
+	  (wl-folder-set-folder-updated (wl-summary-buffer-folder-name)
+					(list
+					 0
+					 (let ((flag-count
+						(wl-summary-count-unread)))
+					   (or (cdr (assq 'unread flag-count))
+					       0))
+					 (elmo-folder-length
+					  wl-summary-buffer-elmo-folder)))
+	  (wl-summary-update-modeline)))
       dels)))
 
 (defun wl-score-edit-done ()

@@ -2949,6 +2949,28 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 		 (const :tag "Don't use PGP" nil))
   :group 'wl-pref)
 
+(defcustom wl-display-progress-threshold
+  '((wl-folder-insert-entity . 100)
+    (elmo-retrieve-message . 3000)
+    (t . 20))
+  "*Displaying progress message if number of total are more than this value."
+  :type '(choice (const :tag "No display" nil)
+		 (const :tag "No limitation" 0)
+		 (integer :tag "For all")
+		 (repeat :tag "Each label"
+			 (cons (choice (const :tag "Default" t)
+				       (symbol :tag "Label"))
+			       (choice (const :tag "No display" nil)
+				       (const :tag "No limitation" 0)
+				       (integer :tag "Threshold")))))
+  :group 'wl-pref)
+
+(defcustom wl-display-progress-function #'wl-simple-display-progress
+  "*A function to display progress message"
+  :type '(choice (const :tag "No display" nil)
+		 (function :tag "Function"))
+  :group 'wl-pref)
+
 ;;; Internal variables
 (defvar wl-init nil)
 

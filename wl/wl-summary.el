@@ -1080,7 +1080,6 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
 	 (and disable-thread wl-summary-search-parent-by-subject-regexp))
 	(wl-summary-divide-thread-when-subject-changed
 	 (and disable-thread wl-summary-divide-thread-when-subject-changed))
-	(i 0)
 	num
 	expunged)
     (erase-buffer)
@@ -1101,20 +1100,14 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
 	  wl-summary-buffer-temp-mark-list nil
 	  wl-summary-delayed-update nil)
     (elmo-kill-buffer wl-summary-search-buf-name)
-    (while numbers
-      (wl-summary-insert-message (elmo-message-entity
-				  wl-summary-buffer-elmo-folder
-				  (car numbers))
-				 wl-summary-buffer-elmo-folder
-				 nil)
-      (setq numbers (cdr numbers))
-      (when (> num elmo-display-progress-threshold)
-	(setq i (+ i 1))
-	(if (or (zerop (% i 5)) (= i num))
-	    (elmo-display-progress
-	     'wl-summary-rescan "Constructing summary structure..."
-	     (/ (* i 100) num)))))
-    (when wl-summary-delayed-update
+    (elmo-with-progress-display (wl-summary-insert-line num)
+	"Constructing summary structure"
+      (dolist (number numbers)
+	(wl-summary-insert-message (elmo-message-entity
+				    wl-summary-buffer-elmo-folder
+				    number)
+				   wl-summary-buffer-elmo-folder
+				   nil))
       (while wl-summary-delayed-update
 	(message "Parent (%d) of message %d is no entity"
 		 (caar wl-summary-delayed-update)
@@ -1124,12 +1117,8 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
 	 (cdar wl-summary-delayed-update)
 	 wl-summary-buffer-elmo-folder nil t)
 	(setq wl-summary-delayed-update (cdr wl-summary-delayed-update))))
-    (message "Constructing summary structure...done")
-    (if (eq wl-summary-buffer-view 'thread)
-	(progn
-	  (message "Inserting thread...")
-	  (wl-thread-insert-top)
-	  (message "Inserting thread...done")))
+    (when (eq wl-summary-buffer-view 'thread)
+      (wl-thread-insert-top))
     (when wl-use-scoring
       (wl-summary-score-headers (wl-summary-rescore-msgs
 				 wl-summary-buffer-number-list)
@@ -1551,25 +1540,27 @@ If ARG is non-nil, checking is omitted."
   "All uncached messages are cached."
   (interactive)
   (unless (elmo-folder-local-p wl-summary-buffer-elmo-folder)
-    (let ((targets (elmo-folder-list-flagged wl-summary-buffer-elmo-folder
-					     'uncached 'in-msgdb))
-	  (count 0)
-	  wl-prefetch-confirm
-	  wl-prefetch-threshold
-	  (elmo-inhibit-display-retrieval-progress t)
-	  length msg)
+    (let* ((targets (elmo-folder-list-flagged wl-summary-buffer-elmo-folder
+					      'uncached 'in-msgdb))
+	   (count 0)
+	   wl-prefetch-confirm
+	   wl-prefetch-threshold
+	   (length (length targets))
+	   msg)
       (save-excursion
-	(goto-char (point-min))
-	(setq length (length targets))
-	(dolist (target targets)
-	  (when (if (not (wl-thread-entity-parent-invisible-p
-			  (wl-thread-get-entity target)))
-		    (progn
-		      (wl-summary-jump-to-msg target)
-		      (wl-summary-prefetch-msg
-		       (wl-summary-message-number)))
-		  (wl-summary-prefetch-msg target))
-	    (message "Retrieving... %d/%d" (incf count) length)))
+	(elmo-with-progress-display (wl-summary-prefetch-message length)
+	    "Retrieving"
+	  (goto-char (point-min))
+	  (dolist (target targets)
+	    (when (if (not (wl-thread-entity-parent-invisible-p
+			    (wl-thread-get-entity target)))
+		      (progn
+			(wl-summary-jump-to-msg target)
+			(wl-summary-prefetch-msg
+			 (wl-summary-message-number)))
+		    (wl-summary-prefetch-msg target))
+	      (incf count))
+	    (elmo-progress-notify 'wl-summary-prefetch-message)))
 	(message "Retrieved %d/%d message(s)" count length)))))
 
 (defun wl-summary-prefetch-msg (number &optional arg)
@@ -1864,16 +1855,13 @@ If ARG is non-nil, checking is omitted."
 		(delete-char 1) ; delete '\n'
 		(setq wl-summary-buffer-number-list
 		      (delq (car msgs) wl-summary-buffer-number-list)))))
-;	(when (> len elmo-display-progress-threshold)
-;	  (setq i (1+ i))
-;	  (if (or (zerop (% i 5)) (= i len))
-;	      (elmo-display-progress
-;	       'wl-summary-delete-messages-on-buffer deleting-info
-;	       (/ (* i 100) len))))
 	(setq msgs (cdr msgs)))
       (when (eq wl-summary-buffer-view 'thread)
-	(wl-thread-update-line-msgs (elmo-uniq-list update-list))
-	(wl-thread-cleanup-symbols msgs2))
+	(let ((updates (elmo-uniq-list update-list)))
+	  (elmo-with-progress-display (wl-thread-update-line (length updates))
+	      "Updating deleted thread"
+	    (wl-thread-update-line-msgs updates)
+	    (wl-thread-cleanup-symbols msgs2))))
       ;;(message (concat deleting-info "done"))
       (wl-summary-count-unread)
       (wl-summary-update-modeline)
@@ -1986,8 +1974,7 @@ This function is defined for `window-scroll-functions'"
 			  (not wl-summary-lazy-highlight)))
 		    append-list delete-list
 		    update-thread update-top-list
-		    num diff entity
-		    (i 0))
+		    num diff entity)
 		;; Setup sync-all
 		(if sync-all (wl-summary-sync-all-init))
 		(setq diff (elmo-list-diff (elmo-folder-list-messages
@@ -2009,28 +1996,22 @@ This function is defined for `window-scroll-functions'"
 		(setq num (length append-list))
 		(setq wl-summary-delayed-update nil)
 		(elmo-kill-buffer wl-summary-search-buf-name)
-		(dolist (number append-list)
-		  (setq entity (elmo-message-entity folder number))
-		  (when (setq update-thread
-			      (wl-summary-insert-message
-			       entity folder
-			       (not sync-all)))
-		    (wl-append update-top-list update-thread))
-		  (if elmo-use-database
-		      (elmo-database-msgid-put
-		       (elmo-message-entity-field entity 'message-id)
-		       (elmo-folder-name-internal folder)
-		       (elmo-message-entity-number entity)))
-		  (when (> num elmo-display-progress-threshold)
-		    (setq i (+ i 1))
-		    (if (or (zerop (% i 5)) (= i num))
-			(elmo-display-progress
-			 'wl-summary-sync-update
-			 (if (eq wl-summary-buffer-view 'thread)
-			     "Making thread..."
-			   "Inserting message...")
-			 (/ (* i 100) num)))))
-		(when wl-summary-delayed-update
+		(elmo-with-progress-display (wl-summary-insert-line num)
+		    (if (eq wl-summary-buffer-view 'thread)
+			"Making thread"
+		      "Inserting message")
+		  (dolist (number append-list)
+		    (setq entity (elmo-message-entity folder number))
+		    (when (setq update-thread
+				(wl-summary-insert-message
+				 entity folder
+				 (not sync-all)))
+		      (wl-append update-top-list update-thread))
+		    (if elmo-use-database
+			(elmo-database-msgid-put
+			 (elmo-message-entity-field entity 'message-id)
+			 (elmo-folder-name-internal folder)
+			 (elmo-message-entity-number entity))))
 		  (while wl-summary-delayed-update
 		    (message "Parent (%d) of message %d is no entity"
 			     (caar wl-summary-delayed-update)
@@ -2043,21 +2024,16 @@ This function is defined for `window-scroll-functions'"
 				 (not sync-all) t))
 		      (wl-append update-top-list update-thread))
 		    (setq wl-summary-delayed-update
-			  (cdr wl-summary-delayed-update))))
-		(when (and (eq wl-summary-buffer-view 'thread)
-			   update-top-list)
-		  (wl-thread-update-indent-string-thread
-		   (elmo-uniq-list update-top-list)))
-		(message (if (eq wl-summary-buffer-view 'thread)
-			     "Making thread...done"
-			   "Inserting message...done"))
+			  (cdr wl-summary-delayed-update)))
+		  (when (and (eq wl-summary-buffer-view 'thread)
+			     update-top-list)
+		    (wl-thread-update-indent-string-thread
+		     (elmo-uniq-list update-top-list))))
 		(when (or delete-list append-list)
 		  (wl-summary-set-message-modified))
 		(when (and sync-all (eq wl-summary-buffer-view 'thread))
 		  (elmo-kill-buffer wl-summary-search-buf-name)
-		  (message "Inserting message...")
-		  (wl-thread-insert-top)
-		  (message "Inserting message...done"))
+		  (wl-thread-insert-top))
 		(if elmo-use-database
 		    (elmo-database-close))
 		(run-hooks 'wl-summary-sync-updated-hook)
@@ -2166,21 +2142,13 @@ This function is defined for `window-scroll-functions'"
 
 (defun wl-summary-highlight-msgs (msgs)
   (save-excursion
-    (let ((len (length msgs))
-	  i)
-      (message "Hilighting...")
-      (setq i 0)
+    (elmo-with-progress-display (wl-summary-highlight-line (length msgs))
+	"Hilighting"
       (while msgs
 	(if (wl-summary-jump-to-msg (car msgs))
 	    (wl-highlight-summary-current-line))
 	(setq msgs (cdr msgs))
-	(when (> len elmo-display-progress-threshold)
-	  (setq i (+ i 1))
-	  (if (or (zerop (% i 5)) (= i len))
-	      (elmo-display-progress
-	       'wl-summary-highlight-msgs "Highlighting..."
-	       (/ (* i 100) len)))))
-      (message "Highlighting...done"))))
+	(elmo-progress-notify 'wl-summary-highlight-line)))))
 
 (defun wl-summary-message-number ()
   (save-excursion
@@ -2631,6 +2599,7 @@ If ARG, without confirm."
        (save-excursion (beginning-of-line)(point))
        (save-excursion (end-of-line)(point))
        'mouse-face nil))
+  (elmo-progress-notify 'wl-summary-insert-line)
   (ignore-errors
     (run-hooks 'wl-summary-line-inserted-hook)))
 

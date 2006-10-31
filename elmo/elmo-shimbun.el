@@ -336,27 +336,17 @@ If it is the symbol `all', update overview for all shimbun folders."
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-shimbun-folder)
 					      numlist flag-table)
   (let ((new-msgdb (elmo-make-msgdb))
-	entity i percent length msgid flags)
-    (setq length (length numlist))
-    (setq i 0)
-    (message "Creating msgdb...")
-    (while numlist
-      (setq entity
-	    (elmo-shimbun-msgdb-create-entity
-	     folder (car numlist)))
-      (when entity
-	(setq msgid (elmo-message-entity-field entity 'message-id)
-	      flags (elmo-flag-table-get flag-table msgid))
-	(elmo-global-flags-set flags folder (car numlist) msgid)
-	(elmo-msgdb-append-entity new-msgdb entity flags))
-      (when (> length elmo-display-progress-threshold)
-	(setq i (1+ i))
-	(setq percent (/ (* i 100) length))
-	(elmo-display-progress
-	 'elmo-folder-msgdb-create "Creating msgdb..."
-	 percent))
-      (setq numlist (cdr numlist)))
-    (message "Creating msgdb...done")
+	entity msgid flags)
+    (elmo-with-progress-display (elmo-folder-msgdb-create (length numlist))
+	"Creating msgdb"
+      (dolist (number numlist)
+	(setq entity (elmo-shimbun-msgdb-create-entity folder number))
+	(when entity
+	  (setq msgid (elmo-message-entity-field entity 'message-id)
+		flags (elmo-flag-table-get flag-table msgid))
+	  (elmo-global-flags-set flags folder number msgid)
+	  (elmo-msgdb-append-entity new-msgdb entity flags))
+	(elmo-progress-notify 'elmo-folder-msgdb-create)))
     new-msgdb))
 
 (luna-define-method elmo-folder-message-file-p ((folder elmo-shimbun-folder))

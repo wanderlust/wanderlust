@@ -208,10 +208,9 @@ Return new location alist."
 		'<))
 	 (new-msgdb (elmo-make-msgdb (elmo-folder-msgdb-path folder)))
 	 (number 1)
-	 total location entity)
-    (setq total (length numbers))
-    (elmo-with-progress-display (> total elmo-display-progress-threshold)
-	(elmo-folder-pack-numbers total "Packing...")
+	 location entity)
+    (elmo-with-progress-display (elmo-folder-pack-numbers (length numbers))
+	"Packing"
       (dolist (old-number numbers)
 	(setq entity (elmo-msgdb-message-entity msgdb old-number))
 	(elmo-message-entity-set-number entity number)

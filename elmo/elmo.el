@@ -808,10 +808,9 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 							 numbers))))
 	(setq numbers results
 	      condition (nth 2 condition)))
-      (let ((len (length numbers))
-	    matched)
-	(elmo-with-progress-display (> len elmo-display-progress-threshold)
-	    (elmo-folder-search len "Searching...")
+      (let (matched)
+	(elmo-with-progress-display (elmo-folder-search (length numbers))
+	    "Searching messages"
 	  (dolist (number numbers)
 	    (let (result)
 	      (setq result (elmo-msgdb-match-condition msgdb
@@ -826,7 +825,6 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 	      (when result
 		(setq matched (cons number matched))))
 	    (elmo-progress-notify 'elmo-folder-search)))
-	(message "Searching...done")
 	(nreverse matched)))))
 
 (defun elmo-message-buffer-match-condition (condition number)
@@ -1181,7 +1179,6 @@ Returns a list of message numbers successfully appended."
 					     same-number)
   (save-excursion
     (let* ((messages msgs)
-	   (elmo-inhibit-display-retrieval-progress t)
 	   (len (length msgs))
 	   succeeds i result)
       (if (eq dst-folder 'null)

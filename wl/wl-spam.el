@@ -153,47 +153,35 @@ See `wl-summary-mark-action-list' for the detail of element."
 	      wl-spam-auto-check-marks)))
 
 (defsubst wl-spam-map-spam-messages (folder numbers function &rest args)
-  (let ((total (length numbers)))
-    (message "Checking spam...")
-    (elmo-with-progress-display (> total elmo-display-progress-threshold)
-	(elmo-spam-check-spam total "Checking spam...")
-      (dolist (number (elmo-spam-list-spam-messages (elmo-spam-processor)
-						    folder
-						    numbers))
-	(apply function number args)))
-    (message "Checking spam...done")))
+  (elmo-with-progress-display (elmo-spam-check-spam (length numbers))
+      "Checking spam"
+    (dolist (number (elmo-spam-list-spam-messages (elmo-spam-processor)
+						  folder
+						  numbers))
+      (apply function number args))))
 
 (defun wl-spam-apply-partitions (folder partitions function msg)
   (when partitions
     (let ((total 0))
       (dolist (partition partitions)
 	(setq total (+ total (length (cdr partition)))))
-      (message msg)
-      (elmo-with-progress-display (> total elmo-display-progress-threshold)
-	  (elmo-spam-register total msg)
+      (elmo-with-progress-display (elmo-spam-register total) msg
 	(dolist (partition partitions)
-	  (funcall function folder (cdr partition) (car partition))))
-      (message (concat msg "done")))))
+	  (funcall function folder (cdr partition) (car partition)))))))
 
 (defun wl-spam-register-spam-messages (folder numbers)
-  (let ((total (length numbers)))
-    (message "Registering spam...")
-    (elmo-with-progress-display (> total elmo-display-progress-threshold)
-	(elmo-spam-register total "Registering spam...")
-      (elmo-spam-register-spam-messages (elmo-spam-processor)
-					folder
-					numbers))
-    (message "Registering spam...done")))
+  (elmo-with-progress-display (elmo-spam-register (length numbers))
+      "Registering spam"
+    (elmo-spam-register-spam-messages (elmo-spam-processor)
+				      folder
+				      numbers)))
 
 (defun wl-spam-register-good-messages (folder numbers)
-  (let ((total (length numbers)))
-    (message "Registering good...")
-    (elmo-with-progress-display (> total elmo-display-progress-threshold)
-	(elmo-spam-register total "Registering good...")
-      (elmo-spam-register-good-messages (elmo-spam-processor)
-					folder
-					numbers))
-    (message "Registering good...done")))
+  (elmo-with-progress-display (elmo-spam-register (length numbers))
+      "Registering good"
+    (elmo-spam-register-good-messages (elmo-spam-processor)
+				      folder
+				      numbers)))
 
 (defun wl-spam-save-status (&optional force)
   (interactive "P")
@@ -330,10 +318,10 @@ See `wl-summary-mark-action-list' for the detail of element."
        (elmo-spam-register-spam-messages (elmo-spam-processor)
 					 folder numbers
 					 (eq domain 'good)))
-     "Registering spam...")
+     "Registering spam")
     (wl-summary-move-mark-list-messages mark-list
 					wl-spam-folder
-					"Refiling spam...")))
+					"Refiling spam")))
 
 (defun wl-summary-exec-action-refile-with-register (mark-list)
   (let ((folder wl-summary-buffer-elmo-folder)
@@ -352,7 +340,7 @@ See `wl-summary-mark-action-list' for the detail of element."
        (elmo-spam-register-spam-messages (elmo-spam-processor)
 					 folder numbers
 					 (eq domain 'good)))
-     "Registering spam...")
+     "Registering spam")
     (wl-spam-apply-partitions
      folder
      (wl-filter-associations '(undecided spam)
@@ -361,7 +349,7 @@ See `wl-summary-mark-action-list' for the detail of element."
        (elmo-spam-register-good-messages (elmo-spam-processor)
 					 folder numbers
 					 (eq domain 'spam)))
-     "Registering good...")
+     "Registering good")
     ;; execute refile messages
     (wl-summary-exec-action-refile mark-list)))
 

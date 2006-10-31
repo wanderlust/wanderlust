@@ -1763,9 +1763,9 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 				  (wl-highlight-folder-current-line))
 		  (setq removed (cdr removed)))
 		(remove-text-properties beg (point) '(wl-folder-entity-id)))
-	      (let* ((len (length flist))
-		     (mes (> len 100))
-		     (i 0))
+	      (elmo-with-progress-display
+		  (wl-folder-insert-entity (length flist))
+		  (format "Inserting group %s" (car entity))
 		(while flist
 		  (setq ret-val
 			(wl-folder-insert-entity
@@ -1773,15 +1773,8 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 		  (setq new    (+ (or new 0) (or (nth 0 ret-val) 0)))
 		  (setq unread (+ (or unread 0) (or (nth 1 ret-val) 0)))
 		  (setq all    (+ (or all 0) (or (nth 2 ret-val) 0)))
-		  (when (and mes
-			     (> len elmo-display-progress-threshold))
-		    (setq i (1+ i))
-		    (elmo-display-progress
-		     'wl-folder-insert-entity "Inserting group %s..."
-		     (/ (* i 100) len) (car entity)))
-		  (setq flist (cdr flist)))
-		(if (> len 0)
-		    (message "Inserting group %s...done" (car entity))))
+		  (elmo-progress-notify 'wl-folder-insert-entity)
+		  (setq flist (cdr flist))))
 	      (save-excursion
 		(goto-char group-name-end)
 		(delete-region (point) (save-excursion (end-of-line)
@@ -2551,37 +2544,30 @@ Use `wl-subscribed-mailing-list'."
 	  (erase-buffer)
 	  (wl-folder-insert-entity " " wl-folder-entity)
 	  (wl-folder-move-path id))
-      (message "Opening all folders...")
-      (wl-folder-open-all-pre)
-      (save-excursion
-	(goto-char (point-min))
-	(while (re-search-forward
-		"^\\([ ]*\\)\\[\\([+]\\)\\]\\(.+\\):[-0-9-]+/[0-9-]+/[0-9-]+$"
-		nil t)
-	  (setq indent (wl-match-buffer 1))
-	  (setq name (wl-folder-get-entity-from-buffer))
-	  (setq entity (wl-folder-search-group-entity-by-name
-			name
-			wl-folder-entity))
-	  ;; insert as opened
-	  (setcdr (assoc (car entity) wl-folder-group-alist) t)
-	  (beginning-of-line)
-	  (wl-folder-insert-entity indent entity)
-	  (delete-region (save-excursion (beginning-of-line)
-					 (point))
-			 (save-excursion (end-of-line)
-					 (+ 1 (point))))
-	  (when (> len elmo-display-progress-threshold)
-	    (setq i (1+ i))
-	    (if (or (zerop (% i 5)) (= i len))
-		(elmo-display-progress
-		 'wl-folder-open-all "Opening all folders..."
-		 (/ (* i 100) len)))))
-	(when (> len elmo-display-progress-threshold)
-	  (elmo-display-progress
-	   'wl-folder-open-all "Opening all folders..." 100))))
+      (elmo-with-progress-display
+	  (wl-folder-open-all (length wl-folder-group-alist))
+	  "Opening all folders"
+	(wl-folder-open-all-pre)
+	(save-excursion
+	  (goto-char (point-min))
+	  (while (re-search-forward
+		  "^\\([ ]*\\)\\[\\([+]\\)\\]\\(.+\\):[-0-9-]+/[0-9-]+/[0-9-]+$"
+		  nil t)
+	    (setq indent (wl-match-buffer 1))
+	    (setq name (wl-folder-get-entity-from-buffer))
+	    (setq entity (wl-folder-search-group-entity-by-name
+			  name
+			  wl-folder-entity))
+	    ;; insert as opened
+	    (setcdr (assoc (car entity) wl-folder-group-alist) t)
+	    (beginning-of-line)
+	    (wl-folder-insert-entity indent entity)
+	    (delete-region (save-excursion (beginning-of-line)
+					   (point))
+			   (save-excursion (end-of-line)
+					   (+ 1 (point))))
+	    (elmo-progress-notify 'wl-folder-open-all)))))
     (wl-highlight-folder-path wl-folder-buffer-cur-path)
-    (message "Opening all folders...done")
     (set-buffer-modified-p nil)))
 
 (defun wl-folder-close-all ()
@@ -2635,101 +2621,91 @@ Use `wl-subscribed-mailing-list'."
       t)))
 
 (defun wl-folder-update-access-group (entity new-flist)
-  (let* ((flist (nth 2 entity))
-	 (unsubscribes (nth 3 entity))
-	 (len (+ (length flist) (length unsubscribes)))
-	 (i 0)
-	 diff new-unsubscribes removes
-	 subscribed-list folder group entry)
-    ;; check subscribed groups
-    (while flist
-      (cond
-       ((listp (car flist))	;; group
-	(setq group (elmo-string (caar flist)))
+  (let ((flist (nth 2 entity))
+	(unsubscribes (nth 3 entity))
+	diff new-unsubscribes removes
+	subscribed-list folder group entry)
+    (elmo-with-progress-display
+	(wl-folder-update-access-group (+ (length flist) (length unsubscribes)))
+	"Updating access group"
+      ;; check subscribed groups
+      (while flist
 	(cond
-	 ((assoc group new-flist)	;; found in new-flist
-	  (setq new-flist (delete (assoc group new-flist)
-				  new-flist))
-	  (if (wl-folder-access-subscribe-p (car entity) group)
-	      (wl-append subscribed-list (list (car flist)))
-	    (wl-append new-unsubscribes (list (car flist)))
-	    (setq diff t)))
-	 (t
-	  (setq wl-folder-group-alist
-		(delete (wl-string-assoc group wl-folder-group-alist)
-			wl-folder-group-alist))
-	  (wl-append removes (list (list group))))))
-       (t			;; folder
-	(setq folder (elmo-string (car flist)))
-	(cond
-	 ((member folder new-flist)	;; found in new-flist
-	  (setq new-flist (delete folder new-flist))
-	  (if (wl-folder-access-subscribe-p (car entity) folder)
-	      (wl-append subscribed-list (list (car flist)))
-	    (wl-append new-unsubscribes (list folder))
-	    (setq diff t)))
-	 (t
-	  (wl-append removes (list folder))))))
-      (when (> len elmo-display-progress-threshold)
-	(setq i (1+ i))
-	(if (or (zerop (% i 10)) (= i len))
-	    (elmo-display-progress
-	     'wl-folder-update-access-group "Updating access group..."
-	     (/ (* i 100) len))))
-      (setq flist (cdr flist)))
-    ;; check unsubscribed groups
-    (while unsubscribes
-      (cond
-       ((listp (car unsubscribes))
-	(when (setq entry (assoc (caar unsubscribes) new-flist))
-	  (setq new-flist (delete entry new-flist))
-	  (wl-append new-unsubscribes (list (car unsubscribes)))))
-       (t
-	(when (member (car unsubscribes) new-flist)
-	  (setq new-flist (delete (car unsubscribes) new-flist))
-	  (wl-append new-unsubscribes (list (car unsubscribes))))))
-      (when (> len elmo-display-progress-threshold)
-	(setq i (1+ i))
-	(if (or (zerop (% i 10)) (= i len))
-	    (elmo-display-progress
-	     'wl-folder-update-access-group "Updating access group..."
-	     (/ (* i 100) len))))
-      (setq unsubscribes (cdr unsubscribes)))
-    ;;
-    (if (or new-flist removes)
-	(setq diff t))
-    (setq new-flist
-	  (mapcar '(lambda (x)
-		     (cond ((consp x) (list (car x) 'access))
-			   (t x)))
-		  new-flist))
-    ;; check new groups
-    (let ((new-list new-flist))
-      (while new-list
-	(if (not (wl-folder-access-subscribe-p
-		  (car entity)
-		  (if (listp (car new-list))
-		      (caar new-list)
-		    (car new-list))))
-	    ;; auto unsubscribe
-	    (progn
-	      (wl-append new-unsubscribes (list (car new-list)))
-	      (setq new-flist (delete (car new-list) new-flist)))
+	 ((listp (car flist))	;; group
+	  (setq group (elmo-string (caar flist)))
 	  (cond
-	   ((listp (car new-list))
-	    ;; check group exists
-	    (if (wl-string-assoc (caar new-list) wl-folder-group-alist)
-		(progn
-		  (message "%s: group already exists." (caar new-list))
-		  (sit-for 1)
-		  (wl-append new-unsubscribes (list (car new-list)))
-		  (setq new-flist (delete (car new-list) new-flist)))
-	      (wl-append wl-folder-group-alist
-			 (list (cons (caar new-list) nil)))))))
-	(setq new-list (cdr new-list))))
-    (if new-flist
-	(message "%d new folder(s)." (length new-flist))
-      (message "Updating access group...done"))
+	   ((assoc group new-flist)	;; found in new-flist
+	    (setq new-flist (delete (assoc group new-flist)
+				    new-flist))
+	    (if (wl-folder-access-subscribe-p (car entity) group)
+		(wl-append subscribed-list (list (car flist)))
+	      (wl-append new-unsubscribes (list (car flist)))
+	      (setq diff t)))
+	   (t
+	    (setq wl-folder-group-alist
+		  (delete (wl-string-assoc group wl-folder-group-alist)
+			  wl-folder-group-alist))
+	    (wl-append removes (list (list group))))))
+	 (t			;; folder
+	  (setq folder (elmo-string (car flist)))
+	  (cond
+	   ((member folder new-flist)	;; found in new-flist
+	    (setq new-flist (delete folder new-flist))
+	    (if (wl-folder-access-subscribe-p (car entity) folder)
+		(wl-append subscribed-list (list (car flist)))
+	      (wl-append new-unsubscribes (list folder))
+	      (setq diff t)))
+	   (t
+	    (wl-append removes (list folder))))))
+	(elmo-progress-notify 'wl-folder-update-access-group)
+	(setq flist (cdr flist)))
+      ;; check unsubscribed groups
+      (while unsubscribes
+	(cond
+	 ((listp (car unsubscribes))
+	  (when (setq entry (assoc (caar unsubscribes) new-flist))
+	    (setq new-flist (delete entry new-flist))
+	    (wl-append new-unsubscribes (list (car unsubscribes)))))
+	 (t
+	  (when (member (car unsubscribes) new-flist)
+	    (setq new-flist (delete (car unsubscribes) new-flist))
+	    (wl-append new-unsubscribes (list (car unsubscribes))))))
+	(elmo-progress-notify 'wl-folder-update-access-group)
+	(setq unsubscribes (cdr unsubscribes)))
+      ;;
+      (if (or new-flist removes)
+	  (setq diff t))
+      (setq new-flist
+	    (mapcar '(lambda (x)
+		       (cond ((consp x) (list (car x) 'access))
+			     (t x)))
+		    new-flist))
+      ;; check new groups
+      (let ((new-list new-flist))
+	(while new-list
+	  (if (not (wl-folder-access-subscribe-p
+		    (car entity)
+		    (if (listp (car new-list))
+			(caar new-list)
+		      (car new-list))))
+	      ;; auto unsubscribe
+	      (progn
+		(wl-append new-unsubscribes (list (car new-list)))
+		(setq new-flist (delete (car new-list) new-flist)))
+	    (cond
+	     ((listp (car new-list))
+	      ;; check group exists
+	      (if (wl-string-assoc (caar new-list) wl-folder-group-alist)
+		  (progn
+		    (message "%s: group already exists." (caar new-list))
+		    (sit-for 1)
+		    (wl-append new-unsubscribes (list (car new-list)))
+		    (setq new-flist (delete (car new-list) new-flist)))
+		(wl-append wl-folder-group-alist
+			   (list (cons (caar new-list) nil)))))))
+	  (setq new-list (cdr new-list)))))
+    (when new-flist
+      (message "%d new folder(s)." (length new-flist)))
     (wl-append new-flist subscribed-list)	;; new is first
     (run-hooks 'wl-folder-update-access-group-hook)
     (setcdr (cdr entity) (list new-flist new-unsubscribes))

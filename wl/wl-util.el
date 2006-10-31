@@ -1134,6 +1134,36 @@ is enclosed by at least one regexp grouping construct."
 	(if beg
 	    (cons beg end)))))
 
+(defun wl-simple-display-progress (label action current total)
+  (message "%s... %d%%"
+	   action
+	   (if (> total 0) (floor (* (/ current (float total)) 100)) 0)))
+
+(when (fboundp 'progress-feedback-with-label)
+  (defun wl-display-progress-with-gauge (label action current total)
+    (progress-feedback-with-label
+     label
+     "%s..."
+     (if (> total 0) (floor (* (/ current (float total)) 100)) 0)
+     action)))
+
+(defun wl-progress-callback-function (label action current total)
+  (case current
+    (query
+     (let ((threshold (if (consp wl-display-progress-threshold)
+			  (cdr (or (assq label wl-display-progress-threshold)
+				   (assq t wl-display-progress-threshold)))
+			wl-display-progress-threshold)))
+       (and threshold
+	    (>= total threshold))))
+    (start
+     (message "%s..." action))
+    (done
+     (message "%s...done" action))
+    (t
+     (when wl-display-progress-function
+       (funcall wl-display-progress-function label action current total)))))
+
 ;; read multiple strings with completion
 (defun wl-completing-read-multiple-1 (prompt
 				      table

@@ -927,7 +927,8 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 	(elmo-imap4-response-value element 'uid)
 	:size (elmo-imap4-response-value element 'rfc822size)))
      (elmo-imap4-response-value element 'flags)
-     app-data)))
+     app-data)
+    (elmo-progress-notify 'elmo-folder-msgdb-create)))
 
 (defun elmo-imap4-parse-capability (string)
   (if (string-match "^\\*\\(.*\\)$" string)
@@ -1234,7 +1235,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 (defvar elmo-imap4-client-eol "\r\n"
   "The EOL string we send to the server.")
 
-(defvar elmo-imap4-display-literal-progress nil)
+(defvar elmo-imap4-literal-progress-reporter nil)
 
 (defun elmo-imap4-find-next-line ()
   "Return point at end of current line, taking into account literals.
@@ -1245,16 +1246,12 @@ Return nil if no complete line has arrived."
     (if (match-string 1)
 	(if (< (point-max) (+ (point) (string-to-number (match-string 1))))
 	    (progn
-	      (if (and elmo-imap4-display-literal-progress
-		       (> (string-to-number (match-string 1))
-			  (min elmo-display-retrieval-progress-threshold 100)))
-		  (elmo-display-progress
-		   'elmo-imap4-display-literal-progress
-		   (format "Retrieving (%d/%d bytes)..."
-			   (- (point-max) (point))
-			   (string-to-number (match-string 1)))
-		   (/ (- (point-max) (point))
-		      (/ (string-to-number (match-string 1)) 100))))
+	      (when elmo-imap4-literal-progress-reporter
+		(elmo-progress-counter-set-total
+		 elmo-imap4-literal-progress-reporter
+		 (string-to-number (match-string 1)))
+		(elmo-progress-notify 'elmo-retrieve-message
+				      :set (- (point-max) (point))))
 	      nil)
 	  (goto-char (+ (point) (string-to-number (match-string 1))))
 	  (elmo-imap4-find-next-line))
@@ -2211,7 +2208,6 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	(total 0)
 	(length (length from-msgs))
 	charset set-list end results)
-    (message "Searching...")
     (cond
      ((string= "last" search-key)
       (let ((numbers (or from-msgs (elmo-folder-list-messages folder))))
@@ -2260,11 +2256,6 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		   (elmo-date-get-datevec
 		    (elmo-filter-value filter)))))
 		'search)))
-	(when (> length elmo-display-progress-threshold)
-	  (setq total (+ total (car (car set-list))))
-	  (elmo-display-progress
-	   'elmo-imap4-search "Searching..."
-	   (/ (* total 100) length)))
 	(setq set-list (cdr set-list)
 	      end (null set-list)))
       results)
@@ -2312,11 +2303,6 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		   (encode-mime-charset-string
 		    (elmo-filter-value filter) charset))))
 		'search)))
-	(when (> length elmo-display-progress-threshold)
-	  (setq total (+ total (car (car set-list))))
-	  (elmo-display-progress
-	   'elmo-imap4-search "Searching..."
-	   (/ (* total 100) length)))
 	(setq set-list (cdr set-list)
 	      end (null set-list)))
       results))))
@@ -2348,10 +2334,12 @@ If optional argument REMOVE is non-nil, remove FLAG."
   (if (elmo-folder-plugged-p folder)
       (save-excursion
 	(let ((session (elmo-imap4-get-session folder)))
+	  (message "Searching...")
 	  (elmo-imap4-session-select-mailbox
 	   session
 	   (elmo-imap4-folder-mailbox-internal folder))
-	  (elmo-imap4-search-internal folder session condition numbers)))
+	  (elmo-imap4-search-internal folder session condition numbers)
+	  (message "Searching...done")))
     (luna-call-next-method)))
 
 (luna-define-method elmo-folder-msgdb-create-plugged
@@ -2365,53 +2353,47 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	       "Message-Id" "References" "In-Reply-To")
 	     (mapcar #'capitalize (elmo-msgdb-extra-fields 'non-virtual)))))
 	  (total 0)
-	  (length (length numbers))
 	  print-length print-depth
 	  rfc2060 set-list)
       (setq rfc2060 (memq 'imap4rev1
 			  (elmo-imap4-session-capability-internal
 			   session)))
-      (message "Getting overview...")
-      (elmo-imap4-session-select-mailbox
-       session (elmo-imap4-folder-mailbox-internal folder))
-      (setq set-list (elmo-imap4-make-number-set-list
-		      numbers
-		      elmo-imap4-overview-fetch-chop-length))
-      ;; Setup callback.
-      (with-current-buffer (elmo-network-session-buffer session)
-	(setq elmo-imap4-current-msgdb (elmo-make-msgdb)
-	      elmo-imap4-seen-messages nil
-	      elmo-imap4-fetch-callback 'elmo-imap4-fetch-callback-1
-	      elmo-imap4-fetch-callback-data (cons flag-table folder))
-	(while set-list
-	  (elmo-imap4-send-command-wait
-	   session
-	   ;; get overview entity from IMAP4
-	   (format "%sfetch %s (%s rfc822.size flags)"
-		   (if elmo-imap4-use-uid "uid " "")
-		   (cdr (car set-list))
-		   (if rfc2060
-		       (format "body.peek[header.fields %s]" headers)
-		     (format "%s" headers))))
-	  (when (> length elmo-display-progress-threshold)
-	    (setq total (+ total (car (car set-list))))
-	    (elmo-display-progress
-	     'elmo-imap4-msgdb-create "Getting overview..."
-	     (/ (* total 100) length)))
-	  (setq set-list (cdr set-list)))
-	(message "Getting overview...done")
-	(when elmo-imap4-seen-messages
-	  (elmo-imap4-set-flag folder elmo-imap4-seen-messages "\\Seen"))
-	;; cannot setup the global flag while retrieval.
-	(dolist (number (elmo-msgdb-list-messages elmo-imap4-current-msgdb))
-	  (elmo-global-flags-set (elmo-msgdb-flags elmo-imap4-current-msgdb
-						   number)
-				 folder number
-				 (elmo-message-entity-field
-				  (elmo-msgdb-message-entity
-				   elmo-imap4-current-msgdb number)
-				  'message-id)))
-	elmo-imap4-current-msgdb))))
+      (elmo-with-progress-display (elmo-folder-msgdb-create (length numbers))
+	  "Creating msgdb"
+	(elmo-imap4-session-select-mailbox
+	 session (elmo-imap4-folder-mailbox-internal folder))
+	(setq set-list (elmo-imap4-make-number-set-list
+			numbers
+			elmo-imap4-overview-fetch-chop-length))
+	;; Setup callback.
+	(with-current-buffer (elmo-network-session-buffer session)
+	  (setq elmo-imap4-current-msgdb (elmo-make-msgdb)
+		elmo-imap4-seen-messages nil
+		elmo-imap4-fetch-callback 'elmo-imap4-fetch-callback-1
+		elmo-imap4-fetch-callback-data (cons flag-table folder))
+	  (while set-list
+	    (elmo-imap4-send-command-wait
+	     session
+	     ;; get overview entity from IMAP4
+	     (format "%sfetch %s (%s rfc822.size flags)"
+		     (if elmo-imap4-use-uid "uid " "")
+		     (cdr (car set-list))
+		     (if rfc2060
+			 (format "body.peek[header.fields %s]" headers)
+		       (format "%s" headers))))
+	    (setq set-list (cdr set-list)))
+	  (when elmo-imap4-seen-messages
+	    (elmo-imap4-set-flag folder elmo-imap4-seen-messages "\\Seen"))
+	  ;; cannot setup the global flag while retrieval.
+	  (dolist (number (elmo-msgdb-list-messages elmo-imap4-current-msgdb))
+	    (elmo-global-flags-set (elmo-msgdb-flags elmo-imap4-current-msgdb
+						     number)
+				   folder number
+				   (elmo-message-entity-field
+				    (elmo-msgdb-message-entity
+				     elmo-imap4-current-msgdb number)
+				    'message-id)))
+	  elmo-imap4-current-msgdb)))))
 
 (luna-define-method elmo-folder-set-flag-plugged ((folder elmo-imap4-folder)
 						  numbers flag)
@@ -2710,24 +2692,20 @@ If optional argument REMOVE is non-nil, remove FLAG."
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-fetch-callback nil)
       (setq elmo-imap4-fetch-callback-data nil))
-    (unless elmo-inhibit-display-retrieval-progress
-      (setq elmo-imap4-display-literal-progress t))
-    (unwind-protect
-	(setq response
-	      (elmo-imap4-send-command-wait session
-					    (format
-					     (if elmo-imap4-use-uid
-						 "uid fetch %s body%s[%s]"
-					       "fetch %s body%s[%s]")
-					     number
-					     (if unseen ".peek" "")
-					     (or section "")
-					     )))
-      (setq elmo-imap4-display-literal-progress nil))
-    (unless elmo-inhibit-display-retrieval-progress
-      (elmo-display-progress 'elmo-imap4-display-literal-progress
-			     "Retrieving..." 100)  ; remove progress bar.
-      (message "Retrieving...done"))
+    (elmo-with-progress-display (elmo-retrieve-message
+				 (or (elmo-message-field folder number :size)
+				     0)
+				 elmo-imap4-literal-progress-reporter)
+	"Retrieving"
+      (setq response
+	    (elmo-imap4-send-command-wait session
+					  (format
+					   (if elmo-imap4-use-uid
+					       "uid fetch %s body%s[%s]"
+					     "fetch %s body%s[%s]")
+					   number
+					   (if unseen ".peek" "")
+					   (or section "")))))
     (if (setq response (elmo-imap4-response-bodydetail-text
 			(elmo-imap4-response-value-all
 			 response 'fetch)))

@@ -316,8 +316,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
     count))
 
 (defun elmo-split-subr (folder &optional reharsal)
-  (let ((elmo-inhibit-display-retrieval-progress t)
-	(count 0)
+  (let ((count 0)
 	(fcount 0)
 	(default-rule `((t ,elmo-split-default-action)))
 	msgs action target-folder failure delete-substance
@@ -325,9 +324,8 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
     (message "Splitting...")
     (elmo-folder-open-internal folder)
     (setq msgs (elmo-folder-list-messages folder))
-    (elmo-progress-set 'elmo-split (length msgs) "Splitting...")
-    (unwind-protect
-	(progn
+    (elmo-with-progress-display (elmo-split (length msgs)) "Splitting messages"
+      (unwind-protect
 	  (with-temp-buffer
 	    (set-buffer-multibyte nil)
 	    (dolist (msg msgs)
@@ -436,8 +434,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 		      (unless (eq (nth 2 rule) 'continue)
 			(throw 'terminate nil))))))
 	      (elmo-progress-notify 'elmo-split)))
-	  (elmo-folder-close-internal folder))
-      (elmo-progress-clear 'elmo-split))
+	(elmo-folder-close-internal folder)))
     (cons count fcount)))
 
 (require 'product)

@@ -145,12 +145,9 @@
     (message "Checking %s..." (elmo-folder-name-internal src))
     (elmo-folder-open src)
     (unwind-protect
-	(let* ((msgs (elmo-pipe-folder-list-target-messages src ignore-list))
-	       (len (length msgs)))
-	  (elmo-with-progress-display (> len elmo-display-progress-threshold)
-	      (elmo-folder-move-messages len (if copy
-						 "Copying messages..."
-					       "Moving messages..."))
+	(let ((msgs (elmo-pipe-folder-list-target-messages src ignore-list)))
+	  (elmo-with-progress-display (elmo-folder-move-messages (length msgs))
+	      (if copy "Copying messages" "Moving messages")
 	    (elmo-folder-move-messages src msgs dst copy))
 	  (when (and copy msgs)
 	    (setq ignore-list (elmo-number-set-append-list ignore-list msgs))))

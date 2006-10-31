@@ -143,23 +143,14 @@
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-file-folder)
 					      numlist flag-table)
   (let ((new-msgdb (elmo-make-msgdb))
-	entity mark i percent num)
-    (setq num (length numlist))
-    (setq i 0)
-    (message "Creating msgdb...")
-    (while numlist
-      (setq entity
-	    (elmo-file-msgdb-create-entity new-msgdb folder (car numlist)))
-      (when entity
-	(elmo-msgdb-append-entity new-msgdb entity '(new unread)))
-      (when (> num elmo-display-progress-threshold)
-	(setq i (1+ i))
-	(setq percent (/ (* i 100) num))
-	(elmo-display-progress
-	 'elmo-folder-msgdb-create "Creating msgdb..."
-	 percent))
-      (setq numlist (cdr numlist)))
-    (message "Creating msgdb...done")
+	entity)
+    (elmo-with-progress-display (elmo-folder-msgdb-create (length numlist))
+	"Creating msgdb"
+      (dolist (number numlist)
+	(setq entity (elmo-file-msgdb-create-entity new-msgdb folder number))
+	(when entity
+	  (elmo-msgdb-append-entity new-msgdb entity '(new unread)))
+	(elmo-progress-notify 'elmo-folder-msgdb-create)))
     new-msgdb))
 
 (luna-define-method elmo-folder-message-file-p ((folder elmo-file-folder))

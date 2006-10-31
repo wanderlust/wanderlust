@@ -543,20 +543,20 @@ Don't cache if nil.")
 	    (insert (match-string 0 response) "\n")
 	    (setq start (match-end 0)))))
       (goto-char (point-min))
-      (let ((len (count-lines (point-min) (point-max)))
-	    (i 0) regexp)
+      (elmo-with-progress-display
+	  (elmo-nntp-parse-active (count-lines (point-min) (point-max)))
+	  "Parsing active"
 	(if one-level
-	    (progn
-	      (setq regexp
-		    (format "^\\(%s[^. ]+\\)\\([. ]\\).*\n"
-			    (if (and (elmo-nntp-folder-group-internal folder)
-				     (null (string=
-					    (elmo-nntp-folder-group-internal
-					     folder) "")))
-				(concat (elmo-nntp-folder-group-internal
-					 folder)
-					"\\.")
-			      "")))
+	    (let ((regexp
+		   (format "^\\(%s[^. ]+\\)\\([. ]\\).*\n"
+			   (if (and (elmo-nntp-folder-group-internal folder)
+				    (null (string=
+					   (elmo-nntp-folder-group-internal
+					    folder) "")))
+			       (concat (elmo-nntp-folder-group-internal
+					folder)
+				       "\\.")
+			     ""))))
 	      (while (looking-at regexp)
 		(setq top-ng (elmo-match-buffer 1))
 		(if (string= (elmo-match-buffer 2) " ")
@@ -567,25 +567,12 @@ Don't cache if nil.")
 		      (setq ret-val (delete top-ng ret-val)))
 		  (if (not (assoc top-ng ret-val))
 		      (setq ret-val (nconc ret-val (list (list top-ng))))))
-		(when (> len elmo-display-progress-threshold)
-		  (setq i (1+ i))
-		  (if (or (zerop (% i 10)) (= i len))
-		      (elmo-display-progress
-		       'elmo-nntp-list-folders "Parsing active..."
-		       (/ (* i 100) len))))
+		(elmo-progress-notify 'elmo-nntp-parse-active)
 		(forward-line 1)))
 	  (while (re-search-forward "\\([^ ]+\\) .*\n" nil t)
 	    (setq ret-val (nconc ret-val
 				 (list (elmo-match-buffer 1))))
-	    (when (> len elmo-display-progress-threshold)
-	      (setq i (1+ i))
-	      (if (or (zerop (% i 10)) (= i len))
-		  (elmo-display-progress
-		   'elmo-nntp-list-folders "Parsing active..."
-		   (/ (* i 100) len))))))
-	(when (> len elmo-display-progress-threshold)
-	  (elmo-display-progress
-	   'elmo-nntp-list-folders "Parsing active..." 100))))
+	    (elmo-progress-notify 'elmo-nntp-parse-active)))))
 
     (setq username (or (elmo-net-folder-user-internal folder) ""))
     (unless (string= username (or elmo-nntp-default-user ""))
@@ -787,41 +774,36 @@ Don't cache if nil.")
 	    cur beg-num
 	    end-num (nth (1- (length numbers)) numbers)
 	    length  (+ (- end-num beg-num) 1))
-      (message "Getting overview...")
-      (while (<= cur end-num)
-	(elmo-nntp-send-command
-	 session
-	 (format
-	  "xover %s-%s"
-	  (int-to-string cur)
-	  (int-to-string
-	   (+ cur
-	      elmo-nntp-overview-fetch-chop-length))))
-	(with-current-buffer (elmo-network-session-buffer session)
-	  (if ov-str
-	      (elmo-msgdb-append
-	       new-msgdb
-	       (elmo-nntp-create-msgdb-from-overview-string
-		folder
-		ov-str
-		flag-table
-		filter))))
-	(if (null (elmo-nntp-read-response session t))
-	    (progn
-	      (setq cur end-num);; exit while loop
-	      (elmo-nntp-set-xover session nil)
-	      (setq use-xover nil))
-	  (if (null (setq ov-str (elmo-nntp-read-contents session)))
-	      (error "Fetching overview failed")))
-	(setq cur (+ elmo-nntp-overview-fetch-chop-length cur 1))
-	(when (> length elmo-display-progress-threshold)
-	  (elmo-display-progress
-	   'elmo-nntp-msgdb-create "Getting overview..."
-	   (/ (* (+ (- (min cur end-num)
-		       beg-num) 1) 100) length))))
-      (when (> length elmo-display-progress-threshold)
-	(elmo-display-progress
-	 'elmo-nntp-msgdb-create "Getting overview..." 100)))
+      (elmo-with-progress-display (elmo-retrieve-overview length)
+	  "Getting overview"
+	(while (<= cur end-num)
+	  (elmo-nntp-send-command
+	   session
+	   (format
+	    "xover %s-%s"
+	    (int-to-string cur)
+	    (int-to-string
+	     (+ cur
+		elmo-nntp-overview-fetch-chop-length))))
+	  (with-current-buffer (elmo-network-session-buffer session)
+	    (if ov-str
+		(elmo-msgdb-append
+		 new-msgdb
+		 (elmo-nntp-create-msgdb-from-overview-string
+		  folder
+		  ov-str
+		  flag-table
+		  filter))))
+	  (if (null (elmo-nntp-read-response session t))
+	      (progn
+		(setq cur end-num);; exit while loop
+		(elmo-nntp-set-xover session nil)
+		(setq use-xover nil))
+	    (if (null (setq ov-str (elmo-nntp-read-contents session)))
+		(error "Fetching overview failed")))
+	  (setq cur (+ elmo-nntp-overview-fetch-chop-length cur 1))
+	  (elmo-progress-notify 'elmo-retrieve-overview
+				:set (+ (- (min cur end-num) beg-num) 1)))))
     (if (not use-xover)
 	(setq new-msgdb (elmo-nntp-msgdb-create-by-header
 			 session numbers flag-table))
@@ -1273,26 +1255,20 @@ Returns a list of cons cells like (NUMBER . VALUE)"
        (elmo-network-session-process-internal session) 1)
       (discard-input)
       ;; Wait for all replies.
-      (message "Getting folders info...")
-      (while (progn
-	       (goto-char last-point)
-	       ;; Count replies.
-	       (while (re-search-forward "^[0-9]" nil t)
-		 (setq received
-		       (1+ received)))
-	       (setq last-point (point))
-	       (< received count))
-	(accept-process-output (elmo-network-session-process-internal session)
-			       1)
-	(discard-input)
-	(when (> count elmo-display-progress-threshold)
-	  (if (or (zerop (% received 10)) (= received count))
-	      (elmo-display-progress
-	       'elmo-nntp-groups-read-response "Getting folders info..."
-	       (/ (* received 100) count)))))
-      (when (> count elmo-display-progress-threshold)
-	(elmo-display-progress
-	 'elmo-nntp-groups-read-response "Getting folders info..." 100))
+      (elmo-with-progress-display (elmo-nntp-groups-read-response count)
+	  "Getting folders info"
+	(while (progn
+		 (goto-char last-point)
+		 ;; Count replies.
+		 (while (re-search-forward "^[0-9]" nil t)
+		   (setq received (1+ received)))
+		 (setq last-point (point))
+		 (< received count))
+	  (accept-process-output
+	   (elmo-network-session-process-internal session)
+	   1)
+	  (discard-input)
+	  (elmo-progress-notify 'elmo-nntp-groups-read-response :set received)))
       ;; Wait for the reply from the final command.
       (goto-char (point-max))
       (re-search-backward "^[0-9]" nil t)
@@ -1333,38 +1309,32 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	  (received 0)
 	  (last-point (point-min))
 	  article)
-      ;; Send HEAD commands.
-      (while (setq article (pop articles))
-	(elmo-nntp-send-command session
-				(format "head %s" article)
-				'noerase)
-	(setq count (1+ count))
-	;; Every 200 requests we have to read the stream in
-	;; order to avoid deadlocks.
-	(when (or (null articles)	;All requests have been sent.
-		  (zerop (% count elmo-nntp-header-fetch-chop-length)))
-	  (accept-process-output
-	   (elmo-network-session-process-internal session) 1)
-	  (discard-input)
-	  (while (progn
-		   (goto-char last-point)
-		   ;; Count replies.
-		   (while (elmo-nntp-next-result-arrived-p)
-		     (setq last-point (point))
-		     (setq received (1+ received)))
-		   (< received count))
-	    (when (> number elmo-display-progress-threshold)
-	      (if (or (zerop (% received 20)) (= received number))
-		  (elmo-display-progress
-		   'elmo-nntp-retrieve-headers "Getting headers..."
-		   (/ (* received 100) number))))
+      (elmo-with-progress-display (elmo-retrieve-header number)
+	  "Getting headers"
+	;; Send HEAD commands.
+	(while (setq article (pop articles))
+	  (elmo-nntp-send-command session
+				  (format "head %s" article)
+				  'noerase)
+	  (setq count (1+ count))
+	  ;; Every 200 requests we have to read the stream in
+	  ;; order to avoid deadlocks.
+	  (when (or (null articles)	;All requests have been sent.
+		    (zerop (% count elmo-nntp-header-fetch-chop-length)))
 	    (accept-process-output
 	     (elmo-network-session-process-internal session) 1)
-	    (discard-input))))
-      (when (> number elmo-display-progress-threshold)
-	(elmo-display-progress
-	 'elmo-nntp-retrieve-headers "Getting headers..." 100))
-      (message "Getting headers...done")
+	    (discard-input)
+	    (while (progn
+		     (goto-char last-point)
+		     ;; Count replies.
+		     (while (elmo-nntp-next-result-arrived-p)
+		       (setq last-point (point))
+		       (setq received (1+ received)))
+		     (< received count))
+	      (elmo-progress-notify 'elmo-retrieve-header :set received)
+	      (accept-process-output
+	       (elmo-network-session-process-internal session) 1)
+	      (discard-input)))))
       ;; Replace all CRLF with LF.
       (elmo-delete-cr-buffer)
       (copy-to-buffer outbuf (point-min) (point-max)))))
@@ -1374,42 +1344,34 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 (defun elmo-nntp-msgdb-create-message (len flag-table)
   (save-excursion
     (let ((new-msgdb (elmo-make-msgdb))
-	  beg entity i num message-id)
+	  beg entity num message-id)
       (set-buffer-multibyte nil)
       (goto-char (point-min))
-      (setq i 0)
-      (message "Creating msgdb...")
-      (while (not (eobp))
-	(setq beg (save-excursion (forward-line 1) (point)))
-	(setq num
-	      (and (looking-at "^2[0-9]*[ ]+\\([0-9]+\\)")
-		   (string-to-int
-		    (elmo-match-buffer 1))))
-	(elmo-nntp-next-result-arrived-p)
-	(when num
-	  (save-excursion
-	    (forward-line -1)
-	    (save-restriction
-	      (narrow-to-region beg (point))
-	      (setq entity
-		    (elmo-msgdb-create-message-entity-from-buffer
-		     (elmo-msgdb-message-entity-handler new-msgdb) num))
-	      (when entity
-		(setq message-id
-		      (elmo-message-entity-field entity 'message-id))
-		(elmo-msgdb-append-entity
-		 new-msgdb
-		 entity
-		 (elmo-flag-table-get flag-table message-id))))))
-	(when (> len elmo-display-progress-threshold)
-	  (setq i (1+ i))
-	  (if (or (zerop (% i 20)) (= i len))
-	      (elmo-display-progress
-	       'elmo-nntp-msgdb-create-message "Creating msgdb..."
-	       (/ (* i 100) len)))))
-      (when (> len elmo-display-progress-threshold)
-	(elmo-display-progress
-	 'elmo-nntp-msgdb-create-message "Creating msgdb..." 100))
+      (elmo-with-progress-display (elmo-folder-msgdb-create len)
+	  "Creating msgdb"
+	(while (not (eobp))
+	  (setq beg (save-excursion (forward-line 1) (point)))
+	  (setq num
+		(and (looking-at "^2[0-9]*[ ]+\\([0-9]+\\)")
+		     (string-to-int
+		      (elmo-match-buffer 1))))
+	  (elmo-nntp-next-result-arrived-p)
+	  (when num
+	    (save-excursion
+	      (forward-line -1)
+	      (save-restriction
+		(narrow-to-region beg (point))
+		(setq entity
+		      (elmo-msgdb-create-message-entity-from-buffer
+		       (elmo-msgdb-message-entity-handler new-msgdb) num))
+		(when entity
+		  (setq message-id
+			(elmo-message-entity-field entity 'message-id))
+		  (elmo-msgdb-append-entity
+		   new-msgdb
+		   entity
+		   (elmo-flag-table-get flag-table message-id))))))
+	  (elmo-progress-notify 'elmo-folder-msgdb-create)))
       new-msgdb)))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-nntp-folder) number)

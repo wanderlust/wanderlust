@@ -934,25 +934,24 @@ TYPE specifies the archiver's symbol."
 					      numbers flag-table)
   (when numbers
     (save-excursion ;; 981005
-      (if (and elmo-archive-use-izip-agent
-	       (elmo-archive-get-method
-		(elmo-archive-folder-archive-type-internal folder)
-		'cat-headers))
-	  (elmo-archive-msgdb-create-as-numlist-subr2
-	   folder numbers flag-table)
-	(elmo-archive-msgdb-create-as-numlist-subr1
-	 folder numbers flag-table)))))
+      (elmo-with-progress-display (elmo-folder-create-msgdb (length numbers))
+	  "Creating msgdb"
+	(if (and elmo-archive-use-izip-agent
+		 (elmo-archive-get-method
+		  (elmo-archive-folder-archive-type-internal folder)
+		  'cat-headers))
+	    (elmo-archive-msgdb-create-as-numlist-subr2
+	     folder numbers flag-table)
+	  (elmo-archive-msgdb-create-as-numlist-subr1
+	   folder numbers flag-table))))))
 
 (defun elmo-archive-msgdb-create-as-numlist-subr1 (folder numlist flag-table)
   (let* ((type (elmo-archive-folder-archive-type-internal folder))
 	 (file (elmo-archive-get-archive-name folder))
 	 (method (elmo-archive-get-method type 'cat))
 	 (new-msgdb (elmo-make-msgdb))
-	 entity i percent num message-id flags)
+	 entity message-id flags)
     (with-temp-buffer
-      (setq num (length numlist))
-      (setq i 0)
-      (message "Creating msgdb...")
       (while numlist
 	(erase-buffer)
 	(setq entity
@@ -965,14 +964,8 @@ TYPE specifies the archiver's symbol."
 		flags (elmo-flag-table-get flag-table message-id))
 	  (elmo-global-flags-set flags folder (car numlist) message-id)
 	  (elmo-msgdb-append-entity new-msgdb entity flags))
-	(when (> num elmo-display-progress-threshold)
-	  (setq i (1+ i))
-	  (setq percent (/ (* i 100) num))
-	  (elmo-display-progress
-	   'elmo-archive-msgdb-create-as-numlist-subr1 "Creating msgdb..."
-	   percent))
+	(elmo-progress-notify 'elmo-folder-msgdb-create)
 	(setq numlist (cdr numlist)))
-      (message "Creating msgdb...done")
       new-msgdb)))
 
 ;;; info-zip agent
@@ -988,11 +981,8 @@ TYPE specifies the archiver's symbol."
 	 (args (cdr method))
 	 (arc (elmo-archive-get-archive-name folder))
 	 (new-msgdb (elmo-make-msgdb))
-	 n i percent num msgs case-fold-search)
+	 n msgs case-fold-search)
     (with-temp-buffer
-      (setq num (length numlist))
-      (setq i 0)
-      (message "Creating msgdb...")
       (while numlist
 	(setq n (min (1- elmo-archive-fetch-headers-volume)
 		     (1- (length numlist))))
@@ -1004,7 +994,6 @@ TYPE specifies the archiver's symbol."
 	  'concat
 	  (mapcar '(lambda (x) (elmo-concat-path prefix (int-to-string x))) msgs)
 	  "\n"))
-	(message "Fetching headers...")
 	(as-binary-process (apply 'call-process-region
 				  (point-min) (point-max)
 				  prog t t nil (append args (list arc))))
@@ -1020,12 +1009,7 @@ TYPE specifies the archiver's symbol."
 ;;; 	   (elmo-archive-parse-unixmail msgs flag-table)))
 	 (t			;; unknown format
 	  (error "Unknown format!")))
-	(when (> num elmo-display-progress-threshold)
-	  (setq i (+ n i))
-	  (setq percent (/ (* i 100) num))
-	  (elmo-display-progress
-	   'elmo-archive-msgdb-create-as-numlist-subr2 "Creating msgdb..."
-	   percent))))
+	(elmo-progress-notify 'elmo-folder-msgdb-create)))
     new-msgdb))
 
 (defun elmo-archive-parse-mmdf (folder msgs flag-table)
@@ -1081,23 +1065,16 @@ TYPE specifies the archiver's symbol."
 	 ;;      updates match-data.
 	 ;; (msgs (or from-msgs (elmo-archive-list-folder spec)))
 	 (msgs (or from-msgs (elmo-folder-list-messages folder)))
-	 (num (length msgs))
-	 (i 0)
 	 (case-fold-search nil)
-	 number-list ret-val)
-    (setq number-list msgs)
-    (while msgs
-      (if (elmo-archive-field-condition-match
-	   folder (car msgs) number-list
-	   condition
-	   (elmo-archive-folder-archive-prefix-internal folder))
-	  (setq ret-val (cons (car msgs) ret-val)))
-      (when (> num elmo-display-progress-threshold)
-	(setq i (1+ i))
-	(elmo-display-progress
-	 'elmo-archive-search "Searching..."
-	 (/ (* i 100) num)))
-      (setq msgs (cdr msgs)))
+	 ret-val)
+    (elmo-with-progress-display (elmo-folder-search (length msgs)) "Searching"
+      (dolist (number msgs)
+	(when (elmo-archive-field-condition-match
+	       folder number msgs
+	       condition
+	       (elmo-archive-folder-archive-prefix-internal folder))
+	  (setq ret-val (cons number ret-val)))
+	(elmo-progress-notify 'elmo-folder-search)))
     (nreverse ret-val)))
 
 ;;; method(alist)
