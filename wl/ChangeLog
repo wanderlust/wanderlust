@@ -1,3 +1,7 @@
+2006-10-31  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* Version number is increased to 2.15.5.
+
 2006-09-28  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-thread.el (wl-thread-close-children): New function.

@@ -1,3 +1,7 @@
+2006-10-31  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-version.el (elmo-version): Up to 2.15.5.
+
 2006-10-15  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-imap4.el (elmo-imap4-arrival-filter): Use `case' instead of
