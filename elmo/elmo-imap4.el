@@ -1246,7 +1246,8 @@ Return nil if no complete line has arrived."
     (if (match-string 1)
 	(if (< (point-max) (+ (point) (string-to-number (match-string 1))))
 	    (progn
-	      (when elmo-imap4-literal-progress-reporter
+	      (when (elmo-progress-counter-label
+		     elmo-imap4-literal-progress-reporter)
 		(elmo-progress-counter-set-total
 		 elmo-imap4-literal-progress-reporter
 		 (string-to-number (match-string 1)))
