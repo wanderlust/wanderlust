@@ -137,7 +137,10 @@ If optional argument RESTORE is non-nil, unregister from spam list.")
 	(while (and numbers (< count number-per-process))
 	  (insert "From MAILER-DAEMON@example.com\n")
 	  (let ((begin (point)))
-	    (elmo-spam-message-fetch folder (car numbers))
+	    (insert
+	     (with-temp-buffer
+	       (elmo-spam-message-fetch folder (car numbers))
+	       (buffer-string)))
 	    (goto-char begin)
 	    (while (re-search-forward "^>*From " nil t)
 	      (goto-char (match-beginning 0))
