@@ -1,6 +1,6 @@
 2006-11-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
-	* elsp-bsfilter.el (elsp-bsfilter-list-spam-filter): Abolish.
+	* elsp-bsfilter.el (elsp-bsfilter-list-spam-files): Abolish.
 	(elsp-bsfilter-list-spam-filter): New function.
 	(elsp-bsfilter-start-list-spam): Ditto.
 	(elsp-bsfilter-read-list-spam): Ditto.
@@ -10,7 +10,7 @@
 2006-11-03  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-spam.el (elmo-spam-process-messages-as-mbox): Fix problem
-	of flusing priviously inserted message contents.
+	of flushing previously inserted message contents.
 
 	* elmo-imap4.el (elmo-folder-search): Fix return value.
 
@@ -39,7 +39,7 @@
 	(elmo-progress-start): Ditto.
 	(elmo-progress-done): Ditto.
 	(elmo-progress-notify): Rewrite.
-	(elmo-with-progress-display): Remove first arguemnt
+	(elmo-with-progress-display): Remove first argument
 	`condition'. Add optional argument `var' in `spec'.
 
 	* elmo-vars.el (elmo-display-progress-threshold): Abolish.
