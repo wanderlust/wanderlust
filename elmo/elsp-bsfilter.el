@@ -107,30 +107,51 @@
     (= 0 (elsp-bsfilter-call-bsfilter
 	  (if register elmo-spam-bsfilter-update-switch)))))
 
-(defsubst elsp-bsfilter-list-spam-files (targets)
-  (let ((temp-file (and elmo-spam-bsfilter-debug
-			(make-temp-file "elsp-bserror"))))
-    (unwind-protect
-	(apply
-	 #'call-process
-	 elmo-spam-bsfilter-shell-program
-	 nil
-	 (list t temp-file)
-	 nil
-	 (append (if elmo-spam-bsfilter-shell-switch
-		     (list elmo-spam-bsfilter-shell-switch))
-		 (if elmo-spam-bsfilter-program
-		     (list elmo-spam-bsfilter-program))
-		 elmo-spam-bsfilter-args
-		 (list "--list-spam")
-		 (if elmo-spam-bsfilter-database-directory
-		     (list "--homedir" elmo-spam-bsfilter-database-directory))
-		 targets))
-      (when (and temp-file (file-exists-p temp-file))
+(defun elsp-bsfilter-list-spam-filter (process output)
+  (when (buffer-live-p (process-buffer process))
+    (with-current-buffer (process-buffer process)
+      (save-excursion
+	(goto-char (process-mark process))
+	(insert output)
+	(set-marker (process-mark process) (point)))
+      (while (re-search-forward "^combined probability.+\r?\n" nil t)
+	(delete-region (match-beginning 0) (match-end 0))
+	(elmo-progress-notify 'elmo-spam-check-spam))
+      (when elmo-spam-bsfilter-debug
 	(with-current-buffer (get-buffer-create "*Debug ELMO Bsfilter*")
 	  (goto-char (point-max))
-	  (insert-file-contents temp-file))
-	(delete-file temp-file)))))
+	  (insert output))))))
+
+(defsubst elsp-bsfilter-start-list-spam (targets)
+  (let ((process
+	 (apply #'start-process
+		"elsp-bsfilter"
+		(current-buffer)
+		elmo-spam-bsfilter-shell-program
+		(append (if elmo-spam-bsfilter-shell-switch
+			    (list elmo-spam-bsfilter-shell-switch))
+			(if elmo-spam-bsfilter-program
+			    (list elmo-spam-bsfilter-program))
+			elmo-spam-bsfilter-args
+			(list "--list-spam")
+			(if elmo-spam-bsfilter-database-directory
+			    (list "--homedir"
+				  elmo-spam-bsfilter-database-directory))
+			targets))))
+    (set-process-filter process #'elsp-bsfilter-list-spam-filter)
+    process))
+
+(defsubst elsp-bsfilter-read-list-spam (results hash)
+  (goto-char (point-min))
+  (while (not (eobp))
+    (let* ((filename (buffer-substring (point) (save-excursion
+						 (end-of-line)
+						 (point))))
+	   (number (elmo-get-hash-val filename hash)))
+      (when number
+	(setq results (cons number results)))
+      (forward-line)))
+  results)
 
 (luna-define-method elmo-spam-list-spam-messages :around
   ((processor elsp-bsfilter) folder &optional numbers)
@@ -153,18 +174,12 @@
 		 (next (cdr last)))
 	    (when last
 	      (setcdr last nil))
-	    (elsp-bsfilter-list-spam-files targets)
-	    (elmo-progress-notify 'elmo-spam-check-spam (length targets))
-	    (setq targets next)))
-	(goto-char (point-min))
-	(while (not (eobp))
-	  (let* ((filename (buffer-substring (point) (save-excursion
-						       (end-of-line)
-						       (point))))
-		 (number (elmo-get-hash-val filename hash)))
-	    (when number
-	      (setq results (cons number results)))
-	    (forward-line))))
+	    (let ((process (elsp-bsfilter-start-list-spam targets)))
+	      (while (memq (process-status process) '(open run))
+		(accept-process-output process 1))
+	      (setq results (elsp-bsfilter-read-list-spam results hash)))
+	    (erase-buffer)
+	    (setq targets next))))
       results)))
 
 

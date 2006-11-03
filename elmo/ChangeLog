@@ -1,3 +1,12 @@
+2006-11-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elsp-bsfilter.el (elsp-bsfilter-list-spam-filter): Abolish.
+	(elsp-bsfilter-list-spam-filter): New function.
+	(elsp-bsfilter-start-list-spam): Ditto.
+	(elsp-bsfilter-read-list-spam): Ditto.
+	(elmo-spam-list-spam-messages): Use async process to display
+	progress message by each message.
+
 2006-11-03  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-spam.el (elmo-spam-process-messages-as-mbox): Fix problem
