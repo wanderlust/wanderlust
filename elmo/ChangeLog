@@ -1,3 +1,7 @@
+2006-11-03  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-imap4.el (elmo-folder-search): Fix return value.
+
 2006-11-01  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-imap4.el (elmo-imap4-find-next-line): Check whether a label

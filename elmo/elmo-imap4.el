@@ -2334,13 +2334,15 @@ If optional argument REMOVE is non-nil, remove FLAG."
 						condition &optional numbers)
   (if (elmo-folder-plugged-p folder)
       (save-excursion
-	(let ((session (elmo-imap4-get-session folder)))
+	(let ((session (elmo-imap4-get-session folder))
+	      ret)
 	  (message "Searching...")
 	  (elmo-imap4-session-select-mailbox
 	   session
 	   (elmo-imap4-folder-mailbox-internal folder))
-	  (elmo-imap4-search-internal folder session condition numbers)
-	  (message "Searching...done")))
+	  (setq ret (elmo-imap4-search-internal folder session condition numbers))
+	  (message "Searching...done")
+	  ret))
     (luna-call-next-method)))
 
 (luna-define-method elmo-folder-msgdb-create-plugged
