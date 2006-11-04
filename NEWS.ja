@@ -2,6 +2,17 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 * 2.14.x から 2.16.0 への変更点
 
+** リファイル処理の最適化
+   filter, pipe, multi フォルダを解釈し、最適な方法を選択します。
+
+** bsfilter 処理の高速化
+
+** maildir フォルダの処理の高速化
+
+** サマリバッファでメッセージにマークをつけた時にスレッドを開きます。
+
+** EasyPG (http://www.easypg.org) が利用可能であれば使います。
+
 ** namazu フォルダは機能を拡張した search フォルダに置き換えられました。
    namazu 以外の外部プログラムを使った検索が出来るようになりました。デ
    フォルトでは、grep での検索がサポートされています。

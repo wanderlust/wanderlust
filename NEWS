@@ -2,6 +2,17 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 * Changes in 2.16.0 from 2.14.x
 
+** Optimize refiling.
+   Interpret filter, pipe and multi folder and select the most suitable method.
+
+** Speed up bsfilter processing.
+
+** Speed up handling of maildir folder.
+
+** Open following thread when you put mark on message in summary buffer.
+
+** Use EasyPG (http://www.easypg.org) if it is available.
+
 ** A folder type `namazu' is abolished.  New folder type `search' is added instead.
 
 ** Fixed against overwriting existing messages in archive folders.
