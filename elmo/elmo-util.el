@@ -1202,7 +1202,7 @@ If optional DELETE-FUNCTION is speficied, it is used as delete procedure."
 
 (defun elmo-progress-done (counter)
   (when counter
-    (when (elmo-progress-counter-label elmo-progress-counter)
+    (when (elmo-progress-counter-label counter)
       (when (< (elmo-progress-counter-value counter)
 	       (elmo-progress-counter-total counter))
 	(elmo-progress-call-callback counter 100))
