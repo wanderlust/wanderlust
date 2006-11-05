@@ -344,6 +344,9 @@ Returns non-nil if bottom of message."
   (interactive)
   (let (summary-buf summary-win mother-buffer)
     (cond ((setq summary-buf wl-message-buffer-cur-summary-buffer)
+	   (unless (buffer-live-p summary-buf)
+	     (error "Summary buffer not found: %s"
+		    wl-message-buffer-cur-folder))
 	   (if (setq summary-win (get-buffer-window summary-buf))
 	       (select-window summary-win)
 	     (switch-to-buffer summary-buf)
@@ -351,7 +354,8 @@ Returns non-nil if bottom of message."
 	     (select-window (get-buffer-window summary-buf))))
 	  ((setq mother-buffer mime-mother-buffer)
 	   (kill-buffer (current-buffer))
-	   (switch-to-buffer mother-buffer)))
+	   (when (buffer-live-p mother-buffer)
+	     (switch-to-buffer mother-buffer))))
     (run-hooks 'wl-message-exit-hook)))
 
 (defun wl-message-toggle-disp-summary ()
