@@ -9,6 +9,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 ** Speed up handling of maildir folder.
 
+** Use IMAP4 non-synchronizing literals (RFC 2088) if it is available.
+
 ** Open following thread when you put mark on message in summary buffer.
 
 ** Use EasyPG (http://www.easypg.org) if it is available.

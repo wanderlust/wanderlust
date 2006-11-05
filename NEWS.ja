@@ -15,6 +15,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 ** maildir フォルダの処理の高速化
 
+** IMAP4 非同期リテラル(RFC 2088)に対応
+
 ** サマリバッファでメッセージにマークをつけた時にスレッドを開きます。
 
 ** EasyPG (http://www.easypg.org) が利用可能であれば使います。
