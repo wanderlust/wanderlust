@@ -198,6 +198,9 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 		     (capability current-mailbox read-only flags))
   (luna-define-internal-accessors 'elmo-imap4-session))
 
+(defmacro elmo-imap4-session-capable-p (session capability)
+  `(memq ,capability (elmo-imap4-session-capability-internal ,session)))
+
 ;;; MIME-ELMO-IMAP Location
 (eval-and-compile
   (luna-define-class mime-elmo-imap-location
@@ -324,9 +327,7 @@ Returns a TAG string which is assigned to the COMMAND."
 				    cmdstr
 				    (elmo-imap4-format-quoted (nth 1 token)))))
 		     ((eq kind 'literal)
-		      (if (memq 'literal+
-				(elmo-imap4-session-capability-internal
-				 session))
+		      (if (elmo-imap4-session-capable-p session 'literal+)
 			  ;; rfc2088
 			  (progn
 			    (setq cmdstr (concat cmdstr
@@ -1004,8 +1005,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
       (when (eq (elmo-network-stream-type-symbol
 		 (elmo-network-session-stream-type-internal session))
 		'starttls)
-	(or (memq 'starttls
-		  (elmo-imap4-session-capability-internal session))
+	(or (elmo-imap4-session-capable-p session 'starttls)
 	    (signal 'elmo-open-error
 		    '(elmo-imap4-starttls-error)))
 	(elmo-imap4-send-command-wait session "starttls")
@@ -1123,7 +1123,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 (luna-define-method elmo-network-setup-session ((session
 						 elmo-imap4-session))
   (with-current-buffer (elmo-network-session-buffer session)
-    (when (memq 'namespace (elmo-imap4-session-capability-internal session))
+    (when (elmo-imap4-session-capable-p session 'namespace)
       (setq elmo-imap4-server-namespace
 	    (elmo-imap4-response-value
 	     (elmo-imap4-send-command-wait session "namespace")
@@ -2358,9 +2358,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	  (total 0)
 	  print-length print-depth
 	  rfc2060 set-list)
-      (setq rfc2060 (memq 'imap4rev1
-			  (elmo-imap4-session-capability-internal
-			   session)))
+      (setq rfc2060 (elmo-imap4-session-capable-p session 'imap4rev1))
       (elmo-with-progress-display (elmo-folder-msgdb-create (length numbers))
 	  "Creating msgdb"
 	(elmo-imap4-session-select-mailbox
