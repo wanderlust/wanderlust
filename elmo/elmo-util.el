@@ -2075,6 +2075,9 @@ If KBYTES is kilo bytes (This value must be float)."
     ret-val))
 
 (defun elmo-cache-expire-by-age (&optional days)
+  "Expire cache file by age.
+Optional argument DAYS specifies the days to expire caches."
+  (interactive)
   (let ((age (or (and days (int-to-string days))
 		 (and (interactive-p)
 		      (read-from-minibuffer
