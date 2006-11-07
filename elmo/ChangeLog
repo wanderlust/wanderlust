@@ -2,6 +2,9 @@
 
 	* elmo-util.el (elmo-cache-expire-by-age): Add docstring.
 	Make it interactive.
+	(elmo-progress-start): Avoid updating `elmo-progress-counter'
+	when a query callback returns nil.  Return a progress counter
+	instead of t whenever a start callback was called.
 
 2006-11-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
