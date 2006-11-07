@@ -1241,11 +1241,12 @@ SPEC is a list as followed (LABEL TOTAL [VAR])."
 	(total (nth 1 spec))
 	(var (or (nth 2 spec) (make-symbol "--elmo-progress-temp--"))))
     `(let ((,var (elmo-progress-start (quote ,label) ,total ,message)))
-       (unwind-protect
-	   (progn
-	     ,@body)
-	 (elmo-progress-clear ,var))
-       (elmo-progress-done ,var))))
+       (prog1
+	   (unwind-protect
+	       (progn
+		 ,@body)
+	     (elmo-progress-clear ,var))
+	 (elmo-progress-done ,var)))))
 
 (put 'elmo-with-progress-display 'lisp-indent-function '2)
 (def-edebug-spec elmo-with-progress-display

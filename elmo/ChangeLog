@@ -1,3 +1,8 @@
+2006-11-08  Tetsurou Okazaki  <okazaki@be.to>
+
+	* elmo-util.el (elmo-with-progress-display): Return the value
+	of the last form in `body'.
+
 2006-11-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-util.el (elmo-progress-start): Accept nil for `total'.  Set
