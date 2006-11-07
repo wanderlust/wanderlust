@@ -1193,12 +1193,10 @@ If optional DELETE-FUNCTION is speficied, it is used as delete procedure."
 	     (null elmo-progress-counter))
     (let ((counter (cons label (vector 0 total action))))
       (elmo-progress-call-callback counter 'start)
-      (setq elmo-progress-counter
-	    (if (elmo-progress-call-callback counter 'query)
-		(progn
-		  (elmo-progress-call-callback counter)
-		  counter)
-	      t)))))
+      (when (elmo-progress-call-callback counter 'query)
+	(elmo-progress-call-callback counter)
+	(setq elmo-progress-counter counter))
+      counter)))
 
 (defun elmo-progress-done (counter)
   (when counter
