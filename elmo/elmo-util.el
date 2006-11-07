@@ -1189,40 +1189,53 @@ If optional DELETE-FUNCTION is speficied, it is used as delete procedure."
 	     (elmo-progress-counter-total counter))))
 
 (defun elmo-progress-start (label total action)
-  (when (and (> total 0)
-	     (null elmo-progress-counter))
+  (when (and (null elmo-progress-counter)
+	     (or (null total)
+		 (> total 0)))
     (let ((counter (cons label (vector 0 total action))))
       (elmo-progress-call-callback counter 'start)
-      (when (elmo-progress-call-callback counter 'query)
-	(elmo-progress-call-callback counter)
-	(setq elmo-progress-counter counter))
+      (setq elmo-progress-counter
+	    (cond ((null total)
+		   counter)
+		  ((elmo-progress-call-callback counter 'query)
+		   (elmo-progress-call-callback counter)
+		   counter)
+		  (t
+		   t)))
       counter)))
 
-(defun elmo-progress-done (counter)
+(defun elmo-progress-clear (counter)
   (when counter
-    (when (elmo-progress-counter-label counter)
-      (when (< (elmo-progress-counter-value counter)
-	       (elmo-progress-counter-total counter))
-	(elmo-progress-call-callback counter 100))
-      (elmo-progress-call-callback counter 'done))
-    (when (eq counter elmo-progress-counter)
-      (setq elmo-progress-counter nil))))
+    (when (and (elmo-progress-counter-label elmo-progress-counter)
+	       (elmo-progress-counter-total elmo-progress-counter))
+      (elmo-progress-call-callback elmo-progress-counter 100))
+    (setq elmo-progress-counter nil)))
+
+(defun elmo-progress-done (counter)
+  (when (elmo-progress-counter-label counter)
+    (elmo-progress-call-callback counter 'done)))
 
 (defun elmo-progress-notify (label &rest params)
-  (when (and elmo-progress-counter
-	     (eq (elmo-progress-counter-label elmo-progress-counter) label))
+  (when (eq label (elmo-progress-counter-label elmo-progress-counter))
     (let ((counter elmo-progress-counter))
-      (elmo-progress-counter-set-value
-       counter
-       (or (plist-get params :set)
-	   (+ (elmo-progress-counter-value counter)
-	      (or (plist-get params :inc)
-		  (car params)
-		  1))))
-      (elmo-progress-call-callback counter))))
+      (if (or (elmo-progress-counter-total counter)
+	      (and (elmo-progress-counter-set-total
+		    counter
+		    (plist-get params :total))
+		   (elmo-progress-call-callback counter 'query)))
+	  (progn
+	    (elmo-progress-counter-set-value
+	     counter
+	     (or (plist-get params :set)
+		 (+ (elmo-progress-counter-value counter)
+		    (or (plist-get params :inc)
+			(car params)
+			1))))
+	    (elmo-progress-call-callback counter))
+	(setq elmo-progress-counter t)))))
 
 (defmacro elmo-with-progress-display (spec message &rest body)
-  "Evaluate BODY with progress gauge if CONDITION is non-nil.
+  "Evaluate BODY with progress message.
 SPEC is a list as followed (LABEL TOTAL [VAR])."
   (let ((label (nth 0 spec))
 	(total (nth 1 spec))
@@ -1231,7 +1244,8 @@ SPEC is a list as followed (LABEL TOTAL [VAR])."
        (unwind-protect
 	   (progn
 	     ,@body)
-	 (elmo-progress-done ,var)))))
+	 (elmo-progress-clear ,var))
+       (elmo-progress-done ,var))))
 
 (put 'elmo-with-progress-display 'lisp-indent-function '2)
 (def-edebug-spec elmo-with-progress-display

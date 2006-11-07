@@ -1246,13 +1246,11 @@ Return nil if no complete line has arrived."
     (if (match-string 1)
 	(if (< (point-max) (+ (point) (string-to-number (match-string 1))))
 	    (progn
-	      (when (elmo-progress-counter-label
-		     elmo-imap4-literal-progress-reporter)
-		(elmo-progress-counter-set-total
-		 elmo-imap4-literal-progress-reporter
-		 (string-to-number (match-string 1)))
-		(elmo-progress-notify 'elmo-retrieve-message
-				      :set (- (point-max) (point))))
+	      (when elmo-imap4-literal-progress-reporter
+		(elmo-progress-notify
+		 'elmo-retrieve-message
+		 :set (- (point-max) (point))
+		 :total (string-to-number (match-string 1))))
 	      nil)
 	  (goto-char (+ (point) (string-to-number (match-string 1))))
 	  (elmo-imap4-find-next-line))
@@ -2694,8 +2692,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
       (setq elmo-imap4-fetch-callback nil)
       (setq elmo-imap4-fetch-callback-data nil))
     (elmo-with-progress-display (elmo-retrieve-message
-				 (or (elmo-message-field folder number :size)
-				     0)
+				 (elmo-message-field folder number :size)
 				 elmo-imap4-literal-progress-reporter)
 	"Retrieving"
       (setq response
