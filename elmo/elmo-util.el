@@ -1240,7 +1240,7 @@ SPEC is a list as followed (LABEL TOTAL [VAR]).
 LABEL is an identifier what is specidied by `elmo-progress-notify'.
 If TOTAL is nil, the first `elmo-progress-notify' call must be
 with a `:total' parameter.
-If optional parameter VAR is specified, it is bound a progress counter object.
+If optional parameter VAR is specified, bind it with a progress counter object.
 MESSAGE is a doing part of progress message."
   (let ((label (nth 0 spec))
 	(total (nth 1 spec))
