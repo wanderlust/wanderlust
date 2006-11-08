@@ -1235,8 +1235,13 @@ If optional DELETE-FUNCTION is speficied, it is used as delete procedure."
 	(setq elmo-progress-counter t)))))
 
 (defmacro elmo-with-progress-display (spec message &rest body)
-  "Evaluate BODY with progress message.
-SPEC is a list as followed (LABEL TOTAL [VAR])."
+  "Evaluate BODY with progress message and return its value.
+SPEC is a list as followed (LABEL TOTAL [VAR]).
+LABEL is an identifier what is specidied by `elmo-progress-notify'.
+If TOTAL is nil, the first `elmo-progress-notify' call must be
+with a `:total' parameter.
+If optional parameter VAR is specified, it bind a progress counter object.
+MESSAGE is a doing part of progress message."
   (let ((label (nth 0 spec))
 	(total (nth 1 spec))
 	(var (or (nth 2 spec) (make-symbol "--elmo-progress-temp--"))))
