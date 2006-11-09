@@ -1,3 +1,9 @@
+2006-11-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-sync-update): Move
+	`wl-thread-update-indent-string-thread' to outside of
+	`elmo-with-progress-display'.
+
 2006-11-05  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-message.el (wl-message-exit): Check buffer existence.

@@ -2024,11 +2024,11 @@ This function is defined for `window-scroll-functions'"
 				 (not sync-all) t))
 		      (wl-append update-top-list update-thread))
 		    (setq wl-summary-delayed-update
-			  (cdr wl-summary-delayed-update)))
-		  (when (and (eq wl-summary-buffer-view 'thread)
-			     update-top-list)
-		    (wl-thread-update-indent-string-thread
-		     (elmo-uniq-list update-top-list))))
+			  (cdr wl-summary-delayed-update))))
+		(when (and (eq wl-summary-buffer-view 'thread)
+			   update-top-list)
+		  (wl-thread-update-indent-string-thread
+		   (elmo-uniq-list update-top-list)))
 		(when (or delete-list append-list)
 		  (wl-summary-set-message-modified))
 		(when (and sync-all (eq wl-summary-buffer-view 'thread))
