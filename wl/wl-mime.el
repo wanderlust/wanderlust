@@ -488,7 +488,8 @@ It calls following-method selected from variable
 				epg-decrypt-string
 				epg-verify-string
 				epg-context-result-for
-				epa-display-verify-result)))
+				epg-verify-result-to-string
+				epa-display-info)))
   (condition-case nil
       (require 'pgg)
     (error
@@ -522,8 +523,8 @@ It calls following-method selected from variable
 	'raw-text-dos)))
     (message "Verifying...done")
     (when (epg-context-result-for context 'verify)
-      (epa-display-verify-result
-       (epg-context-result-for context 'verify)))))
+      (epa-display-info (epg-verify-result-to-string
+			 (epg-context-result-for context 'verify))))))
 
 (defun wl-mime-pgp-decrypt-region-with-pgg (beg end &optional no-decode)
   (require 'pgg)
