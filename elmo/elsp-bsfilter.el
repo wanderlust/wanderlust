@@ -77,6 +77,20 @@
   :type 'integer
   :group 'elmo-spam-bsfilter)
 
+(defcustom elmo-spam-bsfilter-use-remote
+  (and elmo-spam-bsfilter-shell-program
+       (let ((program (file-name-nondirectory
+		       elmo-spam-bsfilter-shell-program))
+	     (remote-shells '("ssh" "rsh")))
+	 (catch 'found
+	   (dolist (shell remote-shells)
+	     (when (string-match (concat "\\`" shell) program)
+	       (throw 'found t)))
+	   nil)))
+  "*Non-nil disables local file feature."
+  :type 'boolean
+  :group 'elmo-spam-bsfilter)
+
 (defcustom elmo-spam-bsfilter-debug nil
   "Non-nil to debug elmo bsfilter spam backend."
   :type 'boolean
@@ -155,7 +169,8 @@
 
 (luna-define-method elmo-spam-list-spam-messages :around
   ((processor elsp-bsfilter) folder &optional numbers)
-  (if (not (elmo-folder-message-file-p folder))
+  (if (or elmo-spam-bsfilter-use-remote
+	  (not (elmo-folder-message-file-p folder)))
       (luna-call-next-method)
     (let* ((nth-of-targets (1- (or elmo-spam-bsfilter-max-files-per-process
 				   100)))
