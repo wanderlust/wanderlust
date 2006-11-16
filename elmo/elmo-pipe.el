@@ -263,6 +263,13 @@
   (and (elmo-folder-plugged-p (elmo-pipe-folder-src-internal folder))
        (elmo-folder-plugged-p (elmo-pipe-folder-dst-internal folder))))
 
+(luna-define-method elmo-folder-set-plugged ((folder elmo-pipe-folder)
+					     plugged &optional add)
+  (elmo-folder-set-plugged (elmo-pipe-folder-src-internal folder)
+			   plugged add)
+  (elmo-folder-set-plugged (elmo-pipe-folder-dst-internal folder)
+			   plugged add))
+
 (luna-define-method elmo-folder-message-file-p ((folder elmo-pipe-folder))
   (elmo-folder-message-file-p (elmo-pipe-folder-dst-internal folder)))
 
