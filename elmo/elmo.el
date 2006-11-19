@@ -1128,9 +1128,9 @@ Returns a list of message numbers successfully appended."
 (defun elmo-generic-folder-append-messages (folder src-folder numbers
 						   same-number)
   (let ((src-msgdb-exists (not (zerop (elmo-folder-length src-folder))))
-	unseen table
+	unseen
 	succeed-numbers failure cache id)
-    (setq table (elmo-folder-flag-table folder))
+    (elmo-folder-flag-table folder) ; load
     (with-temp-buffer
       (set-buffer-multibyte nil)
       (while numbers
