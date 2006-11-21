@@ -96,6 +96,14 @@
 (put 'elmo-with-enable-multibyte 'lisp-indent-function 0)
 (def-edebug-spec elmo-with-enable-multibyte t)
 
+(static-if (condition-case nil
+	       (plist-get '(one) 'other)
+	     (error t))
+    (defmacro elmo-safe-plist-get (plist prop)
+      `(ignore-errors
+	 (plist-get ,plist ,prop)))
+  (defalias 'elmo-safe-plist-get 'plist-get))
+
 (eval-when-compile
   (unless (fboundp 'coding-system-base)
     (defalias 'coding-system-base 'ignore))
@@ -1221,14 +1229,14 @@ If optional DELETE-FUNCTION is speficied, it is used as delete procedure."
       (if (or (elmo-progress-counter-total counter)
 	      (and (elmo-progress-counter-set-total
 		    counter
-		    (plist-get params :total))
+		    (elmo-safe-plist-get params :total))
 		   (elmo-progress-call-callback counter 'query)))
 	  (progn
 	    (elmo-progress-counter-set-value
 	     counter
-	     (or (plist-get params :set)
+	     (or (elmo-safe-plist-get params :set)
 		 (+ (elmo-progress-counter-value counter)
-		    (or (plist-get params :inc)
+		    (or (elmo-safe-plist-get params :inc)
 			(car params)
 			1))))
 	    (elmo-progress-call-callback counter))
