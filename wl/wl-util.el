@@ -1210,7 +1210,7 @@ is enclosed by at least one regexp grouping construct."
 				     nil initial-input
 				     hist def inherit-input-method))))
  (t
-  (defalias 'wl-completing-read-multiple 'wl-completing-read-multiple-2)))
+  (defalias 'wl-completing-read-multiple 'completing-read-multiple)))
 
 
 (require 'product)
