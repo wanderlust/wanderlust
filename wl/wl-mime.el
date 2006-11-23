@@ -487,6 +487,7 @@ It calls following-method selected from variable
      (wl-define-dummy-functions epg-make-context
 				epg-decrypt-string
 				epg-verify-string
+				epg-context-set-progress-callback
 				epg-context-result-for
 				epg-verify-result-to-string
 				epa-display-info)))
@@ -497,31 +498,43 @@ It calls following-method selected from variable
 				pgg-verify-region
 				pgg-display-output-buffer))))
 
+(defun wl-epg-progress-callback (context what char current total reporter)
+  (let ((label (elmo-progress-counter-label reporter)))
+    (when label
+      (elmo-progress-notify label :set current :total total))))
+
 (defun wl-mime-pgp-decrypt-region-with-epg (beg end &optional no-decode)
   (require 'epg)
-  (message "Decrypting...")
-  (insert (prog1
-	      (decode-coding-string
-	       (epg-decrypt-string
-		(epg-make-context)
-		(buffer-substring beg end))
-	       (if no-decode 'raw-text wl-cs-autoconv))
-	    (delete-region beg end)))
-  (message "Decrypting...done")
+  (let ((context (epg-make-context)))
+    (elmo-with-progress-display (epg-decript nil reporter)
+	"Decrypting"
+      (epg-context-set-progress-callback context
+					 #'wl-epg-progress-callback
+					 reporter)
+      (insert (prog1
+		  (decode-coding-string
+		   (epg-decrypt-string
+		    context
+		    (buffer-substring beg end))
+		   (if no-decode 'raw-text wl-cs-autoconv))
+		(delete-region beg end)))))
   last-coding-system-used)
 
 (defun wl-mime-pgp-verify-region-with-epg (beg end &optional coding-system)
   (require 'epa)
   (let ((context (epg-make-context)))
-    (message "Verifying...")
-    (epg-verify-string
-     context
-     (encode-coding-string
-      (buffer-substring beg end)
-      (if coding-system
-	  (coding-system-change-eol-conversion coding-system 'dos)
-	'raw-text-dos)))
-    (message "Verifying...done")
+    (elmo-with-progress-display (epg-verify nil reporter)
+	"Verifying"
+      (epg-context-set-progress-callback context
+					 #'wl-epg-progress-callback
+					 reporter)
+      (epg-verify-string
+       context
+       (encode-coding-string
+	(buffer-substring beg end)
+	(if coding-system
+	    (coding-system-change-eol-conversion coding-system 'dos)
+	  'raw-text-dos))))
     (when (epg-context-result-for context 'verify)
       (epa-display-info (epg-verify-result-to-string
 			 (epg-context-result-for context 'verify))))))

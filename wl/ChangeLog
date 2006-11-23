@@ -1,3 +1,11 @@
+2006-11-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-epg-progress-callback): New function.
+	(wl-mime-pgp-decrypt-region-with-epg): Display progress message
+	with `elmo-with-progress-display'. Set a progress callback
+	function to epg-context.
+	(wl-mime-pgp-verify-region-with-epg): Ditto.
+
 2006-11-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-util.el (wl-completing-read-multiple): Define as an alias of
