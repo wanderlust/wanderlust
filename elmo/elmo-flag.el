@@ -124,7 +124,8 @@
 						elmo-flag-folder))
   (elmo-object-save
    (expand-file-name ".minfo" (elmo-folder-msgdb-path folder))
-   (elmo-flag-folder-minfo-internal folder))
+   (elmo-flag-folder-minfo-internal folder)
+   elmo-mime-charset)
   (if (elmo-flag-folder-max-number-internal folder)
       (elmo-object-save
        (expand-file-name "max" (elmo-folder-msgdb-path folder))
