@@ -612,8 +612,9 @@ Message is inserted to the summary buffer."
 	;; insert as children.
 	(wl-thread-entity-insert-as-children
 	 parent
-	 (setq child-entity (wl-thread-create-entity
-			     msg (nth 0 parent) nil linked)))
+	 (setq child-entity
+	       (wl-thread-create-entity
+		msg (wl-thread-entity-get-number parent) nil linked)))
       ;; insert as top message.
       (wl-thread-entity-insert-as-top
        (wl-thread-create-entity msg nil)))
@@ -785,14 +786,14 @@ Message is inserted to the summary buffer."
 	(setq temp-mark (wl-summary-get-score-mark msg-num)))
       (setq message-entity
 	    (elmo-message-entity wl-summary-buffer-elmo-folder
-				 (nth 0 entity)))
+				 msg-num))
 ;;;   (wl-delete-all-overlays)
       (when message-entity
 	(wl-summary-insert-line
 	 (wl-summary-create-line
 	  message-entity
 	  (elmo-message-entity wl-summary-buffer-elmo-folder
-			       (nth 0 parent-entity))
+			       (wl-thread-entity-get-number parent-entity))
 	  temp-mark
 	  (elmo-message-status wl-summary-buffer-elmo-folder msg-num)
 	  (if wl-thread-insert-force-opened
@@ -808,7 +809,7 @@ Message is inserted to the summary buffer."
     (while msgs
       (wl-thread-insert-entity-sub indent entity parent-entity all)
       (setq msgs (cdr msgs))
-      (setq children (nth 2 entity))
+      (setq children (wl-thread-entity-get-children entity))
       (if children
 	  ;; insert children
 	  (when (or wl-thread-insert-force-opened
@@ -953,7 +954,7 @@ Message is inserted to the summary buffer."
     (wl-thread-insert-entity (- depth 1)
 			     entity
 			     (wl-thread-get-entity
-			      (nth 3 entity))
+			      (wl-thread-entity-get-parent entity))
 			     nil)
     (delete-char 1) ; delete '\n'
     (wl-thread-print-argument-region beg (point))))
@@ -979,7 +980,8 @@ Message is inserted to the summary buffer."
     (wl-thread-insert-entity depth ;(- depth 1)
 			     entity
 			     (wl-thread-get-entity
-			      (nth 3 entity)) nil)
+			      (wl-thread-entity-get-parent entity))
+			     nil)
     (delete-char 1) ; delete '\n'
     (wl-thread-print-argument-region beg (point))))
 

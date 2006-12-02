@@ -2,6 +2,9 @@
 
 	* wl-thread.el (wl-thread-entity-insert-as-children): Use
 	wl-thread-entity-set-children.
+	(wl-thread-insert-message, wl-thread-insert-entity-sub,
+	wl-thread-insert-entity, wl-thread-close, wl-thread-open):
+	Use wl-thread-entity-get-*.
 
 2006-11-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
