@@ -198,8 +198,7 @@
  				      (nth (- (length curc) 1)
  					   curc))))
  			(wl-thread-entity-get-number curp)))
-    (setcar (cddr to) (wl-append children
-				 (list (car entity))))
+    (wl-thread-entity-set-children to (wl-append children (list (car entity))))
     (setq wl-thread-entities (cons entity wl-thread-entities))
     (elmo-set-hash-val (format "#%d" (car entity)) entity
 		       wl-thread-entity-hashtb)))
