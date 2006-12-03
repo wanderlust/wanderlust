@@ -1,3 +1,8 @@
+2006-12-03  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-imap4.el (elmo-network-initialize-session): Check to
+	retrieve a whole greeting message.
+
 2006-11-25  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-flag.el (elmo-folder-commit): Encode `.minfo' at save.

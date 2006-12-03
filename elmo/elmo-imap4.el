@@ -983,8 +983,8 @@ If CHOP-LENGTH is not specified, message set is not chopped."
       ;; Skip garbage output from process before greeting.
       (while (and (memq (process-status process) '(open run))
 		  (goto-char (point-max))
-		  (forward-line -1)
-		  (not (elmo-imap4-parse-greeting)))
+		  (or (/= (forward-line -1) 0)
+		      (not (elmo-imap4-parse-greeting))))
 	(accept-process-output process 1))
       (erase-buffer)
       (set-process-filter process 'elmo-imap4-arrival-filter)
