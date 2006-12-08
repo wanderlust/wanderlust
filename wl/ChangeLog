@@ -1,3 +1,8 @@
+2006-12-08  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-spam.el (wl-spam-setup): Bind "rkm" to wl-summary-spam-region and
+	"tkm" to wl-thread-spam.
+
 2006-12-02  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-thread.el (wl-thread-entity-insert-as-children): Use

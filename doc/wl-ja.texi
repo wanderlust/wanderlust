@@ -7102,20 +7102,6 @@ non-spam としての学習に加えて、spam に行なった学習を削除します。
 カーソル行のメッセージをテストし、spam と判定された場合に spam マークを
 付けます。
 
-@item r k c
-@kindex r k c (Summary)
-@findex wl-summary-test-spam-region
-指定リージョンにあるメッセージをテストし、spam と判定された場合に spam マークを
-付けます。
-
-@item t k c
-@kindex t k c (Summary)
-@findex wl-thread-test-spam
-カーソル行があるメッセージを先頭とするスレッドのメッセージをテストし、
-spam と判定された場合に spam マークを付けます。
-prefix argument つきならばカーソル行があるメッセージを含むスレッド全てに
-適用します。
-
 @item k C
 @kindex k C (Summary)
 @findex wl-summary-mark-spam
@@ -7143,6 +7129,32 @@ spam かどうかのテストを行います。spam と判定されたメッセージには、sp
 @kindex k N (Summary)
 @findex wl-summary-register-as-good-all
 フォルダ内の全てのメッセージを non-spam として登録します。
+
+@item r k m
+@kindex r k m (Summary)
+@findex wl-summary-spam-region
+指定リージョンにあるメッセージに spam マークを付けます。
+
+@item r k c
+@kindex r k c (Summary)
+@findex wl-summary-test-spam-region
+指定リージョンにあるメッセージをテストし、spam と判定された場合に spam マークを
+付けます。
+
+@item t k m
+@kindex t k m (Summary)
+@findex wl-thread-spam
+カーソル行があるメッセージを先頭とするスレッドのメッセージに spam マークを付けます。
+prefix argument つきならばカーソル行があるメッセージを含むスレッド全てに
+適用します。
+
+@item t k c
+@kindex t k c (Summary)
+@findex wl-thread-test-spam
+カーソル行があるメッセージを先頭とするスレッドのメッセージをテストし、
+spam と判定された場合に spam マークを付けます。
+prefix argument つきならばカーソル行があるメッセージを含むスレッド全てに
+適用します。
 
 @item m k
 @kindex m k (Summary)

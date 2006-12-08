@@ -393,7 +393,11 @@ See `wl-summary-mark-action-list' for the detail of element."
 		  wl-summary-skip-mark-list))))
   (define-key wl-summary-mode-map "k" wl-summary-spam-map)
   (define-key
+    wl-summary-mode-map "rkm" 'wl-summary-spam-region)
+  (define-key
     wl-summary-mode-map "rkc" 'wl-summary-test-spam-region)
+  (define-key
+    wl-summary-mode-map "tkm" 'wl-thread-spam)
   (define-key
     wl-summary-mode-map "tkc" 'wl-thread-test-spam)
   (define-key
