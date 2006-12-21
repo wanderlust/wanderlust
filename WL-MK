@@ -310,22 +310,12 @@
   (config-wl-package-subr)
   ;; PACKAGEDIR check.
   (let (package-dir)
-    (and (setq package-dir (car command-line-args-left))
-	 (if (string= "NONE" package-dir)
-	     (defvar PACKAGEDIR
-	       (if (boundp 'early-packages)
-		   (let ((dirs (append (if early-package-load-path
-					   early-packages)
-				       (if late-package-load-path
-					   late-packages)
-				       (if last-package-load-path
-					   last-packages)))
-			 dir)
-		     (while (not (file-exists-p
-				  (setq dir (car dirs))))
-		       (setq dirs (cdr dirs)))
-		     dir)))
-	   (defvar PACKAGEDIR package-dir)))
+    (defvar PACKAGEDIR
+      (if (and (setq package-dir (car command-line-args-left))
+	       (not (string= "NONE" package-dir)))
+	  package-dir
+	(require 'install)
+	(install-get-default-package-directory)))
     (princ (format "PACKAGEDIR is %s\n" PACKAGEDIR))
     (setq command-line-args-left (cdr command-line-args-left)))
   ;; PIXMAPDIR check.
