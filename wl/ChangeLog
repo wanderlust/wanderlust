@@ -1,3 +1,7 @@
+2007-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-demo.el (wl-demo-copyright-notice): Add 2007.
+
 2006-12-08  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-spam.el (wl-spam-setup): Bind "rkm" to wl-summary-spam-region and
