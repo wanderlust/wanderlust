@@ -385,11 +385,15 @@ It calls following-method selected from variable
 	mime-view-ignored-field-list)
     (mime-view-mode nil nil nil inbuf outbuf)))
 
-(defun wl-message-delete-mime-out-buf ()
-  (let (mime-out-buf mime-out-win)
-    (if (setq mime-out-buf (get-buffer mime-echo-buffer-name))
-	(if (setq mime-out-win (get-buffer-window mime-out-buf))
-	    (delete-window mime-out-win)))))
+(defun wl-message-delete-popup-windows ()
+  (dolist (buffer wl-message-popup-buffers)
+    (when (or (stringp buffer)
+	      (and (symbolp buffer)
+		   (boundp buffer)
+		   (setq buffer (symbol-value buffer))))
+      (let ((window (get-buffer-window buffer)))
+	(when window
+	  (delete-window window))))))
 
 (defun wl-message-request-partial (folder number)
   (elmo-set-work-buf
@@ -845,8 +849,9 @@ With ARG, ask destination folder."
 	     'wl-original-message-mode 'wl-message-exit)
   (set-alist 'mime-preview-over-to-next-method-alist
 	     'wl-original-message-mode 'wl-message-exit)
-  (add-hook 'wl-summary-redisplay-hook 'wl-message-delete-mime-out-buf)
-  (add-hook 'wl-message-exit-hook 'wl-message-delete-mime-out-buf)
+  (add-hook 'wl-summary-toggle-disp-off-hook 'wl-message-delete-popup-windows)
+  (add-hook 'wl-summary-redisplay-hook 'wl-message-delete-popup-windows)
+  (add-hook 'wl-message-exit-hook 'wl-message-delete-popup-windows)
 
   (ctree-set-calist-strictly
    'mime-preview-condition

@@ -2278,6 +2278,12 @@ See also variable `wl-summary-next-no-unread-command'."
   :group 'wl-pref
   :group 'wl-setting)
 
+(defcustom wl-message-popup-buffers '(mime-echo-buffer-name epa-info-buffer)
+  "*List of buffer or name which is popped up with message buffer."
+  :type '(repeat (choice (symbol :tag "Variable")
+			 (string :tag "Buffer name")))
+  :group 'wl-setting)
+
 (defcustom wl-message-buffer-name " *WL:Message*"
   "*Buffer name for message buffers."
   :group 'wl-pref

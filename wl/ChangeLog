@@ -1,3 +1,12 @@
+2007-01-07  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-vars.el (wl-message-popup-buffers): New user option.
+
+	* wl-mime.el (wl-message-delete-mime-out-buf): Abolish.
+	(wl-message-delete-popup-windows): New function that substitues
+	above one.
+	(wl-mime-setup): Follow the above change.
+
 2007-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-demo.el (wl-demo-copyright-notice): Add 2007.
