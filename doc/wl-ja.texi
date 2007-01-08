@@ -8764,12 +8764,6 @@ POP3 $B;2>H;~$K=hM}$,%O%s%0$9$k$h$&$J>l9g$O!"(B@code{t} $B$K$9$k$HNI$$$+$b$7$
 $B=i4|@_Dj$O(B @code{t}$B!#(B
 Non-nil $B$J$i$P%*%U%i%$%s=hM}$GN/$C$?=hM}$r<B9T$9$k$+$I$&$+$r3NG'$7$^$9!#(B
 
-@item elmo-display-progress-threshold
-@vindex elmo-display-progress-threshold
-$B=i4|@_Dj$O(B 20$B!#(B
-$B?JD=I=<((B(progress gauge)$B$rI=<($9$kogCM!#$3$NCM$h$j$b99?7?t$,Bg$-$$>l9g$O(B
-$B?JD=I=<($7$^$9!#(B
-
 @item elmo-network-session-idle-timeout
 @vindex elmo-network-session-idle-timeout
 $B=i4|@_Dj$O(B @code{nil}$B!#(B

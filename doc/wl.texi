@@ -8833,12 +8833,6 @@ The initial setting is @code{t}.
 If non-nil, you are asked for confirmation if accumulated off-line
 operations are executed.
 
-@item elmo-display-progress-threshold
-@vindex elmo-display-progress-threshold
-The initial setting is 20.
-Threshold for display of progress gauge.  If number of renewal is more than
-this value, display progress gauge.
-
 @item elmo-network-session-idle-timeout
 @vindex elmo-network-session-idle-timeout
 The initial setting is @code{nil}.
