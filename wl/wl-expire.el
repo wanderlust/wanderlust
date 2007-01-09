@@ -132,33 +132,29 @@
       (setq refile-list
 	    (wl-expire-delete-reserved-messages refile-list folder)))
     (when refile-list
-      (let* ((doingmes (if copy
-			   "Copying %s"
-			 "Expiring (move %s)"))
+      (let* ((dst-name dst-folder)
 	     (dst-folder (wl-folder-get-elmo-folder dst-folder))
-	     (mess (format (concat doingmes " %s msgs...")
-			   (elmo-folder-name-internal dst-folder)
-			   (length refile-list))))
-	(message "%s" mess)
-	(if wl-expire-test
-	    nil
-	  (unless (or (elmo-folder-exists-p dst-folder)
-		      (elmo-folder-create dst-folder))
-	    (error "%s: create folder failed"
-		   (elmo-folder-name-internal dst-folder)))
-	  (if (elmo-folder-move-messages folder
-					 refile-list
-					 dst-folder
-					 copy
-					 preserve-number)
-	      (progn
-		(wl-expire-append-log
-		 (elmo-folder-name-internal folder)
-		 refile-list
-		 (elmo-folder-name-internal dst-folder)
-		 (if copy 'copy 'move))
-		(message "%sdone" mess))
-	    (error "%sfailed!" mess)))))
+	     (action (format (if copy "Copying to %s" "Expiring (move to %s)")
+			     dst-name)))
+	(elmo-with-progress-display
+	    (elmo-folder-move-messages (length refile-list))
+	    action
+	  (if wl-expire-test
+	      nil
+	    (unless (or (elmo-folder-exists-p dst-folder)
+			(elmo-folder-create dst-folder))
+	      (error "Create folder failed: %s" dst-name))
+	    (unless (elmo-folder-move-messages folder
+					       refile-list
+					       dst-folder
+					       copy
+					       preserve-number)
+	      (error "%s is failed" action))
+	    (wl-expire-append-log
+	     (elmo-folder-name-internal folder)
+	     refile-list
+	     dst-name
+	     (if copy 'copy 'move))))))
     (cons refile-list (length refile-list))))
 
 (defun wl-expire-refile-with-copy-reserve-msg
@@ -587,27 +583,21 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 (defun wl-summary-expire (&optional folder notsummary nolist)
   ""
   (interactive)
-  (let ((folder (or folder wl-summary-buffer-elmo-folder))
-	(deleting-info "Expiring...")
-	expires)
-    (when (and (or (setq expires (wl-expire-folder-p
-				  (elmo-folder-name-internal folder)))
-		   (progn (and (interactive-p)
-			       (message "no match %s in wl-expire-alist"
-					(elmo-folder-name-internal folder)))
-			  nil))
-	       (or (not (interactive-p))
-		   (y-or-n-p (format "Expire %s? " (elmo-folder-name-internal
-						    folder)))))
-      (let* (expval rm-type val-type value more args
-		    delete-list)
-	(save-excursion
-	  (setq expval (car expires)
-		rm-type (nth 1 expires)
-		args (cddr expires))
-	  (setq val-type (car expval)
-		value (nth 1 expval)
-		more (nth 2 expval))
+  (let* ((folder (or folder wl-summary-buffer-elmo-folder))
+	 (folder-name (elmo-folder-name-internal folder))
+	 (expires (wl-expire-folder-p folder-name)))
+    (unless expires
+      (error "No match %s in wl-expire-alist" folder-name))
+    (when (or (not (interactive-p))
+	      (y-or-n-p (format "Expire %s? " folder-name)))
+      (save-excursion
+	(let* ((expval (car expires))
+	       (val-type (car expval))
+	       (value (nth 1 expval))
+	       (more (nth 2 expval))
+	       (rm-type (nth 1 expires))
+	       (args (cddr expires))
+	       delete-list)
 	  (run-hooks 'wl-summary-expire-pre-hook)
 	  (cond
 	   ((eq val-type nil))
@@ -647,35 +637,29 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 	    (or wl-expired-alist
 		(setq wl-expired-alist (wl-expired-alist-load)))
 	    ;; evaluate string-match for wl-expand-newtext
-	    (wl-expire-folder-p
-	     (elmo-folder-name-internal folder))
+	    (wl-expire-folder-p folder-name)
 	    (setq delete-list
 		  (cond ((eq rm-type nil) nil)
 			((eq rm-type 'remove)
-			 (setq deleting-info "Deleting...")
 			 (car (wl-expire-delete folder delete-list)))
 			((eq rm-type 'trash)
-			 (setq deleting-info "Deleting...")
 			 (car (wl-expire-refile folder
 						delete-list
 						wl-trash-folder)))
 			((eq rm-type 'hide)
-			 (setq deleting-info "Hiding...")
 			 (car (wl-expire-hide folder delete-list)))
 			((stringp rm-type)
-			 (setq deleting-info "Refiling...")
 			 (car (wl-expire-refile folder delete-list
 						(wl-expand-newtext
 						 rm-type
-						 (elmo-folder-name-internal
-						  folder)))))
+						 folder-name))))
 			((fboundp rm-type)
-			 (apply rm-type (append (list folder delete-list)
-						args)))
+			 (apply rm-type
+				(nconc (list folder delete-list) args)))
 			(t
 			 (error "%s: invalid type" rm-type))))
 	    (when (and (not wl-expire-test) (not notsummary) delete-list)
-	      (wl-summary-delete-messages-on-buffer delete-list deleting-info)
+	      (wl-summary-delete-messages-on-buffer delete-list)
 	      (wl-summary-folder-info-update)
 	      (wl-summary-set-message-modified)
 	      (sit-for 0)
@@ -683,11 +667,10 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 	    (wl-expired-alist-save))
 	  (run-hooks 'wl-summary-expire-hook)
 	  (if delete-list
-	      (message "Expiring %s is done" (elmo-folder-name-internal
-					      folder))
+	      (message "Expiring %s is done" folder-name)
 	    (and (interactive-p)
-		 (message "No expire"))))
-	delete-list))))
+		 (message "No expire")))
+	  delete-list)))))
 
 (defun wl-folder-expire-entity (entity)
   (cond

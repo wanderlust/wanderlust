@@ -1829,7 +1829,7 @@ If ARG is non-nil, checking is omitted."
       (wl-summary-update-modeline)
       (message "Resuming cache status...done"))))
 
-(defun wl-summary-delete-messages-on-buffer (msgs &optional deleting-info)
+(defun wl-summary-delete-messages-on-buffer (msgs)
   (interactive)
   (save-excursion
     (let ((inhibit-read-only t)
@@ -1837,7 +1837,6 @@ If ARG is non-nil, checking is omitted."
 	  (msgs2 msgs)
 	  (len (length msgs))
 	  (i 0)
-	  ;(deleting-info (or deleting-info "Deleting..."))
 	  update-list)
       (elmo-kill-buffer wl-summary-search-buf-name)
       (while msgs
@@ -1862,7 +1861,6 @@ If ARG is non-nil, checking is omitted."
 	      "Updating deleted thread"
 	    (wl-thread-update-line-msgs updates)
 	    (wl-thread-cleanup-symbols msgs2))))
-      ;;(message (concat deleting-info "done"))
       (wl-summary-count-unread)
       (wl-summary-update-modeline)
       (wl-summary-folder-info-update))))
