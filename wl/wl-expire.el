@@ -580,97 +580,96 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
   "Return non-nil, when ENTITY matched `wl-archive-alist'."
   (wl-get-assoc-list-value wl-archive-alist entity))
 
-(defun wl-summary-expire (&optional folder notsummary nolist)
-  ""
-  (interactive)
+(defun wl-summary-expire (&optional folder notsummary all)
+  "Expire messages of current summary."
+  (interactive
+   (list wl-summary-buffer-elmo-folder
+	 nil
+	 current-prefix-arg))
   (let* ((folder (or folder wl-summary-buffer-elmo-folder))
 	 (folder-name (elmo-folder-name-internal folder))
-	 (expires (wl-expire-folder-p folder-name)))
-    (unless expires
-      (error "No match %s in wl-expire-alist" folder-name))
-    (when (or (not (interactive-p))
-	      (y-or-n-p (format "Expire %s? " folder-name)))
-      (save-excursion
-	(let* ((expval (car expires))
-	       (val-type (car expval))
-	       (value (nth 1 expval))
-	       (more (nth 2 expval))
-	       (rm-type (nth 1 expires))
-	       (args (cddr expires))
-	       delete-list)
+	 (rule (wl-expire-folder-p folder-name)))
+    (if (not rule)
+	(and (interactive-p)
+	     (error "No match %s in `wl-expire-alist'" folder-name))
+      (when (or (not (interactive-p))
+		(y-or-n-p (format "Expire %s? " folder-name)))
+	(save-excursion
 	  (run-hooks 'wl-summary-expire-pre-hook)
-	  (cond
-	   ((eq val-type nil))
-	   ((eq val-type 'number)
-	    (let* ((msgs (if (not nolist)
-			     (elmo-folder-list-messages folder)
-			   (elmo-folder-list-messages folder 'visible
-						      'in-msgdb)))
-		   (msglen (length msgs))
-		   (more (or more (1+ value)))
-		   count)
-	      (when (>= msglen more)
-		(setq count (- msglen value))
-		(while (and msgs (> count 0))
-		  (when (elmo-message-entity folder (car msgs))
-		    ;; don't expire new message
-		    (wl-append delete-list (list (car msgs)))
-		    (when (or (not wl-expire-number-with-reserve-marks)
-			      (wl-expire-message-p folder (car msgs)))
-		      (setq count (1- count))))
-		  (setq msgs (cdr msgs))))))
-	   ((eq val-type 'date)
-	    (let* ((key-date (elmo-datevec-to-time
-			      (elmo-date-get-offset-datevec
-			       (timezone-fix-time (current-time-string)
-						  (current-time-zone) nil)
-			       value t))))
-	      (elmo-folder-do-each-message-entity (entity folder)
-		(when (elmo-time<
-		       (elmo-message-entity-field entity 'date)
-		       key-date)
-		  (wl-append delete-list
-			     (list (elmo-message-entity-number entity)))))))
-	   (t
-	    (error "%s: not supported" val-type)))
-	  (when delete-list
-	    (or wl-expired-alist
-		(setq wl-expired-alist (wl-expired-alist-load)))
-	    ;; evaluate string-match for wl-expand-newtext
-	    (wl-expire-folder-p folder-name)
-	    (setq delete-list
-		  (cond ((eq rm-type nil) nil)
-			((eq rm-type 'remove)
-			 (car (wl-expire-delete folder delete-list)))
-			((eq rm-type 'trash)
-			 (car (wl-expire-refile folder
-						delete-list
-						wl-trash-folder)))
-			((eq rm-type 'hide)
-			 (car (wl-expire-hide folder delete-list)))
-			((stringp rm-type)
-			 (car (wl-expire-refile folder delete-list
-						(wl-expand-newtext
-						 rm-type
-						 folder-name))))
-			((fboundp rm-type)
-			 (apply rm-type
-				(nconc (list folder delete-list) args)))
-			(t
-			 (error "%s: invalid type" rm-type))))
-	    (when (and (not wl-expire-test) (not notsummary) delete-list)
-	      (wl-summary-delete-messages-on-buffer delete-list)
+	  (let ((expired (apply #'wl-expire-folder folder all rule)))
+	    (when (and (not wl-expire-test)
+		       (not notsummary)
+		       expired)
+	      (wl-summary-delete-messages-on-buffer expired)
 	      (wl-summary-folder-info-update)
 	      (wl-summary-set-message-modified)
 	      (sit-for 0)
 	      (set-buffer-modified-p nil))
-	    (wl-expired-alist-save))
-	  (run-hooks 'wl-summary-expire-hook)
-	  (if delete-list
-	      (message "Expiring %s is done" folder-name)
-	    (and (interactive-p)
-		 (message "No expire")))
-	  delete-list)))))
+	    (run-hooks 'wl-summary-expire-hook)
+	    (if expired
+		(message "Expiring %s is done" folder-name)
+	      (and (interactive-p)
+		   (message "No expire")))
+	    expired))))))
+
+(defun wl-expire-folder (folder all condition action &rest args)
+  (let ((folder-name (elmo-folder-name-internal folder))
+	(val-type (car condition))
+	(value (nth 1 condition))
+	targets)
+    (cond
+     ((eq val-type nil))
+     ((eq val-type 'number)
+      (let* ((msgs (elmo-folder-list-messages folder (not all) (not all)))
+	     (msglen (length msgs))
+	     count)
+	(when (>= msglen (or (nth 2 condition) (1+ value)))
+	  (setq count (- msglen value))
+	  (while (and msgs (> count 0))
+	    (when (elmo-message-entity folder (car msgs))
+	      ;; don't expire new message
+	      (wl-append targets (list (car msgs)))
+	      (when (or (not wl-expire-number-with-reserve-marks)
+			(wl-expire-message-p folder (car msgs)))
+		(setq count (1- count))))
+	    (setq msgs (cdr msgs))))))
+     ((eq val-type 'date)
+      (let ((key-date (elmo-datevec-to-time
+		       (elmo-date-get-offset-datevec
+			(timezone-fix-time (current-time-string)
+					   (current-time-zone) nil)
+			value t))))
+	(elmo-folder-do-each-message-entity (entity folder)
+	  (when (elmo-time<
+		 (elmo-message-entity-field entity 'date)
+		 key-date)
+	    (wl-append targets
+		       (list (elmo-message-entity-number entity)))))))
+     (t
+      (error "%s: not supported" val-type)))
+    (when targets
+      (or wl-expired-alist
+	  (setq wl-expired-alist (wl-expired-alist-load)))
+      ;; evaluate string-match for wl-expand-newtext
+      (wl-expire-folder-p folder-name)
+      (prog1
+	  (cond ((eq action nil) nil)
+		((eq action 'remove)
+		 (car (wl-expire-delete folder targets)))
+		((eq action 'trash)
+		 (car (wl-expire-refile folder targets wl-trash-folder)))
+		((eq action 'hide)
+		 (car (wl-expire-hide folder targets)))
+		((stringp action)
+		 (car (wl-expire-refile
+		       folder
+		       targets
+		       (wl-expand-newtext action folder-name))))
+		((fboundp action)
+		 (apply action folder targets args))
+		(t
+		 (error "%s: invalid type" action)))
+	(wl-expired-alist-save)))))
 
 (defun wl-folder-expire-entity (entity)
   (cond

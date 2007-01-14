@@ -1,3 +1,11 @@
+2007-01-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-expire.el (wl-expire-folder): New function (split from
+	wl-summary-expire).
+	(wl-summary-expire): Use it. Add argument `all' instead of remove
+	`nolist'. Cause an error only if this function is calling
+	interactively.
+
 2007-01-09  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-expire.el (wl-expire-refile): Display progress message.
