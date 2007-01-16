@@ -258,9 +258,9 @@
 (luna-define-method elmo-message-fetch-internal ((folder elmo-localdir-folder)
 						 number strategy
 						 &optional section unread)
-  (when (file-exists-p (elmo-message-file-name folder number))
-    (insert-file-contents-as-binary
-     (elmo-message-file-name folder number))))
+  (let ((filename (elmo-message-file-name folder number)))
+    (when (file-exists-p filename)
+      (insert-file-contents-as-raw-text filename))))
 
 (luna-define-method elmo-folder-list-messages-internal
   ((folder elmo-localdir-folder) &optional nohide)

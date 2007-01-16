@@ -528,7 +528,7 @@ file name for maildir directories."
 					    &optional section unseen)
   (let ((file (elmo-maildir-message-file-name folder location)))
     (when (file-exists-p file)
-      (insert-file-contents-as-binary file)
+      (insert-file-contents-as-raw-text file)
       (unless unseen
 	(elmo-map-folder-set-flag folder (list location) 'read))
       t)))

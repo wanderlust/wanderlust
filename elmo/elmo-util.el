@@ -2262,7 +2262,8 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
 			    file nil beg
 			    (incf beg elmo-msgdb-file-header-chop-length))))
 		  (prog1 (not (search-forward "\n\n" nil t))
-		    (goto-char (point-max))))))))
+		    (goto-char (point-max)))))
+      (elmo-delete-cr-buffer))))
 
 ;;
 ;; overview handling
