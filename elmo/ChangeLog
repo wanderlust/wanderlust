@@ -1,3 +1,10 @@
+2007-01-23  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* elmo-shimbun.el (elmo-shimbun-update-overview): Add argnument
+	`entity'.
+	(elmo-map-message-fetch): Call `elmo-shimbun-update-overview' only
+	if the message entity is exists.
+
 2007-01-16  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* elmo-util.el (elmo-msgdb-insert-file-header): Call

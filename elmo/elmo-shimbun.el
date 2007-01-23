@@ -352,9 +352,8 @@ If it is the symbol `all', update overview for all shimbun folders."
 (luna-define-method elmo-folder-message-file-p ((folder elmo-shimbun-folder))
   nil)
 
-(defsubst elmo-shimbun-update-overview (folder shimbun-id header)
-  (let ((entity (elmo-message-entity folder shimbun-id))
-	(message-id (shimbun-header-id header))
+(defsubst elmo-shimbun-update-overview (folder entity shimbun-id header)
+  (let ((message-id (shimbun-header-id header))
 	references)
     (when (elmo-msgdb-update-entity
 	   (elmo-folder-msgdb folder)
@@ -393,7 +392,9 @@ If it is the symbol `all', update overview for all shimbun folders."
 		  (elmo-string-match-member
 		   (elmo-folder-name-internal folder)
 		   elmo-shimbun-update-overview-folder-list))
-	  (elmo-shimbun-update-overview folder location header))
+	  (let ((entity (elmo-message-entity folder location)))
+	    (when entity
+	      (elmo-shimbun-update-overview folder entity location header))))
 	(when (setq shimbun-id
 		    (elmo-shimbun-header-extra-field header "x-shimbun-id"))
 	  (goto-char (point-min))
