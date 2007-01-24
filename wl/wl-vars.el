@@ -2154,33 +2154,33 @@ Each elements are regexp of folder name."
 (defcustom wl-show-plug-status-on-modeline t
   "If it is non-nil, show plugged status in modeline."
   :type 'boolean
-  :group 'wl-highlight)
+  :group 'wl-setting)
 
 (defcustom wl-plug-state-indicator-on  " [ON] "
   "String used to show plugged status ON."
   :type 'string
-  :group 'wl-highlight)
+  :group 'wl-setting)
 
 (defcustom wl-plug-state-indicator-off " [--] "
   "String used to show plugged status OFF."
   :type 'string
-  :group 'wl-highlight)
+  :group 'wl-setting)
 
 (defcustom wl-biff-check-folder-list nil
-  "All folders that match this list are automatically checked
-every intervals specified by wl-biff-check-interval."
-  :type '(repeat (regexp :tag "Folder"))
-  :group 'wl-highlight)
+  "All folders that include this list are automatically checked
+every intervals specified by `wl-biff-check-interval'."
+  :type '(repeat (string :tag "Folder"))
+  :group 'wl-setting)
 
 (defcustom wl-biff-check-interval 40
   "Number of seconds between updates of new mails in the mode line."
   :type 'integer
-  :group 'wl-highlight)
+  :group 'wl-setting)
 
 (defcustom wl-biff-use-idle-timer nil
   "Non-nil to use idle timer instead of strict timer for wl-biff"
   :type 'boolean
-  :group 'wl-highlight)
+  :group 'wl-setting)
 
 (defcustom wl-biff-state-indicator-on (if (and (featurep 'xemacs)
 					       (not (featurep 'mule)))
@@ -2193,7 +2193,7 @@ every intervals specified by wl-biff-check-interval."
 					   'iso-2022-jp)))
   "String used to show biff status ON."
   :type 'string
-  :group 'wl-highlight)
+  :group 'wl-setting)
 
 (defcustom wl-biff-state-indicator-off (if (and (featurep 'xemacs)
 						(not (featurep 'mule)))
@@ -2202,7 +2202,7 @@ every intervals specified by wl-biff-check-interval."
 					 "[‐]")
   "String used to show biff status OFF."
   :type 'string
-  :group 'wl-highlight)
+  :group 'wl-setting)
 
 (defcustom wl-mode-line-display-priority-list '(biff plug title)
   "Displaying order of items to be shown in modeline.  The first item will
@@ -2221,7 +2221,7 @@ even if the value of this option is set to nil.  Here are some samples:
   :type '(repeat (radio (const :format "%v " biff)
 			(const :format "%v " plug)
 			(sexp :tag "Other" :value title)))
-  :group 'wl-highlight)
+  :group 'wl-setting)
 
 (defcustom wl-interactive-send t
   "*If non-nil, require your confirmation when sending draft message."
