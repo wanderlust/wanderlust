@@ -150,7 +150,7 @@ VALUE is the field value."
 		  (cond ((functionp real-fields)
 			 (funcall real-fields extra))
 			((listp real-fields)
-			 real-fields)))
+			 (copy-sequence real-fields))))
 	      (list extra))))
 	elmo-msgdb-extra-fields))
     elmo-msgdb-extra-fields))
