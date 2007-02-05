@@ -757,6 +757,44 @@ With ARG, ask destination folder."
       (setq wl-mime-save-directory (file-name-directory filename))
       (mime-write-entity-content entity filename))))
 
+(defun wl-summary-extract-attachments-1 (message-entity directory number)
+  ;; returns new number.
+  (let (children filename)
+    (cond
+     ((setq children (mime-entity-children message-entity))
+      (dolist (entity children)
+	(setq number
+	      (wl-summary-extract-attachments-1 entity directory number))))
+     ((and (eq (mime-content-disposition-type
+		(mime-entity-content-disposition message-entity))
+	       'attachment)
+	   (setq filename (mime-entity-safe-filename message-entity)))
+      (let ((full (expand-file-name filename directory)))
+	(when (or (not (file-exists-p full))
+		  (yes-or-no-p
+		   (format "File %s exists. Save anyway? " filename)))
+	  (message "Extracting...%s" (setq number (+ 1 number)))
+	  (mime-write-entity-content message-entity full)))))
+    number))
+
+(defun wl-summary-extract-attachments (directory)
+  "Extract attachment parts in MIME format into the DIRECTORY."
+  (interactive
+   (let* ((default (or wl-mime-save-directory
+		       wl-temporary-file-directory))
+	  (directory (read-directory-name "Extract to " default default t)))
+     (list (if (> (length directory) 0) directory default))))
+  (unless (and (file-writable-p directory)
+	       (file-directory-p directory))
+    (error "%s is not writable" directory))
+  (save-excursion
+    (wl-summary-set-message-buffer-or-redisplay)
+    (let ((entity (get-text-property (point-min) 'mime-view-entity)))
+      (when entity
+	(message "Extracting...")
+	(wl-summary-extract-attachments-1 entity directory 0)
+	(message "Extracting...done")))))
+
 ;;; Yet another combine method.
 (defun wl-mime-combine-message/partial-pieces (entity situation)
   "Internal method for wl to combine message/partial messages automatically."

@@ -1,3 +1,8 @@
+2007-02-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-mime.el (wl-summary-extract-attachments): New command.
+	(wl-summary-extract-attachments-1): New internal function.
+
 2007-01-14  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-expire.el (wl-expire-folder): New function (split from
