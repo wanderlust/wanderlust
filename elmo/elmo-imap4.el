@@ -937,6 +937,8 @@ If CHOP-LENGTH is not specified, message set is not chopped."
        (concat "(" (downcase (elmo-match-string 1 string)) ")"))))
 
 (defun elmo-imap4-clear-login (session)
+  (when (elmo-imap4-session-capable-p session 'logindisabled)
+    (signal 'elmo-authenticate-error '(elmo-imap4-clear-login)))
   (let ((elmo-imap4-debug-inhibit-logging t))
     (or
      (elmo-imap4-read-ok
