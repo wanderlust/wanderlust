@@ -326,8 +326,9 @@ e.g.
     result))
 
 (defun wl-draft-reply (buf with-arg summary-buf &optional number)
-  "Reply to BUF buffer message.
-Reply to author if WITH-ARG is non-nil."
+  "Create draft for replying to the message in buffer BUF.
+Recipients are prepared along `wl-draft-reply-without-argument-list',
+or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 ;;;(save-excursion
   (let ((rule-list (if with-arg
 		       'wl-draft-reply-with-argument-list

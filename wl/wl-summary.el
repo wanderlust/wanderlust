@@ -4217,8 +4217,7 @@ Return t if message exists."
 	     nil)))))
 
 (defun wl-summary-reply (&optional arg without-setup-hook)
-  "Reply to current message. Default is \"wide\" reply.
-Reply to author if invoked with ARG."
+  "Reply to current message. See also `wl-draft-reply'."
   (interactive "P")
   (let ((folder wl-summary-buffer-elmo-folder)
 	(number (wl-summary-message-number))

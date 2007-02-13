@@ -1,3 +1,8 @@
+2007-02-13  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-summary.el (wl-summary-reply): Fix docstring.
+	* wl-draft.el (wl-draft-reply): Ditto.
+
 2007-02-05  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-mime.el (wl-summary-extract-attachments): New command.
