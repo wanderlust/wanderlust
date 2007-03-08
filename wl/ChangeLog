@@ -1,3 +1,11 @@
+2007-03-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-util.el (wl-read-shell-commande): New function or alias.
+
+	* wl-summary.el (wl-summary-pipe-message): Use
+	`wl-read-shell-command' instead of `read-string'.
+	(wl-summary-target-mark-pipe): Ditto.
+
 2007-02-13  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* wl-summary.el (wl-summary-reply): Fix docstring.

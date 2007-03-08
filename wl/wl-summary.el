@@ -4795,8 +4795,8 @@ If ARG is numeric number, decode message as following:
   (interactive (list current-prefix-arg nil))
   (if (null (wl-summary-message-number))
       (message "No message.")
-    (setq command (read-string "Shell command on message: "
-			       wl-summary-shell-command-last))
+    (setq command (wl-read-shell-command "Shell command on message: "
+					 wl-summary-shell-command-last))
     (if (y-or-n-p "Send this message to pipe? ")
 	(wl-summary-pipe-message-subr prefix command))))
 
@@ -4805,8 +4805,9 @@ If ARG is numeric number, decode message as following:
   (interactive (list current-prefix-arg nil))
   (if (null wl-summary-buffer-target-mark-list)
       (message "No marked message.")
-    (setq command (read-string "Shell command on each marked message: "
-			       wl-summary-shell-command-last))
+    (setq command (wl-read-shell-command
+		   "Shell command on each marked message: "
+		   wl-summary-shell-command-last))
     (when (y-or-n-p "Send each marked message to pipe? ")
       (while (car wl-summary-buffer-target-mark-list)
 	(let ((num (car wl-summary-buffer-target-mark-list)))

@@ -1213,6 +1213,15 @@ is enclosed by at least one regexp grouping construct."
   (defalias 'wl-completing-read-multiple 'completing-read-multiple)))
 
 
+(cond
+ ((fboundp 'shell-command-read-minibuffer)
+  (defun wl-read-shell-command (prompt &optional
+				       initial-contents keymap read hist)
+    (shell-command-read-minibuffer prompt default-directory
+				   initial-contents keymap read hist)))
+ (t
+  (defalias 'wl-read-shell-command 'read-from-minibuffer)))
+
 (require 'product)
 (product-provide (provide 'wl-util) (require 'wl-version))
 
