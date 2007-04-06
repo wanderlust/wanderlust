@@ -2378,10 +2378,13 @@ If ARG, without confirm."
 	       (eq major-mode 'wl-summary-mode)) ; called in summary.
       (setq wl-summary-last-visited-folder (wl-summary-buffer-folder-name))
       (run-hooks 'wl-summary-exit-pre-hook)
-      (if (or force-exit (not (wl-summary-sticky-p)))
+      (let ((discard-contents (or force-exit (not (wl-summary-sticky-p)))))
+	(when discard-contents
 	  (wl-summary-cleanup-temp-marks))
-      (wl-summary-save-view)
-      (elmo-folder-commit wl-summary-buffer-elmo-folder)
+	(wl-summary-save-view)
+	(if discard-contents
+	    (elmo-folder-close wl-summary-buffer-elmo-folder)
+	  (elmo-folder-commit wl-summary-buffer-elmo-folder)))
       (if (and (wl-summary-sticky-p) force-exit)
 	  (kill-buffer (current-buffer))))
     (setq buf (wl-summary-get-buffer-create (elmo-folder-name-internal folder)

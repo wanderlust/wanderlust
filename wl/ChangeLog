@@ -1,3 +1,9 @@
+2007-04-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
+
+	* wl-summary.el (wl-summary-goto-folder-subr): Call
+	`elmo-folder-close' instead of `elmo-folder-commit' if discard
+	current summary.
+
 2007-03-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-util.el (wl-read-shell-commande): New function or alias.
