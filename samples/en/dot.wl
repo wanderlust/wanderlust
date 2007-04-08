@@ -174,6 +174,15 @@
 ;	     (wl-folder-open-unread-folder entity)
 ;	     ))
 
+;; Jump to unfiltered folder by `wl-summary-exit'. It is useful for people who
+;; use filtered folder as a temporary folder created by `wl-summary-virtual'.
+;(add-hook 'wl-summary-prepared-hook
+;	  '(lambda ()
+;	     (setq wl-summary-buffer-exit-function
+;		   (when (eq 'filter
+;			     (elmo-folder-type-internal wl-summary-buffer-elmo-folder))
+;		     'wl-summary-unvirtual))))
+
 ;; Change summary display function.
 
 ;; Set extra field use with `elmo-message-entity-field'.

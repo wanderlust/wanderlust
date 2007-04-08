@@ -173,6 +173,15 @@
 ;	     (wl-folder-open-unread-folder entity)
 ;	     ))
 
+;; `wl-summary-exit' によりフィルタされる前のフォルダに飛ぶ。フィルタフォルダを
+;; `wl-summary-virtual' で生成される一時的なフォルダとして使う場合に有用。
+;(add-hook 'wl-summary-prepared-hook
+;	  '(lambda ()
+;	     (setq wl-summary-buffer-exit-function
+;		   (when (eq 'filter
+;			     (elmo-folder-type-internal wl-summary-buffer-elmo-folder))
+;		     'wl-summary-unvirtual))))
+
 ;; サマリ表示関数を変更する
 
 ;; `elmo-message-entity-field' で参照したいフィールド。
