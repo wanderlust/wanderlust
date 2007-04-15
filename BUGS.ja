@@ -1,2 +1,4 @@
 * qmail 対応の UW imapd のメッセージを扱えない。
 * POP3 フォルダの biff がうまく動かない (c.f. [wl: 08937])。
+* IMAP STATUS コマンドをselectされた mailbox に対して使ってはならない(RFC3501)
+

@@ -1,2 +1,4 @@
 * Cannot communicate with UW imapd with qmail patch.
 * Biff of the POP3 folders do not work correctly (c.f. [wl: 08937]).
+* IMAP STATUS command MUST NOT be used as a "check for new messages in the
+  selected mailbox" operation (RFC3501)
