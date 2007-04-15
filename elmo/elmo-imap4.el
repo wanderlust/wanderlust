@@ -2034,13 +2034,13 @@ Return nil if no complete line has arrived."
 			   root)))
 	    (setq root (concat root delim)))
 	  (while (setq folder (car result))
-	    (when (string-match
-		   (concat "^\\(" (regexp-quote root) "[^" re-delim "]" "+\\)"
-			   re-delim)
-		   folder)
-	      (setq folder (match-string 1 folder)))
-	    (setq has-child-p nil
-		  result (delq
+	    (setq has-child-p
+		  (when (string-match
+			 (concat "^\\(" (regexp-quote root) "[^" re-delim "]" "+\\)"
+				 re-delim)
+			 folder)
+		    (setq folder (match-string 1 folder))))
+	    (setq result (delq
 			  nil
 			  (mapcar (lambda (fld)
 				    (if (string-match
