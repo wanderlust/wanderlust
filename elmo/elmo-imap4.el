@@ -2087,8 +2087,9 @@ Return nil if no complete line has arrived."
   t)
 
 (luna-define-method elmo-folder-delete ((folder elmo-imap4-folder))
-  (let ((msgs (and (elmo-folder-exists-p folder)
-		   (elmo-folder-list-messages folder))))
+  (let* ((exists (elmo-folder-exists-p folder))
+	 (msgs (and exists
+		    (elmo-folder-list-messages folder))))
     (when (yes-or-no-p (format "%sDelete msgdb and substance of \"%s\"? "
 			       (if (> (length msgs) 0)
 				   (format "%d msg(s) exists. " (length msgs))
@@ -2097,7 +2098,9 @@ Return nil if no complete line has arrived."
       (let ((session (elmo-imap4-get-session folder)))
 	(when (elmo-imap4-folder-mailbox-internal folder)
 	  (when msgs (elmo-folder-delete-messages-internal folder msgs))
-	  (elmo-imap4-send-command-wait session "close")
+	  ;; close selected mailbox except one with \Noselect attribute
+	  (when exists
+	    (elmo-imap4-send-command-wait session "close"))
 	  (elmo-imap4-send-command-wait
 	   session
 	   (list "delete "

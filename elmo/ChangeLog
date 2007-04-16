@@ -1,3 +1,8 @@
+2007-04-16  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-imap4.el (elmo-folder-delete): Don't call close for mailbox
+	with \Noselect attribute.
+
 2007-04-15  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-imap4.el (elmo-folder-list-subfolders): Fix handling of
