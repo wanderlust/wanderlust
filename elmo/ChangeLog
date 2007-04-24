@@ -1,3 +1,9 @@
+2007-04-24  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-pop3.el (elmo-pop3-auth-apop): Use more strict regexp.
+	http://seclists.org/bugtraq/2007/Apr/0018.html
+	(Suggested by Tatsuya Kinoshita)
+
 2007-04-16  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-imap4.el (elmo-folder-delete): Don't call close for mailbox

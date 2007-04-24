@@ -299,7 +299,7 @@ CODE is one of the following:
     (car response)))
 
 (defun elmo-pop3-auth-apop (session)
-  (unless (string-match "^\+OK .*\\(<[^\>]+>\\)"
+  (unless (string-match "^\+OK .*\\(<[=!-;?-~]+@[=!-;?-~]+>\\)"
 			(elmo-network-session-greeting-internal session))
     (signal 'elmo-open-error '(elmo-pop3-auth-apop)))
   ;; good, APOP ready server
