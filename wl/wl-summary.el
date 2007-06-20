@@ -1032,15 +1032,15 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
 	     (wl-summary-rescan ,(symbol-name sort-by) reverse)))))
 
 (defun wl-summary-sort-function-from-spec (spec reverse)
-  (let (funtion)
+  (let (function)
     (when (string-match "^!\\(.+\\)$" spec)
       (setq spec (match-string 1 spec)
 	    reverse (not reverse)))
-    (setq funtion
+    (setq function
 	  (intern (format "wl-summary-overview-entity-compare-by-%s" spec)))
     (if reverse
-	`(lambda (x y) (not (,funtion x y)))
-      funtion)))
+	`(lambda (x y) (not (,function x y)))
+      function)))
 
 (defun wl-summary-sort-messages (numbers sort-by reverse)
   (let* ((functions (mapcar
