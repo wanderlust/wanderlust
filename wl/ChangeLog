@@ -2,6 +2,8 @@
 
 	* wl-score.el (wl-score-insert-header): Add guard for
 	`std11-unfold-string'.
+	(wl-score-ov-entity-get): Call 'elmo-message-entity-field' with
+	TYPE artgument.
 
 2007-04-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 

@@ -177,7 +177,7 @@ Remove Re, Was, Fwd etc."
 	   (string= s1 s2))))
 
 (defsubst wl-score-ov-entity-get (entity index &optional extra)
-  (elmo-message-entity-field entity (if extra (intern extra) index)))
+  (elmo-message-entity-field entity (if extra (intern extra) index) 'string))
 
 (defun wl-score-string< (a1 a2)
   (string-lessp (wl-score-ov-entity-get (car a1) wl-score-index)
