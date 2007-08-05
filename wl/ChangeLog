@@ -1,3 +1,8 @@
+2007-08-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-score.el (wl-score-insert-header): Add guard for
+	`std11-unfold-string'.
+
 2007-04-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-summary.el (wl-summary-goto-folder-subr): Call
