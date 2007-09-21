@@ -16,3 +16,10 @@
    (not
     (string= (wl-unique-id)
 	     (progn (sleep-for 1) (wl-unique-id))))))
+
+(luna-define-method test-wl-repeat-string ((case test-wl-util))
+  "Should be empty testcase."
+  (lunit-assert
+   (string= "" (wl-repeat-string "string" 0))) ; nil expected?
+  (lunit-assert
+   (string= "" (wl-repeat-string "" 99))))

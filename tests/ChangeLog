@@ -1,3 +1,8 @@
+2007-09-21  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* test-ptexinfmt.el (test-texinfo-format-special-char): New
+	testcase.
+
 2006-11-03  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* test-wl-draft.el: New file.
