@@ -52,6 +52,10 @@
 ;;  @deftypeivar
 ;;  @deftypeop
 ;;  @allowcodebreaks
+;;  @thischapternum
+;;  @quotedblleft @quotedblright
+;;  @quoteleft @quoteright  @quotedblbase @quotesinglbase
+;;  @guillemetleft @guillemetright @guilsinglleft @guilsinglright.
 
 ;;; Code:
 
@@ -194,6 +198,7 @@ DOCSTRING will be printed if ASSERTION is nil and
 (put 'afourwide 'texinfo-format 'texinfo-discard-line)
 (put 'afivepaper 'texinfo-format 'texinfo-discard-line)
 (put 'pagesizes 'texinfo-format 'texinfo-discard-line-with-args)
+(put 'fonttextsize 'texinfo-format 'texinfo-discard-line-with-args)
 
 ;; style
 (put 'setchapternewpage 'texinfo-format 'texinfo-discard-line-with-args)
@@ -600,6 +605,12 @@ For example, @verb\{|@|\} results in @ and
 (put '\/ 'texinfo-format 'texinfo-format-\/)
 (ptexinfmt-defun-if-void texinfo-format-\/ ()
   (texinfo-discard-command))
+
+;; @textdegree
+(put 'textdegree 'texinfo-format 'texinfo-format-textdegree)
+(ptexinfmt-defun-if-void texinfo-format-textdegree ()
+  (insert "o" (texinfo-parse-arg-discard))
+  (goto-char texinfo-command-start))
 
 
 ;;; Cross References
