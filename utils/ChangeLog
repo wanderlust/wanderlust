@@ -3,6 +3,7 @@
 	* ptexinfmt.el (ptexinfmt-broken-facility, ptexinfmt-defun-if-broken)
 	(ptexinfmt-defun-if-void, ptexinfmt-defvar-if-void): Don't use
 	old-style backquotes.
+	(texinfo-format-cedilla-accent): Quote `,'.
 
 2007-11-09  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 

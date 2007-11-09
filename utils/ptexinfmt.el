@@ -524,7 +524,7 @@ For example, @verb\{|@|\} results in @ and
   (goto-char texinfo-command-start))
 
 ;; @,{c}	==>	c,	cedilla accent
-(put ', 'texinfo-format 'texinfo-format-cedilla-accent)
+(put '\, 'texinfo-format 'texinfo-format-cedilla-accent)
 (ptexinfmt-defun-if-void texinfo-format-cedilla-accent ()
   (insert (texinfo-parse-arg-discard) ",")
   (goto-char texinfo-command-start))
