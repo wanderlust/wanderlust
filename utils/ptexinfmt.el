@@ -3,7 +3,7 @@
 ;; Copyright (C) 1985, 1986, 1988, 1990, 1991, 1992, 1993,
 ;;               1994, 1995, 1996, 1997 Free Software Foundation, Inc.
 ;; Copyright (C) 1999 Yoshiki Hayashi <yoshiki@xemacs.org>
-;; Copyright (C) 2000, 2001, 2002 TAKAHASHI Kaoru <kaoru@kaisei.org>
+;; Copyright (C) 2000 TAKAHASHI Kaoru <kaoru@kaisei.org>
 
 ;; Author: TAKAHASHI Kaoru <kaoru@kaisei.org>
 ;;	Yoshiki Hayashi <yoshiki@xemacs.org>
@@ -24,8 +24,8 @@
 
 ;; You should have received a copy of the GNU General Public License
 ;; along with GNU Emacs; see the file COPYING.  If not, write to the
-;; Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-;; Boston, MA 02111-1307, USA.
+;; Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;; Boston, MA 02110-1301, USA.
 
 ;;; Commentary:
 
