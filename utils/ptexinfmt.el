@@ -295,7 +295,6 @@ DOCSTRING will be printed if ASSERTION is nil and
 (put 'ifnotdocbook 'texinfo-format 'texinfo-discard-line)
 (put 'ifnotdocbook 'texinfo-end 'texinfo-discard-command)
 
-
 ;; @ifnotinfo ... @end ifnotinfo (makeinfo 3.11 or later)
 (put 'ifnotinfo 'texinfo-format 'texinfo-format-ifnotinfo)
 (ptexinfmt-defun-if-void texinfo-format-ifnotinfo ()
@@ -337,7 +336,6 @@ DOCSTRING will be printed if ASSERTION is nil and
   (delete-region texinfo-command-start
 		 (progn (re-search-forward "@end ifdocbook[ \t]*\n")
 			(point))))
-
 
 
 ;;; Marking
