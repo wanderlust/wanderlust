@@ -1,3 +1,8 @@
+2007-11-09  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl.el (wl-plugged-server-indent): Use quote instead of
+	backquote.
+
 2007-08-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-score.el (wl-score-insert-header): Add guard for
