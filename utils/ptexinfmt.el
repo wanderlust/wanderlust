@@ -960,6 +960,40 @@ This command is executed when texinfmt sees @item inside @multitable."
 	(texinfo-sort-region opoint (point))
       (shell-command-on-region opoint (point) "sort -fd" 1))))
 
+
+;; @copying ... @end copying
+;; that Emacs 21.4 and lesser and XEmacs don't support.
+(if (fboundp 'texinfo-copying)
+    nil
+  (defvar texinfo-copying-text ""
+    "Text of the copyright notice and copying permissions.")
+
+  (defun texinfo-copying ()
+    "Copy the copyright notice and copying permissions from the Texinfo file,
+as indicated by the @copying ... @end copying command;
+insert the text with the @insertcopying command."
+    (let ((beg (progn (beginning-of-line) (point)))
+	  (end  (progn (re-search-forward "^@end copying[ \t]*\n") (point))))
+      (setq texinfo-copying-text
+	    (buffer-substring-no-properties
+	     (save-excursion (goto-char beg) (forward-line 1) (point))
+	     (save-excursion (goto-char end) (forward-line -1) (point))))
+      (delete-region beg end)))
+
+  (defun texinfo-insertcopying ()
+    "Insert the copyright notice and copying permissions from the Texinfo file,
+which are indicated by the @copying ... @end copying command."
+    (insert (concat "\n" texinfo-copying-text)))
+
+  (defadvice texinfo-format-scan (before expand-@copying-section activate)
+    "Extract @copying and replace @insertcopying with it."
+    (goto-char (point-min))
+    (when (search-forward "@copying" nil t)
+      (texinfo-copying))
+    (while (search-forward "@insertcopying" nil t)
+      (delete-region (match-beginning 0) (match-end 0))
+      (texinfo-insertcopying))))
+
 (provide 'ptexinfmt)
 
 ;;; ptexinfmt.el ends here

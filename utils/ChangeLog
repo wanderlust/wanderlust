@@ -1,3 +1,8 @@
+2007-11-10  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* ptexinfmt.el (texinfo-copying-text, texinfo-copying)
+	(texinfo-insertcopying, texinfo-format-scan): Move from infohack.el.
+
 2007-11-09  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* ptexinfmt.el (ptexinfmt-broken-facility, ptexinfmt-defun-if-broken)
