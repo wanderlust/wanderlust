@@ -871,6 +871,7 @@ This function is imported from Emacs 20.7."
 	    (while flist
 	      (setq folder (wl-folder-get-elmo-folder (car flist))
 		    flist (cdr flist))
+	      (elmo-folder-set-biff-internal folder t)
 	      (when (and (elmo-folder-plugged-p folder)
 			 (elmo-folder-exists-p folder))
 		(setq new-mails

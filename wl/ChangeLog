@@ -1,3 +1,8 @@
+2007-12-15  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* wl-util.el (wl-biff-check-folders): Set biff flag.
+	(from Naoto Morishima [wl:14031])
+
 2007-11-09  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl.el (wl-plugged-server-indent): Use quote instead of
