@@ -1942,15 +1942,17 @@ Return nil if no complete line has arrived."
 						       &optional
 						       enable-killed)
   (elmo-imap4-list folder
-		   (let ((killed
-			  (elmo-folder-killed-list-internal
-			   folder)))
-		     (if (and killed
-			      (eq (length killed) 1)
-			      (consp (car killed))
-			      (eq (car (car killed)) 1))
-			 (format "uid %d:*" (cdr (car killed)))
-		       "all"))))
+		   (concat
+		    (let ((killed
+			   (elmo-folder-killed-list-internal
+			    folder)))
+		      (if (and killed
+			       (eq (length killed) 1)
+			       (consp (car killed))
+			       (eq (car (car killed)) 1))
+			  (format "uid %d:*" (cdr (car killed)))
+			"all"))
+		    " undeleted")))
 
 (luna-define-method elmo-folder-list-flagged-plugged
   ((folder elmo-imap4-folder) flag)
@@ -2192,13 +2194,19 @@ If optional argument REMOVE is non-nil, remove FLAG."
 
 (luna-define-method elmo-folder-delete-messages-plugged
   ((folder elmo-imap4-folder) numbers)
-  (let ((session (elmo-imap4-get-session folder)))
+  (let ((session (elmo-imap4-get-session folder))
+	(expunge
+	 (or (null (elmo-imap4-list folder "deleted"))
+	     (y-or-n-p
+	      "There's hidden deleted messages, expunge anyway?"))))
     (elmo-imap4-session-select-mailbox
      session
      (elmo-imap4-folder-mailbox-internal folder))
     (unless (elmo-imap4-set-flag folder numbers "\\Deleted")
       (error "Failed to set deleted flag"))
-    (elmo-imap4-send-command session "expunge")))
+    (when expunge
+      (elmo-imap4-send-command session "expunge"))
+    t))
 
 (defmacro elmo-imap4-detect-search-charset (string)
   (` (with-temp-buffer

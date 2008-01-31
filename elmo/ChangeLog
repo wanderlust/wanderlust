@@ -1,3 +1,10 @@
+2008-01-31  Yoichi NAKAYAMA  <yoichi@geiin.org>
+
+	* elmo-imap4.el (elmo-folder-list-messages-plugged): Don't include
+	messages with \Deleted flag.
+	(elmo-folder-delete-messages-plugged): Don't send expunge command
+	if there are messages with \Deleted flag.
+
 2007-04-24  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-pop3.el (elmo-pop3-auth-apop): Use more strict regexp.
