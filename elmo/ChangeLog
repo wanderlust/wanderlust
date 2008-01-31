@@ -2,8 +2,8 @@
 
 	* elmo-imap4.el (elmo-folder-list-messages-plugged): Don't include
 	messages with \Deleted flag.
-	(elmo-folder-delete-messages-plugged): Don't send expunge command
-	if there are messages with \Deleted flag.
+	(elmo-folder-delete-messages-plugged): Ask before sending expunge
+	command if there are messages with \Deleted flag.
 
 2007-04-24  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
