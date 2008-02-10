@@ -513,8 +513,8 @@ It calls following-method selected from variable
     (elmo-with-progress-display (epg-decript nil reporter)
 	"Decrypting"
       (epg-context-set-progress-callback context
-					 #'wl-epg-progress-callback
-					 reporter)
+					 (cons #'wl-epg-progress-callback
+					       reporter))
       (insert (prog1
 		  (decode-coding-string
 		   (epg-decrypt-string
@@ -530,8 +530,8 @@ It calls following-method selected from variable
     (elmo-with-progress-display (epg-verify nil reporter)
 	"Verifying"
       (epg-context-set-progress-callback context
-					 #'wl-epg-progress-callback
-					 reporter)
+					 (cons #'wl-epg-progress-callback
+					       reporter))
       (epg-verify-string
        context
        (encode-coding-string
@@ -865,6 +865,8 @@ With ARG, ask destination folder."
 	(elmo-message-visible-field-list wl-message-visible-field-list)
 	(elmo-message-sorted-field-list wl-message-sort-field-list))
     (elmo-mime-insert-header entity situation)
+    (goto-char (point-min))
+    (delete-matching-lines "^$")
     (wl-highlight-headers)))
 
 (defun wl-mime-decrypt-application/pgp-encrypted (entity situation)

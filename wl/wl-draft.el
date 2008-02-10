@@ -539,7 +539,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 	      (wl-draft-add-references)
 	    (if wl-draft-add-in-reply-to
 		(wl-draft-add-in-reply-to)))
-      (wl-highlight-headers 'for-draft)) ; highlight when added References:
+      (wl-highlight-headers-for-draft)) ; highlight when added References:
     (when wl-highlight-body-too
       (wl-highlight-body-region beg (point-max)))))
 
@@ -1796,7 +1796,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (when wl-draft-write-file-function
       (add-hook 'local-write-file-hooks wl-draft-write-file-function))
     (wl-draft-overload-functions)
-    (wl-highlight-headers 'for-draft)
+    (wl-highlight-headers-for-draft)
     (wl-draft-save)
     (clear-visited-file-modtime)))
 
@@ -2002,7 +2002,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (setq wl-draft-parent-folder ""))
     (when wl-draft-write-file-function
       (add-hook 'local-write-file-hooks wl-draft-write-file-function))
-    (wl-highlight-headers 'for-draft)
+    (wl-highlight-headers-for-draft)
     (goto-char body-top)
     (run-hooks 'wl-draft-reedit-hook)
     (goto-char (point-max))
@@ -2607,7 +2607,7 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 	      t)
 	    (setq headers (cdr headers))))
 	;; highlight headers (from wl-draft in wl-draft.el)
-	(wl-highlight-headers 'for-draft)
+	(wl-highlight-headers-for-draft)
 	;; insert body
 	(if (wl-string-match-assoc "body" wl-user-agent-headers-and-body-alist
 				   'ignore-case)

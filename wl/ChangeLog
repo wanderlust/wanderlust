@@ -1,3 +1,10 @@
+2008-02-10  Daiki Ueno  <ueno@unixuser.org>
+
+	* wl-mime.el (wl-mime-pgp-decrypt-region-with-epg): Don't use
+	optional 3rd argument of epg-context-set-progress-callback; it was
+	temporarily removed in the Emacs trunk due to copyright problem.
+	(wl-mime-pgp-verify-region-with-epg): Ditto.
+
 2008-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-demo.el (wl-demo-copyright-notice): Add 2008.
@@ -5956,7 +5963,7 @@
 	message is not displayed yet.
 	(wl-summary-prev-page): Ditto.
 
-2002-03-11  J.ANirNtme Marant <jerome.marant@free.fr>
+2002-03-11  J,Ai(Br,At(Bme Marant <jerome.marant@free.fr>
 
 	* wl-folder.el (wl-folder-mode-menu-spec): Fixed typo.
 
