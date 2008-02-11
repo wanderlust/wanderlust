@@ -100,8 +100,8 @@ If nil,  the old 'user' entry remains.")
 
 ;; hash table for wl-addrbook-alist
 (defmacro wl-addrbook-hashtb ()
-  (` (or wl-addrbook-hashtb
-	 (setq wl-addrbook-hashtb (elmo-make-hash 1021)))))
+  '(or wl-addrbook-hashtb
+       (setq wl-addrbook-hashtb (elmo-make-hash 1021))))
 
 (defsubst wl-addrbook-get-record-by-addr (addr &optional alist)
   (elmo-get-hash-val (downcase addr) (wl-addrbook-hashtb)))
@@ -180,10 +180,10 @@ If nil,  the old 'user' entry remains.")
 ;;
 
 (defmacro wl-alias-get (key)
-  (` (wl-addrbook-alias-get (, key) wl-addrbook-alist)))
+  `(wl-addrbook-alias-get ,key wl-addrbook-alist))
 
 (defmacro wl-alias-next (key)
-  (` (wl-addrbook-alias-next (, key) wl-addrbook-alist)))
+  `(wl-addrbook-alias-next ,key wl-addrbook-alist))
 
 (defalias 'wl-addrbook-alias-hit 'wl-addrbook-get-record-by-alias)
 
