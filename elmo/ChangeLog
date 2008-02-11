@@ -1,5 +1,9 @@
 2008-02-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* pldap.el (ldap-static-if): New backquote style.
+	(ldap/ldif-safe-string-p): Ditto.
+	(ldap/ldif-insert-field): Ditto.
+
 	* elmo-version.el (elmo-version): Up to 2.15.6.
 
 2008-01-31  Yoichi NAKAYAMA  <yoichi@geiin.org>

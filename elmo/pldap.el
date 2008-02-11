@@ -42,7 +42,7 @@
   "`if' expression but COND is evaluated at compile-time."
   (if (eval cond)
       then
-    (` (progn  (,@ else)))))
+    `(progn ,@else)))
 
 (ldap-static-if (and (not (featurep 'pldap))
 		     (fboundp 'ldap-open))
@@ -81,7 +81,7 @@
 (defmacro ldap/ldif-safe-string-p (string)
   "Return t if STRING is a safe-string for LDIF."
   ;; Need better implentation.
-  (` (string-match ldap-ldif-safe-string-regexp (, string))))
+  `(string-match ldap-ldif-safe-string-regexp ,string))
 
 (defgroup ldap nil
   "Lightweight Directory Access Protocol"
@@ -517,9 +517,9 @@ DN is the distinguished name of the entry to delete."
 	     (error "%s" (car (split-string ret "\n"))))))))
 
 (defmacro ldap/ldif-insert-field (attr value)
-  (` (if (not (ldap/ldif-safe-string-p (, value)))
-	 (insert (, attr) ":: " (base64-encode-string (, value)) "\n")
-       (insert (, attr) ": " (, value) "\n"))))
+  `(if (not (ldap/ldif-safe-string-p ,value))
+       (insert ,attr ":: " (base64-encode-string ,value) "\n")
+     (insert ,attr ": " ,value "\n")))
 
 (defun ldap-modify (ldap dn mods)
   "Add an entry to an LDAP directory.
