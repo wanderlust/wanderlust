@@ -63,7 +63,7 @@
   (defmacro defgroup (&rest args))
   (defmacro defcustom (symbol value &optional doc &rest args)
     (let ((doc (concat "*" (or doc ""))))
-      (` (defvar (, symbol) (, value) (, doc))))))
+      `(defvar ,symbol ,value ,doc))))
 
 (load "bytecomp" nil t)
 
