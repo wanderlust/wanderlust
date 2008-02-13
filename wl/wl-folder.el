@@ -77,7 +77,7 @@
 (make-variable-buffer-local 'wl-folder-buffer-cur-point)
 
 (defconst wl-folder-entity-regexp "^\\([ ]*\\)\\(\\[[\\+-]\\]\\)?\\([^\\[].+\\):[-*0-9]+/[-*0-9]+/[-*0-9]+")
-(defconst wl-folder-group-regexp  "^\\([ ]*\\)\\[\\([\\+-]\\)\\]\\(.+\\):[-0-9-]+/[0-9-]+/[0-9-]+\n")
+(defconst wl-folder-group-regexp  "^\\([ ]*\\)\\[\\([\\+-]\\)\\]\\(.+\\):[0-9-]+/[0-9-]+/[0-9-]+\n")
 ;;				1:indent 2:opened 3:group-name
 (defconst wl-folder-unsync-regexp ":[^0\\*][0-9]*/[0-9\\*-]+/[0-9\\*-]+$")
 

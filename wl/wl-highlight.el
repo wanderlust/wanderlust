@@ -795,8 +795,8 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
-(defvar wl-highlight-folder-opened-regexp " *\\(\\[\\-\\]\\)")
-(defvar wl-highlight-folder-closed-regexp " *\\(\\[\\+\\]\\)")
+(defvar wl-highlight-folder-opened-regexp "^ *\\(\\[\\-\\]\\)")
+(defvar wl-highlight-folder-closed-regexp "^ *\\(\\[\\+\\]\\)")
 (defvar wl-highlight-folder-leaf-regexp "[ ]*\\([-%\\+]\\)\\(.*\\):.*$")
 
 (defvar wl-highlight-citation-face-list
