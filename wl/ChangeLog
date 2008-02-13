@@ -1,3 +1,11 @@
+2008-02-13  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-highlight.el (wl-highlight-folder-opened-regexp)
+	(wl-highlight-folder-closed-regexp): Include the beginning of a line.
+
+	* wl-folder.el (wl-folder-group-regexp): Remove a redundant character
+	in the character alternative.
+
 2008-02-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* Version number is increased to 2.15.6.
