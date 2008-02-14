@@ -1,3 +1,7 @@
+2008-02-14  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-mailto.el: Use `string-to-number' instead of `string-to-int'.
+
 2008-02-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-addrbook.el (wl-addrbook-hashtb): Use quote instead of

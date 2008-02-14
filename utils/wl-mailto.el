@@ -90,7 +90,7 @@
 
 ;; yucky compatibility stuff -- someone help me w/ this, please...
 (if (and (string-match "^XEmacs \\([0-9.]+\\)" (emacs-version))
-	 (< (string-to-int (match-string 1 (emacs-version))) 21))
+	 (< (string-to-number (match-string 1 (emacs-version))) 21))
     ;; for xemacs versions less than 21, use browse-url.el
     (progn
       (require 'browse-url)
