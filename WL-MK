@@ -524,7 +524,7 @@
 		  (version-tmp (split-string (match-string 1) "\\."))
 		  version news-string end)
 	      (while version-tmp
-		(setq version (append version (list (string-to-int (car version-tmp)))))
+		(setq version (append version (list (string-to-number (car version-tmp)))))
 		(setq version-tmp (cdr version-tmp)))
 	      (re-search-forward "^\\(\\* \\|\\)" nil t)
 	      (goto-char (- (match-beginning 0) 1))

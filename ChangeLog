@@ -1,3 +1,8 @@
+2008-02-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* WL-MK (wl-news-parse-news-subr): Use `string-to-number' instead
+	of `string-to-int'.
+
 2008-02-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* WL-MK: New backquote style.
