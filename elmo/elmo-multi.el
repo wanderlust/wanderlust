@@ -45,12 +45,12 @@
 
 (defmacro elmo-multi-real-folder-number (folder number)
   "Returns a cons cell of real FOLDER and NUMBER."
-  (` (cons (nth (-
-		 (/ (, number)
-		    (elmo-multi-folder-divide-number-internal (, folder)))
-		 1) (elmo-multi-folder-children-internal (, folder)))
-	   (% (, number) (elmo-multi-folder-divide-number-internal
-			  (, folder))))))
+  `(cons (nth (-
+	       (/ ,number
+		  (elmo-multi-folder-divide-number-internal ,folder))
+	       1) (elmo-multi-folder-children-internal ,folder))
+	 (% ,number (elmo-multi-folder-divide-number-internal
+		     ,folder))))
 
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-multi-folder)

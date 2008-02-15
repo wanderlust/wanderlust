@@ -43,19 +43,19 @@ Automatically loaded/saved.")
 
 (defmacro elmo-make-dop-queue (fname method arguments)
   "Make a dop queue."
-  (` (vector (, fname) (, method) (, arguments))))
+  `(vector ,fname ,method ,arguments))
 
 (defmacro elmo-dop-queue-fname (queue)
   "Return the folder name string of the QUEUE."
-  (` (aref (, queue) 0)))
+  `(aref ,queue 0))
 
 (defmacro elmo-dop-queue-method (queue)
   "Return the method symbol of the QUEUE."
-  (` (aref (, queue) 1)))
+  `(aref ,queue 1))
 
 (defmacro elmo-dop-queue-arguments (queue)
   "Return the arguments of the QUEUE."
-  (` (aref (, queue) 2)))
+  `(aref ,queue 2))
 
 (defun elmo-dop-queue-append (folder method arguments)
   "Append to disconnected operation queue."

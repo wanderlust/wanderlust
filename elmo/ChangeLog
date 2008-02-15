@@ -1,3 +1,33 @@
+2008-02-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-dop.el (elmo-make-dop-queue): New backquote style.
+	(elmo-dop-queue-fname, elmo-dop-queue-method): Ditto.
+	(elmo-dop-queue-arguments): Ditto.
+
+	* elmo-date.el (elmo-match-substring): New backquote style.
+	(elmo-match-string, elmo-match-buffer): Ditto.
+	(elmo-date-make-sortable-string): Ditto.
+
+	* elmo-archive.el (elmo-archive-get-method):New backquote style.
+	(elmo-archive-get-suffix, elmo-archive-get-regexp): Ditto.
+
+	* elmo-multi.el (elmo-multi-real-folder-number): New backquote
+	style.
+
+	* elmo-net.el (elmo-network-stream-type-spec-string): New
+	backquote style.
+	(elmo-network-stream-type-symbol): Ditto.
+	(elmo-network-stream-type-feature): Ditto.
+	(elmo-network-stream-type-function): Ditto.
+	(elmo-network-session-buffer): Ditto.
+
+	* elmo-util.el (elmo-file-cache-expand-path): New backquote style.
+	(elmo-file-cache-status, elmo-file-cache-path): Ditto.
+	(elmo-make-file-cache, elmo-string, elmo-get-passwd): Ditto.
+	(elmo-bind-directory, elmo-set-work-buf): Ditto.
+
+	* elmo.el (elmo-folder-send): New backquote style.
+
 2008-02-11  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* pldap.el (ldap-static-if): New backquote style.

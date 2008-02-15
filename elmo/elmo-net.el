@@ -121,16 +121,16 @@ If nil, just once. If t, until success."
     (delete-process (elmo-network-session-process-internal session))))
 
 (defmacro elmo-network-stream-type-spec-string (stream-type)
-  (` (nth 0 (, stream-type))))
+  `(nth 0 ,stream-type))
 
 (defmacro elmo-network-stream-type-symbol (stream-type)
-  (` (nth 1 (, stream-type))))
+  `(nth 1 ,stream-type))
 
 (defmacro elmo-network-stream-type-feature (stream-type)
-  (` (nth 2 (, stream-type))))
+  `(nth 2 ,stream-type))
 
 (defmacro elmo-network-stream-type-function (stream-type)
-  (` (nth 3 (, stream-type))))
+  `(nth 3 ,stream-type))
 
 (defsubst elmo-network-session-password-key (session)
   (format "%s:%s/%s@%s:%d"
@@ -175,8 +175,7 @@ If nil, just once. If t, until success."
 
 (defmacro elmo-network-session-buffer (session)
   "Get buffer for SESSION."
-  (` (process-buffer (elmo-network-session-process-internal
-		      (, session)))))
+  `(process-buffer (elmo-network-session-process-internal ,session)))
 
 (defun elmo-network-get-session (class name folder &optional if-exists)
   "Get network session from session cache or a new network session.

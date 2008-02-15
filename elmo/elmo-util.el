@@ -68,19 +68,19 @@
 
 (defmacro elmo-set-work-buf (&rest body)
   "Execute BODY on work buffer.  Work buffer remains."
-  (` (save-excursion
-       (set-buffer (get-buffer-create elmo-work-buf-name))
-       (set-buffer-multibyte default-enable-multibyte-characters)
-       (erase-buffer)
-       (,@ body))))
+  `(save-excursion
+     (set-buffer (get-buffer-create elmo-work-buf-name))
+     (set-buffer-multibyte default-enable-multibyte-characters)
+     (erase-buffer)
+     ,@body))
 
 (put 'elmo-set-work-buf 'lisp-indent-function 0)
 (def-edebug-spec elmo-set-work-buf t)
 
 (defmacro elmo-bind-directory (dir &rest body)
   "Set current directory DIR and execute BODY."
-  (` (let ((default-directory (file-name-as-directory (, dir))))
-       (,@ body))))
+  `(let ((default-directory (file-name-as-directory ,dir)))
+     ,@body))
 
 (put 'elmo-bind-directory 'lisp-indent-function 1)
 (def-edebug-spec elmo-bind-directory
@@ -591,7 +591,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 				(elmo-base64-encode-string pass)))))
       (if elmo-passwd-life-time
 	  (run-with-timer elmo-passwd-life-time nil
-			  (` (lambda () (elmo-remove-passwd (, key))))))
+			  `(lambda nil (elmo-remove-passwd ,key))))
       pass)))
 
 (defun elmo-remove-passwd (key)
@@ -1303,9 +1303,9 @@ MESSAGE is a doing part of progress message."
 
 (defmacro elmo-string (string)
   "STRING without text property."
-  (` (let ((obj (copy-sequence (, string))))
-       (and obj (set-text-properties 0 (length obj) nil obj))
-       obj)))
+  `(let ((obj (copy-sequence ,string)))
+     (and obj (set-text-properties 0 (length obj) nil obj))
+     obj))
 
 (defun elmo-flatten (list-of-list)
   "Flatten LIST-OF-LIST."
@@ -1859,15 +1859,15 @@ STATUS is one of 'section, 'entire or nil.
 'section means partial section cache exists.
 'entire means entire cache exists.
 If the cache is partial file-cache, TYPE is 'partial."
-  (` (cons (, path) (, status))))
+  `(cons ,path ,status))
 
 (defmacro elmo-file-cache-path (file-cache)
   "Returns the file path of the FILE-CACHE."
-  (` (car (, file-cache))))
+  `(car ,file-cache))
 
 (defmacro elmo-file-cache-status (file-cache)
   "Returns the status of the FILE-CACHE."
-  (` (cdr (, file-cache))))
+  `(cdr ,file-cache))
 
 (defsubst elmo-cache-to-msgid (filename)
   (concat "<" (elmo-recover-string-from-filename filename) ">"))
@@ -1904,7 +1904,7 @@ If optional argument SECTION is specified, partial cache path is returned."
   "Return file name for the file-cache corresponds to the section.
 PATH is the file-cache path.
 SECTION is the section string."
-  (` (expand-file-name (or (, section) "") (, path))))
+  `(expand-file-name (or ,section "") ,path))
 
 (defun elmo-file-cache-delete (path)
   "Delete a cache on PATH."

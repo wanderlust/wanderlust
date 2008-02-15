@@ -36,18 +36,18 @@
 
 (defmacro elmo-match-substring (pos string from)
   "Substring of POSth matched string of STRING."
-  (` (substring (, string)
-		(+ (match-beginning (, pos)) (, from))
-		(match-end (, pos)))))
+  `(substring ,string
+	      (+ (match-beginning ,pos) ,from)
+	      (match-end ,pos)))
 
 (defmacro elmo-match-string (pos string)
   "Substring POSth matched STRING."
-  (` (substring (, string) (match-beginning (, pos)) (match-end (, pos)))))
+  `(substring ,string (match-beginning ,pos) (match-end ,pos)))
 
 (defmacro elmo-match-buffer (pos)
   "Substring POSth matched from the current buffer."
-  (` (buffer-substring-no-properties
-      (match-beginning (, pos)) (match-end (, pos)))))
+  `(buffer-substring-no-properties
+    (match-beginning ,pos) (match-end ,pos)))
 
 ;; from subr.el
 (defun elmo-replace-in-string (str regexp newtext &optional literal)
@@ -202,14 +202,14 @@ Otherwise treat \\ in NEWTEXT string as special:
 
 (defmacro elmo-date-make-sortable-string (datevec)
   "Make a sortable string from DATEVEC."
-  (` (timezone-make-sortable-date
-      (aref (, datevec) 0)
-      (aref (, datevec) 1)
-      (aref (, datevec) 2)
-      (timezone-make-time-string
-       (aref (, datevec) 3)
-       (aref (, datevec) 4)
-       (aref (, datevec) 5)))))
+  `(timezone-make-sortable-date
+    (aref ,datevec 0)
+    (aref ,datevec 1)
+    (aref ,datevec 2)
+    (timezone-make-time-string
+     (aref ,datevec 3)
+     (aref ,datevec 4)
+     (aref ,datevec 5))))
 
 (defsubst elmo-datevec-to-time (datevec)
   (encode-time (aref datevec 5) (aref datevec 4) (aref datevec 3)

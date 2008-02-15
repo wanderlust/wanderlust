@@ -161,7 +161,7 @@ If a folder name begins with PREFIX, use BACKEND."
 
 (defmacro elmo-folder-send (folder message &rest args)
   "Let FOLDER receive the MESSAGE with ARGS."
-  (` (luna-send (, folder) (, message) (, folder) (,@ args))))
+  `(luna-send ,folder ,message ,folder ,@args))
 
 ;;;###autoload
 (defun elmo-make-folder (name &optional non-persistent mime-charset)

@@ -255,16 +255,13 @@
 
 ;;; Macro
 (defmacro elmo-archive-get-method (type action)
-  (` (cdr (assq (, action) (cdr (assq (, type)
-				      elmo-archive-method-alist))))))
+  `(cdr (assq ,action (cdr (assq ,type elmo-archive-method-alist)))))
 
 (defmacro elmo-archive-get-suffix (type)
-  (` (cdr (assq (, type)
-		elmo-archive-suffix-alist))))
+  `(cdr (assq ,type elmo-archive-suffix-alist)))
 
 (defmacro elmo-archive-get-regexp (type)
-  (` (cdr (assq (, type)
-		elmo-archive-file-regexp-alist))))
+  `(cdr (assq ,type elmo-archive-file-regexp-alist)))
 
 (defsubst elmo-archive-call-process (prog args &optional output)
   (= (apply 'call-process prog nil output nil args) 0))
