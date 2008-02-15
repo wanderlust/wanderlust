@@ -620,13 +620,13 @@ Deletion is done by using `elmo-list-delete'."
 			   list))))))
 
 (defmacro wl-address-concat-token (string token)
-  (` (cond
-      ((eq 'quoted-string (car (, token)))
-       (concat (, string) "\"" (cdr (, token)) "\""))
-      ((eq 'comment (car (, token)))
-       (concat (, string) "(" (cdr (, token)) ")"))
-      (t
-       (concat (, string) (cdr (, token)))))))
+  `(cond
+    ((eq 'quoted-string (car ,token))
+     (concat ,string "\"" (cdr ,token) "\""))
+    ((eq 'comment (car (, token)))
+     (concat ,string "(" (cdr ,token) ")"))
+    (t
+     (concat ,string (cdr ,token)))))
 
 (defun wl-address-string-without-group-list-contents (sequence)
   "Return address string from lexical analyzed list SEQUENCE.

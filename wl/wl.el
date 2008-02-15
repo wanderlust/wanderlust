@@ -41,7 +41,7 @@
   (defmacro defgroup (&rest args))
   (defmacro defcustom (symbol value &optional doc &rest args)
     (let ((doc (concat "*" (or doc ""))))
-      (` (defvar (, symbol) (, value) (, doc))))))
+      `(defvar ,symbol ,value ,doc))))
 
 (require 'wl-vars)
 (require 'wl-util)
@@ -216,8 +216,10 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (run-hooks 'wl-plugged-mode-hook))
 
 (defmacro wl-plugged-string (plugged &optional time)
-  (` (if (, time) wl-plugged-auto-off
-       (if (, plugged) wl-plugged-plug-on wl-plugged-plug-off))))
+  `(if ,time wl-plugged-auto-off
+     (if ,plugged
+	 wl-plugged-plug-on
+       wl-plugged-plug-off)))
 
 (defmacro wl-plugged-server-indent ()
   '(make-string wl-plugged-server-indent ? ))

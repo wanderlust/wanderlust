@@ -41,12 +41,12 @@
 (defgroup wl nil
   "Wanderlust, a news and mail reading software."
   :tag "Wanderlust"
-  :link (` (custom-manual
-	    (, (if (and (boundp 'current-language-environment)
-			(string-equal "Japanese"
-				      (symbol-value 'current-language-environment)))
-		   "(wl-ja)Top"
-		 "(wl)Top"))))
+  :link `(custom-manual
+	  ,(if (and (boundp 'current-language-environment)
+		    (string-equal "Japanese"
+				  (symbol-value 'current-language-environment)))
+	       "(wl-ja)Top"
+	     "(wl)Top"))
   :group 'news
   :group 'mail)
 
@@ -1774,12 +1774,12 @@ This variable overwhelm `wl-message-ignored-field-list' settings."
   :group 'wl-setting)
 
 (defcustom wl-message-header-button-alist
-  (` (("^\\(References\\|Message-Id\\|In-Reply-To\\):"
-       "<[^>\n ]+>"
-       0 wl-message-button-refer-article  0)
-      ("^[^:]+:"
-       "\\(<\\(url: \\)?news:\\([^>\n ]*\\)>\\)"
-       1 wl-message-button-refer-article 3)))
+  '(("^\\(References\\|Message-Id\\|In-Reply-To\\):"
+     "<[^>\n ]+>"
+     0 wl-message-button-refer-article  0)
+    ("^[^:]+:"
+     "\\(<\\(url: \\)?news:\\([^>\n ]*\\)>\\)"
+     1 wl-message-button-refer-article 3))
   "Alist of headers and regexps to match buttons in message headers."
   :type '(repeat
 	  (list (regexp :tag "Header")

@@ -1,3 +1,17 @@
+2008-02-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-score.el (wl-score-put-alike): Use quote instead of backquote.
+	(wl-score-get-alike): Ditto.
+
+	* wl-vars.el: New backquote style.
+	(wl-message-header-button-alist): Use quote instead of backquote.
+
+	* wl.el (wl-plugged-string): New backquote style.
+
+	* wl-address.el (wl-address-concat-token): New backquote style.
+
+	* wl-expire.el (wl-expire-make-sortable-date): New backquote style.
+
 2008-02-13  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-highlight.el (wl-highlight-folder-opened-regexp)
