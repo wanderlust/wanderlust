@@ -1,3 +1,19 @@
+2008-02-16  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-nntp.el (elmo-nntp-get-server-command)
+	(elmo-nntp-set-server-command, elmo-nntp-xover-p)
+	(elmo-nntp-listgroup-p, elmo-nntp-set-listgroup)
+	(elmo-nntp-list-active-p, elmo-nntp-set-list-active)
+	(elmo-nntp-xhdr-p, elmo-nntp-set-xhdr): New backquote style.
+
+	* elmo-imap4.el (elmo-imap4-debug)
+	(elmo-imap4-response-continue-req-p, elmo-imap4-response-ok-p)
+	(elmo-imap4-response-bye-p, elmo-imap4-response-garbage-p)
+	(elmo-imap4-response-value, elmo-imap4-response-error-text)
+	(elmo-imap4-response-bodydetail-text, elmo-imap4-value)
+	(elmo-imap4-nth, elmo-imap4-detect-search-charset)
+	(elmo-imap4-identical-system-p): New backquote style.
+
 2008-02-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-dop.el (elmo-make-dop-queue): New backquote style.

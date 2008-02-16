@@ -181,69 +181,69 @@ Don't cache if nil.")
 					   (xhdr . 3)))
 
 (defmacro elmo-nntp-get-server-command (session)
-  (` (assoc (cons (elmo-network-session-server-internal (, session))
-		  (elmo-network-session-port-internal (, session)))
-	    elmo-nntp-server-command-alist)))
+  `(assoc (cons (elmo-network-session-server-internal ,session)
+		(elmo-network-session-port-internal ,session))
+	  elmo-nntp-server-command-alist))
 
 (defmacro elmo-nntp-set-server-command (session com value)
-  (` (let (entry)
-       (unless (setq entry (cdr (elmo-nntp-get-server-command
-				 (, session))))
-	 (setq elmo-nntp-server-command-alist
-	       (nconc elmo-nntp-server-command-alist
-		      (list (cons
-			     (cons
-			      (elmo-network-session-server-internal (, session))
-			      (elmo-network-session-port-internal (, session)))
-			     (setq entry
-				   (vector
-				    elmo-nntp-default-use-xover
-				    elmo-nntp-default-use-listgroup
-				    elmo-nntp-default-use-list-active
-				    elmo-nntp-default-use-xhdr)))))))
-       (aset entry
-	     (cdr (assq (, com) elmo-nntp-server-command-index))
-	     (, value)))))
+  `(let (entry)
+     (unless (setq entry (cdr (elmo-nntp-get-server-command
+			       ,session)))
+       (setq elmo-nntp-server-command-alist
+	     (nconc elmo-nntp-server-command-alist
+		    (list (cons
+			   (cons
+			    (elmo-network-session-server-internal ,session)
+			    (elmo-network-session-port-internal ,session))
+			   (setq entry
+				 (vector
+				  elmo-nntp-default-use-xover
+				  elmo-nntp-default-use-listgroup
+				  elmo-nntp-default-use-list-active
+				  elmo-nntp-default-use-xhdr)))))))
+     (aset entry
+	   (cdr (assq ,com elmo-nntp-server-command-index))
+	   ,value)))
 
 (defmacro elmo-nntp-xover-p (session)
-  (` (let ((entry (elmo-nntp-get-server-command (, session))))
-       (if entry
-	   (aref (cdr entry)
-		 (cdr (assq 'xover elmo-nntp-server-command-index)))
-	 elmo-nntp-default-use-xover))))
+  `(let ((entry (elmo-nntp-get-server-command ,session)))
+     (if entry
+	 (aref (cdr entry)
+	       (cdr (assq 'xover elmo-nntp-server-command-index)))
+       elmo-nntp-default-use-xover)))
 
 (defmacro elmo-nntp-set-xover (session value)
-  (` (elmo-nntp-set-server-command (, session) 'xover (, value))))
+  `(elmo-nntp-set-server-command ,session 'xover ,value))
 
 (defmacro elmo-nntp-listgroup-p (session)
-  (` (let ((entry (elmo-nntp-get-server-command (, session))))
-       (if entry
-	   (aref (cdr entry)
-		 (cdr (assq 'listgroup elmo-nntp-server-command-index)))
-	 elmo-nntp-default-use-listgroup))))
+  `(let ((entry (elmo-nntp-get-server-command ,session)))
+     (if entry
+	 (aref (cdr entry)
+	       (cdr (assq 'listgroup elmo-nntp-server-command-index)))
+       elmo-nntp-default-use-listgroup)))
 
 (defmacro elmo-nntp-set-listgroup (session value)
-  (` (elmo-nntp-set-server-command (, session) 'listgroup (, value))))
+  `(elmo-nntp-set-server-command ,session 'listgroup ,value))
 
 (defmacro elmo-nntp-list-active-p (session)
-  (` (let ((entry (elmo-nntp-get-server-command (, session))))
-       (if entry
-	   (aref (cdr entry)
-		 (cdr (assq 'list-active elmo-nntp-server-command-index)))
-	 elmo-nntp-default-use-list-active))))
+  `(let ((entry (elmo-nntp-get-server-command ,session)))
+     (if entry
+	 (aref (cdr entry)
+	       (cdr (assq 'list-active elmo-nntp-server-command-index)))
+       elmo-nntp-default-use-list-active)))
 
 (defmacro elmo-nntp-set-list-active (session value)
-  (` (elmo-nntp-set-server-command (, session) 'list-active (, value))))
+  `(elmo-nntp-set-server-command ,session 'list-active ,value))
 
 (defmacro elmo-nntp-xhdr-p (session)
-  (` (let ((entry (elmo-nntp-get-server-command (, session))))
-       (if entry
-	   (aref (cdr entry)
-		 (cdr (assq 'xhdr elmo-nntp-server-command-index)))
-	 elmo-nntp-default-use-xhdr))))
+  `(let ((entry (elmo-nntp-get-server-command ,session)))
+     (if entry
+	 (aref (cdr entry)
+	       (cdr (assq 'xhdr elmo-nntp-server-command-index)))
+       elmo-nntp-default-use-xhdr)))
 
 (defmacro elmo-nntp-set-xhdr (session value)
-  (` (elmo-nntp-set-server-command (, session) 'xhdr (, value))))
+  `(elmo-nntp-set-server-command ,session 'xhdr ,value))
 
 (defsubst elmo-nntp-max-number-precedes-list-active-p ()
   elmo-nntp-max-number-precedes-list-active)

@@ -210,8 +210,8 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 
 ;;; Debug
 (defmacro elmo-imap4-debug (message &rest args)
-  (` (if elmo-imap4-debug
-	 (elmo-imap4-debug-1 (, message) (,@ args)))))
+  `(if elmo-imap4-debug
+       (elmo-imap4-debug-1 ,message ,@args)))
 
 (defun elmo-imap4-debug-1 (message &rest args)
   (with-current-buffer (get-buffer-create "*IMAP4 DEBUG*")
@@ -234,23 +234,23 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 
 (defmacro elmo-imap4-response-continue-req-p (response)
   "Returns non-nil if RESPONSE is '+' response."
-  (` (assq 'continue-req (, response))))
+  `(assq 'continue-req ,response))
 
 (defmacro elmo-imap4-response-ok-p (response)
   "Returns non-nil if RESPONSE is an 'OK' response."
-  (` (assq 'ok (, response))))
+  `(assq 'ok ,response))
 
 (defmacro elmo-imap4-response-bye-p (response)
   "Returns non-nil if RESPONSE is an 'BYE' response."
-  (` (assq 'bye (, response))))
+  `(assq 'bye ,response))
 
 (defmacro elmo-imap4-response-garbage-p (response)
   "Returns non-nil if RESPONSE is an 'garbage' response."
-  (` (assq 'garbage (, response))))
+  `(assq 'garbage ,response))
 
 (defmacro elmo-imap4-response-value (response symbol)
   "Get value of the SYMBOL from RESPONSE."
-  (` (nth 1 (assq (, symbol) (, response)))))
+  `(nth 1 (assq ,symbol ,response)))
 
 (defsubst elmo-imap4-response-value-all (response symbol)
   "Get all value of the SYMBOL from RESPONSE."
@@ -263,13 +263,13 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 
 (defmacro elmo-imap4-response-error-text (response)
   "Returns text of NO, BAD, BYE response."
-  (` (nth 1 (or (elmo-imap4-response-value (, response) 'no)
-		(elmo-imap4-response-value (, response) 'bad)
-		(elmo-imap4-response-value (, response) 'bye)))))
+  `(nth 1 (or (elmo-imap4-response-value ,response 'no)
+	      (elmo-imap4-response-value ,response 'bad)
+	      (elmo-imap4-response-value ,response 'bye))))
 
 (defmacro elmo-imap4-response-bodydetail-text (response)
   "Returns text of BODY[section]<partial>."
-  (` (nth 3 (assq 'bodydetail (, response)))))
+  `(nth 3 (assq 'bodydetail ,response)))
 
 ;;; Session commands.
 
@@ -1630,12 +1630,13 @@ Return nil if no complete line has arrived."
 
 
 (defmacro elmo-imap4-value (value)
-  (` (if (eq (, value) 'NIL) nil
-       (, value))))
+  `(if (eq ,value 'NIL)
+       nil
+     ,value))
 
 (defmacro elmo-imap4-nth (pos list)
-  (` (let ((value (nth (, pos) (, list))))
-       (elmo-imap4-value value))))
+  `(let ((value (nth ,pos ,list)))
+     (elmo-imap4-value value)))
 
 (defun elmo-imap4-parse-namespace ()
   (list 'namespace
@@ -2209,9 +2210,9 @@ If optional argument REMOVE is non-nil, remove FLAG."
     t))
 
 (defmacro elmo-imap4-detect-search-charset (string)
-  (` (with-temp-buffer
-       (insert (, string))
-       (detect-mime-charset-region (point-min) (point-max)))))
+  `(with-temp-buffer
+     (insert ,string)
+     (detect-mime-charset-region (point-min) (point-max))))
 
 (defun elmo-imap4-search-internal-primitive (folder session filter from-msgs)
   (let ((search-key (elmo-filter-key filter))
@@ -2638,12 +2639,12 @@ If optional argument REMOVE is non-nil, remove FLAG."
 (eval-when-compile
   (defmacro elmo-imap4-identical-system-p (folder1 folder2)
     "Return t if FOLDER1 and FOLDER2 are in the same IMAP4 system."
-    (` (and (string= (elmo-net-folder-server-internal (, folder1))
-		     (elmo-net-folder-server-internal (, folder2)))
-	    (eq (elmo-net-folder-port-internal (, folder1))
-		(elmo-net-folder-port-internal (, folder2)))
-	    (string= (elmo-net-folder-user-internal (, folder1))
-		     (elmo-net-folder-user-internal (, folder2)))))))
+    `(and (string= (elmo-net-folder-server-internal ,folder1)
+		   (elmo-net-folder-server-internal ,folder2))
+	  (eq (elmo-net-folder-port-internal ,folder1)
+	      (elmo-net-folder-port-internal ,folder2))
+	  (string= (elmo-net-folder-user-internal ,folder1)
+		   (elmo-net-folder-user-internal ,folder2)))))
 
 (luna-define-method elmo-folder-next-message-number-plugged
   ((folder elmo-imap4-folder))
