@@ -1,3 +1,7 @@
+2008-02-16  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-address.el (wl-address-concat-token): Fix typo.
+
 2008-02-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-score.el (wl-score-put-alike): Use quote instead of backquote.

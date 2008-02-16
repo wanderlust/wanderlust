@@ -623,7 +623,7 @@ Deletion is done by using `elmo-list-delete'."
   `(cond
     ((eq 'quoted-string (car ,token))
      (concat ,string "\"" (cdr ,token) "\""))
-    ((eq 'comment (car (, token)))
+    ((eq 'comment (car ,token))
      (concat ,string "(" (cdr ,token) ")"))
     (t
      (concat ,string (cdr ,token)))))
