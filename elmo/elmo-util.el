@@ -591,7 +591,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 				(elmo-base64-encode-string pass)))))
       (if elmo-passwd-life-time
 	  (run-with-timer elmo-passwd-life-time nil
-			  `(lambda nil (elmo-remove-passwd ,key))))
+			  `(lambda () (elmo-remove-passwd ,key))))
       pass)))
 
 (defun elmo-remove-passwd (key)

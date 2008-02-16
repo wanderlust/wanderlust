@@ -1,5 +1,7 @@
 2008-02-16  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-util.el (elmo-get-passwd): Fix typo.
+
 	* elmo-nntp.el (elmo-nntp-get-server-command)
 	(elmo-nntp-set-server-command, elmo-nntp-xover-p)
 	(elmo-nntp-listgroup-p, elmo-nntp-set-listgroup)
