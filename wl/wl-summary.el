@@ -69,8 +69,8 @@
 (defvar wl-summary-buffer-elmo-folder nil)
 
 (defmacro wl-summary-buffer-folder-name ()
-  (` (and wl-summary-buffer-elmo-folder
-	  (elmo-folder-name-internal wl-summary-buffer-elmo-folder))))
+  '(and wl-summary-buffer-elmo-folder
+	(elmo-folder-name-internal wl-summary-buffer-elmo-folder)))
 
 (defvar wl-summary-buffer-disp-msg    nil)
 (defvar wl-summary-buffer-disp-folder nil)
@@ -197,7 +197,7 @@
 (defvar wl-persistent-mark)
 
 (defmacro wl-summary-sticky-buffer-name (name)
-  (` (concat wl-summary-buffer-name ":" (, name))))
+  `(concat wl-summary-buffer-name ":" ,name))
 
 (defun wl-summary-default-subject (subject-string)
   (if (string-match "^[ \t]*\\[[^:]+[,: ][0-9]+\\][ \t]*" subject-string)
@@ -2628,13 +2628,13 @@ If ARG, without confirm."
 	   (funcall wl-summary-subject-filter-function subject2)))
 
 (defmacro wl-summary-put-alike (alike)
-  (` (elmo-set-hash-val (format "#%d" (wl-count-lines))
-			(, alike)
-			wl-summary-alike-hashtb)))
+  `(elmo-set-hash-val (format "#%d" (wl-count-lines))
+		      ,alike
+		      wl-summary-alike-hashtb))
 
 (defmacro wl-summary-get-alike ()
-  (` (elmo-get-hash-val (format "#%d" (wl-count-lines))
-			wl-summary-alike-hashtb)))
+  '(elmo-get-hash-val (format "#%d" (wl-count-lines))
+		      wl-summary-alike-hashtb))
 
 (defun wl-summary-insert-headers (folder func &optional mime-decode)
   (let ((numbers (elmo-folder-list-messages folder 'visible t))

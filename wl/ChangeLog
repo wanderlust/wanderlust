@@ -1,5 +1,10 @@
 2008-02-17  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-summary.el (wl-summary-buffer-folder-name)
+	(wl-summary-get-alike): Use quote instead of backquote.
+	(wl-summary-sticky-buffer-name, wl-summary-put-alike): New
+	backquote style.
+
 	* wl-message.el (wl-message-buffer-cache-buffer-get)
 	(wl-message-buffer-cache-folder-get)
 	(wl-message-buffer-cache-message-get)
