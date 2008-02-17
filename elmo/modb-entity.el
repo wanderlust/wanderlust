@@ -483,7 +483,7 @@ If each field is t, function is set as default converter."
 	    cc   (mapconcat 'identity (elmo-multiple-field-body "cc") ","))
       (unless (elmo-msgdb-message-entity-field handler entity 'size)
 	(if (setq size (elmo-field-body "content-length"))
-	    (setq size (string-to-int size))
+	    (setq size (string-to-number size))
 	  (setq size 0)))
       (while extras
 	(if (setq field-body (elmo-field-body (car extras)))
@@ -561,7 +561,7 @@ If each field is t, function is set as default converter."
      ((or (string= key "larger")
 	  (string= key "smaller"))
       (let ((bytes (elmo-msgdb-message-entity-field handler entity 'size))
-	    (threshold (string-to-int (elmo-filter-value condition))))
+	    (threshold (string-to-number (elmo-filter-value condition))))
 	(if (string= key "larger")
 	    (> bytes threshold)
 	  (< bytes threshold))))
@@ -765,7 +765,7 @@ If each field is t, function is set as default converter."
 	       :size
 	       (let ((size (elmo-field-body "content-length")))
 		 (if size
-		     (string-to-int size)
+		     (string-to-number size)
 		   (or (plist-get args :size) 0)))))))
       (let (field-name field-body extractor)
 	(dolist (extra (cons "newsgroups" elmo-msgdb-extra-fields))

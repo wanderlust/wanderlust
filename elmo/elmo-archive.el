@@ -303,7 +303,7 @@ TYPE specifies the archiver's symbol."
 	      (goto-char (point-min))))
 	  (while (and (re-search-forward file-regexp nil t)
 		      (not (eobp)))  ; for GNU tar 981010
-	    (setq file-list (nconc file-list (list (string-to-int
+	    (setq file-list (nconc file-list (list (string-to-number
 						    (match-string 1)))))))
       (error "%s does not exist" file))
     (if nonsort

@@ -2117,7 +2117,7 @@ Optional argument DAYS specifies the days to expire caches."
 	curtime)
     (if (string= age "")
 	(setq age elmo-cache-expire-default-age)
-      (setq age (string-to-int age)))
+      (setq age (string-to-number age)))
     (setq curtime (current-time))
     (setq curtime (+ (* (nth 0 curtime)
 			(float 65536)) (nth 1 curtime)))

@@ -1,3 +1,44 @@
+2008-02-17  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* modb.el (elmo-msgdb-match-condition-primitive): Use
+	`string-to-number' instead of `string-to-int'.
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-buffer)
+	(elmo-msgdb-message-match-condition)
+	(elmo-msgdb-create-message-entity-from-buffer): Use
+	`string-to-number' instead of `string-to-int'.
+
+	* elmo.el (elmo-folder-confirm-appends): Use `string-to-number'
+	instead of `string-to-int'.
+
+	* elmo-util.el (elmo-cache-expire-by-age): Use `string-to-number'
+	instead of `string-to-int'.
+
+	* elmo-pop3.el (elmo-pop3-list-by-list, elmo-folder-status): Use
+	`string-to-number' instead of `string-to-int'.
+
+	* elmo-nntp.el (elmo-nntp-make-msglist)
+	(elmo-folder-list-messages-plugged, elmo-nntp-folder-status)
+	(elmo-nntp-create-msgdb-from-overview-string)
+	(elmo-nntp-parse-xhdr-response, elmo-nntp-msgdb-create-message)
+	(elmo-nntp-search-primitive): Use `string-to-number' instead of
+	`string-to-int'.
+
+	* elmo-net.el (elmo-net-folder-set-parameters): Use
+	`string-to-number' instead of `string-to-int'.
+
+	* elmo-localdir.el (elmo-localdir-list-subr): Use
+	`string-to-number' instead of `string-to-int'.
+
+	* elmo-imap4.el (elmo-imap4-search-internal-primitive): Use
+	`string-to-number' instead of `string-to-int'.
+
+	* elmo-date.el (elmo-date-get-datevec): Use `string-to-number'
+	instead of `string-to-int'.
+
+	* elmo-archive.el (elmo-archive-list-folder-subr): Use
+	`string-to-number' instead of `string-to-int'.
+
 2008-02-16  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-util.el (elmo-get-passwd): Fix typo.

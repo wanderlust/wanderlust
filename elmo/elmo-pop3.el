@@ -582,7 +582,7 @@ until the login delay period has expired"))
       (if elmo-pop3-list-done
 	  (progn
 	    (mapatoms (lambda (atom)
-			(setq list (cons (string-to-int
+			(setq list (cons (string-to-number
 					  (substring (symbol-name atom) 1))
 					 list)))
 		      elmo-pop3-size-hash)
@@ -617,7 +617,7 @@ until the login delay period has expired"))
 	(if (not (string-match "^\+OK[ \t]*\\([0-9]*\\)" response))
 	    (error "POP STAT command failed")
 	  (setq total
-		(string-to-int
+		(string-to-number
 		 (substring response (match-beginning 1)(match-end 1 ))))
 	  (elmo-folder-close-internal folder)
 	  (cons total total))))))

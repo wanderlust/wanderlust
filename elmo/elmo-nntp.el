@@ -603,7 +603,8 @@ Don't cache if nil.")
 	    ret-val)))
 
 (defun elmo-nntp-make-msglist (beg-str end-str)
-  (elmo-make-number-list (string-to-int beg-str) (string-to-int end-str)))
+  (elmo-make-number-list (string-to-number beg-str)
+			 (string-to-number end-str)))
 
 (luna-define-method elmo-folder-list-messages-plugged ((folder
 							elmo-nntp-folder)
@@ -632,7 +633,7 @@ Don't cache if nil.")
 	       (string-match
 		"211 \\([0-9]+\\) \\([0-9]+\\) \\([0-9]+\\) [^.].+$"
 		response)
-	       (> (string-to-int (elmo-match-string 1 response)) 0))
+	       (> (string-to-number (elmo-match-string 1 response)) 0))
 	  (setq numbers (elmo-nntp-make-msglist
 			 (elmo-match-string 2 response)
 			 (elmo-match-string 3 response)))))
@@ -679,9 +680,9 @@ Don't cache if nil.")
 		    "211 \\([0-9]+\\) \\([0-9]+\\) \\([0-9]+\\) [^.].+$"
 		    response))
 	      (progn
-		(setq end-num (string-to-int
+		(setq end-num (string-to-number
 			       (elmo-match-string 3 response)))
-		(setq e-num (string-to-int
+		(setq e-num (string-to-number
 			     (elmo-match-string 1 response)))
 		(when (and killed-list
 			   (elmo-number-set-member end-num killed-list))
@@ -721,7 +722,7 @@ Don't cache if nil.")
 ;;;	      (<= num 0))
 ;;;	  (setq num 0))
 ;;;  (setq num (int-to-string num))
-      (setq num (string-to-int (aref ov-entity 0)))
+      (setq num (string-to-number (aref ov-entity 0)))
       (when (or (null numlist)
 		(memq num numlist))
 	(setq entity (elmo-msgdb-make-message-entity
@@ -740,7 +741,7 @@ Don't cache if nil.")
 					 (aref ov-entity 1)))
 				      elmo-no-subject)
 		      :date       (aref ov-entity 3)
-		      :size       (string-to-int (aref ov-entity 6))))
+		      :size       (string-to-number (aref ov-entity 6))))
 	(dolist (extra elmo-msgdb-extra-fields)
 	  (setq extra (downcase extra))
 	  (when (and (setq field-index
@@ -886,7 +887,7 @@ Don't cache if nil.")
       (goto-char (point-min))
       (while (not (eobp))
 	(if (looking-at "^\\([0-9]+\\) \\(.*\\)$")
-	    (setq response (cons (cons (string-to-int (elmo-match-buffer 1))
+	    (setq response (cons (cons (string-to-number (elmo-match-buffer 1))
 				       (elmo-match-buffer 2))
 				 response)))
 	(forward-line 1)))
@@ -1074,12 +1075,12 @@ Returns a list of cons cells like (NUMBER . VALUE)"
      ((string= "last" search-key)
       (let ((numbers (or from-msgs (elmo-folder-list-messages spec))))
 	(nthcdr (max (- (length numbers)
-			(string-to-int (elmo-filter-value condition)))
+			(string-to-number (elmo-filter-value condition)))
 		     0)
 		numbers)))
      ((string= "first" search-key)
       (let* ((numbers (or from-msgs (elmo-folder-list-messages spec)))
-	     (rest (nthcdr (string-to-int (elmo-filter-value condition) )
+	     (rest (nthcdr (string-to-number (elmo-filter-value condition) )
 			   numbers)))
 	(mapcar '(lambda (x) (delete x numbers)) rest)
 	numbers))
@@ -1353,7 +1354,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	  (setq beg (save-excursion (forward-line 1) (point)))
 	  (setq num
 		(and (looking-at "^2[0-9]*[ ]+\\([0-9]+\\)")
-		     (string-to-int
+		     (string-to-number
 		      (elmo-match-buffer 1))))
 	  (elmo-nntp-next-result-arrived-p)
 	  (when num

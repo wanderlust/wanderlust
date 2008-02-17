@@ -115,7 +115,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 	     (timezone-fix-time (current-time-string) (current-time-zone)
 				nil)))
 	  (number
-	   (string-to-int
+	   (string-to-number
 	    (if (match-beginning 1)
 		(elmo-match-string 1 description)
 	      "0")))

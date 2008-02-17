@@ -351,7 +351,7 @@ Returned value is searched from `elmo-network-stream-type-alist'."
     ;; port
     (elmo-net-folder-set-port-internal
      folder
-     (or (and port (string-to-int port))
+     (or (and port (string-to-number port))
 	 (plist-get defaults :port)))
     ;; stream-type
     (elmo-net-folder-set-stream-type-internal

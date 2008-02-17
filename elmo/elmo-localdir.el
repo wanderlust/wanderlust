@@ -177,7 +177,7 @@
     one-level)))
 
 (defsubst elmo-localdir-list-subr (folder &optional nonsort)
-  (let ((flist (mapcar 'string-to-int
+  (let ((flist (mapcar 'string-to-number
 		       (directory-files
 			(elmo-localdir-folder-directory-internal folder)
 			nil "^[0-9]+$" t)))
