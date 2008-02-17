@@ -1,5 +1,13 @@
 2008-02-17  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-folder.el (wl-folder-buffer-group-p): Use quote instead of
+	backquote.
+	(wl-folder-unread-regex, wl-folder-entity-exists-p)
+	(wl-folder-clear-entity-info)
+	(wl-folder-get-entity-info, wl-folder-set-entity-info)
+	(wl-folder-elmo-folder-cache-get)
+	(wl-folder-elmo-folder-cache-put): New backquote style.
+
 	* wl-fldmgr.el (wl-fldmgr-get-entity-id): New backquote style.
 	(wl-fldmgr-assign-id): Ditto.
 	(wl-fldmgr-delete-line): Use quote instead of backquote.

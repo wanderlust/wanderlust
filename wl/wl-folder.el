@@ -225,13 +225,13 @@
    wl-folder-mode-menu-spec))
 
 (defmacro wl-folder-unread-regex (group)
-  (` (concat "^[ ]*.+:[0-9\\*-]+/[^0\\*][0-9]*/[0-9\\*-]+$"
-	     (if (, group)
-		 "\\|^[ ]*\\[[+-]\\]"
-	       ""))))
+  `(concat "^[ ]*.+:[0-9\\*-]+/[^0\\*][0-9]*/[0-9\\*-]+$"
+	   (if ,group
+	       "\\|^[ ]*\\[[+-]\\]"
+	     "")))
 
 (defmacro wl-folder-buffer-group-p ()
-  (` (get-text-property (point) 'wl-folder-is-group)))
+  '(get-text-property (point) 'wl-folder-is-group))
 
 (defun wl-folder-buffer-search-group (group)
   (let ((prev-point (point))
@@ -281,24 +281,23 @@
        (wl-folder-get-folder-name-by-id id))))
 
 (defmacro wl-folder-entity-exists-p (entity &optional hashtb)
-  (` (let ((sym (intern-soft (, entity)
-			     (or (, hashtb) wl-folder-entity-hashtb))))
-       (and sym (boundp sym)))))
+  `(let ((sym (intern-soft ,entity (or ,hashtb wl-folder-entity-hashtb))))
+     (and sym (boundp sym))))
 
 (defmacro wl-folder-clear-entity-info (entity &optional hashtb)
-  (` (elmo-clear-hash-val (, entity) (or (, hashtb) wl-folder-entity-hashtb))))
+  `(elmo-clear-hash-val ,entity (or ,hashtb wl-folder-entity-hashtb)))
 
 (defmacro wl-folder-get-entity-info (entity &optional hashtb)
-  (` (elmo-get-hash-val (, entity) (or (, hashtb) wl-folder-entity-hashtb))))
+  `(elmo-get-hash-val ,entity (or ,hashtb wl-folder-entity-hashtb)))
 
 (defmacro wl-folder-set-entity-info (entity value &optional hashtb)
-  (` (let* ((hashtb (or (, hashtb) wl-folder-entity-hashtb))
-	    (info (wl-folder-get-entity-info (, entity) hashtb)))
-       (elmo-set-hash-val (elmo-string (, entity))
-			  (if (< (length (, value)) 4)
-			      (append (, value) (list (nth 3 info)))
-			    (, value))
-			  hashtb))))
+  `(let* ((hashtb (or ,hashtb wl-folder-entity-hashtb))
+	  (info (wl-folder-get-entity-info ,entity hashtb)))
+     (elmo-set-hash-val (elmo-string ,entity)
+			(if (< (length ,value) 4)
+			    (append ,value (list (nth 3 info)))
+			  ,value)
+			hashtb)))
 
 (defun wl-folder-persistent-p (folder)
   (or (and (wl-folder-search-entity-by-name folder wl-folder-entity
@@ -321,14 +320,14 @@
 (defmacro wl-folder-elmo-folder-cache-get (name &optional hashtb)
   "Returns a elmo folder structure associated with NAME from HASHTB.
 Default HASHTB is `wl-folder-elmo-folder-hashtb'."
-  (` (elmo-get-hash-val (, name)
-			(or (, hashtb) wl-folder-elmo-folder-hashtb))))
+  `(elmo-get-hash-val ,name
+		      (or ,hashtb wl-folder-elmo-folder-hashtb)))
 
 (defmacro wl-folder-elmo-folder-cache-put (name folder &optional hashtb)
   "Get folder elmo folder structure on HASHTB for folder with NAME.
 Default HASHTB is `wl-folder-elmo-folder-hashtb'."
-  (` (elmo-set-hash-val (, name) (, folder)
-			(or (, hashtb) wl-folder-elmo-folder-hashtb))))
+  `(elmo-set-hash-val ,name ,folder
+		      (or ,hashtb wl-folder-elmo-folder-hashtb)))
 
 (defun wl-draft-get-folder ()
   "A function to obtain `opened' draft elmo folder structure."
