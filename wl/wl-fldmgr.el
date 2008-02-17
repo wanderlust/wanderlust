@@ -107,27 +107,27 @@
 ;;
 
 (defmacro wl-fldmgr-delete-line ()
-  (` (delete-region (save-excursion (beginning-of-line)
-				    (point))
-		    (save-excursion (end-of-line)
-				    (+ 1 (point))))))
+  '(delete-region (save-excursion (beginning-of-line)
+				  (point))
+		  (save-excursion (end-of-line)
+				  (+ 1 (point)))))
 
 (defmacro wl-fldmgr-make-indent (level)
-  (` (concat " " (make-string (* 2 (, level)) ? ))))
+  `(concat " " (make-string (* 2 ,level) ,(string-to-char " "))))
 
 (defmacro wl-fldmgr-get-entity-id (&optional entity)
-  (` (get-text-property (if (, entity)
-			    0
-			  (point))
-			'wl-folder-entity-id
-			(, entity))))
+  `(get-text-property (if ,entity
+			  0
+			(point))
+		      'wl-folder-entity-id
+		      ,entity))
 
 (defmacro wl-fldmgr-assign-id (entity &optional id)
-  (` (let ((entity-id (or (, id) wl-folder-entity-id)))
-       (put-text-property 0 (length (, entity))
-			  'wl-folder-entity-id
-			  entity-id
-			  (, entity)))))
+  `(let ((entity-id (or ,id wl-folder-entity-id)))
+     (put-text-property 0 (length ,entity)
+			'wl-folder-entity-id
+			entity-id
+			,entity)))
 
 (defsubst wl-fldmgr-read-string (str)
   (if (string-match "\n" str)

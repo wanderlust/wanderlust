@@ -1,5 +1,10 @@
 2008-02-17  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-fldmgr.el (wl-fldmgr-get-entity-id): New backquote style.
+	(wl-fldmgr-assign-id): Ditto.
+	(wl-fldmgr-delete-line): Use quote instead of backquote.
+	(wl-fldmgr-make-indent): Use `string-to-char' instead of `? '.
+
 	* wl-draft.el (wl-smtp-extension-bind, wl-draft-sent-message-p)
 	(wl-draft-set-sent-message): New backquote style.
 	(wl-draft-body-goto-top, wl-draft-body-goto-bottom)
