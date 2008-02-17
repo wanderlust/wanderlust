@@ -1,3 +1,10 @@
+2008-02-17  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-draft.el (wl-smtp-extension-bind, wl-draft-sent-message-p)
+	(wl-draft-set-sent-message): New backquote style.
+	(wl-draft-body-goto-top, wl-draft-body-goto-bottom)
+	(wl-draft-config-body-goto-header): Use quote instead of backquote.
+
 2008-02-16  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-address.el (wl-address-concat-token): Fix typo.

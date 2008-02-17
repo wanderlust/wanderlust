@@ -135,32 +135,32 @@ e.g.
 	  user mechanism server))
 
 (defmacro wl-smtp-extension-bind (&rest body)
-  (` (let* ((smtp-sasl-mechanisms
-	     (if wl-smtp-authenticate-type
-		 (mapcar 'upcase
-			 (if (listp wl-smtp-authenticate-type)
-			     wl-smtp-authenticate-type
-			   (list wl-smtp-authenticate-type)))))
-	    (smtp-use-sasl (and smtp-sasl-mechanisms t))
-	    (smtp-use-starttls (eq wl-smtp-connection-type 'starttls))
-	    (smtp-open-connection-function
-	     (if (eq wl-smtp-connection-type 'ssl)
-		 #'open-ssl-stream
-	       smtp-open-connection-function))
-	    smtp-sasl-user-name smtp-sasl-properties sasl-read-passphrase)
-       (setq smtp-sasl-user-name wl-smtp-posting-user
-	     smtp-sasl-properties (when wl-smtp-authenticate-realm
-				    (list 'realm
-					  wl-smtp-authenticate-realm)))
-       (setq sasl-read-passphrase
-	     (function
-	      (lambda (prompt)
-		(elmo-get-passwd
-		 (wl-smtp-password-key
-		  smtp-sasl-user-name
-		  (car smtp-sasl-mechanisms)
-		  smtp-server)))))
-       (,@ body))))
+  `(let* ((smtp-sasl-mechanisms
+	   (if wl-smtp-authenticate-type
+	       (mapcar 'upcase
+		       (if (listp wl-smtp-authenticate-type)
+			   wl-smtp-authenticate-type
+			 (list wl-smtp-authenticate-type)))))
+	  (smtp-use-sasl (and smtp-sasl-mechanisms t))
+	  (smtp-use-starttls (eq wl-smtp-connection-type 'starttls))
+	  (smtp-open-connection-function
+	   (if (eq wl-smtp-connection-type 'ssl)
+	       #'open-ssl-stream
+	     smtp-open-connection-function))
+	  smtp-sasl-user-name smtp-sasl-properties sasl-read-passphrase)
+     (setq smtp-sasl-user-name wl-smtp-posting-user
+	   smtp-sasl-properties (when wl-smtp-authenticate-realm
+				  (list 'realm
+					wl-smtp-authenticate-realm)))
+     (setq sasl-read-passphrase
+	   (function
+	    (lambda (prompt)
+	      (elmo-get-passwd
+	       (wl-smtp-password-key
+		smtp-sasl-user-name
+		(car smtp-sasl-mechanisms)
+		smtp-server)))))
+     ,@body))
 
 (defun wl-draft-insert-date-field ()
   "Insert Date field."
@@ -828,16 +828,16 @@ text was killed."
 ;; function for wl-sent-message-via
 
 (defmacro wl-draft-sent-message-p (type)
-  (` (eq (nth 1 (assq (, type) wl-sent-message-via)) 'sent)))
+  `(eq (nth 1 (assq ,type wl-sent-message-via)) 'sent))
 
 (defmacro wl-draft-set-sent-message (type result &optional server-port)
-  (` (let ((element (assq (, type) wl-sent-message-via)))
-       (if element
-	   (unless (eq (nth 1 element) (, result))
-	     (setcdr element (list (, result) (, server-port)))
-	     (setq wl-sent-message-modified t))
-	 (push (list (, type) (, result) (, server-port)) wl-sent-message-via)
-	 (setq wl-sent-message-modified t)))))
+  `(let ((element (assq ,type wl-sent-message-via)))
+     (if element
+	 (unless (eq (nth 1 element) ,result)
+	   (setcdr element (list ,result ,server-port))
+	   (setq wl-sent-message-modified t))
+       (push (list ,type ,result ,server-port) wl-sent-message-via)
+       (setq wl-sent-message-modified t))))
 
 (defun wl-draft-sent-message-results ()
   (let ((results wl-sent-message-via)
@@ -2009,21 +2009,21 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     buffer))
 
 (defmacro wl-draft-body-goto-top ()
-  (` (progn
-       (goto-char (point-min))
-       (if (re-search-forward mail-header-separator nil t)
-	   (forward-char 1)
-	 (goto-char (point-max))))))
+  '(progn
+     (goto-char (point-min))
+     (if (re-search-forward mail-header-separator nil t)
+	 (forward-char 1)
+       (goto-char (point-max)))))
 
 (defmacro wl-draft-body-goto-bottom ()
-  (` (goto-char (point-max))))
+  '(goto-char (point-max)))
 
 (defmacro wl-draft-config-body-goto-header ()
-  (` (progn
-       (goto-char (point-min))
-       (if (re-search-forward mail-header-separator nil t)
-	   (beginning-of-line)
-	 (goto-char (point-max))))))
+  '(progn
+     (goto-char (point-min))
+     (if (re-search-forward mail-header-separator nil t)
+	 (beginning-of-line)
+       (goto-char (point-max)))))
 
 (defsubst wl-draft-config-sub-eval-insert (content &optional newline)
   (let (content-value)
