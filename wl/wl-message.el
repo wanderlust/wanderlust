@@ -85,21 +85,21 @@
 With association ((\"folder\" message \"message-id\") . cache-buffer).")
 
 (defmacro wl-message-buffer-cache-buffer-get (entry)
-  (` (cdr (, entry))))
+  `(cdr ,entry))
 
 (defmacro wl-message-buffer-cache-folder-get (entry)
-  (` (car (car (, entry)))))
+  `(car (car ,entry)))
 
 (defmacro wl-message-buffer-cache-message-get (entry)
-  (` (cdr (car (, entry)))))
+  `(cdr (car ,entry)))
 
 (defmacro wl-message-buffer-cache-entry-make (key buf)
-  (` (cons (, key) (, buf))))
+  `(cons ,key ,buf))
 
 (defmacro wl-message-buffer-cache-hit (key)
   "Return value assosiated with key."
-  (` (wl-message-buffer-cache-buffer-get
-      (assoc (, key) wl-message-buffer-cache))))
+  `(wl-message-buffer-cache-buffer-get
+    (assoc ,key wl-message-buffer-cache)))
 
 (defun wl-message-buffer-cache-sort (entry)
   "Move ENTRY to the top of `wl-message-buffer-cache'."

@@ -1,5 +1,11 @@
 2008-02-17  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-message.el (wl-message-buffer-cache-buffer-get)
+	(wl-message-buffer-cache-folder-get)
+	(wl-message-buffer-cache-message-get)
+	(wl-message-buffer-cache-entry-make)
+	(wl-message-buffer-cache-hit): New backquote style.
+
 	* wl-folder.el (wl-folder-buffer-group-p): Use quote instead of
 	backquote.
 	(wl-folder-unread-regex, wl-folder-entity-exists-p)
