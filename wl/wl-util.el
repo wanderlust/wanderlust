@@ -239,12 +239,12 @@ even when invalid character is contained."
 
 (defmacro wl-match-string (pos string)
   "Substring POSth matched STRING."
-  (` (substring (, string) (match-beginning (, pos)) (match-end (, pos)))))
+  `(substring ,string (match-beginning ,pos) (match-end ,pos)))
 
 (defmacro wl-match-buffer (pos)
   "Substring POSth matched from the current buffer."
-  (` (buffer-substring-no-properties
-      (match-beginning (, pos)) (match-end (, pos)))))
+  `(buffer-substring-no-properties
+    (match-beginning ,pos) (match-end ,pos)))
 
 (put 'wl-as-coding-system 'lisp-indent-function 1)
 (put 'wl-as-mime-charset 'lisp-indent-function 1)
@@ -253,21 +253,21 @@ even when invalid character is contained."
   (cond
    (wl-on-mule3
     (defmacro wl-as-coding-system (coding-system &rest body)
-      (` (let ((coding-system-for-read (, coding-system))
-	       (coding-system-for-write (, coding-system)))
-	   (,@ body)))))
+      `(let ((coding-system-for-read ,coding-system)
+	     (coding-system-for-write ,coding-system))
+	 ,@body)))
    (wl-on-mule
     (defmacro wl-as-coding-system (coding-system &rest body)
-      (` (let ((file-coding-system-for-read (, coding-system))
-	       (file-coding-system (, coding-system)))
-	   (,@ body)))))
+      `(let ((file-coding-system-for-read ,coding-system)
+	     (file-coding-system ,coding-system))
+	 ,@body)))
    (t
     (defmacro wl-as-coding-system (coding-system &rest body)
-      (` (progn (,@ body)))))))
+      `(progn ,@body)))))
 
 (defmacro wl-as-mime-charset (mime-charset &rest body)
-  (` (wl-as-coding-system (mime-charset-to-coding-system (, mime-charset))
-       (,@ body))))
+  `(wl-as-coding-system (mime-charset-to-coding-system ,mime-charset)
+     ,@body))
 
 (defalias 'wl-string 'elmo-string)
 (make-obsolete 'wl-string 'elmo-string)
@@ -489,7 +489,7 @@ that `read' can handle, whenever this is possible."
       (message "Not a nntp: url."))))
 
 (defmacro wl-concat-list (list separator)
-  (` (mapconcat 'identity (delete "" (delq nil (, list))) (, separator))))
+  `(mapconcat 'identity (delete "" (delq nil ,list)) ,separator))
 
 (defun wl-current-message-buffer ()
   (when (buffer-live-p wl-current-summary-buffer)
@@ -503,13 +503,13 @@ that `read' can handle, whenever this is possible."
 		nil nil))))))
 
 (defmacro wl-kill-buffers (regexp)
-  (` (mapcar (function
-	      (lambda (x)
-		(if (and (buffer-name x)
-			 (string-match (, regexp) (buffer-name x)))
-		    (and (get-buffer x)
-			 (kill-buffer x)))))
-	     (buffer-list))))
+  `(mapcar (function
+	    (lambda (x)
+	      (if (and (buffer-name x)
+		       (string-match ,regexp (buffer-name x)))
+		  (and (get-buffer x)
+		       (kill-buffer x)))))
+	   (buffer-list)))
 
 (defun wl-collect-summary ()
   (let (result)
@@ -568,8 +568,8 @@ that `read' can handle, whenever this is possible."
 (static-if (fboundp 'local-variable-p)
     (defalias 'wl-local-variable-p 'local-variable-p)
   (defmacro wl-local-variable-p (symbol &optional buffer)
-    (` (if (assq (, symbol) (buffer-local-variables (, buffer)))
-	   t))))
+    `(if (assq ,symbol (buffer-local-variables ,buffer))
+	 t)))
 
 (defun wl-number-base36 (num len)
   (if (if (< len 0)
@@ -653,9 +653,9 @@ that `read' can handle, whenever this is possible."
 ;;;
 
 (defmacro wl-count-lines ()
-  (` (save-excursion
-       (beginning-of-line)
-       (count-lines 1 (point)))))
+  '(save-excursion
+     (beginning-of-line)
+     (count-lines 1 (point))))
 
 (defun wl-horizontal-recenter ()
   "Recenter the current buffer horizontally."
@@ -1015,15 +1015,15 @@ is enclosed by at least one regexp grouping construct."
     (append (list 'format f) specs)))
 
 (defmacro wl-line-formatter-setup (formatter format alist)
-  (` (let (byte-compile-warnings)
-       (setq (, formatter)
-	     (byte-compile
-	      (list 'lambda ()
-		    (wl-line-parse-format (, format) (, alist)))))
-       (when (get-buffer "*Compile-Log*")
-	 (bury-buffer "*Compile-Log*"))
-       (when (get-buffer "*Compile-Log-Show*")
-	 (bury-buffer "*Compile-Log-Show*")))))
+  `(let (byte-compile-warnings)
+     (setq ,formatter
+	   (byte-compile
+	    (list 'lambda ()
+		  (wl-line-parse-format ,format ,alist))))
+     (when (get-buffer "*Compile-Log*")
+       (bury-buffer "*Compile-Log*"))
+     (when (get-buffer "*Compile-Log-Show*")
+       (bury-buffer "*Compile-Log-Show*"))))
 
 (defsubst wl-copy-local-variables (src dst local-variables)
   "Copy value of LOCAL-VARIABLES from SRC buffer to DST buffer."

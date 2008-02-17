@@ -1,5 +1,11 @@
 2008-02-17  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-util.el (wl-match-string, wl-match-buffer)
+	(wl-as-coding-system, wl-as-mime-charset, wl-concat-list)
+	(wl-kill-buffers, wl-local-variable-p)
+	(wl-line-formatter-setup): New backquote style.
+	(wl-count-lines): Use quote instead of backquote.
+
 	* wl-summary.el (wl-summary-buffer-folder-name)
 	(wl-summary-get-alike): Use quote instead of backquote.
 	(wl-summary-sticky-buffer-name, wl-summary-put-alike): New
