@@ -1,3 +1,8 @@
+2008-02-17  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* INSTALL: Updated recommended version of APEL and FLIM.
+	* INSTALL.ja: Updated recommended version of APEL and FLIM.
+
 2008-02-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* WL-MK (wl-news-parse-news-subr): Use `string-to-number' instead
