@@ -36,6 +36,7 @@
 (require 'elmo-map)
 
 (eval-when-compile
+  (require 'cl)
   (require 'elmo-util))
 
 (eval-and-compile

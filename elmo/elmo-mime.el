@@ -33,6 +33,11 @@
 (require 'mmimap)
 (require 'mime-view)
 
+(eval-when-compile
+  (require 'luna)
+  (require 'elmo)	      ; elmo-folder-do-each-message-entity
+  (require 'cl))
+
 ;; MIME-Entity
 (eval-and-compile
   (luna-define-class elmo-mime-entity))

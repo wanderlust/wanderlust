@@ -32,6 +32,7 @@
 ;; 28 Aug 2001 Created.
 
 ;;; Code:
+(eval-when-compile (require 'cl))
 
 (defgroup slp nil
   "Interface for `Service Location Protocol'."

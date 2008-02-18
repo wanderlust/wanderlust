@@ -33,6 +33,7 @@
 (require 'path-util)
 (require 'timezone)
 (require 'elmo-vars)
+(eval-when-compile (require 'cl))
 
 (defmacro elmo-match-substring (pos string from)
   "Substring of POSth matched string of STRING."

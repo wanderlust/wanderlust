@@ -1,3 +1,10 @@
+2008-02-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* slp.el: Add (eval-when-compile (require 'cl)).
+	* elmo-date.el: Ditto.
+	* elmo-pop3.el: Ditto.
+	* elmo-mime.el: Add (eval-when-compile (require 'elmo)).
+
 2008-02-17  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* modb.el (elmo-msgdb-match-condition-primitive): Use
