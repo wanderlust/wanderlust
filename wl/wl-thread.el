@@ -295,7 +295,7 @@ ENTITY is returned."
   "Jump to the message with specified number in the current summary."
   (interactive)
   (let ((num (or number
-		 (string-to-int
+		 (string-to-number
 		  (read-from-minibuffer "Jump to Message(No.): ")))))
     (wl-thread-entity-force-open (wl-thread-get-entity num))
     (wl-summary-jump-to-msg num)))
@@ -1092,7 +1092,7 @@ Message is inserted to the summary buffer."
     (if (string= dst-parent "")
 	(setq dst-parent nil)
       (if (interactive-p)
-	  (setq dst-parent (string-to-int dst-parent))
+	  (setq dst-parent (string-to-number dst-parent))
 	(setq dst-parent parent-number)))
     (if (and dst-parent
 	     (memq dst-parent (wl-thread-get-children-msgs number)))

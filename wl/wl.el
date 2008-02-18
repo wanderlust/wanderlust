@@ -531,7 +531,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	   ((eq indent wl-plugged-port-indent)  ;; toggle port plug
 	    (cond
 	     ((string-match "\\([^([]*\\)(\\([^)[]+\\))" name)
-	      (setq port (string-to-int (elmo-match-string 2 name)))
+	      (setq port (string-to-number (elmo-match-string 2 name)))
 	      (if (string-match "!" (setq name-1 (elmo-match-string 1 name)))
 		  (setq stream-type
 			(intern (substring name-1 (match-end 0))))))

@@ -2407,7 +2407,7 @@ Automatically applied in draft sending time."
 	(message "No draft message exist.")
       (if (string-match (concat "^" wl-draft-folder "/") mybuf)
 	  (setq msg (cadr (memq
-			   (string-to-int (substring mybuf (match-end 0)))
+			   (string-to-number (substring mybuf (match-end 0)))
 			   msgs))))
       (or msg (setq msg (car msgs)))
       (if (setq buf (get-buffer (format "%s/%d" wl-draft-folder msg)))

@@ -2198,11 +2198,11 @@ Use `wl-subscribed-mailing-list'."
       (setq is-group (get-text-property (point) 'wl-folder-is-group))
       (when (looking-at "^[ ]*\\(.*\\):\\([0-9\\*-]*\\)/\\([0-9\\*-]*\\)/\\([0-9\\*]*\\)")
 	;;(looking-at "^[ ]*\\([^\\[].+\\):\\([0-9\\*-]*/[0-9\\*-]*/[0-9\\*]*\\)")
-	(setq cur-new (string-to-int
+	(setq cur-new (string-to-number
 		       (wl-match-buffer 2)))
-	(setq cur-unread (string-to-int
+	(setq cur-unread (string-to-number
 			  (wl-match-buffer 3)))
-	(setq cur-all (string-to-int
+	(setq cur-all (string-to-number
 		       (wl-match-buffer 4)))
 	(delete-region (match-beginning 2)
 		       (match-end 4))

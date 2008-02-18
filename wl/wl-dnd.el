@@ -59,7 +59,7 @@
 		       (split-string (nth 2 (car (cdr object)))
 				     " ")))
 	   (src-fld (nth 0 src-spec))
-	   (number  (string-to-int (nth 1 src-spec)))
+	   (number  (string-to-number (nth 1 src-spec)))
 	   target)
       (setq target
 	    (wl-folder-get-folder-name-by-id (get-text-property

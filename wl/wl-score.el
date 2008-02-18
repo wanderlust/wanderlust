@@ -166,7 +166,7 @@ Remove Re, Was, Fwd etc."
 (defun wl-score-overview-entity-get-lines (entity)
   (let ((lines (elmo-message-entity-field entity 'lines)))
     (and lines
-	 (string-to-int lines))))
+	 (string-to-number lines))))
 
 (defun wl-score-overview-entity-get-xref (entity)
   (or (elmo-message-entity-field entity 'xref)
@@ -815,7 +815,7 @@ Set `wl-score-cache' nil."
   "Automatically mark messages with score below SCORE as read."
   (interactive
    (list (or (and current-prefix-arg (prefix-numeric-value current-prefix-arg))
-	     (string-to-int (read-string "Mark below: ")))))
+	     (string-to-number (read-string "Mark below: ")))))
   (setq score (or score wl-summary-default-score 0))
   (wl-score-set 'mark (list score))
   (wl-score-set 'touched '(t))
@@ -826,7 +826,7 @@ Set `wl-score-cache' nil."
   "Automatically expunge messages with score below SCORE."
   (interactive
    (list (or (and current-prefix-arg (prefix-numeric-value current-prefix-arg))
-	     (string-to-int (read-string "Expunge below: ")))))
+	     (string-to-number (read-string "Expunge below: ")))))
   (setq score (or score wl-summary-default-score 0))
   (wl-score-set 'expunge (list score))
   (wl-score-set 'touched '(t)))
@@ -872,7 +872,7 @@ Set `wl-score-cache' nil."
     ;; transform from string to int.
     (when (eq (nth 1 (assoc (car entry) wl-score-header-index))
 	      'wl-score-integer)
-      (setq match (string-to-int match)))
+      (setq match (string-to-number match)))
     ;; set score
     (if score
 	(setq lscore rscore)
@@ -1061,7 +1061,7 @@ Set `wl-score-cache' nil."
 
 	  ;; read the score.
 	  (unless (or score increase)
-	    (setq score (string-to-int (read-string "Set score: ")))))
+	    (setq score (string-to-number (read-string "Set score: ")))))
       (message "")
       (wl-score-kill-help-buffer))
 

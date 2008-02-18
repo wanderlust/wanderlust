@@ -1003,7 +1003,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	       (count (elmo-find-list-match-value
 		       elmo-mailing-list-count-spec-list
 		       getter)))
-	  (cons name (and count (string-to-int count)))))))
+	  (cons name (and count (string-to-number count)))))))
 
 (defun wl-summary-overview-entity-compare-by-list-info (x y)
   "Compare entity X and Y by mailing-list info."
@@ -2153,7 +2153,7 @@ This function is defined for `window-scroll-functions'"
     (beginning-of-line)
     (if (or (re-search-forward "\r\\(-?[0-9]+\\)" (point-at-eol) t)
 	    (re-search-forward "^ *\\(-?[0-9]+\\)" (point-at-eol) t))
-	(string-to-int (wl-match-buffer 1))
+	(string-to-number (wl-match-buffer 1))
       nil)))
 
 (defun wl-summary-delete-all-msgs ()

@@ -387,7 +387,7 @@ Refile to archive folder followed the number of message in one archive folder."
 	       (setq dels (nth 1 tmp)))
       (wl-append deleted-list (car (wl-expire-delete folder dels))))
     (setq delete-list (car tmp)
-	  filenum (string-to-int (nth 3 tmp))
+	  filenum (string-to-number (nth 3 tmp))
 	  len (nth 4 tmp)
 	  arc-len len)
     (catch 'done

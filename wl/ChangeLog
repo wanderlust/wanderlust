@@ -1,3 +1,35 @@
+2008-02-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl.el (wl-plugged-toggle): Use `string-to-number' instead of
+	`string-to-int'.
+
+	* wl-util.el (wl-unique-id): Use `string-to-number' instead of
+	`string-to-int'.
+
+	* wl-thread.el (wl-thread-jump-to-msg, wl-thread-set-parent): Use
+	`string-to-number' instead of `string-to-int'.
+
+	* wl-summary.el (wl-summary-get-list-info)
+	(wl-summary-message-number): Use `string-to-number' instead of
+	`string-to-int'.
+
+	* wl-score.el (wl-score-overview-entity-get-lines)
+	(wl-score-set-mark-below, wl-score-set-expunge-below)
+	(wl-summary-increase-score, wl-score-get-header-entry): Use
+	`string-to-number' instead of `string-to-int'.
+
+	* wl-folder.el (wl-folder-update-diff-line): Use
+	`string-to-number' instead of `string-to-int'.
+
+	* wl-expire.el (wl-expire-archive-number2): Use `string-to-number'
+	instead of `string-to-int'.
+
+	* wl-draft.el (wl-jump-to-draft-folder): Use `string-to-number'
+	instead of `string-to-int'.
+
+	* wl-dnd.el (wl-dnd-drop-func): Use `string-to-number' instead of
+	`string-to-int'.
+
 2008-02-17  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-util.el (wl-match-string, wl-match-buffer)

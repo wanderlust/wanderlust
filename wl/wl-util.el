@@ -600,11 +600,11 @@ that `read' can handle, whenever this is possible."
 				      ("Jul" . "07") ("Aug" . "08")
 				      ("Sep" . "09") ("Oct" . "10")
 				      ("Nov" . "11") ("Dec" . "12"))))))
-		(list (string-to-int (concat (nth 6 cts) m
-					     (substring (nth 2 cts) 0 1)))
-		      (string-to-int (concat (substring (nth 2 cts) 1)
-					     (nth 4 cts) (nth 5 cts)
-					     (nth 6 cts))))))))
+		(list (string-to-number (concat (nth 6 cts) m
+						(substring (nth 2 cts) 0 1)))
+		      (string-to-number (concat (substring (nth 2 cts) 1)
+						(nth 4 cts) (nth 5 cts)
+						(nth 6 cts))))))))
     (concat
      (if (memq system-type '(ms-dos emx vax-vms))
 	 (let ((user (downcase (user-login-name))))
