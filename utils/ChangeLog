@@ -1,3 +1,7 @@
+2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* bbdb-wl.el: Add (eval-when-compile (require 'static)).
+
 2008-02-14  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-mailto.el: Use `string-to-number' instead of `string-to-int'.

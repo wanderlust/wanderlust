@@ -17,6 +17,7 @@
 
 ;; bbdb setup.
 (eval-when-compile
+  (require 'static)
   (require 'mime-setup)
   (require 'elmo-vars)
   (require 'elmo-util)
