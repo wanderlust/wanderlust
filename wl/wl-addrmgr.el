@@ -34,6 +34,7 @@
 
 (require 'wl-address)
 (require 'wl-draft)
+(eval-when-compile (require 'cl))
 
 ;; Variables
 (defgroup wl-addrmgr nil

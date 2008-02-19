@@ -36,6 +36,7 @@
 (require 'wl-util)
 (require 'wl-vars)
 (require 'std11)
+(eval-when-compile (require 'cl))
 
 (defvar wl-address-complete-header-list
   '("To:" "From:" "Cc:" "Bcc:" "Mail-Followup-To:" "Reply-To:"

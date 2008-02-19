@@ -35,10 +35,12 @@
 (require 'bytecomp)
 (require 'elmo-util)
 (require 'elmo-flag)
+(require 'wl-vars)
 
 (condition-case nil (require 'pp) (error nil))
 
 (eval-when-compile
+  (require 'cl)
   (require 'time-stamp)
   (defalias-maybe 'next-command-event 'ignore)
   (defalias-maybe 'event-to-character 'ignore)

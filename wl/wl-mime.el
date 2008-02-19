@@ -33,6 +33,7 @@
 (require 'mime-play)
 (require 'elmo)
 (require 'wl-vars)
+(eval-when-compile (require 'cl))
 
 ;;; Draft
 

@@ -1,3 +1,10 @@
+2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-address.el: Add (eval-when-compile (require 'cl)).
+	* wl-addrmgr.el: Ditto.
+	* wl-mime.el: Ditto.
+	* wl-util.el: Ditto.
+
 2008-02-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl.el (wl-plugged-toggle): Use `string-to-number' instead of
