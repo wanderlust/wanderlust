@@ -1,3 +1,7 @@
+2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* Makefile (clean-elc): Remove *.elx for compile-strict.
+
 2008-02-17  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* INSTALL: Updated recommended version of APEL and FLIM.

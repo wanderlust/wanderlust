@@ -80,7 +80,8 @@ uninstall-elc:
 
 clean-elc:
 	rm -f wl/*.elc wl/*~ wl/auto-autoloads.el wl/custom-load.el \
-		wl/wl-news.el elmo/*.elc utils/*.elc utils/hmac/lisp/*.elc
+		wl/wl-news.el elmo/*.elc utils/*.elc \
+		wl/*.elx elmo/*.elx utils/*.elx
 
 package:
 	$(XEMACS) $(FLAGS) -l WL-MK -f compile-wl-package-xmas \
