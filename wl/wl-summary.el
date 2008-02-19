@@ -2297,7 +2297,7 @@ If ARG, without confirm."
     (wl-summary-mode)
     (wl-summary-buffer-set-folder folder)
     (let ((buffer-read-only nil))
-      (insert-buffer cur-buf))
+      (insert-buffer-substring cur-buf))
     (set-buffer-modified-p nil)
     (while copy-variables
       (set (car copy-variables)

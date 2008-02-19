@@ -1,5 +1,9 @@
 2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-mime.el (wl-message-delete-current-part): Use
+	`insert-buffer-substring' instead of `insert-buffer'.
+	* wl-summary.el (wl-summary-switch-to-clone-buffer): Ditto.
+
 	* wl-address.el: Add (eval-when-compile (require 'cl)).
 	* wl-addrmgr.el: Ditto.
 	* wl-mime.el: Ditto.

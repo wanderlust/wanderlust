@@ -450,7 +450,7 @@ It calls following-method selected from variable
 		  (format "Do you really want to delete part %s? "
 			  (wl-mime-node-id-to-string node-id))))
 	(when (with-temp-buffer
-		(insert-buffer orig-buf)
+		(insert-buffer-substring orig-buf)
 		(delete-region header-start body-end)
 		(goto-char header-start)
 		(insert "Content-Type: text/plain; charset=US-ASCII\n")
