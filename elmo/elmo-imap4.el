@@ -38,6 +38,7 @@
 ;;    Author: Simon Josefsson <jas@pdc.kth.se>
 ;;
 
+;;; Code:
 (require 'elmo-vars)
 (require 'elmo-util)
 (require 'elmo-date)
@@ -48,7 +49,6 @@
 (require 'utf7)
 (require 'elmo-mime)
 
-;;; Code:
 (eval-when-compile (require 'cl))
 
 (defvar elmo-imap4-disuse-server-flag-mailbox-regexp "^#mh" ; UW imapd

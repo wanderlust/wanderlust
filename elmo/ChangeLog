@@ -1,5 +1,9 @@
 2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-flag.el: Move ';;; Code:' comment.
+	* elmo-imap4.el: Ditto.
+	* elmo-net.el: Ditto.
+
 	* elmo-version.el (product-provide): Fix comment.
 
 2008-02-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>

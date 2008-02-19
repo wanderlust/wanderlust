@@ -25,11 +25,12 @@
 
 ;;; Commentary:
 ;;
+
+;;; Code:
 (require 'elmo-util)
 (require 'elmo-localdir)
 (eval-when-compile (require 'cl))
 
-;;; Code:
 (defcustom elmo-global-flags '(important)
   "A list of flag symbol which is managed globally by the flag folder."
   :type '(repeat symbol)

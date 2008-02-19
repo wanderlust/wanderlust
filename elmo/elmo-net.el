@@ -26,6 +26,8 @@
 ;;; Commentary:
 ;;
 
+;;; Code:
+;;
 (eval-when-compile (require 'cl))
 
 (require 'elmo-util)
@@ -33,9 +35,6 @@
 (require 'elmo-vars)
 (require 'elmo-cache)
 (require 'elmo)
-
-;;; Code:
-;;
 
 (defconst elmo-net-folder-name-syntax '((?@ [server ".+"])
 					(?: [port "^[0-9]+$"])
