@@ -34,6 +34,7 @@
 (require 'wl-vars)
 (require 'wl-util)
 (eval-when-compile
+  (require 'cl)				; cadaar, cddaar
   (require 'elmo-msgdb))		; for inline functions
 
 (defvar wl-score-edit-header-char
