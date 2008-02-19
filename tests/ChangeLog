@@ -1,3 +1,8 @@
+2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* test-wl-util.el (test-wl-unique-id-by-user): New testcase.
+	(test-wl-inverse-alist): Ditto.
+
 2008-02-15  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* test-elmo-date.el: New file.
