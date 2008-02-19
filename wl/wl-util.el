@@ -36,11 +36,12 @@
 (require 'elmo-util)
 (require 'elmo-flag)
 (require 'wl-vars)
+(eval-when-compile (require 'cl))
+(eval-when-compile (require 'static))
 
 (condition-case nil (require 'pp) (error nil))
 
 (eval-when-compile
-  (require 'cl)
   (require 'time-stamp)
   (defalias-maybe 'next-command-event 'ignore)
   (defalias-maybe 'event-to-character 'ignore)
@@ -363,8 +364,6 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
       (setq keys (cdr keys)))
     result))
 
-(eval-when-compile
-  (require 'static))
 (static-unless (fboundp 'pp)
   (defvar pp-escape-newlines t)
   (defun pp (object &optional stream)

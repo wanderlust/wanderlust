@@ -28,6 +28,7 @@
 
 ;;; Code:
 ;;
+(eval-when-compile (require 'static))
 
 (static-cond
  ((featurep 'offix)

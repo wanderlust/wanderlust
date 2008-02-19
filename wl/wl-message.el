@@ -29,6 +29,7 @@
 ;;; Code:
 ;;
 (eval-when-compile (require 'cl))
+(eval-when-compile (require 'static))
 
 (require 'wl-vars)
 (require 'wl-highlight)
