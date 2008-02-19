@@ -7,6 +7,8 @@
 	* wl-mime.el (wl-message-delete-current-part): Use
 	`insert-buffer-substring' instead of `insert-buffer'.
 	* wl-summary.el (wl-summary-switch-to-clone-buffer): Ditto.
+	* wl-draft.el (wl-draft-generate-clone-buffer)
+	(wl-draft-do-mime-bcc): Ditto.
 
 	* wl-address.el: Add (eval-when-compile (require 'cl)).
 	* wl-addrmgr.el: Ditto.

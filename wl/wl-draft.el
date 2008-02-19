@@ -1402,7 +1402,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 			"This is a blind carbon copy.")
 		    "\n")
 	    (mime-edit-insert-tag "message" "rfc822")
-	    (insert-buffer draft-buffer)
+	    (insert-buffer-substring draft-buffer)
 	    (let (wl-interactive-send)
 	      (wl-draft-send 'kill-when-done))))))))
 
@@ -1940,7 +1940,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (erase-buffer)
       (wl-draft-mode)
       (wl-draft-editor-mode)
-      (insert-buffer editing-buffer)
+      (insert-buffer-substring editing-buffer)
       (message "")
       (while local-variables
 	(make-local-variable (car local-variables))
