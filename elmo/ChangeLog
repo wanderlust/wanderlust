@@ -1,3 +1,7 @@
+2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-version.el (product-provide): Fix comment.
+
 2008-02-18  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* slp.el: Add (eval-when-compile (require 'cl)).
