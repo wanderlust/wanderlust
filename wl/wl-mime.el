@@ -484,8 +484,11 @@ It calls following-method selected from variable
 (eval-when-compile
   (defmacro wl-define-dummy-functions (&rest symbols)
     `(dolist (symbol (quote ,symbols))
-       (defalias symbol 'ignore)))
+       (defalias symbol 'ignore))))
 
+(eval-when-compile
+  ;; split eval-when-compile form for avoid error on `make compile-strict'
+  (require 'mime-pgp)
   (condition-case nil
       (require 'epa)
     (error

@@ -1,5 +1,9 @@
 2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-mime.el (wl-define-dummy-functions): Split
+	`eval-when-compile' form for avoid error; when `make
+	compile-strict.
+
 	* wl-util.el: Move (eval-when-compile (require 'static)).
 	* wl-dnd.el: Add (eval-when-compile (require 'static)).
 	* wl-message.el: Ditto.
