@@ -1,5 +1,8 @@
 2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* mmimap.el: Remove (require 'static).
+	* acap.el: Ditto.
+
 	* elmo-flag.el: Move ';;; Code:' comment.
 	* elmo-imap4.el: Ditto.
 	* elmo-net.el: Ditto.

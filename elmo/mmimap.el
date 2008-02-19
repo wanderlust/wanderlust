@@ -31,7 +31,6 @@
 (require 'mmgeneric)
 (require 'mime)
 (require 'pces)
-(require 'static)
 (require 'mime-parse)
 
 (eval-and-compile
