@@ -1,5 +1,7 @@
 2008-02-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-template.el: Require elmo-util and wl-vars.
+
 	* wl-mime.el (wl-mime-display-header): Revert last change.
 	Remove `delete-matching-lines "^$"'.
 

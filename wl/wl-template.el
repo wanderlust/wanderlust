@@ -28,6 +28,8 @@
 
 ;;; Code:
 ;;
+(require 'elmo-util)
+(require 'wl-vars)
 
 ;; Variables
 
