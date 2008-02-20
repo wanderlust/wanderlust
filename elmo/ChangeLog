@@ -1,5 +1,8 @@
 2008-02-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-vars.el (dynamic-link, dynamic-call): Use `defalias-maybe'
+	instead of `defun-maybe'
+
 	* elmo-util.el: Add (eval-when-compile (require 'static)).
 
 2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>

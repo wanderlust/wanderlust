@@ -32,8 +32,8 @@
 
 ;; silence byte compiler
 (eval-when-compile
-  (defun-maybe dynamic-link (a))
-  (defun-maybe dynamic-call (a b)))
+  (defalias-maybe 'dynamic-link 'ignore)
+  (defalias-maybe 'dynamic-call 'ignore))
 
 ;; bind colon keywords for old Emacsen.
 (dont-compile
