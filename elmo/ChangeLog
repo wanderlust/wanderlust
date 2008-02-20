@@ -1,3 +1,7 @@
+2008-02-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-util.el: Add (eval-when-compile (require 'static)).
+
 2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* mmimap.el: Remove (require 'static).
