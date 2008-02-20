@@ -869,8 +869,6 @@ With ARG, ask destination folder."
 	(elmo-message-visible-field-list wl-message-visible-field-list)
 	(elmo-message-sorted-field-list wl-message-sort-field-list))
     (elmo-mime-insert-header entity situation)
-    (goto-char (point-min))
-    (delete-matching-lines "^$")
     (wl-highlight-headers)))
 
 (defun wl-mime-decrypt-application/pgp-encrypted (entity situation)

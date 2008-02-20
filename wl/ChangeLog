@@ -1,3 +1,8 @@
+2008-02-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-mime.el (wl-mime-display-header): Revert last change.
+	Remove `delete-matching-lines "^$"'.
+
 2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-mime.el (wl-define-dummy-functions): Split
