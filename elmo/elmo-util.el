@@ -62,11 +62,12 @@
 (fset 'elmo-base64-decode-string
       (mel-find-function 'mime-decode-string "base64"))
 
-(if elmo-use-hardlink
-    (defalias 'elmo-add-name-to-file 'add-name-to-file)
-  (defun elmo-add-name-to-file
-    (filename newname &optional ok-if-already-exists)
-    (copy-file filename newname ok-if-already-exists t)))
+(eval-and-compile
+  (if elmo-use-hardlink
+      (defalias 'elmo-add-name-to-file 'add-name-to-file)
+    (defun elmo-add-name-to-file
+      (filename newname &optional ok-if-already-exists)
+      (copy-file filename newname ok-if-already-exists t))))
 
 (defmacro elmo-set-work-buf (&rest body)
   "Execute BODY on work buffer.  Work buffer remains."
@@ -1278,9 +1279,10 @@ MESSAGE is a doing part of progress message."
     (and (eq (car diff) 0)
 	 (< diff-time (nth 1 diff)))))
 
-(if (fboundp 'std11-fetch-field)
-    (defalias 'elmo-field-body 'std11-fetch-field) ;;no narrow-to-region
-  (defalias 'elmo-field-body 'std11-field-body))
+(eval-and-compile
+  (if (fboundp 'std11-fetch-field)
+      (defalias 'elmo-field-body 'std11-fetch-field) ;;no narrow-to-region
+    (defalias 'elmo-field-body 'std11-field-body)))
 
 (defun elmo-unfold-field-body (name)
   (let ((value (elmo-field-body name)))

@@ -1,5 +1,8 @@
 2008-02-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-util.el (elmo-add-name-to-file, elmo-field-body): Use
+	`eval-and-compile' for suppress compile warnings.
+
 	* elmo-vars.el (dynamic-link, dynamic-call): Use `defalias-maybe'
 	instead of `defun-maybe'
 
