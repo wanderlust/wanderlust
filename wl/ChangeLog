@@ -1,3 +1,12 @@
+2008-02-25  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-mime.el:  Add (eval-when-compile (require 'mmbuffer)).
+	Require mime-parse, elmo-mime, and wl-util.
+
+	* wl-summary.el: Add (eval-when-compile (require 'elmo-filter)).
+
+	* wl-util.el: Add (eval-when-compile (require 'elmo-pop3)).
+
 2008-02-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-template.el: Require elmo-util and wl-vars.

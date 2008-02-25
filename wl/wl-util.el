@@ -36,6 +36,7 @@
 (require 'elmo-util)
 (require 'elmo-flag)
 (require 'wl-vars)
+(eval-when-compile (require 'elmo-pop3))
 (eval-when-compile (require 'cl))
 (eval-when-compile (require 'static))
 

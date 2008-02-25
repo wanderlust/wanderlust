@@ -31,8 +31,12 @@
 (require 'mime-view)
 (require 'mime-edit)
 (require 'mime-play)
+(require 'mime-parse)
+(eval-when-compile (require 'mmbuffer))
 (require 'elmo)
+(require 'elmo-mime)
 (require 'wl-vars)
+(require 'wl-util)
 (eval-when-compile (require 'cl))
 
 ;;; Draft

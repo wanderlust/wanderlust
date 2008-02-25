@@ -37,6 +37,7 @@
 
 (require 'elmo)
 (require 'elmo-multi)
+(eval-when-compile (require 'elmo-filter))
 (require 'wl-message)
 (require 'wl-vars)
 (require 'wl-highlight)
