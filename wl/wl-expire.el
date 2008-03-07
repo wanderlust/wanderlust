@@ -27,12 +27,12 @@
 ;;; Commentary:
 ;;
 
+;;; Code:
+
 (require 'wl-summary)
 (require 'wl-thread)
 (require 'wl-folder)
 (require 'elmo)
-
-;;; Code:
 
 (eval-when-compile
   (require 'wl-util)

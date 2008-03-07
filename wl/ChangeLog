@@ -1,3 +1,7 @@
+2008-03-07  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-expire.el: Fix Comentary section.
+
 2008-02-25  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-mime.el:  Add (eval-when-compile (require 'mmbuffer)).
