@@ -1,3 +1,8 @@
+2008-03-30  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-mime.el (wl-message-decrypt-pgp-nonmime): Upcase "pgp" in the error message.
+	(wl-message-verify-pgp-nonmime): Cause an error if no PGP signed region is found.
+
 2008-03-07  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-expire.el: Fix Comentary section.

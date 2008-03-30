@@ -1,3 +1,7 @@
+2008-03-30  Tetsurou Okazaki  <okazaki@be.to>
+
+	* elmo-imap4.el (elmo-imap4-send-command): Combine `process-send-string' calls.
+
 2008-02-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-util.el (elmo-add-name-to-file, elmo-field-body): Use
