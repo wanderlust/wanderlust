@@ -331,14 +331,14 @@ Returns a TAG string which is assigned to the COMMAND."
 			  ;; rfc2088
 			  (progn
 			    (setq cmdstr (concat cmdstr
-						 (format "{%d+}" (nth 2 token))))
+						 (format "{%d+}" (nth 2 token))
+						 "\r\n"))
 			    (process-send-string process cmdstr)
-			    (process-send-string process "\r\n")
 			    (setq cmdstr nil))
 			(setq cmdstr (concat cmdstr
-					     (format "{%d}" (nth 2 token))))
+					     (format "{%d}" (nth 2 token))
+					     "\r\n"))
 			(process-send-string process cmdstr)
-			(process-send-string process "\r\n")
 			(setq cmdstr nil)
 			(elmo-imap4-accept-continue-req session))
 		      (cond ((stringp (nth 1 token))
@@ -356,9 +356,7 @@ Returns a TAG string which is assigned to the COMMAND."
 	      (t
 	       (error "Invalid argument")))
 	(setq command-args (cdr command-args)))
-      (if cmdstr
-	  (process-send-string process cmdstr))
-      (process-send-string process "\r\n")
+      (process-send-string process (concat cmdstr "\r\n"))
       tag)))
 
 (defun elmo-imap4-send-string (session string)
