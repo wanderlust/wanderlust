@@ -612,7 +612,7 @@ It calls following-method selected from variable
 	  (inhibit-read-only t)
 	  coding-system)
       (unless region
-	(error "Cannot find pgp encrypted region"))
+	(error "Cannot find PGP encrypted region"))
       (save-restriction
 	(let ((props (text-properties-at (car region))))
 	  (narrow-to-region (car region) (cdr region))
@@ -632,6 +632,8 @@ With ARG, ask coding system and encode the region with it before verifying."
     (let ((region (wl-find-region "^-+BEGIN PGP SIGNED MESSAGE-+$"
 				  "^-+END PGP SIGNATURE-+$"))
 	  coding-system)
+      (unless region
+	(error "Cannot find PGP signed region"))
       (setq coding-system
 	    (or (get-text-property (car region) 'wl-mime-decoded-coding-system)
 		(let* ((situation (mime-preview-find-boundary-info))
