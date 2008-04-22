@@ -609,6 +609,18 @@ For example, @verb\{|@|\} results in @ and
   (insert "o" (texinfo-parse-arg-discard))
   (goto-char texinfo-command-start))
 
+;; @geq{}
+(put 'geq 'texinfo-format 'texinfo-format-geq)
+(ptexinfmt-defun-if-void texinfo-format-geq ()
+  (insert ">=" (texinfo-parse-arg-discard))
+  (goto-char texinfo-command-start))
+
+;; @leq{}
+(put 'leq 'texinfo-format 'texinfo-format-leq)
+(ptexinfmt-defun-if-void texinfo-format-leq ()
+  (insert "<=" (texinfo-parse-arg-discard))
+  (goto-char texinfo-command-start))
+
 
 ;;; Cross References
 ;; @ref, @xref
