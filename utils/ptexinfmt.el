@@ -37,25 +37,26 @@
 ;; Modified by Yamaoka not to use APEL functions.
 
 ;; Unimplemented command:
-;;  @abbr
-;;  @float, @caption, @shortcaption, @listoffloats
+;;  @abbr{ABBREVIATION}
+;;  @float ... @end float, @caption{TEXT}, @shortcaption{TEXT}, @listoffloats
 ;;  @deftypecv[x]
 ;;  @headitem
 ;;  @comma{}
 ;;  @quotation (optional arguments)
-;;  @acronym (optional argument)
+;;  @acronym{ACRONYM[, MEANING]} (optional argument)
 ;;  @dofirstparagraphindent
 ;;  @indent
-;;  @verbatiminclude
+;;  @verbatiminclude FILENAME
 ;;  @\
-;;  @definfoenclose
-;;  @deftypeivar
-;;  @deftypeop
-;;  @allowcodebreaks
+;;  @definfoenclose phoo,//,\\
+;;  @deftypeivar CLASS DATA-TYPE VARIABLE-NAME
+;;  @deftypeop CATEGORY CLASS DATA-TYPE NAME ARGUMENTS...
+;;  @allowcodebreaks false
 ;;  @thischapternum
 ;;  @quotedblleft @quotedblright
 ;;  @quoteleft @quoteright  @quotedblbase @quotesinglbase
 ;;  @guillemetleft @guillemetright @guilsinglleft @guilsinglright.
+;;  @clicksequence, @click, @clickstyle, @arrow
 
 ;;; Code:
 
@@ -127,7 +128,7 @@ DOCSTRING will be printed if ASSERTION is nil and
       nil
     t))
 
-;; @var
+;; @var{METASYNTACTIC-VARIABLE}
 (ptexinfmt-broken-facility texinfo-format-var
   "Don't perse @var argument."
   (condition-case nil
@@ -139,7 +140,8 @@ DOCSTRING will be printed if ASSERTION is nil and
 	  t))
     (error nil)))
 
-;; @xref
+;; @xref{NODE-NAME[, CROSS-REFERENCE-NAME, TITLE-OR-TOPIC,
+;;     INFO-FILE-NAME, PRINTED-MANUAL-TITLE]}.
 (ptexinfmt-broken-facility texinfo-format-xref
   "Can't format @xref, 1st argument is empty."
   (condition-case nil
@@ -151,7 +153,7 @@ DOCSTRING will be printed if ASSERTION is nil and
 	  t))
     (error nil)))
 
-;; @uref
+;; @uref{URL[, TEXT][, REPLACEMENT]}
 (ptexinfmt-broken-facility texinfo-format-uref
   "Parse twice @uref argument."
   (condition-case nil
@@ -222,10 +224,10 @@ DOCSTRING will be printed if ASSERTION is nil and
 (put 'page 'texinfo-format 'texinfo-discard-line)
 (put 'hyphenation 'texinfo-format 'texinfo-discard-command-and-arg)
 
-;; @slanted{} (makeinfo 4.8 or later)
+;; @slanted{TEXT} (makeinfo 4.8 or later)
 (put 'slanted 'texinfo-format 'texinfo-format-noop)
 
-;; @sansserif{} (makeinfo 4.8 or later)
+;; @sansserif{TEXT} (makeinfo 4.8 or later)
 (put 'sansserif 'texinfo-format 'texinfo-format-noop)
 
 ;; @tie{} (makeinfo 4.3 or later)
@@ -236,7 +238,7 @@ DOCSTRING will be printed if ASSERTION is nil and
 
 
 ;;; Directory File
-;; @direcategory
+;; @direcategory DIRPART
 (put 'dircategory 'texinfo-format 'texinfo-format-dircategory)
 (ptexinfmt-defun-if-void texinfo-format-dircategory ()
   (let ((str (texinfo-parse-arg-discard)))
@@ -246,7 +248,7 @@ DOCSTRING will be printed if ASSERTION is nil and
 		     (point)))
     (insert "INFO-DIR-SECTION " str "\n")))
 
-;; @direntry
+;; @direntry ... @end direntry
 (put 'direntry 'texinfo-format 'texinfo-format-direntry)
 (ptexinfmt-defun-if-void texinfo-format-direntry ()
   (texinfo-push-stack 'direntry nil)
@@ -339,22 +341,28 @@ DOCSTRING will be printed if ASSERTION is nil and
 
 
 ;;; Marking
-;; @indicateurl, @url, @env, @command, 
+;; @env{ENVIRONMENT-VARIABLE}
 (put 'env 'texinfo-format 'texinfo-format-code)
+
+;; @command{COMMAND-NAME}
 (put 'command 'texinfo-format 'texinfo-format-code)
 
+;; @indicateurl{INDICATEURL}
 (put 'indicateurl 'texinfo-format 'texinfo-format-code)
+
+;; @url{URL[, DISPLAYED-TEXT][, REPLACEMENT}
 (put 'url 'texinfo-format 'texinfo-format-uref)	; Texinfo 4.7
 
-;; @acronym
+;; @acronym{ACRONYM}
 (put 'acronym 'texinfo-format 'texinfo-format-var)
 
+;; @var{METASYNTACTIC-VARIABLE}
 (ptexinfmt-defun-if-broken texinfo-format-var ()
   (let ((arg (texinfo-parse-expanded-arg)))
     (texinfo-discard-command)
     (insert (upcase arg))))
 
-;; @key
+;; @key{KEY-NAME}
 (put 'key 'texinfo-format 'texinfo-format-key)
 (ptexinfmt-defun-if-void texinfo-format-key ()
   (insert (texinfo-parse-arg-discard))
@@ -372,7 +380,7 @@ Insert < ... > around EMAIL-ADDRESS."
 	(insert (nth 1 args) " <" (nth 0 args) ">")
       (insert "<" (nth 0 args) ">"))))
 
-;; @option
+;; @option{OPTION-NAME}
 (put 'option 'texinfo-format 'texinfo-format-option)
 (ptexinfmt-defun-if-void texinfo-format-option ()
   "Insert ` ... ' around arg unless inside a table; in that case, no quotes."
@@ -407,12 +415,13 @@ For example, @verb\{|@|\} results in @ and
   (delete-char 1))
 
 
-;;; @LaTeX, @registeredsymbol{}
+;; @LaTeX{}
 (put 'LaTeX 'texinfo-format 'texinfo-format-LaTeX)
 (ptexinfmt-defun-if-void texinfo-format-LaTeX ()
   (texinfo-parse-arg-discard)
   (insert "LaTeX"))
 
+;; @registeredsymbol{}
 (put 'registeredsymbol 'texinfo-format 'texinfo-format-registeredsymbol)
 (ptexinfmt-defun-if-void texinfo-format-registeredsymbol ()
   (texinfo-parse-arg-discard)
@@ -603,7 +612,7 @@ For example, @verb\{|@|\} results in @ and
 (ptexinfmt-defun-if-void texinfo-format-\/ ()
   (texinfo-discard-command))
 
-;; @textdegree
+;; @textdegree{}
 (put 'textdegree 'texinfo-format 'texinfo-format-textdegree)
 (ptexinfmt-defun-if-void texinfo-format-textdegree ()
   (insert "o" (texinfo-parse-arg-discard))
@@ -623,7 +632,8 @@ For example, @verb\{|@|\} results in @ and
 
 
 ;;; Cross References
-;; @ref, @xref
+;; @ref{NODE-NAME, ...}
+;; @xref{NODE-NAME, ...}
 (put 'ref 'texinfo-format 'texinfo-format-xref)
 
 (ptexinfmt-defun-if-broken texinfo-format-xref ()
@@ -652,7 +662,7 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
 	(insert  (nth 1 args) " (" (nth 0 args) ")")
       (insert "`" (nth 0 args) "'"))))
 
-;; @inforef
+;; @inforef{NODE-NAME, CROSS-REFERENCE-NAME, INFO-FILE-NAME}
 (put 'inforef 'texinfo-format 'texinfo-format-inforef)
 (ptexinfmt-defun-if-void texinfo-format-inforef ()
   (let ((args (texinfo-format-parse-args)))
@@ -662,7 +672,7 @@ otherwise, insert URL-TITLE followed by URL in parentheses."
       (insert "*Note " "(" (nth 2 args) ")" (car args) "::"))))
 
 
-;; @anchor
+;; @anchor{NAME}
 ;; don't emulation
 ;; If support @anchor for Mule 2.3, We must fix informat.el and info.el:
 ;;  - Info-tagify suport @anthor-*-refill.

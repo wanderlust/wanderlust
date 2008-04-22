@@ -1,7 +1,7 @@
 2008-04-22  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
-	* ptexinfmt.el (texinfo-format-geq, texinfo-format-leq,): Support
-	@geq and @leq.
+	* ptexinfmt.el: Fix Comments.
+	(texinfo-format-geq, texinfo-format-leq,): Support @geq and @leq.
 
 2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
