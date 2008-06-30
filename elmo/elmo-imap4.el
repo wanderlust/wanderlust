@@ -1602,22 +1602,23 @@ Return nil if no complete line has arrived."
 	(setq status
 	      (cons
 	       (let ((token (read (current-buffer))))
-		 (cond ((eq token 'MESSAGES)
-			(list 'messages (read (current-buffer))))
-		       ((eq token 'RECENT)
-			(list 'recent (read (current-buffer))))
-		       ((eq token 'UIDNEXT)
-			(list 'uidnext (read (current-buffer))))
-		       ((eq token 'UIDVALIDITY)
-			(and (looking-at " \\([0-9]+\\)")
-			     (prog1 (list 'uidvalidity (match-string 1))
-			       (goto-char (match-end 1)))))
-		       ((eq token 'UNSEEN)
-			(list 'unseen (read (current-buffer))))
-		       (t
-			(message
-			 "Unknown status data %s in mailbox %s ignored"
-			 token mailbox))))
+		 (case (intern (upcase (symbol-name token)))
+		   (MESSAGES
+		    (list 'messages (read (current-buffer))))
+		   (RECENT
+		    (list 'recent (read (current-buffer))))
+		   (UIDNEXT
+		    (list 'uidnext (read (current-buffer))))
+		   (UIDVALIDITY
+		    (and (looking-at " \\([0-9]+\\)")
+			 (prog1 (list 'uidvalidity (match-string 1))
+			   (goto-char (match-end 1)))))
+		   (UNSEEN
+		    (list 'unseen (read (current-buffer))))
+		   (t 
+		    (message
+		     "Unknown status data %s in mailbox %s ignored"
+		     token mailbox))))
 	       status))
 	(skip-chars-forward " ")))
     (and elmo-imap4-status-callback

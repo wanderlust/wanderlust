@@ -1,3 +1,12 @@
+2008-06-30  Tetsurou Okazaki  <okazaki@be.to>
+
+	* elmo-imap4.el (elmo-imap4-parse-status): Use `case' instead of `cond'.
+
+2008-06-30  Don Bashford  <Don.Bashford@stjude.org>
+
+	* elmo-imap4.el (elmo-imap4-parse-status): Accept IMAP4 tokens in a
+	case-insensitive fashion.
+
 2008-03-30  Tetsurou Okazaki  <okazaki@be.to>
 
 	* elmo-imap4.el (elmo-imap4-send-command): Combine `process-send-string' calls.
