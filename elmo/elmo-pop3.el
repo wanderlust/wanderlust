@@ -469,15 +469,14 @@ until the login delay period has expired"))
 (defun elmo-pop3-read-contents (process)
   (with-current-buffer (process-buffer process)
     (let ((case-fold-search nil)
-	  match-end)
-      (goto-char elmo-pop3-read-point)
-      (while (not (re-search-forward "^\\.\r\n" nil t))
-	(accept-process-output process 1)
-	(goto-char elmo-pop3-read-point))
-      (setq match-end (point))
+	  (point elmo-pop3-read-point))
+      (while (and (goto-char (max (- point 2) (point-min)))
+		  (not (search-forward "\r\n.\r\n" nil t)))
+	(setq point (goto-char (point-max)))
+	(accept-process-output process 1))
       (elmo-delete-cr
        (buffer-substring elmo-pop3-read-point
-			 (- match-end 3))))))
+			 (- (point) 3))))))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder elmo-pop3-folder))
   (convert-standard-filename

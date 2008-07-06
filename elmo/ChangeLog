@@ -1,3 +1,9 @@
+2008-07-06 YAMASHITA Junji <ysiijj@gmail.com>
+
+	* elmo-pop3.el (elmo-pop3-read-contents): improving performance:
+	goto the previous end-point insead of the head-point, and use
+	`search-forward' instead of `re-search-forward'.
+
 2008-06-30  Tetsurou Okazaki  <okazaki@be.to>
 
 	* elmo-imap4.el (elmo-imap4-parse-status): Use `case' instead of `cond'.
