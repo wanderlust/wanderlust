@@ -472,7 +472,8 @@ until the login delay period has expired"))
 	  (point elmo-pop3-read-point))
       (while (and (goto-char (- point 2))
 		  (not (search-forward "\r\n.\r\n" nil t)))
-	(setq point (- (point-max) 2)) ; Care of \r\n.\r[EOF] case
+	(setq point (max (- (point-max) 2) ; Care of \r\n.\r[EOF] case
+			 elmo-pop3-read-point))
 	(accept-process-output process 1))
       (elmo-delete-cr
        (buffer-substring elmo-pop3-read-point
