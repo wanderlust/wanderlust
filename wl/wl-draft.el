@@ -2009,17 +2009,17 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     buffer))
 
 (defmacro wl-draft-body-goto-top ()
-  '(progn
+  `(progn
      (goto-char (point-min))
      (if (re-search-forward mail-header-separator nil t)
 	 (forward-char 1)
        (goto-char (point-max)))))
 
 (defmacro wl-draft-body-goto-bottom ()
-  '(goto-char (point-max)))
+  `(goto-char (point-max)))
 
 (defmacro wl-draft-config-body-goto-header ()
-  '(progn
+  `(progn
      (goto-char (point-min))
      (if (re-search-forward mail-header-separator nil t)
 	 (beginning-of-line)

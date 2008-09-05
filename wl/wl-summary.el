@@ -70,7 +70,7 @@
 (defvar wl-summary-buffer-elmo-folder nil)
 
 (defmacro wl-summary-buffer-folder-name ()
-  '(and wl-summary-buffer-elmo-folder
+  `(and wl-summary-buffer-elmo-folder
 	(elmo-folder-name-internal wl-summary-buffer-elmo-folder)))
 
 (defvar wl-summary-buffer-disp-msg    nil)
@@ -2634,7 +2634,7 @@ If ARG, without confirm."
 		      wl-summary-alike-hashtb))
 
 (defmacro wl-summary-get-alike ()
-  '(elmo-get-hash-val (format "#%d" (wl-count-lines))
+  `(elmo-get-hash-val (format "#%d" (wl-count-lines))
 		      wl-summary-alike-hashtb))
 
 (defun wl-summary-insert-headers (folder func &optional mime-decode)
