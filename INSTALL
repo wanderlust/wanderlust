@@ -18,7 +18,7 @@ System Requirements
   modules.
 
 	SEMI	(1.14.6 or later)
-	FLIM	(1.14.6 or later)
+	FLIM	(1.14.9 or later)
 
   Wanderlust and MIME modules require APEL.  Before installing MIME
   modules, please install the APEL.
