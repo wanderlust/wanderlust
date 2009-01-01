@@ -1,3 +1,7 @@
+2009-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-demo.el (wl-demo-copyright-notice): Add 2009.
+
 2008-09-05  Kenichi Okada  <okada@opaopa.org>
 
 	* wl-summary.el (wl-summary-buffer-folder-name)
