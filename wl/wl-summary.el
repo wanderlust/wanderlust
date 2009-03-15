@@ -5028,14 +5028,27 @@ If ARG is numeric number, decode message as following:
 ;; 					    sum))
 ;; 	(message "Dropping...done"))))
 
+(defun wl-summary-previous-message-number (msg)
+  "Return a message number previous to the message specified by MSG."
+  (let ((list wl-summary-buffer-number-list)
+	previous)
+    (while (and list (not (eq msg (car list))))
+      (setq previous (car list))
+      (setq list (cdr list)))
+    previous))
+
+(defun wl-summary-next-message-number (msg)
+  "Return a message number next to the message specified by MSG."
+  (cadr (memq msg wl-summary-buffer-number-list)))
+
 (defun wl-summary-default-get-next-msg (msg)
   (or (wl-summary-next-message msg
 			       (if wl-summary-move-direction-downward 'down
 				 'up)
 			       nil)
-      (cadr (memq msg (if wl-summary-move-direction-downward
-			  wl-summary-buffer-number-list
-			(reverse wl-summary-buffer-number-list))))))
+      (if wl-summary-move-direction-downward
+	  (wl-summary-next-message-number msg)
+	(wl-summary-previous-message-number msg))))
 
 (defun wl-summary-save-current-message ()
   "Save current message for `wl-summary-yank-saved-message'."
