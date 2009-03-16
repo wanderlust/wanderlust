@@ -1,3 +1,15 @@
+2009-03-16  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-summary.el (wl-summary-previous-message-number): New function.
+	(wl-summary-next-message-number): Ditto.
+	(wl-summary-default-get-next-msg): Use `wl-summary-previous-message-number' and
+	`wl-summary-next-message-number'.
+	(wl-summary-get-prev-unread-folder): Use `with-current-buffer' instead of `save-excursion'.
+	Inline temporary variable `cur-id'.
+	(wl-summary-get-next-unread-folder): Ditto.
+	(wl-summary-get-next-folder): Ditto.
+	(wl-summary-get-prev-folder): Ditto.  Remove a local variable `last-entity'.
+
 2009-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-demo.el (wl-demo-copyright-notice): Add 2009.
