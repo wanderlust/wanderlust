@@ -4410,36 +4410,34 @@ Use function list is `wl-summary-write-current-folder-functions'."
 		(wl-summary-entity-info-msg next-entity finfo)))))))))
 
 (defun wl-summary-get-prev-folder ()
-  (let ((folder-buf (get-buffer wl-folder-buffer-name))
-	last-entity cur-id)
+  (let ((folder-buf (get-buffer wl-folder-buffer-name)))
     (when folder-buf
-      (setq cur-id (save-excursion (set-buffer folder-buf)
-				   wl-folder-buffer-cur-entity-id))
-      (wl-folder-get-prev-folder cur-id))))
+      (wl-folder-get-prev-folder
+       (with-current-buffer folder-buf
+	 wl-folder-buffer-cur-entity-id)))))
 
 (defun wl-summary-get-next-folder ()
-  (let ((folder-buf (get-buffer wl-folder-buffer-name))
-	cur-id)
+  (let ((folder-buf (get-buffer wl-folder-buffer-name)))
     (when folder-buf
-      (setq cur-id (save-excursion (set-buffer folder-buf)
-				   wl-folder-buffer-cur-entity-id))
-      (wl-folder-get-next-folder cur-id))))
+      (wl-folder-get-next-folder
+       (with-current-buffer folder-buf
+	 wl-folder-buffer-cur-entity-id)))))
 
 (defun wl-summary-get-next-unread-folder ()
-  (let ((folder-buf (get-buffer wl-folder-buffer-name))
-	cur-id)
+  (let ((folder-buf (get-buffer wl-folder-buffer-name)))
     (when folder-buf
-      (setq cur-id (save-excursion (set-buffer folder-buf)
-				   wl-folder-buffer-cur-entity-id))
-      (wl-folder-get-next-folder cur-id 'unread))))
+      (wl-folder-get-next-folder
+       (with-current-buffer folder-buf
+	 wl-folder-buffer-cur-entity-id)
+       'unread))))
 
 (defun wl-summary-get-prev-unread-folder ()
-  (let ((folder-buf (get-buffer wl-folder-buffer-name))
-	cur-id)
+  (let ((folder-buf (get-buffer wl-folder-buffer-name)))
     (when folder-buf
-      (setq cur-id (save-excursion (set-buffer folder-buf)
-				   wl-folder-buffer-cur-entity-id))
-      (wl-folder-get-prev-folder cur-id 'unread))))
+      (wl-folder-get-prev-folder
+       (with-current-buffer folder-buf
+	 wl-folder-buffer-cur-entity-id)
+       'unread))))
 
 (defun wl-summary-down (&optional interactive skip-no-unread)
   (interactive)
