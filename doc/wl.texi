@@ -7440,7 +7440,7 @@ Specify options to give to the shell executing @command{bsfilter}.
 
 @item elmo-spam-bsfilter-update-switch
 @vindex elmo-spam-bsfilter-update-switch
-The initial setting is @code{"--synchronous-auto-update"}.
+The initial setting is @code{"--auto-update"}.
 Specify options to give to @command{bsfilter} for learning messages.
 
 @end table

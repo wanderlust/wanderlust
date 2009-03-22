@@ -56,7 +56,7 @@
   :type '(repeat string)
   :group 'elmo-spam-bsfilter)
 
-(defcustom elmo-spam-bsfilter-update-switch "--synchronous-auto-update"
+(defcustom elmo-spam-bsfilter-update-switch "--auto-update"
   "*The switch that Bsfilter uses to update database with classify."
   :type 'string
   :group 'elmo-spam-bsfilter)

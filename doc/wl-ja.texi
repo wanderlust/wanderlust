@@ -7383,7 +7383,7 @@ bsfilter を起動するシェルに与える引数を指定します。
 
 @item elmo-spam-bsfilter-update-switch
 @vindex elmo-spam-bsfilter-update-switch
-初期設定は、@code{"--synchronous-auto-update"}。
+初期設定は、@code{"--auto-update"}。
 メッセージを学習する際に @command{bsfilter} に与える引数を指定します。
 
 @end table
