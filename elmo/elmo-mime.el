@@ -80,7 +80,8 @@ use for keymap of representation buffer.")
 					      &optional
 					      original-major-mode
 					      keymap)
-  (let ((elmo-message-displaying t))
+  (let ((elmo-message-displaying t)
+	(default-mime-charset 'x-unknown))
     (mime-display-message entity
 			  preview-buffer
 			  nil
