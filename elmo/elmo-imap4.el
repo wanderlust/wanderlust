@@ -974,17 +974,25 @@ If CHOP-LENGTH is not specified, message set is not chopped."
   (when (elmo-imap4-session-capable-p session 'logindisabled)
     (signal 'elmo-authenticate-error '(elmo-imap4-clear-login)))
   (let ((elmo-imap4-debug-inhibit-logging t))
-    (or
-     (elmo-imap4-read-ok
-      session
-      (elmo-imap4-send-command
+    (prog1
+	(or
+	 (elmo-imap4-read-ok
+	  session
+	  (elmo-imap4-send-command
+	   session
+	   (list "login "
+		 (elmo-imap4-userid (elmo-network-session-user-internal session))
+		 " "
+		 (elmo-imap4-password
+		  (elmo-get-passwd (elmo-network-session-password-key session))))))
+	 (signal 'elmo-authenticate-error '(elmo-imap4-clear-login)))
+;; Fix for Zimbra
+;; Some servers return reduced capabilities when client asks for them before login
+      (elmo-imap4-session-set-capability-internal
        session
-       (list "login "
-	     (elmo-imap4-userid (elmo-network-session-user-internal session))
-	     " "
-	     (elmo-imap4-password
-	      (elmo-get-passwd (elmo-network-session-password-key session))))))
-     (signal 'elmo-authenticate-error '(elmo-imap4-clear-login)))))
+       (elmo-imap4-response-value
+	(elmo-imap4-send-command-wait session "capability")
+	'capability)))))
 
 (defun elmo-imap4-auth-login (session)
   (let ((tag (elmo-imap4-send-command session "authenticate login"))
