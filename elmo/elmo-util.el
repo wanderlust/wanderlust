@@ -485,6 +485,10 @@ Return value is a cons cell of (STRUCTURE . REST)"
       (setq list (cdr list))))
   list)
 
+(defun elmo-union (l1 l2)
+  "Make a union of two lists"
+  (elmo-uniq-sorted-list (sort (append l1 l2) #'<)))
+
 (defun elmo-list-insert (list element after)
   (let* ((match (memq after list))
 	 (rest (and match (cdr (memq after list)))))
