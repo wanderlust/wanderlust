@@ -48,6 +48,7 @@
 (require 'elmo-net)
 (require 'utf7)
 (require 'elmo-mime)
+(require 'time-stamp)
 
 (eval-when-compile (require 'cl))
 
@@ -314,7 +315,6 @@ Returns a TAG string which is assigned to the COMMAND."
 				session))
 	(message "Waiting for IMAP response...done"))
       (setq elmo-imap4-parsing t)
-      (elmo-imap4-debug "<-(%s)- %s" tag command)
       (while (setq token (car command-args))
 	(cond ((stringp token)   ; formatted
 	       (setq cmdstr (concat cmdstr token)))
@@ -356,6 +356,7 @@ Returns a TAG string which is assigned to the COMMAND."
 	      (t
 	       (error "Invalid argument")))
 	(setq command-args (cdr command-args)))
+      (elmo-imap4-debug "[%s] <- %s" (time-stamp-hh:mm:ss) cmdstr)
       (process-send-string process (concat cmdstr "\r\n"))
       tag)))
 
@@ -365,7 +366,7 @@ Returns a TAG string which is assigned to the COMMAND."
 			(elmo-network-session-process-internal session))
     (setq elmo-imap4-current-response nil)
     (goto-char (point-min))
-    (elmo-imap4-debug "<-- %s" string)
+    (elmo-imap4-debug "[%s] <-- %s" (time-stamp-hh:mm:ss) string)
     (process-send-string (elmo-network-session-process-internal session)
 			 string)
     (process-send-string (elmo-network-session-process-internal session)
@@ -390,7 +391,7 @@ TAG is the tag of the command"
 		  '(open run))
 	(accept-process-output (elmo-network-session-process-internal session)
 			       1)))
-    (elmo-imap4-debug "=>%s" (prin1-to-string elmo-imap4-current-response))
+    (elmo-imap4-debug "[%s] =>%s" (time-stamp-hh:mm:ss) (prin1-to-string elmo-imap4-current-response))
     (setq elmo-imap4-parsing nil)
     elmo-imap4-current-response))
 
@@ -398,7 +399,7 @@ TAG is the tag of the command"
   (with-current-buffer (process-buffer process)
     (while (not elmo-imap4-current-response)
       (accept-process-output process 1))
-    (elmo-imap4-debug "=>%s" (prin1-to-string elmo-imap4-current-response))
+    (elmo-imap4-debug "[%s] =>%s" (time-stamp-hh:mm:ss) (prin1-to-string elmo-imap4-current-response))
     elmo-imap4-current-response))
 
 (defun elmo-imap4-read-continue-req (session)
@@ -1298,7 +1299,6 @@ Return nil if no complete line has arrived."
   "IMAP process filter."
   (when (buffer-live-p (process-buffer proc))
   (with-current-buffer (process-buffer proc)
-    (elmo-imap4-debug "-> %s" string)
     (goto-char (point-max))
     (insert string)
     (let (end)
@@ -1423,6 +1423,7 @@ Return nil if no complete line has arrived."
 
 (defun elmo-imap4-parse-response ()
   "Parse a IMAP command response."
+  (elmo-imap4-debug "[%s] -> %s" (time-stamp-hh:mm:ss) (buffer-substring (point) (point-max)))
   (let (token)
     (case (setq token (read (current-buffer)))
       (+ (progn
