@@ -27,6 +27,10 @@
 	* elmo-imap4.el (elmo-message-fetch-plugged): Added workaround
 	for non-storing the "Seen" flag (buggy Gmail...)
 
+	* elmo/modb-standard.el (modb-standard-save-entity,
+	modb-standard-cleanup-stale-entities): Remove stale entities from
+	elmo's cache.
+
 2009-03-22  Tetsurou Okazaki  <okazaki@be.to>
 
 	* elsp-bsfilter.el (elmo-spam-bsfilter-update-switch): Change
