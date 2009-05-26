@@ -857,16 +857,7 @@ FLAG is one of the `unread', `read', `important', `answered', `any'."
   (let ((session (elmo-imap4-get-session folder))
 	(criteria (elmo-imap4-flag-to-imap-criteria flag)))
     (if (elmo-imap4-session-flag-available-p session flag)
-	(progn
-	  (elmo-imap4-session-select-mailbox
-	   session
-	   (elmo-imap4-folder-mailbox-internal folder))
-	  (elmo-imap4-response-value
-	   (elmo-imap4-send-command-wait
-	    session
-	    (format (if elmo-imap4-use-uid "uid search %s"
-		      "search %s") criteria))
-	   'search))
+	(elmo-imap4-list folder criteria)
       ;; List flagged messages in the msgdb.
       (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) flag))))
 
