@@ -1,3 +1,7 @@
+2009-05-26  Vitaly Mayatskikh <v.mayatskih@gmail.com>
+
+	* elmo-util.el (elmo-union): New function, make a union of two lists.
+
 2009-05-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-version.el (elmo-version): Up to 2.15.7.
