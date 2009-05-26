@@ -1,3 +1,7 @@
+2009-05-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-version.el (elmo-version): Up to 2.15.7.
+
 2009-03-22  Tetsurou Okazaki  <okazaki@be.to>
 
 	* elsp-bsfilter.el (elmo-spam-bsfilter-update-switch): Change
