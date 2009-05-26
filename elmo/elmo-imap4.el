@@ -1907,9 +1907,15 @@ Return nil if no complete line has arrived."
 					    (elmo-imap4-encode-folder-string
 					     (cdr (assq 'mailbox tokens))))
     ;; user
-    (elmo-net-folder-set-user-internal folder
-				       (or (cdr (assq 'user tokens))
-					   default-user))
+    (elmo-net-folder-set-user-internal 
+     folder
+     (let ((user (cdr (assq 'user tokens))))
+       (if user
+	   (if (string-match "*" user)
+	       (replace-match "@" nil nil user)
+	     user)
+	 default-user)))
+
     ;; auth
     (elmo-net-folder-set-auth-internal
      folder
