@@ -1,3 +1,32 @@
+2009-05-26  Vitaly Mayatskikh <v.mayatskih@gmail.com>
+
+	* elmo-util.el (elmo-union): New function, make a union of two lists.
+
+	* elmo-mime.el (elmo-mime-entity-display): Fix Emacs crash in mime-view
+	when displaying malformed base64 attach
+
+	* elmo-imap4.el (elmo-imap4-list, elmo-imap4-parse-response,
+	elmo-imap4-elist): Added support for Added support for RFC4731.
+
+	* elmo-imap4.el (elmo-imap4-clear-login): Fixed bug with obtaining
+	wrong capabilities from Zimbra server.
+
+	* elmo-imap4.el: Better IMAP4 proto logging. Logging calls rearranged
+	a bit, added timestamps.
+
+	* elmo-imap4.el (elmo-imap4-folder-list-flagged): Use elmo-imap4-list
+	(removed duplicated code)
+
+	* elmo-imap4.el (elmo-imap4-folder-list-range,
+	elmo-folder-list-messages-plugged, elmo-folder-open): Partial updates.
+	Improved messages list update, reduced traffic usage.
+
+	* elmo-imap4.el (elmo-folder-initialize): Allow email address as
+	user name for imap. Use `*' instead of `@' in email-like login.
+
+	* elmo-imap4.el (elmo-message-fetch-plugged): Added workaround
+	for non-storing the "Seen" flag (buggy Gmail...)
+
 2009-03-22  Tetsurou Okazaki  <okazaki@be.to>
 
 	* elsp-bsfilter.el (elmo-spam-bsfilter-update-switch): Change
