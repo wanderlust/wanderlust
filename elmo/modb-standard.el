@@ -247,6 +247,23 @@
 			   entities))
       (ignore-errors (delete-file filename)))))
 
+(defun modb-standard-cleanup-stale-entities (modb path)
+  (message "Removing stale entities...")
+  (let* ((entity-regex
+	  (concat "^" modb-standard-entity-filename "-\\([0-9]+\\)"))
+	 (entities (elmo-uniq-list
+		    (mapcar
+		     #'(lambda (x) (/ x modb-standard-divide-number))
+		     (modb-standard-number-list-internal modb))))
+	 (files (mapcar #'(lambda(x)
+			    (when (string-match entity-regex x)
+			      (string-to-int (match-string 1 x))))
+			(directory-files path nil entity-regex))))
+    (dolist (entity (car (elmo-list-diff-nonsortable files entities)))
+      (ignore-errors (delete-file
+		      (expand-file-name
+		       (modb-standard-entity-filename entity) path))))))
+
 (defun modb-standard-save-entity (modb path)
   (let ((modified (modb-generic-message-modified-internal modb)))
     (cond ((listp modified)

@@ -5,6 +5,9 @@
         * elmo-mime.el (elmo-mime-entity-display): Fix Emacs crash in
 	mime-view when displaying malformed base64 attach.
 
+	* modb-standard.el (modb-standard-cleanup-stale-entities): New
+	function, Remove stale entities from elmo's cache.
+
 2009-05-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-version.el (elmo-version): Up to 2.15.7.
