@@ -13,6 +13,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 ** Open following thread when you put mark on message in summary buffer.
 
+** Add new command wl-summary-display-raw.
+
 ** Use EasyPG (http://www.easypg.org) if it is available.
 
 ** A folder type `namazu' is abolished.  New folder type `search' is added instead.

@@ -20,6 +20,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 ** サマリバッファでメッセージにマークをつけた時にスレッドを開きます。
 
+** wl-summary-display-raw が追加されました。
+
 ** EasyPG (http://www.easypg.org) が利用可能であれば使います。
 
 ** namazu フォルダは機能を拡張した search フォルダに置き換えられました。
