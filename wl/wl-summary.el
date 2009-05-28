@@ -291,7 +291,8 @@ See also variable `wl-use-petname'."
      ["Resend bounced mail" wl-summary-resend-bounced-mail t]
      ["Enter the message" wl-summary-jump-to-current-message t]
      ["Pipe message" wl-summary-pipe-message t]
-     ["Print message" wl-summary-print-message t])
+     ["Print message" wl-summary-print-message t]
+     ["View raw message" wl-summary-display-raw t])
     ("Thread Operation"
      ["Open or Close" wl-thread-open-close (eq wl-summary-buffer-view 'thread)]
      ["Open all"     wl-thread-open-all (eq wl-summary-buffer-view 'thread)]
@@ -387,6 +388,7 @@ See also variable `wl-use-petname'."
   ;; basic commands
   (define-key wl-summary-mode-map " "    'wl-summary-read)
   (define-key wl-summary-mode-map "."    'wl-summary-redisplay)
+  (define-key wl-summary-mode-map ","    'wl-summary-display-raw)
   (define-key wl-summary-mode-map "<"    'wl-summary-display-top)
   (define-key wl-summary-mode-map ">"    'wl-summary-display-bottom)
   (define-key wl-summary-mode-map "\177" 'wl-summary-prev-page)
@@ -4740,6 +4742,31 @@ If ARG is numeric number, decode message as following:
 			   (concat "Followup-To: " followup-to "\n")))))
 	(if message-buf (set-buffer message-buf))
 	(wl-draft-edit-string (buffer-substring (point-min) (point-max)))))))
+
+(defun wl-summary-display-raw (&optional arg)
+  "Display current message in raw format."
+  (interactive)
+  (let ((number (wl-summary-message-number))
+	(folder wl-summary-buffer-elmo-folder))
+    (if number
+	(let ((raw (elmo-message-fetch-string 
+		    folder number
+		    (elmo-find-fetch-strategy folder number)))
+	      (raw-buffer (get-buffer-create "*wl:raw message*"))
+	      (raw-mode-map (make-sparse-keymap)))
+	  (with-current-buffer raw-buffer
+	    (toggle-read-only -1)
+	    (erase-buffer)
+	    (princ raw raw-buffer)
+	    (toggle-read-only t)
+	    (beginning-of-buffer)
+	    (switch-to-buffer-other-window raw-buffer)
+	    (define-key raw-mode-map "l" 'toggle-truncate-lines)
+	    (define-key raw-mode-map "q" 'kill-buffer-and-window)
+	    (define-key raw-mode-map "," 'kill-buffer-and-window)
+	    (use-local-map raw-mode-map)))
+      (message "No message to display."))
+    number))
 
 (defun wl-summary-save (&optional arg wl-save-dir)
   "Save current message to disk."
