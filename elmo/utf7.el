@@ -91,8 +91,23 @@
   (concat utf7-direct-encoding-chars "+\\~")
   "Character ranges which do not need escaping in the IMAP variant of UTF-7.")
 
-(defconst utf7-utf-16-coding-system (and (fboundp 'find-coding-system)
-					 (find-coding-system 'utf-16-be))
+
+(eval-and-compile
+  (defun utf7-find-coding-system-without-bom (cs)
+    (and (fboundp 'find-coding-system)
+	 (find-coding-system cs)
+	 ;; Avoid versions with BOM.
+	 (= 2 (length (encode-coding-string "a" cs)))
+	 cs)))
+
+(defconst utf7-utf-16-coding-system
+  (or
+   ;; Mule-UCS
+   (utf7-find-coding-system-without-bom 'utf-16-be-no-signature)
+   ;; Emacs 21.3, Emacs 22
+   (utf7-find-coding-system-without-bom 'utf-16-be)
+   ;; Emacs 21.3, Emacs 22
+   (utf7-find-coding-system-without-bom 'utf-16be))
   "Coding system which encodes big endian UTF-16.")
 
 (defsubst utf7-imap-get-pad-length (len modulus)
@@ -195,14 +210,9 @@ Use IMAP modification if FOR-IMAP is non-nil."
 	    (encode-coding-region (point-min)(point-max)
 				  utf7-utf-16-coding-system)
 	    (set-buffer-multibyte nil)
-	    (goto-char (point-min))
-	    ;; Remove BOM (Big-endian UTF-16 FE FF)
-	    (while (re-search-forward "\376\377" nil t)
-	      (delete-region (match-beginning 0)(match-end 0))))
+	    (goto-char (point-min)))
 	(lambda ()
 	  (goto-char (point-min))
-	  ;; Add BOM (Big-endian UTF-16 FE FF)
-	  (insert "\376\377")
 	  (decode-coding-region (point-min) (point-max)
 				utf7-utf-16-coding-system)))))
 

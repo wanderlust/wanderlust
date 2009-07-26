@@ -1,3 +1,9 @@
+2009-07-11  Taiki SUGAWARA  <buzz.taiki@gmail.com>
+
+	* utf7.el (utf7-find-coding-system-without-bom): New Function.
+	(utf7-utf-16-coding-system): use no-BOM coding system.
+	(utf7-get-u16char-converter): remove workaround for BOM.
+
 2009-05-26  Vitaly Mayatskikh <v.mayatskih@gmail.com>
 
 	* elmo-util.el (elmo-union): New function, make a union of two lists.
