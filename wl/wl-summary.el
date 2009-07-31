@@ -4759,7 +4759,7 @@ If ARG is numeric number, decode message as following:
 	    (erase-buffer)
 	    (princ raw raw-buffer)
 	    (toggle-read-only t)
-	    (beginning-of-buffer)
+	    (goto-char (point-min))
 	    (switch-to-buffer-other-window raw-buffer)
 	    (define-key raw-mode-map "l" 'toggle-truncate-lines)
 	    (define-key raw-mode-map "q" 'kill-buffer-and-window)
