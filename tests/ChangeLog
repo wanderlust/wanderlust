@@ -1,5 +1,10 @@
 2009-08-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* test-elmo-imap4.el: New file.
+	(test-elmo-imap4-parse-greeting-ok): New testcase.
+	(test-elmo-imap4-parse-greeting-preauth): Ditto.
+	(test-elmo-imap4-parse-greeting-bye): Ditto.
+
 	* test-utf7.el (toplevel): Use `fboundp' instead of `boundp'.
 	Fix (require 'utf7) order for Mule-UCS.
 	(test-utf7-decode-string-plus): New testcase.
