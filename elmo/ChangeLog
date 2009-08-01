@@ -1,3 +1,10 @@
+2009-08-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* utf7.el (utf7-get-u16char-converter): Revert BOM workaround for
+	Mule-UCS (to-utf-16).
+	(utf7-utf-16-coding-system): Change preference when Mule-UCS on
+	Emacs 23.
+
 2009-07-11  Taiki SUGAWARA  <buzz.taiki@gmail.com>
 
 	* utf7.el (utf7-find-coding-system-without-bom): New Function.
