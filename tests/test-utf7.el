@@ -18,8 +18,43 @@
     "+ZeVnLIqe-"
     (utf7-encode-string "日本語"))))	; FIXME!!: don't care coding system
 
+(luna-define-method test-utf7-encode-string-plus ((case test-utf7))
+  (lunit-assert
+   (string= "+-" (utf7-encode-string "+"))))
+
+(luna-define-method test-utf7-encode-string-noconv ((case test-utf7))
+  (lunit-assert
+   (string= "" (utf7-encode-string "")))
+  (lunit-assert
+   (string= "a" (utf7-encode-string "a")))
+  (lunit-assert
+   (string= "-" (utf7-encode-string "-")))
+  (lunit-assert
+   (string= "=" (utf7-encode-string "="))))
+
+
 (luna-define-method test-utf7-decode-string ((case test-utf7))
   (lunit-assert
    (string=
     "日本語"				; FIXME!!: don't care coding system
     (utf7-decode-string "+ZeVnLIqe-"))))
+
+(luna-define-method test-utf7-decode-string-plus ((case test-utf7))
+  (lunit-assert
+   (string= "+" (utf7-decode-string "+-")))
+  (lunit-assert
+   (string= "++" (utf7-decode-string "+-+-")))
+  (lunit-assert
+   (string= "+++" (utf7-decode-string "+-+-+-")))
+  (lunit-assert
+   (string= "++++" (utf7-decode-string "+-+-+-+-"))))
+
+(luna-define-method test-utf7-decode-string-noconv ((case test-utf7))
+  (lunit-assert
+   (string= "" (utf7-decode-string "")))
+  (lunit-assert
+   (string= "a" (utf7-decode-string "a")))
+  (lunit-assert
+   (string= "-" (utf7-decode-string "-")))
+  (lunit-assert
+   (string= "=" (utf7-encode-string "="))))

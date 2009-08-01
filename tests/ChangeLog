@@ -4,6 +4,11 @@
 	Fix (require 'utf7) order for Mule-UCS.
 	Add coding: comment.
 
+	(test-utf7-decode-string-plus): New testcase.
+	(test-utf7-decode-string-noconv): Ditto.
+	(test-utf7-encode-string-plus): Ditto.
+	(test-utf7-encode-string-noconv): Ditto.
+
 2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* test-wl-util.el (test-wl-unique-id-by-user): New testcase.
