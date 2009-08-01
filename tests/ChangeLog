@@ -1,3 +1,9 @@
+2009-08-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* test-utf7.el (toplevel): Use `fboundp' instead of `boundp'.
+	Fix (require 'utf7) order for Mule-UCS.
+	Add coding: comment.
+
 2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* test-wl-util.el (test-wl-unique-id-by-user): New testcase.
