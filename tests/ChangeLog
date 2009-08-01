@@ -2,12 +2,15 @@
 
 	* test-utf7.el (toplevel): Use `fboundp' instead of `boundp'.
 	Fix (require 'utf7) order for Mule-UCS.
-	Add coding: comment.
-
 	(test-utf7-decode-string-plus): New testcase.
 	(test-utf7-decode-string-noconv): Ditto.
 	(test-utf7-encode-string-plus): Ditto.
 	(test-utf7-encode-string-noconv): Ditto.
+	(test-utf7-decode-string-nihongo): Rename from
+	`test-utf7-decode-string'. Use `make-char'.
+	(test-utf7-encode-string-nihongo): Rename from
+	`test-utf7-encode-string'. Use `make-char'.
+
 
 2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 

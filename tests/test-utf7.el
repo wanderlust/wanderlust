@@ -1,4 +1,3 @@
-;; -*- coding: iso-2022-jp -*-
 (require 'lunit)
 
 ;; Emacs 21
@@ -12,11 +11,14 @@
 
 (luna-define-class test-utf7 (lunit-test-case))
 
-(luna-define-method test-utf7-encode-string ((case test-utf7))
+(luna-define-method test-utf7-encode-string-nihongo ((case test-utf7))
   (lunit-assert
    (string=
     "+ZeVnLIqe-"
-    (utf7-encode-string "日本語"))))	; FIXME!!: don't care coding system
+    (utf7-encode-string
+     (string (make-char 'japanese-jisx0208 70 124)
+	     (make-char 'japanese-jisx0208 75 92)
+	     (make-char 'japanese-jisx0208 56 108))))))
 
 (luna-define-method test-utf7-encode-string-plus ((case test-utf7))
   (lunit-assert
@@ -33,10 +35,12 @@
    (string= "=" (utf7-encode-string "="))))
 
 
-(luna-define-method test-utf7-decode-string ((case test-utf7))
+(luna-define-method test-utf7-decode-string-nihongo ((case test-utf7))
   (lunit-assert
    (string=
-    "日本語"				; FIXME!!: don't care coding system
+    (string (make-char 'japanese-jisx0208 70 124)
+	    (make-char 'japanese-jisx0208 75 92)
+	    (make-char 'japanese-jisx0208 56 108))
     (utf7-decode-string "+ZeVnLIqe-"))))
 
 (luna-define-method test-utf7-decode-string-plus ((case test-utf7))
