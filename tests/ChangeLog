@@ -10,7 +10,10 @@
 	`test-utf7-decode-string'. Use `make-char'.
 	(test-utf7-encode-string-nihongo): Rename from
 	`test-utf7-encode-string'. Use `make-char'.
-
+	(test-utf7-decode-string-alpha): New testcase.
+	(test-utf7-encode-string-alpha): Ditto.
+	(test-utf7-decode-string-smiling-face): Ditto.
+	(test-utf7-encode-string-smiling-face): Ditto.
 
 2008-02-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
