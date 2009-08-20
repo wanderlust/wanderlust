@@ -18,6 +18,9 @@
         * elmo-mime.el (elmo-mime-entity-display): Fix Emacs crash in
 	mime-view when displaying malformed base64 attach.
 
+	* elmo-imap4.el (elmo-imap4-folder-list-flagged): Use elmo-imap4-list
+	(removed duplicated code)
+
 	* modb-standard.el (modb-standard-cleanup-stale-entities): New
 	function, Remove stale entities from elmo's cache.
 
