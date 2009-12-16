@@ -828,6 +828,7 @@ you."
 	wl-summary-highlight
 	temp persistent)
     (with-temp-buffer
+      (set-buffer-multibyte t)
       (setq wl-summary-buffer-number-column column
 	    wl-summary-buffer-line-formatter formatter
 	    wl-summary-buffer-weekday-name-lang lang)
