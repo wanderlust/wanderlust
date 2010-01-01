@@ -1927,8 +1927,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 (defun wl-draft-generate-clone-buffer (name &optional local-variables)
   "Generate clone of current buffer named NAME."
   (let ((editing-buffer (current-buffer)))
-    (save-excursion
-      (set-buffer (generate-new-buffer name))
+    (with-current-buffer (generate-new-buffer name)
       (erase-buffer)
       (wl-draft-mode)
       (wl-draft-editor-mode)
@@ -1937,8 +1936,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (while local-variables
 	(make-local-variable (car local-variables))
 	(set (car local-variables)
-	     (save-excursion
-	       (set-buffer editing-buffer)
+	     (with-current-buffer editing-buffer
 	       (symbol-value (car local-variables))))
 	(setq local-variables (cdr local-variables)))
       (current-buffer))))
@@ -2157,8 +2155,7 @@ Automatically applied in draft sending time."
 	     ((eq key 'reply)
 	      (when (and
 		     reply-buf
-		     (save-excursion
-		       (set-buffer reply-buf)
+		     (with-current-buffer reply-buf
 		       (save-restriction
 			 (std11-narrow-to-header)
 			 (goto-char (point-min))
