@@ -454,8 +454,7 @@ Don't cache if nil.")
     (let* ((cache-time (car elmo-nntp-list-folders-cache)))
       (unless (elmo-time-expire cache-time
 				elmo-nntp-list-folders-use-cache)
-	(save-excursion
-	  (set-buffer buf)
+	(with-current-buffer buf
 	  (erase-buffer)
 	  (insert (nth 3 elmo-nntp-list-folders-cache))
 	  (goto-char (point-min))
@@ -981,8 +980,7 @@ Don't cache if nil.")
 		   (elmo-get-network-stream-type
 		    elmo-nntp-default-stream-type))))
 	response has-message-id)
-    (save-excursion
-      (set-buffer content-buf)
+    (with-current-buffer content-buf
       (goto-char (point-min))
       (if (search-forward mail-header-separator nil t)
 	  (delete-region (match-beginning 0)(match-end 0)))

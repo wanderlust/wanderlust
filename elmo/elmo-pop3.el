@@ -639,8 +639,7 @@ until the login delay period has expired"))
     nil)))
 
 (defun elmo-pop3-retrieve-headers (process tobuffer articles)
-  (save-excursion
-    (set-buffer (process-buffer process))
+  (with-current-buffer (process-buffer process)
     (erase-buffer)
     (let ((count 0)
 	  (received 0)
