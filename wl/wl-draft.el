@@ -487,8 +487,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
   (wl-draft-add-in-reply-to "References"))
 
 (defun wl-draft-add-in-reply-to (&optional alt-field)
-  (let* ((mes-id (save-excursion
-		   (set-buffer mail-reply-buffer)
+  (let* ((mes-id (with-current-buffer mail-reply-buffer
 		   (std11-field-body "message-id")))
 	 (field (or alt-field "In-Reply-To"))
 	 (ref (std11-field-body field))
@@ -756,9 +755,8 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 
 (defun wl-draft-delete (editing-buffer)
   "Kill the editing draft buffer and delete the file corresponds to it."
-  (save-excursion
-    (when editing-buffer
-      (set-buffer editing-buffer)
+  (when editing-buffer
+    (with-current-buffer editing-buffer
       (when wl-draft-buffer-message-number
 	(elmo-folder-delete-messages (wl-draft-get-folder)
 				     (list

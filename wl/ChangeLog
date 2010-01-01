@@ -15,6 +15,7 @@
 	* wl-message.el (wl-message-select-buffer): Ditto.
 	* wl-template.el (wl-template-show): Ditto.
 	* wl-util.el (wl-collect-summary): Ditto.
+	* wl-draft.el (wl-draft-add-in-reply-to, wl-draft-delete): Ditto.
 
 2009-12-16  Lloyd Zusman <ljz@asfast.com>
 
