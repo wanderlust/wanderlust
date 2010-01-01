@@ -538,10 +538,10 @@ Set `wl-score-cache' nil."
       (setq extras (cdr extras)))
     nil))
 
-(defsubst wl-score-put-alike ()
-  (elmo-set-hash-val (format "#%d" (wl-count-lines))
-		     alike
-		     wl-score-alike-hashtb))
+(defmacro wl-score-put-alike ()
+  '(elmo-set-hash-val (format "#%d" (wl-count-lines))
+		      alike
+		      wl-score-alike-hashtb))
 
 (defsubst wl-score-get-alike ()
   (elmo-get-hash-val (format "#%d" (wl-count-lines))

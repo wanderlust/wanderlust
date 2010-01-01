@@ -4,8 +4,8 @@
 	(wl-draft-body-goto-top, wl-draft-body-goto-bottom): Change from
 	macro to function.
 
-	* wl-score.el (wl-score-get-alike, wl-score-put-alike): Change
-	from macro to inline-function.
+	* wl-score.el (wl-score-get-alike): Change from macro to
+	inline-function.
 
 	* wl-util.el (wl-collect-summary, wl-kill-buffers): Use `mapc'
 	instead of `mapcar'. Don't use `function' for lambda.
