@@ -2,6 +2,9 @@
 
 	* wl-demo.el (wl-demo-copyright-notice): Add 2010.
 
+	* wl-action.el (wl-summary-auto-refile): Use `goto-char' instead
+	of `goto-line'.
+
 2009-12-16  Lloyd Zusman <ljz@asfast.com>
 
 	* wl-summary.el (wl-summary-detect-mark-position): Force

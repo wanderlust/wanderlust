@@ -825,7 +825,7 @@ Return number if put mark succeed"
 	   checked-dsts
 	   (count 0)
 	   number dst thr-entity)
-      (goto-line 1)
+      (goto-char (point-min))
       (while (not (eobp))
 	(setq number (wl-summary-message-number))
 	(dolist (number (cons number
