@@ -1,3 +1,7 @@
+2010-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-demo.el (wl-demo-copyright-notice): Add 2010.
+
 2009-12-16  Lloyd Zusman <ljz@asfast.com>
 
 	* wl-summary.el (wl-summary-detect-mark-position): Force
