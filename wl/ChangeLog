@@ -1,5 +1,9 @@
 2010-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-draft.el (wl-draft-config-body-goto-header)
+	(wl-draft-body-goto-top, wl-draft-body-goto-bottom): Change from
+	macro to function.
+
 	* wl-score.el (wl-score-get-alike, wl-score-put-alike): Change
 	from macro to inline-function.
 

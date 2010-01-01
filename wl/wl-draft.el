@@ -1998,22 +1998,20 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (goto-char (point-max))
     buffer))
 
-(defmacro wl-draft-body-goto-top ()
-  `(progn
-     (goto-char (point-min))
-     (if (re-search-forward mail-header-separator nil t)
-	 (forward-char 1)
-       (goto-char (point-max)))))
+(defun wl-draft-body-goto-top ()
+  (goto-char (point-min))
+  (if (re-search-forward mail-header-separator nil t)
+      (forward-char 1)
+    (goto-char (point-max))))
 
-(defmacro wl-draft-body-goto-bottom ()
-  `(goto-char (point-max)))
+(defun wl-draft-body-goto-bottom ()
+  (goto-char (point-max)))
 
-(defmacro wl-draft-config-body-goto-header ()
-  `(progn
-     (goto-char (point-min))
-     (if (re-search-forward mail-header-separator nil t)
-	 (beginning-of-line)
-       (goto-char (point-max)))))
+(defun wl-draft-config-body-goto-header ()
+  (goto-char (point-min))
+  (if (re-search-forward mail-header-separator nil t)
+      (beginning-of-line)
+    (goto-char (point-max))))
 
 (defsubst wl-draft-config-sub-eval-insert (content &optional newline)
   (let (content-value)
