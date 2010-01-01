@@ -15,11 +15,9 @@
 	* wl-message.el (wl-message-select-buffer): Ditto.
 	* wl-template.el (wl-template-show): Ditto.
 	* wl-util.el (wl-collect-summary): Ditto.
-	* wl-draft.el (wl-draft-add-in-reply-to, wl-draft-delete): Ditto.
-	* wl-draft.el (wl-draft-send-mail-with-smtp, wl-draft-send)
-	(wl-draft-do-fcc): Ditto.
-	* wl-draft.el (wl-draft-generate-clone-buffer)
-	(wl-draft-config-exec): Ditto.
+	* wl-draft.el (wl-draft-add-in-reply-to, wl-draft-delete)
+	(wl-draft-send-mail-with-smtp, wl-draft-send, wl-draft-do-fcc)
+	(wl-draft-generate-clone-buffer, wl-draft-config-exec): Ditto.
 	* wl-score.el (wl-score-insert-help, wl-score-edit-get-header)
 	(wl-score-edit-insert-number): Ditto.
 
