@@ -407,7 +407,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
       (setq mail-followup-to (wl-delete-duplicates mail-followup-to nil t)))
     (with-temp-buffer			; to keep raw buffer unibyte.
       (set-buffer-multibyte default-enable-multibyte-characters)
-      (setq newsgroups (wl-parse newsgroups
+      (setq newsgroups (elmo-parse newsgroups
 				 "[ \t\f\r\n,]*\\([^ \t\f\r\n,]+\\)")
 	    newsgroups (wl-delete-duplicates newsgroups)
 	    newsgroups
