@@ -1068,8 +1068,7 @@ non-nil."
 		(newline))
 	    (run-hooks 'wl-mail-send-pre-hook) ;; X-PGP-Sig, Cancel-Lock
 	    (if mail-interactive
-		(save-excursion
-		  (set-buffer errbuf)
+		(with-current-buffer errbuf
 		  (erase-buffer)))
 	    (wl-draft-delete-field "bcc" delimline)
 	    (wl-draft-delete-field "resent-bcc" delimline)
@@ -1319,8 +1318,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	  (wl-draft-verbose-msg nil)
 	  err)
       (unwind-protect
-	  (save-excursion
-	    (set-buffer sending-buffer)
+	  (with-current-buffer sending-buffer
 	    (if (and (not (wl-message-mail-p))
 		     (not (wl-message-news-p)))
 		(error "No recipient is specified"))
@@ -1556,15 +1554,12 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 
 (defun wl-draft-do-fcc (header-end &optional fcc-list)
   (let ((send-mail-buffer (current-buffer))
-	(tembuf (generate-new-buffer " fcc output"))
 	(case-fold-search t)
 	beg end)
     (or (markerp header-end) (error "HEADER-END must be a marker"))
-    (save-excursion
-      (unless fcc-list
-	(setq fcc-list (wl-draft-get-fcc-list header-end)))
-      (set-buffer tembuf)
-      (erase-buffer)
+    (unless fcc-list
+      (setq fcc-list (wl-draft-get-fcc-list header-end)))
+    (with-temp-buffer
       ;; insert just the headers to avoid moving the gap more than
       ;; necessary (the message body could be arbitrarily huge.)
       (insert-buffer-substring send-mail-buffer 1 header-end)
@@ -1585,8 +1580,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	      (or (equal (car fcc-list) (car wl-read-folder-history))
 		  (setq wl-read-folder-history
 			(append (list (car fcc-list)) wl-read-folder-history))))
-	  (setq fcc-list (cdr fcc-list)))))
-    (kill-buffer tembuf)))
+	  (setq fcc-list (cdr fcc-list)))))))
 
 (defun wl-draft-on-field-p ()
   (if (< (point)
