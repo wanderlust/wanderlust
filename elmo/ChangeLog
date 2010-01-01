@@ -1,5 +1,10 @@
 2010-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* pldap.el (ldap-search-entries): Don't use `function' for lambda.
+	(ldap-add-entries, ldap-modify-entries): Use `mapc' instead of `mapcar'.
+	(ldap-delete-entries): Use `mapc' instead of `mapcar'. Don't use
+	`function' for lambda.
+
 	* modb-standard.el (modb-standard-cleanup-stale-entities): Use
 	`string-to-number' instead of `string-to-int'.
 

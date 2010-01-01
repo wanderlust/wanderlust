@@ -930,10 +930,10 @@ entry according to the value of WITHDN."
       (set-buffer-multibyte nil)
       (if ldap-ignore-attribute-codings
 	  result
-	(mapcar (function
-		 (lambda (record)
-		   (mapcar 'ldap-decode-attribute record)))
-		result)))))
+	(mapcar
+	 (lambda (record)
+	   (mapcar 'ldap-decode-attribute record))
+	 result)))))
 
 (defun ldap-add-entries (entries &optional host binddn passwd)
   "Add entries to an LDAP directory.
@@ -961,22 +961,22 @@ PASSWD is the corresponding password"
     (setq ldap (ldap-open host host-plist))
     (if ldap-verbose
 	(message "Adding LDAP entries..."))
-    (mapcar (lambda (thisentry)
-	      (setcdr thisentry
-		      (mapcar
-		       (lambda (add-spec)
-			 (setq add-spec (ldap-encode-attribute
-					 (list (car add-spec)
-					       (cdr add-spec))))
-			 (cons (nth 0 add-spec)
-			       (nth 1 add-spec)))
-		       (cdr thisentry)))
-	      (setq thisentry (ldap-encode-attribute thisentry))
-	      (ldap-add ldap (car thisentry) (cdr thisentry))
-	      (if ldap-verbose
-		  (message "%d added" i))
-	      (setq i (1+ i)))
-	    entries)
+    (mapc (lambda (thisentry)
+	    (setcdr thisentry
+		    (mapcar
+		     (lambda (add-spec)
+		       (setq add-spec (ldap-encode-attribute
+				       (list (car add-spec)
+					     (cdr add-spec))))
+		       (cons (nth 0 add-spec)
+			     (nth 1 add-spec)))
+		     (cdr thisentry)))
+	    (setq thisentry (ldap-encode-attribute thisentry))
+	    (ldap-add ldap (car thisentry) (cdr thisentry))
+	    (if ldap-verbose
+		(message "%d added" i))
+	    (setq i (1+ i)))
+	  entries)
     (ldap-close ldap)))
 
 (defun ldap-modify-entries (entry-mods &optional host binddn passwd)
@@ -1009,21 +1009,22 @@ PASSWD is the corresponding password"
     (setq ldap (ldap-open host host-plist))
     (if ldap-verbose
 	(message "Modifying LDAP entries..."))
-    (mapcar (lambda (thisentry)
-	      (setcdr thisentry
-		      (mapcar
-		       (lambda (mod-spec)
-			 (if (or (eq (car mod-spec) 'add)
-				 (eq (car mod-spec) 'replace))
-			     (append (list (nth 0 mod-spec))
-				     (ldap-encode-attribute
-				      (cdr mod-spec)))))
-		       (cdr thisentry)))
-	      (ldap-modify ldap (car thisentry) (cdr thisentry))
-	      (if ldap-verbose
-		  (message "%d modified" i))
-	      (setq i (1+ i)))
-	    entry-mods)
+    (mapc
+     (lambda (thisentry)
+       (setcdr thisentry
+	       (mapcar
+		(lambda (mod-spec)
+		  (if (or (eq (car mod-spec) 'add)
+			  (eq (car mod-spec) 'replace))
+		      (append (list (nth 0 mod-spec))
+			      (ldap-encode-attribute
+			       (cdr mod-spec)))))
+		(cdr thisentry)))
+       (ldap-modify ldap (car thisentry) (cdr thisentry))
+       (if ldap-verbose
+	   (message "%d modified" i))
+       (setq i (1+ i)))
+     entry-mods)
     (ldap-close ldap)))
 
 (defun ldap-delete-entries (dn &optional host binddn passwd)
@@ -1051,13 +1052,13 @@ PASSWD is the corresponding password."
 	(let ((i 1))
 	  (if ldap-verbose
 	      (message "Deleting LDAP entries..."))
-	  (mapcar (function
-		   (lambda (thisdn)
-		     (ldap-delete ldap thisdn)
-		     (if ldap-verbose
-			 (message "%d deleted" i))
-		     (setq i (1+ i))))
-		  dn))
+	  (mapc
+	   (lambda (thisdn)
+	     (ldap-delete ldap thisdn)
+	     (if ldap-verbose
+		 (message "%d deleted" i))
+	     (setq i (1+ i)))
+	   dn))
       (if ldap-verbose
 	  (message "Deleting LDAP entry..."))
       (ldap-delete ldap dn))
