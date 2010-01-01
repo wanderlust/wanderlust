@@ -5,6 +5,9 @@
 	* wl-action.el (wl-summary-auto-refile): Use `goto-char' instead
 	of `goto-line'.
 
+	* wl-util.el (wl-collect-summary): Use `eq' instead of `equal' for
+	symbol.
+
 2009-12-16  Lloyd Zusman <ljz@asfast.com>
 
 	* wl-summary.el (wl-summary-detect-mark-position): Force

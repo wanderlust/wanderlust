@@ -521,7 +521,7 @@ that `read' can handle, whenever this is possible."
 					(buffer-name x))
 			  (save-excursion
 			    (set-buffer x)
-			    (equal major-mode 'wl-summary-mode)))
+			    (eq major-mode 'wl-summary-mode)))
 		     (setq result (nconc result (list x))))))
      (buffer-list))
     result))
