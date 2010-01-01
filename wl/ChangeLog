@@ -1,5 +1,10 @@
 2010-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-util.el (wl-collect-summary, wl-kill-buffers): Use `mapc'
+	instead of `mapcar'. Don't use `function' for lambda.
+	(wl-read-search-condition-internal): Don't use `function' for
+	lambda.
+
 	* wl-draft.el (wl-draft-reply): Use `elmo-parse' instead of `wl-parse'.
 
 	* wl-draft.el (wl-draft-do-fcc): Use `with-temp-buffer'.

@@ -505,23 +505,23 @@ that `read' can handle, whenever this is possible."
 		nil nil))))))
 
 (defmacro wl-kill-buffers (regexp)
-  `(mapcar (function
-	    (lambda (x)
-	      (if (and (buffer-name x)
-		       (string-match ,regexp (buffer-name x)))
-		  (and (get-buffer x)
-		       (kill-buffer x)))))
-	   (buffer-list)))
+  `(mapc
+    (lambda (x)
+      (if (and (buffer-name x)
+	       (string-match ,regexp (buffer-name x)))
+	  (and (get-buffer x)
+	       (kill-buffer x)))))
+  (buffer-list))
 
 (defun wl-collect-summary ()
   (let (result)
-    (mapcar
-     (function (lambda (x)
-		 (if (and (string-match "^Summary"
-					(buffer-name x))
-			  (with-current-buffer x
-			    (eq major-mode 'wl-summary-mode)))
-		     (setq result (nconc result (list x))))))
+    (mapc
+     (lambda (x)
+       (if (and (string-match "^Summary"
+			      (buffer-name x))
+		(with-current-buffer x
+		  (eq major-mode 'wl-summary-mode)))
+	   (setq result (nconc result (list x)))))
      (buffer-list))
     result))
 
@@ -1074,10 +1074,10 @@ is enclosed by at least one regexp grouping construct."
       (let ((default (format-time-string "%Y-%m-%d")))
 	(setq value (completing-read
 		     (format "Value for '%s' [%s]: " field default)
-		     (mapcar (function
-			      (lambda (x)
-				(list (format "%s" (car x)))))
-			     elmo-date-descriptions)))
+		     (mapcar
+		      (lambda (x)
+			(list (format "%s" (car x))))
+		      elmo-date-descriptions)))
 	(concat (downcase field) ":"
 		(if (equal value "") default value))))
      ((string-match "!?Flag" field)
