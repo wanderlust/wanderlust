@@ -538,9 +538,9 @@ Set `wl-score-cache' nil."
       (setq extras (cdr extras)))
     nil))
 
-(defmacro wl-score-put-alike ()
-  '(elmo-set-hash-val (format "#%d" (wl-count-lines))
-		      alike
+(defmacro wl-score-put-alike (alike)
+  `(elmo-set-hash-val (format "#%d" (wl-count-lines))
+		      ,alike
 		      wl-score-alike-hashtb))
 
 (defsubst wl-score-get-alike ()
@@ -576,12 +576,12 @@ Set `wl-score-cache' nil."
 	      ;; headers.
 	      (wl-push art alike)
 	    (when last
-	      (wl-score-put-alike)
+	      (wl-score-put-alike alike)
 	      (insert last ?\n))
 	    (setq alike (list art)
 		  last this)))
 	(when last
-	  (wl-score-put-alike)
+	  (wl-score-put-alike alike)
 	  (insert last ?\n))
 	(when mime-decode
 	  (decode-mime-charset-region (point-min) (point-max)
