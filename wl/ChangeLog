@@ -1,5 +1,8 @@
 2010-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-util.el (wl-count-lines): Use `point-at-bol' instead of
+	`(beginning-of-line) (point)'.
+
 	* wl-fldmgr.el (wl-fldmgr-make-indent):	Change from macro to function.
 	(wl-fldmgr-delete-line): Change from macro to function. Use
 	`point-at-bol' and `point-at-eol'.

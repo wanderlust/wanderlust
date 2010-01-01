@@ -654,9 +654,7 @@ that `read' can handle, whenever this is possible."
 ;;;
 
 (defsubst wl-count-lines ()
-  (save-excursion
-    (beginning-of-line)
-    (count-lines 1 (point))))
+  (count-lines 1 (point-at-bol)))
 
 (defun wl-horizontal-recenter ()
   "Recenter the current buffer horizontally."
