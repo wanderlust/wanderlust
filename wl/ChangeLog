@@ -4,6 +4,8 @@
 	instead of `mapcar'. Don't use `function' for lambda.
 	(wl-read-search-condition-internal): Don't use `function' for
 	lambda.
+	(wl-kill-buffers): Change from macro to function.
+	(wl-count-lines): Change from macro to inline-function.
 
 	* wl-draft.el (wl-draft-reply): Use `elmo-parse' instead of `wl-parse'.
 

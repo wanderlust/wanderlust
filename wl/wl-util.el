@@ -504,14 +504,14 @@ that `read' can handle, whenever this is possible."
 		wl-summary-buffer-display-mime-mode
 		nil nil))))))
 
-(defmacro wl-kill-buffers (regexp)
-  `(mapc
-    (lambda (x)
-      (if (and (buffer-name x)
-	       (string-match ,regexp (buffer-name x)))
-	  (and (get-buffer x)
-	       (kill-buffer x))))
-    (buffer-list)))
+(defun wl-kill-buffers (regexp)
+  (mapc
+   (lambda (x)
+     (if (and (buffer-name x)
+	      (string-match regexp (buffer-name x)))
+	 (and (get-buffer x)
+	      (kill-buffer x))))
+   (buffer-list)))
 
 (defun wl-collect-summary ()
   (let (result)
@@ -653,10 +653,10 @@ that `read' can handle, whenever this is possible."
 
 ;;;
 
-(defmacro wl-count-lines ()
-  '(save-excursion
-     (beginning-of-line)
-     (count-lines 1 (point))))
+(defsubst wl-count-lines ()
+  (save-excursion
+    (beginning-of-line)
+    (count-lines 1 (point))))
 
 (defun wl-horizontal-recenter ()
   "Recenter the current buffer horizontally."
