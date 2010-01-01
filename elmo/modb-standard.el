@@ -257,7 +257,7 @@
 		     (modb-standard-number-list-internal modb))))
 	 (files (mapcar #'(lambda(x)
 			    (when (string-match entity-regex x)
-			      (string-to-int (match-string 1 x))))
+			      (string-to-number (match-string 1 x))))
 			(directory-files path nil entity-regex))))
     (dolist (entity (car (elmo-list-diff-nonsortable files entities)))
       (ignore-errors (delete-file

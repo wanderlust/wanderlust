@@ -1,5 +1,8 @@
 2010-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* modb-standard.el (modb-standard-cleanup-stale-entities): Use
+	`string-to-number' instead of `string-to-int'.
+
 	* elmo-util.el (elmo-set-work-buf): Use `with-current-buffer'
 	instead of `save-excursion' (for suppress compile warnings).
 	* elmo-pop3.el (elmo-pop3-retrieve-headers): Ditto.
