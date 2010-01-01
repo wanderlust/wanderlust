@@ -1,5 +1,8 @@
 2010-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-score.el (wl-score-get-alike, wl-score-put-alike): Change
+	from macro to inline-function.
+
 	* wl-util.el (wl-collect-summary, wl-kill-buffers): Use `mapc'
 	instead of `mapcar'. Don't use `function' for lambda.
 	(wl-read-search-condition-internal): Don't use `function' for
