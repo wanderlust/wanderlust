@@ -510,8 +510,8 @@ that `read' can handle, whenever this is possible."
       (if (and (buffer-name x)
 	       (string-match ,regexp (buffer-name x)))
 	  (and (get-buffer x)
-	       (kill-buffer x)))))
-  (buffer-list))
+	       (kill-buffer x))))
+    (buffer-list)))
 
 (defun wl-collect-summary ()
   (let (result)
