@@ -1,5 +1,7 @@
 2010-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl.el (wl-plugged-server-indent): Change from macro to function.
+
 	* wl-score.el (wl-score-put-alike): Explicit add `alike' argument.
 
 	* wl-draft.el (wl-draft-config-body-goto-header)

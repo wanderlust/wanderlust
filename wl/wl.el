@@ -221,8 +221,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	 wl-plugged-plug-on
        wl-plugged-plug-off)))
 
-(defmacro wl-plugged-server-indent ()
-  '(make-string wl-plugged-server-indent ? ))
+(defun wl-plugged-server-indent ()
+  (make-string wl-plugged-server-indent ? ))
 
 (defun wl-plugged-set-variables ()
   (setq wl-plugged-sending-queue-alist
