@@ -18,6 +18,8 @@
 	* wl-draft.el (wl-draft-add-in-reply-to, wl-draft-delete): Ditto.
 	* wl-draft.el (wl-draft-send-mail-with-smtp, wl-draft-send)
 	(wl-draft-do-fcc): Ditto.
+	* wl-score.el (wl-score-insert-help, wl-score-edit-get-header)
+	(wl-score-edit-insert-number): Ditto.
 
 	* wl-draft.el (wl-draft-do-fcc): Use `with-temp-buffer'.
 

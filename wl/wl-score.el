@@ -937,8 +937,7 @@ Set `wl-score-cache' nil."
   (setq wl-score-help-winconf (current-window-configuration))
   (let ((cur-win (selected-window))
 	mes-win)
-    (save-excursion
-      (set-buffer (get-buffer-create "*Score Help*"))
+    (with-current-buffer (get-buffer-create "*Score Help*")
       (buffer-disable-undo (current-buffer))
       (delete-windows-on (current-buffer))
       (erase-buffer)
@@ -1374,8 +1373,7 @@ Entering Score mode calls the value of `wl-score-mode-hook'."
   (let ((sum-buf (wl-score-edit-get-summary-buf))
 	(index (nth 2 (assoc header wl-score-header-index))))
     (when (and sum-buf index)
-      (save-excursion
-	(set-buffer sum-buf)
+      (with-current-buffer sum-buf
 	(wl-score-get-header header extra)))))
 
 (defun wl-score-edit-insert-number ()
@@ -1383,8 +1381,7 @@ Entering Score mode calls the value of `wl-score-mode-hook'."
   (let ((sum-buf (wl-score-edit-get-summary-buf))
 	num)
     (when sum-buf
-      (if (setq num (save-excursion
-		      (set-buffer sum-buf)
+      (if (setq num (with-current-buffer sum-buf
 		      (wl-summary-message-number)))
 	  (prin1 num (current-buffer))))))
 
