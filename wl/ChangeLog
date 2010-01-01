@@ -8,6 +8,14 @@
 	* wl-util.el (wl-collect-summary): Use `eq' instead of `equal' for
 	symbol.
 
+	* wl.el (wl-plugged-change): Suppress compile warnings; Use
+	`with-current-buffer' instead of `save-excursion' & `set-buffer'.
+	* wl-action.el (wl-summary-exec-action-resend-subr): Ditto.
+	* wl-address.el (wl-complete-window-show): Ditto.
+	* wl-message.el (wl-message-select-buffer): Ditto.
+	* wl-template.el (wl-template-show): Ditto.
+	* wl-util.el (wl-collect-summary): Ditto.
+
 2009-12-16  Lloyd Zusman <ljz@asfast.com>
 
 	* wl-summary.el (wl-summary-detect-mark-position): Force

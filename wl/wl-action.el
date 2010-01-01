@@ -544,9 +544,8 @@ Return number if put mark succeed"
   "Resend the message with NUMBER to ADDRESS."
   (message "Resending message to %s..." address)
   (let ((folder wl-summary-buffer-elmo-folder))
-    (save-excursion
+    (with-current-buffer (get-buffer-create " *wl-draft-resend*")
       ;; We first set up a normal mail buffer.
-      (set-buffer (get-buffer-create " *wl-draft-resend*"))
       (set-buffer-multibyte nil)
       (erase-buffer)
       (setq wl-sent-message-via nil)

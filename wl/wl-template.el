@@ -135,8 +135,7 @@ Entering WL-Template mode calls the value of `wl-template-mode-hook'."
 (defun wl-template-show (&optional arg)
   "Show reference INDEX in `wl-template-alist'.
 ARG is ignored."			; ARG ignored this version (?)
-  (save-excursion
-    (set-buffer wl-template-buffer-name)
+  (with-current-buffer wl-template-buffer-name
     (let ((buffer-read-only nil)
 	  (wl-template-preview t)
 	  (mail-header-separator  "--header separater--"))

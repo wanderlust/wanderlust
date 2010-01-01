@@ -460,8 +460,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 			  (/ (frame-height) 2)
 			(window-height)))
 	   window-lines lines)
-      (save-excursion
-	(set-buffer (get-buffer-create wl-plugged-buf-name))
+      (with-current-buffer (get-buffer-create wl-plugged-buf-name)
 	(wl-plugged-mode)
 	(buffer-disable-undo (current-buffer))
 	(delete-windows-on (current-buffer))

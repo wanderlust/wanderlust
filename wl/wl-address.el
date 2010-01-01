@@ -365,8 +365,7 @@ Matched address lists are append to CL."
   (if (and (get-buffer-window wl-completion-buf-name)
 	   (equal wl-complete-candidates all))
       (let ((win (get-buffer-window wl-completion-buf-name)))
-	(save-excursion
-	  (set-buffer wl-completion-buf-name)
+	(with-current-buffer wl-completion-buf-name
 	  (if (pos-visible-in-window-p (point-max) win)
 	      (set-window-start win 1)
 	    (scroll-other-window))))

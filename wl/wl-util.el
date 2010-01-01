@@ -519,8 +519,7 @@ that `read' can handle, whenever this is possible."
      (function (lambda (x)
 		 (if (and (string-match "^Summary"
 					(buffer-name x))
-			  (save-excursion
-			    (set-buffer x)
+			  (with-current-buffer x
 			    (eq major-mode 'wl-summary-mode)))
 		     (setq result (nconc result (list x))))))
      (buffer-list))

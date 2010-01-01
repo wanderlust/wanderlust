@@ -208,8 +208,8 @@ Return its cache buffer."
 	(mes (cdr wl-message-window-size))
 	whi)
     (when (and window
-	       (not (eq (save-excursion (set-buffer (window-buffer window))
-					wl-message-buffer-cur-summary-buffer)
+	       (not (eq (with-current-buffer (window-buffer window)
+			  wl-message-buffer-cur-summary-buffer)
 			(current-buffer))))
       (delete-window window)
       (run-hooks 'wl-message-window-deleted-hook)
