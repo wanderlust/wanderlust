@@ -1,5 +1,8 @@
 2010-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl.el (toplevel): Use `mapc' instead of `mapcar'. Don't use
+	`function' for lambda.
+
 	* wl.el (wl-plugged-server-indent): Change from macro to function.
 
 	* wl-score.el (wl-score-put-alike): Explicit add `alike' argument.

@@ -904,23 +904,21 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
 
 ;; Define some autoload functions WL might use.
 (eval-and-compile
-  ;; This little mapcar goes through the list below and marks the
+  ;; This little mapc goes through the list below and marks the
   ;; symbols in question as autoloaded functions.
-  (mapcar
-   (function
-    (lambda (package)
-      (let ((interactive (nth 1 (memq ':interactive package))))
-	(mapcar
-	 (function
-	  (lambda (function)
-	    (let (keymap)
-	      (when (consp function)
-		(setq keymap (car (memq 'keymap function)))
-		(setq function (car function)))
-	      (autoload function (car package) nil interactive keymap))))
-	 (if (eq (nth 1 package) ':interactive)
-	     (cdddr package)
-	   (cdr package))))))
+  (mapc
+   (lambda (package)
+     (let ((interactive (nth 1 (memq ':interactive package))))
+       (mapc
+	(lambda (function)
+	  (let (keymap)
+	    (when (consp function)
+	      (setq keymap (car (memq 'keymap function)))
+	      (setq function (car function)))
+	    (autoload function (car package) nil interactive keymap)))
+	(if (eq (nth 1 package) ':interactive)
+	    (cdddr package)
+	  (cdr package)))))
    '(("wl-fldmgr" :interactive t
       wl-fldmgr-access-display-all wl-fldmgr-access-display-normal
       wl-fldmgr-add wl-fldmgr-clear-cut-entity-list wl-fldmgr-copy
