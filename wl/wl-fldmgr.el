@@ -106,14 +106,11 @@
 ;;; Macro and misc Function
 ;;
 
-(defmacro wl-fldmgr-delete-line ()
-  '(delete-region (save-excursion (beginning-of-line)
-				  (point))
-		  (save-excursion (end-of-line)
-				  (+ 1 (point)))))
+(defun wl-fldmgr-delete-line ()
+  (delete-region (point-at-bol) (1+ (point-at-eol))))
 
-(defmacro wl-fldmgr-make-indent (level)
-  `(concat " " (make-string (* 2 ,level) ,(string-to-char " "))))
+(defun wl-fldmgr-make-indent (level)
+  (concat " " (make-string (* 2 level) (string-to-char " "))))
 
 (defmacro wl-fldmgr-get-entity-id (&optional entity)
   `(get-text-property (if ,entity

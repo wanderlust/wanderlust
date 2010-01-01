@@ -1,5 +1,9 @@
 2010-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-fldmgr.el (wl-fldmgr-make-indent):	Change from macro to function.
+	(wl-fldmgr-delete-line): Change from macro to function. Use
+	`point-at-bol' and `point-at-eol'.
+
 	* wl.el (toplevel): Use `mapc' instead of `mapcar'. Don't use
 	`function' for lambda.
 
