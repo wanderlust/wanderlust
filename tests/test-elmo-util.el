@@ -324,3 +324,9 @@
   (lunit-assert
    (equal '(1)
 	  (elmo-number-set-to-number-list '(1)))))
+
+(luna-define-method test-elmo-delete-cr-1 ((case test-elmo-util))
+  (lunit-assert (string= "" (elmo-delete-cr "")))
+  (lunit-assert (string= "\n" (elmo-delete-cr "\r\n")))
+  (lunit-assert (string= "\n\n" (elmo-delete-cr "\r\n\n")))
+  (lunit-assert (string= "\n\n" (elmo-delete-cr "\r\n\r\n"))))
