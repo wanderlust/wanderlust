@@ -1,3 +1,10 @@
+2010-01-02  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-address.el (wl-address-add-or-change): Use `point-at-bol'
+	and `point-at-eol'.
+	* wl-addrmgr.el (wl-addrmgr-unmark, wl-addrmgr-address-entry):
+	Ditto.
+
 2010-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-util.el (wl-count-lines): Use `point-at-bol' instead of

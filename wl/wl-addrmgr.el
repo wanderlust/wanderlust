@@ -439,8 +439,7 @@ Return nil if no ADDRESS exists."
   (let ((entry (wl-addrmgr-address-entry))
 	buffer-read-only)
     (save-excursion
-      (beginning-of-line)
-      (delete-region (point) (progn (end-of-line)(point)))
+      (delete-region (point-at-bol) (point-at-eol))
       (wl-addrmgr-insert-line entry))
     (set-buffer-modified-p nil)
     (wl-addrmgr-next)))
@@ -552,14 +551,10 @@ Return nil if no ADDRESS exists."
 ;;; Operations.
 
 (defun wl-addrmgr-address-entry ()
-  (save-excursion
-    (end-of-line)
-    (get-text-property (previous-single-property-change
-			(point) 'wl-addrmgr-entry nil
-			(progn
-			  (beginning-of-line)
-			  (point)))
-		       'wl-addrmgr-entry)))
+  (get-text-property (previous-single-property-change
+		      (point-at-eol) 'wl-addrmgr-entry nil
+		      (point-at-bol))
+		     'wl-addrmgr-entry))
 
 (defun wl-addrmgr-mark-write (&optional mark)
   "Set MARK to the current address entry."

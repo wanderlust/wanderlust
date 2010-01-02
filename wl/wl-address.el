@@ -720,10 +720,7 @@ If already registerd, change it."
 		  (insert "\n")))
 	  ;; override
 	  (while (re-search-forward (concat "^[ \t]*" address) nil t)
-	    (delete-region (save-excursion (beginning-of-line)
-					   (point))
-			   (save-excursion (end-of-line)
-					   (+ 1 (point))))))
+	    (delete-region (point-at-bol) (1+ (point-at-eol)))))
 	(insert (format "%s\t%s\t%s\n"
 			(or new-addr address)
 			(prin1-to-string the-petname)
