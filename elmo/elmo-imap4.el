@@ -2201,10 +2201,10 @@ If optional argument REMOVE is non-nil, remove FLAG."
       (elmo-imap4-send-command session "expunge"))
     t))
 
-(defmacro elmo-imap4-detect-search-charset (string)
-  `(with-temp-buffer
-     (insert ,string)
-     (detect-mime-charset-region (point-min) (point-max))))
+(defun elmo-imap4-detect-search-charset (string)
+  (with-temp-buffer
+    (insert string)
+    (detect-mime-charset-region (point-min) (point-max))))
 
 (defun elmo-imap4-search-internal-primitive (folder session filter from-msgs)
   (let ((search-key (elmo-filter-key filter))

@@ -78,10 +78,10 @@
   (concat "\n" ldap-ldif-field-name-regexp ":")
   "A Regexp for next field head.")
 
-(defmacro ldap/ldif-safe-string-p (string)
+(defun ldap/ldif-safe-string-p (string)
   "Return t if STRING is a safe-string for LDIF."
   ;; Need better implentation.
-  `(string-match ldap-ldif-safe-string-regexp ,string))
+  (string-match ldap-ldif-safe-string-regexp string))
 
 (defgroup ldap nil
   "Lightweight Directory Access Protocol"

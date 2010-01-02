@@ -1,5 +1,8 @@
 2010-01-02  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* pldap.el (ldap/ldif-safe-string-p): macro to function.
+	* elmo-imap4.el (elmo-imap4-detect-search-charset): Ditto.
+
 	* elmo.el (elmo-folder-info-make-hashtb): Use `mapc' instead of
 	`mapcar'; Suppress compile warning.
 	* elmo-imap4.el (elmo-network-initialize-session-buffer)
