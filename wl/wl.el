@@ -215,11 +215,12 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (setq buffer-read-only t)
   (run-hooks 'wl-plugged-mode-hook))
 
-(defmacro wl-plugged-string (plugged &optional time)
-  `(if ,time wl-plugged-auto-off
-     (if ,plugged
-	 wl-plugged-plug-on
-       wl-plugged-plug-off)))
+(defun wl-plugged-string (plugged &optional time)
+  (if time
+      wl-plugged-auto-off
+    (if plugged
+	wl-plugged-plug-on
+      wl-plugged-plug-off)))
 
 (defun wl-plugged-server-indent ()
   (make-string wl-plugged-server-indent (string-to-char " ")))

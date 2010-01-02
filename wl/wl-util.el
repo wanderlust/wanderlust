@@ -241,14 +241,14 @@ even when invalid character is contained."
 	(setq alist (cdr alist)))
       value)))
 
-(defmacro wl-match-string (pos string)
+(defun wl-match-string (pos string)
   "Substring POSth matched STRING."
-  `(substring ,string (match-beginning ,pos) (match-end ,pos)))
+  (substring string (match-beginning pos) (match-end pos)))
 
-(defmacro wl-match-buffer (pos)
+(defun wl-match-buffer (pos)
   "Substring POSth matched from the current buffer."
-  `(buffer-substring-no-properties
-    (match-beginning ,pos) (match-end ,pos)))
+  (buffer-substring-no-properties
+   (match-beginning pos) (match-end pos)))
 
 (put 'wl-as-coding-system 'lisp-indent-function 1)
 (put 'wl-as-mime-charset 'lisp-indent-function 1)

@@ -8,6 +8,11 @@
 	inline-function.
 	* wl-folder.el (wl-folder-unread-regex, wl-folder-buffer-group-p):
 	Macro to function.
+	(wl-folder-get-entity-from-buffer): Macro to function.
+	* wl-util.el (wl-match-string, wl-match-buffer):  Macro to function.
+	* wl-summary.el (wl-summary-message-status): Macro to inline-function.
+	* wl.el (wl-plugged-string): Macro to function.
+
 	* wl-highlight.el (wl-delete-all-overlays):  Macro to function.
 	* wl-summary.el (wl-summary-get-alike): Macro to inline-function.
 	(wl-summary-buffer-folder-name, wl-summary-sticky-buffer-name):

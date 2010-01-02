@@ -605,9 +605,9 @@ See also variable `wl-use-petname'."
       (setq wl-summary-buffer-message-ring
 	    (cdr wl-summary-buffer-message-ring)))))
 
-(defmacro wl-summary-message-status (&optional number)
-  `(elmo-message-status wl-summary-buffer-elmo-folder
-			(or ,number (wl-summary-message-number))))
+(defsubst wl-summary-message-status (&optional number)
+  (elmo-message-status wl-summary-buffer-elmo-folder
+		       (or number (wl-summary-message-number))))
 
 (defun wl-summary-update-mark-and-highlight-window (&optional win beg)
   "A function to be called as window-scroll-functions."

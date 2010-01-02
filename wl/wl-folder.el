@@ -273,12 +273,12 @@
 (defmacro wl-folder-get-entity-id (entity)
   `(get-text-property 0 'wl-folder-entity-id ,entity))
 
-(defmacro wl-folder-get-entity-from-buffer (&optional getid)
-  `(let ((id (get-text-property (point)
-				'wl-folder-entity-id)))
-     (if ,getid
-	 id
-       (wl-folder-get-folder-name-by-id id))))
+(defun wl-folder-get-entity-from-buffer (&optional getid)
+  (let ((id (get-text-property (point)
+			       'wl-folder-entity-id)))
+    (if getid
+	id
+      (wl-folder-get-folder-name-by-id id))))
 
 (defmacro wl-folder-entity-exists-p (entity &optional hashtb)
   `(let ((sym (intern-soft ,entity (or ,hashtb wl-folder-entity-hashtb))))
