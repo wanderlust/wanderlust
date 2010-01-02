@@ -1,5 +1,9 @@
 2010-01-02  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-addrmgr.el(wl-addrmgr-mark-write): Use `string-to-char'
+	instead of `? '.  Use `point-at-bol' and `point-at-eol'.  Remove
+	verbose point move.
+
 	* wl-address.el (wl-address-add-or-change): Use `point-at-bol'
 	and `point-at-eol'.
 	* wl-addrmgr.el (wl-addrmgr-unmark, wl-addrmgr-address-entry):
