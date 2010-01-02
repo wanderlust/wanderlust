@@ -1,5 +1,14 @@
 2010-01-02  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-expire.el (wl-expire-make-sortable-date): Macro to
+	inline-function.
+	* wl-folder.el (wl-folder-unread-regex, wl-folder-buffer-group-p):
+	Macro to function.
+	* wl-highlight.el (wl-delete-all-overlays):  Macro to function.
+	* wl-summary.el (wl-summary-get-alike): Macro to inline-function.
+	(wl-summary-buffer-folder-name, wl-summary-sticky-buffer-name):
+	Macro to function.
+
 	* wl-thread.el (wl-thread-open, wl-thread-close): Use
 	`point-at-bol', `point-at-eol'.
 

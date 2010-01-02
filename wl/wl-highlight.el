@@ -811,14 +811,14 @@
     wl-highlight-message-cited-text-9
     wl-highlight-message-cited-text-10))
 
-(defmacro wl-delete-all-overlays ()
+(defun wl-delete-all-overlays ()
   "Delete all momentary overlays."
-  '(let ((overlays (overlays-in (point-min) (point-max)))
-	 overlay)
-     (while (setq overlay (car overlays))
-       (if (overlay-get overlay 'wl-momentary-overlay)
-	   (delete-overlay overlay))
-       (setq overlays (cdr overlays)))))
+  (let ((overlays (overlays-in (point-min) (point-max)))
+	overlay)
+    (while (setq overlay (car overlays))
+      (if (overlay-get overlay 'wl-momentary-overlay)
+	  (delete-overlay overlay))
+      (setq overlays (cdr overlays)))))
 
 (defun wl-highlight-summary-displaying ()
   (interactive)

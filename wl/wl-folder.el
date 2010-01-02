@@ -224,14 +224,14 @@
    "Menu used in Folder mode."
    wl-folder-mode-menu-spec))
 
-(defmacro wl-folder-unread-regex (group)
-  `(concat "^[ ]*.+:[0-9\\*-]+/[^0\\*][0-9]*/[0-9\\*-]+$"
-	   (if ,group
-	       "\\|^[ ]*\\[[+-]\\]"
-	     "")))
+(defun wl-folder-unread-regex (group)
+  (concat "^[ ]*.+:[0-9\\*-]+/[^0\\*][0-9]*/[0-9\\*-]+$"
+	  (if group
+	      "\\|^[ ]*\\[[+-]\\]"
+	    "")))
 
-(defmacro wl-folder-buffer-group-p ()
-  '(get-text-property (point) 'wl-folder-is-group))
+(defun wl-folder-buffer-group-p ()
+  (get-text-property (point) 'wl-folder-is-group))
 
 (defun wl-folder-buffer-search-group (group)
   (let ((prev-point (point))
