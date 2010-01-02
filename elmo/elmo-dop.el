@@ -197,7 +197,7 @@ Saved queue is old version(2.6).  Clear all pending operations? ")
     (setq elmo-dop-queue new-queue)))
 
 ;;; dop spool folder
-(defsubst elmo-dop-spool-folder (folder)
+(defun elmo-dop-spool-folder (folder)
   "Return a spool folder for disconnected operations
 which is corresponded to the FOLDER."
   (elmo-make-folder

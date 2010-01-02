@@ -1,5 +1,9 @@
 2010-01-02  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-dop.el (elmo-dop-spool-folder): Suppress warning "defsubst
+	`elmo-dop-spool-folder' was used before it was defined"; Use
+	`defun' instead.
+
 	* pldap.el (ldap/ldif-safe-string-p): macro to function.
 	* elmo-imap4.el (elmo-imap4-detect-search-charset): Ditto.
 
