@@ -1080,7 +1080,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
       (let* ((numbers (or from-msgs (elmo-folder-list-messages spec)))
 	     (rest (nthcdr (string-to-number (elmo-filter-value condition) )
 			   numbers)))
-	(mapcar '(lambda (x) (delete x numbers)) rest)
+	(mapc (lambda (x) (delete x numbers)) rest)
 	numbers))
      ((or (string= "since" search-key)
 	  (string= "before" search-key))

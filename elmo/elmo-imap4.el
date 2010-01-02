@@ -963,7 +963,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
   elmo-network-initialize-session-buffer :after ((session
 						  elmo-imap4-session) buffer)
   (with-current-buffer buffer
-    (mapcar 'make-variable-buffer-local elmo-imap4-local-variables)
+    (mapc 'make-variable-buffer-local elmo-imap4-local-variables)
     (setq elmo-imap4-seqno 0)
     (setq elmo-imap4-status 'initial)))
 
@@ -2224,7 +2224,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
       (let* ((numbers (or from-msgs (elmo-folder-list-messages folder)))
 	     (rest (nthcdr (string-to-number (elmo-filter-value filter) )
 			   numbers)))
-	(mapcar '(lambda (x) (delete x numbers)) rest)
+	(mapc (lambda (x) (delete x numbers)) rest)
 	numbers))
      ((string= "flag" search-key)
       (elmo-imap4-folder-list-flagged

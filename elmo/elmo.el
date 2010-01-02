@@ -973,7 +973,7 @@ If optional argument IF-EXISTS is nil, load on demand.
   "Setup folder info hashtable by INFO-ALIST on HASHTB."
   (let* ((hashtb (or hashtb
 		     (elmo-make-hash (length info-alist)))))
-    (mapcar
+    (mapc
      (lambda (x)
        (let ((info (cadr x)))
 	 (and (intern-soft (car x) hashtb)

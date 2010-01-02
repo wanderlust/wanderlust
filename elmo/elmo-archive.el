@@ -811,20 +811,22 @@ TYPE specifies the archiver's symbol."
     (setq sum 0)
     (catch 'done
       (while (and rest (<= i n))
-	(mapcar '(lambda (x)
-		   (let* ((len (length x))
-			  (files (member x (reverse rest))))
-		     ;; total(previous) + current + white space
-		     (if (<= max-len (+ sum len 1))
-			 (progn
-			   (unless
-			       (elmo-archive-call-process
-				prog (append args files))
-			     (throw 'done nil))
-			   (setq sum 0) ;; reset
-			   (setq rest (nthcdr i rest)))
-		       (setq sum (+ sum len 1)))
-		     (setq i (1+ i)))) msgs))
+	(mapc
+	 (lambda (x)
+	   (let* ((len (length x))
+		  (files (member x (reverse rest))))
+	     ;; total(previous) + current + white space
+	     (if (<= max-len (+ sum len 1))
+		 (progn
+		   (unless
+		       (elmo-archive-call-process
+			prog (append args files))
+		     (throw 'done nil))
+		   (setq sum 0) ;; reset
+		   (setq rest (nthcdr i rest)))
+	       (setq sum (+ sum len 1)))
+	     (setq i (1+ i))))
+	 msgs))
       (throw 'done
 	     (or (not rest)
 		 (elmo-archive-call-process prog (append args rest))))
