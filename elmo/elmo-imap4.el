@@ -1354,7 +1354,8 @@ Return nil if no complete line has arrived."
 	(elmo-imap4-forward)
 	(while (and (not (eq (char-after (point)) ?\)))
 		    ;; next line for MS Exchange bug
-		    (progn (and (eq (char-after (point)) ? ) (elmo-imap4-forward)) t)
+		    (progn (and (eq (char-after (point)) (string-to-char " "))
+				(elmo-imap4-forward)) t)
 		    (setq address (elmo-imap4-parse-address)))
 	  (setq addresses (cons address addresses)))
 	(when (eq (char-after (point)) ?\))
@@ -1530,7 +1531,7 @@ Return nil if no complete line has arrived."
 			   (1-
 			    (progn (re-search-forward "[] ]" nil t)
 				   (point))))))
-    (if (eq (char-before) ? )
+    (if (eq (char-before) (string-to-char " "))
 	(prog1
 	    (mapconcat 'identity
 		       (cons section (elmo-imap4-parse-header-list)) " ")
@@ -1673,7 +1674,7 @@ Return nil if no complete line has arrived."
 (defun elmo-imap4-parse-acl ()
   (let ((mailbox (elmo-imap4-parse-mailbox))
 	identifier rights acl)
-    (while (eq (char-after (point)) ?\ )
+    (while (eq (char-after (point)) (string-to-char " "))
       (elmo-imap4-forward)
       (setq identifier (elmo-imap4-parse-astring))
       (elmo-imap4-forward)
@@ -1728,7 +1729,7 @@ Return nil if no complete line has arrived."
       (let (b-e)
 	(elmo-imap4-forward)
 	(push (elmo-imap4-parse-body-extension) b-e)
-	(while (eq (char-after (point)) ?\ )
+	(while (eq (char-after (point)) (string-to-char " "))
 	  (elmo-imap4-forward)
 	  (push (elmo-imap4-parse-body-extension) b-e))
 	(assert (eq (char-after (point)) ?\)))
@@ -1739,7 +1740,7 @@ Return nil if no complete line has arrived."
 
 (defsubst elmo-imap4-parse-body-ext ()
   (let (ext)
-    (when (eq (char-after (point)) ?\ );; body-fld-dsp
+    (when (eq (char-after (point)) (string-to-char " ")) ; body-fld-dsp
       (elmo-imap4-forward)
       (let (dsp)
 	(if (eq (char-after (point)) ?\()
@@ -1751,12 +1752,12 @@ Return nil if no complete line has arrived."
 	      (elmo-imap4-forward))
 	  (assert (elmo-imap4-parse-nil)))
 	(push (nreverse dsp) ext))
-      (when (eq (char-after (point)) ?\ );; body-fld-lang
+      (when (eq (char-after (point)) (string-to-char " ")) ; body-fld-lang
 	(elmo-imap4-forward)
 	(if (eq (char-after (point)) ?\()
 	    (push (elmo-imap4-parse-string-list) ext)
 	  (push (elmo-imap4-parse-nstring) ext))
-	(while (eq (char-after (point)) ?\ );; body-extension
+	(while (eq (char-after (point)) (string-to-char " "));; body-extension
 	  (elmo-imap4-forward)
 	  (setq ext (append (elmo-imap4-parse-body-extension) ext)))))
     ext))
@@ -1772,7 +1773,7 @@ Return nil if no complete line has arrived."
 	      (push subbody body))
 	    (elmo-imap4-forward)
 	    (push (elmo-imap4-parse-string) body);; media-subtype
-	    (when (eq (char-after (point)) ?\ );; body-ext-mpart:
+	    (when (eq (char-after (point)) (string-to-char " ")) ; body-ext-mpart:
 	      (elmo-imap4-forward)
 	      (if (eq (char-after (point)) ?\();; body-fld-param
 		  (push (elmo-imap4-parse-string-list) body)
@@ -1788,7 +1789,8 @@ Return nil if no complete line has arrived."
 	(push (elmo-imap4-parse-string) body);; media-subtype
 	(elmo-imap4-forward)
 	;; next line for Sun SIMS bug
-	(and (eq (char-after (point)) ? ) (elmo-imap4-forward))
+	(and (eq (char-after (point)) (string-to-char " "))
+	     (elmo-imap4-forward))
 	(if (eq (char-after (point)) ?\();; body-fld-param
 	    (push (elmo-imap4-parse-string-list) body)
 	  (push (and (elmo-imap4-parse-nil) nil) body))
@@ -1811,7 +1813,7 @@ Return nil if no complete line has arrived."
 	;; the problem is that the two first are in turn optionally followed
 	;; by the third.  So we parse the first two here (if there are any)...
 
-	(when (eq (char-after (point)) ?\ )
+	(when (eq (char-after (point)) (string-to-char " "))
 	  (elmo-imap4-forward)
 	  (let (lines)
 	    (cond ((eq (char-after (point)) ?\();; body-type-msg:
@@ -1827,7 +1829,7 @@ Return nil if no complete line has arrived."
 
 	;; ...and then parse the third one here...
 
-	(when (eq (char-after (point)) ?\ );; body-ext-1part:
+	(when (eq (char-after (point)) (string-to-char " ")) ; body-ext-1part:
 	  (elmo-imap4-forward)
 	  (push (elmo-imap4-parse-nstring) body);; body-fld-md5
 	  (setq body

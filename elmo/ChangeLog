@@ -1,3 +1,11 @@
+2010-01-02  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-imap4.el (elmo-imap4-parse-address-list)
+	(elmo-imap4-parse-fetch-body-section, elmo-imap4-parse-body)
+	(elmo-imap4-parse-acl, elmo-imap4-parse-body-extension)
+	(elmo-imap4-parse-body-ext, elmo-imap4-parse-body): Use
+	`(string-to-char " ")' instead of `? ', `?\ '.
+
 2010-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* pldap.el (ldap-search-entries): Don't use `function' for lambda.
