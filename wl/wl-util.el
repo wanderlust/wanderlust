@@ -118,7 +118,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 		    (string-to-char (format "%s" (this-command-keys))))))
     (message "%s" mes-string)
     (setq key (car (setq keve (wl-read-event-char))))
-    (if (or (equal key ?\ )
+    (if (or (equal key (string-to-char " "))
 	    (and cmd
 		 (equal key cmd)))
 	(progn
@@ -163,7 +163,7 @@ even when invalid character is contained."
 					(abs width))))
       (let ((paddings (make-string
 		       (max 0 (- (abs width) (string-width string)))
-		       (or padding ?\ ))))
+		       (or padding (string-to-char " ")))))
 	(if (< width 0)
 	    (concat paddings string)
 	  (concat string paddings)))))
@@ -180,7 +180,7 @@ even when invalid character is contained."
      (if (= (current-column) (abs width))
 	 string
        (let ((paddings (make-string (- (abs width) (current-column))
-				    (or padding ?\ ))))
+				    (or padding (string-to-char " ")))))
 	 (if (< width 0)
 	     (concat paddings string)
 	   (concat string paddings))))))))
@@ -1115,7 +1115,7 @@ is enclosed by at least one regexp grouping construct."
 		(cdr (wl-read-event-char prompt)))
 	  ((?y ?Y)
 	   (throw 'done t))
-	  (?\ 
+	  ((string-to-char " ")
 	   (if scroll-by-SPC
 	       (ignore-errors (scroll-up))
 	     (throw 'done t)))

@@ -222,7 +222,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
        wl-plugged-plug-off)))
 
 (defun wl-plugged-server-indent ()
-  (make-string wl-plugged-server-indent ? ))
+  (make-string wl-plugged-server-indent (string-to-char " ")))
 
 (defun wl-plugged-set-variables ()
   (setq wl-plugged-sending-queue-alist
@@ -379,7 +379,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
       ;; port plug
       (setq line
 	    (format "%s[%s]%s"
-		    (make-string wl-plugged-port-indent ? )
+		    (make-string wl-plugged-port-indent (string-to-char " "))
 		    (wl-plugged-string plugged time)
 		    (cond
 		     ((stringp port)
@@ -419,7 +419,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 (defun wl-plugged-redrawing-switch (indent switch &optional time)
   (beginning-of-line)
   (when (re-search-forward
-	 (format "^%s\\[\\([^]]+\\)\\]" (make-string indent ? )))
+	 (format "^%s\\[\\([^]]+\\)\\]"
+		 (make-string indent (string-to-char " "))))
     (goto-char (match-beginning 1))
     (delete-region (match-beginning 1) (match-end 1))
     (insert (wl-plugged-string switch time))
@@ -504,7 +505,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	(let (variable switch name)
 	  (goto-char cur-point)
 	  (when (and (not (bobp))
-		     (not (eq (char-before) ? )))
+		     (not (eq (char-before) (string-to-char " "))))
 	    (if (re-search-backward " [^ ]+" nil t)
 		(forward-char 1)
 	      (re-search-backward "^[^ ]+" nil t)))

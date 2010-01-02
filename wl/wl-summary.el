@@ -1450,7 +1450,7 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
 		 the-email)
 	(while (not (or (eq (setq char (read-char)) ?\r)
 			(eq char ?\n)
-			(eq char ? )
+			(eq char (string-to-char " "))
 			(eq char ?e)
 			(eq char ?c)
 			(eq char ?d)))
@@ -1460,7 +1460,7 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
 	 ((or (eq char ?e)
 	      (eq char ?\n)
 	      (eq char ?\r)
-	      (eq char ? ))
+	      (eq char (string-to-char " ")))
 	  ;; Change Addresses
 	  (wl-address-add-or-change
 	   the-email
