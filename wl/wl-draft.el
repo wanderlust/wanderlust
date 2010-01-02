@@ -1848,7 +1848,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	field
       nil)))
 
-(defsubst wl-draft-default-headers ()
+(defun wl-draft-default-headers ()
   (list
    (cons 'Mail-Reply-To (and wl-insert-mail-reply-to
 			     (wl-address-header-extract-address
