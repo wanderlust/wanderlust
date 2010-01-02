@@ -1,5 +1,8 @@
 2010-01-02  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-thread.el (wl-thread-open, wl-thread-close): Use
+	`point-at-bol', `point-at-eol'.
+
 	* wl.el (wl-plugged-server-indent, wl-plugged-drawing)
 	(wl-plugged-redrawing-switch, wl-plugged-toggle): Use
 	`(string-to-char " ")' instead of `? ', `?\ '.
