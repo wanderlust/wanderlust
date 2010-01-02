@@ -563,10 +563,10 @@ Refresh `wl-address-list', `wl-address-completion-list', and
 
 (defsubst wl-address-header-extract-address (str)
   "Extracts a real e-mail address from STR and return it.
-e.g. \"Mine Sakurai <m-sakura@ccs.mt.nec.co.jp>\"
-  ->  \"m-sakura@ccs.mt.nec.co.jp\".
-e.g. \"m-sakura@ccs.mt.nec.co.jp (Mine Sakurai)\"
-  ->  \"m-sakura@ccs.mt.nec.co.jp\"."
+e.g. \"Mine Sakurai <m-sakura@example.org>\"
+  ->  \"m-sakura@example.org\".
+e.g. \"m-sakura@example.org (Mine Sakurai)\"
+  ->  \"m-sakura@example.org\"."
   (cond ((string-match ".*<\\([^>]*\\)>" str) ; .* to extract last <>
 	 (wl-match-string 1 str))
 	((string-match "\\([^ \t\n]*@[^ \t\n]*\\)" str)
@@ -575,7 +575,7 @@ e.g. \"m-sakura@ccs.mt.nec.co.jp (Mine Sakurai)\"
 
 (defsubst wl-address-header-extract-realname (str)
   "Extracts a real name from STR and return it.
-e.g. \"Mr. bar <hoge@foo.com>\"
+e.g. \"Mr. bar <hoge@example.com>\"
   ->  \"Mr. bar\"."
   (cond ((string-match "\\(.*[^ \t]\\)[ \t]*<[^>]*>" str)
 	 (wl-match-string 1 str))

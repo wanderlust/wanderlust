@@ -1,5 +1,9 @@
 2010-01-02  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-address.el (wl-address-header-extract-address)
+	(wl-address-header-extract-realname): Fix mail-address in
+	docstring.
+
 	* wl-expire.el (wl-expire-make-sortable-date): Macro to
 	inline-function.
 	* wl-folder.el (wl-folder-unread-regex, wl-folder-buffer-group-p):
