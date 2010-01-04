@@ -257,7 +257,7 @@ Don't cache if nil.")
    (if (and port
 	    (null (eq port elmo-nntp-default-port)))
        (concat ":" (if (numberp port)
-		       (int-to-string port) port)))
+		       (number-to-string port) port)))
    (unless (eq (elmo-network-stream-type-symbol type)
 	       elmo-nntp-default-stream-type)
      (elmo-network-stream-type-spec-string type))))
@@ -585,7 +585,7 @@ Don't cache if nil.")
 				"@" (elmo-net-folder-server-internal folder))))
     (unless (eq (elmo-net-folder-port-internal folder) elmo-nntp-default-port)
       (setq append-serv (concat append-serv
-				":" (int-to-string
+				":" (number-to-string
 				     (elmo-net-folder-port-internal folder)))))
     (unless (eq (elmo-network-stream-type-symbol
 		 (elmo-net-folder-stream-type-internal folder))
@@ -781,8 +781,8 @@ Don't cache if nil.")
 	   session
 	   (format
 	    "xover %s-%s"
-	    (int-to-string cur)
-	    (int-to-string
+	    (number-to-string cur)
+	    (number-to-string
 	     (+ cur
 		elmo-nntp-overview-fetch-chop-length))))
 	  (with-current-buffer (elmo-network-session-buffer session)

@@ -109,7 +109,7 @@
 (luna-define-method elmo-message-file-name ((folder
 					     elmo-localdir-folder)
 					    number)
-  (expand-file-name (int-to-string number)
+  (expand-file-name (number-to-string number)
 		    (elmo-localdir-folder-directory-internal folder)))
 
 (luna-define-method elmo-folder-message-file-number-p ((folder
@@ -134,10 +134,10 @@
     (dolist (number numbers)
       (elmo-copy-file
        (expand-file-name
-	(int-to-string number)
+	(number-to-string number)
 	(elmo-localdir-folder-directory-internal folder))
        (expand-file-name
-	(int-to-string (if start-number cur-number number))
+	(number-to-string (if start-number cur-number number))
 	temp-dir))
       (incf cur-number))
     temp-dir))
@@ -145,7 +145,7 @@
 (defun elmo-localdir-msgdb-create-entity (msgdb dir number)
   (elmo-msgdb-create-message-entity-from-file
    (elmo-msgdb-message-entity-handler msgdb)
-   number (expand-file-name (int-to-string number) dir)))
+   number (expand-file-name (number-to-string number) dir)))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-localdir-folder)
 					      numbers
@@ -219,7 +219,7 @@
       (elmo-copy-file
        (elmo-message-file-name src-folder (car numbers))
        (expand-file-name
-	(int-to-string
+	(number-to-string
 	 (if same-number (car numbers) next-num))
 	dir))
       ;; save flag-table only when src folder's msgdb is loaded.
@@ -332,8 +332,8 @@
 	  (elmo-bind-directory
 	   dir
 	   ;; xxx  nfs,hardlink
-	   (rename-file (int-to-string old-number)
-			(int-to-string new-number) t))
+	   (rename-file (number-to-string old-number)
+			(number-to-string new-number) t))
 	  (elmo-message-entity-set-number entity new-number))
 	(elmo-msgdb-append-entity new-msgdb entity
 				  (elmo-msgdb-flags msgdb old-number))

@@ -1,5 +1,29 @@
 2010-01-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo.el (elmo-folder-confirm-appends): Use `number-to-string'
+	instead of `int-to-string'.
+	* elmo-archive.el (elmo-archive-message-fetch-internal)
+	(elmo-archive-folder-message-make-temp-files)
+	(elmo-archive-folder-append-buffer)
+	(elmo-folder-delete-messages-internal)
+	(elmo-archive-msgdb-create-entity)
+	(elmo-archive-msgdb-create-as-numlist-subr2): Ditto.
+	* elmo-util.el (elmo-cache-expire-by-age): Ditto.
+	* elmo-flag.el (elmo-global-flag-set-internal): Ditto.
+	* elmo-file.el (elmo-folder-message-make-temp-files): Ditto.
+	* elmo-imap4.el (elmo-imap4-make-number-set-list)
+	(elmo-folder-list-subfolders): Ditto.
+	* elmo-localdir.el (elmo-message-file-name)
+	(elmo-folder-message-make-temp-files)
+	(elmo-localdir-msgdb-create-entity)
+	(elmo-folder-append-messages-*-localdir)
+	(elmo-folder-pack-numbers): Ditto.
+	* elmo-maildir.el (elmo-folder-message-make-temp-files): Ditto.
+	* elmo-map.el (elmo-location-map-key): Ditto.
+	* elmo-nntp.el (elmo-nntp-folder-postfix)
+	(elmo-nntp-folder-list-subfolders)
+	(elmo-nntp-folder-msgdb-create): Ditto.
+
 	* elmo.el (elmo-crosspost-message-alist-save): Don't use
 	`function' for `lambda'.
 	* elmo-archive.el (elmo-archive-folder-list-subfolders)

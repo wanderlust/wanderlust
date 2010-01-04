@@ -1497,7 +1497,7 @@ If Optional LOCAL is non-nil, don't update server flag."
 	  (catch 'end
 	    (while t
 	      (setq in (read-from-minibuffer "Update number: "
-					     (int-to-string in))
+					     (number-to-string in))
 		    in (string-to-number in))
 	      (if (< len in)
 		  (throw 'end len))

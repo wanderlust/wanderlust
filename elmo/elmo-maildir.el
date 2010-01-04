@@ -477,7 +477,7 @@ file name for maildir directories."
       (elmo-copy-file
        (elmo-message-file-name folder number)
        (expand-file-name
-	(int-to-string (if start-number cur-number number))
+	(number-to-string (if start-number cur-number number))
 	temp-dir))
       (incf cur-number))
     temp-dir))

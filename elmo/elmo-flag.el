@@ -322,7 +322,7 @@ NUMBER is the message number."
 	    1))
 	(setq new-file
 	      (expand-file-name
-	       (int-to-string
+	       (number-to-string
 		(setq new-number
 		      (elmo-flag-folder-max-number-internal flag-folder)))
 	       (elmo-localdir-folder-directory-internal flag-folder)))

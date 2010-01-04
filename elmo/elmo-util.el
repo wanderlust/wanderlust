@@ -2111,12 +2111,12 @@ If KBYTES is kilo bytes (This value must be float)."
   "Expire cache file by age.
 Optional argument DAYS specifies the days to expire caches."
   (interactive)
-  (let ((age (or (and days (int-to-string days))
+  (let ((age (or (and days (number-to-string days))
 		 (and (interactive-p)
 		      (read-from-minibuffer
 		       (format "Enter days (%s): "
 			       elmo-cache-expire-default-age)))
-		 (int-to-string elmo-cache-expire-default-age)))
+		 (number-to-string elmo-cache-expire-default-age)))
 	(dirs (directory-files
 	       elmo-cache-directory
 	       t "^[^\\.]"))

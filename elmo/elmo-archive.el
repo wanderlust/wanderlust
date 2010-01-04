@@ -560,7 +560,7 @@ TYPE specifies the archiver's symbol."
 	 (prefix (elmo-archive-folder-archive-prefix-internal folder))
 	 (method (elmo-archive-get-method type 'cat))
 	 (args (list arc (elmo-concat-path
-			  prefix (int-to-string number)))))
+			  prefix (number-to-string number)))))
     (and (file-exists-p arc)
 	 (as-binary-process
 	  (elmo-archive-call-method method args t))
@@ -600,7 +600,7 @@ TYPE specifies the archiver's symbol."
 	  (elmo-make-directory (directory-file-name tmp-dir))))
       (setq newfile (elmo-concat-path
 		     prefix
-		     (int-to-string next-num)))
+		     (number-to-string next-num)))
       (elmo-bind-directory
        tmp-dir
        (if (and (or (functionp method) (car method))
@@ -703,7 +703,7 @@ TYPE specifies the archiver's symbol."
 	 (n-method (elmo-archive-get-method type 'ext))
 	 (tmp-msgs (mapcar (lambda (x) (elmo-concat-path
 					prefix
-					(int-to-string x))) numbers))
+					(number-to-string x))) numbers))
 	 number)
     ;; Expand files in the tmp-dir-src.
     (elmo-bind-directory
@@ -730,7 +730,7 @@ TYPE specifies the archiver's symbol."
 		    tmp-dir-src)
 		   (expand-file-name
 		    (if start-number
-			(int-to-string number)
+			(number-to-string number)
 		      (file-name-nondirectory tmp-file))
 		    tmp-dir-dst))
       (if start-number (incf number)))
@@ -778,7 +778,7 @@ TYPE specifies the archiver's symbol."
 	 (n-method (elmo-archive-get-method type 'rm))
 	 (numbers (mapcar (lambda (x) (elmo-concat-path
 				       prefix
-				       (int-to-string x)))
+				       (number-to-string x)))
 			  numbers)))
     (cond ((functionp n-method)
 	   (funcall n-method (cons arc numbers)))
@@ -921,7 +921,7 @@ TYPE specifies the archiver's symbol."
 					    method
 					    archive number type
 					    &optional prefix)
-  (let* ((msg (elmo-concat-path prefix (int-to-string number)))
+  (let* ((msg (elmo-concat-path prefix (number-to-string number)))
 	 (arg-list (list archive msg)))
     (when (elmo-archive-article-exists-p archive msg type)
       ;; insert article.
@@ -991,7 +991,8 @@ TYPE specifies the archiver's symbol."
 	(insert
 	 (mapconcat
 	  'concat
-	  (mapcar (lambda (x) (elmo-concat-path prefix (int-to-string x))) msgs)
+	  (mapcar (lambda (x) (elmo-concat-path prefix (number-to-string x)))
+		  msgs)
 	  "\n"))
 	(as-binary-process (apply 'call-process-region
 				  (point-min) (point-max)
@@ -1048,7 +1049,7 @@ TYPE specifies the archiver's symbol."
     (let* ((type (elmo-archive-folder-archive-type-internal folder))
 	   (arc (elmo-archive-get-archive-name folder))
 	   (method (elmo-archive-get-method type 'cat))
-	   (args (list arc (elmo-concat-path prefix (int-to-string number)))))
+	   (args (list arc (elmo-concat-path prefix (number-to-string number)))))
       (elmo-set-work-buf
        (when (file-exists-p arc)
 	 (as-binary-process

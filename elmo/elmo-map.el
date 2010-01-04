@@ -58,7 +58,7 @@
 
 
 (defmacro elmo-location-map-key (number)
-  `(concat "#" (int-to-string ,number)))
+  `(concat "#" (number-to-string ,number)))
 
 (defun elmo-location-map-load (location-map directory)
   (elmo-location-map-setup

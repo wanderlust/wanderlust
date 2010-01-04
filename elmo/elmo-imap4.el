@@ -860,7 +860,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 		 (cond ((consp x)
 			(format "%s:%s" (car x) (cdr x)))
 		       ((integerp x)
-			(int-to-string x))))
+			(number-to-string x))))
 	       cont-list
 	       ","))
 	     set-list)))
@@ -2007,7 +2007,7 @@ Return nil if no complete line has arrived."
 				(elmo-net-folder-server-internal folder))))
     (unless (eq (elmo-net-folder-port-internal folder) elmo-imap4-default-port)
       (setq append-serv (concat append-serv ":"
-				(int-to-string
+				(number-to-string
 				 (elmo-net-folder-port-internal folder)))))
     (setq type (elmo-net-folder-stream-type-internal folder))
     (unless (eq (elmo-network-stream-type-symbol type)
