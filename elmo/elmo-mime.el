@@ -143,8 +143,7 @@ value is used."
 			  (t
 			   elmo-mime-header-max-column)))
 	vf-alist)
-    (save-excursion
-      (set-buffer buffer)
+    (with-current-buffer buffer
       (save-restriction
 	(narrow-to-region start end)
 	(goto-char start)
@@ -175,8 +174,9 @@ value is used."
 				 (throw 'done t))
 			       (when (string-match re df)
 				 (throw 'done nil)))
-			     t))))))
-      (set-buffer the-buf)
+			     t)))))))
+    (set-buffer the-buf)		; verbose. remove me.
+    (save-excursion
       (while vf-alist
 	(let* ((vf (car vf-alist))
 	       (field-name (nth 0 vf))

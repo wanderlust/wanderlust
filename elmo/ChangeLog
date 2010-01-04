@@ -1,5 +1,9 @@
 2010-01-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-mime.el (elmo-mime-insert-header-from-buffer): Use
+	`with-current-buffer' instead of `save-excursion' (for suppress
+	compile warnings).
+
 	* elmo.el (elmo-folder-confirm-appends): Use `number-to-string'
 	instead of `int-to-string'.
 	* elmo-archive.el (elmo-archive-message-fetch-internal)
