@@ -2127,7 +2127,7 @@ This function is defined for `window-scroll-functions'"
   (when number
     (let ((pos (point))
 	  regexp)
-      (setq regexp (concat "\r" (int-to-string number) "[^0-9]"))
+      (setq regexp (concat "\r" (number-to-string number) "[^0-9]"))
       (if (and beg end (or (< pos beg) (< end pos)))
 	  (progn
 	    (goto-char beg)
@@ -4778,7 +4778,7 @@ If ARG is numeric number, decode message as following:
     (if num
 	(save-excursion
 	  (setq filename (expand-file-name
-			  (concat (int-to-string num)
+			  (concat (number-to-string num)
 				  wl-summary-save-file-suffix)
 			  wl-save-dir))
 	  (when (or (null arg)

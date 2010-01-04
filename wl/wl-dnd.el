@@ -49,7 +49,7 @@
   (mouse-set-point event)
   (start-drag event (concat
 		     wl-summary-buffer-folder-name " "
-		     (int-to-string (wl-summary-message-number)))))
+		     (number-to-string (wl-summary-message-number)))))
 
 (defun wl-dnd-drop-func (event object text)
   (interactive "@e")

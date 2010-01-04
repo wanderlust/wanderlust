@@ -265,7 +265,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	    (if (> len 1)
 		(format ": %d msgs (" len)
 	      (format ": %d msg (" len))
-	    (mapconcat (function int-to-string) (cdr qinfo) ",")
+	    (mapconcat (function number-to-string) (cdr qinfo) ",")
 	    ")")))
 
 (defun wl-plugged-dop-queue-info ()

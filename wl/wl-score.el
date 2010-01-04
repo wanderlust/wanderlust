@@ -868,7 +868,7 @@ Set `wl-score-cache' nil."
 			 (car entry)
 			 (if increase "raise" "lower"))
 		 (if (numberp match)
-		     (int-to-string match)
+		     (number-to-string match)
 		   match)))
     ;; transform from string to int.
     (when (eq (nth 1 (assoc (car entry) wl-score-header-index))
@@ -962,7 +962,7 @@ Set `wl-score-cache' nil."
 	    (delete-char -1)		; the `\n' takes a char
 	    (insert "\n"))
 	  (setq pad (- width 3))
-	  (setq format (concat "%c: %-" (int-to-string pad) "s"))
+	  (setq format (concat "%c: %-" (number-to-string pad) "s"))
 	  (insert (format format (caar alist) (nth idx (car alist))))
 	  (setq alist (cdr alist))
 	  (setq i (1+ i)))

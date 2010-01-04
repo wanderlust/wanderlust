@@ -1,5 +1,12 @@
 2010-01-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl.el (wl-plugged-sending-queue-status): Use `int-to-string'
+	instead of `number-to-string'.
+	* wl-dnd.el (wl-dnd-start-drag): Ditto.
+	* wl-score.el (wl-score-insert-help, wl-summary-increase-score): Ditto.
+	* wl-summary.el (wl-summary-jump-to-msg, wl-summary-save): Ditto.
+	* wl-util.el (wl-url-nntp): Ditto.
+
 	* wl.el (wl-plugged-set-variables, wl-plugged-dop-queue-info)
 	(wl-plugged-dop-queue-status): Don't quote `lambda'.
 	* wl-thread.el (wl-thread-delete-message): Ditto
