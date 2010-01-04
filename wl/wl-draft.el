@@ -865,7 +865,7 @@ text was killed."
 			  (concat " to="
 				  (mapconcat
 				   'identity
-				   (mapcar (lambda(x) (format "<%s>" x)) to)
+				   (mapcar (lambda (x) (format "<%s>" x)) to)
 				   ","))))
 		   ""))
 	     (id (if id (concat " id=" id) ""))
