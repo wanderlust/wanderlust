@@ -212,25 +212,25 @@
 
 (defun wl-scan-source (path)
   (let (ret)
-    (mapcar
-     '(lambda (x)
-	(mapcar '(lambda (y)
-		   (setq ret (append (list y (concat y "c")) ret)))
-		(directory-files x nil "\\(.+\\)\\.el$" t)))
+    (mapc
+     (lambda (x)
+       (mapc (lambda (y)
+	       (setq ret (append (list y (concat y "c")) ret)))
+	     (directory-files x nil "\\(.+\\)\\.el$" t)))
      path)
     ret))
 
 
 (defun wl-uninstall (objs path)
   ;(message (mapconcat 'identity objs " "))
-  (mapcar
-   '(lambda (x)
-      (let ((filename (expand-file-name x path)))
-	(if (and (file-exists-p filename)
-		 (file-writable-p filename))
-	    (progn
-	      (princ (format "%s was uninstalled.\n" filename))
-	      (delete-file filename)))))
+  (mapc
+   (lambda (x)
+     (let ((filename (expand-file-name x path)))
+       (if (and (file-exists-p filename)
+		(file-writable-p filename))
+	   (progn
+	     (princ (format "%s was uninstalled.\n" filename))
+	     (delete-file filename)))))
    objs))
 
 
@@ -246,9 +246,9 @@
 (defun compile-wl-package ()
   (config-wl-package)
   (make-wl-news)
-  (mapcar
-   '(lambda (x)
-      (compile-elisp-modules (cdr x) (car x)))
+  (mapc
+   (lambda (x)
+     (compile-elisp-modules (cdr x) (car x)))
    modules-alist))
 
 (defun install-wl-icons ()
@@ -269,12 +269,12 @@
   (compile-wl-package)
   (let ((wl-install-dir (expand-file-name WL_PREFIX LISPDIR))
 	(elmo-install-dir (expand-file-name ELMO_PREFIX LISPDIR)))
-    (mapcar
-     '(lambda (x)
-	(install-elisp-modules (cdr x) (car x)
-			       (if (string= (car x) ELMODIR)
-				   elmo-install-dir
-				 wl-install-dir)))
+    (mapc
+     (lambda (x)
+       (install-elisp-modules (cdr x) (car x)
+			      (if (string= (car x) ELMODIR)
+				  elmo-install-dir
+				wl-install-dir)))
      modules-alist))
   (if PIXMAPDIR
       (install-wl-icons)))
@@ -333,9 +333,9 @@
   (Custom-make-dependencies)
   ;; WL-AUTOLOAD-MODULES
   (compile-elisp-modules WL-AUTOLOAD-MODULES WLDIR)
-  (mapcar
-   '(lambda (x)
-      (compile-elisp-modules (cdr x) (car x)))
+  (mapc
+   (lambda (x)
+     (compile-elisp-modules (cdr x) (car x)))
    modules-alist))
 
 (defun install-wl-package-xmas ()
@@ -354,9 +354,9 @@
     ;; copy xpm files
     (install-wl-icons)
 
-    (mapcar '(lambda (x)
-	       (install-elisp-modules (cdr x) (car x) LISPDIR))
-	    modules-alist)
+    (mapc (lambda (x)
+	    (install-elisp-modules (cdr x) (car x) LISPDIR))
+	  modules-alist)
     ;; WL-AUTOLOAD-MODULES
     (install-elisp-modules WL-AUTOLOAD-MODULES WLDIR LISPDIR)
     ;;
@@ -403,7 +403,7 @@
   (wl-detect-info-directory)
   (cond ((null wl-info-lang))
 	((listp wl-info-lang)
-	 (mapcar 'wl-texinfo-format-file wl-info-lang))
+	 (mapc 'wl-texinfo-format-file wl-info-lang))
 	((stringp wl-info-lang)
 	 (wl-texinfo-format-file wl-info-lang))))
 
@@ -414,7 +414,7 @@
 (defun wl-texinfo-install ()
   (cond ((null wl-info-lang))
 	((listp wl-info-lang)
-	 (mapcar 'wl-texinfo-install-file wl-info-lang))
+	 (mapc 'wl-texinfo-install-file wl-info-lang))
 	((stringp wl-info-lang)
 	 (wl-texinfo-install-file wl-info-lang))))
 

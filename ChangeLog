@@ -1,3 +1,11 @@
+2010-01-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* WL-MK (wl-scan-source, wl-uninstall)
+	(compile-wl-package, install-wl-package)
+	(compile-wl-package-xmas, install-wl-package-xmas)
+	(wl-texinfo-format, wl-texinfo-install) : Use `mapc' instead of
+	`mapcar'. Don't quote `lambda'.
+
 2008-11-25  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* INSTALL: Updated recommended version of FLIM.
