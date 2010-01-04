@@ -1,5 +1,10 @@
 2010-01-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-addrmgr.el (wl-addrmgr-replace-field): Use `point-at-bol'.
+	* wl-action.el (wl-summary-remove-argument): Explicit `point-at-bol'.
+	* wl-summary.el (wl-summary-narrow-to-region)
+	(wl-summary-insert-line): Use `point-at-bol', `point-at-eol'.
+
 	* wl.el (wl-plugged-sending-queue-status): Use `number-to-string'
 	instead of `int-to-string'.
 	* wl-dnd.el (wl-dnd-start-drag): Ditto.

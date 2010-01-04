@@ -662,12 +662,10 @@ Return nil if no ADDRESS exists."
 	(while (re-search-forward (concat "^" (regexp-quote field) ":") nil t)
 	  ;; delete field
 	  (progn
-	    (save-excursion
-	      (beginning-of-line)
-	      (setq beg (point)))
+	    (setq beg (point-at-bol))
 	    (re-search-forward "^[^ \t]" nil 'move)
-	    (beginning-of-line)
-	    (delete-region beg (point))))
+	    (delete-region beg (point-at-bol))
+	    (beginning-of-line)))
 	(when content
 	  ;; add field to top.
 	  (goto-char (point-min))

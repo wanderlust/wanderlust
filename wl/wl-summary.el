@@ -1627,12 +1627,12 @@ If ARG is non-nil, checking is omitted."
   (narrow-to-region
    (save-excursion
      (goto-char beg)
-     (beginning-of-line)
-     (point))
+     (point-at-bol))
    (save-excursion
      (goto-char end)
-     (if (eq (current-column) 0) (beginning-of-line) (end-of-line))
-     (point))))
+     (if (= (current-column) 0)
+	 (point-at-bol)
+       (point-at-eol)))))
 
 (defun wl-summary-prefetch-region-no-mark (beg end &optional prefetch-marks)
   (interactive "r")
@@ -2588,8 +2588,7 @@ If ARG, without confirm."
   (if wl-use-highlight-mouse-line
       ;; remove 'mouse-face of current line.
       (put-text-property
-       (save-excursion (beginning-of-line)(point))
-       (save-excursion (end-of-line)(point))
+       (point-at-bol) (point-at-eol)
        'mouse-face nil))
   (insert line "\n")
   (save-excursion
@@ -2601,8 +2600,7 @@ If ARG, without confirm."
   (if wl-use-highlight-mouse-line
       ;; remove 'mouse-face of current line.
       (put-text-property
-       (save-excursion (beginning-of-line)(point))
-       (save-excursion (end-of-line)(point))
+       (point-at-bol) (point-at-eol)
        'mouse-face nil))
   (elmo-progress-notify 'wl-summary-insert-line)
   (ignore-errors
