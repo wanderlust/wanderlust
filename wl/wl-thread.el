@@ -488,9 +488,8 @@ ENTITY is returned."
 			(apply (function nconc)
 			       update-msgs
 			       (mapcar
-				(function
-				 (lambda (message)
-				   (wl-thread-get-children-msgs message t)))
+				(lambda (message)
+				  (wl-thread-get-children-msgs message t))
 				children))))
 		(wl-thread-entity-set-children
 		 parent (append older-brothers children younger-brothers))

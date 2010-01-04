@@ -1,3 +1,24 @@
+2010-01-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl.el (wl-plugged-set-variables, wl-plugged-dop-queue-info)
+	(wl-plugged-dop-queue-status): Don't quote `lambda'.
+	* wl-thread.el (wl-thread-delete-message): Ditto
+	* wl-summary.el (wl-summary-edit-addresses)
+	(wl-summary-edit-addresses-collect-candidate-fields)
+	(wl-summary-search-by-subject): Ditto.
+	* wl-mime.el (wl-mime-node-id-to-string): Ditto.
+	* wl-fldmgr.el (wl-fldmgr-add-completion-all-completions)
+	(wl-fldmgr-add-completion-subr): Ditto.
+	* wl-draft.el (wl-smtp-extension-bind)
+	(wl-draft-insert-get-message, wl-draft-default-headers)
+	(wl-jump-to-draft-buffer): Ditto.
+	* wl-summary.el (wl-summary-cursor-move-surface, wl-summary-up)
+	(wl-summary-down): Ditto.
+	* wl-message.el (wl-message-buffer-prefetch-subr): Ditto.
+	* wl-draft.el (wl-draft-reply, wl-draft-write-sendlog): Ditto.
+	* wl-folder.el (wl-folder-make-save-access-list)
+	(wl-folder-update-access-group, wl-folder-pick): Ditto.
+
 2010-01-02  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-draft.el (wl-draft-default-headers): Suppress warning

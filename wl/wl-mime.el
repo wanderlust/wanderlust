@@ -419,7 +419,7 @@ It calls following-method selected from variable
 
 (defsubst wl-mime-node-id-to-string (node-id)
   (if (consp node-id)
-      (mapconcat (function (lambda (num) (format "%s" (1+ num))))
+      (mapconcat (lambda (num) (format "%s" (1+ num)))
 		 (reverse node-id)
 		 ".")
     "0"))

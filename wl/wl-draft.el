@@ -423,24 +423,24 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 		      to (copy-sequence to))
 	      t t))
     (and to (setq to (mapconcat
-		      '(lambda (addr)
-			 (if wl-draft-reply-use-address-with-full-name
-			     (or (cdr (assoc addr to-alist)) addr)
-			   addr))
+		      (lambda (addr)
+			(if wl-draft-reply-use-address-with-full-name
+			    (or (cdr (assoc addr to-alist)) addr)
+			  addr))
 		      to ",\n\t")))
     (and cc (setq cc (mapconcat
-		      '(lambda (addr)
-			 (if wl-draft-reply-use-address-with-full-name
-			     (or (cdr (assoc addr cc-alist)) addr)
-			   addr))
+		      (lambda (addr)
+			(if wl-draft-reply-use-address-with-full-name
+			    (or (cdr (assoc addr cc-alist)) addr)
+			  addr))
 		      cc ",\n\t")))
     (and mail-followup-to
 	 (setq mail-followup-to
 	       (mapconcat
-		'(lambda (addr)
-		   (if wl-draft-reply-use-address-with-full-name
-		       (or (cdr (assoc addr (append to-alist cc-alist))) addr)
-		     addr))
+		(lambda (addr)
+		  (if wl-draft-reply-use-address-with-full-name
+		      (or (cdr (assoc addr (append to-alist cc-alist))) addr)
+		    addr))
 		mail-followup-to ",\n\t")))
     (and (null to) (setq to cc cc nil))
     (setq references (delq nil references)
@@ -865,7 +865,7 @@ text was killed."
 			  (concat " to="
 				  (mapconcat
 				   'identity
-				   (mapcar '(lambda(x) (format "<%s>" x)) to)
+				   (mapcar (lambda(x) (format "<%s>" x)) to)
 				   ","))))
 		   ""))
 	     (id (if id (concat " id=" id) ""))

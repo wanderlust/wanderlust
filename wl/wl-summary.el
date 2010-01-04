@@ -1431,16 +1431,16 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
       (setq fields (cdr fields)))
     (setq candidates (elmo-uniq-list candidates))
     (elmo-with-enable-multibyte
-      (mapcar (function
-	       (lambda (x)
-		 (setq components (std11-extract-address-components x))
-		 (cons (nth 1 components)
-		       (and (car components)
-			    (eword-decode-string
-			     (decode-mime-charset-string
-			      (car components)
-			      mime-charset))))))
-	      candidates))))
+      (mapcar
+       (lambda (x)
+	 (setq components (std11-extract-address-components x))
+	 (cons (nth 1 components)
+	       (and (car components)
+		    (eword-decode-string
+		     (decode-mime-charset-string
+		      (car components)
+		      mime-charset)))))
+       candidates))))
 
 (defun wl-summary-edit-addresses-subr (the-email name-in-addr)
   ;; returns nil if there's no change.
@@ -1509,7 +1509,7 @@ Optional argument ADDR-STR is used as a target address if specified."
 		  (completing-read
 		   (format "Target address (%s): " address)
 		   (mapcar
-		    (function (lambda (x) (cons (car x) (car x))))
+		    (lambda (x) (cons (car x) (car x)))
 		    candidates)
 		   nil nil nil nil address))))
 	(when address
@@ -2681,10 +2681,9 @@ If ARG, without confirm."
 	  (message "Creating subject cache...")
 	  (wl-summary-insert-headers
 	   folder
-	   (function
-	    (lambda (x)
-	      (funcall wl-summary-subject-filter-function
-		       (elmo-message-entity-field x 'subject)))))
+	   (lambda (x)
+	     (funcall wl-summary-subject-filter-function
+		      (elmo-message-entity-field x 'subject))))
 	  (message "Creating subject cache...done"))
 	(setq match (funcall wl-summary-subject-filter-function
 			     (elmo-message-entity-field entity 'subject)))
@@ -3753,7 +3752,7 @@ Return non-nil if the mark is updated"
     (setq range
 	  (completing-read (format "Range (%s): " default)
 			   (mapcar
-			    (function (lambda (x) (cons x x)))
+			    (lambda (x) (cons x x))
 			    input-range-list)))
     (if (string= range "")
 	default

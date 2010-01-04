@@ -1623,12 +1623,12 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
     (list new unread all)))
 
 (defsubst wl-folder-make-save-access-list (list)
-  (mapcar '(lambda (x)
-	     (cond
-	      ((consp x)
-	       (list (elmo-string (car x)) 'access))
-	      (t
-	       (elmo-string x))))
+  (mapcar (lambda (x)
+	    (cond
+	     ((consp x)
+	      (list (elmo-string (car x)) 'access))
+	     (t
+	      (elmo-string x))))
 	  list))
 
 (defun wl-folder-update-newest (indent entity)
@@ -2675,9 +2675,9 @@ Use `wl-subscribed-mailing-list'."
       (if (or new-flist removes)
 	  (setq diff t))
       (setq new-flist
-	    (mapcar '(lambda (x)
-		       (cond ((consp x) (list (car x) 'access))
-			     (t x)))
+	    (mapcar (lambda (x)
+		      (cond ((consp x) (list (car x) 'access))
+			    (t x)))
 		    new-flist))
       ;; check new groups
       (let ((new-list new-flist))
@@ -2927,10 +2927,10 @@ Call `wl-summary-write-current-folder' with current folder name."
 	(setq folder-list (cdr folder-list)))
       (if results
 	  (message "%s are picked."
-		   (mapconcat '(lambda (res)
-				 (format "%s(%d)"
-					 (car res)
-					 (length (cdr res))))
+		   (mapconcat (lambda (res)
+				(format "%s(%d)"
+					(car res)
+					(length (cdr res))))
 			      results
 			      ","))
 	(message "No message was picked.")))))

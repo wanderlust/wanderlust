@@ -232,8 +232,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	(wl-plugged-dop-queue-info))
   (setq wl-plugged-alist
 	(sort (copy-sequence elmo-plugged-alist)
-	      '(lambda (a b)
-		 (string< (caar a) (caar b))))))
+	      (lambda (a b)
+		(string< (caar a) (caar b))))))
 
 (defun wl-plugged-sending-queue-info ()
   ;; sending queue status
@@ -276,9 +276,9 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	 ope operation)
     ;(elmo-dop-queue-load)
     (elmo-dop-queue-merge)
-    (setq dop-queue (sort elmo-dop-queue '(lambda (a b)
-					    (string< (elmo-dop-queue-fname a)
-						     (elmo-dop-queue-fname b)))))
+    (setq dop-queue (sort elmo-dop-queue (lambda (a b)
+					   (string< (elmo-dop-queue-fname a)
+						    (elmo-dop-queue-fname b)))))
     (wl-append dop-queue (list nil)) ;; terminate(dummy)
     (when (car dop-queue)
       (setq last (elmo-dop-queue-fname (car dop-queue)))) ;; first
@@ -313,29 +313,29 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (let ((operations (cdr qinfo))
 	(column (or column wl-plugged-queue-status-column)))
     (mapconcat
-     '(lambda (folder-ope)
-	(concat (wl-plugged-set-folder-icon
-		 (car folder-ope)
-		 (wl-folder-get-petname (car folder-ope)))
-		"("
-		(let ((opes (cdr folder-ope))
-		      pair shrinked)
-		  (while opes
-		    (if (setq pair (assoc (car (car opes)) shrinked))
-			(setcdr pair (+ (cdr pair)
-					(max (cdr (car opes)) 1)))
-		      (setq shrinked (cons
-				      (cons (car (car opes))
-					    (max (cdr (car opes)) 1))
-				      shrinked)))
-		    (setq opes (cdr opes)))
-		  (mapconcat
-		   '(lambda (ope)
-		      (if (> (cdr ope) 0)
-			  (format "%s:%d" (car ope) (cdr ope))
-			(format "%s" (car ope))))
-		   (nreverse shrinked) ","))
-		")"))
+     (lambda (folder-ope)
+       (concat (wl-plugged-set-folder-icon
+		(car folder-ope)
+		(wl-folder-get-petname (car folder-ope)))
+	       "("
+	       (let ((opes (cdr folder-ope))
+		     pair shrinked)
+		 (while opes
+		   (if (setq pair (assoc (car (car opes)) shrinked))
+		       (setcdr pair (+ (cdr pair)
+				       (max (cdr (car opes)) 1)))
+		     (setq shrinked (cons
+				     (cons (car (car opes))
+					   (max (cdr (car opes)) 1))
+				     shrinked)))
+		   (setq opes (cdr opes)))
+		 (mapconcat
+		  (lambda (ope)
+		    (if (> (cdr ope) 0)
+			(format "%s:%d" (car ope) (cdr ope))
+		      (format "%s" (car ope))))
+		  (nreverse shrinked) ","))
+	       ")"))
      operations
      (concat "\n" (wl-set-string-width column "")))))
 

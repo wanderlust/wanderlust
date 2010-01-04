@@ -762,10 +762,9 @@ return value is diffs '(-new -unread -all)."
   (let ((table
 	 (catch 'found
 	   (mapatoms
-	    (function
-	     (lambda (atom)
-	       (if (string-match (symbol-name atom) string)
-		   (throw 'found (symbol-value atom)))))
+	    (lambda (atom)
+	      (if (string-match (symbol-name atom) string)
+		  (throw 'found (symbol-value atom))))
 	    wl-fldmgr-add-completion-hashtb)))
 	(pattern
 	 (if (string-match "\\.$"
@@ -794,8 +793,8 @@ return value is diffs '(-new -unread -all)."
 (defun wl-fldmgr-add-completion-subr (string predicate flag)
   (let ((table
 	 (if (string= string "")
-	     (mapcar (function (lambda (spec)
-				 (list (char-to-string (car spec)))))
+	     (mapcar (lambda (spec)
+		       (list (char-to-string (car spec))))
 		     elmo-folder-type-alist)
 	   (when (assq (aref string 0) elmo-folder-type-alist)
 	     (delq nil (mapcar
