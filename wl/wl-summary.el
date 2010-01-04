@@ -652,8 +652,7 @@ See also variable `wl-use-petname'."
 
 ;; Handler of event from elmo-folder
 (defun wl-summary-update-persistent-mark-on-event (buffer numbers)
-  (save-excursion
-    (set-buffer buffer)
+  (with-current-buffer buffer
     (if wl-summary-lazy-update-mark
 	(let ((window-list (get-buffer-window-list (current-buffer) 'nomini t))
 	      invalidate)
@@ -2305,8 +2304,7 @@ If ARG, without confirm."
     (set-buffer-modified-p nil)
     (while copy-variables
       (set (car copy-variables)
-	   (save-excursion
-	     (set-buffer cur-buf)
+	   (with-current-buffer cur-buf
 	     (symbol-value (car copy-variables))))
       (setq copy-variables (cdr copy-variables)))
     (switch-to-buffer buf)
@@ -2394,8 +2392,7 @@ If ARG, without confirm."
     (setq buf (wl-summary-get-buffer-create (elmo-folder-name-internal folder)
 					    sticky))
     (setq reuse-buf
-	  (save-excursion
-	    (set-buffer buf)
+	  (with-current-buffer buf
 	    (string= (elmo-folder-name-internal folder)
 		     (wl-summary-buffer-folder-name))))
     (unwind-protect
@@ -3990,8 +3987,7 @@ Return t if message exists."
 	(wl-draft-body-goto-top)
 	(wl-draft-enclose-digest-region (point) (point-max)))
       (goto-char start-point)
-      (save-excursion
-	(set-buffer summary-buf)
+      (with-current-buffer summary-buf
 	(wl-summary-delete-all-target-marks)))
     (run-hooks 'wl-mail-setup-hook)))
 
@@ -4019,8 +4015,7 @@ Return t if message exists."
 	  (wl-draft-yank-original)
 	  (setq mlist (cdr mlist)))
 	(goto-char start-point)
-	(save-excursion
-	  (set-buffer summary-buf)
+	(with-current-buffer summary-buf
 	  (wl-summary-delete-all-target-marks)))
       (wl-draft-reply-position wl-draft-reply-default-position)
       (run-hooks 'wl-mail-setup-hook))))
@@ -5008,8 +5003,7 @@ If ARG is numeric number, decode message as following:
 		  (as-binary-output-file
 		   (write-region (point-min) (point-max)
 				 filename nil 'no-msg))))
-	    (save-excursion
-	      (set-buffer summary-buf)
+	    (with-current-buffer summary-buf
 	      (wl-summary-delete-all-target-marks))
 	    (if (file-exists-p filename)
 		(message "Saved as %s" filename)))

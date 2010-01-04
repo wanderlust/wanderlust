@@ -1,5 +1,17 @@
 2010-01-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-message.el (wl-message-uu-substring): Suppress compile
+	warnings; Use `with-current-buffer' instead of `save-excursion' &
+	`set-buffer'.
+	* wl-mime.el (wl-draft-yank-current-message-entity)
+	(wl-mime-preview-follow-no-mime)
+	(wl-mime-preview-follow-current-region): Ditto.
+	* wl-summary.el (wl-summary-update-persistent-mark-on-event)
+	(wl-summary-switch-to-clone-buffer)
+	(wl-summary-target-mark-forward)
+	(wl-summary-target-mark-reply-with-citation)
+	(wl-summary-target-mark-uudecode): Ditto.
+
 	* wl-addrmgr.el (wl-addrmgr-replace-field): Use `point-at-bol'.
 	* wl-action.el (wl-summary-remove-argument): Explicit `point-at-bol'.
 	* wl-summary.el (wl-summary-narrow-to-region)

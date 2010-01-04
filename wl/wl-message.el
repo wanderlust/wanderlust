@@ -822,8 +822,7 @@ Returns non-nil if bottom of message."
       (wl-summary-redisplay)))
 
 (defun wl-message-uu-substring (buf outbuf &optional first last)
-  (save-excursion
-    (set-buffer buf)
+  (with-current-buffer buf
     (search-forward "\n\n")
     (let ((sp (point))
 	  ep filename case-fold-search)
@@ -834,18 +833,16 @@ Returns non-nil if bottom of message."
 		  (setq filename (buffer-substring (match-beginning 1)(match-end 1)))
 		(throw 'done nil)))
 	  (re-search-forward "^M.*$" nil t)) ; uuencoded string
-	(beginning-of-line)
-	(setq sp (point))
+	(setq sp (point-at-bol))
 	(goto-char (point-max))
 	(if last
 	    (re-search-backward "^end" sp t)
 	  (re-search-backward "^M.*$" sp t)) ; uuencoded string
 	(forward-line 1)
 	(setq ep (point))
-	(set-buffer outbuf)
-	(goto-char (point-max))
-	(insert-buffer-substring buf sp ep)
-	(set-buffer buf)
+	(with-current-buffer outbuf
+	  (goto-char (point-max))
+	  (insert-buffer-substring buf sp ep))
 	filename))))
 
 ;;; Header narrowing courtesy of Hideyuki Shirai.

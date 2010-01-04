@@ -62,8 +62,7 @@ has Non-nil value\)"
 		     (function wl-draft-yank-to-draft-buffer))))
 	(message-buffer (wl-current-message-buffer)))
     (if message-buffer
-	(save-excursion
-	  (set-buffer message-buffer)
+	(with-current-buffer message-buffer
 	  (save-restriction
 	    (widen)
 	    (cond
@@ -94,8 +93,7 @@ It calls following-method selected from variable
       (setq min (point-min)
 	    beg (re-search-forward "^$" nil t)
 	    end (point-max)))
-    (save-excursion
-      (set-buffer (setq new-buf (get-buffer-create new-name)))
+    (with-current-buffer (setq new-buf (get-buffer-create new-name))
       (erase-buffer)
       (insert-buffer-substring the-buf beg end)
       (goto-char (point-min))
@@ -126,8 +124,7 @@ It calls following-method selected from variable
 	   new-buf
 	   (the-buf (current-buffer))
 	   fields)
-      (save-excursion
-	(set-buffer (setq new-buf (get-buffer-create new-name)))
+      (with-current-buffer (setq new-buf (get-buffer-create new-name))
 	(erase-buffer)
 	(insert ?\n)
 	(insert-buffer-substring the-buf r-beg r-end)
@@ -154,8 +151,7 @@ It calls following-method selected from variable
 	    (setq field-name (car rest))
 	    (or (std11-field-body field-name)
 		(progn
-		  (save-excursion
-		    (set-buffer the-buf)
+		  (with-current-buffer the-buf
 		    (let ((entity (when mime-mother-buffer
 				    (set-buffer mime-mother-buffer)
 				    (get-text-property (point)
