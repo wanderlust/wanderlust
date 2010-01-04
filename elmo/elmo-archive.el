@@ -508,7 +508,7 @@ TYPE specifies the archiver's symbol."
 					  nil)))
 	     (regexp (format "^\\(.*\\)\\(%s\\)$"
 			     (mapconcat
-			      '(lambda (x) (regexp-quote (cdr x)))
+			      (lambda (x) (regexp-quote (cdr x)))
 			      elmo-archive-suffix-alist
 			      "\\|"))))
 	(if (string-match "\\(.*\\)/$" base-folder) ; ends with '/'.
@@ -518,29 +518,29 @@ TYPE specifies the archiver's symbol."
 	(delq
 	 nil
 	 (mapcar
-	  '(lambda (x)
-	     (when (and (string-match regexp x)
-			(eq suffix
-			    (car
-			     (rassoc (elmo-match-string 2 x)
-				     elmo-archive-suffix-alist))))
-	       (format "%s%s;%s%s"
-		       (elmo-folder-prefix-internal folder)
-		       (elmo-concat-path base-folder (elmo-match-string 1 x))
-		       suffix prefix)))
+	  (lambda (x)
+	    (when (and (string-match regexp x)
+		       (eq suffix
+			   (car
+			    (rassoc (elmo-match-string 2 x)
+				    elmo-archive-suffix-alist))))
+	      (format "%s%s;%s%s"
+		      (elmo-folder-prefix-internal folder)
+		      (elmo-concat-path base-folder (elmo-match-string 1 x))
+		      suffix prefix)))
 	  flist)))
     (elmo-mapcar-list-of-list
-     (function (lambda (x)
-		 (if (file-exists-p
-		      (expand-file-name
-		       (concat elmo-archive-basename
-			       (elmo-archive-get-suffix
-				(elmo-archive-folder-archive-type-internal
-				 folder)))
-		       (expand-file-name
-			x
-			(elmo-archive-folder-path folder))))
-		     (concat (elmo-folder-prefix-internal folder) x))))
+     (lambda (x)
+       (if (file-exists-p
+	    (expand-file-name
+	     (concat elmo-archive-basename
+		     (elmo-archive-get-suffix
+		      (elmo-archive-folder-archive-type-internal
+		       folder)))
+	     (expand-file-name
+	      x
+	      (elmo-archive-folder-path folder))))
+	   (concat (elmo-folder-prefix-internal folder) x)))
      (elmo-list-subdirectories
       (elmo-archive-folder-path folder)
       (or (elmo-archive-folder-dir-name-internal folder) "")
@@ -667,7 +667,7 @@ TYPE specifies the archiver's symbol."
 		(setq base-dir (expand-file-name ".." temp-dir)))
 	      (setq files
 		    (mapcar
-		     '(lambda (x) (elmo-concat-path prefix x))
+		     (lambda (x) (elmo-concat-path prefix x))
 		     (directory-files temp-dir nil "^[^\\.]")))
 	      (unless (elmo-archive-append-files folder
 						 base-dir
@@ -776,9 +776,9 @@ TYPE specifies the archiver's symbol."
 	 (arc (elmo-archive-get-archive-name folder))
 	 (p-method (elmo-archive-get-method type 'rm-pipe))
 	 (n-method (elmo-archive-get-method type 'rm))
-	 (numbers (mapcar '(lambda (x) (elmo-concat-path
-					prefix
-					(int-to-string x)))
+	 (numbers (mapcar (lambda (x) (elmo-concat-path
+				       prefix
+				       (int-to-string x)))
 			  numbers)))
     (cond ((functionp n-method)
 	   (funcall n-method (cons arc numbers)))
@@ -991,7 +991,7 @@ TYPE specifies the archiver's symbol."
 	(insert
 	 (mapconcat
 	  'concat
-	  (mapcar '(lambda (x) (elmo-concat-path prefix (int-to-string x))) msgs)
+	  (mapcar (lambda (x) (elmo-concat-path prefix (int-to-string x))) msgs)
 	  "\n"))
 	(as-binary-process (apply 'call-process-region
 				  (point-min) (point-max)

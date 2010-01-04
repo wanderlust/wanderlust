@@ -256,19 +256,19 @@ LOCATION."
   (let ((cur-time (current-time))
 	(count 0)
 	last-accessed)
-    (mapcar (function
-	     (lambda (file)
-	       (setq last-accessed (nth 4 (file-attributes file)))
-	       (when (or (> (- (car cur-time)(car last-accessed)) 1)
-			 (and (eq (- (car cur-time)(car last-accessed)) 1)
-			      (> (- (cadr cur-time)(cadr last-accessed))
-				 64064))) ; 36 hours.
-		 (message "Maildir: %d tmp file(s) are cleared."
-			  (setq count (1+ count)))
-		 (delete-file file))))
-	    (directory-files (expand-file-name "tmp" dir)
-			     t ; full
-			     "^[^.].*$" t))))
+    (mapcar
+     (lambda (file)
+       (setq last-accessed (nth 4 (file-attributes file)))
+       (when (or (> (- (car cur-time)(car last-accessed)) 1)
+		 (and (eq (- (car cur-time)(car last-accessed)) 1)
+		      (> (- (cadr cur-time)(cadr last-accessed))
+			 64064)))	; 36 hours.
+	 (message "Maildir: %d tmp file(s) are cleared."
+		  (setq count (1+ count)))
+	 (delete-file file)))
+     (directory-files (expand-file-name "tmp" dir)
+		      t			; full
+		      "^[^.].*$" t))))
 
 (defun elmo-maildir-update-current (folder)
   "Move all new msgs to cur in the maildir."

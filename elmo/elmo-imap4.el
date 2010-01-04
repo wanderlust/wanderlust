@@ -1025,15 +1025,15 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 		 (sasl-mechanisms
 		  (delq nil
 			(mapcar
-			 '(lambda (cap)
-			    (if (string-match "^auth=\\(.*\\)$"
-					      (symbol-name cap))
-				(match-string 1 (upcase (symbol-name cap)))))
+			 (lambda (cap)
+			   (if (string-match "^auth=\\(.*\\)$"
+					     (symbol-name cap))
+			       (match-string 1 (upcase (symbol-name cap)))))
 			 (elmo-imap4-session-capability-internal session))))
 		 (mechanism
 		  (sasl-find-mechanism
 		   (delq nil
-			 (mapcar '(lambda (cap) (upcase (symbol-name cap)))
+			 (mapcar (lambda (cap) (upcase (symbol-name cap)))
 				 (if (listp auth)
 				     auth
 				   (list auth)))))) ;)
@@ -1064,10 +1064,9 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 	     session
 	     (intern (downcase name)))
 	    (setq sasl-read-passphrase
-		  (function
-		   (lambda (prompt)
-		     (elmo-get-passwd
-		      (elmo-network-session-password-key session)))))
+		  (lambda (prompt)
+		    (elmo-get-passwd
+		     (elmo-network-session-password-key session))))
 	    (setq tag
 		  (elmo-imap4-send-command
 		   session

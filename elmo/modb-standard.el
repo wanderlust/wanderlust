@@ -253,11 +253,11 @@
 	  (concat "^" modb-standard-entity-filename "-\\([0-9]+\\)"))
 	 (entities (elmo-uniq-list
 		    (mapcar
-		     #'(lambda (x) (/ x modb-standard-divide-number))
+		     (lambda (x) (/ x modb-standard-divide-number))
 		     (modb-standard-number-list-internal modb))))
-	 (files (mapcar #'(lambda(x)
-			    (when (string-match entity-regex x)
-			      (string-to-number (match-string 1 x))))
+	 (files (mapcar (lambda(x)
+			  (when (string-match entity-regex x)
+			    (string-to-number (match-string 1 x))))
 			(directory-files path nil entity-regex))))
     (dolist (entity (car (elmo-list-diff-nonsortable files entities)))
       (ignore-errors (delete-file

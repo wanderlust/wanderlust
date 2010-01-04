@@ -72,24 +72,23 @@ Otherwise treat \\ in NEWTEXT string as special:
 	     (substring str prev-start match)
 	     (cond (literal newtext)
 		   (t (mapconcat
-		       (function
-			(lambda (c)
-			  (if special
-			      (progn
-				(setq special nil)
-				(cond ((eq c ?\\) "\\")
-				      ((eq c ?&)
-				       (elmo-match-string 0 str))
-				      ((and (>= c ?0) (<= c ?9))
-				       (if (> c (+ ?0 (length
-						       (match-data))))
-					   ;; Invalid match num
-					   (error "Invalid match num: %c" c)
-					 (setq c (- c ?0))
-					 (elmo-match-string c str)))
-				      (t (char-to-string c))))
-			    (if (eq c ?\\) (progn (setq special t) nil)
-			      (char-to-string c)))))
+		       (lambda (c)
+			 (if special
+			     (progn
+			       (setq special nil)
+			       (cond ((eq c ?\\) "\\")
+				     ((eq c ?&)
+				      (elmo-match-string 0 str))
+				     ((and (>= c ?0) (<= c ?9))
+				      (if (> c (+ ?0 (length
+						      (match-data))))
+					  ;; Invalid match num
+					  (error "Invalid match num: %c" c)
+					(setq c (- c ?0))
+					(elmo-match-string c str)))
+				     (t (char-to-string c))))
+			   (if (eq c ?\\) (progn (setq special t) nil)
+			     (char-to-string c))))
 		       newtext ""))))))
     (concat rtn-str (substring str start))))
 

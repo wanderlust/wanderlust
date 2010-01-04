@@ -1775,8 +1775,8 @@ Return a hashtable for newsgroups."
       (while alist
 	(setq newsgroups
 	      (elmo-delete-if
-	       '(lambda (x)
-		  (not (intern-soft x elmo-newsgroups-hashtb)))
+	       (lambda (x)
+		 (not (intern-soft x elmo-newsgroups-hashtb)))
 	       (nth 1 (car alist))))
 	(if newsgroups
 	    (setcar (cdar alist) newsgroups)

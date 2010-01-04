@@ -353,11 +353,10 @@
 	    (nconc
 	     numbers
 	     (mapcar
-	      (function
-	       (lambda (x)
-		 (+
-		  (* (elmo-multi-folder-divide-number-internal
-		      folder) cur-number) x)))
+	      (lambda (x)
+		(+
+		 (* (elmo-multi-folder-divide-number-internal
+		     folder) cur-number) x))
 	      list)))
       (setq flds (cdr flds)))
     numbers))
@@ -405,13 +404,12 @@
       (setq cur-number (+ cur-number 1))
       (setq matches (append matches
 			    (mapcar
-			     (function
-			      (lambda (x)
-				(+
-				 (* (elmo-multi-folder-divide-number-internal
-				     folder)
-				    cur-number)
-				 x)))
+			     (lambda (x)
+			       (+
+				(* (elmo-multi-folder-divide-number-internal
+				    folder)
+				   cur-number)
+				x))
 			     (elmo-folder-search
 			      (car flds) condition))))
       (setq flds (cdr flds)))
@@ -497,11 +495,10 @@
 	    (nconc
 	     numbers
 	     (mapcar
-	      (function
-	       (lambda (x)
-		 (+
-		  (* (elmo-multi-folder-divide-number-internal folder)
-		     cur-number) x)))
+	      (lambda (x)
+		(+
+		 (* (elmo-multi-folder-divide-number-internal folder)
+		    cur-number) x))
 	      (elmo-folder-list-flagged child flag in-msgdb)))))
     numbers))
 
