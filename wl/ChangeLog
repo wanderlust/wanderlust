@@ -1,7 +1,7 @@
 2010-01-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
-	* wl.el (wl-plugged-sending-queue-status): Use `int-to-string'
-	instead of `number-to-string'.
+	* wl.el (wl-plugged-sending-queue-status): Use `number-to-string'
+	instead of `int-to-string'.
 	* wl-dnd.el (wl-dnd-start-drag): Ditto.
 	* wl-score.el (wl-score-insert-help, wl-summary-increase-score): Ditto.
 	* wl-summary.el (wl-summary-jump-to-msg, wl-summary-save): Ditto.
