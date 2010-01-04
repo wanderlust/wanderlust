@@ -1,5 +1,7 @@
 2010-01-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* Version number is increased to 2.15.8.
+
 	* wl-message.el (wl-message-uu-substring): Suppress compile
 	warnings; Use `with-current-buffer' instead of `save-excursion' &
 	`set-buffer'.

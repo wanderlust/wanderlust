@@ -1,5 +1,7 @@
 2010-01-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-version.el (elmo-version): Up to 2.15.8.
+
 	* elmo-mime.el (elmo-mime-insert-header-from-buffer): Use
 	`with-current-buffer' instead of `save-excursion' (for suppress
 	compile warnings).
