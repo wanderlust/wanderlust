@@ -131,14 +131,14 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
   (or (string= name wl-draft-folder)
       (string= name wl-queue-folder)))
 
-;(defalias 'wl-make-hash 'elmo-make-hash)
-;;(make-obsolete 'wl-make-hash 'elmo-make-hash)
+;;;(defalias 'wl-make-hash 'elmo-make-hash)
+;;;(make-obsolete 'wl-make-hash 'elmo-make-hash)
 
-;;(defalias 'wl-get-hash-val 'elmo-get-hash-val)
-;;(make-obsolete 'wl-get-hash-val 'elmo-get-hash-val)
+;;;(defalias 'wl-get-hash-val 'elmo-get-hash-val)
+;;;(make-obsolete 'wl-get-hash-val 'elmo-get-hash-val)
 
-;;(defalias 'wl-set-hash-val 'elmo-set-hash-val)
-;;(make-obsolete 'wl-set-hash-val 'elmo-set-hash-val)
+;;;(defalias 'wl-set-hash-val 'elmo-set-hash-val)
+;;;(make-obsolete 'wl-set-hash-val 'elmo-set-hash-val)
 
 (defsubst wl-set-string-width (width string &optional padding ignore-invalid)
   "Make a new string which have specified WIDTH and content of STRING.

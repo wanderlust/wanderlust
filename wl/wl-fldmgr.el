@@ -243,29 +243,29 @@ return value is diffs '(-new -unread -all)."
 	     (setq result-path (cdr result-path))
 	     (setq entities (wl-pop entity-stack)))))))))
 
-;; (defun wl-fldmgr-get-previous-entity (entity key-id)
-;;   (cdr (wl-fldmgr-get-previous-entity-internal '(nil . nil) entity key-id)))
-;;
-;; (defun wl-fldmgr-get-previous-entity-internal (result entity key-id)
-;;   (cond
-;;    ((stringp entity)
-;;     (if (eq key-id (wl-fldmgr-get-entity-id entity))
-;; 	(cons t result)
-;;       (cons nil (cons entity entity))))
-;;    ((consp entity)
-;;     (if (eq key-id (wl-fldmgr-get-entity-id (car entity)))
-;; 	(cons t result)
-;;       (setcar result (car entity))
-;;       (let ((flist (nth 2 entity))
-;; 	    return found)
-;; 	(while (and flist (not found))
-;; 	  (if (car (setq return
-;; 			 (wl-fldmgr-get-previous-entity-internal
-;; 			  result (car flist) key-id)))
-;; 	      (setq found t))
-;; 	  (setq result (cdr return))
-;; 	  (setq flist (cdr flist)))
-;; 	(cons found result))))))
+;;;(defun wl-fldmgr-get-previous-entity (entity key-id)
+;;;  (cdr (wl-fldmgr-get-previous-entity-internal '(nil . nil) entity key-id)))
+;;;
+;;;(defun wl-fldmgr-get-previous-entity-internal (result entity key-id)
+;;;  (cond
+;;;   ((stringp entity)
+;;;    (if (eq key-id (wl-fldmgr-get-entity-id entity))
+;;;	(cons t result)
+;;;      (cons nil (cons entity entity))))
+;;;   ((consp entity)
+;;;    (if (eq key-id (wl-fldmgr-get-entity-id (car entity)))
+;;;	(cons t result)
+;;;      (setcar result (car entity))
+;;;      (let ((flist (nth 2 entity))
+;;;	    return found)
+;;;	(while (and flist (not found))
+;;;	  (if (car (setq return
+;;;			 (wl-fldmgr-get-previous-entity-internal
+;;;			  result (car flist) key-id)))
+;;;	      (setq found t))
+;;;	  (setq result (cdr return))
+;;;	  (setq flist (cdr flist)))
+;;;	(cons found result))))))
 
 ;; path is get `wl-fldmgr-get-path-from-buffer'.
 (defun wl-fldmgr-update-group (path diffs)

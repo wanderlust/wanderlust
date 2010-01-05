@@ -390,11 +390,11 @@ If nil, default acap port is used."
 		       (nreverse settings)))
 	  (message "Storing folders...")
 	  (wl-acap-store-folders proc)
-	  ;; Does not work correctly??
-	  ;;	  (acap-setacl proc (list
-	  ;;			     (concat
-	  ;;			      "/" wl-acap-dataset-class "/~/"))
-	  ;;		       "anyone" "") ; protect.
+;;; Does not work correctly??
+;;;	  (acap-setacl proc (list
+;;;			     (concat
+;;;			      "/" wl-acap-dataset-class "/~/"))
+;;;		       "anyone" "") ; protect.
 	  )
       (acap-close proc))
     (if (interactive-p)

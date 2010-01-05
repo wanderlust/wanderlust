@@ -1,3 +1,37 @@
+2010-01-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl.el	(wl-toggle-plugged, wl-plugged-dop-queue-info)
+	(wl-plugged-exit, wl-exit): Fix comment-out style. Use three
+	semicolons, that should start at the left margin.
+	See. also (Info-goto-node "(elisp)Comment Tips").
+	* wl-acap.el (wl-acap-store): Ditto.
+	* wl-action.el (wl-summary-unset-mark): Ditto.
+	* wl-address.el (wl-address-ldap-search): Ditto.
+	* wl-demo.el (wl-demo-insert-image): Ditto.
+	* wl-dnd.el (wl-dnd-set-drag-starter): Ditto.
+	* wl-draft.el (wl-draft-normal-send-func, wl-draft-send)
+	(wl-draft-previous-history-element): Ditto.
+	* wl-e21.el (wl-draft-key-setup, wl-draft-overload-functions): Ditto.
+	* wl-folder.el (toplevel, wl-folder-mode-menu-spec)
+	(wl-folder-mode-map, wl-folder-get-prev-folder)
+	(wl-folder-jump-to-current-entity, wl-folder-check-entity)
+	(wl-folder-check-entity-async)
+	(wl-create-folder-entity-from-buffer): Ditto.
+	* wl-fldmgr.el (toplevel): Ditto.
+	* wl-message.el (wl-message-buffer-cache-sort)
+	(wl-message-redisplay, wl-message-buffer-prefetch-clear-timer):
+	Ditto.
+	* wl-mule.el (wl-draft-key-setup, wl-draft-overload-functions):
+	Ditto.
+	* wl-summary.el (toplevel, wl-summary-mode)
+	(wl-summary-edit-addresses, wl-summary-sync-update)
+	(wl-summary-stick): Ditto.
+	* wl-thread.el (toplevel, wl-thread-insert-message)
+	(wl-thread-insert-entity-sub, wl-thread-open-close): Ditto.
+	* wl-util.el (toplevel): Ditto.
+	* wl-xmas.el (wl-draft-key-setup, wl-draft-overload-functions):
+	Ditto.
+
 2010-01-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* Version number is increased to 2.15.8.

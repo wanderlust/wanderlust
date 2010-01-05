@@ -236,11 +236,11 @@ Return a number of lines that an image occupies in the buffer."
 
 		 ;; Emacs 21.x may fail on computing the end of the
 		 ;; column if there're bitmap characters.
-		 ;;(setq width 0)
-		 ;;(while (progn
-		 ;;	    (end-of-line 0)
-		 ;;	    (not (bobp)))
-		 ;;  (setq width (max width (current-column))))
+;;;		 (setq width 0)
+;;;		 (while (progn
+;;;			  (end-of-line 0)
+;;;			  (not (bobp)))
+;;;		   (setq width (max width (current-column))))
 		 (setq width 1024)
 		 (while (progn
 			  (end-of-line 0)

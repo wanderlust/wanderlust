@@ -932,13 +932,13 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (setq major-mode 'wl-summary-mode)
   (setq mode-name "Summary")
   (use-local-map wl-summary-mode-map)
-;;;(setq default-directory (or wl-tmp-dir (expand-file-name "~/")))
+;;;  (setq default-directory (or wl-tmp-dir (expand-file-name "~/")))
   (setq buffer-read-only t)
   (setq truncate-lines t)
   (when (boundp 'show-trailing-whitespace)
     (setq show-trailing-whitespace nil))
-;;;(make-local-variable 'tab-width)
-;;;(setq tab-width 1)
+;;;  (make-local-variable 'tab-width)
+;;;  (setq tab-width 1)
   (buffer-disable-undo (current-buffer))
   (setq selective-display t
 	selective-display-ellipses nil)
@@ -1526,7 +1526,7 @@ Optional argument ADDR-STR is used as a target address if specified."
 			 (nth 0 address)
 			 result)))
 ;;; i'd like to update summary-buffer, but...
-;;;	(wl-summary-rescan)
+;;;	  (wl-summary-rescan)
 	  (run-hooks 'wl-summary-edit-addresses-hook))))))
 
 (defun wl-summary-incorporate (&optional arg)
@@ -1961,8 +1961,8 @@ This function is defined for `window-scroll-functions'"
 	    (error "(Internal error) Folder is not set:%s" (buffer-name
 							    (current-buffer))))
 	  ;; Flush pending append operations (disconnected operation).
-	  ;;(setq seen-list
-	  ;;(wl-summary-flush-pending-append-operations seen-list))
+;;;	  (setq seen-list
+;;;		(wl-summary-flush-pending-append-operations seen-list))
 	  (goto-char (point-max))
 	  (wl-folder-confirm-existence folder (elmo-folder-plugged-p folder))
 	  (setq crossed (elmo-folder-synchronize folder
@@ -2259,7 +2259,7 @@ If ARG, without confirm."
        (wl-summary-sticky-buffer-name
 	(wl-summary-buffer-folder-name)))
 ;;; ???hang up
-;;;   (rename-buffer (wl-summary-sticky-buffer-name
+;;;      (rename-buffer (wl-summary-sticky-buffer-name
 ;;;		      (wl-summary-buffer-folder-name))))
       (message "Folder `%s' is now sticky." (wl-summary-buffer-folder-name)))))
 
@@ -3535,11 +3535,11 @@ Return non-nil if the mark is updated"
       "")))
 
 ;;; For future use.
-;;(defun wl-summary-line-cached ()
-;;  (if (elmo-message-cached-p wl-summary-buffer-elmo-folder
-;;			     (elmo-message-entity-number wl-message-entity))
-;;      " "
-;;    "u"))
+;;;(defun wl-summary-line-cached ()
+;;;  (if (elmo-message-cached-p wl-summary-buffer-elmo-folder
+;;;			     (elmo-message-entity-number wl-message-entity))
+;;;      " "
+;;;    "u"))
 
 (defun wl-summary-create-line (wl-message-entity
 			       wl-parent-message-entity
@@ -5009,41 +5009,41 @@ If ARG is numeric number, decode message as following:
 		(message "Saved as %s" filename)))
 	(kill-buffer tmp-buf)))))
 
-;; Someday
-;; (defun wl-summary-drop-unsync ()
-;;   "Drop all unsync messages."
-;;   (interactive)
-;;   (if (elmo-folder-pipe-p (wl-summary-buffer-folder-name))
-;;       (error "You cannot drop unsync messages in this folder"))
-;;   (if (or (not (interactive-p))
-;; 	  (y-or-n-p "Drop all unsync messages? "))
-;;       (let* ((folder-list (elmo-folder-get-primitive-folder-list
-;; 			   (wl-summary-buffer-folder-name)))
-;; 	     (is-multi (elmo-multi-p (wl-summary-buffer-folder-name)))
-;; 	     (sum 0)
-;; 	     (multi-num 0)
-;; 	     pair)
-;; 	(message "Dropping...")
-;; 	(while folder-list
-;; 	  (setq pair (elmo-folder-message-numbers (car folder-list)))
-;; 	  (when is-multi ;; dirty hack...
-;; 	    (incf multi-num)
-;; 	    (setcar pair (+ (* multi-num elmo-multi-divide-number)
-;; 			    (car pair))))
-;; 	  (elmo-msgdb-set-number-alist
-;; 	   (wl-summary-buffer-msgdb)
-;; 	   (nconc
-;; 	    (elmo-msgdb-get-number-alist (wl-summary-buffer-msgdb))
-;; 	    (list (cons (car pair) nil))))
-;; 	  (setq sum (+ sum (cdr pair)))
-;; 	  (setq folder-list (cdr folder-list)))
-;; 	(wl-summary-set-message-modified)
-;; 	(wl-folder-set-folder-updated (wl-summary-buffer-folder-name)
-;; 				      (list 0
-;; 					    (+ wl-summary-buffer-unread-count
-;; 					       wl-summary-buffer-new-count)
-;; 					    sum))
-;; 	(message "Dropping...done"))))
+;;; Someday
+;;;(defun wl-summary-drop-unsync ()
+;;;  "Drop all unsync messages."
+;;;  (interactive)
+;;;  (if (elmo-folder-pipe-p (wl-summary-buffer-folder-name))
+;;;      (error "You cannot drop unsync messages in this folder"))
+;;;  (if (or (not (interactive-p))
+;;;	  (y-or-n-p "Drop all unsync messages? "))
+;;;      (let* ((folder-list (elmo-folder-get-primitive-folder-list
+;;;			   (wl-summary-buffer-folder-name)))
+;;;	     (is-multi (elmo-multi-p (wl-summary-buffer-folder-name)))
+;;;	     (sum 0)
+;;;	     (multi-num 0)
+;;;	     pair)
+;;;	(message "Dropping...")
+;;;	(while folder-list
+;;;	  (setq pair (elmo-folder-message-numbers (car folder-list)))
+;;;	  (when is-multi ;; dirty hack...
+;;;	    (incf multi-num)
+;;;	    (setcar pair (+ (* multi-num elmo-multi-divide-number)
+;;;			    (car pair))))
+;;;	  (elmo-msgdb-set-number-alist
+;;;	   (wl-summary-buffer-msgdb)
+;;;	   (nconc
+;;;	    (elmo-msgdb-get-number-alist (wl-summary-buffer-msgdb))
+;;;	    (list (cons (car pair) nil))))
+;;;	  (setq sum (+ sum (cdr pair)))
+;;;	  (setq folder-list (cdr folder-list)))
+;;;	(wl-summary-set-message-modified)
+;;;	(wl-folder-set-folder-updated (wl-summary-buffer-folder-name)
+;;;				      (list 0
+;;;					    (+ wl-summary-buffer-unread-count
+;;;					       wl-summary-buffer-new-count)
+;;;					    sum))
+;;;	(message "Dropping...done"))))
 
 (defun wl-summary-previous-message-number (msg)
   "Return a message number previous to the message specified by MSG."

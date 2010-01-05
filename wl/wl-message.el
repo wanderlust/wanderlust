@@ -106,14 +106,14 @@ With association ((\"folder\" message \"message-id\") . cache-buffer).")
   "Move ENTRY to the top of `wl-message-buffer-cache'."
   (setq wl-message-buffer-cache
 	(cons entry (delete entry wl-message-buffer-cache))))
-;  (let* ((pointer (cons nil wl-message-buffer-cache))
-;	 (top pointer))
-;    (while (cdr pointer)
-;      (if (equal (car (cdr pointer)) entry)
-;	  (setcdr pointer (cdr (cdr pointer)))
-;	(setq pointer (cdr pointer))))
-;    (setcdr pointer (list entry))
-;    (setq wl-message-buffer-cache (cdr top))))
+;;;  (let* ((pointer (cons nil wl-message-buffer-cache))
+;;;	 (top pointer))
+;;;    (while (cdr pointer)
+;;;      (if (equal (car (cdr pointer)) entry)
+;;;	  (setcdr pointer (cdr (cdr pointer)))
+;;;	(setq pointer (cdr pointer))))
+;;;    (setcdr pointer (list entry))
+;;;    (setq wl-message-buffer-cache (cdr top))))
 
 (defconst wl-original-message-buffer-name " *Original*")
 
@@ -511,9 +511,9 @@ Returns non-nil if bottom of message."
      wl-message-mode-line-format-spec-alist)
     (setq mode-line-buffer-identification
 	  (funcall wl-message-buffer-mode-line-formatter))
-    ;; highlight body
-;    (when wl-highlight-body-too
-;      (wl-highlight-body))
+;;;    ;; highlight body
+;;;    (when wl-highlight-body-too
+;;;      (wl-highlight-body))
     (ignore-errors (wl-message-narrow-to-page))
     (goto-char (point-min))
     (when (re-search-forward "^$" nil t)
@@ -653,8 +653,8 @@ Returns non-nil if bottom of message."
 	    (t wl-message-buffer-prefetch-folder-list)))))
 
 (defsubst wl-message-buffer-prefetch-clear-timer ()
-;;;     cannot use for the bug of fsf-compat package (1.09).
-;;;	(cancel-function-timers 'wl-message-buffer-prefetch-subr)
+;;; cannot use for the bug of fsf-compat package (1.09).
+;;;  (cancel-function-timers 'wl-message-buffer-prefetch-subr)
   (if (fboundp 'run-with-idle-timer)
       (if (featurep 'xemacs)
 	  (let ((p itimer-list))

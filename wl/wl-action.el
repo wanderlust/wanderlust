@@ -251,11 +251,11 @@ Return number if put mark succeed"
 	  (when (wl-summary-action-argument-function action)
 	    (wl-summary-remove-argument)))
 	(set-buffer-modified-p nil))))
-  ;; Move the cursor.
-  ;;  (if (or interactive (interactive-p))
-  ;;      (if (eq wl-summary-move-direction-downward nil)
-  ;;	  (wl-summary-prev)
-  ;;	(wl-summary-next))))
+;;; Move the cursor.
+;;;  (if (or interactive (interactive-p))
+;;;      (if (eq wl-summary-move-direction-downward nil)
+;;;	  (wl-summary-prev)
+;;;	(wl-summary-next))))
   )
 
 (defun wl-summary-make-destination-numbers-list (mark-list)

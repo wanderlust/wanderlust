@@ -93,7 +93,7 @@
 (defun wl-dnd-set-drag-starter (beg end)
   (let (ext kmap)
     (setq ext (make-extent beg end))
-;;; (set-extent-property ext 'mouse-face 'isearch)
+;;;    (set-extent-property ext 'mouse-face 'isearch)
     (setq kmap (make-keymap))
     (define-key kmap [button1] 'wl-dnd-start-drag)
     (set-extent-property ext 'keymap kmap)))

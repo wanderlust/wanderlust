@@ -266,7 +266,7 @@ Matched address lists are append to CL."
       ;; make mail addrses list
       (while mails
 	(if (null (assoc (car mails) cl)); Not already in cl.
-	    ;; (string-match regexp (car mails))
+;;;	    (string-match regexp (car mails))
 	    ;; add mail address itself to completion list
 	    (setq result (cons (cons (car mails)
 				     (concat cn " <" (car mails) ">"))

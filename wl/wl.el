@@ -119,14 +119,14 @@
 	(if (and wl-draft-enable-queuing
 		 wl-auto-flush-queue)
 	    (wl-draft-queue-flush))
-;; 	(when (and (eq major-mode 'wl-summary-mode)
-;; 		   (elmo-folder-plugged-p wl-summary-buffer-elmo-folder))
-;; 	  (let* ((msgdb-dir (elmo-folder-msgdb-path
-;; 			     wl-summary-buffer-elmo-folder))
-;; 		 (seen-list (elmo-msgdb-seen-load msgdb-dir)))
-;; 	 (setq seen-list
-;; 		  (wl-summary-flush-pending-append-operations seen-list))
-;; 	    (elmo-msgdb-seen-save msgdb-dir seen-list)))
+;;; 	(when (and (eq major-mode 'wl-summary-mode)
+;;; 		   (elmo-folder-plugged-p wl-summary-buffer-elmo-folder))
+;;; 	  (let* ((msgdb-dir (elmo-folder-msgdb-path
+;;; 			     wl-summary-buffer-elmo-folder))
+;;; 		 (seen-list (elmo-msgdb-seen-load msgdb-dir)))
+;;;	    (setq seen-list
+;;; 		  (wl-summary-flush-pending-append-operations seen-list))
+;;; 	    (elmo-msgdb-seen-save msgdb-dir seen-list)))
 	(run-hooks 'wl-plugged-hook))
     (wl-biff-stop)
     (run-hooks 'wl-unplugged-hook))
@@ -274,7 +274,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	 (elmo-dop-queue (copy-sequence elmo-dop-queue))
 	 dop-queue last alist server-info
 	 ope operation)
-    ;(elmo-dop-queue-load)
+;;;    (elmo-dop-queue-load)
     (elmo-dop-queue-merge)
     (setq dop-queue (sort elmo-dop-queue (lambda (a b)
 					   (string< (elmo-dop-queue-fname a)
@@ -294,7 +294,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
       (if (and (car dop-queue)
 	       (string= last (elmo-dop-queue-fname (car dop-queue))))
 	  (wl-append operation (list ope))
-	;;(setq count (1+ count))
+;;;	(setq count (1+ count))
 	(when (and last (setq server-info (elmo-net-port-info
 					   (wl-folder-get-elmo-folder last))))
 	  (setq alist
@@ -573,8 +573,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 
 (defun wl-plugged-exit ()
   (interactive)
-  (setq ;;elmo-plugged-alist wl-plugged-alist
-	wl-plugged wl-plugged-switch
+  (setq wl-plugged wl-plugged-switch
+;;;	elmo-plugged-alist wl-plugged-alist
 	wl-plugged-alist nil
 	wl-plugged-sending-queue-alist nil
 	wl-plugged-dop-queue-alist nil)
@@ -689,9 +689,9 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 			"\\|")))
     (when wl-delete-startup-frame-function
       (funcall wl-delete-startup-frame-function))
-;;    (if (and wl-folder-use-frame
-;;	     (> (length (visible-frame-list)) 1))
-;;	(delete-frame))
+;;;    (if (and wl-folder-use-frame
+;;;	     (> (length (visible-frame-list)) 1))
+;;;	(delete-frame))
     (setq wl-init nil)
     (remove-hook 'kill-emacs-hook 'wl-save-status)
     (elmo-passwd-alist-clear)

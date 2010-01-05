@@ -595,8 +595,8 @@ Message is inserted to the summary buffer."
   (let ((parent (wl-thread-get-entity parent-msg))
 	child-entity invisible-top)
 ;;; Update the thread view...not implemented yet.
-;;;  (when force-insert
-;;;    (if parent
+;;;    (when force-insert
+;;;      (if parent
 ;;;	  (wl-thread-entity-force-open parent))
     (when (and wl-summary-max-thread-depth parent)
       (let ((cur parent)
@@ -629,8 +629,8 @@ Message is inserted to the summary buffer."
 				    parent-msg))
 	      (when parent
 		;; use thread structure.
-		;;(wl-thread-entity-get-nearly-older-brother
-		;; child-entity parent))) ; return value
+;;;		(wl-thread-entity-get-nearly-older-brother
+;;;		 child-entity parent))) ; return value
  		(wl-thread-entity-get-number parent))) ; return value
 ;;; 	      (setq beg (point))
 ;;; 	      (wl-thread-goto-bottom-of-sub-thread)
@@ -639,19 +639,19 @@ Message is inserted to the summary buffer."
 	  (wl-thread-update-children-number invisible-top)
 	  nil))))
 
-;(defun wl-thread-get-parent-list (msgs)
-;  ;; return ancestors
-;  (let* ((msgs2 msgs)
-;	 myself)
-;    (while msgs2
-;      (setq myself (car msgs2)
-;	    msgs2 (cdr msgs2))
-;      (while (not (eq myself (car msgs2)))
-;	(if (wl-thread-descendant-p myself (car msgs2))
-;	    (setq msgs (delq (car msgs2) msgs)))
-;	(setq msgs2 (or (cdr msgs2) msgs)))
-;      (setq msgs2 (cdr msgs2)))
-;    msgs))
+;;;(defun wl-thread-get-parent-list (msgs)
+;;;  ;; return ancestors
+;;;  (let* ((msgs2 msgs)
+;;;	 myself)
+;;;    (while msgs2
+;;;      (setq myself (car msgs2)
+;;;	    msgs2 (cdr msgs2))
+;;;      (while (not (eq myself (car msgs2)))
+;;;	(if (wl-thread-descendant-p myself (car msgs2))
+;;;	    (setq msgs (delq (car msgs2) msgs)))
+;;;	(setq msgs2 (or (cdr msgs2) msgs)))
+;;;      (setq msgs2 (cdr msgs2)))
+;;;    msgs))
 
 (defun wl-thread-get-parent-list (msgs)
   ;; return connected ancestors
@@ -786,7 +786,7 @@ Message is inserted to the summary buffer."
       (setq message-entity
 	    (elmo-message-entity wl-summary-buffer-elmo-folder
 				 msg-num))
-;;;   (wl-delete-all-overlays)
+;;;      (wl-delete-all-overlays)
       (when message-entity
 	(wl-summary-insert-line
 	 (wl-summary-create-line
@@ -840,15 +840,15 @@ Message is inserted to the summary buffer."
 	    (throw 'done t)))
       nil)))
 
-;; (defun wl-thread-goto-bottom-of-sub-thread ()
-;;   (interactive)
-;;   (let ((depth (wl-thread-get-depth-of-current-line)))
-;;     (forward-line 1)
-;;     (while (and (not (eobp))
-;; 		(> (wl-thread-get-depth-of-current-line)
-;; 		   depth))
-;;       (forward-line 1))
-;;     (beginning-of-line)))
+;;;(defun wl-thread-goto-bottom-of-sub-thread ()
+;;;  (interactive)
+;;;  (let ((depth (wl-thread-get-depth-of-current-line)))
+;;;    (forward-line 1)
+;;;    (while (and (not (eobp))
+;;; 		(> (wl-thread-get-depth-of-current-line)
+;;; 		   depth))
+;;;      (forward-line 1))
+;;;    (beginning-of-line)))
 
 (defun wl-thread-goto-bottom-of-sub-thread (&optional msg)
   (interactive)
@@ -994,7 +994,7 @@ Message is inserted to the summary buffer."
 (defun wl-thread-open-close (&optional force-open)
   (interactive "P")
   (when (eq wl-summary-buffer-view 'thread)
-;;; (if (equal wl-thread-top-entity '(nil t nil nil))
+;;;    (if (equal wl-thread-top-entity '(nil t nil nil))
 ;;;	(error "There's no thread structure"))
     (save-excursion
       (let ((inhibit-read-only t)

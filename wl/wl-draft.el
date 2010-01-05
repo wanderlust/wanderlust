@@ -1167,7 +1167,7 @@ If FORCE-MSGID, insert message-id regardless of `wl-insert-message-id'."
 	    nil t)
       (when (string= "" (match-string 1))
 	(replace-match ""))))
-;;;  (run-hooks 'wl-mail-send-pre-hook) ;; X-PGP-Sig, Cancel-Lock
+;;;  (run-hooks 'wl-mail-send-pre-hook) ; X-PGP-Sig, Cancel-Lock
   (wl-draft-dispatch-message)
   (when kill-when-done
     ;; hide editing-buffer.
@@ -1300,9 +1300,9 @@ This variable is valid when `wl-interactive-send' has non-nil value."
   "Send current draft message.
 If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   (interactive)
-  ;; Don't call this explicitly.
-  ;; Added to 'wl-draft-send-hook (by teranisi)
-  ;; (wl-draft-config-exec)
+;;; Don't call this explicitly.
+;;; Added to 'wl-draft-send-hook (by teranisi)
+;;;  (wl-draft-config-exec)
   (run-hooks 'wl-draft-send-hook)
   (when (or (not wl-interactive-send)
 	    (wl-draft-send-confirm))
@@ -2438,8 +2438,8 @@ Automatically applied in draft sending time."
 		  ((looking-at wl-folder-complete-header-regexp)
 		   (and (boundp 'wl-read-folder-history)
 			(setq history wl-read-folder-history)))
-		  ;; ((looking-at wl-address-complete-header-regexp)
-		  ;;  (setq history .....))
+;;;		  ((looking-at wl-address-complete-header-regexp)
+;;;		   (setq history .....))
 		  (t
 		   nil)))
 	       (eolp))
