@@ -812,7 +812,8 @@ ENTRIES is a store-entry list."
 			     (progn
 			       (acap-forward)
 			       (acap-parse-return-data-list)))))
-	  (ALERT ;(cons 'alert (acap-parse-resp-body))
+	  (ALERT
+;;;	   (cons 'alert (acap-parse-resp-body))
 	   (message "%s" (nth 1 (acap-parse-resp-body))))
 	  ((BYE Bye bye)
 	   (cons 'bye (acap-parse-resp-body)))
@@ -834,7 +835,8 @@ ENTRIES is a store-entry list."
 	  ;; response-stat
 	  (OK   (cons 'stat-ok (acap-parse-resp-body)))
 	  (NO   (cons 'stat-no (acap-parse-resp-body)))
-	  (BAD  ;(cons 'stat-bad (acap-parse-resp-body))
+	  (BAD
+;;;	   (cons 'stat-bad (acap-parse-resp-body))
 	   ;; XXX cyrus-sml-acap does not return tagged bad response?
 	   (error "%s" (nth 1 (acap-parse-resp-body))))))
        ((integerp token)

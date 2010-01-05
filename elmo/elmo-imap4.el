@@ -273,13 +273,13 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 
 ;;; Session commands.
 
-; (defun elmo-imap4-send-command-wait (session command)
-;   "Send COMMAND to the SESSION and wait for response.
-; Returns RESPONSE (parsed lisp object) of IMAP session."
-;   (elmo-imap4-read-response session
-;			    (elmo-imap4-send-command
-;			     session
-;			     command)))
+;;;(defun elmo-imap4-send-command-wait (session command)
+;;;  "Send COMMAND to the SESSION and wait for response.
+;;;Returns RESPONSE (parsed lisp object) of IMAP session."
+;;;  (elmo-imap4-read-response session
+;;;			    (elmo-imap4-send-command
+;;;			     session
+;;;			     command)))
 
 (defun elmo-imap4-send-command-wait (session command)
   "Send COMMAND to the SESSION.
@@ -303,7 +303,8 @@ Returns a TAG string which is assigned to the COMMAND."
 			(number-to-string
 			 (setq elmo-imap4-seqno (+ 1 elmo-imap4-seqno)))))
       (setq cmdstr (concat tag " "))
-      ;; (erase-buffer) No need.
+;;; No need.
+;;;      (erase-buffer)
       (goto-char (point-min))
       (when (elmo-imap4-response-bye-p elmo-imap4-current-response)
 	(elmo-imap4-process-bye session))
@@ -736,9 +737,9 @@ Returns response value if selecting folder succeed. "
 ;;;(elmo-imap4-send-command-wait
 ;;;(elmo-imap4-get-session spec)
 ;;;(list "status "
-;;;	 (elmo-imap4-mailbox
-;;;	  (elmo-imap4-spec-mailbox spec))
-;;;	 " (uidvalidity)")))
+;;;      (elmo-imap4-mailbox
+;;;       (elmo-imap4-spec-mailbox spec))
+;;;      " (uidvalidity)")))
   )
 
 (defun elmo-imap4-sync-validity  (spec validity-file)
@@ -875,8 +876,8 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 	(flag-table (car app-data))
 	(msg-id (elmo-message-entity-field entity 'message-id))
 	saved-flags flag-list)
-;;    (when (elmo-string-member-ignore-case "\\Flagged" flags)
-;;      (elmo-msgdb-global-mark-set msg-id elmo-msgdb-important-mark))
+;;;    (when (elmo-string-member-ignore-case "\\Flagged" flags)
+;;;      (elmo-msgdb-global-mark-set msg-id elmo-msgdb-important-mark))
     (setq saved-flags (elmo-flag-table-get flag-table msg-id)
 	  flag-list
 	  (if use-flag
@@ -980,11 +981,11 @@ If CHOP-LENGTH is not specified, message set is not chopped."
       (erase-buffer)
       (set-process-filter process 'elmo-imap4-arrival-filter)
       (set-process-sentinel process 'elmo-imap4-sentinel)
-;;;   (while (and (memq (process-status process) '(open run))
+;;;      (while (and (memq (process-status process) '(open run))
 ;;;		  (eq elmo-imap4-status 'initial))
 ;;;	(message "Waiting for server response...")
 ;;;	(accept-process-output process 1))
-;;;   (message "")
+;;;      (message "")
       (unless (memq elmo-imap4-status '(nonauth auth))
 	(signal 'elmo-open-error
 		(list 'elmo-network-initialize-session)))
@@ -1203,8 +1204,8 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 
 (luna-define-method elmo-server-diff-async ((folder elmo-imap4-folder))
   (let ((session (elmo-imap4-get-session folder)))
-    ;; commit.
-    ;; (elmo-imap4-commit spec)
+;;;    ;; commit.
+;;;    (elmo-imap4-commit spec)
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-status-callback
 	    'elmo-imap4-server-diff-async-callback-1)
@@ -2439,7 +2440,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 (defsubst elmo-imap4-folder-diff-plugged (folder)
   (let ((session (elmo-imap4-get-session folder))
 	messages new unread response killed uidnext)
-;;; (elmo-imap4-commit spec)
+;;;    (elmo-imap4-commit spec)
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-status-callback nil)
       (setq elmo-imap4-status-callback-data nil))
@@ -2679,12 +2680,12 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	    (elmo-imap4-get-session folder)))
     elmo-enable-disconnected-operation)) ; offline refile.
 
-;(luna-define-method elmo-message-fetch-unplugged
-;  ((folder elmo-imap4-folder)
-;   number strategy  &optional section outbuf unseen)
-;  (error "%d%s is not cached." number (if section
-;					  (format "(%s)" section)
-;					"")))
+;;;(luna-define-method elmo-message-fetch-unplugged
+;;;  ((folder elmo-imap4-folder)
+;;;   number strategy  &optional section outbuf unseen)
+;;;  (error "%d%s is not cached." number (if section
+;;;					  (format "(%s)" section)
+;;;					"")))
 
 (defsubst elmo-imap4-message-fetch (folder number strategy
 					   section outbuf unseen)

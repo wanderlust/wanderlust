@@ -173,7 +173,7 @@ VALUE is the field value."
 ;;;
 (defsubst elmo-msgdb-append-element (list element)
   (if list
-;;;   (append list (list element))
+;;;      (append list (list element))
       (nconc list (list element))
     ;; list is nil
     (list element)))

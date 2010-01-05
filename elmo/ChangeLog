@@ -1,3 +1,31 @@
+2010-01-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* acap.el (acap-parse-response): Fix comment-out style. Use three
+	semicolons, that should start at the left margin.
+	See. also (Info-goto-node "(elisp)Comment Tips").
+	* elmo.el (toplevel, elmo-message-match-condition)
+	(elmo-folder-set-info-max-by-numdb, elmo-folder-move-messages):
+	Ditto.
+	* elmo-archive.el (elmo-archive-suffix-alist)
+	(elmo-archive-tar-method-alist, elmo-archive-tgz-method-alist)
+	(elmo-archive-method-list)
+	(elmo-archive-msgdb-create-as-numlist-subr2, elmo-folder-search):
+	Ditto.
+	* elmo-imap4.el	(toplevel)
+	(elmo-imap4-send-command, elmo-imap4-check-validity)
+	(elmo-imap4-fetch-callback-1-subr)
+	(elmo-network-initialize-session, elmo-server-diff-async)
+	(elmo-imap4-folder-diff-plugged): Ditto
+	* elmo-maildir.el (elmo-maildir-temporal-filename): Ditto.
+	* elmo-msgdb.el (elmo-msgdb-append-element): Ditto.
+	* elmo-net.el (elmo-network-close-session): Ditto.
+	* elmo-nntp.el (elmo-nntp-create-msgdb-from-overview-string)
+	(elmo-nntp-parse-overview-string, elmo-nntp-post): Ditto.
+	* elmo-pop3.el (elmo-pop3-retrieve-headers):  Ditto.
+	* elmo-util.el (elmo-set-auto-coding, elmo-passwd-alist-save)
+	(elmo-number-set-delete)
+	(elmo-cache-get-oldest-cache-file-entity): Ditto.
+
 2010-01-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-version.el (elmo-version): Up to 2.15.8.

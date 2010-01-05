@@ -113,7 +113,7 @@ If nil, just once. If t, until success."
 
 (luna-define-method elmo-network-close-session ((session elmo-network-session))
   (when (elmo-network-session-process-internal session)
-;;; (memq (process-status (elmo-network-session-process-internal session))
+;;;    (memq (process-status (elmo-network-session-process-internal session))
 ;;;	  '(open run))
     (kill-buffer (process-buffer
 		  (elmo-network-session-process-internal session)))

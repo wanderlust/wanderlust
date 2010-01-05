@@ -147,11 +147,11 @@
 
 (defvar elmo-archive-suffix-alist
    '((lha . ".lzh")  ; default
-;;;  (lha . ".lzs")
+;;;     (lha . ".lzs")
      (zip . ".zip")
      (zoo . ".zoo")
-;;;  (arc . ".arc")
-;;;  (arj . ".arj")
+;;;     (arc . ".arc")
+;;;     (arj . ".arj")
      (rar . ".rar")
      (tar . ".tar")
      (tgz . ".tar.gz")))
@@ -219,7 +219,7 @@
     '((ls    . ("gtar" "-tf"))
       (cat   . ("gtar" "-Oxf"))
       (ext   . ("gtar" "-xf"))
-;;;	(rm    . ("gtar" "--delete" "-f")) ;; well not work
+;;;      (rm    . ("gtar" "--delete" "-f")) ;; well not work
       )))
 
 ;;; GNU tar (*.tar.gz, *.tar.Z, *.tar.bz2)
@@ -227,7 +227,7 @@
   '((ls         . ("gtar" "-ztf"))
     (cat        . ("gtar" "-Ozxf"))
     (create     . ("gtar" "-zcf"))
-;;; (rm         . elmo-archive-tgz-rm-func)
+;;;    (rm         . elmo-archive-tgz-rm-func)
     (cp         . elmo-archive-tgz-cp-func)
     (mv         . elmo-archive-tgz-mv-func)
     (ext        . ("gtar" "-zxf"))
@@ -235,17 +235,17 @@
     (decompress . ("gzip" "-d"))
     (compress   . ("gzip"))
     (append     . ("gtar" "-uf"))
-;;; (delete     . ("gtar" "--delete" "-f")) ; well not work
+;;;    (delete     . ("gtar" "--delete" "-f")) ; well not work
     ))
 
 (defvar elmo-archive-method-list
   '(elmo-archive-lha-method-alist
     elmo-archive-zip-method-alist
     elmo-archive-zoo-method-alist
-;;; elmo-archive-tar-method-alist
+;;;    elmo-archive-tar-method-alist
     elmo-archive-tgz-method-alist
-;;; elmo-archive-arc-method-alist
-;;; elmo-archive-arj-method-alist
+;;;    elmo-archive-arc-method-alist
+;;;    elmo-archive-arj-method-alist
     elmo-archive-rar-method-alist))
 
 ;;; Internal vars.
@@ -1003,7 +1003,7 @@ TYPE specifies the archiver's symbol."
 	  (elmo-msgdb-append
 	   new-msgdb
 	   (elmo-archive-parse-mmdf folder msgs flag-table)))
-;;; 	 ((looking-at delim2)	;; UNIX MAIL
+;;; 	 ((looking-at delim2)		; UNIX MAIL
 ;;; 	  (elmo-msgdb-append
 ;;; 	   new-msgdb
 ;;; 	   (elmo-archive-parse-unixmail msgs flag-table)))
@@ -1060,12 +1060,11 @@ TYPE specifies the archiver's symbol."
 
 (luna-define-method elmo-folder-search ((folder elmo-archive-folder)
 					condition &optional from-msgs)
-  (let* (;;(args (elmo-string-to-list key))
-	 ;; XXX: I don't know whether `elmo-archive-list-folder'
-	 ;;      updates match-data.
-	 ;; (msgs (or from-msgs (elmo-archive-list-folder spec)))
+  (let* ((case-fold-search nil)
+;;;	 (args (elmo-string-to-list key))
+;;; XXX: I don't know whether `elmo-archive-list-folder' updates match-data.
+;;;	 (msgs (or from-msgs (elmo-archive-list-folder spec)))
 	 (msgs (or from-msgs (elmo-folder-list-messages folder)))
-	 (case-fold-search nil)
 	 ret-val)
     (elmo-with-progress-display (elmo-folder-search (length msgs)) "Searching"
       (dolist (number msgs)

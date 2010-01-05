@@ -651,7 +651,7 @@ until the login delay period has expired"))
 	  (elmo-pop3-send-command process
 				  (format "top %s 0" (car articles))
 				  'no-erase)
-	  ;;;	(accept-process-output process 1)
+;;;	  (accept-process-output process 1)
 	  (setq articles (cdr articles))
 	  (setq count (1+ count))
 	  ;; Every 200 requests we have to read the stream in
@@ -671,7 +671,7 @@ until the login delay period has expired"))
 		     (< received count))
 	      (elmo-progress-notify 'elmo-retrieve-header :set received)
 	      (accept-process-output process 1)
-	      ;;;	    (accept-process-output process)
+;;;	      (accept-process-output process)
 	      (discard-input)))))
       ;; Replace all CRLF with LF.
       (elmo-delete-cr-buffer)

@@ -405,7 +405,7 @@ file name for maildir directories."
       (make-directory (file-name-directory filename)))
     (while (file-exists-p filename)
 ;;; I don't want to wait.
-;;;   (sleep-for 2)
+;;;      (sleep-for 2)
       (setq filename
 	    (expand-file-name
 	     (concat "tmp/" (elmo-maildir-make-unique-string))
