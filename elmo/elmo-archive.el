@@ -219,7 +219,7 @@
     '((ls    . ("gtar" "-tf"))
       (cat   . ("gtar" "-Oxf"))
       (ext   . ("gtar" "-xf"))
-;;;      (rm    . ("gtar" "--delete" "-f")) ;; well not work
+;;;      (rm    . ("gtar" "--delete" "-f")) ; well not work
       )))
 
 ;;; GNU tar (*.tar.gz, *.tar.Z, *.tar.bz2)
