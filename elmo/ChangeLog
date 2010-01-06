@@ -1,8 +1,3 @@
-2010-01-06  TAKAHASHI Kaoru  <kaoru@kaisei.org>
-
-	* elmo-util.el (elmo-set-work-buf): Revert `save-excursion' for
-	robustness.
-
 2010-01-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* acap.el (acap-parse-response): Fix comment-out style. Use three

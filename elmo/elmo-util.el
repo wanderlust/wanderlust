@@ -71,11 +71,10 @@
 
 (defmacro elmo-set-work-buf (&rest body)
   "Execute BODY on work buffer.  Work buffer remains."
-  `(save-excursion
-     (with-current-buffer (get-buffer-create elmo-work-buf-name)
-       (set-buffer-multibyte default-enable-multibyte-characters)
-       (erase-buffer)
-       ,@body)))
+  `(with-current-buffer (get-buffer-create elmo-work-buf-name)
+     (set-buffer-multibyte default-enable-multibyte-characters)
+     (erase-buffer)
+     ,@body))
 
 (put 'elmo-set-work-buf 'lisp-indent-function 0)
 (def-edebug-spec elmo-set-work-buf t)
