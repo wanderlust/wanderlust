@@ -653,32 +653,33 @@ See also variable `wl-use-petname'."
 ;; Handler of event from elmo-folder
 (defun wl-summary-update-persistent-mark-on-event (buffer numbers)
   (with-current-buffer buffer
-    (if wl-summary-lazy-update-mark
-	(let ((window-list (get-buffer-window-list (current-buffer) 'nomini t))
-	      invalidate)
-	  (dolist (number numbers)
-	    (when (wl-summary-message-visible-p number)
-	      (if (catch 'visible
-		    (let ((window-list window-list)
-			  win)
-		      (while (setq win (car window-list))
-			(when (wl-summary-jump-to-msg number
-						      (window-start win)
-						      (window-end win))
-			  (throw 'visible t))
-			(setq window-list (cdr window-list)))))
-		  (wl-summary-update-persistent-mark number)
-		(setq invalidate t))))
-	  (when invalidate
-	    (wl-summary-invalidate-persistent-mark)
-	    (dolist (win window-list)
-	      (wl-summary-validate-persistent-mark
-	       (window-start win)
-	       (window-end win)))))
-      (dolist (number numbers)
-	(when (and (wl-summary-message-visible-p number)
-		   (wl-summary-jump-to-msg number))
-	  (wl-summary-update-persistent-mark number))))))
+    (save-excursion
+      (if wl-summary-lazy-update-mark
+	  (let ((window-list (get-buffer-window-list (current-buffer) 'nomini t))
+		invalidate)
+	    (dolist (number numbers)
+	      (when (wl-summary-message-visible-p number)
+		(if (catch 'visible
+		      (let ((window-list window-list)
+			    win)
+			(while (setq win (car window-list))
+			  (when (wl-summary-jump-to-msg number
+							(window-start win)
+							(window-end win))
+			    (throw 'visible t))
+			  (setq window-list (cdr window-list)))))
+		    (wl-summary-update-persistent-mark number)
+		  (setq invalidate t))))
+	    (when invalidate
+	      (wl-summary-invalidate-persistent-mark)
+	      (dolist (win window-list)
+		(wl-summary-validate-persistent-mark
+		 (window-start win)
+		 (window-end win)))))
+	(dolist (number numbers)
+	  (when (and (wl-summary-message-visible-p number)
+		     (wl-summary-jump-to-msg number))
+	    (wl-summary-update-persistent-mark number)))))))
 
 (defun wl-summary-buffer-attach ()
   (when wl-summary-buffer-elmo-folder
