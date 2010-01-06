@@ -400,8 +400,7 @@ it will add an alias."
   (wl-summary-redisplay)
   (let ((buf wl-message-buffer)
 	from shortname address addrs name)
-    (save-excursion
-      (set-buffer buf)
+    (with-current-buffer buf
       (setq address (std11-field-body "From"))
       (if (wl-address-user-mail-address-p address)
 	  (setq address (std11-field-body "To")))
