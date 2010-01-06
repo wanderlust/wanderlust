@@ -1,5 +1,8 @@
 2010-01-06  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* wl-score.el (wl-score-followup): Remove verbose comment (same as
+	docstring).
+
 	* wl-summary.el (wl-summary-update-persistent-mark-on-event):
 	Revert `save-excursion' for `wl-summary-jump-to-msg'.
 

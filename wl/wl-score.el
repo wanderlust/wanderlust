@@ -711,7 +711,6 @@ Set `wl-score-cache' nil."
 
 (defun wl-score-followup (scores header now expire &optional thread)
   "Insert the unique message headers in the buffer."
-  ;; Insert the unique message headers in the buffer.
   (let ((wl-score-index (nth 2 (assoc header wl-score-header-index)))
 	(all-scores scores)
 	entries alist messages
