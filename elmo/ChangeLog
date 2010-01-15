@@ -14,6 +14,10 @@
 	elmo-imap4-folder-list-range, elmo-folder-open): Don't ask server
 	for full uid range on folder entering, retrieve updates only for
 	newly appeared messages.
+	* elmo-imap4.el (elmo-imap4-send-command, elmo-imap4-send-string,
+	elmo-imap4-read-response, elmo-imap4-read-untagged,
+	elmo-imap4-parse-response): Change deprecated time-stamp-hh:mm:ss
+	to format-time-string.
 
 2010-01-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 

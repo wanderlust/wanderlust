@@ -357,7 +357,7 @@ Returns a TAG string which is assigned to the COMMAND."
 	      (t
 	       (error "Invalid argument")))
 	(setq command-args (cdr command-args)))
-      (elmo-imap4-debug "[%s] <- %s" (time-stamp-hh:mm:ss) cmdstr)
+      (elmo-imap4-debug "[%s] <- %s" (format-time-string "%T") cmdstr)
       (process-send-string process (concat cmdstr "\r\n"))
       tag)))
 
@@ -367,7 +367,7 @@ Returns a TAG string which is assigned to the COMMAND."
 			(elmo-network-session-process-internal session))
     (setq elmo-imap4-current-response nil)
     (goto-char (point-min))
-    (elmo-imap4-debug "[%s] <-- %s" (time-stamp-hh:mm:ss) string)
+    (elmo-imap4-debug "[%s] <-- %s" (format-time-string "%T") string)
     (process-send-string (elmo-network-session-process-internal session)
 			 string)
     (process-send-string (elmo-network-session-process-internal session)
@@ -392,7 +392,7 @@ TAG is the tag of the command"
 		  '(open run))
 	(accept-process-output (elmo-network-session-process-internal session)
 			       1)))
-    (elmo-imap4-debug "[%s] =>%s" (time-stamp-hh:mm:ss) (prin1-to-string elmo-imap4-current-response))
+    (elmo-imap4-debug "[%s] => %s" (format-time-string "%T") (prin1-to-string elmo-imap4-current-response))
     (setq elmo-imap4-parsing nil)
     elmo-imap4-current-response))
 
@@ -400,7 +400,7 @@ TAG is the tag of the command"
   (with-current-buffer (process-buffer process)
     (while (not elmo-imap4-current-response)
       (accept-process-output process 1))
-    (elmo-imap4-debug "[%s] =>%s" (time-stamp-hh:mm:ss) (prin1-to-string elmo-imap4-current-response))
+    (elmo-imap4-debug "[%s] =>%s" (format-time-string "%T") (prin1-to-string elmo-imap4-current-response))
     elmo-imap4-current-response))
 
 (defun elmo-imap4-read-continue-req (session)
@@ -1415,7 +1415,7 @@ Return nil if no complete line has arrived."
 
 (defun elmo-imap4-parse-response ()
   "Parse a IMAP command response."
-  (elmo-imap4-debug "[%s] -> %s" (time-stamp-hh:mm:ss) (buffer-substring (point) (point-max)))
+  (elmo-imap4-debug "[%s] -> %s" (format-time-string "%T") (buffer-substring (point) (point-max)))
   (let (token)
     (case (setq token (read (current-buffer)))
       (+ (progn
