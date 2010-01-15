@@ -2,6 +2,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 * Changes in 2.16.0 from 2.14.x
 
+** Added support for ESEARCH feature (RFC4731).
+
 ** New option `elmo-imap4-set-seen-flag-explicitly'.
 
 ** Optimize refiling.
