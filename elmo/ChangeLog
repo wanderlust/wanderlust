@@ -3,6 +3,11 @@
 	* elmo-imap4.el (elmo-imap4-elist): New function
 	* elmo-imap4.el (elmo-imap4-parse-response): Added support for
 	ESEARCH feature (RFC4731).
+	* elmo-imap4.el (toplevel): Require time-stamp
+	* elmo-imap4.el (elmo-imap4-send-command, elmo-imap4-send-string,
+	elmo-imap4-read-response elmo-imap4-read-untagged
+	elmo-imap4-arrival-filter elmo-imap4-parse-response): Change
+	logging format.
 
 2010-01-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
