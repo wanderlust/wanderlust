@@ -746,17 +746,52 @@ Returns response value if selecting folder succeed. "
   ;; Not used.
   )
 
+(defun elmo-imap4-elist (folder query tags)
+  (let ((session (elmo-imap4-get-session folder)))
+    (elmo-imap4-session-select-mailbox
+     session
+     (elmo-imap4-folder-mailbox-internal folder))
+    (let ((answer (elmo-imap4-response-value
+		   (elmo-imap4-send-command-wait
+		    session query) 'esearch))
+	  tag result)
+      (while answer
+	(setq tag (intern (downcase (car answer))))
+	(cond ((eq tag 'uid)
+	       nil)
+	      ((memq tag tags)
+	       (setq result
+		     (append result
+			     (if (eq tag 'all)
+				 (sort
+				  (elmo-number-set-to-number-list
+				   (mapcar #'(lambda (x)
+					       (let ((y (split-string x ":")))
+						 (if (null (cdr y))
+						     (string-to-number (car y))
+						   (cons (string-to-number (car y))
+							 (string-to-number (cadr y))))))
+					   (split-string (cadr answer) "\,"))) '<)
+			       (string-to-number (cadr answer))))))
+	      (t nil))
+	(setq answer (cdr answer)))
+      result)))
+
 (defun elmo-imap4-list (folder flag)
   (let ((session (elmo-imap4-get-session folder)))
     (elmo-imap4-session-select-mailbox
      session
      (elmo-imap4-folder-mailbox-internal folder))
-    (elmo-imap4-response-value
-     (elmo-imap4-send-command-wait
-      session
-      (format (if elmo-imap4-use-uid "uid search %s"
-		"search %s") flag))
-     'search)))
+    (if (elmo-imap4-session-capable-p session 'esearch)
+	(elmo-imap4-elist folder
+			  (concat (if elmo-imap4-use-uid "uid " "")
+				  "search return (all) " flag) '(all))
+      (elmo-imap4-response-value
+       (elmo-imap4-send-command-wait
+	session
+	(format (if elmo-imap4-use-uid "uid search %s"
+		  "search %s") flag))
+       'search))))
 
 (defun elmo-imap4-session-flag-available-p (session flag)
   (case flag
@@ -1400,6 +1435,9 @@ Return nil if no complete line has arrived."
 			(read (concat "("
 				      (buffer-substring (point) (point-max))
 				      ")"))))
+	   (ESEARCH     (list
+			 'esearch
+			 (cddr (split-string (buffer-substring (point) (point-max)) " " "\,"))))
 	   (STATUS     (elmo-imap4-parse-status))
 	   ;; Added
 	   (NAMESPACE  (elmo-imap4-parse-namespace))

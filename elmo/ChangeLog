@@ -1,3 +1,9 @@
+2010-01-15  Vitaly Mayatskih  <v.mayatskih@gmail.com>
+
+	* elmo-imap4.el (elmo-imap4-elist): New function
+	* elmo-imap4.el (elmo-imap4-parse-response): Added support for
+	ESEARCH feature (RFC4731).
+
 2010-01-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* acap.el (acap-parse-response): Fix comment-out style. Use three
