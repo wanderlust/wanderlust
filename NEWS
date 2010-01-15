@@ -2,6 +2,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 * Changes in 2.16.0 from 2.14.x
 
+** New option `elmo-imap4-set-seen-flag-explicitly'.
+
 ** Optimize refiling.
    Interpret filter, pipe and multi folder and select the most suitable method.
 

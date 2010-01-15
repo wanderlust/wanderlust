@@ -2,6 +2,8 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 * 2.14.x から 2.16.0 への変更点
 
+** 新規オプション elmo-imap4-set-seen-flag-explicitly が追加されました。
+
 ** pipe でのコピーで新規メッセージが取り込めなくなるバグが修正されました。
 
 ** サマリのソート順に複数の条件を指定出来るようになりました。
