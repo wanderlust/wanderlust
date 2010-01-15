@@ -8,6 +8,10 @@
 	elmo-imap4-read-response elmo-imap4-read-untagged
 	elmo-imap4-arrival-filter elmo-imap4-parse-response): Change
 	logging format.
+	* elmo-imap4.el (elmo-folder-list-messages-plugged,
+	elmo-imap4-folder-list-range, elmo-folder-open): Don't ask server
+	for full uid range on folder entering, retrieve updates only for
+	newly appeared messages.
 
 2010-01-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 

@@ -1969,22 +1969,37 @@ Return nil if no complete line has arrived."
 	  (elmo-msgdb-killed-list-length killed))
        (elmo-imap4-response-value status 'messages)))))
 
+(defun elmo-imap4-folder-list-range (folder min max)
+  (elmo-imap4-list
+   folder
+   (concat
+    (let ((killed
+          (elmo-folder-killed-list-internal
+           folder)))
+      (if (and killed
+              (eq (length killed) 1)
+              (consp (car killed))
+              (eq (car (car killed)) 1))
+;; What about elmo-imap4-use-uid?
+         (format "uid %d:%s" (cdr (car killed)) max)
+       (format "uid %s:%s" min max)))
+    " undeleted")))
+
 (luna-define-method elmo-folder-list-messages-plugged ((folder
-							elmo-imap4-folder)
-						       &optional
-						       enable-killed)
-  (elmo-imap4-list folder
-		   (concat
-		    (let ((killed
-			   (elmo-folder-killed-list-internal
-			    folder)))
-		      (if (and killed
-			       (eq (length killed) 1)
-			       (consp (car killed))
-			       (eq (car (car killed)) 1))
-			  (format "uid %d:*" (cdr (car killed)))
-			"all"))
-		    " undeleted")))
+                                                        elmo-imap4-folder)
+                                                       &optional
+                                                       enable-killed)
+
+  (let* ((old (elmo-msgdb-list-messages (elmo-folder-msgdb folder)))
+         (new (elmo-imap4-folder-list-range folder
+               (1+ (or (elmo-folder-get-info-max folder) 0)) "*"))
+         (united-old-new (elmo-union old new)))
+    (if (= (length united-old-new) (or (elmo-folder-get-info-length folder) 0))
+        united-old-new
+      (elmo-union new
+		  (elmo-imap4-folder-list-range
+		   folder
+		   1 (1+ (or (elmo-folder-get-info-max folder) 0)))))))
 
 (luna-define-method elmo-folder-list-flagged-plugged
   ((folder elmo-imap4-folder) flag)
@@ -2544,6 +2559,9 @@ If optional argument REMOVE is non-nil, remove FLAG."
 				(setq response
 				      (elmo-imap4-read-response session tag))))
 		  (progn
+		    (let ((exists (assq 'exists response))) ; update message count,
+		      (when exists			    ; so merge update can go
+			(elmo-folder-set-info-hashtb folder nil (cadr exists))))
 		    (elmo-imap4-session-set-current-mailbox-internal
 		     session mailbox)
 		    (elmo-imap4-session-set-read-only-internal
