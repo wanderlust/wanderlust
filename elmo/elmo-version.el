@@ -41,7 +41,7 @@
 (product-provide 'elmo-version
   ;; Don't forget to run `make update-version' and `make test'.
   ;; Don't forget to check codename in `wl-version.el'.
-  (product-define "ELMO" nil '(2 15 8)))
+  (product-define "ELMO" nil '(2 15 9)))
 
 ;; set version-string
 (product-version-as-string 'elmo-version)

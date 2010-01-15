@@ -1,5 +1,7 @@
 2010-01-15  Vitaly Mayatskih  <v.mayatskih@gmail.com>
 
+	* elmo-version.el (elmo-version): Up to 2.15.9.
+
 	* elmo-imap4.el (elmo-imap4-elist): New function
 	* elmo-imap4.el (elmo-imap4-parse-response): Added support for
 	ESEARCH feature (RFC4731).
