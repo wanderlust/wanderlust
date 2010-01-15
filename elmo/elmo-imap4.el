@@ -2780,6 +2780,8 @@ If optional argument REMOVE is non-nil, remove FLAG."
 						number strategy
 						&optional section
 						outbuf unseen)
+  (when elmo-imap4-set-seen-flag-explicitly
+    (elmo-imap4-set-flag folder (list number) "\\Seen"))
   (elmo-imap4-message-fetch folder number strategy section outbuf unseen))
 
 (luna-define-method elmo-message-fetch-field ((folder elmo-imap4-folder)

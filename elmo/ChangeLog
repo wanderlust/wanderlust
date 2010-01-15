@@ -18,6 +18,10 @@
 	elmo-imap4-read-response, elmo-imap4-read-untagged,
 	elmo-imap4-parse-response): Change deprecated time-stamp-hh:mm:ss
 	to format-time-string.
+	* elmo-vars.el (toplevel): New custom
+	`elmo-imap4-set-seen-flag-explicitly' to override setting of Seen
+	flag for some buggy servers.
+	* elmo-imap4.el (elmo-message-fetch-plugged): Ditto
 
 2010-01-05  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 

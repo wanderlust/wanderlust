@@ -121,6 +121,12 @@ you have to add it to `elmo-digest-flags'.
   "A hook called just before the nntp posting.")
 
 ;;; IMAP4
+(defcustom elmo-imap4-set-seen-flag-explicitly
+  nil
+  "*Set Seen flag explicitly (avoid bug in Google Mail)"
+  :type 'boolean
+  :group 'elmo
+  :group 'elmo-setting)
 
 (defcustom elmo-imap4-default-server "localhost"
   "*Default IMAP4 server."
