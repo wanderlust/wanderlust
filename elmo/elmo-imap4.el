@@ -1985,17 +1985,14 @@ Return nil if no complete line has arrived."
        (format "uid %s:%s" min max)))
     " undeleted")))
 
-(luna-define-method elmo-folder-list-messages-plugged ((folder
-                                                        elmo-imap4-folder)
-                                                       &optional
-                                                       enable-killed)
-
+(luna-define-method elmo-folder-list-messages-plugged
+  ((folder elmo-imap4-folder) &optional enable-killed)
   (let* ((old (elmo-msgdb-list-messages (elmo-folder-msgdb folder)))
-         (new (elmo-imap4-folder-list-range folder
-               (1+ (or (elmo-folder-get-info-max folder) 0)) "*"))
-         (united-old-new (elmo-union old new)))
+	 (new (elmo-imap4-folder-list-range
+	       folder (1+ (or (elmo-folder-get-info-max folder) 0)) "*"))
+	 (united-old-new (elmo-union old new)))
     (if (= (length united-old-new) (or (elmo-folder-get-info-length folder) 0))
-        united-old-new
+	united-old-new
       (elmo-union new
 		  (elmo-imap4-folder-list-range
 		   folder
