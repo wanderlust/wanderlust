@@ -430,6 +430,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "\C-c\C-n" 'wl-summary-next-buffer)
   (define-key wl-summary-mode-map "H"    'wl-summary-toggle-all-header)
   (define-key wl-summary-mode-map "M"    'wl-summary-toggle-mime)
+  (define-key wl-summary-mode-map "\C-cm" 'wl-summary-toggle-mime-buttons)
   (define-key wl-summary-mode-map "B"    'wl-summary-burst)
   (define-key wl-summary-mode-map "Z"    'wl-status-update)
   (define-key wl-summary-mode-map "#"    'wl-summary-print-message)
@@ -5101,6 +5102,13 @@ If ARG is numeric number, decode message as following:
 	  (set-buffer mbuf)
 	  (wl-message-header-narrowing-toggle)
 	  (and wpos (set-window-start mwin wpos)))))))
+
+(defun wl-summary-toggle-mime-buttons ()
+  "Toggle visibility of mime buttons."
+  (interactive)
+  (customize-set-value 'mime-view-buttons-visible (not mime-view-buttons-visible))
+  (wl-message-buffer-cache-clean-up)
+  (wl-summary-redisplay))
 
 (require 'product)
 (product-provide (provide 'wl-summary) (require 'wl-version))

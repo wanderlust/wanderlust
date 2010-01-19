@@ -1,3 +1,8 @@
+2010-01-19  Vitaly Mayatskikh  <v.mayatskih@gmail.com>
+	* wl-summary.el (toplevel): New function
+	`wl-summary-toggle-mime-buttons' and keybinding to toggle
+	visibility of MIME buttons in message view mode.
+
 2010-01-15  Vitaly Mayatskikh  <v.mayatskih@gmail.com>
 
 	* Version number is increased to 2.15.9.
