@@ -1,3 +1,7 @@
+2010-01-22  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* test-elmo-date.el (test-elmo-date-get-week): Add assert.
+
 2010-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* test-elmo-util.el (test-elmo-delete-cr-1): New testcase.

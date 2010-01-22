@@ -7,6 +7,8 @@
   "Check around singularity date. leap year and 2038-01-19."
   (let ((elmo-lang "en"))
     (lunit-assert
+     (string= "Fri" (elmo-date-get-week 1582 10 15)))
+    (lunit-assert
      (string= "Tue" (elmo-date-get-week 2000 2 29)))
     (lunit-assert
      (string= "Tue" (elmo-date-get-week 2038 1 19)))
