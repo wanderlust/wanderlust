@@ -1,5 +1,7 @@
 2010-01-22  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* test-utf7.el (test-utf7-encode-string-alpha): Fix indent.
+
 	* test-elmo-date.el (test-elmo-date-get-week): Add assert.
 
 2010-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>

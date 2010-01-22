@@ -35,8 +35,8 @@
     "A+ImIDkQ-."
     (utf7-encode-string
      (concat "A"
-	    (string (make-char 'mule-unicode-0100-24ff 121 34)
-		    (make-char 'mule-unicode-0100-24ff 38 113))
+	     (string (make-char 'mule-unicode-0100-24ff 121 34)
+		     (make-char 'mule-unicode-0100-24ff 38 113))
 	     ".")))))
 
 (luna-define-method test-utf7-encode-string-plus ((case test-utf7))
