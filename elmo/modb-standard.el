@@ -276,7 +276,7 @@
 	     (dolist (section sections)
 	       (modb-standard-save-entity-1 modb path section))))
 	  (modified
-	   (modb-standard-save-entity-1 modb path)))))
+	   (modb-standard-cleanup-stale-entities modb path)))))
 
 ;;; Implement
 ;;
