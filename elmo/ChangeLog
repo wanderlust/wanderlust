@@ -3,6 +3,8 @@
 	* modb-standard.el (modb-standard-save-entity): Use
 	`modb-standard-cleanup-stale-entities' to clean up stale entity
 	files in modb cache.
+	* elmo-imap4.el (elmo-network-authenticate-session): Ask for
+	capabilities after login.
 
 2010-01-17  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
