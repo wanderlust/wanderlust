@@ -1,4 +1,4 @@
-2010-01-15  Vitaly Mayatskih  <v.mayatskih@gmail.com>
+2010-01-22  Vitaly Mayatskih  <v.mayatskih@gmail.com>
 
 	* modb-standard.el (modb-standard-save-entity): Use
 	`modb-standard-cleanup-stale-entities' to clean up stale entity
