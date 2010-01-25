@@ -1,3 +1,8 @@
+2010-01-25  Vitaly Mayatskikh  <v.mayatskih@gmail.com>
+
+	* wl-draft.el (wl-draft-send-confirm-with-preview): Inhibit pgp
+	autodecryption for draft preview.
+
 2010-01-19  Vitaly Mayatskikh  <v.mayatskih@gmail.com>
 	* wl-summary.el (toplevel): New function
 	`wl-summary-toggle-mime-buttons' and keybinding to toggle

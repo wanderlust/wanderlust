@@ -1279,7 +1279,8 @@ This variable is valid when `wl-interactive-send' has non-nil value."
       (condition-case nil
 	  (progn
 	    (when wl-draft-send-confirm-with-preview
-	      (let (wl-draft-send-hook)
+	      (let (wl-draft-send-hook
+		    (pgg-decrypt-automatically nil))
 		(wl-draft-preview-message)))
 	    (save-excursion
 	      (goto-char (point-min)) ; to show recipients in header
