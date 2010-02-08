@@ -1,3 +1,10 @@
+2010-02-08  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-action.el (wl-summary-action-unmark-docstring): New inline function.
+	(wl-summary-define-mark-action): Define unmark functions.
+	(wl-summary-unmark): Add the second argument `mark'.
+	(wl-summary-delete-all-mark): Pass `mark' to `wl-summary-unmark'.
+
 2010-01-25  Vitaly Mayatskikh  <v.mayatskih@gmail.com>
 
 	* wl-draft.el (wl-draft-send-confirm-with-preview): Inhibit pgp
