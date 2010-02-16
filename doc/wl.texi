@@ -7158,6 +7158,7 @@ Put spam mark (@samp{s}) on current message.
 @kindex k c (Summary)
 @findex wl-summary-test-spam
 Test current message and put spam mark if judged as spam.
+Remove spam mark if judged as non-spam.
 
 @item k C
 @kindex k C (Summary)
@@ -7195,6 +7196,7 @@ Put spam mark on messages in the specified region.
 @kindex r k c (Summary)
 @findex wl-summary-test-spam-region
 Test messages in the specified region and put spam mark if judged as spam.
+Remove spam mark if judged as non-spam.
 
 @item t k m
 @kindex t k m (Summary)
@@ -7206,8 +7208,8 @@ With prefix argument, it affects on the all messages in the thread tree.
 @kindex t k c (Summary)
 @findex wl-thread-test-spam
 Test messages which are the descendant of the current thread and put spam mark
-if judged as spam.  With prefix argument, it affects on the all messages in
-the thread tree.
+if judged as spam.  Remove spam mark if judged as non-spam.
+With prefix argument, it affects on the all messages in the thread tree.
 
 @item m k
 @kindex m k (Summary)

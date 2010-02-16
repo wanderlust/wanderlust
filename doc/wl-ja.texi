@@ -7100,7 +7100,7 @@ non-spam としての学習に加えて、spam に行なった学習を削除します。
 @kindex k c (Summary)
 @findex wl-summary-test-spam
 カーソル行のメッセージをテストし、spam と判定された場合に spam マークを
-付けます。
+付けます。spam でないと判定された場合は spam マークを取り除きます。
 
 @item k C
 @kindex k C (Summary)
@@ -7139,7 +7139,7 @@ spam かどうかのテストを行います。spam と判定されたメッセージには、sp
 @kindex r k c (Summary)
 @findex wl-summary-test-spam-region
 指定リージョンにあるメッセージをテストし、spam と判定された場合に spam マークを
-付けます。
+付けます。spam でないと判定された場合は spam マークを取り除きます。
 
 @item t k m
 @kindex t k m (Summary)
@@ -7153,6 +7153,7 @@ prefix argument つきならばカーソル行があるメッセージを含むスレッド全てに
 @findex wl-thread-test-spam
 カーソル行があるメッセージを先頭とするスレッドのメッセージをテストし、
 spam と判定された場合に spam マークを付けます。
+spam でないと判定された場合は spam マークを取り除きます。
 prefix argument つきならばカーソル行があるメッセージを含むスレッド全てに
 適用します。
 

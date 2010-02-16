@@ -206,7 +206,8 @@ See `wl-summary-mark-action-list' for the detail of element."
 
 (eval-when-compile
   ;; Avoid compile warnings
-  (defalias-maybe 'wl-summary-spam 'ignore))
+  (defalias-maybe 'wl-summary-spam 'ignore)
+  (defalias-maybe 'wl-summary-unmark-spam 'ignore))
 
 (defun wl-summary-test-spam (&optional folder number)
   (interactive)
@@ -214,20 +215,32 @@ See `wl-summary-mark-action-list' for the detail of element."
 	(number (or number (wl-summary-message-number)))
 	spam)
     (message "Checking spam...")
-    (when (setq spam (elmo-spam-message-spam-p (elmo-spam-processor)
-					       folder number))
-      (wl-summary-spam number))
+    (if (setq spam (elmo-spam-message-spam-p (elmo-spam-processor)
+					     folder number))
+	(wl-summary-spam number)
+      (wl-summary-unmark-spam number))
     (message "Checking spam...done")
     (when (interactive-p)
       (message "No: %d is %sa spam message." number (if spam "" "not ")))))
+
+(defun wl-summary-test-spam-messages (folder numbers &rest args)
+  (elmo-with-progress-display (elmo-spam-check-spam (length numbers))
+      "Checking spam"
+    (let* ((spams (elmo-spam-list-spam-messages (elmo-spam-processor)
+						folder
+						numbers))
+	   (goods (car (elmo-list-diff numbers spams))))
+      (dolist (number spams)
+	(wl-summary-spam number args))
+      (dolist (number goods)
+	(wl-summary-unmark-spam number)))))
 
 (defun wl-summary-test-spam-region (beg end)
   (interactive "r")
   (let ((numbers (wl-summary-collect-numbers-region beg end)))
     (cond (numbers
-	   (wl-spam-map-spam-messages wl-summary-buffer-elmo-folder
-				      numbers
-				      #'wl-summary-spam))
+	   (wl-summary-test-spam-messages wl-summary-buffer-elmo-folder
+					  numbers))
 	  ((interactive-p)
 	   (message "No message to test.")))))
 

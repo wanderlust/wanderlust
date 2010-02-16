@@ -1,3 +1,11 @@
+2010-02-16  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-spam.el (wl-summary-test-spam): Call `wl-summary-unmark-spam'
+	for the message not classified as spam.
+	(wl-summary-test-spam-messages): New function.
+	(wl-summary-test-spam-region): Use `wl-summary-test-spam-messages'
+	instead of `wl-spam-map-spam-messages'.
+
 2010-02-08  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-action.el (wl-summary-action-unmark-docstring): New inline function.
