@@ -1,3 +1,8 @@
+2010-03-03  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* etc/icons/unplugged.xpm: Change design. Use `unplugged' style
+	instead of `prohibition sign' style.
+
 2010-01-04  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* WL-MK (wl-scan-source, wl-uninstall)
