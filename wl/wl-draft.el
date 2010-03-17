@@ -2527,7 +2527,8 @@ Automatically applied in draft sending time."
   (goto-char (point-min))
   (search-forward mail-header-separator)
   (forward-line 1)
-  (insert body-text))
+  (insert body-text)
+  (or (bolp) (insert "\n")))
 
 ;;;###autoload
 (defun wl-user-agent-compose (&optional to subject other-headers continue
@@ -2546,26 +2547,23 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
   ;; to be necessary to protect the values used w/in
   (let ((wl-user-agent-headers-and-body-alist other-headers)
 	(wl-draft-use-frame (eq switch-function 'switch-to-buffer-other-frame))
-	(wl-draft-buffer-style switch-function))
+	(wl-draft-buffer-style switch-function)
+	tem)
     (if to
-	(if (wl-string-match-assoc "to" wl-user-agent-headers-and-body-alist
-				   'ignore-case)
-	    (setcdr
-	     (wl-string-match-assoc "to" wl-user-agent-headers-and-body-alist
-				    'ignore-case)
-	     to)
+	(if (setq tem (wl-string-match-assoc
+		       "\\`to\\'"
+		       wl-user-agent-headers-and-body-alist
+		       'ignore-case))
+	    (setcdr tem to)
 	  (setq wl-user-agent-headers-and-body-alist
 		(cons (cons "to" to)
 		      wl-user-agent-headers-and-body-alist))))
     (if subject
-	(if (wl-string-match-assoc "subject"
-				   wl-user-agent-headers-and-body-alist
-				   'ignore-case)
-	    (setcdr
-	     (wl-string-match-assoc "subject"
-				    wl-user-agent-headers-and-body-alist
-				    'ignore-case)
-	     subject)
+	(if (setq tem (wl-string-match-assoc
+		       "\\`subject\\'"
+		       wl-user-agent-headers-and-body-alist
+		       'ignore-case))
+	    (setcdr tem subject)
 	  (setq wl-user-agent-headers-and-body-alist
 		(cons (cons "subject" subject)
 		      wl-user-agent-headers-and-body-alist))))
@@ -2597,12 +2595,11 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 	;; highlight headers (from wl-draft in wl-draft.el)
 	(wl-highlight-headers 'for-draft)
 	;; insert body
-	(if (wl-string-match-assoc "body" wl-user-agent-headers-and-body-alist
-				   'ignore-case)
-	    (wl-user-agent-insert-body
-	     (cdr (wl-string-match-assoc
-		   "body"
-		   wl-user-agent-headers-and-body-alist 'ignore-case)))))
+	(let ((body (wl-string-match-assoc "\\`body\\'"
+					   wl-user-agent-headers-and-body-alist
+					   'ignore-case)))
+	  (if body
+	      (wl-user-agent-insert-body (cdr body)))))
     t))
 
 (defun wl-draft-setup-parent-flag (flag)

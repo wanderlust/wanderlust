@@ -1,3 +1,10 @@
+2010-03-17  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-draft.el (wl-user-agent-insert-body): Make sure body ends with
+	newline.
+	(wl-user-agent-compose, wl-user-agent-compose-internal): Fix regexps
+	so as to match header tokens strictly.
+
 2010-02-16  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-spam.el (wl-summary-test-spam): Call `wl-summary-unmark-spam'
