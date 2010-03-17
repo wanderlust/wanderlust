@@ -852,11 +852,15 @@ Returns response value if selecting folder succeed. "
     (t
      (elmo-imap4-flag-to-imap-search-key flag))))
 
-(defun elmo-imap4-folder-list-flagged (folder flag)
+(defun elmo-imap4-folder-list-flagged (folder flag &optional type)
   "List flagged message numbers in the FOLDER.
-FLAG is one of the `unread', `read', `important', `answered', `any'."
+FLAG is one of the `unread', `read', `important', `answered',
+`any'.
+When optional argument TYPE is symbol 'unmatch, negate search
+condition."
   (let ((session (elmo-imap4-get-session folder))
-	(criteria (elmo-imap4-flag-to-imap-criteria flag)))
+	(criteria (concat (if (eq type 'unmatch) "not " "")
+			  (elmo-imap4-flag-to-imap-criteria flag))))
     (if (elmo-imap4-session-flag-available-p session flag)
 	(elmo-imap4-list folder criteria)
       ;; List flagged messages in the msgdb.
@@ -2287,7 +2291,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	numbers))
      ((string= "flag" search-key)
       (elmo-imap4-folder-list-flagged
-       folder (intern (elmo-filter-value filter))))
+       folder (intern (elmo-filter-value filter)) (elmo-filter-type filter)))
      ((or (string= "since" search-key)
 	  (string= "before" search-key))
       (setq search-key (concat "sent" search-key)
