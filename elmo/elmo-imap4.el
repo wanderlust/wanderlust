@@ -95,6 +95,10 @@
   "Extra namespace alist.
 A list of cons cell like: (REGEXP . DELIMITER).
 REGEXP should have a grouping for namespace prefix.")
+
+(defvar elmo-imap4-disabled-extensions nil
+  "List of server extensions that are disabled on the client side.")
+
 ;;
 ;;; internal variables
 ;;
@@ -200,7 +204,8 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
   (luna-define-internal-accessors 'elmo-imap4-session))
 
 (defmacro elmo-imap4-session-capable-p (session capability)
-  `(memq ,capability (elmo-imap4-session-capability-internal ,session)))
+  `(and (memq ,capability (elmo-imap4-session-capability-internal ,session))
+	(not (memq ,capability elmo-imap4-disabled-extensions))))
 
 ;;; MIME-ELMO-IMAP Location
 (eval-and-compile

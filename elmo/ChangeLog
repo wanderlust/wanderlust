@@ -1,3 +1,11 @@
+2010-04-14  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-imap4-disabled-extension): New
+	variable. List of server extensions that are disabled on the
+	client side.
+	(elmo-imap4-session-capable-p): Honour list of disabled
+	extensions.
+
 2010-03-17  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-folder-list-flagged)
