@@ -181,7 +181,7 @@ REGEXP should have a grouping for namespace prefix.")
 
 (defconst elmo-imap4-folder-name-syntax
   `(mailbox
-    (?: [user "^[A-Za-z]"] (?/ [auth ".+"]))
+    (?: [user "^[A-Za-z0-9]"] (?/ [auth ".+"]))
     ,@elmo-net-folder-name-syntax))
 
 ;; For debugging.
