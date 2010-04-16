@@ -200,7 +200,11 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 ;;; Session
 (eval-and-compile
   (luna-define-class elmo-imap4-session (elmo-network-session)
-		     (capability current-mailbox read-only flags))
+		     (capability
+		      current-mailbox
+		      current-mailbox-size
+		      read-only
+		      flags))
   (luna-define-internal-accessors 'elmo-imap4-session))
 
 (defmacro elmo-imap4-session-capable-p (session capability)
@@ -276,6 +280,32 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 (defmacro elmo-imap4-response-bodydetail-text (response)
   "Returns text of BODY[section]<partial>."
   `(nth 3 (assq 'bodydetail ,response)))
+
+(defun elmo-imap4-mailbox-size-update-maybe (session response)
+  "Update size of selected mailbox in SESSION according to RESPONSE."
+  (let ((exists (elmo-imap4-response-value response 'exists))
+	(recent (elmo-imap4-response-value response 'recent))
+	(expunge (delq nil (mapcar '(lambda (r)
+				      (if (eq (car r) 'expunge)
+					  (cadr r)))
+				    response)))
+	(current-size (or (elmo-imap4-session-current-mailbox-size-internal
+			   session) (cons nil nil))))
+    (when (or expunge exists recent)
+      (when expunge
+	(if (null (car current-size))
+	    (elmo-imap4-debug "[%s] -> (bug) cannot reduce mailbox size"
+			      (format-time-string "%T"))
+	  (setcar current-size (- (car current-size)
+				  (length expunge)))))
+      (if exists (setcar current-size exists))
+      (if recent (setcdr current-size recent))
+      (elmo-imap4-session-set-current-mailbox-size-internal
+       session current-size)
+      (elmo-imap4-debug "[%s] -> mailbox size adjusted: %s, %s"
+			(format-time-string "%T")
+			(elmo-imap4-session-current-mailbox-internal session)
+			current-size))))
 
 ;;; Session commands.
 
@@ -399,6 +429,7 @@ TAG is the tag of the command"
 			       1)))
     (elmo-imap4-debug "[%s] => %s" (format-time-string "%T") (prin1-to-string elmo-imap4-current-response))
     (setq elmo-imap4-parsing nil)
+    (elmo-imap4-mailbox-size-update-maybe session elmo-imap4-current-response)
     elmo-imap4-current-response))
 
 (defsubst elmo-imap4-read-untagged (process)
@@ -506,7 +537,7 @@ If response is not `OK' response, causes error with IMAP response text."
   (with-current-buffer (elmo-network-session-buffer session)
     (setq elmo-imap4-fetch-callback nil)
     (setq elmo-imap4-fetch-callback-data nil))
-  (elmo-imap4-send-command session "check"))
+  (elmo-imap4-send-command-wait session "check"))
 
 (defun elmo-imap4-atom-p (string)
   "Return t if STRING is an atom defined in rfc2060."
@@ -729,6 +760,7 @@ Returns response value if selecting folder succeed. "
 	       (nth 1 (or (assq 'permanentflags response)
 			  (assq 'flags response)))))
 	  (elmo-imap4-session-set-current-mailbox-internal session nil)
+	  (elmo-imap4-session-set-current-mailbox-size-internal session nil)
 	  (if (and (eq no-error 'notify-bye)
 		   (elmo-imap4-response-bye-p response))
 	      (elmo-imap4-process-bye session)
@@ -2169,7 +2201,9 @@ Return nil if no complete line has arrived."
 	   (list "delete "
 		 (elmo-imap4-mailbox
 		  (elmo-imap4-folder-mailbox-internal folder)))))
-	(elmo-imap4-session-set-current-mailbox-internal session nil))
+	(elmo-imap4-session-set-current-mailbox-internal session nil)
+	(elmo-imap4-session-set-current-mailbox-size-internal session nil)
+	)
       (elmo-msgdb-delete-path folder)
       t)))
 
@@ -2266,7 +2300,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
     (unless (elmo-imap4-set-flag folder numbers "\\Deleted")
       (error "Failed to set deleted flag"))
     (when expunge
-      (elmo-imap4-send-command session "expunge"))
+      (elmo-imap4-send-command-wait session "expunge"))
     t))
 
 (defun elmo-imap4-detect-search-charset (string)
@@ -2586,6 +2620,8 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		     (nth 1 (or (assq 'permanentflags response)
 				(assq 'flags response)))))
 		(elmo-imap4-session-set-current-mailbox-internal session nil)
+		(elmo-imap4-session-set-current-mailbox-size-internal
+		 session nil)
 		(if (elmo-imap4-response-bye-p response)
 		    (elmo-imap4-process-bye session)
 		  (error "%s"
@@ -2601,13 +2637,16 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		session mailbox)
 	     (and session
 		  (elmo-imap4-session-set-current-mailbox-internal
-		   session nil))))
+		   session nil))
+	    ))
 	  (error
 	   (if (elmo-imap4-response-ok-p response)
 	       (elmo-imap4-session-set-current-mailbox-internal
 		session mailbox)
 	     (and session
 		  (elmo-imap4-session-set-current-mailbox-internal
+		   session nil)
+		  (elmo-imap4-session-set-current-mailbox-size-internal
 		   session nil))))))
     (luna-call-next-method)))
 
