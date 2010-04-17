@@ -1,3 +1,8 @@
+2010-04-17  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-imap4-mailbox-size-update-maybe): Build list
+	of expunged messages only when response contains expunge.
+
 2010-04-16  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (luna-define-class): Add slot
