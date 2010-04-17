@@ -2,6 +2,8 @@
 
 	* elmo-imap4.el (elmo-imap4-mailbox-size-update-maybe): Build list
 	of expunged messages only when response contains expunge.
+	(elmo-imap4-folder-diff-plugged): Removed usage of kill file to
+	adjust message counter.
 
 2010-04-16  David Maus  <dmaus@ictsoc.de>
 

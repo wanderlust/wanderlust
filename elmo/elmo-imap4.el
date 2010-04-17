@@ -2542,7 +2542,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 
 (defsubst elmo-imap4-folder-diff-plugged (folder)
   (let ((session (elmo-imap4-get-session folder))
-	messages new unread response killed uidnext)
+	messages new unread response)
 ;;;    (elmo-imap4-commit spec)
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-status-callback nil)
@@ -2558,18 +2558,9 @@ If optional argument REMOVE is non-nil, remove FLAG."
 					 (elmo-imap4-mailbox
 					  (elmo-imap4-folder-mailbox-internal
 					   folder))
-					 " (recent unseen messages uidnext)")))
+					 " (recent unseen messages)")))
     (setq response (elmo-imap4-response-value response 'status))
     (setq messages (elmo-imap4-response-value response 'messages))
-    (setq uidnext (elmo-imap4-response-value response 'uidnext))
-    (setq killed (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder)))
-    ;;
-    (when killed
-      (when (and (consp (car killed))
-		 (eq (car (car killed)) 1))
-	(setq messages (- uidnext (cdr (car killed)) 1)))
-      (setq messages (- messages
-			(elmo-msgdb-killed-list-length (cdr killed)))))
     (setq new (elmo-imap4-response-value response 'recent)
 	  unread (elmo-imap4-response-value response 'unseen))
     (if (< unread new) (setq new unread))
