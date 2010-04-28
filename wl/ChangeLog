@@ -1,3 +1,7 @@
+2010-04-28  Vitaly Mayatskikh  <v.mayatskih@gmail.com>
+	* wl-e21.el (wl-e21-setup-toolbar): Don't define vector with
+	images for the icon if there is only one image.
+
 2010-03-17  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-draft.el (wl-user-agent-insert-body): Make sure body ends with

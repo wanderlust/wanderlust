@@ -202,7 +202,9 @@
 			    `((,@props ,(concat name "-down.xpm"))))
 		      disabled (wl-e21-find-image
 				`((,@props ,(concat name "-disabled.xpm")))))
-		(set icon (vector down up disabled disabled)))
+		(if (and down disabled)
+		    (set icon (vector down up disabled disabled))
+		  (set icon up)))
 	    (setq bar nil
 		  success nil))))
       success)))
