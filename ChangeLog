@@ -1,3 +1,9 @@
+2010-04-29  Tetsurou Okazaki  <okazaki@be.to>
+
+	* WL-MK (uninstall-wl-icons): New function.  Uninstall *.img
+	files as well.
+	(uninstall-wl-package): Use `uninstall-wl-icons'.
+
 2010-03-03  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* etc/icons/unplugged.xpm: Change design. Use `unplugged' style

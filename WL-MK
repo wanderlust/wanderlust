@@ -265,6 +265,19 @@
 					"\\.img$\\|\\.xbm$")))))
     (install-files icons ICONDIR PIXMAPDIR nil 'overwrite)))
 
+(defun uninstall-wl-icons ()
+  (let* ((case-fold-search t)
+	 (icons (directory-files PIXMAPDIR t "\\.img$\\|\\.x[bp]m$"))
+	 icon)
+    (while icons
+      (setq icon (car icons)
+	    icons (cdr icons))
+      (if (and (file-exists-p icon)
+	       (file-writable-p icon))
+	  (progn
+	    (princ (format "%s was uninstalled.\n" icon))
+	    (delete-file icon))))))
+
 (defun install-wl-package ()
   (compile-wl-package)
   (let ((wl-install-dir (expand-file-name WL_PREFIX LISPDIR))
@@ -291,17 +304,7 @@
     (wl-uninstall (wl-scan-source (list ELMODIR))
 		  elmo-install-dir))
   (if PIXMAPDIR
-      (let* ((case-fold-search t)
-	     (icons (directory-files PIXMAPDIR t "\\.x[bp]m$"))
-	     icon)
-	(while icons
-	  (setq icon (car icons)
-		icons (cdr icons))
-	  (if (and (file-exists-p icon)
-		   (file-writable-p icon))
-	      (progn
-		(princ (format "%s was uninstalled.\n" icon))
-		(delete-file icon)))))))
+      (uninstall-wl-icons)))
 
 
 (defun config-wl-package-xmas ()
