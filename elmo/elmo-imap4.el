@@ -285,20 +285,20 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
   "Update size of selected mailbox in SESSION according to RESPONSE."
   (let ((exists (elmo-imap4-response-value response 'exists))
 	(recent (elmo-imap4-response-value response 'recent))
-	(expunge (if (assq 'expunge response)
-		     (delq nil (mapcar '(lambda (r)
-					  (if (eq (car r) 'expunge)
-					      (cadr r)))
-				       response))))
 	(current-size (or (elmo-imap4-session-current-mailbox-size-internal
-			   session) (cons nil nil))))
-    (when (or expunge exists recent)
-      (when expunge
+			   session) (cons nil nil)))
+	(expunge 0))
+    (when (assq 'expunge response)
+      (mapc '(lambda (r)
+	       (if (eq (car r) 'expunge)
+		   (setq expunge (1+ expunge)))) response))
+    (when (or (> expunge 0) exists recent)
+      (when (> expunge 0)
 	(if (null (car current-size))
 	    (elmo-imap4-debug "[%s] -> (bug) cannot reduce mailbox size"
 			      (format-time-string "%T"))
 	  (setcar current-size (- (car current-size)
-				  (length expunge)))))
+				  expunge))))
       (if exists (setcar current-size exists))
       (if recent (setcdr current-size recent))
       (elmo-imap4-session-set-current-mailbox-size-internal
@@ -2551,18 +2551,28 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	(elmo-imap4-session-select-mailbox
 	 session
 	 (elmo-imap4-folder-mailbox-internal folder)))
-    (setq response
-	  (elmo-imap4-send-command-wait session
-					(list
-					 "status "
-					 (elmo-imap4-mailbox
-					  (elmo-imap4-folder-mailbox-internal
-					   folder))
-					 " (recent unseen messages)")))
-    (setq response (elmo-imap4-response-value response 'status))
-    (setq messages (elmo-imap4-response-value response 'messages))
-    (setq new (elmo-imap4-response-value response 'recent)
-	  unread (elmo-imap4-response-value response 'unseen))
+    (if (string= (elmo-imap4-session-current-mailbox-internal session)
+		 (elmo-imap4-folder-mailbox-internal folder))
+	(progn
+	  (elmo-imap4-send-command-wait session "noop")
+	  (setq unread (length (elmo-imap4-folder-list-flagged folder 'unread)))
+	  (setq messages
+		(car (elmo-imap4-session-current-mailbox-size-internal
+		      session))
+		new (cdr (elmo-imap4-session-current-mailbox-size-internal
+			  session))))
+      (setq response
+	    (elmo-imap4-send-command-wait session
+					  (list
+					   "status "
+					   (elmo-imap4-mailbox
+					    (elmo-imap4-folder-mailbox-internal
+					     folder))
+					   " (recent unseen messages)")))
+      (setq response (elmo-imap4-response-value response 'status))
+      (setq messages (elmo-imap4-response-value response 'messages))
+      (setq new (elmo-imap4-response-value response 'recent)
+	    unread (elmo-imap4-response-value response 'unseen)))
     (if (< unread new) (setq new unread))
     (list new unread messages)))
 
