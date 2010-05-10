@@ -1,3 +1,13 @@
+2010-05-08  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-imap4-mailbox-selected-p): New macro.
+	Return non-nil if mailbox is selected in session.
+	(elmo-imap4-session-select-mailbox): Use macro
+	`elmo-imap4-mailbox-selected-p'.
+	(elmo-folder-exists-p-plugged): Dto.
+	(elmo-folder-check-plugged): Dto.
+	(elmo-imap4-folder-diff-plugged): Dto.
+
 2010-05-05  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-mailbox-size-update-maybe): Use

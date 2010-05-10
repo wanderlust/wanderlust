@@ -211,6 +211,10 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
   `(and (memq ,capability (elmo-imap4-session-capability-internal ,session))
 	(not (memq ,capability elmo-imap4-disabled-extensions))))
 
+(defmacro elmo-imap4-mailbox-selected-p (mailbox session)
+  "Return non-nil if MAILBOX is selected in SESSION."
+  `(string= (elmo-imap4-session-current-mailbox-internal ,sessio) ,maibox))
+
 ;;; MIME-ELMO-IMAP Location
 (eval-and-compile
   (luna-define-class mime-elmo-imap-location
@@ -737,9 +741,7 @@ selecting folder was failed.
 If NO-ERROR is 'notify-bye, only BYE response is reported as error.
 Returns response value if selecting folder succeed. "
   (when (or force
-	    (not (string=
-		  (elmo-imap4-session-current-mailbox-internal session)
-		  mailbox)))
+	    (not (elmo-imap4-mailbox-selected-p mailbox session)))
     (let (response result)
       (unwind-protect
 	  (setq response
@@ -2167,9 +2169,8 @@ Return nil if no complete line has arrived."
 
 (luna-define-method elmo-folder-exists-p-plugged ((folder elmo-imap4-folder))
   (let ((session (elmo-imap4-get-session folder)))
-    (if (string=
-	 (elmo-imap4-session-current-mailbox-internal session)
-	 (elmo-imap4-folder-mailbox-internal folder))
+    (if (elmo-imap4-mailbox-selected-p
+	 (elmo-imap4-folder-mailbox-internal folder) session)
 	t
       (elmo-imap4-session-select-mailbox
        session
@@ -2530,9 +2531,9 @@ If optional argument REMOVE is non-nil, remove FLAG."
 (luna-define-method elmo-folder-check-plugged ((folder elmo-imap4-folder))
   (let ((session (elmo-imap4-get-session folder 'if-exists)))
     (when session
-      (if (string=
-	   (elmo-imap4-session-current-mailbox-internal session)
-	   (elmo-imap4-folder-mailbox-internal folder))
+      (if (elmo-imap4-mailbox-selected-p
+	   (elmo-imap4-folder-mailbox-internal folder)
+	   session)
 	  (if elmo-imap4-use-select-to-update-status
 	      (elmo-imap4-session-select-mailbox
 	       session
@@ -2551,8 +2552,9 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	(elmo-imap4-session-select-mailbox
 	 session
 	 (elmo-imap4-folder-mailbox-internal folder)))
-    (if (string= (elmo-imap4-session-current-mailbox-internal session)
-		 (elmo-imap4-folder-mailbox-internal folder))
+    (if (elmo-imap4-mailbox-selected-p
+	 (elmo-imap4-folder-mailbox-internal folder)
+	 session)
 	(progn
 	  (elmo-imap4-send-command-wait session "noop")
 	  (setq unread (length (elmo-imap4-folder-list-flagged folder 'unread)))
