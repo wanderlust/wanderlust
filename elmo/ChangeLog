@@ -1,3 +1,7 @@
+2010-05-18  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-imap4-mailbox-selected-p): Fix typo.
+
 2010-05-08  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-mailbox-selected-p): New macro.

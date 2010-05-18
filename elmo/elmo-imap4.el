@@ -213,7 +213,7 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 
 (defmacro elmo-imap4-mailbox-selected-p (mailbox session)
   "Return non-nil if MAILBOX is selected in SESSION."
-  `(string= (elmo-imap4-session-current-mailbox-internal ,sessio) ,maibox))
+  `(string= (elmo-imap4-session-current-mailbox-internal ,session) ,mailbox))
 
 ;;; MIME-ELMO-IMAP Location
 (eval-and-compile
