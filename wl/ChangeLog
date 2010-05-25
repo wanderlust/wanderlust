@@ -1,3 +1,10 @@
+2010-05-25  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-spam.el (wl-summary-register-as-spam-region)
+	(wl-thread-register-as-spam, wl-summary-register-as-good-region)
+	(wl-thread-register-as-good): New functions.
+	(wl-spam-setup): Bind "rks", "rkn", "tks" and "tkn".
+
 2010-04-28  Vitaly Mayatskikh  <v.mayatskih@gmail.com>
 	* wl-e21.el (wl-e21-setup-toolbar): Don't define vector with
 	images for the icon if there is only one image.

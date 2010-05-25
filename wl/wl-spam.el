@@ -272,6 +272,19 @@ See `wl-summary-mark-action-list' for the detail of element."
       (wl-spam-register-spam-messages wl-summary-buffer-elmo-folder
 				      (list number)))))
 
+(defun wl-summary-register-as-spam-region (beg end)
+  (interactive "r")
+  (let ((numbers (wl-summary-collect-numbers-region beg end)))
+    (cond (numbers
+	   (wl-spam-register-spam-messages wl-summary-buffer-elmo-folder
+					   numbers))
+	  ((interactive-p)
+	   (message "No message to register as spam.")))))
+
+(defun wl-thread-register-as-spam (&optional arg)
+  (interactive "P")
+  (wl-thread-call-region-func 'wl-summary-register-as-spam-region arg))
+
 (defun wl-summary-register-as-spam-all ()
   (interactive)
   (wl-spam-register-spam-messages wl-summary-buffer-elmo-folder
@@ -295,6 +308,19 @@ See `wl-summary-mark-action-list' for the detail of element."
     (when number
       (wl-spam-register-good-messages wl-summary-buffer-elmo-folder
 				      (list number)))))
+
+(defun wl-summary-register-as-good-region (beg end)
+  (interactive "r")
+  (let ((numbers (wl-summary-collect-numbers-region beg end)))
+    (cond (numbers
+	   (wl-spam-register-good-messages wl-summary-buffer-elmo-folder
+					   numbers))
+	  ((interactive-p)
+	   (message "No message to register as good.")))))
+
+(defun wl-thread-register-as-good (&optional arg)
+  (interactive "P")
+  (wl-thread-call-region-func 'wl-summary-register-as-good-region arg))
 
 (defun wl-summary-register-as-good-all ()
   (interactive)
@@ -410,9 +436,17 @@ See `wl-summary-mark-action-list' for the detail of element."
   (define-key
     wl-summary-mode-map "rkc" 'wl-summary-test-spam-region)
   (define-key
+    wl-summary-mode-map "rks" 'wl-summary-register-as-spam-region)
+  (define-key
+    wl-summary-mode-map "rkn" 'wl-summary-register-as-good-region)
+  (define-key
     wl-summary-mode-map "tkm" 'wl-thread-spam)
   (define-key
     wl-summary-mode-map "tkc" 'wl-thread-test-spam)
+  (define-key
+    wl-summary-mode-map "tks" 'wl-thread-register-as-spam)
+  (define-key
+    wl-summary-mode-map "tkn" 'wl-thread-register-as-good)
   (define-key
     wl-summary-mode-map "mk" 'wl-summary-target-mark-spam)
   (define-key

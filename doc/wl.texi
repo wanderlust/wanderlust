@@ -7198,6 +7198,16 @@ Put spam mark on messages in the specified region.
 Test messages in the specified region and put spam mark if judged as spam.
 Remove spam mark if judged as non-spam.
 
+@item r k s
+@kindex r k s (Summary)
+@findex wl-summary-register-as-spam-region
+Register messages in the specified region as spam.
+
+@item r k n
+@kindex r k n (Summary)
+@findex wl-summary-register-as-good-region
+Register messages in the specified region as non-spam.
+
 @item t k m
 @kindex t k m (Summary)
 @findex wl-thread-spam
@@ -7209,6 +7219,18 @@ With prefix argument, it affects on the all messages in the thread tree.
 @findex wl-thread-test-spam
 Test messages which are the descendant of the current thread and put spam mark
 if judged as spam.  Remove spam mark if judged as non-spam.
+With prefix argument, it affects on the all messages in the thread tree.
+
+@item t k s
+@kindex t k s (Summary)
+@findex wl-thread-register-as-spam
+Register messages which are the descendant of the current thread as spam.
+With prefix argument, it affects on the all messages in the thread tree.
+
+@item t k n
+@kindex t k n (Summary)
+@findex wl-thread-register-as-good
+Register messages which are the descendant of the current thread as non-spam.
 With prefix argument, it affects on the all messages in the thread tree.
 
 @item m k
