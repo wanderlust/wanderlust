@@ -2745,15 +2745,24 @@ If optional argument REMOVE is non-nil, remove FLAG."
 
 (luna-define-method elmo-folder-next-message-number-plugged
   ((folder elmo-imap4-folder))
-  (let ((session (elmo-imap4-get-session folder))
-	messages new unread response killed uidnext)
+  (let* ((session (elmo-imap4-get-session folder))
+	 (selected (elmo-imap4-mailbox-selected-p
+		    (elmo-imap4-folder-mailbox-internal folder) session))
+	 response uidnext)
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-status-callback nil)
       (setq elmo-imap4-status-callback-data nil))
-    (if elmo-imap4-use-select-to-update-status
-	(elmo-imap4-session-select-mailbox
-	 session
-	 (elmo-imap4-folder-mailbox-internal folder)))
+    (cond
+     ((and selected (not elmo-imap4-use-select-to-update-status))
+      (elmo-imap4-send-command-wait session "close")
+      (elmo-imap4-session-set-current-mailbox-internal session nil)
+      (elmo-imap4-session-set-current-mailbox-size-internal session nil))
+     ((and (not selected) elmo-imap4-use-select-to-update-status)
+      ;; This will result in a violation of RFC3501: calling STATUS on
+      ;; a selected mailbox.
+      (elmo-imap4-session-select-mailbox
+       session
+       (elmo-imap4-folder-mailbox-internal folder))))
     (setq response
 	  (elmo-imap4-send-command-wait session
 					(list

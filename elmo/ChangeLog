@@ -8,6 +8,10 @@
 	opposite.
 	(elmo-imap4-folder-status-plugged): Remove usage of kill file to
 	adjust message counter.
+	(elmo-folder-next-message-number-plugged): Close mailbox before
+	calling STATUS if selected.  If
+	`elmo-imap4-use-select-to-update-status' is non-nil, do the
+	opposite.
 
 2010-05-18  David Maus  <dmaus@ictsoc.de>
 
