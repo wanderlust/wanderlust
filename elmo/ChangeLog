@@ -1,3 +1,12 @@
+2010-07-02  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-server-diff-async): Remove.  Unused luna
+	method.
+	(elmo-imap4-folder-status-plugged): Close mailbox before calling
+	STATUS if it is selected.  If
+	`elmo-imap4-use-select-to-update-status' is non-nil, do the
+	opposite.
+
 2010-05-18  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-mailbox-selected-p): Fix typo.

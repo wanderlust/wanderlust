@@ -1290,22 +1290,6 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 			       (elmo-imap4-folder-mailbox-internal folder))
 			      " (recent unseen messages)"))))
 
-(luna-define-method elmo-server-diff-async ((folder elmo-imap4-folder))
-  (let ((session (elmo-imap4-get-session folder)))
-;;;    ;; commit.
-;;;    (elmo-imap4-commit spec)
-    (with-current-buffer (elmo-network-session-buffer session)
-      (setq elmo-imap4-status-callback
-	    'elmo-imap4-server-diff-async-callback-1)
-      (setq elmo-imap4-status-callback-data
-	    elmo-imap4-server-diff-async-callback-data))
-    (elmo-imap4-send-command session
-			     (list
-			      "status "
-			      (elmo-imap4-mailbox
-			       (elmo-imap4-folder-mailbox-internal folder))
-			      " (recent unseen messages)"))))
-
 ;;; IMAP parser.
 
 (defvar elmo-imap4-server-eol "\r\n"
@@ -1998,13 +1982,26 @@ Return nil if no complete line has arrived."
   (elmo-imap4-folder-status-plugged folder))
 
 (defun elmo-imap4-folder-status-plugged (folder)
-  (let ((session (elmo-imap4-get-session folder))
-	(killed (elmo-msgdb-killed-list-load
+  (let* ((session (elmo-imap4-get-session folder))
+	 (killed (elmo-msgdb-killed-list-load
 		 (elmo-folder-msgdb-path folder)))
-	status)
+	 (selected (elmo-imap4-mailbox-selected-p
+		    (elmo-imap4-folder-mailbox-internal folder) session))
+	 status)
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-status-callback nil)
       (setq elmo-imap4-status-callback-data nil))
+    (cond
+     ((and selected (not elmo-imap4-use-select-to-update-status))
+      (elmo-imap4-send-command-wait session "close")
+      (elmo-imap4-session-set-current-mailbox-internal session nil)
+      (elmo-imap4-session-set-current-mailbox-size-internal session nil))
+     ((and (not selected) elmo-imap4-use-select-to-update-status)
+      ;; This will result in a violation of RFC3501: calling STATUS on
+      ;; a selected mailbox.
+      (elmo-imap4-session-select-mailbox
+       session
+       (elmo-imap4-folder-mailbox-internal folder))))
     (setq status (elmo-imap4-response-value
 		  (elmo-imap4-send-command-wait
 		   session
