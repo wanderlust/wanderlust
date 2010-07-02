@@ -6,6 +6,8 @@
 	STATUS if it is selected.  If
 	`elmo-imap4-use-select-to-update-status' is non-nil, do the
 	opposite.
+	(elmo-imap4-folder-status-plugged): Remove usage of kill file to
+	adjust message counter.
 
 2010-05-18  David Maus  <dmaus@ictsoc.de>
 

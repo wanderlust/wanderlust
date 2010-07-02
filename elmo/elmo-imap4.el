@@ -1983,8 +1983,6 @@ Return nil if no complete line has arrived."
 
 (defun elmo-imap4-folder-status-plugged (folder)
   (let* ((session (elmo-imap4-get-session folder))
-	 (killed (elmo-msgdb-killed-list-load
-		 (elmo-folder-msgdb-path folder)))
 	 (selected (elmo-imap4-mailbox-selected-p
 		    (elmo-imap4-folder-mailbox-internal folder) session))
 	 status)
@@ -2012,11 +2010,7 @@ Return nil if no complete line has arrived."
 		  'status))
     (cons
      (- (elmo-imap4-response-value status 'uidnext) 1)
-     (if killed
-	 (-
-	  (elmo-imap4-response-value status 'messages)
-	  (elmo-msgdb-killed-list-length killed))
-       (elmo-imap4-response-value status 'messages)))))
+     (elmo-imap4-response-value status 'messages))))
 
 (defun elmo-imap4-folder-list-range (folder min max)
   (elmo-imap4-list
