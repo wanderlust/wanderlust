@@ -1,3 +1,10 @@
+2010-07-18  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-imap4-mailbox-size-update-maybe): Ignore
+	EXPUNGE responses.
+	(elmo-imap4-mailbox-size-update-maybe): Use latest EXIST or RECENT
+	response value.
+
 2010-07-02  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-server-diff-async): Remove.  Unused luna

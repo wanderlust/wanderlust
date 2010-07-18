@@ -287,30 +287,20 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 
 (defun elmo-imap4-mailbox-size-update-maybe (session response)
   "Update size of selected mailbox in SESSION according to RESPONSE."
-  (let ((exists (elmo-imap4-response-value response 'exists))
-	(recent (elmo-imap4-response-value response 'recent))
+  (let ((exists (elmo-imap4-response-value-all response 'exists))
+	(recent (elmo-imap4-response-value-all response 'recent))
 	(current-size (or (elmo-imap4-session-current-mailbox-size-internal
-			   session) (cons nil nil)))
-	(expunge 0))
-    (when (assq 'expunge response)
-      (mapc '(lambda (r)
-	       (if (eq (car r) 'expunge)
-		   (setq expunge (1+ expunge)))) response))
-    (when (or (> expunge 0) exists recent)
-      (when (> expunge 0)
-	(if (null (car current-size))
-	    (elmo-imap4-debug "[%s] -> (bug) cannot reduce mailbox size"
-			      (format-time-string "%T"))
-	  (setcar current-size (- (car current-size)
-				  expunge))))
-      (if exists (setcar current-size exists))
-      (if recent (setcdr current-size recent))
-      (elmo-imap4-session-set-current-mailbox-size-internal
-       session current-size)
-      (elmo-imap4-debug "[%s] -> mailbox size adjusted: %s, %s"
-			(format-time-string "%T")
-			(elmo-imap4-session-current-mailbox-internal session)
-			current-size))))
+			   session) (cons nil nil))))
+    (if exists (setcar current-size (if (atom exists)
+					exists (car (last exists)))))
+    (if recent (setcdr current-size (if (atom recent)
+					recent (car (last recent)))))
+    (elmo-imap4-session-set-current-mailbox-size-internal
+     session current-size)
+    (elmo-imap4-debug "[%s] -> mailbox size adjusted: %s, %s"
+		      (format-time-string "%T")
+		      (elmo-imap4-session-current-mailbox-internal session)
+		      current-size)))
 
 ;;; Session commands.
 
