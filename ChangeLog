@@ -1,3 +1,8 @@
+2010-07-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* INSTALL: Update recommended version of APEL.
+	* INSTALL.ja: Ditto.
+
 2010-07-11  David Maus  <dmaus@ictsoc.de>
 
 	* doc/wl.texi (Variables of Summary): Replace unicode character.

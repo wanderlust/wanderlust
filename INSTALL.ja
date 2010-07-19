@@ -33,23 +33,23 @@ MIME用モジュールの選択
 
   (a) XEmacs 21.1 以降
 
-	APEL 10.7, FLIM 1.14.9, SEMI 1.14.6
+	APEL 10.8, FLIM 1.14.9, SEMI 1.14.6
 
     可能ならば XEmacs のパッケージとしてインストールすることをお勧めします。
 
   (b) Emacs 20.4 以降
 
-	APEL 10.7, FLIM 1.14.9, SEMI 1.14.6
+	APEL 10.8, FLIM 1.14.9, SEMI 1.14.6
 
   (c) Emacs 20.1〜20.3
 
-	APEL 10.7, CLIME 1.14.6, SEMI 1.14.6
+	APEL 10.8, CLIME 1.14.6, SEMI 1.14.6
 
     FLIM が動きませんので、代わりに CLIME をインストールしてください。
 
   (d) Emacs 19.34 (Mule 2.3)
 
-	APEL 10.7, CLIME 1.14.6, SEMI 1.14.6
+	APEL 10.8, CLIME 1.14.6, SEMI 1.14.6
 
     Emacs 19.34 ベースの Mule では SEMI を動作させることが可能です。下記
     のページが参考になります。
