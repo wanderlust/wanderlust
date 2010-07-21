@@ -1,3 +1,9 @@
+2010-07-21  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-summary.el (wl-summary-put-temp-mark): Use (delete-char -1)
+	instead of (delete-backward-char 1) that deletes region in Emacs 24.
+	See delete-active-region described in NEWS.
+
 2010-05-25  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-spam.el (wl-summary-register-as-spam-region)

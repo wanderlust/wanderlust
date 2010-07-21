@@ -3008,7 +3008,7 @@ The mark is decided according to the FOLDER and STATUS."
       (let ((inhibit-read-only t)
 	    (buffer-read-only nil))
 	(move-to-column wl-summary-buffer-temp-mark-column)
-	(delete-backward-char 1)
+	(delete-char -1)
 	(insert mark)))))
 
 (defun wl-summary-next-buffer ()
