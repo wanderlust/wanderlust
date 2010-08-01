@@ -1188,7 +1188,7 @@ Returns a list of message numbers successfully appended."
 	  (error "move: %d is not writable"
 		 (elmo-folder-name-internal dst-folder)))
 	(when messages
-	  ;; src is already opened.
+	  (elmo-folder-open-internal src-folder)
 	  (elmo-folder-open-internal dst-folder)
 	  (unless (setq succeeds (elmo-folder-append-messages dst-folder
 							      src-folder
