@@ -39,7 +39,7 @@
     (defmacro defgroup (&rest args)
       nil)
     (defmacro defcustom (var value doc &rest args) 
-      (` (defvar (, var) (, value) (, doc))))))
+      `(devar ,var ,value ,doc))))
 
 (defgroup ssl nil
   "Support for `Secure Sockets Layer' encryption."
@@ -192,9 +192,8 @@ specifying a port number to connect to."
   (let* ((process-connection-type nil)
 	 (port service)
 	 (proc (eval
-		(`
-		 (start-process name buffer ssl-program-name
-				(,@ ssl-program-arguments))))))
+		`(start-process name buffer ssl-program-name
+				,@ssl-program-arguments))))
     (process-kill-without-query proc)
     proc))
 
