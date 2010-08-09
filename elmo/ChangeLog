@@ -1,3 +1,12 @@
+2010-08-09  David Maus  <dmaus@ictsoc.de>
+
+	* elmo.el (elmo-folder-open-internal-p): New luna method.
+	(elmo-folder-move-messages): Open source folder only if necessary.
+	* elmo-pipe.el (elmo-folder-open-internal-p): New luna method.
+	* elmo-multi.el (elmo-folder-open-internal-p): Dto.
+	* elmo-map.el (elmo-folder-open-internal-p): Dto.
+	* elmo-filter.el (elmo-folder-open-internal-p): Dto.
+
 2010-08-01  David Maus  <dmaus@ictsoc.de>
 
 	* elmo.el (elmo-folder-move-messages): Open source folder before
