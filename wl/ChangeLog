@@ -1,3 +1,8 @@
+2010-08-14  David Maus  <dmaus@ictsoc.de>
+
+	* wl-summary.el (wl-summary-mode-menu-spec): Add menu option to
+	edit draft message when in draft folder.
+
 2010-07-21  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-summary.el (wl-summary-put-temp-mark): Use (delete-char -1)
