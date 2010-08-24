@@ -3143,7 +3143,7 @@ Return non-nil if the mark is updated"
 		  (new-mark (wl-summary-persistent-mark number status)))
 	      (prog1
 		  (unless (string= new-mark mark)
-		    (delete-backward-char 1)
+		    (delete-char -1)
 		    (insert new-mark)
 		    (wl-summary-set-message-modified)
 		    t)

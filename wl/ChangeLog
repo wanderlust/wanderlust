@@ -1,3 +1,12 @@
+2010-08-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-address.el (wl-address-make-alist-from-alias-file): Use
+	`(delete-char -1)' instead of `(delete-backward-char 1)' that
+	deletes region in Emacs 24.
+	See delete-active-region described in NEWS.
+	* wl-draft.el (wl-draft-insert-mail-header-separator): Ditto.
+	* wl-summary.el (wl-summary-update-persistent-mark): Ditto.
+
 2010-08-14  David Maus  <dmaus@ictsoc.de>
 
 	* wl-summary.el (wl-summary-mode-menu-spec): Add menu option to

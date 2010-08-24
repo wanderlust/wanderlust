@@ -1878,7 +1878,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	(goto-char delimline)
       (goto-char (point-min))
       (if (search-forward "\n\n" nil t)
-	  (delete-backward-char 1)
+	  (delete-char -1)
 	(goto-char (point-max))))
     (wl-draft-check-new-line)
     (put-text-property (point)

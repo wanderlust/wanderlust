@@ -531,7 +531,7 @@ Refresh `wl-address-list', `wl-address-completion-list', and
       (while (re-search-forward ",$" nil t)
 	(end-of-line)
 	(forward-char 1)
-	(delete-backward-char 1))
+	(delete-char -1))
       (goto-char (point-min))
       (while (re-search-forward "^\\([^#;\n][^:]+\\):[ \t]*\\(.*\\)$" nil t)
 	(setq alias (wl-match-buffer 1)
