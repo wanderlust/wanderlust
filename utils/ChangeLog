@@ -3,6 +3,9 @@
 	* ptexinfmt.el (texinfo-format-verb): Use (delete-char -1)
         instead of (delete-backward-char 1); For Emacs24.
 
+	* wl-addrbook.el (wl-addrbook-insert-file): Use (delete-char -1)
+	instead of (delete-backward-char 1) or (backward-deletechar 1).
+
 2010-08-04  David Maus  <dmaus@ictsoc.de>
 
 	* ssl.el (open-ssl-stream, condition-case): Don't use old-style
