@@ -1,3 +1,12 @@
+2010-08-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* acap.el (acap-arrival-filter): Use (delete-char (- X)) instead of
+	(delete-backward-char X) that deletes region in Emacs 24.
+	See delete-active-region described in NEWS.
+	* elmo-imap4.el (elmo-imap4-arrival-filter): Ditto.
+	* elmo-util.el (elmo-get-file-string): Ditto.
+	* utf7.el (utf7-encode-internal, utf7-decode-internal): Ditto.
+
 2010-08-09  David Maus  <dmaus@ictsoc.de>
 
 	* elmo.el (elmo-folder-open-internal-p): New luna method.

@@ -1314,7 +1314,7 @@ Return nil if no complete line has arrived."
       (while (setq end (elmo-imap4-find-next-line))
 	(save-restriction
 	  (narrow-to-region (point-min) end)
-	  (delete-backward-char (length elmo-imap4-server-eol))
+	  (delete-char (- (length elmo-imap4-server-eol)))
 	  (goto-char (point-min))
 	  (unwind-protect
 	      (case elmo-imap4-status

@@ -508,7 +508,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 		  (> (buffer-size) 0)
 		  (= (char-after (1- (point-max))) ?\n))
 	 (goto-char (point-max))
-	 (delete-backward-char 1))
+	 (delete-char -1))
        (buffer-string)))))
 
 (defun elmo-save-string (string filename)
