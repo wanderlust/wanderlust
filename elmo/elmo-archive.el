@@ -146,15 +146,15 @@
      (rar . "^[ \t]%s\\([0-9]+\\)$"))))
 
 (defvar elmo-archive-suffix-alist
-   '((lha . ".lzh")  ; default
+  '((lha . ".lzh")			; default
 ;;;     (lha . ".lzs")
-     (zip . ".zip")
-     (zoo . ".zoo")
+    (zip . ".zip")
+    (zoo . ".zoo")
 ;;;     (arc . ".arc")
 ;;;     (arj . ".arj")
-     (rar . ".rar")
-     (tar . ".tar")
-     (tgz . ".tar.gz")))
+    (rar . ".rar")
+    (tar . ".tar")
+    (tgz . ".tar.gz")))
 
 ;;; lha
 (defvar elmo-archive-lha-method-alist
@@ -428,20 +428,19 @@ TYPE specifies the archiver's symbol."
 	(error "WARNING: read-only mode: %s (method undefined)" type))
       (cond
        ((file-directory-p tmp-dir)
-	()) ;nop
+	())				; nop
        ((file-exists-p tmp-dir)
 	;; file exists
 	(error "Create directory failed; File \"%s\" exists" tmp-dir))
        (t
 	(elmo-make-directory tmp-dir)))
-      (elmo-bind-directory
-       tmp-dir
-       (write-region (point) (point) dummy nil 'no-msg)
-       (prog1
-	   (elmo-archive-call-method method args)
-	 (if (file-exists-p dummy)
-	     (delete-file dummy)))
-       ))))
+      (elmo-bind-directory tmp-dir
+	(write-region (point) (point) dummy nil 'no-msg)
+	(prog1
+	    (elmo-archive-call-method method args)
+	  (if (file-exists-p dummy)
+	      (delete-file dummy)))
+	))))
 
 (luna-define-method elmo-folder-delete ((folder elmo-archive-folder))
   (let ((msgs (and (elmo-folder-exists-p folder)
@@ -601,24 +600,23 @@ TYPE specifies the archiver's symbol."
       (setq newfile (elmo-concat-path
 		     prefix
 		     (number-to-string next-num)))
-      (elmo-bind-directory
-       tmp-dir
-       (if (and (or (functionp method) (car method))
-		(file-writable-p newfile))
-	   (progn
-	     (setq dst-buffer (current-buffer))
-	     (with-current-buffer src-buffer
-	       (copy-to-buffer dst-buffer (point-min) (point-max)))
-	     (as-binary-output-file
-		  (write-region (point-min) (point-max) newfile nil 'no-msg))
-	     (when (elmo-archive-call-method method (list arc newfile))
-	       (elmo-folder-preserve-flags
-		folder
-		(with-current-buffer src-buffer
-		  (elmo-msgdb-get-message-id-from-buffer))
-		flags)
-	       t))
-	 nil)))))
+      (elmo-bind-directory tmp-dir
+	(if (and (or (functionp method) (car method))
+		 (file-writable-p newfile))
+	    (progn
+	      (setq dst-buffer (current-buffer))
+	      (with-current-buffer src-buffer
+		(copy-to-buffer dst-buffer (point-min) (point-max)))
+	      (as-binary-output-file
+	       (write-region (point-min) (point-max) newfile nil 'no-msg))
+	      (when (elmo-archive-call-method method (list arc newfile))
+		(elmo-folder-preserve-flags
+		 folder
+		 (with-current-buffer src-buffer
+		   (elmo-msgdb-get-message-id-from-buffer))
+		 flags)
+		t))
+	  nil)))))
 
 (defun elmo-folder-append-messages-*-archive (folder
 					      src-folder
@@ -706,22 +704,21 @@ TYPE specifies the archiver's symbol."
 					(number-to-string x))) numbers))
 	 number)
     ;; Expand files in the tmp-dir-src.
-    (elmo-bind-directory
-     tmp-dir-src
-     (cond
-      ((functionp n-method)
-       (funcall n-method (cons arc tmp-msgs)))
-      (p-method
-       (let ((p-prog (car p-method))
-	     (p-prog-arg (cdr p-method)))
-	 (elmo-archive-exec-msgs-subr1
-	  p-prog (append p-prog-arg (list arc)) tmp-msgs)))
-      (t
-       (let ((n-prog (car n-method))
-	     (n-prog-arg (cdr n-method)))
-	 (elmo-archive-exec-msgs-subr2
-	  n-prog (append n-prog-arg (list arc)) tmp-msgs
-	  (length arc))))))
+    (elmo-bind-directory tmp-dir-src
+      (cond
+       ((functionp n-method)
+	(funcall n-method (cons arc tmp-msgs)))
+       (p-method
+	(let ((p-prog (car p-method))
+	      (p-prog-arg (cdr p-method)))
+	  (elmo-archive-exec-msgs-subr1
+	   p-prog (append p-prog-arg (list arc)) tmp-msgs)))
+       (t
+	(let ((n-prog (car n-method))
+	      (n-prog-arg (cdr n-method)))
+	  (elmo-archive-exec-msgs-subr2
+	   n-prog (append n-prog-arg (list arc)) tmp-msgs
+	   (length arc))))))
     ;; Move files to the tmp-dir-dst.
     (setq number start-number)
     (dolist (tmp-file tmp-msgs)
@@ -752,21 +749,20 @@ TYPE specifies the archiver's symbol."
       (ding)
       (error "WARNING: read-only mode: %s (method undefined)" dst-type))
     (save-excursion
-      (elmo-bind-directory
-       dir
-       (cond
-	((functionp n-method)
-	 (funcall n-method (cons arc files)))
-	(p-method
-	 (let ((p-prog (car p-method))
-	       (p-prog-arg (cdr p-method)))
-	   (elmo-archive-exec-msgs-subr1
-	    p-prog (append p-prog-arg (list arc)) files)))
-	(t
-	 (let ((n-prog (car n-method))
-	       (n-prog-arg (cdr n-method)))
-	   (elmo-archive-exec-msgs-subr2
-	    n-prog (append n-prog-arg (list arc)) files (length arc)))))))))
+      (elmo-bind-directory dir
+	(cond
+	 ((functionp n-method)
+	  (funcall n-method (cons arc files)))
+	 (p-method
+	  (let ((p-prog (car p-method))
+		(p-prog-arg (cdr p-method)))
+	    (elmo-archive-exec-msgs-subr1
+	     p-prog (append p-prog-arg (list arc)) files)))
+	 (t
+	  (let ((n-prog (car n-method))
+		(n-prog-arg (cdr n-method)))
+	    (elmo-archive-exec-msgs-subr2
+	     n-prog (append n-prog-arg (list arc)) files (length arc)))))))))
 
 (luna-define-method elmo-folder-delete-messages-internal ((folder
 							   elmo-archive-folder)
@@ -1051,12 +1047,12 @@ TYPE specifies the archiver's symbol."
 	   (method (elmo-archive-get-method type 'cat))
 	   (args (list arc (elmo-concat-path prefix (number-to-string number)))))
       (elmo-set-work-buf
-       (when (file-exists-p arc)
-	 (as-binary-process
-	  (elmo-archive-call-method method args t))
-	 (set-buffer-multibyte default-enable-multibyte-characters)
-	 (decode-mime-charset-region (point-min)(point-max) elmo-mime-charset)
-	 (elmo-message-buffer-match-condition condition number))))))
+	(when (file-exists-p arc)
+	  (as-binary-process
+	   (elmo-archive-call-method method args t))
+	  (set-buffer-multibyte default-enable-multibyte-characters)
+	  (decode-mime-charset-region (point-min)(point-max) elmo-mime-charset)
+	  (elmo-message-buffer-match-condition condition number))))))
 
 (luna-define-method elmo-folder-search ((folder elmo-archive-folder)
 					condition &optional from-msgs)

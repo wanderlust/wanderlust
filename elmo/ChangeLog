@@ -1,5 +1,12 @@
 2010-08-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-archive.el (elmo-archive-field-condition-match)
+	(elmo-archive-suffix-alist)
+	(elmo-archive-create-file, elmo-archive-folder-append-buffer)
+	(elmo-archive-folder-message-make-temp-files)
+	(elmo-archive-append-files)
+	(elmo-archive-field-condition-match): Fix indent.
+
 	* elmo-pop3.el (elmo-pop3-read-response): Fix `response-string'.
 	Avoid `args-out-of-range 0, 1' error.
 
