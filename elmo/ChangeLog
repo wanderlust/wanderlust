@@ -1,3 +1,8 @@
+2010-08-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-pop3.el (elmo-pop3-read-response): Fix `response-string'.
+	Avoid `args-out-of-range 0, 1' error.
+
 2010-08-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* acap.el (acap-arrival-filter): Use (delete-char (- X)) instead of
