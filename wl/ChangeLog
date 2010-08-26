@@ -1,3 +1,10 @@
+2010-08-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-e21.el (wl-draft-insert-signature): Fix comment style.
+	(wl-highlight-folder-current-line): Ditto.
+	* wl-xmas.el (wl-draft-insert-signature): Ditto.
+	(wl-highlight-folder-current-line): Ditto.
+
 2010-08-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-address.el (wl-address-make-alist-from-alias-file): Use
