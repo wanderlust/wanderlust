@@ -1,3 +1,8 @@
+2010-08-27  Kenichi Okada  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-prefetch-msg): Make the confirmation
+	message human-readable.
+
 2010-08-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-e21.el (wl-draft-insert-signature): Fix comment style.

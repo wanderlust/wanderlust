@@ -1596,7 +1596,7 @@ If ARG is non-nil, checking is omitted."
 		    (widen)
 		    (y-or-n-p
 		     (format
-		      "Message from %s has %d bytes.  Prefetch it? "
+		      "Message from %s has %s bytes.  Prefetch it? "
 		      (concat
 		       "[ "
 		       (save-match-data
@@ -1612,7 +1612,10 @@ If ARG is non-nil, checking is omitted."
 			      'from)
 			     "??")))))
 		       " ]")
-		      size))))
+		      (do ((size (/ size 1024.0) (/ size 1024.0))
+			   ;; kilo, mega, giga, tera, peta, exa
+			   (post-fixes (list "k" "M" "G" "T" "P" "E") (cdr post-fixes)))
+			  ((< size 1024) (format "%.0f%s" size (car post-fixes))))))))
 	    (message "")))		; flush.
 	(if force-read
 	    (save-excursion
