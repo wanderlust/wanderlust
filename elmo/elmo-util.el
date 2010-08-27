@@ -417,14 +417,14 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defsubst elmo-delete-char (char string &optional unibyte)
   (save-match-data
     (elmo-set-work-buf
-     (let ((coding-system-for-read 'no-conversion)
-	   (coding-system-for-write 'no-conversion))
-       (if unibyte (set-buffer-multibyte nil))
-       (insert string)
-       (goto-char (point-min))
-       (while (search-forward (char-to-string char) nil t)
-	 (replace-match ""))
-       (buffer-string)))))
+      (let ((coding-system-for-read 'no-conversion)
+	    (coding-system-for-write 'no-conversion))
+	(if unibyte (set-buffer-multibyte nil))
+	(insert string)
+	(goto-char (point-min))
+	(while (search-forward (char-to-string char) nil t)
+	  (replace-match ""))
+	(buffer-string)))))
 
 (defsubst elmo-delete-cr-buffer ()
   "Delete CR from buffer."
@@ -445,11 +445,11 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defun elmo-delete-cr (string)
   (save-match-data
     (elmo-set-work-buf
-     (insert string)
-     (goto-char (point-min))
-     (while (search-forward "\r\n" nil t)
-       (replace-match "\n"))
-     (buffer-string))))
+      (insert string)
+      (goto-char (point-min))
+      (while (search-forward "\r\n" nil t)
+	(replace-match "\n"))
+      (buffer-string))))
 
 (defun elmo-last (list)
   (and list (nth (1- (length list)) list)))
@@ -499,26 +499,26 @@ Return value is a cons cell of (STRUCTURE . REST)"
 
 (defun elmo-get-file-string (filename &optional remove-final-newline)
   (elmo-set-work-buf
-   (let (insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
-	 insert-file-contents-post-hook)
-     (when (file-exists-p filename)
-       (if filename
-	   (as-binary-input-file (insert-file-contents filename)))
-       (when (and remove-final-newline
-		  (> (buffer-size) 0)
-		  (= (char-after (1- (point-max))) ?\n))
-	 (goto-char (point-max))
-	 (delete-char -1))
-       (buffer-string)))))
+    (let (insert-file-contents-pre-hook	; To avoid autoconv-xmas...
+	  insert-file-contents-post-hook)
+      (when (file-exists-p filename)
+	(if filename
+	    (as-binary-input-file (insert-file-contents filename)))
+	(when (and remove-final-newline
+		   (> (buffer-size) 0)
+		   (= (char-after (1- (point-max))) ?\n))
+	  (goto-char (point-max))
+	  (delete-char -1))
+	(buffer-string)))))
 
 (defun elmo-save-string (string filename)
   (if string
       (elmo-set-work-buf
-       (as-binary-output-file
-	(insert string)
-	(write-region (point-min) (point-max)
-		      filename nil 'no-msg))
-       )))
+	(as-binary-output-file
+	 (insert string)
+	 (write-region (point-min) (point-max)
+		       filename nil 'no-msg))
+	)))
 
 (defun elmo-max-of-list (nlist)
   (let ((l nlist)
@@ -664,13 +664,13 @@ Return value is a cons cell of (STRUCTURE . REST)"
 
 (defun elmo-string-to-list (string)
   (elmo-set-work-buf
-   (insert string)
-   (goto-char (point-min))
-   (insert "(")
-   (goto-char (point-max))
-   (insert ")")
-   (goto-char (point-min))
-   (read (current-buffer))))
+    (insert string)
+    (goto-char (point-min))
+    (insert "(")
+    (goto-char (point-max))
+    (insert ")")
+    (goto-char (point-min))
+    (read (current-buffer))))
 
 (defun elmo-list-to-string (list)
   (let ((tlist list)
@@ -2226,13 +2226,13 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
       (save-match-data
 	(let (beg)
 	  (elmo-set-work-buf
-	   (insert string)
-	   (goto-char (point-max))
-	   (when (search-backward "<" nil t)
-	     (setq beg (point))
-	     (if (search-forward ">" nil t)
-		 (elmo-replace-in-string
-		  (buffer-substring beg (point)) "\n[ \t]*" ""))))))))
+	    (insert string)
+	    (goto-char (point-max))
+	    (when (search-backward "<" nil t)
+	      (setq beg (point))
+	      (if (search-forward ">" nil t)
+		  (elmo-replace-in-string
+		   (buffer-substring beg (point)) "\n[ \t]*" ""))))))))
 
 (defun elmo-msgdb-get-message-id-from-buffer ()
   (let ((msgid (elmo-field-body "message-id")))

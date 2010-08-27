@@ -1,3 +1,9 @@
+2010-08-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-util.el (elmo-delete-char): Fix `elmo-set-work-buf' indent.
+	(elmo-delete-cr, elmo-get-file-string, elmo-save-string)
+	(elmo-string-to-list, elmo-list-to-string): Ditto.
+
 2010-08-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-archive.el (elmo-archive-field-condition-match)
