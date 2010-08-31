@@ -1,5 +1,8 @@
 2010-08-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-localdir.el (elmo-folder-pack-numbers): Fix
+	`elmo-bind-directory' indent.
+
 	* elmo-imap4.el (elmo-imap4-folder-list-range): Fix indent (only
 	cosmetic fix).
 
