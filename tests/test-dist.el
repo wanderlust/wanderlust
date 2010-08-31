@@ -17,6 +17,21 @@
        WL-MODULES)
       lost))))
 
+(luna-define-method test-wl-modules-trailing-whitespace ((case test-dist))
+  (let (filename badmodule)
+    (mapc
+     (lambda (module)
+       (setq filename
+	     (format "%s.el%s" (symbol-name module)
+		     (if (eq 'wl-news module) ".in" "")))
+       (with-temp-buffer
+	 (insert-file-contents (expand-file-name filename WLDIR))
+	 (when (re-search-forward "[ \t]$" nil t)
+	   (add-to-list 'badmodule filename))))
+     WL-MODULES)
+    (lunit-assert (null badmodule))))
+
+
 ;; ELMO-MODULES
 (luna-define-method test-elmo-modules-exists ((case test-dist))
   (lunit-assert
@@ -30,6 +45,19 @@
        ELMO-MODULES)
       lost))))
 
+(luna-define-method test-elmo-modules-trailing-whitespace ((case test-dist))
+  (let (filename badmodule)
+    (mapc
+     (lambda (module)
+       (setq filename (format "%s.el" (symbol-name module)))
+       (with-temp-buffer
+	 (insert-file-contents (expand-file-name filename ELMODIR))
+	 (when (re-search-forward "[ \t]$" nil t)
+	   (add-to-list 'badmodule filename))))
+     ELMO-MODULES)
+    (lunit-assert (null badmodule))))
+
+
 ;; UTILS-MODULES
 (luna-define-method test-util-modules-exists ((case test-dist))
   (lunit-assert
@@ -42,6 +70,19 @@
 	   (add-to-list 'lost symbol)))
        UTILS-MODULES)
       lost))))
+
+(luna-define-method test-util-modules-trailing-whitespace ((case test-dist))
+  (let (filename badmodule)
+    (mapc
+     (lambda (module)
+       (setq filename (format "%s.el" (symbol-name module)))
+       (with-temp-buffer
+	 (insert-file-contents (expand-file-name filename UTILSDIR))
+	 (when (re-search-forward "[ \t]$" nil t)
+	   (add-to-list 'badmodule filename))))
+     UTILS-MODULES)
+    (lunit-assert (null badmodule))))
+
 
 ;; Icons
 (luna-define-method test-wl-icon-exists ((case test-dist))
