@@ -4749,7 +4749,7 @@ If ARG is numeric number, decode message as following:
   (let ((number (wl-summary-message-number))
 	(folder wl-summary-buffer-elmo-folder))
     (if number
-	(let ((raw (elmo-message-fetch-string 
+	(let ((raw (elmo-message-fetch-string
 		    folder number
 		    (elmo-find-fetch-strategy folder number)))
 	      (raw-buffer (get-buffer-create "*wl:raw message*"))
