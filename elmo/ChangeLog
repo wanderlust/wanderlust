@@ -1,3 +1,8 @@
+2010-08-31  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-folder-delete-messages-plugged): Use smarter
+	mechanism to expunge messages.
+
 2010-08-04  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-session-deselect-mailbox): New

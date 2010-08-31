@@ -2286,17 +2286,28 @@ If optional argument REMOVE is non-nil, remove FLAG."
 (luna-define-method elmo-folder-delete-messages-plugged
   ((folder elmo-imap4-folder) numbers)
   (let ((session (elmo-imap4-get-session folder))
-	(expunge
-	 (or (null (elmo-imap4-list folder "deleted"))
-	     (y-or-n-p
-	      "There's hidden deleted messages, expunge anyway?"))))
+	(deleted (elmo-imap4-list folder "deleted")))
     (elmo-imap4-session-select-mailbox
      session
      (elmo-imap4-folder-mailbox-internal folder))
     (unless (elmo-imap4-set-flag folder numbers "\\Deleted")
       (error "Failed to set deleted flag"))
-    (when expunge
-      (elmo-imap4-send-command-wait session "expunge"))
+    (cond
+     ((and deleted elmo-imap4-use-uid
+	   (elmo-imap4-session-capable-p session 'uidplus))
+      (elmo-imap4-send-command-wait
+       session (list
+		"uid expunge "
+		(mapconcat 'number-to-string numbers ","))))
+     ((and deleted elmo-imap4-use-uid)
+      (unless (elmo-imap4-set-flag folder deleted "\\Deleted" 'remove)
+	(error "Failed to temporarily remove deleted flag"))
+      (elmo-imap4-send-command-wait session "expunge")
+      (unless (elmo-imap4-set-flag folder deleted "\\Deleted")
+	(error "Failed to restore deleted flags")))
+     ((or (null deleted)
+	  (y-or-n-p "There are hidden deleted messages.  Expunge anyway?"))
+      (elmo-imap4-send-command-wait session "expunge")))
     t))
 
 (defun elmo-imap4-detect-search-charset (string)
