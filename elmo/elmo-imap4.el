@@ -1663,7 +1663,7 @@ Return nil if no complete line has arrived."
 			   (goto-char (match-end 1)))))
 		   (UNSEEN
 		    (list 'unseen (read (current-buffer))))
-		   (t 
+		   (t
 		    (message
 		     "Unknown status data %s in mailbox %s ignored"
 		     token mailbox))))

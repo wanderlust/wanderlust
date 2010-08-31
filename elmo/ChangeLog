@@ -1,5 +1,7 @@
 2010-08-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
+	* elmo-imap4.el: Remove trailing whitespace.
+
 	* elmo-localdir.el (elmo-folder-pack-numbers): Fix
 	`elmo-bind-directory' indent.
 
