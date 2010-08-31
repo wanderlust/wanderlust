@@ -1,3 +1,8 @@
+2010-08-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-imap4.el (elmo-imap4-folder-list-range): Fix indent (only
+	cosmetic fix).
+
 2010-08-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-util.el (elmo-delete-char): Fix `elmo-set-work-buf' indent.

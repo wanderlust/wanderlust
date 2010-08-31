@@ -1990,16 +1990,14 @@ Return nil if no complete line has arrived."
   (elmo-imap4-list
    folder
    (concat
-    (let ((killed
-          (elmo-folder-killed-list-internal
-           folder)))
+    (let ((killed (elmo-folder-killed-list-internal folder)))
       (if (and killed
-              (eq (length killed) 1)
-              (consp (car killed))
-              (eq (car (car killed)) 1))
-;; What about elmo-imap4-use-uid?
-         (format "uid %d:%s" (cdr (car killed)) max)
-       (format "uid %s:%s" min max)))
+	       (eq (length killed) 1)
+	       (consp (car killed))
+	       (eq (car (car killed)) 1))
+	  ;; What about elmo-imap4-use-uid?
+	  (format "uid %d:%s" (cdr (car killed)) max)
+	(format "uid %s:%s" min max)))
     " undeleted")))
 
 (luna-define-method elmo-folder-list-messages-plugged
