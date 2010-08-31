@@ -26,7 +26,7 @@
   "*Regular expression for \".im/Addrbook\".")
 (defvar wl-addrbook-override-by-newone t
   "If non-nil, the 'user' entry in 'wl-alias-auto-alist'
-is override by a new entry of (user different-address). 
+is override by a new entry of (user different-address).
 This means that addresses in To: and Cc: in Draft mode are
 always learned with an exception 'user' is defined in Addrbook.
 If nil,  the old 'user' entry remains.")
@@ -242,7 +242,7 @@ If addresses is a string, expands it recursively."
 	    (setq wl-alias-auto-alist
 		  (cons (list user addr)
 			(delete match-auto wl-alias-auto-alist))))
-	   (t 
+	   (t
 	    ;; the old entry remains
 	    )))
 	 (match-adbk
@@ -365,7 +365,7 @@ If addresses is a string, expands it recursively."
 
 (defun wl-draft-learn-alias ()
   (interactive)
-  (let ((recipients (mapconcat 'identity 
+  (let ((recipients (mapconcat 'identity
 			       (delq nil (std11-field-bodies '("To" "Cc")))
 			       ",")))
     (mapcar '(lambda (addr)
@@ -502,7 +502,7 @@ The keys that are defined for this mode are:
 	 (set-buffer buf)
 	 (goto-char (point-min))
 	 (if (and shortname
-		  (re-search-forward 
+		  (re-search-forward
 		   (concat "^" (regexp-quote shortname) "[ \t]*:?[ \t]+") nil t))
 	     (setq not-uniq t))
 	 (if not-uniq
@@ -568,7 +568,7 @@ The keys that are defined for this mode are:
 ;; Redistribution and use in source and binary forms, with or without
 ;; modification, are permitted provided that the following conditions
 ;; are met:
-;; 
+;;
 ;; 1. Redistributions of source code must retain the above copyright
 ;;    notice, this list of conditions and the following disclaimer.
 ;; 2. Redistributions in binary form must reproduce the above copyright
@@ -577,7 +577,7 @@ The keys that are defined for this mode are:
 ;; 3. Neither the name of the team nor the names of its contributors
 ;;    may be used to endorse or promote products derived from this software
 ;;    without specific prior written permission.
-;; 
+;;
 ;; THIS SOFTWARE IS PROVIDED BY THE TEAM AND CONTRIBUTORS ``AS IS'' AND
 ;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 ;; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR

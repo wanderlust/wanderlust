@@ -1,3 +1,10 @@
+2010-08-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-addrbook.el: Delete traing whitespace.
+	* wl-complete.el: Ditto.
+	* rfc2368.el: Ditto.
+	* ssl.el: Ditto.
+
 2010-08-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* ptexinfmt.el (texinfo-format-verb): Use (delete-char -1)

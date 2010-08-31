@@ -123,7 +123,7 @@
       (wl-complete word wl-folder-entity-hashtb "folder" nil))))
 
 (defun wl-addrbook-complete-address ()
-  "Complete and expand address aliases. 
+  "Complete and expand address aliases.
 First alias key is completed. When completed solely or the @ character
 is inserted before the cursor, the alias key is expanded to its value."
   (interactive)
@@ -134,7 +134,7 @@ is inserted before the cursor, the alias key is expanded to its value."
 	  (insert (or (wl-alias-next word) word))
 	(wl-complete
 	 word wl-addrbook-alist "alias" ?@ nil nil
-	 (function wl-addrbook-alias-get) 
+	 (function wl-addrbook-alias-get)
 	 (function wl-addrbook-alias-hit))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -153,8 +153,8 @@ is inserted before the cursor, the alias key is expanded to its value."
 (defun wl-circular-complete-domain ()
   "Circular completion of domains for To:, Cc:, etc.
 If the @ character does not exist, the first value of
-wl-mail-domain-list is inserted. If exists, the next value of 
-wl-mail-domain-list concerned with the string between @ and 
+wl-mail-domain-list is inserted. If exists, the next value of
+wl-mail-domain-list concerned with the string between @ and
 the cursor is inserted."
   (interactive)
   (let ((word (wl-delete-backward-char "@")))
@@ -350,7 +350,7 @@ the name exists."
 (defun wl-slide-pair (x)
   (let ((ret nil)
 	(first (car x)))
-    (cond 
+    (cond
      ((eq x 0) nil)
      ((eq x 1) (cons first first))
      (t
@@ -371,7 +371,7 @@ the name exists."
 ;; Redistribution and use in source and binary forms, with or without
 ;; modification, are permitted provided that the following conditions
 ;; are met:
-;; 
+;;
 ;; 1. Redistributions of source code must retain the above copyright
 ;;    notice, this list of conditions and the following disclaimer.
 ;; 2. Redistributions in binary form must reproduce the above copyright
@@ -380,7 +380,7 @@ the name exists."
 ;; 3. Neither the name of the team nor the names of its contributors
 ;;    may be used to endorse or promote products derived from this software
 ;;    without specific prior written permission.
-;; 
+;;
 ;; THIS SOFTWARE IS PROVIDED BY THE TEAM AND CONTRIBUTORS ``AS IS'' AND
 ;; ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 ;; IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
