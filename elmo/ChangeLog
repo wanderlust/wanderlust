@@ -3,12 +3,63 @@
 	* elmo-imap4.el (elmo-folder-delete-messages-plugged): Use smarter
 	mechanism to expunge messages.
 
+2010-08-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-imap4.el: Remove trailing whitespace.
+
+	* elmo-localdir.el (elmo-folder-pack-numbers): Fix
+	`elmo-bind-directory' indent.
+
+	* elmo-imap4.el (elmo-imap4-folder-list-range): Fix indent (only
+	cosmetic fix).
+
+2010-08-27  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-util.el (elmo-delete-char): Fix `elmo-set-work-buf' indent.
+	(elmo-delete-cr, elmo-get-file-string, elmo-save-string)
+	(elmo-string-to-list, elmo-list-to-string): Ditto.
+
+2010-08-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* elmo-archive.el (elmo-archive-field-condition-match)
+	(elmo-archive-suffix-alist)
+	(elmo-archive-create-file, elmo-archive-folder-append-buffer)
+	(elmo-archive-folder-message-make-temp-files)
+	(elmo-archive-append-files)
+	(elmo-archive-field-condition-match): Fix indent.
+
+	* elmo-pop3.el (elmo-pop3-read-response): Fix `response-string'.
+	Avoid `args-out-of-range 0, 1' error.
+
+2010-08-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* acap.el (acap-arrival-filter): Use (delete-char (- X)) instead of
+	(delete-backward-char X) that deletes region in Emacs 24.
+	See delete-active-region described in NEWS.
+	* elmo-imap4.el (elmo-imap4-arrival-filter): Ditto.
+	* elmo-util.el (elmo-get-file-string): Ditto.
+	* utf7.el (utf7-encode-internal, utf7-decode-internal): Ditto.
+
+2010-08-09  David Maus  <dmaus@ictsoc.de>
+
+	* elmo.el (elmo-folder-open-internal-p): New luna method.
+	(elmo-folder-move-messages): Open source folder only if necessary.
+	* elmo-pipe.el (elmo-folder-open-internal-p): New luna method.
+	* elmo-multi.el (elmo-folder-open-internal-p): Dto.
+	* elmo-map.el (elmo-folder-open-internal-p): Dto.
+	* elmo-filter.el (elmo-folder-open-internal-p): Dto.
+
 2010-08-04  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-session-deselect-mailbox): New
 	function.  Leave selected state without causing silent EXPUNGE.
 	(elmo-imap4-folder-status-plugged, elmo-folder-rename-internal):
 	Use function.
+
+2010-08-01  David Maus  <dmaus@ictsoc.de>
+
+	* elmo.el (elmo-folder-move-messages): Open source folder before
+	moving messages.
 
 2010-07-18  David Maus  <dmaus@ictsoc.de>
 
@@ -2154,7 +2205,7 @@
 	* elmo.el (elmo-folder-append-buffer): Fix docstring.
 	(elmo-generic-folder-append-messages): If elmo-message-flags return nil,
 	pass (read) for the FLAG argument of elmo-folder-append-buffer.
-	
+
 2004-10-02  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-split.el (elmo-split-rule): Update comment.

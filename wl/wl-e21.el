@@ -153,7 +153,7 @@
     )
   "The Message buffer toolbar.")
 
-(defalias 'wl-draft-insert-signature 'insert-signature);; for draft toolbar.
+(defalias 'wl-draft-insert-signature 'insert-signature)	; for draft toolbar.
 
 (defvar wl-draft-toolbar
   '([wl-draft-send-from-toolbar
@@ -202,7 +202,9 @@
 			    `((,@props ,(concat name "-down.xpm"))))
 		      disabled (wl-e21-find-image
 				`((,@props ,(concat name "-disabled.xpm")))))
-		(set icon (vector down up disabled disabled)))
+		(if (and down disabled)
+		    (set icon (vector down up disabled disabled))
+		  (set icon up)))
 	    (setq bar nil
 		  success nil))))
       success)))
@@ -316,8 +318,8 @@
     (beginning-of-line)
     (let (fld-name start end)
       (cond
-       (;; opened folder group
-	(and (wl-folder-buffer-group-p)
+       ;; opened folder group
+       ((and (wl-folder-buffer-group-p)
 	     (looking-at wl-highlight-folder-opened-regexp))
 	(setq start (match-beginning 1)
 	      end (match-end 1))
@@ -327,8 +329,8 @@
 	(wl-e21-highlight-folder-by-numbers start end
 					    'wl-highlight-folder-opened-face
 					    numbers))
-       (;; closed folder group
-	(and (wl-folder-buffer-group-p)
+       ;; closed folder group
+       ((and (wl-folder-buffer-group-p)
 	     (looking-at wl-highlight-folder-closed-regexp))
 	(setq start (match-beginning 1)
 	      end (match-end 1))
@@ -338,8 +340,8 @@
 	(wl-e21-highlight-folder-by-numbers start end
 					    'wl-highlight-folder-closed-face
 					    numbers))
-       (;; basic folder
-	(and (setq fld-name (wl-folder-get-folder-name-by-id
+       ;; basic folder
+       ((and (setq fld-name (wl-folder-get-folder-name-by-id
 			     (get-text-property (point) 'wl-folder-entity-id)))
 	     (looking-at "[[:blank:]]+\\([^[:blank:]\n]+\\)"))
 	(setq start (match-beginning 1)
@@ -358,22 +360,26 @@
 		(unless (get (caar wl-folder-internal-icon-list) 'image)
 		  (wl-folder-init-icons))
 		(setq image
-		      (cond ((string= fld-name wl-trash-folder);; trash folder
-			     (let ((num (nth 2 numbers)));; number of messages
-			       (get (if (or (not num) (zerop num))
-					'wl-folder-trash-empty-image
-				      'wl-folder-trash-image)
-				    'image)))
-			    ((string= fld-name wl-draft-folder);; draft folder
-			     (get 'wl-folder-draft-image 'image))
-			    ((string= fld-name wl-queue-folder);; queue folder
-			     (get 'wl-folder-queue-image 'image))
-			    (;; and one of many other folders
-			     (setq type (or (elmo-folder-type fld-name)
-					    (elmo-folder-type-internal
-					     (elmo-make-folder fld-name))))
-			     (get (intern (format "wl-folder-%s-image" type))
-				  'image)))))
+		      (cond
+		       ;; trash folder
+		       ((string= fld-name wl-trash-folder)
+			(let ((num (nth 2 numbers))) ; number of messages
+			  (get (if (or (not num) (zerop num))
+				   'wl-folder-trash-empty-image
+				 'wl-folder-trash-image)
+			       'image)))
+		       ;; draft folder
+		       ((string= fld-name wl-draft-folder)
+			(get 'wl-folder-draft-image 'image))
+		       ;; queue folder
+		       ((string= fld-name wl-queue-folder)
+			(get 'wl-folder-queue-image 'image))
+		       ;; and one of many other folders
+		       ((setq type (or (elmo-folder-type fld-name)
+				       (elmo-folder-type-internal
+					(elmo-make-folder fld-name))))
+			(get (intern (format "wl-folder-%s-image" type))
+			     'image)))))
 	      (overlay-put overlay 'before-string
 			   (propertize " " 'display image
 				       'invisible t))))

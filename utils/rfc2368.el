@@ -89,7 +89,7 @@
 	     ((match-beginning 1) "\n")
 	     (t " "))
 	    buf)
-      (setq start (match-end 0)))  
+      (setq start (match-end 0)))
     (apply 'concat (nreverse (cons (substring string start) buf)))))
 
 (defun rfc2368-parse-mailto-url (mailto-url)

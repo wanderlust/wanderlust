@@ -587,7 +587,7 @@ ENTRIES is a store-entry list."
       (while (setq end (acap-find-next-line))
 	(save-restriction
 	  (narrow-to-region (point-min) end)
-	  (delete-backward-char (length acap-server-eol))
+	  (delete-char (- (length acap-server-eol)))
 	  (goto-char (point-min))
 	  (unwind-protect
 	      (cond ((or (eq acap-state 'auth)

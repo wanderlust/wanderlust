@@ -1,3 +1,28 @@
+2010-09-02  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* ptexinfmt.el (texinfo-multitable-widths): Use `make-char'
+	instead of KANJI literal.
+
+2010-08-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-addrbook.el: Delete traing whitespace.
+	* wl-complete.el: Ditto.
+	* rfc2368.el: Ditto.
+	* ssl.el: Ditto.
+
+2010-08-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* ptexinfmt.el (texinfo-format-verb): Use (delete-char -1)
+        instead of (delete-backward-char 1); For Emacs24.
+
+	* wl-addrbook.el (wl-addrbook-insert-file): Use (delete-char -1)
+	instead of (delete-backward-char 1) or (backward-deletechar 1).
+
+2010-08-04  David Maus  <dmaus@ictsoc.de>
+
+	* ssl.el (open-ssl-stream, condition-case): Don't use old-style
+	backquotes.
+
 2010-01-06  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-addrbook.el (wl-summary-addrbook-add): Use

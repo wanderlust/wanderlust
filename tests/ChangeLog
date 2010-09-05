@@ -1,3 +1,9 @@
+2010-08-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* test-dist.el (test-elmo-modules-trailing-whitespace)
+	(test-util-modules-trailing-whitespace)
+	(test-wl-modules-trailing-whitespace): New testcases.
+
 2010-01-22  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* test-utf7.el (test-utf7-encode-string-alpha): Fix indent.

@@ -38,13 +38,13 @@
     ;; We have the old custom-library, hack around it!
     (defmacro defgroup (&rest args)
       nil)
-    (defmacro defcustom (var value doc &rest args) 
-      (` (defvar (, var) (, value) (, doc))))))
+    (defmacro defcustom (var value doc &rest args)
+      `(devar ,var ,value ,doc))))
 
 (defgroup ssl nil
   "Support for `Secure Sockets Layer' encryption."
   :group 'comm)
-  
+
 (defcustom ssl-certificate-directory "~/.w3/certs/"
   "*Directory to store CA certificates in"
   :group 'ssl
@@ -134,7 +134,7 @@ to."
 	  (while (re-search-forward "^\\([^=\n\r]+\\)\\s *=\\s *\\(.*\\)" nil t)
 	    (push (cons (match-string 1) (match-string 2)) vals))
 	  vals)))))
-  
+
 (defun ssl-accept-ca-certificate ()
   "Ask if the user is willing to accept a new CA certificate. The buffer-name
 should be the intended name of the certificate, and the buffer should probably
@@ -143,10 +143,10 @@ be in DER encoding"
   (let* ((process-connection-type nil)
 	 (tmpbuf (generate-new-buffer "X509 CA Certificate Information"))
 	 (response (save-excursion
-		     (and (eq 0 
+		     (and (eq 0
 			      (apply 'call-process-region
-				     (point-min) (point-max) 
-				     ssl-view-certificate-program-name 
+				     (point-min) (point-max)
+				     ssl-view-certificate-program-name
 				     nil tmpbuf t
 				     ssl-view-certificate-program-arguments))
 			  (switch-to-buffer tmpbuf)
@@ -192,9 +192,8 @@ specifying a port number to connect to."
   (let* ((process-connection-type nil)
 	 (port service)
 	 (proc (eval
-		(`
-		 (start-process name buffer ssl-program-name
-				(,@ ssl-program-arguments))))))
+		`(start-process name buffer ssl-program-name
+				,@ssl-program-arguments))))
     (process-kill-without-query proc)
     proc))
 

@@ -228,7 +228,8 @@ CODE is one of the following:
 	  (goto-char elmo-pop3-read-point))
 	(setq match-end (point))
 	(setq response-string
-	      (buffer-substring elmo-pop3-read-point (- match-end 2)))
+	      (buffer-substring elmo-pop3-read-point
+				(max (- match-end 2) elmo-pop3-read-point)))
 	(goto-char elmo-pop3-read-point)
 	(if (looking-at "\\+.*$")
 	    (progn

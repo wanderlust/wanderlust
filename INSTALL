@@ -34,24 +34,24 @@ Select MIME Module
 
   (a) XEmacs 21.1 or later
 
-	APEL 10.7, FLIM 1.14.9, SEMI 1.14.6
+	APEL 10.8, FLIM 1.14.9, SEMI 1.14.6
 
     Installation as a XEmacs package, If possible.
 
   (b) Emacs 20.4 or later
 
-	APEL 10.7, FLIM 1.14.9, SEMI 1.14.6
+	APEL 10.8, FLIM 1.14.9, SEMI 1.14.6
 
  (c) Emacs 20.1 to 20.3
 
-	APEL 10.7, CLIME 1.14.6, SEMI 1.14.6
+	APEL 10.8, CLIME 1.14.6, SEMI 1.14.6
 
     Use CLIME instead of FLIM.  FLIM does not support Emacs 20.3 or
     earlier.
 
   (d) Emacs 19.34 (Mule 2.3)
 
-	APEL 10.7, CLIME 1.14.6, SEMI 1.14.6
+	APEL 10.8, CLIME 1.14.6, SEMI 1.14.6
 
     Mule based on Emacs 19.34 can also run SEMI.  See the following web
     page to get more information (in Japanese).

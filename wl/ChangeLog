@@ -1,3 +1,50 @@
+2010-08-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-summary.el: Delete trailing whitespace.
+
+2010-08-27  Kenichi Okada  <okada@opaopa.org>
+
+	* wl-summary.el (wl-summary-prefetch-msg): Make the confirmation
+	message human-readable.
+
+2010-08-26  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-e21.el (wl-draft-insert-signature): Fix comment style.
+	(wl-highlight-folder-current-line): Ditto.
+	* wl-xmas.el (wl-draft-insert-signature): Ditto.
+	(wl-highlight-folder-current-line): Ditto.
+
+2010-08-24  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-address.el (wl-address-make-alist-from-alias-file): Use
+	`(delete-char -1)' instead of `(delete-backward-char 1)' that
+	deletes region in Emacs 24.
+	See delete-active-region described in NEWS.
+	* wl-draft.el (wl-draft-insert-mail-header-separator): Ditto.
+	* wl-summary.el (wl-summary-update-persistent-mark): Ditto.
+
+2010-08-14  David Maus  <dmaus@ictsoc.de>
+
+	* wl-summary.el (wl-summary-mode-menu-spec): Add menu option to
+	edit draft message when in draft folder.
+
+2010-07-21  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-summary.el (wl-summary-put-temp-mark): Use (delete-char -1)
+	instead of (delete-backward-char 1) that deletes region in Emacs 24.
+	See delete-active-region described in NEWS.
+
+2010-05-25  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-spam.el (wl-summary-register-as-spam-region)
+	(wl-thread-register-as-spam, wl-summary-register-as-good-region)
+	(wl-thread-register-as-good): New functions.
+	(wl-spam-setup): Bind "rks", "rkn", "tks" and "tkn".
+
+2010-04-28  Vitaly Mayatskikh  <v.mayatskih@gmail.com>
+	* wl-e21.el (wl-e21-setup-toolbar): Don't define vector with
+	images for the icon if there is only one image.
+
 2010-03-17  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-draft.el (wl-user-agent-insert-body): Make sure body ends with

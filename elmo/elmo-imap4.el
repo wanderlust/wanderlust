@@ -1336,7 +1336,7 @@ Return nil if no complete line has arrived."
       (while (setq end (elmo-imap4-find-next-line))
 	(save-restriction
 	  (narrow-to-region (point-min) end)
-	  (delete-backward-char (length elmo-imap4-server-eol))
+	  (delete-char (- (length elmo-imap4-server-eol)))
 	  (goto-char (point-min))
 	  (unwind-protect
 	      (case elmo-imap4-status
@@ -1685,7 +1685,7 @@ Return nil if no complete line has arrived."
 			   (goto-char (match-end 1)))))
 		   (UNSEEN
 		    (list 'unseen (read (current-buffer))))
-		   (t 
+		   (t
 		    (message
 		     "Unknown status data %s in mailbox %s ignored"
 		     token mailbox))))
@@ -2019,16 +2019,14 @@ Return nil if no complete line has arrived."
   (elmo-imap4-list
    folder
    (concat
-    (let ((killed
-          (elmo-folder-killed-list-internal
-           folder)))
+    (let ((killed (elmo-folder-killed-list-internal folder)))
       (if (and killed
-              (eq (length killed) 1)
-              (consp (car killed))
-              (eq (car (car killed)) 1))
-;; What about elmo-imap4-use-uid?
-         (format "uid %d:%s" (cdr (car killed)) max)
-       (format "uid %s:%s" min max)))
+	       (eq (length killed) 1)
+	       (consp (car killed))
+	       (eq (car (car killed)) 1))
+	  ;; What about elmo-imap4-use-uid?
+	  (format "uid %d:%s" (cdr (car killed)) max)
+	(format "uid %s:%s" min max)))
     " undeleted")))
 
 (luna-define-method elmo-folder-list-messages-plugged

@@ -329,11 +329,10 @@
       (dolist (old-number numbers)
 	(setq entity (elmo-msgdb-message-entity msgdb old-number))
 	(when (not (eq old-number new-number)) ; why \=() is wrong..
-	  (elmo-bind-directory
-	   dir
-	   ;; xxx  nfs,hardlink
-	   (rename-file (number-to-string old-number)
-			(number-to-string new-number) t))
+	  (elmo-bind-directory dir
+	    ;; xxx  nfs,hardlink
+	    (rename-file (number-to-string old-number)
+			 (number-to-string new-number) t))
 	  (elmo-message-entity-set-number entity new-number))
 	(elmo-msgdb-append-entity new-msgdb entity
 				  (elmo-msgdb-flags msgdb old-number))

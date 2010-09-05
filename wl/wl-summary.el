@@ -245,6 +245,7 @@ See also variable `wl-use-petname'."
 (defvar wl-summary-mode-menu-spec
   '("Summary"
     ["Read" wl-summary-read t]
+    ["Edit draft message" wl-summary-reedit :visible (string= (wl-summary-buffer-folder-name) wl-draft-folder)]
     ["Prev page" wl-summary-prev-page t]
     ["Next page" wl-summary-next-page t]
     ["Top"       wl-summary-display-top t]
@@ -292,7 +293,8 @@ See also variable `wl-use-petname'."
      ["Enter the message" wl-summary-jump-to-current-message t]
      ["Pipe message" wl-summary-pipe-message t]
      ["Print message" wl-summary-print-message t]
-     ["View raw message" wl-summary-display-raw t])
+     ["View raw message" wl-summary-display-raw t]
+     )
     ("Thread Operation"
      ["Open or Close" wl-thread-open-close (eq wl-summary-buffer-view 'thread)]
      ["Open all"     wl-thread-open-all (eq wl-summary-buffer-view 'thread)]
@@ -1594,7 +1596,7 @@ If ARG is non-nil, checking is omitted."
 		    (widen)
 		    (y-or-n-p
 		     (format
-		      "Message from %s has %d bytes.  Prefetch it? "
+		      "Message from %s has %s bytes.  Prefetch it? "
 		      (concat
 		       "[ "
 		       (save-match-data
@@ -1610,7 +1612,10 @@ If ARG is non-nil, checking is omitted."
 			      'from)
 			     "??")))))
 		       " ]")
-		      size))))
+		      (do ((size (/ size 1024.0) (/ size 1024.0))
+			   ;; kilo, mega, giga, tera, peta, exa
+			   (post-fixes (list "k" "M" "G" "T" "P" "E") (cdr post-fixes)))
+			  ((< size 1024) (format "%.0f%s" size (car post-fixes))))))))
 	    (message "")))		; flush.
 	(if force-read
 	    (save-excursion
@@ -3008,7 +3013,7 @@ The mark is decided according to the FOLDER and STATUS."
       (let ((inhibit-read-only t)
 	    (buffer-read-only nil))
 	(move-to-column wl-summary-buffer-temp-mark-column)
-	(delete-backward-char 1)
+	(delete-char -1)
 	(insert mark)))))
 
 (defun wl-summary-next-buffer ()
@@ -3141,7 +3146,7 @@ Return non-nil if the mark is updated"
 		  (new-mark (wl-summary-persistent-mark number status)))
 	      (prog1
 		  (unless (string= new-mark mark)
-		    (delete-backward-char 1)
+		    (delete-char -1)
 		    (insert new-mark)
 		    (wl-summary-set-message-modified)
 		    t)
@@ -4744,7 +4749,7 @@ If ARG is numeric number, decode message as following:
   (let ((number (wl-summary-message-number))
 	(folder wl-summary-buffer-elmo-folder))
     (if number
-	(let ((raw (elmo-message-fetch-string 
+	(let ((raw (elmo-message-fetch-string
 		    folder number
 		    (elmo-find-fetch-strategy folder number)))
 	      (raw-buffer (get-buffer-create "*wl:raw message*"))

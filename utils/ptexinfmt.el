@@ -170,7 +170,10 @@ DOCSTRING will be printed if ASSERTION is nil and
   "`texinfo-multitable-widths' unsupport wide-char."
   (if (fboundp 'texinfo-multitable-widths)
       (with-temp-buffer
-	(let ((str "幅広文字"))
+	(let ((str (string (make-char 'japanese-jisx0208 73 125)
+			   (make-char 'japanese-jisx0208 57 45)
+			   (make-char 'japanese-jisx0208 74 56)
+			   (make-char 'japanese-jisx0208 59 122))))
 	  (texinfo-mode)
 	  (insert (format " {%s}\n" str))
 	  (goto-char (point-min))
@@ -409,7 +412,7 @@ For example, @verb\{|@|\} results in @ and
       (error "Not found: @verb start brace"))
     (delete-region texinfo-command-start (+ 2 texinfo-command-end))
     (search-forward  delimiter))
-  (delete-backward-char 1)
+  (delete-char -1)
   (unless (looking-at "}")
     (error "Not found: @verb end brace"))
   (delete-char 1))

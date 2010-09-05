@@ -123,7 +123,7 @@
     )
   "The Message buffer toolbar.")
 
-(defalias 'wl-draft-insert-signature 'insert-signature);; for draft toolbar.
+(defalias 'wl-draft-insert-signature 'insert-signature)	; for draft toolbar.
 
 (defvar wl-draft-toolbar
   '([wl-draft-send-from-toolbar
@@ -252,20 +252,20 @@
     (beginning-of-line)
     (let (fld-name)
       (cond
-       (;; opened folder group
-	(and (wl-folder-buffer-group-p)
+       ;; opened folder group
+       ((and (wl-folder-buffer-group-p)
 	     (looking-at wl-highlight-folder-opened-regexp))
 	(wl-xmas-highlight-folder-group-line 'wl-folder-opened-glyph
 					     'wl-highlight-folder-opened-face
 					     numbers))
-       (;; closed folder group
-	(and (wl-folder-buffer-group-p)
+       ;; closed folder group
+       ((and (wl-folder-buffer-group-p)
 	     (looking-at wl-highlight-folder-closed-regexp))
 	(wl-xmas-highlight-folder-group-line 'wl-folder-closed-glyph
 					     'wl-highlight-folder-closed-face
 					     numbers))
-       (;; basic folder
-	(and (setq fld-name (wl-folder-get-folder-name-by-id
+       ;; basic folder
+       ((and (setq fld-name (wl-folder-get-folder-name-by-id
 			     (get-text-property (point) 'wl-folder-entity-id)))
 	     (looking-at "[ \t]+\\([^ \t]+\\)"))
 	(let ((start (match-beginning 1)))
@@ -280,18 +280,21 @@
 	      (set-extent-begin-glyph
 	       extent
 	       (cond
-		((string= fld-name wl-trash-folder);; trash folder
-		 (let ((num (nth 2 numbers)));; number of messages
+		;; trash folder
+		((string= fld-name wl-trash-folder)
+		 (let ((num (nth 2 numbers))) ; number of messages
 		   (get (if (or (not num) (zerop num))
 			    'wl-folder-trash-empty-glyph
 			  'wl-folder-trash-glyph)
 			'glyph)))
-		((string= fld-name wl-draft-folder);; draft folder
+		;; draft folder
+		((string= fld-name wl-draft-folder)
 		 (get 'wl-folder-draft-glyph 'glyph))
-		((string= fld-name wl-queue-folder);; queue folder
+		;; queue folder
+		((string= fld-name wl-queue-folder)
 		 (get 'wl-folder-queue-glyph 'glyph))
-		(;; and one of many other folders
-		 (setq type (or (elmo-folder-type fld-name)
+		;; and one of many other folders
+		((setq type (or (elmo-folder-type fld-name)
 				(elmo-folder-type-internal
 				 (elmo-make-folder fld-name))))
 		 (get (intern (format "wl-folder-%s-glyph" type)) 'glyph))))))
