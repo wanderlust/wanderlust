@@ -1,3 +1,19 @@
+2010-09-08  Tetsurou Okazaki  <okazaki@be.to>
+
+	* wl-spam.el (wl-spam-register-spam-messages): Put spam mark on
+	the registered messages unless specified folder is a spam folder.
+	Add docstring.
+	(wl-spam-register-good-messages): Remove spam mark from
+	the registered messages.  Add docstring.
+	(wl-summary-register-as-spam)
+	(wl-summary-register-as-spam-region, wl-thread-register-as-spam)
+	(wl-summary-register-as-spam-all)
+	(wl-summary-target-mark-register-as-spam)
+	(wl-summary-register-as-good)
+	(wl-summary-register-as-good-region, wl-thread-register-as-good)
+	(wl-summary-register-as-good-all)
+	(wl-summary-target-mark-register-as-good): Add docstring.
+
 2010-08-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-summary.el: Delete trailing whitespace.
