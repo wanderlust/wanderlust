@@ -2,6 +2,10 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 * 2.14.x から 2.16.0 への変更点
 
+** spam として登録したメッセージに spam マークを付けます。
+
+** non-spam として登録したメッセージから spam マークを取り除きます。
+
 ** ESEARCH (RFC4731) がサポートされました。
 
 ** 新規オプション elmo-imap4-set-seen-flag-explicitly が追加されました。
