@@ -1,3 +1,8 @@
+2010-09-18  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-demo.el: Prune functions provided temporarily to avoid
+	compile warnings in the end.
+
 2010-09-08  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-spam.el (wl-spam-register-spam-messages): Put spam mark on
