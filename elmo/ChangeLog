@@ -1,3 +1,10 @@
+2010-10-13  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-multi.el (elmo-folder-open-internal-p): Start with t and
+	set to nil if one of the child folders is not open.
+	(elmo-folder-open-internal): Open child folders only if they are
+	not opened yet.
+
 2010-08-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* elmo-imap4.el: Remove trailing whitespace.
