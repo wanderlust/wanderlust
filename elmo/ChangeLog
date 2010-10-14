@@ -1,3 +1,8 @@
+2010-10-14  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-multi.el (elmo-folder-open-internal-p): Evaluate symbol to
+	return state of child folders.
+
 2010-10-13  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-multi.el (elmo-folder-open-internal-p): Start with t and
