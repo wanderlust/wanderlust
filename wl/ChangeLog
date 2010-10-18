@@ -1,3 +1,8 @@
+2010-10-18  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-summary.el (wl-summary-mode): Check with fboundp before calling `make-local-hook'.
+	* wl-mime.el (wl-draft-preview-message): Ditto.
+
 2010-09-18  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-demo.el: Prune functions provided temporarily to avoid
