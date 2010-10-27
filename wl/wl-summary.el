@@ -952,13 +952,15 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	(wl-summary-window-scroll-functions))
   (when wl-summary-buffer-window-scroll-functions
     (let ((hook (if wl-on-xemacs 'pre-idle-hook 'window-scroll-functions)))
-      (make-local-hook hook)
+      (if (fboundp 'make-local-hook)
+	  (make-local-hook hook))
       (dolist (function wl-summary-buffer-window-scroll-functions)
 	(add-hook hook function nil t)))
     (add-hook 'window-size-change-functions
 	      #'wl-summary-after-resize-function))
   (dolist (hook '(change-major-mode-hook kill-buffer-hook))
-    (make-local-hook hook)
+    (if (fboundp 'make-local-hook)
+	(make-local-hook hook))
     (add-hook hook #'wl-summary-buffer-detach nil t))
   ;; This hook may contain the function `wl-setup-summary' for reasons
   ;; of system internal to accord facilities for the Emacs variants.
