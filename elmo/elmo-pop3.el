@@ -789,9 +789,6 @@ until the login delay period has expired"))
   (when (elmo-pop3-folder-use-uidl folder)
     (elmo-location-map-load folder (elmo-folder-msgdb-path folder))))
 
-(luna-define-method elmo-folder-open-internal-p ((folder elmo-pop3-folder))
-  (elmo-location-map-alist folder))
-
 (luna-define-method elmo-folder-commit :after ((folder elmo-pop3-folder))
   (when (and (not elmo-inhibit-number-mapping)
 	     (elmo-folder-persistent-p folder))

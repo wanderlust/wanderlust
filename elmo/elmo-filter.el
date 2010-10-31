@@ -156,9 +156,6 @@
 (luna-define-method elmo-folder-open-internal ((folder elmo-filter-folder))
   (elmo-folder-open-internal (elmo-filter-folder-target-internal folder)))
 
-(luna-define-method elmo-folder-open-internal-p ((folder elmo-filter-folder))
-  (elmo-folder-open-internal-p (elmo-filter-folder-target-internal folder)))
-
 (luna-define-method elmo-folder-check ((folder elmo-filter-folder))
   (when (elmo-filter-folder-require-msgdb-internal folder)
     (elmo-folder-synchronize (elmo-filter-folder-target-internal folder))))

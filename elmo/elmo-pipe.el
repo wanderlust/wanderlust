@@ -179,9 +179,6 @@
 (luna-define-method elmo-folder-open-internal ((folder elmo-pipe-folder))
   (elmo-folder-open-internal (elmo-pipe-folder-dst-internal folder)))
 
-(luna-define-method elmo-folder-open-internal-p ((folder elmo-pipe-folder))
-  (elmo-folder-open-internal-p (elmo-pipe-folder-dst-internal folder)))
-
 (luna-define-method elmo-folder-close-internal ((folder elmo-pipe-folder))
   (elmo-folder-close-internal (elmo-pipe-folder-dst-internal folder)))
 

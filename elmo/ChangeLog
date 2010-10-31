@@ -1,3 +1,17 @@
+2010-10-31  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-map.el (elmo-folder-open-internal): Don't load location map
+	if it is already loaded.
+
+	* elmo.el (elmo-folder-open-internal-p)
+	(elmo-folder-move-messages): Method removed.
+	* elmo-filter.el (elmo-folder-open-internal-p): Dto.
+	* elmo-map.el (elmo-folder-open-internal-p): Dto.
+	* elmo-multi.el (elmo-folder-open-internal-p): Dto.
+	* elmo-pipe.el (elmo-folder-open-internal-p): Dto.
+	* elmo-pop3.el (elmo-folder-open-internal-p): Dto.
+	* elmo-shimbun.el (elmo-folder-open-internal-p): Dto.
+
 2010-10-24  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-pop3.el (elmo-folder-open-internal-p): Define method for
