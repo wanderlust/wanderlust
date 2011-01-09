@@ -1,3 +1,8 @@
+2011-01-09  David Maus  <dmaus@ictsoc.de>
+
+	* wl-template.el (wl-template-select): Reset draft config exec
+	flag when selecting template.
+
 2010-10-18  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-summary.el (wl-summary-mode): Check with fboundp before calling `make-local-hook'.
@@ -1604,12 +1609,12 @@
 
 2004-12-11  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* wl-mime.el (wl-draft-yank-current-message-entity): 
+	* wl-mime.el (wl-draft-yank-current-message-entity):
 	Switch to no-mime following method according to wl-message-display-type
 	property.
 	(wl-mime-preview-follow-no-mime): Use wl-message-mime-analysis-p.
 
-	* wl-message.el (wl-message-display-internal): 
+	* wl-message.el (wl-message-display-internal):
 	Put wl-message-display-type property on message buffer.
 
 	* wl-message.el (wl-message-mime-analysis-p): Fixed misspelling.
@@ -1866,7 +1871,7 @@
 
 2004-09-29  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* wl-summary.el (wl-summary-overview-entity-compare-by-from): 
+	* wl-summary.el (wl-summary-overview-entity-compare-by-from):
 	Don't extract mail address.
 	(wl-summary-mark-as-read-all): Dont' treat `read' flag.
 
@@ -2043,8 +2048,8 @@
 	Add an argument `reverse'.  All callers are updated.
 	(wl-summary-sort): Add a prefix argument `reverse' to specify
 	reverse sorting.
-	(wl-summary-sort-by-date, wl-summary-sort-by-number) 
-	(wl-summary-sort-by-subject, wl-summary-sort-by-from) 
+	(wl-summary-sort-by-date, wl-summary-sort-by-number)
+	(wl-summary-sort-by-subject, wl-summary-sort-by-from)
 	(wl-summary-sort-by-list-info, wl-summary-sort-by-size): Likewise.
 
 2004-09-08  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
@@ -2752,7 +2757,7 @@
 	* wl-summary.el (wl-summary-decide-flag): Use
 	wl-completing-read-multiple instead of completing-read-multiple.
 
-	* wl-mule.el,wl-e21.el,wl-xmas.el (wl-completing-read-multiple): 
+	* wl-mule.el,wl-e21.el,wl-xmas.el (wl-completing-read-multiple):
 	New alias.
 
 	* wl-demo.el (wl-demo-setup-properties)[XEmacs]:
@@ -2812,7 +2817,7 @@
 
 	* wl-summary.el: Define `elmo-global-flag-list' to avoid byte-compile
 	warning.
-	(wl-summary-mode-menu-spec): Follow the change of 
+	(wl-summary-mode-menu-spec): Follow the change of
 	`wl-summary-mark-as-important', `wl-thread-set-flags', and so on.
 	(wl-summary-mode-map): Follow the change of
 	`wl-summary-mark-as-important', `wl-thread-set-flags', and so on.
@@ -2824,7 +2829,7 @@
 	instead of elmo-message-flagged-p.
 	(wl-summary-persistent-mark-string): Follow the variable name change;
 	Put wl-summary-flag-mark if the message has global-flag.
-	(wl-summary-target-mark-set-flags): Renamed from 
+	(wl-summary-target-mark-set-flags): Renamed from
 	wl-summary-target-mark-mark-as-important.
 	(wl-summary-decide-flag): New function.
 	(wl-summary-set-flags-internal): Renamed from
@@ -2837,7 +2842,7 @@
 	(wl-summary-next-message): List flagged messages in the msgdb.
 
 	* wl-score.el (wl-summary-score-update-all-lines): Use
-	wl-summary-add-flags-internal instead of 
+	wl-summary-add-flags-internal instead of
 
 	* wl-mime.el (wl-mime-display-header): Follow the variable name change.
 
@@ -2862,7 +2867,7 @@
 	(wl-demo-setup-properties): Renamed from
 	`wl-demo-set-background-color'.
 	(wl-demo): Follow the change above.
-	
+
 	* Version number is increased to 2.11.24.
 
 2004-02-06  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
@@ -3354,7 +3359,7 @@
 	(wl-draft-reedit): Rewrite.
 
 	* Version number is increased to 2.11.19.
-	
+
 2003-10-09  Tetsurou Okazaki  <okazaki@be.to>
 
 	* wl-summary.el (wl-summary-search-by-subject): Remove unused local
@@ -3446,7 +3451,7 @@
 	* wl-highlight.el (wl-highlight-summary-current-line): Added optional
 	argument number and flag.
 
-	* wl-action.el (wl-summary-registered-temp-mark): 
+	* wl-action.el (wl-summary-registered-temp-mark):
 	Do nothing when wl-summary-buffer-temp-mark-list is nil.
 
 2003-09-28  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
@@ -3626,14 +3631,14 @@
 	(wl-message-header-narrowing-widen-at-mouse): Ditto.
 	(wl-message-header-narrowing-setup): Ditto.
 	(wl-message-header-narrowing-toggle): Ditto.
-	
+
 	* wl-highlight.el (wl-message-header-narrowing-face): New face.
 
 	* wl-vars.el (wl-folder-sync-range-alist): Set default range for
 	'flag as all.
 	(wl-use-flag-folder-help-echo): New user option.
 
-	* wl-summary.el (wl-summary-detect-mark-position): Bind 
+	* wl-summary.el (wl-summary-detect-mark-position): Bind
 	wl-summary-highlight as nil.
 	(wl-summary-set-mark-modified): Follow the API change.
 	(wl-summary-mark-modified-p): Ditto.
@@ -3657,7 +3662,7 @@
 	* wl-draft.el (wl-draft-kill): Follow the API change.
 
 	* Version number is increased to 2.11.14.
-	
+
 2003-09-17  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
 	* wl-draft.el (wl-draft-do-fcc): Follow the API change.
@@ -3788,7 +3793,7 @@
 
 	* wl-highlight.el (wl-highlight-summary-line-string): Changed argument
 	mark to flags.
-	(wl-highlight-summary-current-line): Decide the face not by the 
+	(wl-highlight-summary-current-line): Decide the face not by the
 	persistent mark but flags.
 
 2003-08-22  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
@@ -3924,7 +3929,7 @@
 	`wl-summary-message-visible-p' to check visibility of the message
 	and jump to message only when the message line is visible and have
 	different number; Call wl-summary-unset-mark with number argument.
-	(wl-summary-unset-mark): 
+	(wl-summary-unset-mark):
 	Use `wl-summary-message-visible-p'
 	to check visibility of the message and jump to message only when
 	the message line is visible and have different number;
@@ -4061,7 +4066,7 @@
 	order of the arguments for `wl-expire-message-p'.
 	(Reported by Shinichiro HIDA <shinichiro@stained-g.net>)
 
-	* wl-summary.el (wl-summary-target-mark-reply-with-citation): 
+	* wl-summary.el (wl-summary-target-mark-reply-with-citation):
 	Check return value of wl-summary-reply.
 	(wl-summary-reply): Recover window configuration when an error occured.
 
@@ -4207,7 +4212,7 @@
 	* wl-thread.el (wl-thread-delete-message): Always update
 	wl-summary-buffer-number-list.
 
-	* wl-action.el (wl-summary-print-destination): 
+	* wl-action.el (wl-summary-print-destination):
 	Do nothing when folder is nil.
 
 2003-07-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
@@ -4250,7 +4255,7 @@
 
 	* wl-action.el (wl-summary-define-mark-action): Fixed region function.
 
-	* wl-summary.el (wl-summary-set-message-modified): 
+	* wl-summary.el (wl-summary-set-message-modified):
 	Call wl-summary-set-mark-modified.
 	(wl-summary-delete-messages-on-buffer): Call
 	wl-folder-set-folder-updated instead of wl-folder-update-unread.
@@ -4299,7 +4304,7 @@
 	(wl-summary-exec): Ditto.
 
 2003-07-15  Mito  <mito@mxa.nes.nec.co.jp>
-	
+
 	* wl-summary.el (wl-summary-entity-info-msg): Don't replace '%' to
 	'%%'.
 
@@ -4328,7 +4333,7 @@
 	* wl-draft.el (wl-draft-normal-send-func): Fixed bug for removing
 	empty lines.
 
-	* wl-action.el: New file. 
+	* wl-action.el: New file.
 
 2003-07-14  Yuuichi Teranishi  <teranisi@gohome.org>
 
@@ -4353,8 +4358,8 @@
 	* wl-vars.el (wl-summary-mark-action-list): Moved from wl-summary.el
 	and define using defcustom;
 	Define 4th element as a face.
-	
-	* wl-summary.el (wl-summary-incorporate): Use 
+
+	* wl-summary.el (wl-summary-incorporate): Use
 	`wl-summary-prefetch-region-no-mark' instead of
 	`wl-summary-prefetch-region'.
 	(wl-summary-prefetch-region-no-mark): Revival of old
@@ -4555,7 +4560,7 @@
 	(wl-summary-insert-sequential): Changed argument msgdb to folder.
 	(wl-summary-insert-headers): Changed argument overview to folder.
 	(wl-summary-search-by-subject): Likewise.
-	(wl-summary-insert-thread): Renamed from 
+	(wl-summary-insert-thread): Renamed from
 	wl-summary-insert-thread-entity and changed argument msgdb to folder.
 
 	* wl-folder.el (wl-folder-check-one-entity): Treat elmo-imap4-bye-error
@@ -5603,7 +5608,7 @@
 	and mailing-list:.
 	(wl-summary-overview-entity-compare-by-list-info): Treat empty field
 	value.
-	(wl-summary-line-list-info): Print mailing-list name even when 
+	(wl-summary-line-list-info): Print mailing-list name even when
 	list-number is empty.
 
 2002-07-18  Yoichi NAKAYAMA  <yoichi@eken.phys.nagoya-u.ac.jp>
@@ -5696,7 +5701,7 @@
 
 2002-06-17  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* wl-summary.el (wl-summary-read-folder): Use copy-sequence 
+	* wl-summary.el (wl-summary-read-folder): Use copy-sequence
 	`wl-folder-entity-hashtb' as completion table.
 
 2002-06-14  Katsumi Yamaoka  <yamaoka@jpl.org>
@@ -5876,7 +5881,7 @@
 
 2002-05-14  KAMO Tomoyuki  <kamo@i-manage.co.jp>
 
-	* wl-summary.el (wl-summary-prefetch-msg): 
+	* wl-summary.el (wl-summary-prefetch-msg):
 	If wl-prefetch-confirm is nil and arg is non-nil, do prefetch.
 
 2002-05-11  Yuuichi Teranishi  <teranisi@gohome.org>
@@ -6095,7 +6100,7 @@
 	(wl-summary-subject-filter-func-internal): Ditto.
 	(All other related portions are changed.)
 	(wl-summary-buffer-set-folder):
-	Set up wl-summary-buffer-number-column and 
+	Set up wl-summary-buffer-number-column and
 	wl-summary-buffer-line-formatter
 	(All other related portions are changed.)
 	(wl-summary-buffer-number-column-detect): Abolished.
@@ -6166,7 +6171,7 @@
 	* wl-folder.el (wl-folder-buffer-search-entity): Bind case-fold-search
 	as nil.
 
-	* wl-thread.el (wl-thread-open-all-unread): Use 
+	* wl-thread.el (wl-thread-open-all-unread): Use
 	elmo-folder-list-messages-mark-match.
 	(wl-thread-insert-message): Removed argument `mark-alist'.
 	(wl-thread-msg-mark-as-important): Use elmo-msgdb-get-mark and
