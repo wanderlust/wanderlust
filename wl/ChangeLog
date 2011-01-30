@@ -1,3 +1,7 @@
+2011-01-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-demo.el (wl-demo-copyright-notice): Add 2011.
+
 2011-01-29  David Maus  <dmaus@ictsoc.de>
 
 	* wl-draft.el (wl-user-agent-compose): Add optional argument
