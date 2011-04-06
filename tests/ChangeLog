@@ -1,3 +1,12 @@
+2011-04-06  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* test-dist.el: Add `lexical-binding' file variable.
+	(test-wl-modules-trailing-whitespace, test-elmo-modules-exists)
+	(test-elmo-modules-trailing-whitespace)
+	(test-util-modules-exists)
+	(test-util-modules-trailing-whitespace, test-wl-icon-exists): Fix
+	let style for `lexical-binding'.
+
 2010-08-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* test-dist.el (test-elmo-modules-trailing-whitespace)

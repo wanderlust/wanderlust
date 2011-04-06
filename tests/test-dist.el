@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 (require 'lunit)
 (require 'wl)
 (require 'cl)				; mapc
@@ -5,100 +6,98 @@
 (luna-define-class test-dist (lunit-test-case))
 
 ;; WL-MODULES
+(defvar test-dist-wl-lost-module-list nil)
 (luna-define-method test-wl-modules-exists ((case test-dist))
-  (lunit-assert
-   (null
-    (let (filename lost)
-      (mapc
-       (lambda (module)
-	 (setq filename (concat (symbol-name module) ".el"))
-	 (unless (file-exists-p (expand-file-name filename WLDIR))
-	   (add-to-list 'lost filename)))
-       WL-MODULES)
-      lost))))
+  (setq test-dist-wl-lost-module nil)
+  (mapc
+   (lambda (module)
+     (let ((filename (concat (symbol-name module) ".el")))
+       (unless (file-exists-p (expand-file-name filename WLDIR))
+	 (add-to-list 'test-dist-wl-lost-module-list filename))))
+   WL-MODULES)
+  (lunit-assert (null test-dist-wl-lost-module-list)))
 
+(defvar test-dist-wl-bad-module-list nil)
 (luna-define-method test-wl-modules-trailing-whitespace ((case test-dist))
-  (let (filename badmodule)
-    (mapc
-     (lambda (module)
-       (setq filename
-	     (format "%s.el%s" (symbol-name module)
-		     (if (eq 'wl-news module) ".in" "")))
+  (setq test-dist-wl-bad-module-list nil)
+  (mapc
+   (lambda (module)
+     (let ((filename (format "%s.el%s" (symbol-name module)
+			     (if (eq 'wl-news module) ".in" ""))))
        (with-temp-buffer
 	 (insert-file-contents (expand-file-name filename WLDIR))
 	 (when (re-search-forward "[ \t]$" nil t)
-	   (add-to-list 'badmodule filename))))
-     WL-MODULES)
-    (lunit-assert (null badmodule))))
+	   (add-to-list 'test-dist-wl-bad-module-list filename)))))
+   WL-MODULES)
+  (lunit-assert (null test-dist-wl-bad-module-list)))
 
 
 ;; ELMO-MODULES
+(defvar test-dist-elmo-lost-module-list nil)
 (luna-define-method test-elmo-modules-exists ((case test-dist))
-  (lunit-assert
-   (null
-    (let (filename lost)
-      (mapc
-       (lambda (module)
-	 (setq filename (concat (symbol-name module) ".el"))
-	 (unless (file-exists-p (expand-file-name filename ELMODIR))
-	   (add-to-list 'lost filename)))
-       ELMO-MODULES)
-      lost))))
+  (setq test-dist-elmo-lost-module-list nil)
+  (mapc
+   (lambda (module)
+     (let ((filename (concat (symbol-name module) ".el")))
+       (unless (file-exists-p (expand-file-name filename ELMODIR))
+	 (add-to-list 'test-dist-elmo-lost-module-list filename))))
+   ELMO-MODULES)
+  (lunit-assert (null test-dist-elmo-lost-module-list)))
 
+(defvar test-dist-elmo-bad-module-list nil)
 (luna-define-method test-elmo-modules-trailing-whitespace ((case test-dist))
-  (let (filename badmodule)
-    (mapc
-     (lambda (module)
-       (setq filename (format "%s.el" (symbol-name module)))
+  (setq test-dist-elmo-bad-module-list nil)
+  (mapc
+   (lambda (module)
+     (let ((filename (format "%s.el" (symbol-name module))))
        (with-temp-buffer
 	 (insert-file-contents (expand-file-name filename ELMODIR))
 	 (when (re-search-forward "[ \t]$" nil t)
-	   (add-to-list 'badmodule filename))))
-     ELMO-MODULES)
-    (lunit-assert (null badmodule))))
+	   (add-to-list 'test-dist-elmo-bad-module-list filename)))))
+   ELMO-MODULES)
+  (lunit-assert (null test-dist-elmo-bad-module-list)))
 
 
 ;; UTILS-MODULES
+(defvar test-dist-util-lost-module-list nil)
 (luna-define-method test-util-modules-exists ((case test-dist))
-  (lunit-assert
-   (null
-    (let (filename lost)
-      (mapc
-       (lambda (module)
-	 (setq filename (concat (symbol-name module) ".el"))
-	 (unless (file-exists-p (expand-file-name filename UTILSDIR))
-	   (add-to-list 'lost symbol)))
-       UTILS-MODULES)
-      lost))))
+  (setq test-dist-util-lost-module-list nil)
+  (mapc
+   (lambda (module)
+     (let ((filename (concat (symbol-name module) ".el")))
+       (unless (file-exists-p (expand-file-name filename UTILSDIR))
+	 (add-to-list 'test-dist-util-lost-module-list symbol))))
+   UTILS-MODULES)
+  (lunit-assert (null test-dist-util-lost-module-list)))
 
+(defvar test-dist-util-bad-module-list nil)
 (luna-define-method test-util-modules-trailing-whitespace ((case test-dist))
-  (let (filename badmodule)
-    (mapc
-     (lambda (module)
-       (setq filename (format "%s.el" (symbol-name module)))
+  (setq test-dist-util-bad-module-list nil)
+  (mapc
+   (lambda (module)
+     (let ((filename (format "%s.el" (symbol-name module))))
        (with-temp-buffer
 	 (insert-file-contents (expand-file-name filename UTILSDIR))
 	 (when (re-search-forward "[ \t]$" nil t)
-	   (add-to-list 'badmodule filename))))
-     UTILS-MODULES)
-    (lunit-assert (null badmodule))))
+	   (add-to-list 'test-dist-util-bad-module-list filename)))))
+   UTILS-MODULES)
+  (lunit-assert (null test-dist-util-bad-module-list)))
 
 
 ;; Icons
+(defvar test-dist-wl-lost-icon-list nil)
 (luna-define-method test-wl-icon-exists ((case test-dist))
-  (lunit-assert
-   (null
-    (let (name value lost)
-      (mapatoms
-       (lambda (symbol)
-	 (setq name (symbol-name symbol))
-	 (setq value (and (boundp symbol) (symbol-value symbol)))
-	 (when (and (string-match "^wl-.*-icon$" name)
-		    (stringp value)
-		    (string-match "xpm$" value))
-	   (unless (file-exists-p (expand-file-name value ICONDIR))
-	     (add-to-list 'lost symbol)))))
-      lost))))
+  (setq test-dist-wl-lost-icon-list nil)
+  (mapatoms
+   (lambda (symbol)
+     (let ((name (symbol-name symbol))
+	   (value (and (boundp symbol) (symbol-value symbol))))
+       (when (and (string-match "^wl-.*-icon$" name)
+		  (stringp value)
+		  (string-match "xpm$" value))
+	 (unless (file-exists-p (expand-file-name value ICONDIR))
+	   (add-to-list 'test-dist-wl-lost-icon-list symbol))))))
+  (lunit-assert (null test-dist-wl-lost-icon-list)))
 
 (luna-define-method test-version-status-icon-xpm ((case test-dist))
   (require 'wl-demo)
