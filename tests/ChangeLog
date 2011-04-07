@@ -1,3 +1,14 @@
+2011-04-07  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* test-elmo-date.el: Add `lexical-binding' file variable.
+	* test-elmo-imap4.el: Ditto.
+	* test-elmo-localdir.el: Ditto.
+	* test-elmo-util.el: Ditto.
+	* test-rfc2368.el: Ditto.
+	* test-utf7.el: Ditto.
+	* test-wl-draft.el: Ditto.
+	* test-wl-util.el: Ditto.
+
 2011-04-06  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* test-dist.el: Add `lexical-binding' file variable.

@@ -1,3 +1,4 @@
+;; -*- lexical-binding: t -*-
 (require 'lunit)
 (require 'wl-draft)
 
