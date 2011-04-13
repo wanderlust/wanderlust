@@ -1,4 +1,4 @@
-;;; ptexinfmt.el -- portable Texinfo formatter.
+;;; ptexinfmt.el -- portable Texinfo formatter. -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1985, 1986, 1988, 1990, 1991, 1992, 1993,
 ;;               1994, 1995, 1996, 1997 Free Software Foundation, Inc.
@@ -69,7 +69,7 @@ This is last argument in `ptexinfmt-broken-facility'.")
 
 (put 'ptexinfmt-broken-facility 'lisp-indent-function 'defun)
 (defmacro ptexinfmt-broken-facility (facility docstring assertion
-					      &optional dummy)
+					      &optional _dummy)
   "Declare a symbol FACILITY is broken if ASSERTION is nil.
 DOCSTRING will be printed if ASSERTION is nil and
 `ptexinfmt-disable-broken-notice-flag' is nil."
@@ -129,6 +129,8 @@ DOCSTRING will be printed if ASSERTION is nil and
     t))
 
 ;; @var{METASYNTACTIC-VARIABLE}
+(defvar texinfo-enclosure-list)
+(defvar texinfo-alias-list)
 (ptexinfmt-broken-facility texinfo-format-var
   "Don't perse @var argument."
   (condition-case nil
