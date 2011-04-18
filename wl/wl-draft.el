@@ -2533,10 +2533,10 @@ Automatically applied in draft sending time."
 ;;;###autoload
 (defun wl-user-agent-compose (&optional to subject other-headers continue
 					switch-function yank-action
-					send-actions)
+					send-actions return-action)
   "Support the `compose-mail' interface for wl.
 Only support for TO, SUBJECT, and OTHER-HEADERS has been implemented.
-Support for CONTINUE, YANK-ACTION, and SEND-ACTIONS has not
+Support for CONTINUE, YANK-ACTION, SEND-ACTIONS and RETURN-ACTION has not
 been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 
   (unless (featurep 'wl)

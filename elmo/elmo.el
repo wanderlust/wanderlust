@@ -217,9 +217,6 @@ If optional LOAD-MSGDB is non-nil, msgdb is loaded.
 (luna-define-generic elmo-folder-open-internal (folder)
   "Open FOLDER (without loading saved folder status).")
 
-(luna-define-generic elmo-folder-open-internal-p (folder)
-  "Return non-nil if FOLDER is opened internally.")
-
 (luna-define-generic elmo-folder-check (folder)
   "Check the FOLDER to obtain newest information at the next list operation.")
 
@@ -716,10 +713,6 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
   nil ; default is do nothing.
   )
 
-(luna-define-method elmo-folder-open-internal-p ((folder elmo-folder))
-  t ; default is always opened internally
-  )
-
 (luna-define-method elmo-folder-check ((folder elmo-folder))
   nil) ; default is noop.
 
@@ -1195,8 +1188,7 @@ Returns a list of message numbers successfully appended."
 	  (error "move: %d is not writable"
 		 (elmo-folder-name-internal dst-folder)))
 	(when messages
-	  (unless (elmo-folder-open-internal-p src-folder)
-	    (elmo-folder-open-internal src-folder))
+	  (elmo-folder-open-internal src-folder)
 	  (elmo-folder-open-internal dst-folder)
 	  (unless (setq succeeds (elmo-folder-append-messages dst-folder
 							      src-folder

@@ -241,9 +241,6 @@ If it is the symbol `all', update overview for all shimbun folders."
 	 folder
 	 (elmo-map-folder-list-message-locations folder))))))
 
-(luna-define-method elmo-folder-open-internal-p ((folder elmo-shimbun-folder))
-  (elmo-location-map-alist folder))
-
 (luna-define-method elmo-folder-reserve-status-p ((folder elmo-shimbun-folder))
   t)
 

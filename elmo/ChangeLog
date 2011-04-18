@@ -1,3 +1,27 @@
+2011-01-12  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-nntp.el (elmo-nntp-folder-msgdb-create): Remove accidental
+	rebinding of new message db symbol.
+
+2010-11-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-pop3.el (elmo-folder-open-internal): Don't load location
+	map if it is already loaded.
+
+2010-10-31  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-map.el (elmo-folder-open-internal): Don't load location map
+	if it is already loaded.
+
+	* elmo.el (elmo-folder-open-internal-p)
+	(elmo-folder-move-messages): Method removed.
+	* elmo-filter.el (elmo-folder-open-internal-p): Dto.
+	* elmo-map.el (elmo-folder-open-internal-p): Dto.
+	* elmo-multi.el (elmo-folder-open-internal-p): Dto.
+	* elmo-pipe.el (elmo-folder-open-internal-p): Dto.
+	* elmo-pop3.el (elmo-folder-open-internal-p): Dto.
+	* elmo-shimbun.el (elmo-folder-open-internal-p): Dto.
+
 2010-10-24  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-pop3.el (elmo-folder-open-internal-p): Define method for
@@ -1602,7 +1626,7 @@
 
 2005-02-17  ARISAWA Akihiro  <ari@mbf.sphere.ne.jp>
 
-	* elmo-shimbun.el (elmo-folder-exists-p): Use `shimbun-group-p' 
+	* elmo-shimbun.el (elmo-folder-exists-p): Use `shimbun-group-p'
 	if available.
 
 2005-02-18  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
@@ -2148,7 +2172,7 @@
 	* elmo.el (elmo-folder-append-buffer): Fix docstring.
 	(elmo-generic-folder-append-messages): If elmo-message-flags return nil,
 	pass (read) for the FLAG argument of elmo-folder-append-buffer.
-	
+
 2004-10-02  Yoichi NAKAYAMA  <yoichi@geiin.org>
 
 	* elmo-split.el (elmo-split-rule): Update comment.
@@ -2250,7 +2274,7 @@
 
 	* modb-entity.el (elmo-message-entity-handler): If CAR element of entity
 	is `t', treat it as legacy entity.
-	
+
 	* elmo.el (elmo-message-flag-available-p): New generic function.
 	(elmo-message-number): Ditto.
 	(elmo-message-field): Use `elmo-msgdb-message-field'.
@@ -2764,7 +2788,7 @@
 	warnings.
 
 	* elmo-file.el: New file.
-	
+
 	* modb-standard.el (elmo-msgdb-list-flagged): Treat keyword flags.
 
 	* elsp-sa.el (elmo-spam-spamassassin-max-messages-per-process): New
@@ -3627,7 +3651,7 @@
 	elmo-msgdb-message-entity-number.
 	(elmo-msgdb-append-entity): Ditto.
 	(elmo-msgdb-create-message-entity-from-file): Remove.
-	(elmo-msgdb-create-message-entity-from-buffer): Use msgdb which 
+	(elmo-msgdb-create-message-entity-from-buffer): Use msgdb which
 	corresponds to the entity.
 	(elmo-msgdb-message-entity-number): Do nothing currently.
 	(elmo-msgdb-message-entity-field): Ditto.
@@ -3653,7 +3677,7 @@
 
 2003-09-21  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
 
-	* modb-standard.el (elmo-msgdb-create-message-entity-from-buffer): 
+	* modb-standard.el (elmo-msgdb-create-message-entity-from-buffer):
 	Fixed how to set extra field into entity.
 	(elmo-msgdb-message-entity-set-field): Fixed mistake string for
 	symbol.
@@ -3752,7 +3776,7 @@
 	(elmo-map-folder-list-message-locations): elmo-message-entity-field.
 
 	* elmo-sendlog.el (elmo-folder-msgdb-create): Use
-	elmo-msgdb-create-message-entity-from-file and 
+	elmo-msgdb-create-message-entity-from-file and
 	elmo-message-entity-field.
 
 	* elmo-pop3.el (elmo-pop3-sort-msgdb-by-original-number): Use
@@ -3789,7 +3813,7 @@
 	* elmo-map.el (elmo-folder-pack-numbers): Use
 	elmo-message-entity-set-number.
 
-	* elmo-maildir.el (elmo-folder-msgdb-create): 
+	* elmo-maildir.el (elmo-folder-msgdb-create):
 	elmo-msgdb-create-message-entity-from-file instead of
 	elmo-msgdb-create-overview-entity-from-file.
 
@@ -3802,11 +3826,11 @@
 	elmo-messge-entity-field and elmo-message-entity-number.
 	(elmo-imap4-fetch-callback-1): Call
 	elmo-msgdb-create-message-entity-from-buffer instead of
-	elmo-msgdb-create-overview-from-buffer.	
+	elmo-msgdb-create-overview-from-buffer.
 	(elmo-folder-msgdb-create-plugged): Use elmo-messge-entity-field.
 	(elmo-find-fetch-strategy): Likewise.
 
-	* elmo-flag.el (elmo-folder-msgdb-create): Call 
+	* elmo-flag.el (elmo-folder-msgdb-create): Call
 	elmo-localdir-msgdb-create-entity with argument msgdb.
 
 	* elmo-dop.el (elmo-dop-msgdb): Use elmo-message-entity-number
@@ -4082,7 +4106,7 @@
 	`elmo-msgdb-set-path'.
 
 	* elmo-localdir.el (elmo-folder-pack-numbers): Ditto.
- 
+
 	* elmo-version.el (elmo-version): Up to 2.11.13.
 
 	* elmo.el (elmo-generic-folder-commit): Don't load msgdb.
@@ -4376,7 +4400,7 @@
 
 2003-08-05  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* elmo-filter.el (elmo-folder-set-message-modified): Set 
+	* elmo-filter.el (elmo-folder-set-message-modified): Set
 	message-modified slot of itself if it does not require target msgdb.
 
 	* elmo-mime.el (elmo-mime-message-display): Display message entirely
@@ -4500,7 +4524,7 @@
 
 2002-05-05  David Smith <ultrasoul@ultrasoul.com>
 
-	* elmo-imap4.el (elmo-imap4-folder-diff-plugged): 
+	* elmo-imap4.el (elmo-imap4-folder-diff-plugged):
 	Use SELECT when	elmo-imap4-use-select-to-update-status is t.
 
 2003-07-24  Hiroya Murata  <lapis-lazuli@pop06.odn.ne.jp>
@@ -4545,7 +4569,7 @@
 	(elmo-folder-kill-messages): Ditto.
 	(elmo-folder-synchronize): Use elmo-folder-kill-messages-before.
 
-	* elmo-imap4.el (elmo-folder-list-messages-plugged): 
+	* elmo-imap4.el (elmo-folder-list-messages-plugged):
 	Don't use elmo-msgdb-max-of-killed. It is harmful when messages are
 	killed not by synchronize (e.g. scoring).
 
@@ -4753,7 +4777,7 @@
 
 2003-03-25  Yuuichi Teranishi  <teranisi@gohome.org>
 
-	* elmo.el (elmo-folder-append-buffer): Changed argument from unread 
+	* elmo.el (elmo-folder-append-buffer): Changed argument from unread
 	to flag. (All other related portions are changed.)
 	(elmo-folder-msgdb-create): Likewise.
 	(elmo-generic-folder-append-messages): Use flag-table instead of
@@ -4904,7 +4928,7 @@
 	* elmo-msgdb.el: Moved global mark handling stuffs to elmo-util.el.
 
 	* elmo-util.el: Moved global mark handling stuffs from elmo-msgdb.el.
-	
+
 	* elmo-util.el (elmo-file-cache-delete): Check whether the cache file
 	is included in the global-mark or not.
 
@@ -5554,7 +5578,7 @@
 
 	* elmo-multi.el (elmo-multi-folder-append-msgdb): Removed third
 	argument for elmo-msgdb-append.
-	
+
 
 	* elmo-msgdb.el	(elmo-load-msgdb): New function.
 	(elmo-make-msgdb): Ditto.

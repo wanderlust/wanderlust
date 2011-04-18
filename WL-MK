@@ -210,16 +210,25 @@
       (setq files (cdr files)))
     (lunit suite)))
 
-(defun wl-scan-source (path)
-  (let (ret)
-    (mapc
-     (lambda (x)
-       (mapc (lambda (y)
-	       (setq ret (append (list y (concat y "c")) ret)))
-	     (directory-files x nil "\\(.+\\)\\.el$" t)))
-     path)
-    ret))
+(defun wl-scan-path (path scanner)
+  (let ((dirs (if (listp path)
+		  path
+		(list path))))
+    (apply 'append (mapcar scanner dirs))))
 
+(defun wl-scan-source (path)
+  (wl-scan-path path
+		(lambda (x)
+		  (apply 'append
+			 (mapcar (lambda (y)
+				   (list y (concat y "c")))
+				 (directory-files x nil "\\(.+\\)\\.el$" t))))))
+
+(defun wl-scan-icons (path)
+  (wl-scan-path path
+		(lambda (x)
+		  (let ((case-fold-search t))
+		    (directory-files x nil "\\.img$\\|\\.x[bp]m$")))))
 
 (defun wl-uninstall (objs path)
   ;(message (mapconcat 'identity objs " "))
@@ -266,17 +275,10 @@
     (install-files icons ICONDIR PIXMAPDIR nil 'overwrite)))
 
 (defun uninstall-wl-icons ()
-  (let* ((case-fold-search t)
-	 (icons (directory-files PIXMAPDIR t "\\.img$\\|\\.x[bp]m$"))
-	 icon)
-    (while icons
-      (setq icon (car icons)
-	    icons (cdr icons))
-      (if (and (file-exists-p icon)
-	       (file-writable-p icon))
-	  (progn
-	    (princ (format "%s was uninstalled.\n" icon))
-	    (delete-file icon))))))
+  (if (not (file-directory-p PIXMAPDIR))
+      ()
+    (wl-uninstall (wl-scan-icons PIXMAPDIR)
+		  PIXMAPDIR)))
 
 (defun install-wl-package ()
   (compile-wl-package)
