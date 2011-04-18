@@ -1115,7 +1115,7 @@ is enclosed by at least one regexp grouping construct."
 		(cdr (wl-read-event-char prompt)))
 	  ((?y ?Y)
 	   (throw 'done t))
-	  ((string-to-char " ")
+	  ((? ) ;; space
 	   (if scroll-by-SPC
 	       (ignore-errors (scroll-up))
 	     (throw 'done t)))
