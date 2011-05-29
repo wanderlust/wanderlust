@@ -1,5 +1,10 @@
 2011-05-29  David Maus  <dmaus@ictsoc.de>
 
+	* elmo-maildir.el (elmo-folder-append-buffer): Return number of
+	appended message.
+	* elmo-localdir.el (elmo-folder-append-buffer): Dto.
+	* elmo-archive.el (elmo-archive-folder-append-buffer): Dto.
+
 	* elmo.el (elmo-folder-append-buffer): Add optional fourth
 	argument, return number of appended message if possible.
 	* elmo-pipe.el (elmo-folder-append-buffer): Dto.

@@ -203,7 +203,9 @@
        (point-min) (point-max) filename nil 'no-msg)
       (elmo-folder-preserve-flags
        folder (elmo-msgdb-get-message-id-from-buffer) flags)
-      t)))
+      (if return-number
+	  (car (elmo-folder-status folder))
+	t))))
 
 (defun elmo-folder-append-messages-*-localdir (folder
 					       src-folder

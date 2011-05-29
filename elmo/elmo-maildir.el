@@ -450,7 +450,9 @@ file name for maildir directories."
 	    basedir))
 	  (elmo-folder-preserve-flags
 	   folder (elmo-msgdb-get-message-id-from-buffer) flags)
-	  t)
+	  (if return-number
+	      (car (elmo-folder-status folder))
+	    t))
       ;; If an error occured, return nil.
       (error))))
 

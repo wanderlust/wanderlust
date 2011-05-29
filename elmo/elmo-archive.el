@@ -616,7 +616,9 @@ TYPE specifies the archiver's symbol."
 		 (with-current-buffer src-buffer
 		   (elmo-msgdb-get-message-id-from-buffer))
 		 flags)
-		t))
+		(if return-number
+		    next-num
+		  t)))
 	  nil)))))
 
 (defun elmo-folder-append-messages-*-archive (folder
