@@ -1154,15 +1154,15 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 		       (if (sasl-step-data step)
 			   (elmo-base64-encode-string (sasl-step-data step)
 						      'no-line-break)
-			 "")))))))
+			 ""))))))))
 ;; Some servers return reduced capabilities when client asks for them
 ;; before login. It might be a good idea to ask them again, otherwise
 ;; we can miss some useful feature.
-	 (elmo-imap4-session-set-capability-internal
-	  session
-	  (elmo-imap4-response-value
-	   (elmo-imap4-send-command-wait session "capability")
-	   'capability)))))))
+	(elmo-imap4-session-set-capability-internal
+	 session
+	 (elmo-imap4-response-value
+	  (elmo-imap4-send-command-wait session "capability")
+	  'capability))))))
 
 (luna-define-method elmo-network-setup-session ((session
 						 elmo-imap4-session))
@@ -1455,7 +1455,7 @@ Return nil if no complete line has arrived."
 				      ")"))))
 	   (ESEARCH     (list
 			 'esearch
-			 (cddr (split-string (buffer-substring (point) (point-max)) " " "\,"))))
+			 (cddr (split-string (buffer-substring (point) (point-max)) " "))))
 	   (STATUS     (elmo-imap4-parse-status))
 	   ;; Added
 	   (NAMESPACE  (elmo-imap4-parse-namespace))
