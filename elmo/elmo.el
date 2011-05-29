@@ -427,7 +427,7 @@ If optional IS-LOCAL is non-nil, update only local (not server) status.")
 FOLDER is the ELMO folder structure.")
 
 (luna-define-generic elmo-folder-append-buffer (folder &optional flags
-						       number)
+						       number return-number)
   "Append current buffer as a new message.
 FOLDER is the destination folder (ELMO folder structure).
 FLAGS is the flag list for the appended message (list of symbols).
@@ -435,6 +435,9 @@ If FLAGS contain `read', the message is appended as `not-unread'.
 If it is nil, the appended message will be treated as `new'.
 If optional argument NUMBER is specified, the new message number is set
 \(if possible\).
+If optional argument RETURN-NUMBER is non-nil, return the number
+of the appended message if possible. If the number could not be
+obtained return t.
 Return nil on failure.")
 
 (luna-define-generic elmo-folder-pack-numbers (folder)

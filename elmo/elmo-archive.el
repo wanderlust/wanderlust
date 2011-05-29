@@ -573,11 +573,12 @@ TYPE specifies the archiver's symbol."
   (elmo-archive-message-fetch-internal folder number))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-archive-folder)
-					       &optional flags number)
-  (elmo-archive-folder-append-buffer folder flags number))
+					       &optional flags number
+					       return-number)
+  (elmo-archive-folder-append-buffer folder flags number return-number))
 
 ;; verrrrrry slow!!
-(defun elmo-archive-folder-append-buffer (folder flags number)
+(defun elmo-archive-folder-append-buffer (folder flags number return-number)
   (let* ((type (elmo-archive-folder-archive-type-internal folder))
 	 (prefix (elmo-archive-folder-archive-prefix-internal folder))
 	 (arc (elmo-archive-get-archive-name folder))

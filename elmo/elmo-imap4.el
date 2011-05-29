@@ -2715,7 +2715,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
     imap-flag))
 
 (luna-define-method elmo-folder-append-buffer
-  ((folder elmo-imap4-folder) &optional flags number)
+  ((folder elmo-imap4-folder) &optional flags number return-number)
   (if (elmo-folder-plugged-p folder)
       (let ((session (elmo-imap4-get-session folder))
 	    send-buffer result)

@@ -221,10 +221,11 @@
    type))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-filter-folder)
-					       &optional flag number)
+					       &optional flag number
+					       return-number)
   (elmo-folder-append-buffer
    (elmo-filter-folder-target-internal folder)
-   flag number))
+   flag number return-number))
 
 (defun elmo-folder-append-messages-filter-* (dst-folder
 					     src-folder

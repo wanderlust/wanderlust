@@ -1,3 +1,16 @@
+2011-05-29  David Maus  <dmaus@ictsoc.de>
+
+	* elmo.el (elmo-folder-append-buffer): Add optional fourth
+	argument, return number of appended message if possible.
+	* elmo-pipe.el (elmo-folder-append-buffer): Dto.
+	* elmo-maildir.el (elmo-folder-append-buffer): Dto.
+	* elmo-flag.el (elmo-folder-append-buffer): Dto.
+	* elmo-localdir.el (elmo-folder-append-buffer): Dto.
+	* elmo-filter.el (elmo-folder-append-buffer): Dto.
+	* elmo-cache.el (elmo-folder-append-buffer): Dto.
+	* elmo-archive.el (elmo-folder-append-buffer)
+	(elmo-archive-folder-append-buffer): Dto.
+
 2010-08-31  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-folder-delete-messages-plugged): Use smarter
