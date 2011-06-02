@@ -2718,6 +2718,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
   ((folder elmo-imap4-folder) &optional flags number return-number)
   (if (elmo-folder-plugged-p folder)
       (let ((session (elmo-imap4-get-session folder))
+	    (internaldate (elmo-time-make-imap-date-string (current-time)))
 	    send-buffer result)
 	(elmo-imap4-session-select-mailbox session
 					   (elmo-imap4-folder-mailbox-internal
@@ -2734,11 +2735,42 @@ If optional argument REMOVE is non-nil, remove FLAG."
 		    (if (and flags (elmo-folder-use-flag-p folder))
 			(concat " (" (elmo-imap4-flags-to-imap flags) ") ")
 		      " () ")
+		    (if return-number
+			(concat " \"" internaldate "\" ")
+		      "")
 		    (elmo-imap4-buffer-literal send-buffer))))
 	  (kill-buffer send-buffer))
 	(when result
 	  (elmo-folder-preserve-flags
-	   folder (elmo-msgdb-get-message-id-from-buffer) flags))
+	   folder (elmo-msgdb-get-message-id-from-buffer) flags)
+	  (when return-number
+	    (unless (setq result (cadadr (assq 'appenduid (cdar result))))
+	      (let ((candidates 
+		     (elmo-imap4-response-value
+		      (elmo-imap4-send-command-wait
+		       session
+		       (list
+			"uid search since "
+			(car (split-string internaldate " ")))) 'search)))
+		(if (null candidates)
+		    (setq result t)
+		  (setq candidates 
+			(elmo-imap4-response-value-all
+			 (elmo-imap4-send-command-wait
+			  session
+			  (list
+			   "uid fetch "
+			   (mapconcat 'number-to-string candidates ",")
+			   " (internaldate)")) 'fetch))
+		  (while candidates
+		    (if (string= (cadar candidates) internaldate)
+			(setq result (cons 
+				      (cadadr candidates)
+				      result)))
+		    (setq candidates (cddr candidates)))
+		  (setq result (or (null result)
+				   (> (length result) 1)
+				   (car result))))))))
 	result)
     ;; Unplugged
     (if elmo-enable-disconnected-operation

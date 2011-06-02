@@ -224,6 +224,10 @@ Otherwise treat \\ in NEWTEXT string as special:
   (let ((system-time-locale "C"))
     (format-time-string "%a, %d %b %Y %T %z" time)))
 
+(defun elmo-time-make-imap-date-string (time)
+  (let ((system-time-locale "C"))
+    (format-time-string "%d-%b-%Y %T %z")))
+
 (defun elmo-time-less-p (lhs rhs)
   (while (and (car lhs) (car rhs))
     (cond ((< (car lhs) (car rhs))
