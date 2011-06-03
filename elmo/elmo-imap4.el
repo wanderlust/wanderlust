@@ -939,12 +939,6 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 	       (and (elmo-file-cache-exists-p msg-id)
 		    '(cached)))
 	    saved-flags))
-    (when (and (or (memq 'important flag-list)
-		   (memq 'answered flag-list))
-	       (memq 'unread flag-list))
-      (setq elmo-imap4-seen-messages
-	    (cons (elmo-message-entity-number entity)
-		  elmo-imap4-seen-messages)))
     (elmo-msgdb-append-entity elmo-imap4-current-msgdb
 			      entity
 			      flag-list)))
