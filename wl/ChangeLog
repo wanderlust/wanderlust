@@ -1,3 +1,9 @@
+2011-06-05  David Maus  <dmaus@ictsoc.de>
+
+	* wl-draft.el (wl-draft-save): Obtain number of appended draft
+	message by `elmo-folder-append-buffer', handle case UID of
+	appended message could not be found.
+
 2010-08-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-summary.el: Delete trailing whitespace.
