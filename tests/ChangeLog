@@ -1,3 +1,27 @@
+2011-05-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* test-wl-address.el: New file.
+
+2011-04-07  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* test-elmo-date.el: Add `lexical-binding' file variable.
+	* test-elmo-imap4.el: Ditto.
+	* test-elmo-localdir.el: Ditto.
+	* test-elmo-util.el: Ditto.
+	* test-rfc2368.el: Ditto.
+	* test-utf7.el: Ditto.
+	* test-wl-draft.el: Ditto.
+	* test-wl-util.el: Ditto.
+
+2011-04-06  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* test-dist.el: Add `lexical-binding' file variable.
+	(test-wl-modules-trailing-whitespace, test-elmo-modules-exists)
+	(test-elmo-modules-trailing-whitespace)
+	(test-util-modules-exists)
+	(test-util-modules-trailing-whitespace, test-wl-icon-exists): Fix
+	let style for `lexical-binding'.
+
 2010-08-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* test-dist.el (test-elmo-modules-trailing-whitespace)

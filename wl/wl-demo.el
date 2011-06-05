@@ -31,7 +31,7 @@
 ;;; Code:
 
 (defconst wl-demo-copyright-notice
-  "Copyright (C) 1998-2010 Yuuichi Teranishi <teranisi@gohome.org>"
+  "Copyright (C) 1998-2011 Yuuichi Teranishi <teranisi@gohome.org>"
   "A declaration of the copyright on Wanderlust.")
 
 (eval-when-compile
@@ -407,6 +407,17 @@ argument."
 		 (/ (float 5) (float 10))
 	       1))
     buffer))
+
+;; Prune functions provided temporarily to avoid compile warnings.
+(eval-when-compile
+  (dolist (fn '(face-background-name
+		frame-char-height frame-char-width glyph-height glyph-width
+		image-size make-extent propertize set-extent-end-glyph
+		window-pixel-height window-pixel-width))
+    (when (and (get fn 'defalias-maybe)
+	       (eq (symbol-function fn) 'ignore))
+      (put fn 'defalias-maybe nil)
+      (fmakunbound fn))))
 
 (require 'product)
 (product-provide (provide 'wl-demo) (require 'wl-version))

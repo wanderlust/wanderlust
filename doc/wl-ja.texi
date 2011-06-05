@@ -7113,22 +7113,22 @@ spam かどうかのテストを行います。spam と判定されたメッセージには、sp
 @item k s
 @kindex k s (Summary)
 @findex wl-summary-register-as-spam
-カーソル行のメッセージを spam として登録します。
+カーソル行のメッセージを spam として登録し spam マークを付けます。
 
 @item k S
 @kindex k S (Summary)
 @findex wl-summary-register-as-spam-all
-フォルダ内の全てのメッセージを spam として登録します。
+フォルダ内の全てのメッセージを spam として登録し spam マークを付けます。
 
 @item k n
 @kindex k n (Summary)
 @findex wl-summary-register-as-good
-カーソル行のメッセージを non-spam として登録します。
+カーソル行のメッセージを non-spam として登録し spam マークを取り除きます。
 
 @item k N
 @kindex k N (Summary)
 @findex wl-summary-register-as-good-all
-フォルダ内の全てのメッセージを non-spam として登録します。
+フォルダ内の全てのメッセージを non-spam として登録し spam マークを取り除きます。
 
 @item r k m
 @kindex r k m (Summary)
@@ -7144,12 +7144,12 @@ spam かどうかのテストを行います。spam と判定されたメッセージには、sp
 @item r k s
 @kindex r k s (Summary)
 @findex wl-summary-register-as-spam-region
-指定リージョンにあるメッセージを spam として登録します。
+指定リージョンにあるメッセージを spam として登録し spam マークを付けます。
 
 @item r k n
 @kindex r k n (Summary)
 @findex wl-summary-register-as-good-region
-指定リージョンにあるメッセージを non-spam として登録します。
+指定リージョンにあるメッセージを non-spam として登録し spam マークを取り除きます。
 
 @item t k m
 @kindex t k m (Summary)
@@ -7170,14 +7170,16 @@ prefix argument つきならばカーソル行があるメッセージを含むスレッド全てに
 @item t k s
 @kindex t k s (Summary)
 @findex wl-thread-register-as-spam
-カーソル行があるメッセージを先頭とするスレッドのメッセージを spam として登録します。
+カーソル行があるメッセージを先頭とするスレッドのメッセージを spam として登録し
+spam マークを付けます。
 prefix argument つきならばカーソル行があるメッセージを含むスレッド全てに
 適用します。
 
 @item t k n
 @kindex t k n (Summary)
 @findex wl-thread-register-as-good
-カーソル行があるメッセージを先頭とするスレッドのメッセージを non-spam として登録します。
+カーソル行があるメッセージを先頭とするスレッドのメッセージを non-spam として登録し
+spam マークを取り除きます。
 prefix argument つきならばカーソル行があるメッセージを含むスレッド全てに
 適用します。
 
@@ -7190,12 +7192,12 @@ prefix argument つきならばカーソル行があるメッセージを含むスレッド全てに
 @item m s
 @kindex m s (Summary)
 @findex wl-summary-target-mark-register-as-spam
-まとめ処理用マーク @samp{*} のついたメッセージを spam として登録します。
+まとめ処理用マーク @samp{*} のついたメッセージを spam として登録し spam マークを付けます。
 
 @item m n
 @kindex m n (Summary)
 @findex wl-summary-target-mark-register-as-good
-まとめ処理用マーク @samp{*} のついたメッセージを non-spam として登録しま
+まとめ処理用マーク @samp{*} のついたメッセージを non-spam として登録し spam マークを取り除きます。
 す。
 @end table
 

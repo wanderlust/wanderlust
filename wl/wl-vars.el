@@ -274,6 +274,7 @@ which are replaced by the given information:
 %D The day of the date field of the message (zero padded).
 %W The weekday name of the date field of the message (zero padded).
 %h The hour of the date field of the message (zero padded).
+%l The number in the mailing list.
 %m The minute of the date field of the message (zero padded).
 %[ An open bracket.  If the message thread is linked,
    it is replaced with '<'.
@@ -287,7 +288,10 @@ which are replaced by the given information:
 %f The from: field string of the message.
 %s The subject: field string of the message.
 %S The size of the message (if available).
+%t The branch of the thread.
+%@ `@' only if the first MIME part is multipart/mixed.
 %~ If the previous spec is not zero-length, replaced with ' '.
+%#  mailing list information (`(' ML-name [ ` ' ML-number ] `)')
 
 If the format string contains the specifiers %( and %), the text between
 them will have the specified number of columns.

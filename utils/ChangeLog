@@ -1,3 +1,14 @@
+2011-04-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* ptexinfmt.el: Fix description comment style.
+
+2011-04-13  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* ptexinfmt.el: Use lexical binding.
+	(ptexinfmt-broken-facility): Rename _dummy argument.
+	(texinfo-enclosure-list, texinfo-alias-list): Add defvar stub for
+	lexical binding.
+
 2010-09-02  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* ptexinfmt.el (texinfo-multitable-widths): Use `make-char'

@@ -1,3 +1,11 @@
+2011-02-01  Tetsurou Okazaki  <okazaki@be.to>
+
+	* WL-MK (wl-scan-path): New function.
+	(wl-scan-source): Use `wl-scan-path'.
+	(wl-scan-icons): New function.
+	(uninstall-wl-icons): Use `wl-scan-icons'.
+	Check existence of `PIXMAPDIR'.
+
 2010-07-19  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* INSTALL: Update recommended version of APEL.

@@ -170,18 +170,28 @@ See `wl-summary-mark-action-list' for the detail of element."
 	  (funcall function folder (cdr partition) (car partition)))))))
 
 (defun wl-spam-register-spam-messages (folder numbers)
+  "Register messages specified by FOLDER and NUMBERS as spam.
+Put spam mark unless FOLDER is a spam folder."
   (elmo-with-progress-display (elmo-spam-register (length numbers))
       "Registering spam"
     (elmo-spam-register-spam-messages (elmo-spam-processor)
 				      folder
-				      numbers)))
+				      numbers))
+  (unless (eq (wl-spam-domain (elmo-folder-name-internal folder))
+	      'spam)
+    (dolist (number numbers)
+      (wl-summary-spam number))))
 
 (defun wl-spam-register-good-messages (folder numbers)
+  "Register messages specified by FOLDER and NUMBERS as non-spam.
+Remove spam mark."
   (elmo-with-progress-display (elmo-spam-register (length numbers))
       "Registering good"
     (elmo-spam-register-good-messages (elmo-spam-processor)
 				      folder
-				      numbers)))
+				      numbers))
+  (dolist (number numbers)
+    (wl-summary-unmark-spam number)))
 
 (defun wl-spam-save-status (&optional force)
   (interactive "P")
@@ -266,6 +276,8 @@ See `wl-summary-mark-action-list' for the detail of element."
 	   (message "No message to test.")))))
 
 (defun wl-summary-register-as-spam ()
+  "Register current message as spam.
+Put spam mark unless current folder is a spam folder."
   (interactive)
   (let ((number (wl-summary-message-number)))
     (when number
@@ -273,6 +285,8 @@ See `wl-summary-mark-action-list' for the detail of element."
 				      (list number)))))
 
 (defun wl-summary-register-as-spam-region (beg end)
+  "Register messages in the region between BEG and END as spam.
+Put spam mark unless current folder is a spam folder."
   (interactive "r")
   (let ((numbers (wl-summary-collect-numbers-region beg end)))
     (cond (numbers
@@ -282,15 +296,22 @@ See `wl-summary-mark-action-list' for the detail of element."
 	   (message "No message to register as spam.")))))
 
 (defun wl-thread-register-as-spam (&optional arg)
+  "Register messages which are the descendant of the current thread as spam.
+Put spam mark unless current folder is a spam folder.
+With prefix argument, it affects on the all messages in the thread tree."
   (interactive "P")
   (wl-thread-call-region-func 'wl-summary-register-as-spam-region arg))
 
 (defun wl-summary-register-as-spam-all ()
+  "Register all messages in the folder as spam.
+Put spam mark unless current folder is a spam folder."
   (interactive)
   (wl-spam-register-spam-messages wl-summary-buffer-elmo-folder
 				  wl-summary-buffer-number-list))
 
 (defun wl-summary-target-mark-register-as-spam ()
+  "Register messages with the target mark as spam.
+Put spam mark unless current folder is a spam folder."
   (interactive)
   (save-excursion
     (goto-char (point-min))
@@ -303,6 +324,8 @@ See `wl-summary-mark-action-list' for the detail of element."
 	(wl-summary-unset-mark number)))))
 
 (defun wl-summary-register-as-good ()
+  "Register current message as non-spam.
+Remove spam mark."
   (interactive)
   (let ((number (wl-summary-message-number)))
     (when number
@@ -310,6 +333,8 @@ See `wl-summary-mark-action-list' for the detail of element."
 				      (list number)))))
 
 (defun wl-summary-register-as-good-region (beg end)
+  "Register messages in the region between BEG and END as non-spam.
+Remove spam mark."
   (interactive "r")
   (let ((numbers (wl-summary-collect-numbers-region beg end)))
     (cond (numbers
@@ -319,15 +344,22 @@ See `wl-summary-mark-action-list' for the detail of element."
 	   (message "No message to register as good.")))))
 
 (defun wl-thread-register-as-good (&optional arg)
+  "Register messages which are the descendant of the current thread as non-spam.
+Remove spam mark.
+With prefix argument, it affects on the all messages in the thread tree."
   (interactive "P")
   (wl-thread-call-region-func 'wl-summary-register-as-good-region arg))
 
 (defun wl-summary-register-as-good-all ()
+  "Register all messages in the folder as non-spam.
+Remove spam mark."
   (interactive)
   (wl-spam-register-good-messages wl-summary-buffer-elmo-folder
 				  wl-summary-buffer-number-list))
 
 (defun wl-summary-target-mark-register-as-good ()
+  "Register messages with the target mark as non-spam.
+Remove spam mark."
   (interactive)
   (save-excursion
     (goto-char (point-min))

@@ -766,7 +766,7 @@ Don't cache if nil.")
 	(session (elmo-nntp-get-session folder))
 	(new-msgdb (elmo-make-msgdb))
 	beg-num end-num cur length
-	new-msgdb ov-str use-xover dir)
+	ov-str use-xover dir)
     (elmo-nntp-select-group session (elmo-nntp-folder-group-internal
 				     folder))
     (when (setq use-xover (elmo-nntp-xover-p session))

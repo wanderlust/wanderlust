@@ -227,14 +227,12 @@ Return new location alist."
     (elmo-folder-set-msgdb-internal folder new-msgdb)))
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-map-folder))
-  (elmo-location-map-load folder (elmo-folder-msgdb-path folder))
+  (unless (elmo-location-map-alist folder)
+    (elmo-location-map-load folder (elmo-folder-msgdb-path folder)))
   (when (elmo-folder-plugged-p folder)
     (elmo-location-map-update
      folder
      (elmo-map-folder-list-message-locations folder))))
-
-(luna-define-method elmo-folder-open-internal-p ((folder elmo-map-folder))
-  (elmo-location-map-alist folder))
 
 (luna-define-method elmo-folder-commit :after ((folder elmo-map-folder))
   (when (elmo-folder-persistent-p folder)
