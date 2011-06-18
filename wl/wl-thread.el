@@ -75,26 +75,28 @@
 
 (defun wl-thread-make-number-list ()
   "Make `wl-summary-buffer-number-list', a list of message numbers."
-  (let* ((node (wl-thread-get-entity (car wl-thread-entity-list)))
-	 (children (wl-thread-entity-get-children node))
-	 parent sibling)
-    (setq wl-summary-buffer-number-list (list (car wl-thread-entity-list)))
-    (while children
-      (wl-thread-entity-make-number-list-from-children
-       (wl-thread-get-entity (car children)))
-      (setq children (cdr children)))
-    (while node
-      (setq parent (wl-thread-entity-get-parent-entity node)
-	    sibling (wl-thread-entity-get-younger-brothers
-		     node parent))
-      (while sibling
-	(wl-thread-entity-make-number-list-from-children
-	 (wl-thread-get-entity (car sibling)))
-	(setq sibling (cdr sibling)))
-      (setq node parent))
-    (setq wl-summary-buffer-number-list (nreverse
-					 wl-summary-buffer-number-list))))
-
+  (if wl-thread-entity-list
+      (let* ((node (wl-thread-get-entity (car wl-thread-entity-list)))
+	     (children (wl-thread-entity-get-children node))
+	     parent sibling)
+	(setq wl-summary-buffer-number-list (list (car wl-thread-entity-list)))
+	(while children
+	  (wl-thread-entity-make-number-list-from-children
+	   (wl-thread-get-entity (car children)))
+	  (setq children (cdr children)))
+	(while node
+	  (setq parent (wl-thread-entity-get-parent-entity node)
+		sibling (wl-thread-entity-get-younger-brothers
+			 node parent))
+	  (while sibling
+	    (wl-thread-entity-make-number-list-from-children
+	     (wl-thread-get-entity (car sibling)))
+	    (setq sibling (cdr sibling)))
+	  (setq node parent))
+	(setq wl-summary-buffer-number-list (nreverse
+					     wl-summary-buffer-number-list)))
+    (setq wl-summary-buffer-number-list nil)))
+  
 (defun wl-thread-entity-make-number-list-from-children (entity)
   (let ((msgs (list (car entity)))
 	msgs-stack children)

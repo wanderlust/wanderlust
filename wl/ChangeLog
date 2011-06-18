@@ -55,6 +55,22 @@
 	* wl-vars.el (wl-summary-line-format): Document missing control
 	strings.
 
+2011-05-24  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-summary.el (wl-summary-view-old-p): Small refining.
+
+	* wl-thread.el (wl-thread-make-number-list): Do not assume
+	`wl-thread-entity-list' is non-nil.
+
+2011-05-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-mime.el: Do not require mime-pgp.el
+
+	* wl-draft.el: Do not define autoload for `open-ssl-stream'.
+	(wl-template): Require elmo-net.el.
+	(wl-smtp-extension-bind): Respect `elmo-network-stream-type-alist'
+	for over SSL/TLS connection.
+
 2011-01-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-demo.el (wl-demo-copyright-notice): Add 2011.

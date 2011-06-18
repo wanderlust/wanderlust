@@ -89,6 +89,9 @@
 (luna-define-method elmo-archive-folder-path ((folder elmo-archive-folder))
   elmo-archive-folder-path)
 
+(defun elmo-intern-soft (str)
+  (if (eq str "") nil (intern-soft str)))
+
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-archive-folder)
 					    name)
@@ -102,7 +105,7 @@
 	(elmo-archive-folder-set-archive-name-internal
 	 folder ""))
     (or (elmo-archive-folder-set-archive-type-internal
-	 folder (intern-soft (elmo-match-string 2 name)))
+	 folder (elmo-intern-soft (elmo-match-string 2 name)))
 	(elmo-archive-folder-set-archive-type-internal
 	 folder elmo-archive-default-type))
     (or (elmo-archive-folder-set-archive-prefix-internal
