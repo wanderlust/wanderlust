@@ -131,6 +131,14 @@ If nil, just once. If t, until success."
 (defmacro elmo-network-stream-type-function (stream-type)
   `(nth 3 ,stream-type))
 
+(defun elmo-network-stream-type-from-symbol (symbol)
+  (let ((alist elmo-network-stream-type-alist))
+    (catch 'done
+      (while alist
+	(when (eq symbol (elmo-network-stream-type-symbol (car alist)))
+	  (throw 'done (car alist)))
+	(setq alist (cdr alist))))))
+
 (defsubst elmo-network-session-password-key (session)
   (format "%s:%s/%s@%s:%d"
 	  (upcase
@@ -599,6 +607,21 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 
 (luna-define-method elmo-quit ((folder elmo-net-folder))
   (elmo-network-clear-session-cache))
+
+(eval-when-compile
+  (condition-case nil
+      (require 'tls)
+    (error
+     (defalias 'open-tls-stream 'ignore))))
+
+(defun elmo-open-tls-stream (name buffer host port)
+  "Wrapper function for `open-tls-stream'.  This raises error when failed to connect."
+      (let ((result (open-tls-stream name buffer host port)))
+	(if (and (processp result)
+		 (eq (process-status result) 'run))
+	    result
+	  ;; raise error when failed.
+	  (error "Failed to open tls stream"))))
 
 (require 'product)
 (product-provide (provide 'elmo-net) (require 'elmo-version))

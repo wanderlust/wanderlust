@@ -462,7 +462,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	  vals (cdr vals))))
 
 (defun elmo-uniq-list (lst &optional delete-function)
-  "Distractively uniqfy elements of LST."
+  "Destructively uniquify elements of LST."
   (setq delete-function (or delete-function #'delete))
   (let ((tmp lst))
     (while tmp
@@ -475,7 +475,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
   lst)
 
 (defun elmo-uniq-sorted-list (list &optional equal-function)
-  "Distractively uniqfy elements of sorted LIST."
+  "Destructively uniquify elements of sorted LIST."
   (setq equal-function (or equal-function #'equal))
   (let ((list list))
     (while list
