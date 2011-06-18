@@ -3434,10 +3434,10 @@ Return non-nil if the mark is updated"
 
 (defun wl-summary-view-old-p ()
   "Return non-nil when summary view cache has old format."
-  (save-excursion
-    (goto-char (point-min))
-    (and wl-summary-buffer-number-list
-	 (not (re-search-forward "\r-?[0-9]+" (point-at-eol) t)))))
+  (when wl-summary-buffer-number-list
+    (save-excursion
+      (goto-char (point-min))
+      (not (re-search-forward "\r-?[0-9]+" (point-at-eol) t)))))
 
 (defun wl-summary-line-format-changed-p ()
   "Return non-nil when summary line format is changed."

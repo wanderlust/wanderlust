@@ -31,6 +31,7 @@
 ;;; Code:
 ;;
 (require 'elmo)
+(require 'elmo-net)
 (require 'sendmail)
 (require 'wl-template)
 (require 'emu)
@@ -55,7 +56,6 @@
 (eval-and-compile
   (autoload 'wl-addrmgr "wl-addrmgr"))
 
-(autoload 'open-ssl-stream "ssl")
 
 (defvar wl-draft-buffer-message-number nil)
 (defvar wl-draft-field-completion-list nil)
@@ -145,7 +145,10 @@ e.g.
 	  (smtp-use-starttls (eq wl-smtp-connection-type 'starttls))
 	  (smtp-open-connection-function
 	   (if (eq wl-smtp-connection-type 'ssl)
-	       #'open-ssl-stream
+	       (let ((stream-type
+		      (elmo-network-stream-type-from-symbol 'ssl)))
+		 (require (elmo-network-stream-type-feature stream-type))
+		 (elmo-network-stream-type-function stream-type))
 	     smtp-open-connection-function))
 	  smtp-sasl-user-name smtp-sasl-properties sasl-read-passphrase)
      (setq smtp-sasl-user-name wl-smtp-posting-user
