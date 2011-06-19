@@ -1111,20 +1111,21 @@ is enclosed by at least one regexp grouping construct."
     (catch 'done
       (while t
 	(discard-input)
-	(case (let ((cursor-in-echo-area t))
-		(cdr (wl-read-event-char prompt)))
-	  ((?y ?Y)
-	   (throw 'done t))
-	  ((string-to-char " ")
-	   (if scroll-by-SPC
-	       (ignore-errors (scroll-up))
-	     (throw 'done t)))
-	  ((?v ?j ?J next)
-	   (ignore-errors (scroll-up)))
-	  ((?^ ?k ?K prior backspace)
-	   (ignore-errors (scroll-down)))
-	  (t
-	   (throw 'done nil)))))))
+	(let ((key (let ((cursor-in-echo-area t))
+		     (cdr (wl-read-event-char prompt)))))
+	  (cond
+	   ((memq key '(?y ?Y))
+	    (throw 'done t))
+	   ((eq key (string-to-char " "))
+	    (if scroll-by-SPC
+		(ignore-errors (scroll-up))
+	      (throw 'done t)))
+	   ((memq key '(?v ?j ?J next))
+	    (ignore-errors (scroll-up)))
+	   ((memq key '(?^ ?k ?K prior backspace))
+	    (ignore-errors (scroll-down)))
+	   ((memq key '(?n ?N))
+	    (throw 'done nil))))))))
 
 (defun wl-find-region (beg-regexp end-regexp)
   (if (or (re-search-forward end-regexp nil t)
