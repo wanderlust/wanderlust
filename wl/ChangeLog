@@ -1,3 +1,10 @@
+2011-06-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-vars.el (wl-draft-send-confirm-type): Change default value to
+	scroll-by-SPC/BS.
+
+	* wl-util.el (wl-y-or-n-p-with-scroll): Do not use case().
+
 2011-06-03  Erik Hetzner  <egh@e6h.org>
 
 	* wl-vars.el (wl-summary-line-format): Document missing control

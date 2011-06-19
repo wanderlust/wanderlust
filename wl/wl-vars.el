@@ -905,7 +905,7 @@ Prepared candidates are 'wl-draft-send-mail-with-smtp,
 		(function :tag "Other"))
   :group 'wl-draft)
 
-(defcustom wl-draft-send-confirm-type 'y-or-n-p
+(defcustom wl-draft-send-confirm-type 'scroll-by-SPC/BS
   "*Confirmation type or function to use when send a message."
   :type '(choice
 	  (const :tag "y or n with scroll (j/k)" scroll-by-j/k)
