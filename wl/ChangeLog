@@ -37,6 +37,9 @@
 
 2011-06-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* wl-folder.el (wl-folder-buffer-search-entity): Build search
+	string out of loop.
+
 	* wl-vars.el (wl-draft-send-confirm-type): Change default value to
 	scroll-by-SPC/BS.
 
