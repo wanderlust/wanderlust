@@ -1936,7 +1936,7 @@ This function is defined for `window-scroll-functions'"
 	diff diffs)
     (message "Updating marks...")
     (dolist (flag (wl-summary-get-available-flags))
-      (setq diff (elmo-list-diff (elmo-folder-list-flagged
+      (setq diff (elmo-list-diff (elmo-folder-list-flagged-internal
 				  wl-summary-buffer-elmo-folder
 				  flag)
 				 (elmo-folder-list-flagged
