@@ -1,3 +1,15 @@
+2011-06-03  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-imap4-fetch-callback-1-subr): Don't mark
+	unread messages with important or answered flag read.
+
+2011-05-29  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-network-authenticate-session): Always ask
+	for capabilities after login.
+	(elmo-imap4-parse-response): Remove superfluous third argument to
+	split-string.
+
 2011-01-12  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-nntp.el (elmo-nntp-folder-msgdb-create): Remove accidental

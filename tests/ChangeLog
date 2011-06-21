@@ -1,3 +1,7 @@
+2011-05-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* test-wl-address.el: New file.
+
 2011-04-07  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* test-elmo-date.el: Add `lexical-binding' file variable.
