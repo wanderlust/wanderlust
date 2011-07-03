@@ -2,6 +2,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 * Changes in 2.16.0 from 2.14.x
 
+** Prevent accidental loss of messages when renaming IMAP folder
+
 ** Put spam mark on the message registered as spam.
 
 ** Remove spam mark from the message registered as non-spam.

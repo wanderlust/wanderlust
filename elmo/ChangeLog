@@ -1,3 +1,9 @@
+2011-07-03  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-imap4-session-unselect-mailbox): New
+	function. Leave selected state without silent EXPUNGE.
+	(elmo-folder-rename-internal): Use function.
+
 2011-06-03  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-fetch-callback-1-subr): Don't mark
