@@ -1126,6 +1126,22 @@ non-nil."
 	 (signal (car error) (cdr error))))))
   (wl-draft-send-mail-with-smtp))
 
+(defun wl-draft-send-mail-with-sendmail ()
+  "Send the prepared message buffer with `sendmail-send-it'.
+The function `sendmail-send-it' uses the external program
+`sendmail-program'."
+  (let ((id (std11-field-body "message-id"))
+	(to (std11-field-body "to")))
+    (run-hooks 'wl-mail-send-pre-hook)
+    (require 'sendmail)
+    (condition-case err
+	(sendmail-send-it)
+      (error
+       (wl-draft-write-sendlog 'failed 'sendmail nil (list to) id)
+       (signal (car err) (cdr err))))
+    (wl-draft-set-sent-message 'mail 'sent)
+    (wl-draft-write-sendlog 'ok 'sendmail nil (list to) id)))
+
 (defun wl-draft-insert-required-fields (&optional force-msgid)
   "Insert Message-ID, Date, and From field.
 If FORCE-MSGID, insert message-id regardless of `wl-insert-message-id'."

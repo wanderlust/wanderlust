@@ -1,3 +1,10 @@
+2011-07-10  David Maus  <dmaus@ictsoc.de>
+
+	* wl-draft.el (wl-draft-send-mail-with-sendmail): New
+	function. Send mail with sendmail package.
+	* wl-vars.el (wl-draft-send-mail-function): Add function to list
+	of prepared send mail functions.
+
 2011-06-03  Erik Hetzner  <egh@e6h.org>
 
 	* wl-vars.el (wl-summary-line-format): Document missing control
