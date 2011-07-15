@@ -1,3 +1,8 @@
+2011-07-15  Herbert J. Skuhra  <hskuhra@fastmail.fm>
+
+	* wl-folder.el (wl-folder-open-unread-folder): Fix typo in
+	message.
+
 2011-07-10  David Maus  <dmaus@ictsoc.de>
 
 	* wl-draft.el (wl-draft-send-mail-with-sendmail): New
