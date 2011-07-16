@@ -898,8 +898,10 @@ reasons of system internal to accord facilities for the Emacs variants.")
 (defcustom wl-draft-send-mail-function 'wl-draft-send-mail-with-smtp
   "A function to send mail.
 Prepared candidates are 'wl-draft-send-mail-with-smtp,
-'wl-draft-send-mail-with-qmail and 'wl-draft-send-mail-with-pop-before-smtp."
+'wl-draft-send-mail-with-sendmail, 'wl-draft-send-mail-with-qmail
+and 'wl-draft-send-mail-with-pop-before-smtp."
   :type '(radio (function-item wl-draft-send-mail-with-smtp)
+		(function-item wl-draft-send-mail-with-sendmail)
 		(function-item wl-draft-send-mail-with-qmail)
 		(function-item wl-draft-send-mail-with-pop-before-smtp)
 		(function :tag "Other"))
