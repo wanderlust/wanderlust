@@ -738,6 +738,17 @@ Returns response value if selecting folder succeed. "
 			 (format "Select %s failed" mailbox)))))))
       (and result response))))
 
+(defun elmo-imap4-session-unselect-mailbox (session mailbox)
+  "Unselect MAILBOX in SESSION.
+Deselecting will exit selected state without causing silent
+EXPUNGE for deleted messages."
+  (if (elmo-imap4-session-capable-p session 'unselect)
+      (elmo-imap4-send-command-wait session "unselect")
+    (elmo-imap4-send-command-wait
+     session
+     (list "examine " (elmo-imap4-mailbox mailbox)))
+    (elmo-imap4-send-command-wait session "close")))
+
 (defun elmo-imap4-check-validity (spec validity-file)
 ;;; Not used.
 ;;;(elmo-imap4-send-command-wait
@@ -2172,6 +2183,9 @@ Return nil if no complete line has arrived."
     (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-folder-mailbox-internal
 					folder))
+    (elmo-imap4-session-unselect-mailbox session
+					 (elmo-imap4-folder-mailbox-internal
+					  folder))
     (elmo-imap4-send-command-wait session "close")
     (elmo-imap4-send-command-wait
      session
