@@ -1,4 +1,32 @@
-2011-07-03  David Maus  <dmaus@ictsoc.de>
+2011-07-17  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-util.el (elmo-list-difference): New function. Return
+	difference of two lists.
+	* elmo-imap4.el (elmo-imap4-search-generate-vector): Use function.
+
+2011-07-03  Erik Hetzner  <egh@e6h.org>
+
+	* elmo-imap4.el (elmo-imap4-search-internal-primitive): Removed.
+	(elmo-imap4-search-build-full-command): New function. Build full
+	IMAP search command.
+	(elmo-imap4-search-perform): New function. Perform IMAP search.
+	(elmo-imap4-search-generate-vector): New function. Generate search
+	vector.
+	(elmo-imap4-search-mergeable-p): New function. Return non-nil if
+	two search conditions are mergeable.
+	(elmo-imap4-search-mergeable-charset): New function. Return
+	charset of two searches for merging.
+	(elmo-imap4-search-generate-uid): New function. Return search for
+	a set of messages.
+	(elmo-imap4-search-generate-and): New function. Return search that
+	returns intersection of two search commands.
+	(elmo-imap4-search-generate-or): New function. Return search that
+	returns union of two search commands.
+	(elmo-imap4-search-generate): New function. Return search in
+	folder.
+	(elmo-imap4-search-internal): Use new search functions.
+
+2011-07-02  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-session-unselect-mailbox): New
 	function. Leave selected state without silent EXPUNGE.

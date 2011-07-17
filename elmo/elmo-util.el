@@ -892,6 +892,14 @@ the directory becomes empty after deletion."
 	  (delete-directory path) ; should be removed if empty.
 	  ))))
 
+(defun elmo-list-difference (l1 l2)
+  "Return a list from L2 in which each element is not a member of L1."
+  (let (result)
+    (dolist (element l2)
+      (if (not (memq element l1))
+	  (setq result (cons element result))))
+    (nreverse result)))
+
 (defun elmo-list-filter (l1 l2)
   "Return a list from L2 in which each element is a member of L1."
   (let (result)
