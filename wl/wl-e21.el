@@ -215,6 +215,7 @@
     (tool-bar-button-margin      . 2)
     (tool-bar-button-relief      . 1)))
 
+;; FIXME: this function should be rewritten in a proper way.
 (defun wl-e21-make-toolbar-buttons (keymap defs)
   (let ((configs wl-e21-toolbar-configurations)
 	config)
@@ -225,16 +226,18 @@
 	item)
     (while (setq item (pop keys))
       (when (setq item (car-safe item))
-	(define-key keymap (vector 'tool-bar item) 'undefined))))
+	(ignore-errors ;; workaround
+	  (define-key keymap (vector 'tool-bar item) 'undefined)))))
   (let ((n (length defs))
 	def)
     (while (>= n 0)
       (setq n (1- n)
 	    def (nth n defs))
-      (define-key keymap (vector 'tool-bar (aref def 1))
-	(list 'menu-item (aref def 3) (aref def 1)
-	      :enable (aref def 2)
-	      :image (symbol-value (aref def 0)))))))
+      (ignore-errors ;; workaround
+	(define-key keymap (vector 'tool-bar (aref def 1))
+	  (list 'menu-item (aref def 3) (aref def 1)
+		:enable (aref def 2)
+		:image (symbol-value (aref def 0))))))))
 
 (defun wl-e21-setup-folder-toolbar ()
   (when (wl-e21-setup-toolbar wl-folder-toolbar)
