@@ -2,6 +2,10 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 * 2.14.x から 2.16.0 への変更点
 
+** sendmail パッケージによるメール送信がサポートされました。
+
+** IMAP フォルダの改名時にメッセージが失われる事があるバグを修正しました。
+
 ** spam として登録したメッセージに spam マークを付けます。
 
 ** non-spam として登録したメッセージから spam マークを取り除きます。
