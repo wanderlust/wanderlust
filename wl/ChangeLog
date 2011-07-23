@@ -18,11 +18,6 @@
 	* wl-e21.el (wl-e21-make-toolbar-buttons): No need to take care of
 	the tool-bar default bindings for Emacs 24.
 
-2011-07-19  Katsumi Yamaoka  <yamaoka@jpl.org>
-
-	* wl-e21.el (wl-e21-make-toolbar-buttons): Work around the Emacs
-	24 error: "`keymap' is reserved for embedded parent maps"
-
 2011-07-15  Herbert J. Skuhra  <hskuhra@fastmail.fm>
 
 	* wl-folder.el (wl-folder-open-unread-folder): Fix typo in
