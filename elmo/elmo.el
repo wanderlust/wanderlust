@@ -306,9 +306,8 @@ If optional IN-MSGDB is non-nil, retrieve flag information from msgdb.")
     (let ((msgs (elmo-folder-list-flagged-internal folder flag)))
       (unless (listp msgs)
 	(setq msgs (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) flag)))
-      (elmo-uniq-list
-       (nconc (elmo-folder-list-global-flag-messages folder flag) msgs)
-       #'delq))))
+      (elmo-folder-merge-flagged
+       folder (elmo-folder-list-global-flag-messages folder flag) msgs))))
 
 (luna-define-generic elmo-folder-list-flagged-internal (folder flag)
   "Return a list of message in the FOLDER with FLAG.
@@ -317,6 +316,14 @@ Return t if the message list is not available.")
 (luna-define-method elmo-folder-list-flagged-internal ((folder elmo-folder)
 						       flag)
   t)
+
+(luna-define-generic elmo-folder-merge-flagged (folder local remote)
+  "Merge messages of flag folder and messages of remote folder.
+LOCAL is the list of messages from flag folder.
+REMOTE is the list of messages from remote folder.")
+
+(luna-define-method elmo-folder-merge-flagged ((folder elmo-folder) local remote)
+  (elmo-uniq-list (nconc local remote) #'delq))
 
 (luna-define-generic elmo-folder-list-subfolders (folder &optional one-level)
   "Returns a list of subfolders contained in FOLDER.
