@@ -301,13 +301,11 @@ If optional IN-MSGDB is non-nil, retrieve flag information from msgdb.")
 
 (luna-define-method elmo-folder-list-flagged ((folder elmo-folder) flag
 					      &optional in-msgdb)
-  (let ((msgs (if in-msgdb
-		  t
-		(elmo-folder-list-flagged-internal folder flag))))
-    (unless (listp msgs)
-      (setq msgs (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) flag)))
-    (if in-msgdb
-	msgs
+  (if in-msgdb
+      (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) flag)
+    (let ((msgs (elmo-folder-list-flagged-internal folder flag)))
+      (unless (listp msgs)
+	(setq msgs (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) flag)))
       (elmo-uniq-list
        (nconc (elmo-folder-list-global-flag-messages folder flag) msgs)
        #'delq))))
