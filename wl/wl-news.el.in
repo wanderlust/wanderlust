@@ -142,7 +142,7 @@
       (set-buffer
        (setq send-buffer (wl-draft-create-buffer)))
       (wl-draft-create-contents
-       (list (cons 'From "WL Release 'Bot <wl@lists.airs.net>")
+       (list (cons 'From "WL Release 'Bot <wl@ml.gentei.org>")
 	     (cons 'To (wl-draft-eword-encode-address-list wl-from))
 	     (cons 'Subject "Wanderlust NEWS")
 	     (cons 'Date (wl-make-date-string))
