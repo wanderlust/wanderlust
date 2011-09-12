@@ -5112,7 +5112,7 @@ Example:
 @lisp
 @group
 (setq wl-subscribed-mailing-list
-      '("wl@@lists.airs.net"
+      '("wl@@ml.gentei.org"
         "apel-ja@@m17n.org"
         "emacs-mime-ja@@m17n.org"))
 @end group
@@ -9010,19 +9010,19 @@ Topics related to Wanderlust are discussed in following mailing lists.
 The latest version is also announced there.
 
 @display
-Wanderlust Mailing List @t{<wl@@lists.airs.net>}
+Wanderlust Mailing List @t{<wl@@ml.gentei.org>}
 @end display
 
 In this list Japanese is mainly used for discussion. We also have a list
 for discussion in English:
 
 @display
-Wanderlust List in English @t{<wl-en@@lists.airs.net>}
+Wanderlust List in English @t{<wl-en@@ml.gentei.org>}
 @end display
 (Messages posted to this list are also forwarded to the former one.)
 
 A guide can be obtained automatically by sending mail to
-@t{wl-ctl@@lists.airs.net} (or to @t{wl-en-ctl@@lists.airs.net} for
+@t{wl-ctl@@ml.gentei.org} (or to @t{wl-en-ctl@@ml.gentei.org} for
 the English one) with the body
 
 @example
@@ -9044,17 +9044,17 @@ valuable advice and many pieces of code they contributed.
 You can read messages posted to the mailing list on the web or in
 NetNews.
 
-Read messages posted to @t{<wl@@lists.airs.net>}
+Read messages posted to @t{<wl@@ml.gentei.org>}
 
 @example
-@uref{http://lists.airs.net/wl/archive/}
+@uref{http://dir.gmane.org/gmane.mail.wanderlust.general.japanese}
 @uref{news://gmane.mail.wanderlust.general.japanese@@news.gmane.org}
 @end example
 
-Read messages posted to @t{<wl-en@@lists.airs.net>}
+Read messages posted to @t{<wl-en@@ml.gentei.org>}
 
 @example
-@uref{http://lists.airs.net/wl-en/archive/}
+@uref{http://dir.gmane.org/gmane.mail.wanderlust.general}
 @uref{news://gmane.mail.wanderlust.general@@news.gmane.org}
 @end example
 

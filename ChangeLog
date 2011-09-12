@@ -1,3 +1,10 @@
+2011-09-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* README: Update ML's address.
+	* README.ja: Ditto
+	* doc/wl.texi (Mailing List): Ditto.
+	* doc/wl-ja.texi (Mailing List): Ditto.
+
 2011-02-01  Tetsurou Okazaki  <okazaki@be.to>
 
 	* WL-MK (wl-scan-path): New function.
