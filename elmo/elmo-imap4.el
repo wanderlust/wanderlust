@@ -763,8 +763,8 @@ Returns response value if selecting folder succeed. "
 			 (format "Select %s failed" mailbox)))))))
       (and result response))))
 
-(defun elmo-imap4-session-deselect-mailbox (session mailbox)
-  "Deselect MAILBOX in SESSION.
+(defun elmo-imap4-session-unselect-mailbox (session mailbox)
+  "Unselect MAILBOX in SESSION.
 Deselecting will exit selected state without causing silent
 EXPUNGE for deleted messages."
   (if (elmo-imap4-session-capable-p session 'unselect)
@@ -772,9 +772,7 @@ EXPUNGE for deleted messages."
     (elmo-imap4-send-command-wait
      session
      (list "examine " (elmo-imap4-mailbox mailbox)))
-    (elmo-imap4-send-command-wait session "close"))
-  (elmo-imap4-session-set-current-mailbox-internal session nil)
-  (elmo-imap4-session-set-current-mailbox-size-internal session nil))
+    (elmo-imap4-send-command-wait session "close")))
 
 (defun elmo-imap4-check-validity (spec validity-file)
 ;;; Not used.
@@ -2198,11 +2196,14 @@ Return nil if no complete line has arrived."
 (luna-define-method elmo-folder-rename-internal ((folder elmo-imap4-folder)
 						 new-folder)
   (let ((session (elmo-imap4-get-session folder)))
-    (if (elmo-imap4-mailbox-selected-p
-	 (elmo-imap4-folder-mailbox-internal folder) session)
-	(elmo-imap4-session-deselect-mailbox
-	 session
-	 (elmo-imap4-folder-mailbox-internal folder)))
+    ;; make sure the folder is selected.
+    (elmo-imap4-session-select-mailbox session
+				       (elmo-imap4-folder-mailbox-internal
+					folder))
+    (elmo-imap4-session-unselect-mailbox session
+					 (elmo-imap4-folder-mailbox-internal
+					  folder))
+    (elmo-imap4-send-command-wait session "close")
     (elmo-imap4-send-command-wait
      session
      (list "rename "
