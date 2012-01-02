@@ -3074,10 +3074,8 @@ The mark is decided according to the FOLDER and STATUS."
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
 	  wl-summary-buffer-disp-msg)
-      (funcall
-       (intern (format "wl-summary-mark-as-%s-internal" flag))
-       inverse
-       wl-summary-buffer-target-mark-list)
+      (wl-summary-set-persistent-mark-internal
+       inverse flag wl-summary-buffer-target-mark-list)
       (wl-summary-delete-all-target-marks))))
 
 (defun wl-summary-target-mark-mark-as-important (&optional remove)

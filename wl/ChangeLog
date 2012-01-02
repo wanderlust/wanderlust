@@ -27,6 +27,10 @@
 2012-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-demo.el (wl-demo-copyright-notice): Add 2012.
+2011-12-31  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-summary.el (wl-summary-target-mark-operation): Use
+	wl-summary-set-persistent-mark-internal.
 
 2011-09-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
