@@ -1,3 +1,8 @@
+2011-09-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* doc/texinfo.tex, doc/txi-ja.tex: Replaced with 2010-05.22.17
+	modified version by Shoichi Fukusaka <fukusaka@xa2.so-net.ne.jp>.
+
 2011-09-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* README: Update ML's address.
