@@ -1,3 +1,8 @@
+2012-02-12  David Maus  <dmaus@ictsoc.de>
+
+	* wl-mime.el (wl-mime-save-content): Fix incorrect usage of
+	`read-file-name'.
+
 2012-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* wl-demo.el (wl-demo-copyright-notice): Add 2012.
