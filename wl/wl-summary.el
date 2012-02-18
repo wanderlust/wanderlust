@@ -4779,13 +4779,10 @@ If ARG is numeric number, decode message as following:
       (setq wl-save-dir wl-temporary-file-directory))
     (if num
 	(save-excursion
-	  (setq filename (expand-file-name
-			  (concat (number-to-string num)
-				  wl-summary-save-file-suffix)
-			  wl-save-dir))
+	  (setq filename (concat (number-to-string num) wl-summary-save-file-suffix))
 	  (when (or (null arg)
 		    (file-exists-p filename))
-	    (setq filename (read-file-name "Save to file: " filename)))
+	    (setq filename (expand-file-name (read-file-name "Save to file: " wl-save-dir nil nil filename))))
 	  (wl-summary-set-message-buffer-or-redisplay)
 	  (set-buffer (wl-message-get-original-buffer))
 	  (when (or arg
@@ -4985,10 +4982,7 @@ If ARG is numeric number, decode message as following:
       (unwind-protect
 	  (let ((decode-dir wl-temporary-file-directory))
 	    (if (not wl-prog-uudecode-no-stdout-option)
-		(setq filename (read-file-name "Save to file: "
-					       (expand-file-name
-						(elmo-safe-filename filename)
-						wl-temporary-file-directory)))
+		(setq filename (expand-file-name (read-file-name "Save to file: " wl-temporary-file-directory nil nil (elmo-safe-filename))))
 	      (setq decode-dir
 		    (wl-read-directory-name "Save to directory: "
 					    wl-temporary-file-directory))

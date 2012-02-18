@@ -1,3 +1,9 @@
+2012-02-18  David Maus  <dmaus@ictsoc.de>
+
+	* wl-summary.el (wl-summary-save)
+	(wl-summary-target-mark-uudecode): Fix incorrect usage of
+	`read-file-name'.
+
 2012-02-12  David Maus  <dmaus@ictsoc.de>
 
 	* wl-mime.el (wl-mime-save-content): Fix incorrect usage of
