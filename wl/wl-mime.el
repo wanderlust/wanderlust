@@ -489,7 +489,7 @@ It calls following-method selected from variable
 
 (eval-when-compile
   ;; split eval-when-compile form for avoid error on `make compile-strict'
-  (require 'mime-pgp)
+  (require 'mime-pgp nil t)
   (condition-case nil
       (require 'epa)
     (error
