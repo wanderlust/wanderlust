@@ -103,9 +103,10 @@
 			       same-number))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-pipe-folder)
-					       &optional flag number)
+					       &optional flag number
+					       return-number)
   (elmo-folder-append-buffer (elmo-pipe-folder-dst-internal folder)
-			     flag number))
+			     flag number return-number))
 
 (luna-define-method elmo-message-fetch ((folder elmo-pipe-folder)
 					number strategy

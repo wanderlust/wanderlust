@@ -202,12 +202,20 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 ;;; Session
 (eval-and-compile
   (luna-define-class elmo-imap4-session (elmo-network-session)
-		     (capability current-mailbox read-only flags))
+		     (capability
+		      current-mailbox
+		      current-mailbox-size
+		      read-only
+		      flags))
   (luna-define-internal-accessors 'elmo-imap4-session))
 
 (defmacro elmo-imap4-session-capable-p (session capability)
   `(and (memq ,capability (elmo-imap4-session-capability-internal ,session))
 	(not (memq ,capability elmo-imap4-disabled-extensions))))
+
+(defmacro elmo-imap4-mailbox-selected-p (mailbox session)
+  "Return non-nil if MAILBOX is selected in SESSION."
+  `(string= (elmo-imap4-session-current-mailbox-internal ,session) ,mailbox))
 
 ;;; MIME-ELMO-IMAP Location
 (eval-and-compile
@@ -278,6 +286,23 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 (defmacro elmo-imap4-response-bodydetail-text (response)
   "Returns text of BODY[section]<partial>."
   `(nth 3 (assq 'bodydetail ,response)))
+
+(defun elmo-imap4-mailbox-size-update-maybe (session response)
+  "Update size of selected mailbox in SESSION according to RESPONSE."
+  (let ((exists (elmo-imap4-response-value-all response 'exists))
+	(recent (elmo-imap4-response-value-all response 'recent))
+	(current-size (or (elmo-imap4-session-current-mailbox-size-internal
+			   session) (cons nil nil))))
+    (if exists (setcar current-size (if (atom exists)
+					exists (car (last exists)))))
+    (if recent (setcdr current-size (if (atom recent)
+					recent (car (last recent)))))
+    (elmo-imap4-session-set-current-mailbox-size-internal
+     session current-size)
+    (elmo-imap4-debug "[%s] -> mailbox size adjusted: %s, %s"
+		      (format-time-string "%T")
+		      (elmo-imap4-session-current-mailbox-internal session)
+		      current-size)))
 
 ;;; Session commands.
 
@@ -401,6 +426,7 @@ TAG is the tag of the command"
 			       1)))
     (elmo-imap4-debug "[%s] => %s" (format-time-string "%T") (prin1-to-string elmo-imap4-current-response))
     (setq elmo-imap4-parsing nil)
+    (elmo-imap4-mailbox-size-update-maybe session elmo-imap4-current-response)
     elmo-imap4-current-response))
 
 (defsubst elmo-imap4-read-untagged (process)
@@ -508,7 +534,7 @@ If response is not `OK' response, causes error with IMAP response text."
   (with-current-buffer (elmo-network-session-buffer session)
     (setq elmo-imap4-fetch-callback nil)
     (setq elmo-imap4-fetch-callback-data nil))
-  (elmo-imap4-send-command session "check"))
+  (elmo-imap4-send-command-wait session "check"))
 
 (defun elmo-imap4-atom-p (string)
   "Return t if STRING is an atom defined in rfc2060."
@@ -707,9 +733,7 @@ selecting folder was failed.
 If NO-ERROR is 'notify-bye, only BYE response is reported as error.
 Returns response value if selecting folder succeed. "
   (when (or force
-	    (not (string=
-		  (elmo-imap4-session-current-mailbox-internal session)
-		  mailbox)))
+	    (not (elmo-imap4-mailbox-selected-p mailbox session)))
     (let (response result)
       (unwind-protect
 	  (setq response
@@ -731,6 +755,7 @@ Returns response value if selecting folder succeed. "
 	       (nth 1 (or (assq 'permanentflags response)
 			  (assq 'flags response)))))
 	  (elmo-imap4-session-set-current-mailbox-internal session nil)
+	  (elmo-imap4-session-set-current-mailbox-size-internal session nil)
 	  (if (and (eq no-error 'notify-bye)
 		   (elmo-imap4-response-bye-p response))
 	      (elmo-imap4-process-bye session)
@@ -1250,22 +1275,6 @@ If CHOP-LENGTH is not specified, message set is not chopped."
     ;; We should `check' folder to obtain newest information here.
     ;; But since there's no asynchronous check mechanism in elmo yet,
     ;; checking is not done here.
-    (with-current-buffer (elmo-network-session-buffer session)
-      (setq elmo-imap4-status-callback
-	    'elmo-imap4-server-diff-async-callback-1)
-      (setq elmo-imap4-status-callback-data
-	    elmo-imap4-server-diff-async-callback-data))
-    (elmo-imap4-send-command session
-			     (list
-			      "status "
-			      (elmo-imap4-mailbox
-			       (elmo-imap4-folder-mailbox-internal folder))
-			      " (recent unseen messages)"))))
-
-(luna-define-method elmo-server-diff-async ((folder elmo-imap4-folder))
-  (let ((session (elmo-imap4-get-session folder)))
-;;;    ;; commit.
-;;;    (elmo-imap4-commit spec)
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-status-callback
 	    'elmo-imap4-server-diff-async-callback-1)
@@ -1970,13 +1979,24 @@ Return nil if no complete line has arrived."
   (elmo-imap4-folder-status-plugged folder))
 
 (defun elmo-imap4-folder-status-plugged (folder)
-  (let ((session (elmo-imap4-get-session folder))
-	(killed (elmo-msgdb-killed-list-load
-		 (elmo-folder-msgdb-path folder)))
-	status)
+  (let* ((session (elmo-imap4-get-session folder))
+	 (selected (elmo-imap4-mailbox-selected-p
+		    (elmo-imap4-folder-mailbox-internal folder) session))
+	 status)
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-status-callback nil)
       (setq elmo-imap4-status-callback-data nil))
+    (cond
+     ((and selected (not elmo-imap4-use-select-to-update-status))
+      (elmo-imap4-session-deselect-mailbox
+       session
+       (elmo-imap4-folder-mailbox-internal folder)))
+     ((and (not selected) elmo-imap4-use-select-to-update-status)
+      ;; This will result in a violation of RFC3501: calling STATUS on
+      ;; a selected mailbox.
+      (elmo-imap4-session-select-mailbox
+       session
+       (elmo-imap4-folder-mailbox-internal folder))))
     (setq status (elmo-imap4-response-value
 		  (elmo-imap4-send-command-wait
 		   session
@@ -1987,11 +2007,7 @@ Return nil if no complete line has arrived."
 		  'status))
     (cons
      (- (elmo-imap4-response-value status 'uidnext) 1)
-     (if killed
-	 (-
-	  (elmo-imap4-response-value status 'messages)
-	  (elmo-msgdb-killed-list-length killed))
-       (elmo-imap4-response-value status 'messages)))))
+     (elmo-imap4-response-value status 'messages))))
 
 (defun elmo-imap4-folder-list-range (folder min max)
   (elmo-imap4-list
@@ -2139,9 +2155,8 @@ Return nil if no complete line has arrived."
 
 (luna-define-method elmo-folder-exists-p-plugged ((folder elmo-imap4-folder))
   (let ((session (elmo-imap4-get-session folder)))
-    (if (string=
-	 (elmo-imap4-session-current-mailbox-internal session)
-	 (elmo-imap4-folder-mailbox-internal folder))
+    (if (elmo-imap4-mailbox-selected-p
+	 (elmo-imap4-folder-mailbox-internal folder) session)
 	t
       (elmo-imap4-session-select-mailbox
        session
@@ -2174,7 +2189,9 @@ Return nil if no complete line has arrived."
 	   (list "delete "
 		 (elmo-imap4-mailbox
 		  (elmo-imap4-folder-mailbox-internal folder)))))
-	(elmo-imap4-session-set-current-mailbox-internal session nil))
+	(elmo-imap4-session-set-current-mailbox-internal session nil)
+	(elmo-imap4-session-set-current-mailbox-size-internal session nil)
+	)
       (elmo-msgdb-delete-path folder)
       t)))
 
@@ -2264,17 +2281,28 @@ If optional argument REMOVE is non-nil, remove FLAG."
 (luna-define-method elmo-folder-delete-messages-plugged
   ((folder elmo-imap4-folder) numbers)
   (let ((session (elmo-imap4-get-session folder))
-	(expunge
-	 (or (null (elmo-imap4-list folder "deleted"))
-	     (y-or-n-p
-	      "There's hidden deleted messages, expunge anyway?"))))
+	(deleted (elmo-imap4-list folder "deleted")))
     (elmo-imap4-session-select-mailbox
      session
      (elmo-imap4-folder-mailbox-internal folder))
     (unless (elmo-imap4-set-flag folder numbers "\\Deleted")
       (error "Failed to set deleted flag"))
-    (when expunge
-      (elmo-imap4-send-command session "expunge"))
+    (cond
+     ((and deleted elmo-imap4-use-uid
+	   (elmo-imap4-session-capable-p session 'uidplus))
+      (elmo-imap4-send-command-wait
+       session (list
+		"uid expunge "
+		(mapconcat 'number-to-string numbers ","))))
+     ((and deleted elmo-imap4-use-uid)
+      (unless (elmo-imap4-set-flag folder deleted "\\Deleted" 'remove)
+	(error "Failed to temporarily remove deleted flag"))
+      (elmo-imap4-send-command-wait session "expunge")
+      (unless (elmo-imap4-set-flag folder deleted "\\Deleted")
+	(error "Failed to restore deleted flags")))
+     ((or (null deleted)
+	  (y-or-n-p "There are hidden deleted messages.  Expunge anyway?"))
+      (elmo-imap4-send-command-wait session "expunge")))
     t))
 
 (defun elmo-imap4-detect-search-charset (string)
@@ -2550,9 +2578,9 @@ time."
 (luna-define-method elmo-folder-check-plugged ((folder elmo-imap4-folder))
   (let ((session (elmo-imap4-get-session folder 'if-exists)))
     (when session
-      (if (string=
-	   (elmo-imap4-session-current-mailbox-internal session)
-	   (elmo-imap4-folder-mailbox-internal folder))
+      (if (elmo-imap4-mailbox-selected-p
+	   (elmo-imap4-folder-mailbox-internal folder)
+	   session)
 	  (if elmo-imap4-use-select-to-update-status
 	      (elmo-imap4-session-select-mailbox
 	       session
@@ -2562,7 +2590,7 @@ time."
 
 (defsubst elmo-imap4-folder-diff-plugged (folder)
   (let ((session (elmo-imap4-get-session folder))
-	messages new unread response killed uidnext)
+	messages new unread response)
 ;;;    (elmo-imap4-commit spec)
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-status-callback nil)
@@ -2571,27 +2599,29 @@ time."
 	(elmo-imap4-session-select-mailbox
 	 session
 	 (elmo-imap4-folder-mailbox-internal folder)))
-    (setq response
-	  (elmo-imap4-send-command-wait session
-					(list
-					 "status "
-					 (elmo-imap4-mailbox
-					  (elmo-imap4-folder-mailbox-internal
-					   folder))
-					 " (recent unseen messages uidnext)")))
-    (setq response (elmo-imap4-response-value response 'status))
-    (setq messages (elmo-imap4-response-value response 'messages))
-    (setq uidnext (elmo-imap4-response-value response 'uidnext))
-    (setq killed (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder)))
-    ;;
-    (when killed
-      (when (and (consp (car killed))
-		 (eq (car (car killed)) 1))
-	(setq messages (- uidnext (cdr (car killed)) 1)))
-      (setq messages (- messages
-			(elmo-msgdb-killed-list-length (cdr killed)))))
-    (setq new (elmo-imap4-response-value response 'recent)
-	  unread (elmo-imap4-response-value response 'unseen))
+    (if (elmo-imap4-mailbox-selected-p
+	 (elmo-imap4-folder-mailbox-internal folder)
+	 session)
+	(progn
+	  (elmo-imap4-send-command-wait session "noop")
+	  (setq unread (length (elmo-imap4-folder-list-flagged folder 'unread)))
+	  (setq messages
+		(car (elmo-imap4-session-current-mailbox-size-internal
+		      session))
+		new (cdr (elmo-imap4-session-current-mailbox-size-internal
+			  session))))
+      (setq response
+	    (elmo-imap4-send-command-wait session
+					  (list
+					   "status "
+					   (elmo-imap4-mailbox
+					    (elmo-imap4-folder-mailbox-internal
+					     folder))
+					   " (recent unseen messages)")))
+      (setq response (elmo-imap4-response-value response 'status))
+      (setq messages (elmo-imap4-response-value response 'messages))
+      (setq new (elmo-imap4-response-value response 'recent)
+	    unread (elmo-imap4-response-value response 'unseen)))
     (if (< unread new) (setq new unread))
     (list new unread messages)))
 
@@ -2641,6 +2671,8 @@ time."
 		     (nth 1 (or (assq 'permanentflags response)
 				(assq 'flags response)))))
 		(elmo-imap4-session-set-current-mailbox-internal session nil)
+		(elmo-imap4-session-set-current-mailbox-size-internal
+		 session nil)
 		(if (elmo-imap4-response-bye-p response)
 		    (elmo-imap4-process-bye session)
 		  (error "%s"
@@ -2656,13 +2688,16 @@ time."
 		session mailbox)
 	     (and session
 		  (elmo-imap4-session-set-current-mailbox-internal
-		   session nil))))
+		   session nil))
+	    ))
 	  (error
 	   (if (elmo-imap4-response-ok-p response)
 	       (elmo-imap4-session-set-current-mailbox-internal
 		session mailbox)
 	     (and session
 		  (elmo-imap4-session-set-current-mailbox-internal
+		   session nil)
+		  (elmo-imap4-session-set-current-mailbox-size-internal
 		   session nil))))))
     (luna-call-next-method)))
 
@@ -2724,9 +2759,10 @@ time."
     imap-flag))
 
 (luna-define-method elmo-folder-append-buffer
-  ((folder elmo-imap4-folder) &optional flags number)
+  ((folder elmo-imap4-folder) &optional flags number return-number)
   (if (elmo-folder-plugged-p folder)
       (let ((session (elmo-imap4-get-session folder))
+	    (internaldate (elmo-time-make-imap-date-string (current-time)))
 	    send-buffer result)
 	(elmo-imap4-session-select-mailbox session
 					   (elmo-imap4-folder-mailbox-internal
@@ -2743,11 +2779,42 @@ time."
 		    (if (and flags (elmo-folder-use-flag-p folder))
 			(concat " (" (elmo-imap4-flags-to-imap flags) ") ")
 		      " () ")
+		    (if return-number
+			(concat " \"" internaldate "\" ")
+		      "")
 		    (elmo-imap4-buffer-literal send-buffer))))
 	  (kill-buffer send-buffer))
 	(when result
 	  (elmo-folder-preserve-flags
-	   folder (elmo-msgdb-get-message-id-from-buffer) flags))
+	   folder (elmo-msgdb-get-message-id-from-buffer) flags)
+	  (when return-number
+	    (unless (setq result (cadadr (assq 'appenduid (cdar result))))
+	      (let ((candidates 
+		     (elmo-imap4-response-value
+		      (elmo-imap4-send-command-wait
+		       session
+		       (list
+			"uid search since "
+			(car (split-string internaldate " ")))) 'search)))
+		(if (null candidates)
+		    (setq result t)
+		  (setq candidates 
+			(elmo-imap4-response-value-all
+			 (elmo-imap4-send-command-wait
+			  session
+			  (list
+			   "uid fetch "
+			   (mapconcat 'number-to-string candidates ",")
+			   " (internaldate)")) 'fetch))
+		  (while candidates
+		    (if (string= (cadar candidates) internaldate)
+			(setq result (cons 
+				      (cadadr candidates)
+				      result)))
+		    (setq candidates (cddr candidates)))
+		  (setq result (or (null result)
+				   (> (length result) 1)
+				   (car result))))))))
 	result)
     ;; Unplugged
     (if elmo-enable-disconnected-operation
@@ -2766,15 +2833,24 @@ time."
 
 (luna-define-method elmo-folder-next-message-number-plugged
   ((folder elmo-imap4-folder))
-  (let ((session (elmo-imap4-get-session folder))
-	messages new unread response killed uidnext)
+  (let* ((session (elmo-imap4-get-session folder))
+	 (selected (elmo-imap4-mailbox-selected-p
+		    (elmo-imap4-folder-mailbox-internal folder) session))
+	 response uidnext)
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-status-callback nil)
       (setq elmo-imap4-status-callback-data nil))
-    (if elmo-imap4-use-select-to-update-status
-	(elmo-imap4-session-select-mailbox
-	 session
-	 (elmo-imap4-folder-mailbox-internal folder)))
+    (cond
+     ((and selected (not elmo-imap4-use-select-to-update-status))
+      (elmo-imap4-send-command-wait session "close")
+      (elmo-imap4-session-set-current-mailbox-internal session nil)
+      (elmo-imap4-session-set-current-mailbox-size-internal session nil))
+     ((and (not selected) elmo-imap4-use-select-to-update-status)
+      ;; This will result in a violation of RFC3501: calling STATUS on
+      ;; a selected mailbox.
+      (elmo-imap4-session-select-mailbox
+       session
+       (elmo-imap4-folder-mailbox-internal folder))))
     (setq response
 	  (elmo-imap4-send-command-wait session
 					(list

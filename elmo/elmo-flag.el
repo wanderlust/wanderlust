@@ -212,7 +212,8 @@
   numbers)
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-flag-folder)
-					       &optional flag number)
+					       &optional flag number
+					       return-number)
   (error "Cannot append to the flag folder"))
 
 (luna-define-method elmo-folder-unset-flag :before ((folder elmo-flag-folder)

@@ -191,7 +191,8 @@
       (sort flist '<))))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-localdir-folder)
-					       &optional flags number)
+					       &optional flags number
+					       return-number)
   (let ((filename (elmo-message-file-name
 		   folder
 		   (or number
@@ -202,7 +203,9 @@
        (point-min) (point-max) filename nil 'no-msg)
       (elmo-folder-preserve-flags
        folder (elmo-msgdb-get-message-id-from-buffer) flags)
-      t)))
+      (if return-number
+	  (car (elmo-folder-status folder))
+	t))))
 
 (defun elmo-folder-append-messages-*-localdir (folder
 					       src-folder

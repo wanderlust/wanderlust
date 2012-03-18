@@ -1,3 +1,8 @@
+2011-11-30  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-maildir.el (elmo-folder-append-buffer): Correctly get the
+	number of the appended message.
+
 2011-07-17  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-util.el (elmo-list-difference): New function. Return
@@ -26,7 +31,7 @@
 	folder.
 	(elmo-imap4-search-internal): Use new search functions.
 
-2011-07-02  David Maus  <dmaus@ictsoc.de>
+2011-07-03  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-session-unselect-mailbox): New
 	function. Leave selected state without silent EXPUNGE.
@@ -37,12 +42,38 @@
 	* elmo-imap4.el (elmo-imap4-fetch-callback-1-subr): Don't mark
 	unread messages with important or answered flag read.
 
+2011-06-02  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-date.el (elmo-time-make-imap-date-string): New
+	function. Return IMAP4 compliant date string.
+
+	* elmo-imap4.el (elmo-folder-append-buffer): Return uid of append
+	message if requested.
+
 2011-05-29  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-network-authenticate-session): Always ask
 	for capabilities after login.
 	(elmo-imap4-parse-response): Remove superfluous third argument to
 	split-string.
+
+2011-05-29  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-maildir.el (elmo-folder-append-buffer): Return number of
+	appended message.
+	* elmo-localdir.el (elmo-folder-append-buffer): Dto.
+	* elmo-archive.el (elmo-archive-folder-append-buffer): Dto.
+
+	* elmo.el (elmo-folder-append-buffer): Add optional fourth
+	argument, return number of appended message if possible.
+	* elmo-pipe.el (elmo-folder-append-buffer): Dto.
+	* elmo-maildir.el (elmo-folder-append-buffer): Dto.
+	* elmo-flag.el (elmo-folder-append-buffer): Dto.
+	* elmo-localdir.el (elmo-folder-append-buffer): Dto.
+	* elmo-filter.el (elmo-folder-append-buffer): Dto.
+	* elmo-cache.el (elmo-folder-append-buffer): Dto.
+	* elmo-archive.el (elmo-folder-append-buffer)
+	(elmo-archive-folder-append-buffer): Dto.
 
 2011-01-12  David Maus  <dmaus@ictsoc.de>
 
@@ -87,6 +118,11 @@
 	set to nil if one of the child folders is not open.
 	(elmo-folder-open-internal): Open child folders only if they are
 	not opened yet.
+
+2010-08-31  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-folder-delete-messages-plugged): Use smarter
+	mechanism to expunge messages.
 
 2010-08-31  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
@@ -134,10 +170,82 @@
 	* elmo-map.el (elmo-folder-open-internal-p): Dto.
 	* elmo-filter.el (elmo-folder-open-internal-p): Dto.
 
+2010-08-04  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-imap4-session-deselect-mailbox): New
+	function.  Leave selected state without causing silent EXPUNGE.
+	(elmo-imap4-folder-status-plugged, elmo-folder-rename-internal):
+	Use function.
+
 2010-08-01  David Maus  <dmaus@ictsoc.de>
 
 	* elmo.el (elmo-folder-move-messages): Open source folder before
 	moving messages.
+
+2010-07-18  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-imap4-mailbox-size-update-maybe): Ignore
+	EXPUNGE responses.
+	(elmo-imap4-mailbox-size-update-maybe): Use latest EXIST or RECENT
+	response value.
+
+2010-07-02  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-server-diff-async): Remove.  Unused luna
+	method.
+	(elmo-imap4-folder-status-plugged): Close mailbox before calling
+	STATUS if it is selected.  If
+	`elmo-imap4-use-select-to-update-status' is non-nil, do the
+	opposite.
+	(elmo-imap4-folder-status-plugged): Remove usage of kill file to
+	adjust message counter.
+	(elmo-folder-next-message-number-plugged): Close mailbox before
+	calling STATUS if selected.  If
+	`elmo-imap4-use-select-to-update-status' is non-nil, do the
+	opposite.
+
+2010-05-18  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-imap4-mailbox-selected-p): Fix typo.
+
+2010-05-08  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-imap4-mailbox-selected-p): New macro.
+	Return non-nil if mailbox is selected in session.
+	(elmo-imap4-session-select-mailbox): Use macro
+	`elmo-imap4-mailbox-selected-p'.
+	(elmo-folder-exists-p-plugged): Dto.
+	(elmo-folder-check-plugged): Dto.
+	(elmo-imap4-folder-diff-plugged): Dto.
+
+2010-05-05  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-imap4-mailbox-size-update-maybe): Use
+	simpler method to count expunged messages.
+	(elmo-imap4-folder-diff-plugged): Use NOOP and SEARCH when called
+	for selected mailbox.
+
+2010-04-17  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-imap4-mailbox-size-update-maybe): Build list
+	of expunged messages only when response contains expunge.
+	(elmo-imap4-folder-diff-plugged): Removed usage of kill file to
+	adjust message counter.
+	(elmo-imap4-folder-diff-plugged): When mailbox is selected, search
+	for unread messages, call noop to maybe update mailbox size and
+	return recorded size of mailbox.
+
+2010-04-16  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (luna-define-class): Add slot
+	`current-mailbox-size'.
+	(elmo-imap4-mailbox-size-update-maybe): New function.
+	(elmo-imap4-read-response): Update mailbox size when untagged
+	EXISTS, RECENT and EXPUNGE responses arrive.
+	(elmo-imap4-session-check, elmo-folder-delete-messages-plugged):
+	Wait for and evaluate server response.
+	(elmo-imap4-session-select-mailbox, elmo-folder-delete)
+	(elmo-folder-open): Reset mailbox size when no mailbox selected.
 
 2010-04-15  David Maus  <dmaus@ictsoc.de>
 
