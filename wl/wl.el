@@ -59,7 +59,7 @@
 (require 'wl-action)
 (require 'wl-thread)
 (require 'wl-address)
-(require 'wl-news)
+(require 'wl-news nil t)
 
 (wl-draft-mode-setup)
 (require 'wl-draft)
@@ -740,7 +740,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
      (elmo-define-signal-filter (listener folder old-number new-number)
        (and folder
 	    (string= (elmo-folder-name-internal folder) wl-draft-folder))))
-    (wl-news-check)
+    (when (featurep 'wl-news)
+      (wl-news-check))
     (setq wl-init t)
     ;; This hook may contain the functions `wl-plugged-init-icons' and
     ;; `wl-biff-init-icons' for reasons of system internal to accord

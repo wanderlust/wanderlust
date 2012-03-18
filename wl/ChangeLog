@@ -1,3 +1,7 @@
+2012-03-18  David Maus  <dmaus@ictsoc.de>
+
+	* wl.el (wl-init): Remove hard dependency on wl-news.
+
 2012-02-18  David Maus  <dmaus@ictsoc.de>
 
 	* wl-summary.el (wl-summary-save)
