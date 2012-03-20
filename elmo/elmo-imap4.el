@@ -1991,7 +1991,7 @@ Return nil if no complete line has arrived."
       (setq elmo-imap4-status-callback-data nil))
     (cond
      ((and selected (not elmo-imap4-use-select-to-update-status))
-      (elmo-imap4-session-deselect-mailbox
+      (elmo-imap4-session-unselect-mailbox
        session
        (elmo-imap4-folder-mailbox-internal folder)))
      ((and (not selected) elmo-imap4-use-select-to-update-status)
