@@ -2969,9 +2969,10 @@ time."
   nil)
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-imap4-folder))
-  (elmo-imap4-session-unselect-mailbox
-   (elmo-imap4-get-session folder)
-   (elmo-imap4-folder-mailbox-internal folder)))
+  (let ((session (elmo-imap4-get-session folder))
+	(mailbox (elmo-imap4-folder-mailbox-internal folder)))
+    (when (elmo-imap4-mailbox-selected-p mailbox session)
+      (elmo-imap4-session-unselect-mailbox session mailbox))))
 
 (autoload 'elmo-global-flags-set "elmo-flag")
 (autoload 'elmo-get-global-flags "elmo-flag")
