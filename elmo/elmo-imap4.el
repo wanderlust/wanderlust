@@ -777,7 +777,9 @@ EXPUNGE for deleted messages."
     (elmo-imap4-send-command-wait
      session
      (list "examine " (elmo-imap4-mailbox mailbox)))
-    (elmo-imap4-send-command-wait session "close")))
+    (elmo-imap4-send-command-wait session "close"))
+  (elmo-imap4-session-set-current-mailbox-internal session nil)
+  (elmo-imap4-session-set-current-mailbox-size-internal session nil))
 
 (defun elmo-imap4-check-validity (spec validity-file)
 ;;; Not used.
