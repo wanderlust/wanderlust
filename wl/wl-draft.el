@@ -145,8 +145,7 @@ e.g.
 	  (smtp-use-starttls (eq wl-smtp-connection-type 'starttls))
 	  (smtp-open-connection-function
 	   (if (eq wl-smtp-connection-type 'ssl)
-	       (let ((stream-type
-		      (elmo-network-stream-type-from-symbol 'ssl)))
+	       (let ((stream-type (elmo-get-network-stream-type 'ssl)))
 		 (require (elmo-network-stream-type-feature stream-type))
 		 (elmo-network-stream-type-function stream-type))
 	     smtp-open-connection-function))
