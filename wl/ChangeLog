@@ -86,6 +86,11 @@
 
 	* wl-demo.el (wl-demo-copyright-notice): Add 2012.
 
+2012-04-07  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-draft.el (wl-smtp-extension-bind): Use
+	elmo-get-network-stream-type.
+
 2011-12-31  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-summary.el (wl-summary-target-mark-operation): Use
