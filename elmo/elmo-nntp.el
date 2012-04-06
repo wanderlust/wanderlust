@@ -94,9 +94,8 @@ Debug information is inserted in the buffer \"*NNTP DEBUG*\"")
 (luna-define-method elmo-folder-initialize ((folder elmo-nntp-folder) name)
   (let ((elmo-network-stream-type-alist
 	 (if elmo-nntp-stream-type-alist
-	     (setq elmo-network-stream-type-alist
-		   (append elmo-nntp-stream-type-alist
-			   elmo-network-stream-type-alist))
+	     (append elmo-nntp-stream-type-alist
+		     elmo-network-stream-type-alist)
 	   elmo-network-stream-type-alist))
 	tokens)
     (setq tokens (car (elmo-parse-separated-tokens
