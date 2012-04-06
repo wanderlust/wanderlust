@@ -131,14 +131,6 @@ If nil, just once. If t, until success."
 (defmacro elmo-network-stream-type-function (stream-type)
   `(nth 3 ,stream-type))
 
-(defun elmo-network-stream-type-from-symbol (symbol)
-  (let ((alist elmo-network-stream-type-alist))
-    (catch 'done
-      (while alist
-	(when (eq symbol (elmo-network-stream-type-symbol (car alist)))
-	  (throw 'done (car alist)))
-	(setq alist (cdr alist))))))
-
 (defsubst elmo-network-session-password-key (session)
   (format "%s:%s/%s@%s:%d"
 	  (upcase
