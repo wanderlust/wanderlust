@@ -311,7 +311,11 @@ Returns a process object.  if making session failed, returns nil."
 		 (if stream-type
 		     (funcall (elmo-network-stream-type-function stream-type)
 			      name buffer server service)
-		   (open-network-stream name buffer server service)))))
+		   (open-network-stream name buffer server service)))
+	   (unless (and (processp process)
+			(memq (process-status process) '(open run)))
+	     (error "Open network connection to %s:%d failed"
+		    server service))))
       (error
        (when auto-plugged
 	 (elmo-set-plugged nil server service
