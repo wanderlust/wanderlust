@@ -367,7 +367,7 @@ If function, return value of function.")
 		      (gnutls-available-p))
 		 '(gnutls open-gnutls-stream))
 		((module-installed-p 'tls)
-		 '(tls    elmo-open-tls-stream))
+		 '(tls    open-tls-stream))
 		(t
 		 '(ssl    open-ssl-stream))))
     ("!!"     starttls  starttls starttls-open-stream)

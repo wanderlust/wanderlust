@@ -76,6 +76,13 @@
 
 2012-04-07  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo-net.el (elmo-open-tls-stream): Removed.
+
+	* elmo-vars.el (elmo-network-stream-type-alist): Use
+	open-tls-stream instead of elmo-open-tls-stream.
+
+2012-04-07  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* elmo-net.el (elmo-open-network-stream): Raise error when open
 	connection function failed.
 
