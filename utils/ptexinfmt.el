@@ -41,7 +41,6 @@
 ;;  @float ... @end float, @caption{TEXT}, @shortcaption{TEXT}, @listoffloats
 ;;  @deftypecv[x]
 ;;  @headitem
-;;  @comma{}
 ;;  @quotation (optional arguments)
 ;;  @acronym{ACRONYM[, MEANING]} (optional argument)
 ;;  @dofirstparagraphindent
