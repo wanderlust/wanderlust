@@ -647,7 +647,10 @@ See info under Wanderlust for full documentation.
 
 Special commands:
 \\{wl-draft-mode-map}"
-    (setq font-lock-defaults nil)))
+    (setq font-lock-defaults nil)
+    (add-hook 'after-change-functions
+	      'wl-draft-idle-highlight-set-timer nil t)
+    ))
 
 (defun wl-draft-key-setup ()
   (define-key wl-draft-mode-map "\C-c\C-y" 'wl-draft-yank-original)
