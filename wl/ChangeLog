@@ -13,6 +13,23 @@
 	* wl-draft.el (wl-draft-self-reply-p): Call std11-fetch-field
 	directly.
 
+2012-04-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Real-time draft highlighting is supported.
+	* wl-draft.el (wl-draft-highlight): New function.  Highlighting part
+	of wl-draft-highlight-and-recenter are separated from it.
+	(wl-draft-highlight-and-recenter): Likewise.
+	(wl-draft-idle-highlight, wl-draft-idle-highlight-idle-time)
+	(wl-draft-idle-highlight-function)
+	(wl-draft-idle-highlight-timer): New variables.
+	(wl-draft-idle-highlight, wl-draft-default-idle-highlight)
+	(wl-draft-idle-highlight-timer)
+	(wl-draft-idle-highlight-set-timer): New functions.
+
+	* wl-e21.el (wl-draft-mode-setup): Enable idle highlighting.
+
+	* wl-xmas.el (wl-draft-mode-setup): Ditto.
+
 2012-04-07  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-draft.el (wl-smtp-extension-bind): Use

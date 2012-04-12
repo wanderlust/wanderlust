@@ -2422,15 +2422,19 @@ Automatically applied in draft sending time."
 	  (switch-to-buffer buf)
 	(wl-draft-reedit msg)))))
 
-(defun wl-draft-highlight-and-recenter (&optional n)
-  (interactive "P")
+(defun wl-draft-highlight ()
   (when wl-highlight-body-too
-    (let ((modified (buffer-modified-p)))
+    (let ((modified (buffer-modified-p))
+	  wl-draft-idle-highlight)
       (unwind-protect
 	  (progn
 	    (put-text-property (point-min) (point-max) 'face nil)
 	    (wl-highlight-message (point-min) (point-max) t))
-	(set-buffer-modified-p modified))))
+	(set-buffer-modified-p modified)))))
+
+(defun wl-draft-highlight-and-recenter (&optional n)
+  (interactive "P")
+  (wl-draft-highlight)
   (static-when (featurep 'xemacs)
     ;; Cope with one of many XEmacs bugs that `recenter' takes
     ;; a long time if there are a lot of invisible text lines.
@@ -2642,6 +2646,55 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 	 (new-name (wl-draft-config-info-filename new-number msgdb-dir)))
     (when (file-exists-p old-name)
       (rename-file old-name new-name 'ok-if-already-exists))))
+
+;; Real-time draft highlighting
+(defcustom wl-draft-idle-highlight t
+  "When non-nil, enable real-time highlighting."
+  :type 'boolean
+  :group 'wl-draft)
+
+(defcustom wl-draft-idle-highlight-idle-time 0.5
+  "Do real-time highlighting after indicated idle time (second)."
+  :type 'number
+  :group 'wl-draft)
+
+(defcustom wl-draft-idle-highlight-function 'wl-draft-default-idle-highlight
+  "A function for real-time highlighting."
+  :type 'function
+  :group 'wl-draft)
+
+(defvar wl-draft-idle-highlight-timer nil)
+
+(defun wl-draft-idle-highlight (&optional state)
+  "Toggle real-time highlighting.
+If STATE is positive, enable real-time highlighting, and disable it otherwise.  When called non-interactively, enable it if STATE is omitted or nil, and toggle it if STATE is `toggle'."
+  (interactive (if current-prefix-arg "P" '(toggle)))
+  (setq wl-draft-idle-highlight
+	(if (eq state 'toggle)
+	    (null wl-draft-idle-highlight)
+	  (> (prefix-numeric-value state) 0)))
+  (when (interactive-p)
+    (message "Real-time highlighting is %sabled"
+	     (if wl-draft-idle-highlight "en" "dis")))
+  wl-draft-idle-highlight)
+
+(defun wl-draft-default-idle-highlight ()
+  (save-match-data (wl-draft-highlight)))
+
+(defun wl-draft-idle-highlight-timer (buffer)
+  (when (and wl-draft-idle-highlight
+	     (buffer-live-p buffer))
+    (with-current-buffer buffer
+      (funcall wl-draft-idle-highlight-function))))
+
+(defun wl-draft-idle-highlight-set-timer (beg end len)
+  (when wl-draft-idle-highlight
+    (when (timerp wl-draft-idle-highlight-timer)
+      (cancel-timer wl-draft-idle-highlight-timer))
+    (setq wl-draft-idle-highlight-timer
+	  (run-with-idle-timer
+	   wl-draft-idle-highlight-idle-time nil
+	   'wl-draft-idle-highlight-timer (current-buffer)))))
 
 (require 'product)
 (product-provide (provide 'wl-draft) (require 'wl-version))

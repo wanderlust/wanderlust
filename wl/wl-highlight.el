@@ -1204,8 +1204,9 @@ interpreted as cited text.)"
 		      (> (- end start)
 			 wl-highlight-max-message-size)))
 	(real-end end)
-	current  beg
-	e p hend)
+	current beg
+	e p hend
+	wl-draft-idle-highlight)
     (unless too-big
       (save-excursion
 	(save-restriction
