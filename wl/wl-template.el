@@ -60,7 +60,7 @@
 
 (defun wl-template-apply (name)
   "Apply NAME template to draft."
-  (let (template)
+  (let (template wl-draft-idle-highlight)
     (when name
       (if (string= name "")
 	  (setq name wl-template-default-name))
