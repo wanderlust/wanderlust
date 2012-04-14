@@ -2161,6 +2161,7 @@ Automatically applied in draft sending time."
 	(reply-buf (or reply-buf (and (buffer-live-p wl-draft-reply-buffer)
 				      wl-draft-reply-buffer)))
 	(local-variables wl-draft-config-variables)
+	wl-draft-idle-highlight
 	key clist found)
     (when (and (or (interactive-p)
 		   wl-draft-config-exec-flag)
