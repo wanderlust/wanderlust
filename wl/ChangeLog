@@ -1,3 +1,11 @@
+2012-04-14  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-highlight.el (wl-highlight-message): Refined.  Fix the case
+	of too big headers with body-only option.  Avoid stop highlighting
+	the case of wl-highlight-force-citation-header-regexp and/or
+	wl-highlight-citation-prefix-regexp are nil.  Highlight
+	mail-header-separator only once.  Skip invisible regions.
+
 2012-04-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Real-time draft highlighting is supported.
