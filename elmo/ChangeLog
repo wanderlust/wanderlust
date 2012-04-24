@@ -1,5 +1,8 @@
 2012-04-24  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo-util.el (elmo-msgdb-get-message-id-from-buffer): Normalize
+	result string.
+
 	* modb-entity.el (modb-standard-entity-normalizer)
 	(modb-standard-entity-specializer): Fix typo.
 
