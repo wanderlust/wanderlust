@@ -1,3 +1,8 @@
+2012-04-24  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* modb-entity.el (modb-standard-entity-normalizer)
+	(modb-standard-entity-specializer): Fix typo.
+
 2012-04-07  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-net.el (elmo-open-tls-stream): Removed.
