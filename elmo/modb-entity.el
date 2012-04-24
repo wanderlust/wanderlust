@@ -597,7 +597,7 @@ If each field is t, function is set as default converter."
 
 (defvar modb-standard-entity-normalizer nil)
 (modb-set-field-converter 'modb-standard-entity-normalizer nil
-  'messgae-id	nil
+  'message-id	nil
   'number	nil
   'date		#'modb-entity-parse-date-string
   'to		#'modb-entity-parse-address-string
@@ -609,7 +609,7 @@ If each field is t, function is set as default converter."
 
 (defvar modb-standard-entity-specializer nil)
 (modb-set-field-converter 'modb-standard-entity-specializer nil
-  'messgae-id	nil
+  'message-id	nil
   'number	nil
   'date		nil
   'references	nil
@@ -617,7 +617,7 @@ If each field is t, function is set as default converter."
   'score	nil
   t		#'modb-entity-decode-string-recursive)
 (modb-set-field-converter 'modb-standard-entity-specializer 'string
-  'messgae-id	nil
+  'message-id	nil
   'number	nil
   'date		#'modb-entity-make-date-string
   'to		#'modb-entity-make-address-string
