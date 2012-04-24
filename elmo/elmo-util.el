@@ -2238,8 +2238,8 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
 (defun elmo-msgdb-get-message-id-from-header ()
   (let ((msgid (std11-fetch-field "message-id")))
     (if msgid
-	(if (string-match "<\\(.+\\)>$" msgid)
-	    msgid
+	(if (string-match "<.+>$" msgid)
+	    (match-string 0 msgid)
 	  (concat "<" msgid ">"))	; Invaild message-id.
       ;; no message-id, so put dummy msgid.
       (concat "<"
