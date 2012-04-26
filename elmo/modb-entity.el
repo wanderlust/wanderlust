@@ -723,7 +723,7 @@ If each field is t, function is set as default converter."
 
 (luna-define-method elmo-msgdb-create-message-entity-from-header
   ((handler modb-standard-entity-handler) number args)
-  (let (entity)
+  (let (entity size field-name field-body extractor)
     (save-excursion
       (set-buffer-multibyte default-enable-multibyte-characters)
       (setq entity
@@ -763,14 +763,15 @@ If each field is t, function is set as default converter."
 	       :content-type
 	       (elmo-decoded-fetch-field "content-type" 'summary)
 	       :size
-	       (let ((size (std11-fetch-field "content-length")))
-		 (if size
-		     (string-to-number size)
-		   (or (plist-get args :size) 0)))))))
-      (let (field-name field-body extractor)
-	(dolist (extra (cons "newsgroups" elmo-msgdb-extra-fields))
-	  (setq field-name (intern (downcase extra))
-		extractor  (nth 1 (assq field-name
+	       (if (setq size (elmo-field-body "content-length"))
+		   (string-to-number size)
+		 (or (plist-get args :size) 0))))))
+      (dolist (extra (cons "newsgroups"
+			   (remove "newsgroups" elmo-msgdb-extra-fields)))
+	(unless (memq (setq field-name (intern (downcase extra)))
+		      '(number message-id references from subject
+			       date to cc content-type size))
+	  (setq extractor  (nth 1 (assq field-name
 					modb-entity-field-extractor-alist))
 		field-body (if extractor
 			       (funcall extractor field-name)
