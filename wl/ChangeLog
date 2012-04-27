@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 2012-04-14  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-draft.el (wl-draft-config-exec): Suppress real-time
