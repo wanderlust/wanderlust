@@ -426,12 +426,16 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	  (replace-match ""))
 	(buffer-string)))))
 
+(defsubst elmo-delete-cr-region (start end)
+  "Delete CR from region."
+  (save-excursion
+    (goto-char start)
+    (while (search-forward "\r\n" end t)
+      (replace-match "\n")) ))
+
 (defsubst elmo-delete-cr-buffer ()
   "Delete CR from buffer."
-  (save-excursion
-    (goto-char (point-min))
-    (while (search-forward "\r\n" nil t)
-      (replace-match "\n")) ))
+  (elmo-delete-cr-region (point-min) nil))
 
 (defsubst elmo-delete-cr-get-content-type ()
   (save-excursion
@@ -2264,21 +2268,29 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
 	(elmo-msgdb-get-last-message-id (std11-fetch-field "in-reply-to")))))
 
 (defsubst elmo-msgdb-insert-file-header (file)
-  "Insert the header of the article."
-  (let ((beg 0)
-	insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
-	insert-file-contents-post-hook
-	format-alist)
-    (when (file-exists-p file)
+  "Insert the header of the article.  Buffer contents after point are deleted."
+  (when (file-exists-p file)
+    (let ((beg 0)
+	  insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
+	  insert-file-contents-post-hook
+	  format-alist
+	  (first t)
+	  done)
       ;; Read until header separator is found.
-      (while (and (eq elmo-msgdb-file-header-chop-length
-		      (nth 1
-			   (insert-file-contents-as-binary
-			    file nil beg
-			    (incf beg elmo-msgdb-file-header-chop-length))))
-		  (prog1 (not (search-forward "\n\n" nil t))
-		    (goto-char (point-max)))))
-      (elmo-delete-cr-buffer))))
+      (while (null done)
+	(setq done
+	      (null
+	       (eq elmo-msgdb-file-header-chop-length
+		   (nth 1 (insert-file-contents-as-binary
+			   file nil beg
+			   (incf beg elmo-msgdb-file-header-chop-length))))))
+	(if first
+	    (setq first nil)
+	  (forward-char -1))
+	(elmo-delete-cr-region (point) nil)
+	(setq done (or (search-forward "\n\n" nil 'move)
+		       done)))
+      (delete-region (point) (point-max)))))
 
 ;;
 ;; overview handling
