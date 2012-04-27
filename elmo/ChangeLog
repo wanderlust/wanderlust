@@ -1,3 +1,13 @@
+2012-04-27  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-file):
+	Check whether file exists at first.  Do not narrow.
+
+	* elmo-util.el (elmo-delete-cr-region): New inline function.
+	(elmo-delete-cr-buffer): Use it.
+	(elmo-msgdb-insert-file-header): Fix failure to detect the end of
+	headers in some cases.  Delete contents after inserted headers.
+
 2012-04-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* modb-entity.el (elmo-msgdb-create-message-entity-from-buffer):
