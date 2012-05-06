@@ -1259,10 +1259,11 @@ interpreted as cited text.)"
 			       'face 'wl-highlight-header-separator-face)
 	    (forward-line 1))
 	  (let (prefix prefix-face-alist pair end)
-	    (while (not (eobp))
-	      ;; Skip invisible region.
-	      (when (invisible-p (point))
-		(goto-char (next-visible-point (point))))
+	    (while (null (progn
+			     ;; Skip invisible region.
+			   (when (invisible-p (point))
+			     (goto-char (next-visible-point (point))))
+			   (eobp)))
 	      (cond
 	       ((and wl-highlight-force-citation-header-regexp
 		     (looking-at wl-highlight-force-citation-header-regexp))
