@@ -149,23 +149,19 @@ Header region is supposed to be narrowed.")
 
 (luna-define-method elmo-msgdb-create-message-entity-from-file
   ((handler modb-entity-handler) number file)
-  (if (not (file-exists-p file))
-      ()
-    (let (insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
-	  insert-file-contents-post-hook header-end
-	  (attrib (file-attributes file))
-	  ret-val size mtime)
-      (with-temp-buffer
-	(setq size (nth 7 attrib))
-	(setq mtime (timezone-make-date-arpa-standard
-		     (current-time-string (nth 5 attrib)) (current-time-zone)))
-	;; insert header from file.
-	(catch 'done
-	  (condition-case nil
-	      (elmo-msgdb-insert-file-header file)
-	    (error (throw 'done nil)))
-	  (elmo-msgdb-create-message-entity-from-buffer
-	   handler number :size size :date mtime))))))
+  (when (file-exists-p file)
+    (with-temp-buffer
+      (setq buffer-file-name file)
+      ;; insert header from file.
+      (catch 'done
+	(condition-case nil
+	    (elmo-msgdb-insert-file-header file)
+	  (error (setq buffer-file-name nil)
+		 (throw 'done nil)))
+	(prog1
+	    (elmo-msgdb-create-message-entity-from-buffer
+	     handler number)
+	  (setq buffer-file-name nil))))))
 
 (luna-define-method elmo-msgdb-make-message-entity ((handler
 						     modb-entity-handler)
@@ -454,7 +450,7 @@ If each field is t, function is set as default converter."
   (let ((extras elmo-msgdb-extra-fields)
 	(default-mime-charset default-mime-charset)
 	entity message-id references from subject to cc date
-	extra field-body charset size)
+	extra field-body charset size file-attrib)
     (save-excursion
       (setq entity (modb-legacy-make-message-entity args))
       (set-buffer-multibyte default-enable-multibyte-characters)
@@ -472,13 +468,26 @@ If each field is t, function is set as default converter."
 		     (elmo-mime-string (or (elmo-field-body "subject")
 					   elmo-no-subject))
 		     "\t" " ")
-	    date (elmo-decoded-field-body "date")
+	    date (or (elmo-decoded-field-body "date")
+		     (when buffer-file-name
+		       (timezone-make-date-arpa-standard
+			(current-time-string
+			 (nth 5 (or file-attrib
+				    (setq file-attrib
+					  (file-attributes buffer-file-name)))))
+			(current-time-zone))))
 	    to   (mapconcat 'identity (elmo-multiple-field-body "to") ",")
 	    cc   (mapconcat 'identity (elmo-multiple-field-body "cc") ","))
       (unless (elmo-msgdb-message-entity-field handler entity 'size)
-	(if (setq size (elmo-field-body "content-length"))
-	    (setq size (string-to-number size))
-	  (setq size 0)))
+	(setq size
+	      (or (elmo-field-body "content-length")
+		  (when buffer-file-name
+		    (nth 7 (or file-attrib
+			       (setq file-attrib
+				     (file-attributes buffer-file-name)))))
+		  0))
+	(when (stringp size)
+	  (setq size (string-to-number size))))
       (while extras
 	(if (setq field-body (elmo-field-body (car extras)))
 	    (modb-legacy-entity-set-field
@@ -717,7 +726,7 @@ If each field is t, function is set as default converter."
 
 (luna-define-method elmo-msgdb-create-message-entity-from-buffer
   ((handler modb-standard-entity-handler) number args)
-  (let (entity size field-name field-body extractor)
+  (let (entity size field-name field-body extractor file-attrib)
     (save-excursion
       (set-buffer-multibyte default-enable-multibyte-characters)
       (setq entity
@@ -743,7 +752,14 @@ If each field is t, function is set as default converter."
 		    elmo-no-subject)
 		"\t" " ")
 	       :date
-	       (elmo-decoded-field-body "date" 'summary)
+	       (or (elmo-decoded-field-body "date" 'summary)
+		   (when buffer-file-name
+		     (timezone-make-date-arpa-standard
+		      (current-time-string
+		       (nth 5 (or file-attrib
+				  (setq file-attrib
+					(file-attributes buffer-file-name)))))
+		      (current-time-zone))))
 	       :to
 	       (mapconcat
 		(lambda (field-body)
@@ -759,7 +775,12 @@ If each field is t, function is set as default converter."
 	       :size
 	       (if (setq size (elmo-field-body "content-length"))
 		   (string-to-number size)
-		 (or (plist-get args :size) 0))))))
+		 (or (plist-get args :size)
+		     (when buffer-file-name
+		       (nth 7 (or file-attrib
+				  (setq file-attrib
+					(file-attributes buffer-file-name)))))
+		     0))))))
       (dolist (extra (cons "newsgroups"
 			   (remove "newsgroups" elmo-msgdb-extra-fields)))
 	(unless (memq (setq field-name (intern (downcase extra)))
