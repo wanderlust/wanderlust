@@ -74,6 +74,16 @@
 	* modb-entity.el (elmo-msgdb-create-message-entity-from-buffer):
 	Likewise.
 
+2012-05-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-file):
+	Stop to get file attributes here.  Stop to let-bind
+	insert-file-contents-pre-hook and insert-file-contents-post-hook.
+	Pass filename to temporary buffer.
+	(elmo-msgdb-create-message-entity-from-buffer): Get file
+	attributes here.  Get file attributes and build date string from
+	mtime only when needed.
+
 2012-04-27  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* modb-entity.el (elmo-msgdb-create-message-entity-from-file):
