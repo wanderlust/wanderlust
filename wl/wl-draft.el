@@ -1430,13 +1430,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (progn
 	(message "Saving...")
 	(let ((msg (buffer-substring-no-properties (point-min) (point-max)))
+	      (current-number wl-draft-buffer-message-number)
 	      next-number)
-	  (when wl-draft-buffer-message-number
-	    (elmo-folder-delete-messages (wl-draft-get-folder)
-					 (list wl-draft-buffer-message-number))
-	    (wl-draft-config-info-operation wl-draft-buffer-message-number
-					    'delete))
-	  (elmo-folder-check (wl-draft-get-folder))
 	  ;; If no header separator, insert it.
 	  (with-temp-buffer
 	    (insert msg)
@@ -1458,6 +1453,11 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 			(symbol-value 'mime-header-encode-method-alist)))))
 	      (mime-edit-translate-buffer))
 	    (wl-draft-get-header-delimiter t)
+	    (when current-number
+	      (elmo-folder-delete-messages (wl-draft-get-folder)
+					   (list current-number))
+	      (wl-draft-config-info-operation current-number 'delete))
+	    (elmo-folder-check (wl-draft-get-folder))
 	    (setq next-number
 		  (elmo-folder-next-message-number (wl-draft-get-folder)))
 	    (elmo-folder-append-buffer (wl-draft-get-folder)))

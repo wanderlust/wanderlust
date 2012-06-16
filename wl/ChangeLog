@@ -13,6 +13,11 @@
 	* wl-draft.el (wl-draft-self-reply-p): Call std11-fetch-field
 	directly.
 
+2012-06-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-draft.el (wl-draft-save): Delete the old draft after encoding
+	to avoid data loss by Emacs crash.
+
 2012-06-14  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-draft.el (wl-draft-idle-highlight-set-timer): Require
