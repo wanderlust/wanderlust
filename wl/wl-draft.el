@@ -2688,6 +2688,7 @@ If STATE is positive, enable real-time highlighting, and disable it otherwise.  
 
 (defun wl-draft-idle-highlight-set-timer (beg end len)
   (when wl-draft-idle-highlight
+    (require 'timer)
     (when (timerp wl-draft-idle-highlight-timer)
       (cancel-timer wl-draft-idle-highlight-timer))
     (setq wl-draft-idle-highlight-timer
