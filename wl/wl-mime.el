@@ -749,11 +749,12 @@ With ARG, ask destination folder."
 (defun wl-mime-save-content (entity situation)
   (let ((filename (expand-file-name
 		   (read-file-name "Save to file: "
-				   (expand-file-name
-				    (or (mime-entity-safe-filename entity)
-					".")
-				    (or wl-mime-save-directory
-					wl-temporary-file-directory))))))
+				   (or wl-mime-save-directory
+				       wl-temporary-file-directory)
+				   nil nil
+				   (or (mime-entity-safe-filename entity)
+				       ".")
+				    ))))
     (while (file-directory-p filename)
       (setq filename (read-file-name "Please set filename (not directory): "
 				     filename)))

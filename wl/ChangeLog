@@ -1,3 +1,40 @@
+2012-02-18  David Maus  <dmaus@ictsoc.de>
+
+	* wl-summary.el (wl-summary-save)
+	(wl-summary-target-mark-uudecode): Fix incorrect usage of
+	`read-file-name'.
+
+2012-02-12  David Maus  <dmaus@ictsoc.de>
+
+	* wl-mime.el (wl-mime-save-content): Fix incorrect usage of
+	`read-file-name'.
+
+2012-01-01  TAKAHASHI Kaoru  <kaoru@kaisei.org>
+
+	* wl-demo.el (wl-demo-copyright-notice): Add 2012.
+
+2011-07-20  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-e21.el (wl-e21-make-toolbar-buttons): No need to take care of
+	the tool-bar default bindings for Emacs 24.
+
+2011-07-19  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* wl-e21.el (wl-e21-make-toolbar-buttons): Work around the Emacs
+	24 error: "`keymap' is reserved for embedded parent maps"
+
+2011-07-15  Herbert J. Skuhra  <hskuhra@fastmail.fm>
+
+	* wl-folder.el (wl-folder-open-unread-folder): Fix typo in
+	message.
+
+2011-07-10  David Maus  <dmaus@ictsoc.de>
+
+	* wl-draft.el (wl-draft-send-mail-with-sendmail): New
+	function. Send mail with sendmail package.
+	* wl-vars.el (wl-draft-send-mail-function): Add function to list
+	of prepared send mail functions.
+
 2011-06-03  Erik Hetzner  <egh@e6h.org>
 
 	* wl-vars.el (wl-summary-line-format): Document missing control

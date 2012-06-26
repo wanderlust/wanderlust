@@ -2418,7 +2418,7 @@ Use `wl-subscribed-mailing-list'."
       (while path-list
 	(wl-folder-open-folder-sub (car path-list))
 	(setq path-list (cdr path-list)))
-      (message "%s unread folder"
+      (message "%s unread message(s)"
 	       (if (> unread 0) unread "No")))))
 
 (defun wl-folder-open-unread-current-entity ()

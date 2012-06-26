@@ -1,3 +1,10 @@
+2012-04-12  Katsumi Yamaoka  <yamaoka@jpl.org>
+
+	* ptexinfmt.el (texinfo-format-syntax-table): Modify character syntax
+	of " and \ to w, as a workaround.
+	(texinfo-format-comma): Support @comma.
+	(texinfo-format-parse-args): Tweak it so as to work for @comma.
+
 2011-04-20  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* ptexinfmt.el: Fix description comment style.
