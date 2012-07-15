@@ -2243,10 +2243,10 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
 		   (buffer-substring beg (point)) "\n[ \t]*" ""))))))))
 
 (defun elmo-msgdb-get-message-id-from-buffer ()
-  (let ((msgid (elmo-field-body "message-id")))
+  (let ((msgid (elmo-unfold-field-body "message-id")))
     (if msgid
-	(if (string-match "<\\(.+\\)>$" msgid)
-	    msgid
+	(if (string-match "^[ \\t]*\\(<[^>]+>\\)[ \\t]*$" msgid)
+	    (match-string 1 msgid)
 	  (concat "<" msgid ">"))	; Invaild message-id.
       ;; no message-id, so put dummy msgid.
       (concat "<"
