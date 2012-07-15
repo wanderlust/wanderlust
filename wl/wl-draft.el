@@ -276,7 +276,7 @@ e.g.
       (setq subject (wl-draft-forward-make-subject subject))
       (setq references (nconc
 			(std11-field-bodies '("References" "In-Reply-To"))
-			(list (std11-field-body "Message-Id"))))
+			(list (elmo-msgdb-get-message-id-from-buffer))))
       (setq references (delq nil references)
 	    references (mapconcat 'identity references " ")
 	    references (wl-draft-parse-msg-id-list-string references)
@@ -391,7 +391,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 		     (if decoder (funcall decoder addr) addr)))
 	     cc)))
     (setq subject (wl-draft-reply-make-subject subject))
-    (setq in-reply-to (std11-field-body "Message-Id"))
+    (setq in-reply-to (elmo-msgdb-get-message-id-from-buffer))
     (setq references (nconc
 		      (std11-field-bodies '("References" "In-Reply-To"))
 		      (list in-reply-to)))
@@ -488,7 +488,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 
 (defun wl-draft-add-in-reply-to (&optional alt-field)
   (let* ((mes-id (with-current-buffer mail-reply-buffer
-		   (std11-field-body "message-id")))
+		   (elmo-msgdb-get-message-id-from-buffer)))
 	 (field (or alt-field "In-Reply-To"))
 	 (ref (std11-field-body field))
 	 (ref-list nil) (st nil))
@@ -901,7 +901,7 @@ to find out how to use this."
       (wl-draft-set-sent-message 'mail 'unplugged)
     ;; send the message
     (run-hooks 'wl-mail-send-pre-hook) ;; X-PGP-Sig, Cancel-Lock
-    (let ((id (std11-field-body "Message-ID"))
+    (let ((id (elmo-msgdb-get-message-id-from-buffer))
 	  (to (std11-field-body "To")))
       (case
 	  (as-binary-process
@@ -1050,7 +1050,7 @@ non-nil."
 	  (or wl-smtp-posting-server smtp-server "localhost"))
 	 (smtp-service (or wl-smtp-posting-port smtp-service))
 	 (smtp-local-domain (or smtp-local-domain wl-local-domain))
-	 (id (std11-field-body "message-id"))
+	 (id (elmo-msgdb-get-message-id-from-buffer))
 	 recipients)
     (if (not (elmo-plugged-p smtp-server smtp-service))
 	(wl-draft-set-sent-message 'mail 'unplugged
@@ -1130,7 +1130,7 @@ non-nil."
   "Send the prepared message buffer with `sendmail-send-it'.
 The function `sendmail-send-it' uses the external program
 `sendmail-program'."
-  (let ((id (std11-field-body "message-id"))
+  (let ((id (elmo-msgdb-get-message-id-from-buffer))
 	(to (std11-field-body "to")))
     (run-hooks 'wl-mail-send-pre-hook)
     (require 'sendmail)
@@ -1235,7 +1235,7 @@ If FORCE-MSGID, insert message-id regardless of `wl-insert-message-id'."
 			       wl-draft-fcc-list)
 	      (setq wl-draft-fcc-list nil)))
 	(if wl-draft-use-cache
-	    (let ((id (std11-field-body "Message-ID"))
+	    (let ((id (elmo-msgdb-get-message-id-from-buffer))
 		  (elmo-enable-disconnected-operation t))
 	      (elmo-file-cache-save (elmo-file-cache-get-path id)
 				    nil)))
@@ -1583,7 +1583,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (wl-draft-insert-required-fields t)
       (goto-char (point-max))
       (insert-buffer-substring send-mail-buffer header-end)
-      (let ((id (std11-field-body "Message-ID"))
+      (let ((id (elmo-msgdb-get-message-id-from-buffer))
 	    (elmo-enable-disconnected-operation t))
 	(while fcc-list
 	  (if (elmo-folder-append-buffer
@@ -1939,7 +1939,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (wl-draft-set-sent-message 'news 'sent)
       (wl-draft-write-sendlog 'ok 'nntp elmo-nntp-default-server
 			      (std11-field-body "Newsgroups")
-			      (std11-field-body "Message-ID")))))
+			      (elmo-msgdb-get-message-id-from-buffer)))))
 
 (defun wl-draft-generate-clone-buffer (name &optional local-variables)
   "Generate clone of current buffer named NAME."
@@ -2296,7 +2296,7 @@ Automatically applied in draft sending time."
       (message "Queuing..."))
   (let ((send-buffer (current-buffer))
 	(folder (wl-folder-get-elmo-folder wl-queue-folder))
-	(message-id (std11-field-body "Message-ID")))
+	(message-id (elmo-msgdb-get-message-id-from-buffer)))
     (if (elmo-folder-append-buffer folder)
 	(progn
 	  (wl-draft-queue-info-operation
