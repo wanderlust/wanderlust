@@ -1,8 +1,3 @@
-2012-07-15  David Maus  <dmaus@ictsoc.de>
-
-	* elmo-util.el (elmo-msgdb-get-message-id-from-buffer): Properly
-	unfold message-id header value.
-
 2011-07-03  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-session-unselect-mailbox): New
