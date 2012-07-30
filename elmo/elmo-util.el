@@ -1286,23 +1286,24 @@ MESSAGE is a doing part of progress message."
     (and (eq (car diff) 0)
 	 (< diff-time (nth 1 diff)))))
 
-(eval-and-compile
-  (if (fboundp 'std11-fetch-field)
-      (defalias 'elmo-field-body 'std11-fetch-field) ;;no narrow-to-region
-    (defalias 'elmo-field-body 'std11-field-body)))
+(defalias 'elmo-field-body 'std11-fetch-field) ;;no narrow-to-region
 
-(defun elmo-unfold-field-body (name)
-  (let ((value (elmo-field-body name)))
+(defun elmo-unfold-fetch-field (name)
+  (let ((value (std11-fetch-field name)))
     (and value
 	 (std11-unfold-string value))))
 
-(defun elmo-decoded-field-body (field-name &optional mode)
-  (let ((field-body (elmo-field-body field-name)))
+(defalias 'elmo-unfold-field-body 'elmo-unfold-fetch-field)
+
+(defun elmo-decoded-fetch-field (field-name &optional mode)
+  (let ((field-body (std11-fetch-field field-name)))
     (and field-body
 	 (or (ignore-errors
 	      (elmo-with-enable-multibyte
 		(mime-decode-field-body field-body field-name mode)))
 	     field-body))))
+
+(defalias 'elmo-decoded-field-body 'elmo-decoded-fetch-field)
 
 (defun elmo-address-quote-specials (word)
   "Make quoted string of WORD if needed."
@@ -2238,26 +2239,33 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
 		  (elmo-replace-in-string
 		   (buffer-substring beg (point)) "\n[ \t]*" ""))))))))
 
-(defun elmo-msgdb-get-message-id-from-buffer ()
-  (let ((msgid (elmo-field-body "message-id")))
+(defun elmo-msgdb-get-message-id-from-header ()
+  (let ((msgid (std11-fetch-field "message-id")))
     (if msgid
 	(if (string-match "<.+>$" msgid)
 	    (match-string 0 msgid)
 	  (concat "<" msgid ">"))	; Invaild message-id.
       ;; no message-id, so put dummy msgid.
       (concat "<"
-	      (if (elmo-unfold-field-body "date")
-		  (timezone-make-date-sortable (elmo-unfold-field-body "date"))
+	      (if (elmo-unfold-fetch-field "date")
+		  (timezone-make-date-sortable
+		   (elmo-unfold-fetch-field "date"))
 		(md5 (string-as-unibyte (buffer-string))))
 	      (nth 1 (eword-extract-address-components
-		      (or (elmo-field-body "from") "nobody"))) ">"))))
+		      (or (std11-fetch-field "from") "nobody"))) ">"))))
 
-(defun elmo-msgdb-get-references-from-buffer ()
+(defun elmo-msgdb-get-message-id-from-buffer ()
+  (save-excursion
+    (save-restriction
+      (std11-narrow-to-header)
+      (elmo-msgdb-get-message-id-from-header))))
+
+(defun elmo-msgdb-get-references-from-header ()
   (if elmo-msgdb-prefer-in-reply-to-for-parent
-      (or (elmo-msgdb-get-last-message-id (elmo-field-body "in-reply-to"))
-	  (elmo-msgdb-get-last-message-id (elmo-field-body "references")))
-    (or (elmo-msgdb-get-last-message-id (elmo-field-body "references"))
-	(elmo-msgdb-get-last-message-id (elmo-field-body "in-reply-to")))))
+      (or (elmo-msgdb-get-last-message-id (std11-fetch-field "in-reply-to"))
+	  (elmo-msgdb-get-last-message-id (std11-fetch-field  "references")))
+    (or (elmo-msgdb-get-last-message-id (std11-fetch-field "references"))
+	(elmo-msgdb-get-last-message-id (std11-fetch-field "in-reply-to")))))
 
 (defsubst elmo-msgdb-insert-file-header (file)
   "Insert the header of the article.  Buffer contents after point are deleted."

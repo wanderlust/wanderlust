@@ -747,7 +747,7 @@ until the login delay period has expired"))
 	    (save-restriction
 	      (narrow-to-region beg (point))
 	      (setq entity
-		    (elmo-msgdb-create-message-entity-from-buffer
+		    (elmo-msgdb-create-message-entity-from-header
 		     (elmo-msgdb-message-entity-handler new-msgdb)
 		     (car numlist)))
 	      (setq numlist (cdr numlist))

@@ -1,3 +1,74 @@
+2012-07-27  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-msgdb-get-message-id-from-header): New
+	function.
+	(elmo-msgdb-get-message-id-from-buffer): Use it.
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-header):
+	Likewise.
+
+2012-07-27  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-msgdb-get-references-from-header): Renamed
+	from elmo-msgdb-get-references-from-buffer.
+
+	* elmo-shimbun.el (elmo-shimbun-update-overview): Likewise.
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-header):
+	Likewise.
+
+2012-07-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-header):
+	Rnamed from elmo-msgdb-create-message-entity-from-buffer.
+	(elmo-msgdb-create-message-entity-from-file): Likewise.
+
+	* elmo-archive.el (elmo-archive-msgdb-create-entity-subr):
+	Likewise.
+
+	* elmo-imap4.el (elmo-imap4-fetch-callback-1): Likewise.
+
+	* elmo-nntp.el (elmo-nntp-msgdb-create-message): Likewise.
+
+	* elmo-pop3.el (elmo-pop3-msgdb-create-message): Likewise.
+
+	* elmo-shimbun.el (elmo-shimbun-msgdb-create-entity): Likewise.
+
+2012-07-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-msgdb-get-message-id-from-buffer): Do not
+	assume buffer is narrowed to header.
+
+2012-07-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-decoded-fetch-field): Renamed from
+	elmo-decoded-field-body.  elmo-decoded-fetch-field is obsolete.
+
+	* elmo-spam.el (elmo-spam-buffer-spam-p)
+	(elmo-spam-message-spam-p): Likewise.
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-buffer):
+	Likewise.
+
+2012-07-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-unfold-fetch-field): Renamed from
+	elmo-unfold-field-body.  elmo-unfold-field-body is obsolete.
+	(elmo-msgdb-get-message-id-from-buffer): Likewise.
+
+2012-07-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-field-body): Obsolete.  Remove
+	eval-and-compile.  Do not care of std11-fetch-field's
+	availability.
+	(elmo-unfold-field-body, elmo-decoded-field-body)
+	(elmo-msgdb-get-message-id-from-buffer)
+	(elmo-msgdb-get-references-from-buffer): Call std11-fetch-field
+	directly.
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-buffer):
+	Likewise.
+
 2012-05-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* modb-entity.el (elmo-msgdb-create-message-entity-from-file):

@@ -1360,7 +1360,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	      (save-restriction
 		(narrow-to-region beg (point))
 		(setq entity
-		      (elmo-msgdb-create-message-entity-from-buffer
+		      (elmo-msgdb-create-message-entity-from-header
 		       (elmo-msgdb-message-entity-handler new-msgdb) num))
 		(when entity
 		  (setq message-id

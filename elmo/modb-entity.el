@@ -121,7 +121,7 @@ HANDLER is the message entity handler.
 NUMBER is the number of the newly created message entity.
 FILE is the message file.")
 
-(luna-define-generic elmo-msgdb-create-message-entity-from-buffer (handler
+(luna-define-generic elmo-msgdb-create-message-entity-from-header (handler
 								   number
 								   &rest args)
   "Create message entity from current buffer.
@@ -159,7 +159,7 @@ Header region is supposed to be narrowed.")
 	  (error (setq buffer-file-name nil)
 		 (throw 'done nil)))
 	(prog1
-	    (elmo-msgdb-create-message-entity-from-buffer
+	    (elmo-msgdb-create-message-entity-from-header
 	     handler number)
 	  (setq buffer-file-name nil))))))
 
@@ -445,7 +445,7 @@ If each field is t, function is set as default converter."
   ((handler modb-legacy-entity-handler) args)
   (modb-legacy-make-message-entity args))
 
-(luna-define-method elmo-msgdb-create-message-entity-from-buffer
+(luna-define-method elmo-msgdb-create-message-entity-from-header
   ((handler modb-legacy-entity-handler) number args)
   (let ((extras elmo-msgdb-extra-fields)
 	(default-mime-charset default-mime-charset)
@@ -454,21 +454,21 @@ If each field is t, function is set as default converter."
     (save-excursion
       (setq entity (modb-legacy-make-message-entity args))
       (set-buffer-multibyte default-enable-multibyte-characters)
-      (setq message-id (elmo-msgdb-get-message-id-from-buffer))
+      (setq message-id (elmo-msgdb-get-message-id-from-header))
       (and (setq charset (cdr (assoc "charset" (mime-read-Content-Type))))
 	   (setq charset (intern-soft charset))
 	   (setq default-mime-charset charset))
       (setq references
-	    (elmo-msgdb-get-references-from-buffer)
+	    (elmo-msgdb-get-references-from-header)
 	    from (elmo-replace-in-string
-		  (elmo-mime-string (or (elmo-field-body "from")
+		  (elmo-mime-string (or (std11-fetch-field "from")
 					elmo-no-from))
 		  "\t" " ")
 	    subject (elmo-replace-in-string
-		     (elmo-mime-string (or (elmo-field-body "subject")
+		     (elmo-mime-string (or (std11-fetch-field "subject")
 					   elmo-no-subject))
 		     "\t" " ")
-	    date (or (elmo-decoded-field-body "date")
+	    date (or (elmo-decoded-fetch-field "date")
 		     (when buffer-file-name
 		       (timezone-make-date-arpa-standard
 			(current-time-string
@@ -480,7 +480,7 @@ If each field is t, function is set as default converter."
 	    cc   (mapconcat 'identity (elmo-multiple-field-body "cc") ","))
       (unless (elmo-msgdb-message-entity-field handler entity 'size)
 	(setq size
-	      (or (elmo-field-body "content-length")
+	      (or (std11-fetch-field "content-length")
 		  (when buffer-file-name
 		    (nth 7 (or file-attrib
 			       (setq file-attrib
@@ -489,7 +489,7 @@ If each field is t, function is set as default converter."
 	(when (stringp size)
 	  (setq size (string-to-number size))))
       (while extras
-	(if (setq field-body (elmo-field-body (car extras)))
+	(if (setq field-body (std11-fetch-field (car extras)))
 	    (modb-legacy-entity-set-field
 	     entity (intern (downcase (car extras))) field-body 'as-is))
 	(setq extras (cdr extras)))
@@ -724,7 +724,7 @@ If each field is t, function is set as default converter."
 	  (cons (car (cdr entity))
 		(copy-sequence (cdr (cdr entity)))))))
 
-(luna-define-method elmo-msgdb-create-message-entity-from-buffer
+(luna-define-method elmo-msgdb-create-message-entity-from-header
   ((handler modb-standard-entity-handler) number args)
   (let (entity size field-name field-body extractor file-attrib)
     (save-excursion
@@ -738,21 +738,21 @@ If each field is t, function is set as default converter."
 	       :number
 	       number
 	       :message-id
-	       (elmo-msgdb-get-message-id-from-buffer)
+	       (elmo-msgdb-get-message-id-from-header)
 	       :references
-	       (elmo-msgdb-get-references-from-buffer)
+	       (elmo-msgdb-get-references-from-header)
 	       :from
 	       (elmo-replace-in-string
-		(or (elmo-decoded-field-body "from" 'summary)
+		(or (elmo-decoded-fetch-field "from" 'summary)
 		    elmo-no-from)
 		"\t" " ")
 	       :subject
 	       (elmo-replace-in-string
-		(or (elmo-decoded-field-body "subject" 'summary)
+		(or (elmo-decoded-fetch-field "subject" 'summary)
 		    elmo-no-subject)
 		"\t" " ")
 	       :date
-	       (or (elmo-decoded-field-body "date" 'summary)
+	       (or (elmo-decoded-fetch-field "date" 'summary)
 		   (when buffer-file-name
 		     (timezone-make-date-arpa-standard
 		      (current-time-string
@@ -771,9 +771,9 @@ If each field is t, function is set as default converter."
 		  (mime-decode-field-body field-body "cc" 'summary))
 		(elmo-multiple-field-body "cc") ",")
 	       :content-type
-	       (elmo-decoded-field-body "content-type" 'summary)
+	       (elmo-decoded-fetch-field "content-type" 'summary)
 	       :size
-	       (if (setq size (elmo-field-body "content-length"))
+	       (if (setq size (std11-fetch-field "content-length"))
 		   (string-to-number size)
 		 (or (plist-get args :size)
 		     (when buffer-file-name
@@ -790,7 +790,7 @@ If each field is t, function is set as default converter."
 					modb-entity-field-extractor-alist))
 		field-body (if extractor
 			       (funcall extractor field-name)
-			     (elmo-decoded-field-body extra 'summary)))
+			     (elmo-decoded-fetch-field extra 'summary)))
 	  (when field-body
 	    (modb-standard-entity-set-field entity field-name field-body))))
       entity)))
@@ -799,7 +799,7 @@ If each field is t, function is set as default converter."
 ;; mailing list info handling
 (defun modb-entity-extract-mailing-list-info (field)
   (let* ((getter (lambda (field)
-		   (elmo-decoded-field-body (symbol-name field) 'summary)))
+		   (elmo-decoded-fetch-field (symbol-name field) 'summary)))
 	 (name (elmo-find-list-match-value
 		elmo-mailing-list-name-spec-list
 		getter))
