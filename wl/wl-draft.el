@@ -301,7 +301,7 @@ e.g.
 
 (defun wl-draft-self-reply-p ()
   "Return t when From address in the current message is user's self one or not."
-  (wl-address-user-mail-address-p (or (elmo-field-body "From") "")))
+  (wl-address-user-mail-address-p (or (std11-field-body "From") "")))
 
 (defun wl-draft-find-reply-headers (rule-symbol)
   (let ((rule-list (symbol-value rule-symbol))

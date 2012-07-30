@@ -243,7 +243,7 @@ If optional argument RESTORE is non-nil, unregister from spam list.")
   (with-current-buffer buffer
     (save-restriction
       (std11-narrow-to-header)
-      (elmo-spam-header-check-headers #'elmo-decoded-field-body))))
+      (elmo-spam-header-check-headers #'elmo-decoded-fetch-field))))
 
 (luna-define-method elmo-spam-message-spam-p ((processor elsp-header)
 					      folder number &optional register)
@@ -264,7 +264,7 @@ If optional argument RESTORE is non-nil, unregister from spam list.")
 		     (set-buffer buffer)
 		     (elmo-spam-message-fetch folder number)
 		     (std11-narrow-to-header))
-		   (elmo-decoded-field-body field-name))))))
+		   (elmo-decoded-fetch-field field-name))))))
       (and buffer (kill-buffer buffer)))))
 
 (luna-define-method elmo-spam-register-spam-messages ((processor elsp-header)

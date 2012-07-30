@@ -325,7 +325,7 @@ If it is the symbol `all', update overview for all shimbun folders."
 	(shimbun-header-insert
 	 (elmo-shimbun-folder-shimbun-internal folder)
 	 header)
-	(setq ov (elmo-msgdb-create-message-entity-from-buffer
+	(setq ov (elmo-msgdb-create-message-entity-from-header
 		  (elmo-msgdb-message-entity-handler
 		   (elmo-folder-msgdb-internal folder)) number))
 	(elmo-message-entity-set-field
@@ -374,7 +374,7 @@ If it is the symbol `all', update overview for all shimbun folders."
 	     (cons 'subject (shimbun-header-subject header 'no-encode))
 	     (cons 'date    (shimbun-header-date header))
 	     (cons 'references
-		   (elmo-msgdb-get-references-from-buffer)))))
+		   (elmo-msgdb-get-references-from-header)))))
       (elmo-emit-signal 'update-overview folder
 			(elmo-message-entity-number entity)))))
 
