@@ -159,7 +159,7 @@ Header region is supposed to be narrowed.")
 	  (error (setq buffer-file-name nil)
 		 (throw 'done nil)))
 	(prog1
-	    (elmo-msgdb-create-message-entity-from-buffer
+	    (elmo-msgdb-create-message-entity-from-header
 	     handler number)
 	  (setq buffer-file-name nil))))))
 
@@ -468,7 +468,7 @@ If each field is t, function is set as default converter."
 		     (elmo-mime-string (or (std11-fetch-field "subject")
 					   elmo-no-subject))
 		     "\t" " ")
-	    date (or (elmo-decoded-field-body "date")
+	    date (or (elmo-decoded-fetch-field "date")
 		     (when buffer-file-name
 		       (timezone-make-date-arpa-standard
 			(current-time-string
@@ -480,7 +480,7 @@ If each field is t, function is set as default converter."
 	    cc   (mapconcat 'identity (elmo-multiple-field-body "cc") ","))
       (unless (elmo-msgdb-message-entity-field handler entity 'size)
 	(setq size
-	      (or (elmo-field-body "content-length")
+	      (or (std11-fetch-field "content-length")
 		  (when buffer-file-name
 		    (nth 7 (or file-attrib
 			       (setq file-attrib
@@ -752,7 +752,7 @@ If each field is t, function is set as default converter."
 		    elmo-no-subject)
 		"\t" " ")
 	       :date
-	       (or (elmo-decoded-field-body "date" 'summary)
+	       (or (elmo-decoded-fetch-field "date" 'summary)
 		   (when buffer-file-name
 		     (timezone-make-date-arpa-standard
 		      (current-time-string
@@ -773,7 +773,7 @@ If each field is t, function is set as default converter."
 	       :content-type
 	       (elmo-decoded-fetch-field "content-type" 'summary)
 	       :size
-	       (if (setq size (elmo-field-body "content-length"))
+	       (if (setq size (std11-fetch-field "content-length"))
 		   (string-to-number size)
 		 (or (plist-get args :size)
 		     (when buffer-file-name
