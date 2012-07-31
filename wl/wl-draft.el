@@ -162,6 +162,8 @@ e.g.
 		smtp-server)))))
      ,@body))
 
+(def-edebug-spec wl-smtp-extension-bind (body))
+
 (defun wl-draft-insert-date-field ()
   "Insert Date field."
   (insert "Date: " (wl-make-date-string) "\n"))
