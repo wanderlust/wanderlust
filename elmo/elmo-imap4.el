@@ -46,7 +46,6 @@
 (require 'elmo-cache)
 (require 'elmo)
 (require 'elmo-net)
-(require 'utf7)
 (require 'elmo-mime)
 (require 'time-stamp)
 
@@ -84,8 +83,8 @@
   "*Some imapd have to send select command to update status.
 \(ex. UW imapd 4.5-BETA?\).  For these imapd, you must set this variable t.")
 
-(defvar elmo-imap4-use-modified-utf7 nil
-  "*Use mofidied UTF-7 (rfc2060) encoding for IMAP4 folder name.")
+(defvar elmo-imap4-use-modified-utf7 (coding-system-p 'utf-7-imap)
+  "*Use modified UTF-7 (rfc2060) encoding for IMAP4 folder name.")
 
 (defvar elmo-imap4-use-cache t
   "Use cache in imap4 folder.")
@@ -228,12 +227,16 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 
 (defsubst elmo-imap4-decode-folder-string (string)
   (if elmo-imap4-use-modified-utf7
-      (utf7-decode string 'imap)
+      (if (coding-system-p 'utf-7-imap)
+	  (decode-coding-string string 'utf-7-imap)
+	(utf7-decode string 'imap))
     string))
 
 (defsubst elmo-imap4-encode-folder-string (string)
   (if elmo-imap4-use-modified-utf7
-      (utf7-encode string 'imap)
+      (if (coding-system-p 'utf-7-imap)
+	  (encode-coding-string string 'utf-7-imap)
+	(utf7-encode string 'imap))
     string))
 
 ;;; Response
@@ -2836,6 +2839,8 @@ If optional argument REMOVE is non-nil, remove FLAG."
 
 (autoload 'elmo-global-flags-set "elmo-flag")
 (autoload 'elmo-get-global-flags "elmo-flag")
+(autoload 'utf7-decode "utf7")
+(autoload 'utf7-encode "utf7")
 
 (require 'product)
 (product-provide (provide 'elmo-imap4) (require 'elmo-version))
