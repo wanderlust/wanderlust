@@ -1,3 +1,13 @@
+2012-08-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-imap4.el : Don't require utf7.el unconditionally.  Add
+	autoload settings for `utf7-decode' and `utf7-encode'.
+	(elmo-imap4-use-modified-utf7): Set t when internal coding system
+	for modified UTF-7 is available.  Fix typo of docstring.
+	(elmo-imap4-decode-folder-string)
+	(elmo-imap4-encode-folder-string): Use internal coding system if
+	available.
+
 2012-08-01  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-nntp.el (elmo-nntp-post): Remove the invalid Message-ID
