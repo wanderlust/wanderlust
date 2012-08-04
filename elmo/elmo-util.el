@@ -1292,7 +1292,8 @@ MESSAGE is a doing part of progress message."
     (and value
 	 (std11-unfold-string value))))
 
-(make-obsolete 'elmo-unfold-field-body 'elmo-unfold-fetch-field "2012-07-30")
+;; 2012-07-30
+(make-obsolete 'elmo-unfold-field-body 'elmo-unfold-fetch-field)
 
 (defun elmo-decoded-fetch-field (field-name &optional mode)
   (let ((field-body (std11-fetch-field field-name)))
@@ -1302,7 +1303,8 @@ MESSAGE is a doing part of progress message."
 		(mime-decode-field-body field-body field-name mode)))
 	     field-body))))
 
-(make-obsolete 'elmo-decoded-field-body 'elmo-decoded-fetch-field "2012-07-30")
+;; 2012-07-30
+(make-obsolete 'elmo-decoded-field-body 'elmo-decoded-fetch-field)
 
 (defun elmo-address-quote-specials (word)
   "Make quoted string of WORD if needed."
