@@ -984,12 +984,22 @@ Don't cache if nil.")
       (goto-char (point-min))
       (if (search-forward mail-header-separator nil t)
 	  (delete-region (match-beginning 0)(match-end 0)))
-      (setq has-message-id (std11-field-body "message-id"))
+      (setq has-message-id (elmo-get-message-id-from-buffer 'none t))
       (elmo-nntp-send-command session "post")
       (if (string-match "^340" (setq response
 				     (elmo-nntp-read-raw-response session)))
 	  (if (string-match "recommended ID \\(<[^@]+@[^>]+>\\)" response)
 	      (unless has-message-id
+		;; We should remove invalid Message-ID header.
+		(save-restriction
+		  (save-match-data
+		    (std11-narrow-to-header)
+		    (goto-char (point-min))
+		    (let ((case-fold-search t))
+		      (if (re-search-forward "^message-id:[ \t]*" nil t)
+			  (delete-region
+			   (match-beginning 0)
+			   (min (point-max) (1+ (std11-field-end))))))))
 		(goto-char (point-min))
 		(insert (concat "Message-ID: "
 				(elmo-match-string 1 response)
@@ -1417,9 +1427,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
     (save-restriction
       (std11-narrow-to-header)
       (setq newsgroups (std11-fetch-field "newsgroups")
-	    message-id (std11-msg-id-string
-			(car (std11-parse-msg-id-string
-			      (std11-fetch-field "message-id"))))))
+	    message-id (elmo-get-message-id-from-header 'none t)))
     (when newsgroups
       (when (setq crosspost-newsgroups
 		  (delete
