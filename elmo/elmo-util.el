@@ -38,7 +38,6 @@
 (require 'pces)
 (require 'std11)
 (require 'eword-decode)
-(require 'utf7)
 (require 'poem)
 (require 'emu)
 
