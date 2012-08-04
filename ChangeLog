@@ -1,3 +1,8 @@
+2012-08-04  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* WL-ELS (ELMO-MODULES): Do not include utf7.el when Emacs has
+	utf-7-imap coding system.
+
 2011-09-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* doc/texinfo.tex, doc/txi-ja.tex: Replaced with 2010-05.22.17
