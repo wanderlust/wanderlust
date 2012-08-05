@@ -2235,26 +2235,30 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
 		  (elmo-replace-in-string
 		   (buffer-substring beg (point)) "\n[ \t]*" ""))))))))
 
+(defun elmo-extract-std11-msgid-tokens (msgid-string)
+  (let (ids)
+    (dolist (token msgid-string ids)
+      (when (eq (car token) 'msg-id) (setq ids (cons token ids))))
+    ids))
+
+(defun elmo-normalize-msgid-field (field)
+  (mapcar #'std11-msg-id-string (elmo-extract-std11-msgid-tokens (std11-parse-msg-ids-string field))))
+
+(defun elmo-get-message-id-from-field (field &optional strict)
+  (if strict
+      (let ((msgid-list (elmo-normalize-msgid-field field)))
+	(when (null (cdr msgid-list)) (car msgid-list)))
+    (when (string-match "\\`[ \n\t]*\\(<[^<>]+>\\)[ \n\t]*\\'" field) (match-string 1 field))))
+
 (defun elmo-get-message-id-from-header (&optional when-invalid strict)
-   (let ((msgid (std11-fetch-field "message-id")))
-    (when msgid
-      (or (and (null strict)
-	       (string-match "\\`[ \n\t]*\\(<[^<>]+>\\)[ \n\t]*\\'" msgid)
-	       (match-string 1 msgid))
-	  (let* ((tokens (std11-parse-msg-ids-string msgid))
-		 (id (assq 'msg-id tokens)))
-	    (setq id (unless (assq 'msg-id (delq id tokens))
-		       (std11-msg-id-string id)))
-	    ;; Return nil when result is "<>".
-	    (when (> (length id) 2) id))
-	  ;; Invaild message-id.
-	  (cond
-	   ((eq when-invalid 'none)
-	    nil)
-	   ((eq when-invalid 'msgdb)
-	    (concat "<" (std11-unfold-string msgid) ">"))
-	   (t
-	    (std11-unfold-string msgid)))))))
+  (let ((msgid-field (std11-fetch-field "message-id")))
+    (when msgid-field
+      (let ((msgid (elmo-get-message-id-from-field msgid-field strict)))
+	(or msgid
+	    (cond
+	     ((eq when-invalid 'none) nil)
+	     ((eq when-invalid 'msgdb) (concat "<" (std11-unfold-string msgid-field) ">"))
+	     (t (std11-unfold-string msgid-field))))))))
 
 (defun elmo-get-message-id-from-buffer (&optional when-invalid strict)
   (save-excursion

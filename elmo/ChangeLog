@@ -1,3 +1,13 @@
+2012-08-05  David Maus  <dmaus@w500.major-mode.org>
+
+	* elmo-util.el (elmo-extract-std11-msgid-tokens): New
+	function. Extract msg-id tokens from std11-parsed field.
+	(elmo-normalize-msgid-field): New function. Return list of
+	message-id field values in field.
+	(elmo-get-message-id-from-field): New function. Return message-id
+	field value.
+	(elmo-get-message-id-from-header): Refactored. Use new functions.
+
 2012-08-01  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-nntp.el (elmo-nntp-post): Remove the invalid Message-ID
