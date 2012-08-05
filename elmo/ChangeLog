@@ -1,5 +1,8 @@
 2012-08-05  David Maus  <dmaus@ictsoc.de>
 
+	* elmo-util.el (elmo-extract-std11-msgid-tokens): Retain order of
+	message-id values.
+
 	* elmo-vars.el (elmo-prefer-std11-parser): New
 	customizable. Prefer std11 parser over regexp.
 

@@ -2239,7 +2239,7 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
   (let (ids)
     (dolist (token msgid-string ids)
       (when (eq (car token) 'msg-id) (setq ids (cons token ids))))
-    ids))
+    (nreverse ids)))
 
 (defun elmo-normalize-msgid-field (field)
   (mapcar #'std11-msg-id-string (elmo-extract-std11-msgid-tokens (std11-parse-msg-ids-string field))))
