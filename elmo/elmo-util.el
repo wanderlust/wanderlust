@@ -2245,7 +2245,7 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
   (mapcar #'std11-msg-id-string (elmo-extract-std11-msgid-tokens (std11-parse-msg-ids-string field))))
 
 (defun elmo-get-message-id-from-field (field &optional strict)
-  (if strict
+  (if (or strict elmo-prefer-std11-parser)
       (let ((msgid-list (elmo-normalize-msgid-field field)))
 	(when (null (cdr msgid-list)) (car msgid-list)))
     (when (string-match "\\`[ \n\t]*\\(<[^<>]+>\\)[ \n\t]*\\'" field) (match-string 1 field))))

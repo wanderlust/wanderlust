@@ -1,3 +1,10 @@
+2012-08-05  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-vars.el (elmo-prefer-std11-parser): New
+	customizable. Prefer std11 parser over regexp.
+
+	* elmo-util.el (elmo-get-message-id-from-field): Use customizable.
+
 2012-08-05  David Maus  <dmaus@w500.major-mode.org>
 
 	* elmo-util.el (elmo-extract-std11-msgid-tokens): New
