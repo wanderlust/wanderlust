@@ -3,6 +3,8 @@
 	* elmo-util.el (elmo-parse-msgid-field): Renamed from
 	`elmo-normalize-msgid-field'.
 	(elmo-get-message-id-from-field): Dto.
+	(elmo-get-message-id-from-header): Handle case of missing
+	message-id field.
 
 2012-08-05  David Maus  <dmaus@ictsoc.de>
 

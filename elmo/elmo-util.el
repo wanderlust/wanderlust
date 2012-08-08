@@ -2251,14 +2251,13 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
     (when (string-match "\\`[ \n\t]*\\(<[^<>]+>\\)[ \n\t]*\\'" field) (match-string 1 field))))
 
 (defun elmo-get-message-id-from-header (&optional when-invalid strict)
-  (let ((msgid-field (std11-fetch-field "message-id")))
-    (when msgid-field
-      (let ((msgid (elmo-get-message-id-from-field msgid-field strict)))
-	(or msgid
-	    (cond
-	     ((eq when-invalid 'none) nil)
-	     ((eq when-invalid 'msgdb) (concat "<" (std11-unfold-string msgid-field) ">"))
-	     (t (std11-unfold-string msgid-field))))))))
+  (let* ((msgid-field (std11-fetch-field "message-id"))
+	 (msgid (and msgid-field (elmo-get-message-id-from-field msgid-field strict))))
+    (cond
+     (msgid msgid)
+     ((eq when-invalid 'none) nil)
+     ((eq when-invalid 'msgdb) (concat "<" (std11-unfold-string msgid-field) ">"))
+     (t (std11-unfold-string msgid-field)))))
 
 (defun elmo-get-message-id-from-buffer (&optional when-invalid strict)
   (save-excursion
