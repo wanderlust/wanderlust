@@ -1,3 +1,9 @@
+2012-08-08  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-util.el (elmo-parse-msgid-field): Renamed from
+	`elmo-normalize-msgid-field'.
+	(elmo-get-message-id-from-field): Dto.
+
 2012-08-05  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-util.el (elmo-extract-std11-msgid-tokens): Retain order of
