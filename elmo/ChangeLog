@@ -2,6 +2,7 @@
 
 	* elmo-nntp.el (elmo-nntp-post): Dynamically bind
 	`elmo-prefer-std11-parser'.
+	(elmo-nntp-setup-crosspost-buffer): Dto.
 
 	* elmo-util.el (elmo-get-message-id-from-field)
 	(elmo-get-message-id-from-header)
