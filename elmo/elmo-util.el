@@ -2244,27 +2244,27 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
 (defun elmo-parse-msgid-field (field)
   (mapcar #'std11-msg-id-string (elmo-extract-std11-msgid-tokens (std11-parse-msg-ids-string field))))
 
-(defun elmo-get-message-id-from-field (field &optional strict)
-  (if (or strict elmo-prefer-std11-parser)
+(defun elmo-get-message-id-from-field (field)
+  (if elmo-prefer-std11-parser
       (let ((msgid-list (elmo-parse-msgid-field field)))
 	(when (null (cdr msgid-list)) (car msgid-list)))
     (when (string-match "\\`[ \n\t]*\\(<[^<>]+>\\)[ \n\t]*\\'" field) (match-string 1 field))))
 
-(defun elmo-get-message-id-from-header (&optional when-invalid strict)
+(defun elmo-get-message-id-from-header (&optional when-invalid)
   (let ((msgid-field (std11-fetch-field "message-id")))
     (when msgid-field
-      (let ((msgid (elmo-get-message-id-from-field msgid-field strict)))
+      (let ((msgid (elmo-get-message-id-from-field msgid-field)))
 	(or msgid
 	    (cond
 	     ((eq when-invalid 'none) nil)
 	     ((eq when-invalid 'msgdb) (concat "<" (std11-unfold-string msgid-field) ">"))
 	     (t (std11-unfold-string msgid-field))))))))
 
-(defun elmo-get-message-id-from-buffer (&optional when-invalid strict)
+(defun elmo-get-message-id-from-buffer (&optional when-invalid)
   (save-excursion
     (save-restriction
       (std11-narrow-to-header)
-      (elmo-get-message-id-from-header when-invalid strict))))
+      (elmo-get-message-id-from-header when-invalid))))
 
 (defun elmo-msgdb-get-message-id-from-header ()
   (or (elmo-get-message-id-from-header 'msgdb)

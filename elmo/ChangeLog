@@ -1,3 +1,13 @@
+2012-08-14  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-nntp.el (elmo-nntp-post): Dynamically bind
+	`elmo-prefer-std11-parser'.
+
+	* elmo-util.el (elmo-get-message-id-from-field)
+	(elmo-get-message-id-from-header)
+	(elmo-get-message-id-from-buffer): Remove `strict' parameter,
+	dynamically bind `elmo-prefer-std11-parser' instead.
+
 2012-08-08  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-util.el (elmo-parse-msgid-field): Renamed from
