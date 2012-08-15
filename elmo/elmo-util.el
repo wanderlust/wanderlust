@@ -259,7 +259,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
       (elmo-condition-parse-error)))
 
 ;; or-expr      ::= and-expr /
-;;	            and-expr "|" or-expr
+;;		    and-expr "|" or-expr
 (defun elmo-condition-parse-or-expr ()
   (let ((left (elmo-condition-parse-and-expr)))
     (if (looking-at "| *")
@@ -2245,10 +2245,11 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
   (mapcar #'std11-msg-id-string (elmo-extract-std11-msgid-tokens (std11-parse-msg-ids-string field))))
 
 (defun elmo-get-message-id-from-field (field)
-  (if elmo-prefer-std11-parser
-      (let ((msgid-list (elmo-parse-msgid-field field)))
-	(when (null (cdr msgid-list)) (car msgid-list)))
-    (when (string-match "\\`[ \n\t]*\\(<[^<>]+>\\)[ \n\t]*\\'" field) (match-string 1 field))))
+  (if (and (not elmo-always-prefer-std11-parser)
+	   (string-match "\\`[ \n\t]*\\(<[^<>]+>\\)[ \n\t]*\\'" field))
+      (match-string 1 field)
+    (let ((msgid-list (elmo-parse-msgid-field field)))
+      (when (null (cdr msgid-list)) (car msgid-list)))))
 
 (defun elmo-get-message-id-from-header (&optional when-invalid)
   (let ((msgid-field (std11-fetch-field "message-id")))
