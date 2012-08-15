@@ -1,3 +1,48 @@
+2012-08-15  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-util.el (elmo-get-message-id-from-field): Fallback to std11
+	parser if regexp didn't match.
+
+	* elmo-vars.el (elmo-always-prefer-std11-parser): Renamed from
+	`elmo-prefer-std11-parser', default to nil.
+
+2012-08-14  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-nntp.el (elmo-nntp-post): Dynamically bind
+	`elmo-prefer-std11-parser'.
+	(elmo-nntp-setup-crosspost-buffer): Dto.
+
+	* elmo-util.el (elmo-get-message-id-from-field)
+	(elmo-get-message-id-from-header)
+	(elmo-get-message-id-from-buffer): Remove `strict' parameter,
+	dynamically bind `elmo-prefer-std11-parser' instead.
+
+2012-08-08  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-util.el (elmo-parse-msgid-field): Renamed from
+	`elmo-normalize-msgid-field'.
+	(elmo-get-message-id-from-field): Dto.
+
+2012-08-05  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-util.el (elmo-extract-std11-msgid-tokens): Retain order of
+	message-id values.
+
+	* elmo-vars.el (elmo-prefer-std11-parser): New
+	customizable. Prefer std11 parser over regexp.
+
+	* elmo-util.el (elmo-get-message-id-from-field): Use customizable.
+
+2012-08-05  David Maus  <dmaus@w500.major-mode.org>
+
+	* elmo-util.el (elmo-extract-std11-msgid-tokens): New
+	function. Extract msg-id tokens from std11-parsed field.
+	(elmo-normalize-msgid-field): New function. Return list of
+	message-id field values in field.
+	(elmo-get-message-id-from-field): New function. Return message-id
+	field value.
+	(elmo-get-message-id-from-header): Refactored. Use new functions.
+
 2012-08-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-util.el (elmo-unfold-field-body, elmo-decoded-field-body):
@@ -29,10 +74,11 @@
 	(elmo-get-message-id-from-buffer): New functions.
 	(elmo-msgdb-get-message-id-from-header): Use them.
 
-	* elmo-cache.el (elmo-folder-append-buffer): Likewise.
-
 	* elmo-nntp.el (elmo-nntp-post): Likewise.
 	(elmo-nntp-setup-crosspost-buffer): Likewise.
+
+	* elmo-cache.el (elmo-folder-append-buffer): Use
+	elmo-msgdb-get-message-id-from-buffer.
 
 2012-07-30  David Maus  <dmaus@ictsoc.de>
 

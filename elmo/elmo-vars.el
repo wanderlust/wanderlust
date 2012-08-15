@@ -58,6 +58,11 @@
   :prefix "elmo-"
   :group 'elmo)
 
+(defcustom elmo-always-prefer-std11-parser nil
+  "Always prefer std11 parser over regexp."
+  :type 'boolean
+  :group 'elmo)
+
 (defcustom elmo-digest-flags '(unread)
   "Flags which are treated as `digest'."
   :type '(repeat (symbol :tag "flag"))

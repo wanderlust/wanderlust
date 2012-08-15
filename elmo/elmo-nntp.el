@@ -983,7 +983,8 @@ Don't cache if nil.")
       (goto-char (point-min))
       (if (search-forward mail-header-separator nil t)
 	  (delete-region (match-beginning 0)(match-end 0)))
-      (setq has-message-id (elmo-get-message-id-from-buffer 'none t))
+      (setq has-message-id (let ((elmo-prefer-std11-parser t)) 
+			     (elmo-get-message-id-from-buffer 'none)))
       (elmo-nntp-send-command session "post")
       (if (string-match "^340" (setq response
 				     (elmo-nntp-read-raw-response session)))
@@ -1422,11 +1423,12 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 ;;         it is remembered in `temp-crosses' slot.
 ;;         temp-crosses slot is a list of cons cell:
 ;;         (NUMBER . (MESSAGE-ID (LIST-OF-NEWSGROUPS) 'ng))
-  (let (newsgroups crosspost-newsgroups message-id)
+  (let ((elmo-prefer-std11-parser t)
+	newsgroups crosspost-newsgroups message-id)
     (save-restriction
       (std11-narrow-to-header)
       (setq newsgroups (std11-fetch-field "newsgroups")
-	    message-id (elmo-get-message-id-from-header 'none t)))
+	    message-id (elmo-get-message-id-from-header 'none)))
     (when newsgroups
       (when (setq crosspost-newsgroups
 		  (delete
