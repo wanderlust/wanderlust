@@ -54,13 +54,6 @@
 
 	* wl-template.el (wl-template-apply): Likewise.
 
-2012-04-14  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
-
-	* wl-draft.el (wl-draft-config-exec): Suppress real-time
-	highlighting.
-
-	* wl-template.el (wl-template-apply): Likewise.
-
 	* wl-highlight.el (wl-highlight-message): Refined.  Fix the case
 	of too big headers with body-only option.  Avoid stop highlighting
 	the case of wl-highlight-force-citation-header-regexp and/or
