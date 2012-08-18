@@ -29,6 +29,7 @@
 ;;; Code:
 ;;
 (require 'poe)
+(require 'path-util)
 
 ;; silence byte compiler
 (eval-when-compile
@@ -366,7 +367,14 @@ If function, return value of function.")
   "Date match is available or not.")
 
 (defvar elmo-network-stream-type-alist
-  '(("!"      ssl       ssl      open-ssl-stream)
+  `(("!" ssl ,@(cond
+		((and (fboundp 'gnutls-available-p)
+		      (gnutls-available-p))
+		 '(gnutls open-gnutls-stream))
+		((module-installed-p 'tls)
+		 '(tls    open-tls-stream))
+		(t
+		 '(ssl    open-ssl-stream))))
     ("!!"     starttls  starttls starttls-open-stream)
     ("!socks" socks     socks    socks-open-network-stream)
     ("!direct" direct   nil   open-network-stream))

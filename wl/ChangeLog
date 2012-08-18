@@ -1,3 +1,10 @@
+2012-08-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-draft.el: Do not define autoload for `open-ssl-stream'.
+	(wl-template): Require elmo-net.el.
+	(wl-smtp-extension-bind): Respect `elmo-network-stream-type-alist'
+	for over SSL/TLS connection.
+
 2012-08-01  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-draft.el (wl-draft-forward, wl-draft-reply)
