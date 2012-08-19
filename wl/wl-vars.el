@@ -1674,7 +1674,7 @@ Set this if (system-name) does not return FQDN."
 
 (defcustom wl-unique-id-suffix ".wl"
   "*Specific string in generated Message-ID
-which appear just before @."
+which appear just before @ (domain based) or % (mail address based)."
   :type 'string
   :group 'wl-pref)
 

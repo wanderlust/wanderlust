@@ -5177,7 +5177,7 @@ address).
 @item wl-unique-id-suffix
 @vindex wl-unique-id-suffix
 The initial setting is @samp{.wl}. You can specify the string in generated
-Message-ID which appear just before @samp{@@}.
+Message-ID which appear just before @samp{@@} or @samp{%}.
 
 @item wl-draft-config-alist
 @vindex wl-draft-config-alist

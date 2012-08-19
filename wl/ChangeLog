@@ -1,5 +1,9 @@
 2012-08-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* wl-vars.el (wl-unique-id-suffix): Fix docstring.
+
+2012-08-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* wl-util.el (wl-draft-make-message-id-string): When
 	wl-message-id-use-message-from is non-nil, make string from
 	buffer's From field value prior to wl-from.  Use lexical analyzer
