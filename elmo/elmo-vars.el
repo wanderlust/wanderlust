@@ -29,6 +29,7 @@
 ;;; Code:
 ;;
 (require 'poe)
+(require 'path-util)
 
 ;; silence byte compiler
 (eval-when-compile
@@ -55,6 +56,11 @@
 (defgroup elmo-setting nil
   "ELMO common settings."
   :prefix "elmo-"
+  :group 'elmo)
+
+(defcustom elmo-always-prefer-std11-parser nil
+  "Always prefer std11 parser over regexp."
+  :type 'boolean
   :group 'elmo)
 
 (defcustom elmo-digest-flags '(unread)
@@ -361,7 +367,14 @@ If function, return value of function.")
   "Date match is available or not.")
 
 (defvar elmo-network-stream-type-alist
-  '(("!"      ssl       ssl      open-ssl-stream)
+  `(("!" ssl ,@(cond
+		((and (fboundp 'gnutls-available-p)
+		      (gnutls-available-p))
+		 '(gnutls open-gnutls-stream))
+		((module-installed-p 'tls)
+		 '(tls    open-tls-stream))
+		(t
+		 '(ssl    open-ssl-stream))))
     ("!!"     starttls  starttls starttls-open-stream)
     ("!socks" socks     socks    socks-open-network-stream)
     ("!direct" direct   nil   open-network-stream))

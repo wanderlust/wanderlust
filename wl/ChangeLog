@@ -1,3 +1,21 @@
+2012-08-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-draft.el: Do not define autoload for `open-ssl-stream'.
+	(wl-template): Require elmo-net.el.
+	(wl-smtp-extension-bind): Respect `elmo-network-stream-type-alist'
+	for over SSL/TLS connection.
+
+2012-08-01  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-draft.el (wl-draft-forward, wl-draft-reply)
+	(wl-draft-add-in-reply-to, wl-draft-send-mail-with-qmail)
+	(wl-draft-send-mail-with-smtp, wl-draft-send-mail-with-sendmail):
+	Use elmo-get-message-id-from-header or
+	elmo-get-message-id-from-buffer.
+
+	* wl-summary.el (wl-summary-cancel-message)
+	(wl-summary-supersedes-message): Likewise.
+
 2012-07-31  David Maus  <dmaus@ictsoc.de>
 
 	* wl-draft.el (wl-smtp-extension-bind): Declare edebug spec to aid
