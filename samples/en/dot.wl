@@ -44,7 +44,7 @@
 
 ;; Subscribed mailing list.
 (setq wl-subscribed-mailing-list
-      '("wl@lists.airs.net"
+      '("wl@ml.gentei.org"
 	"apel-ja@m17n.org"
 	"emacs-mime-ja@m17n.org"
 	;; "ml@example.com" ...
