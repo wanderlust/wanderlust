@@ -1652,8 +1652,10 @@ Allowed situations are:
   :group 'wl-summary
   :group 'wl-pref)
 
-(defcustom wl-message-id-use-wl-from t
-  "*Use `wl-from' for domain part of Message-ID if non-nil."
+(defcustom wl-message-id-use-message-from
+  (if (boundp 'wl-message-id-use-wl-from)
+      wl-message-id-use-wl-from t)
+  "*When non-nil, use From: header's field value for domain part of Message-ID preferably."
   :type 'boolean
   :group 'wl-pref)
 
@@ -3084,6 +3086,10 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (defvar wl-plugged-queue-status-column 25)
 
 ;;;; Obsolete variables.
+
+;; 2012-08-19
+(elmo-define-obsolete-variable 'wl-message-id-use-wl-from
+			       'wl-message-id-use-message-from)
 
 ;; 2005-01-23
 (elmo-define-obsolete-variable 'wl-nmz-folder-icon

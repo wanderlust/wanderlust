@@ -1,3 +1,13 @@
+2012-08-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-util.el (wl-draft-make-message-id-string): When
+	wl-message-id-use-message-from is non-nil, make string from
+	buffer's From field value prior to wl-from.  Use lexical analyzer
+	to extract mailing address.
+
+	* wl-vars.el (wl-message-id-use-message-from): New customizable
+	variable.  Obsolete `wl-message-id-use-wl-from'.
+
 2012-08-01  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-draft.el (wl-draft-forward, wl-draft-reply)

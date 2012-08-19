@@ -5140,10 +5140,11 @@ draft buffer.  If @code{nil}, it is not automatically inserted.
 The initial setting is @code{t}.  If non-nil, @samp{Message-ID:} field
 is automatically inserted on the transmission.
 
-@item wl-message-id-use-wl-from
-@vindex wl-message-id-use-wl-from
-The initial setting is @code{nil}.  If non-nil, the value of
-@code{wl-from} will be used as the domain part of @samp{Message-ID:}.
+@item wl-message-id-use-message-from
+@vindex wl-message-id-use-message-from
+The initial setting is @code{t}.  If non-nil, the value of @samp{From:}
+field or @code{wl-from} will be used as the domain part of
+@samp{Message-ID:}.
 
 @item wl-local-domain
 @vindex wl-local-domain
