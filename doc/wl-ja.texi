@@ -5109,7 +5109,7 @@ Wanderlust のオフラインモード/オンラインモードをトグルします。
 @lisp
 @group
 (setq wl-subscribed-mailing-list
-      '("wl@@lists.airs.net"
+      '("wl@@ml.gentei.org"
         "apel-ja@@m17n.org"
         "emacs-mime-ja@@m17n.org"))
 @end group
@@ -8939,19 +8939,19 @@ Wanderlust に関する議論は以下のメーリングリストで行われます。
 最新バージョンのアナウンスもこちらに流れます。
 
 @display
-Wanderlust Mailing List @t{<wl@@lists.airs.net>}
+Wanderlust Mailing List @t{<wl@@ml.gentei.org>}
 @end display
 
 ここでは主に日本語での議論が行われています。また、英語専用のリストとして
 
 @display
-Wanderlust List in English @t{<wl-en@@lists.airs.net>}
+Wanderlust List in English @t{<wl-en@@ml.gentei.org>}
 @end display
 
 もあります(こちらに投稿されたメッセージは前者にも配送されます)。
 
-これらのメーリングリストのガイドを得るには、@t{wl-ctl@@lists.airs.net} 宛
-(英語の方は @t{wl-en-ctl@@lists.airs.net} 宛) で、本文に
+これらのメーリングリストのガイドを得るには、@t{wl-ctl@@ml.gentei.org} 宛
+(英語の方は @t{wl-en-ctl@@ml.gentei.org} 宛) で、本文に
 
 @example
 # guide
@@ -8975,14 +8975,14 @@ Wanderlust List in English @t{<wl-en@@lists.airs.net>}
 メーリングリストに投稿されたメッセージは、ウェブや NetNews でも読むこと
 ができます。
 
-@t{<wl@@lists.airs.net>} に投稿されたメッセージ
+@t{<wl@@ml.gentei.org>} に投稿されたメッセージ
 
 @example
-@uref{http://lists.airs.net/wl/archive/}
+@uref{http://dir.gmane.org/gmane.mail.wanderlust.general.japanese}
 @uref{news://gmane.mail.wanderlust.general.japanese@@news.gmane.org}
 @end example
 
-@t{<wl-en@@lists.airs.net>} に投稿されたメッセージ
+@t{<wl-en@@ml.gentei.org>} に投稿されたメッセージ
 
 @example
 @uref{http://lists.airs.net/wl-en/archive/}
