@@ -1659,6 +1659,12 @@ Allowed situations are:
   :type 'boolean
   :group 'wl-pref)
 
+(defcustom wl-message-id-hash-function nil
+  "Indicate hash function for the local part when Message-ID is made from mail address.  Hash function receives a string and returns hashed string.  Nil means the local part is not hashed."
+  :type '(choice (const :tag "as is" nil)
+		 function)
+  :group 'wl-pref)
+
 (defcustom wl-local-domain nil
   "*Domain part of this client (without hostname).
 Set this if (system-name) does not return FQDN."

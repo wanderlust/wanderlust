@@ -622,25 +622,37 @@ that `read' can handle, whenever this is possible."
      ;; might otherwise generate the same ID via another algorithm.
      wl-unique-id-suffix)))
 
+(defun wl-draft-make-message-id-from-address (string)
+  (when (and (stringp string)
+	     (string-match "\\`\\(.+\\)@\\([^@]+\\)\\'" string))
+    (let ((local (match-string 1 string))
+	  (domain (match-string 2 string)))
+      (format "<%s%%%s@%s>"
+	      (wl-unique-id)
+	      (if wl-message-id-hash-function
+		  (concat "%" (funcall wl-message-id-hash-function local))
+		local)
+	      domain))))
+
 (defvar wl-message-id-function 'wl-draft-make-message-id-string)
 (defun wl-draft-make-message-id-string ()
   "Return Message-ID field value."
-  (concat "<" (wl-unique-id)
-	  (or (and wl-message-id-use-message-from
-		   (catch :done
-		     (mapc (lambda (string)
-			     (setq string
-				   (std11-address-string
-				    (car (std11-parse-address-string string))))
-			     (when (and string (string-match "^.+@.+$" string))
-			       (throw :done (format "%%%s>" string))))
-			   (list (or (std11-fetch-field "from") "") wl-from))
-		     nil))
-	      (format "@%s>"
-		      (or wl-message-id-domain
-			  (if wl-local-domain
-			      (concat (system-name) "." wl-local-domain)
-			    (system-name)))))))
+  (or (and wl-message-id-use-message-from
+	   (catch :done
+	     (mapc (lambda (string)
+		     (when (setq string
+				 (wl-draft-make-message-id-from-address
+				  (std11-address-string
+				   (car (std11-parse-address-string string)))))
+		       (throw :done string)))
+		   (list (or (std11-fetch-field "from") "") wl-from))
+	     nil))
+      (format "<%s@%s>"
+	      (wl-unique-id)
+	      (or wl-message-id-domain
+		  (if wl-local-domain
+		      (concat (system-name) "." wl-local-domain)
+		    (system-name))))))
 
 ;;; Profile loading.
 (defvar wl-load-profile-function 'wl-local-load-profile)
