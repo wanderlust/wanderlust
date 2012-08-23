@@ -666,14 +666,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
       ans)))
 
 (defun elmo-string-to-list (string)
-  (elmo-set-work-buf
-    (insert string)
-    (goto-char (point-min))
-    (insert "(")
-    (goto-char (point-max))
-    (insert ")")
-    (goto-char (point-min))
-    (read (current-buffer))))
+  (read (concat "(" string ")")))
 
 (defun elmo-list-to-string (list)
   (let ((tlist list)

@@ -1230,7 +1230,6 @@ Returns a list of message numbers successfully appended."
 		(dirname (file-name-nondirectory path)))
 	   (if (<= (length dirname) elmo-msgdb-path-encode-threshold)
 	       path
-	     (require 'md5)
 	     (setq dirname (md5 dirname))
 	     (when (> (length dirname) elmo-msgdb-path-encode-threshold)
 	       (error "Cannot shrink msgdb path for `%s'"
