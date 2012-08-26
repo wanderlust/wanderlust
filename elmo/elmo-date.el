@@ -51,6 +51,20 @@
     `(buffer-substring-no-properties
       (match-beginning ,pos) (match-end ,pos))))
 
+(eval-and-compile
+  (cond
+   ((fboundp 'replace-regexp-in-string)
+(defun elmo-replace-in-string (str regexp newtext &optional literal)
+  "Replace all matches in STR for REGEXP with NEWTEXT string.
+And returns the new string.
+Optional LITERAL non-nil means do a literal replacement.
+Otherwise treat \\ in NEWTEXT string as special:
+  \\& means substitute original matched text,
+  \\N means substitute match for \(...\) number N,
+  \\\\ means insert one \\."
+  (replace-regexp-in-string regexp newtext str t literal))
+    )
+   (t
 ;; from subr.el
 (defun elmo-replace-in-string (str regexp newtext &optional literal)
   "Replace all matches in STR for REGEXP with NEWTEXT string.
@@ -92,6 +106,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 			     (char-to-string c))))
 		       newtext ""))))))
     (concat rtn-str (substring str start))))
+    )))
 
 (defvar elmo-date-descriptions
   '((yesterday . [0 0 1])

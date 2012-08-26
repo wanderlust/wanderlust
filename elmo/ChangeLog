@@ -1,5 +1,10 @@
 2012-08-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo-date.el (elmo-replace-in-string): Use
+	replace-regexp-in-string if available.
+
+2012-08-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* elmo-imap4.el (elmo-imap4-parse-namespace-subr)
 	(elmo-imap4-parse-flag-list)
 	(elmo-imap4-search-internal-primitive): Use zerop instead of eq
