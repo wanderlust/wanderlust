@@ -1,3 +1,12 @@
+2012-08-19  David Maus  <dmaus@ictsoc.de>
+
+	* README.ja: Update mailing list address.
+	* README: Dto.
+	* samples/en/dot.wl: Dto.
+	* samples/ja/dot.wl: Dto.
+	* doc/wl-ja.texi: Dto, and update address of mailing list archive.
+	* doc/wl.texi: Dto, and update address of mailing list archive.
+
 2011-02-01  Tetsurou Okazaki  <okazaki@be.to>
 
 	* WL-MK (wl-scan-path): New function.
@@ -918,4 +927,3 @@
 
 	* wl: New directory.
 	All wl-related files are moved to this directory.
-
