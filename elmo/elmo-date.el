@@ -41,14 +41,15 @@
 	      (+ (match-beginning ,pos) ,from)
 	      (match-end ,pos)))
 
-(defmacro elmo-match-string (pos string)
-  "Substring POSth matched STRING."
-  `(substring ,string (match-beginning ,pos) (match-end ,pos)))
+;; 2012-08-26
+(make-obsolete 'elmo-match-string 'match-string)
 
 (defmacro elmo-match-buffer (pos)
   "Substring POSth matched from the current buffer."
-  `(buffer-substring-no-properties
-    (match-beginning ,pos) (match-end ,pos)))
+  (if (fboundp 'match-string-no-properties)
+      `(match-string-no-properties ,pos)
+    `(buffer-substring-no-properties
+      (match-beginning ,pos) (match-end ,pos))))
 
 ;; from subr.el
 (defun elmo-replace-in-string (str regexp newtext &optional literal)
@@ -78,14 +79,14 @@ Otherwise treat \\ in NEWTEXT string as special:
 			       (setq special nil)
 			       (cond ((eq c ?\\) "\\")
 				     ((eq c ?&)
-				      (elmo-match-string 0 str))
+				      (match-string 0 str))
 				     ((and (>= c ?0) (<= c ?9))
 				      (if (> c (+ ?0 (length
 						      (match-data))))
 					  ;; Invalid match num
 					  (error "Invalid match num: %c" c)
 					(setq c (- c ?0))
-					(elmo-match-string c str)))
+					(match-string c str)))
 				     (t (char-to-string c))))
 			   (if (eq c ?\\) (progn (setq special t) nil)
 			     (char-to-string c))))
@@ -117,9 +118,9 @@ Otherwise treat \\ in NEWTEXT string as special:
 	  (number
 	   (string-to-number
 	    (if (match-beginning 1)
-		(elmo-match-string 1 description)
+		(match-string 1 description)
 	      "0")))
-	  (suffix (downcase (elmo-match-string 2 description)))
+	  (suffix (downcase (match-string 2 description)))
 	  pair)
       (if (setq pair (assq (intern suffix) elmo-date-descriptions))
 	  (elmo-datevec-substitute today (cdr pair))

@@ -506,7 +506,7 @@ Refresh `wl-address-list', `wl-address-completion-list', and
       (while (setq expn-str (cdr (nth n alist)))
 	(setq new-expn-str nil)
 	(while (string-match "^[ \t]*\\([^,]+\\)" expn-str)
-	  (setq expn (elmo-match-string 1 expn-str))
+	  (setq expn (match-string 1 expn-str))
 	  (setq expn-str (wl-string-delete-match expn-str 0))
 	  (if (string-match "^[ \t,]+" expn-str)
 	      (setq expn-str (wl-string-delete-match expn-str 0)))

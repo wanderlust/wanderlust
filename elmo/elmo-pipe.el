@@ -46,13 +46,12 @@
   (when (string-match "^\\([^|]*\\)|\\(:?\\)\\(.*\\)$" name)
     (elmo-pipe-folder-set-src-internal folder
 				       (elmo-get-folder
-					(elmo-match-string 1 name)))
+					(match-string 1 name)))
     (elmo-pipe-folder-set-dst-internal folder
 				       (elmo-get-folder
-					(elmo-match-string 3 name)))
+					(match-string 3 name)))
     (elmo-pipe-folder-set-copy-internal folder
-					(string= ":"
-						 (elmo-match-string 2 name))))
+					(string= ":" (match-string 2 name))))
   (elmo-pipe-connect-signals folder (elmo-pipe-folder-dst-internal folder))
   folder)
 

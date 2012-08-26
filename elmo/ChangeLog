@@ -1,3 +1,40 @@
+2012-08-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-archive.el (Top, elmo-folder-initialize)
+	(elmo-archive-folder-list-subfolders): Use match-string directly
+	instead of elmo-match-string.
+
+	* elmo-cache.el (elmo-folder-initialize): Likewise
+
+	* elmo-date.el (elmo-replace-in-string, elmo-date-get-datevec):
+	Likewise.
+
+	* elmo-file.el (elmo-file-make-date-string): Likewise.
+
+	* elmo-filter.el (elmo-folder-initialize): Likewise.
+
+	* elmo-imap4.el (elmo-imap4-parse-capability)
+	(elmo-folder-initialize): Likewise.
+
+	* elmo-maildir.el (elmo-maildir-list-location)
+	(elmo-maildir-set-mark, elmo-maildir-delete-mark): Likewise.
+
+	* elmo-nntp.el (elmo-folder-list-messages-plugged)
+	(elmo-nntp-folder-status, elmo-nntp-post): Likewise.
+
+	* elmo-pipe.el (elmo-folder-initialize): Likewise.
+
+	* elmo-shimbun.el (elmo-folder-initialize): Likewise.
+
+	* elmo-util.el (elmo-msgid-to-cache): Likewise.
+
+2012-08-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-date.el (elmo-match-string): Obsolete. Use match-string
+	directly.
+	(elmo-match-buffer): Use `match-string-no-properties' if
+	available.
+
 2012-08-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo.el (elmo-folder-msgdb-path): Do not require md5.el.

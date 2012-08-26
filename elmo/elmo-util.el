@@ -2145,7 +2145,7 @@ Optional argument DAYS specifies the days to expire caches."
   (save-match-data
     (when (and msgid
 	       (string-match "<\\(.+\\)>$" msgid))
-      (elmo-replace-string-as-filename (elmo-match-string 1 msgid)))))
+      (elmo-replace-string-as-filename (match-string 1 msgid)))))
 
 (defun elmo-cache-get-path (msgid &optional folder number)
   "Get path for cache file associated with MSGID, FOLDER, and NUMBER."

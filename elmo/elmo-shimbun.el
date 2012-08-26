@@ -202,7 +202,7 @@ If it is the symbol `all', update overview for all shimbun folders."
   (if (string= name "")
       folder
     (let ((server-group (if (string-match "\\([^.]+\\)\\." name)
-			    (list (elmo-match-string 1 name)
+			    (list (match-string 1 name)
 				  (substring name (match-end 0)))
 			  (list name))))
       (when (nth 0 server-group) ; server

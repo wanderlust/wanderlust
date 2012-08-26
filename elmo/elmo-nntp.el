@@ -631,10 +631,10 @@ Don't cache if nil.")
 	       (string-match
 		"211 \\([0-9]+\\) \\([0-9]+\\) \\([0-9]+\\) [^.].+$"
 		response)
-	       (> (string-to-number (elmo-match-string 1 response)) 0))
+	       (> (string-to-number (match-string 1 response)) 0))
 	  (setq numbers (elmo-nntp-make-msglist
-			 (elmo-match-string 2 response)
-			 (elmo-match-string 3 response)))))
+			 (match-string 2 response)
+			 (match-string 3 response)))))
       numbers)))
 
 (luna-define-method elmo-folder-status ((folder elmo-nntp-folder))
@@ -678,10 +678,8 @@ Don't cache if nil.")
 		    "211 \\([0-9]+\\) \\([0-9]+\\) \\([0-9]+\\) [^.].+$"
 		    response))
 	      (progn
-		(setq end-num (string-to-number
-			       (elmo-match-string 3 response)))
-		(setq e-num (string-to-number
-			     (elmo-match-string 1 response)))
+		(setq end-num (string-to-number (match-string 3 response)))
+		(setq e-num (string-to-number (match-string 1 response)))
 		(when (and killed-list
 			   (elmo-number-set-member end-num killed-list))
 		  ;; Max is killed.
@@ -1002,8 +1000,7 @@ Don't cache if nil.")
 			   (min (point-max) (1+ (std11-field-end))))))))
 		(goto-char (point-min))
 		(insert (concat "Message-ID: "
-				(elmo-match-string 1 response)
-				"\n"))))
+				(match-string 1 response) "\n"))))
 	(error "POST failed"))
       (run-hooks 'elmo-nntp-post-pre-hook)
       (elmo-nntp-send-buffer session content-buf)

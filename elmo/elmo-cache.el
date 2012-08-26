@@ -45,10 +45,10 @@
   (when (string-match "\\([^/]*\\)/?\\(.*\\)$" name)
     (elmo-cache-folder-set-dir-name-internal
      folder
-     (elmo-match-string 2 name))
+     (match-string 2 name))
     (elmo-cache-folder-set-directory-internal
      folder
-     (expand-file-name (elmo-match-string 2 name)
+     (expand-file-name (match-string 2 name)
 		       elmo-cache-directory))
     folder))
 

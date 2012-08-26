@@ -977,7 +977,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 (defun elmo-imap4-parse-capability (string)
   (if (string-match "^\\*\\(.*\\)$" string)
       (read
-       (concat "(" (downcase (elmo-match-string 1 string)) ")"))))
+       (concat "(" (downcase (match-string 1 string)) ")"))))
 
 (defun elmo-imap4-clear-login (session)
   (when (elmo-imap4-session-capable-p session 'logindisabled)
@@ -1916,8 +1916,8 @@ Return nil if no complete line has arrived."
     (when (string-match "\\(.*\\)@\\(.*\\)" default-server)
       ;; case: imap4-default-server is specified like
       ;; "hoge%imap.server@gateway".
-      (setq default-user (elmo-match-string 1 default-server))
-      (setq default-server (elmo-match-string 2 default-server)))
+      (setq default-user (match-string 1 default-server))
+      (setq default-server (match-string 2 default-server)))
     (setq tokens (car (elmo-parse-separated-tokens
 		       name
 		       elmo-imap4-folder-name-syntax)))

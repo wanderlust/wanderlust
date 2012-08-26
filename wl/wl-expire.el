@@ -267,7 +267,7 @@ If REFILE-LIST includes reserve mark message, so copy."
     (catch 'done
       (while files
 	(when (string-match regexp (car files))
-	  (setq filenum (elmo-match-string 1 (car files)))
+	  (setq filenum (match-string 1 (car files)))
 	  (setq in-folder (elmo-folder-status
 			   (wl-folder-get-elmo-folder (car files))))
 	  (throw 'done (cons in-folder filenum)))

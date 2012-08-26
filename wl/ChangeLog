@@ -1,3 +1,20 @@
+2012-08-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl.el (wl-plugged-toggle): Call `match-string' directly instead
+	of `elmo-match-string'.
+
+	* wl-address.el (wl-address-expand-aliases): Likewise.
+
+	* wl-expire.el (wl-expire-archive-get-max-number): Likewise.
+
+	* wl-folder.el (wl-create-folder-entity-from-buffer): Likewise.
+
+	* wl-util.el (wl-url-news, wl-url-nntp): Likewise
+
+	* wl-version.el (wl-extended-emacs-version)
+	(wl-extended-emacs-version2, wl-extended-emacs-version3):
+	Likewise.  Do not require elmo-date.el
+
 2012-08-20  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-vars.el (wl-message-id-hash-function): New customizable

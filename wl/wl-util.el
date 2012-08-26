@@ -461,7 +461,7 @@ that `read' can handle, whenever this is possible."
   (interactive "sURL: ")
   (if (string-match "^news:\\(.*\\)$" url)
       (wl-summary-goto-folder-subr
-       (concat "-" (elmo-match-string 1 url)) nil nil nil t)
+       (concat "-" (match-string 1 url)) nil nil nil t)
     (message "Not a news: url.")))
 
 (defun wl-url-nntp (url &rest args)
@@ -470,18 +470,14 @@ that `read' can handle, whenever this is possible."
     (if (string-match
 	 "^nntp://\\([^:/]*\\):?\\([0-9]*\\)/\\([^/]*\\)/\\([0-9]*\\).*$" url)
 	(progn
-	  (if (eq (length (setq fld-name
-				(elmo-match-string 3 url))) 0)
+	  (if (eq (length (setq fld-name (match-string 3 url))) 0)
 	      (setq fld-name nil))
-	  (if (eq (length (setq port
-				(elmo-match-string 2 url))) 0)
+	  (if (eq (length (setq port (match-string 2 url))) 0)
 	      (setq port (number-to-string elmo-nntp-default-port)))
-	  (if (eq (length (setq server
-				(elmo-match-string 1 url))) 0)
+	  (if (eq (length (setq server (match-string 1 url))) 0)
 	      (setq server elmo-nntp-default-server))
 	  (setq folder (concat "-" fld-name "@" server ":" port))
-	  (if (eq (length (setq msg
-				(elmo-match-string 4 url))) 0)
+	  (if (eq (length (setq msg (match-string 4 url))) 0)
 	      (wl-summary-goto-folder-subr
 	       folder nil nil nil t)
 	    (wl-summary-goto-folder-subr
