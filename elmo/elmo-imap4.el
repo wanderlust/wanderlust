@@ -1719,7 +1719,7 @@ Return nil if no complete line has arrived."
 				      prefix))
 				(setq prefix (substring prefix 0
 							(match-beginning 0))))
-			    (if (eq (length prefix) 0)
+			    (if (zerop (length prefix))
 				(progn (setq default-delim delim) nil)
 			      (cons
 			       (concat "^\\("
@@ -1750,7 +1750,7 @@ Return nil if no complete line has arrived."
   (let ((str (buffer-substring (+ (point) 1)
 			       (progn (search-forward ")" nil t)
 				      (- (point) 1)))))
-    (unless (eq (length str) 0)
+    (unless (zerop (length str))
       (split-string str))))
 
 (defun elmo-imap4-parse-envelope ()
@@ -2343,7 +2343,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
       results)
      (t
       (setq charset
-	    (if (eq (length (elmo-filter-value filter)) 0)
+	    (if (zerop (length (elmo-filter-value filter)))
 		(setq charset 'us-ascii)
 	      (elmo-imap4-detect-search-charset
 	       (elmo-filter-value filter)))

@@ -2048,8 +2048,8 @@ This function is defined for `window-scroll-functions'"
 		    (elmo-database-close))
 		(run-hooks 'wl-summary-sync-updated-hook)
 		(setq mes
-		      (if (and (eq (length delete-list) 0)
-			       (eq num 0))
+		      (if (and (zerop (length delete-list))
+			       (zerop num))
 			  (format
 			   "No updates for \"%s\"" (elmo-folder-name-internal
 						    folder))

@@ -1,5 +1,21 @@
 2012-08-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo-imap4.el (elmo-imap4-parse-namespace-subr)
+	(elmo-imap4-parse-flag-list)
+	(elmo-imap4-search-internal-primitive): Use zerop instead of eq
+	with 0.
+
+	* elmo-nntp.el (elmo-nntp-send-buffer): Likewise.
+
+	* elmo-split.el (elmo-split): Likewise.
+
+	* elmo-util.el (elmo-time-expire, elmo-parse-token)
+	(elmo-parse-prefixed-element): Likewise.
+
+	* elmo.el (elmo-folder-move-messages): Likewise.
+
+2012-08-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* elmo-archive.el (Top, elmo-folder-initialize)
 	(elmo-archive-folder-list-subfolders): Use match-string directly
 	instead of elmo-match-string.

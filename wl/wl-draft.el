@@ -1361,7 +1361,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	    ;; might changed by Fcc.
 	    ;; It causes a huge loss in the IMAP folder.
 	    (when (and parent-flag parent-number
-		       (not (eq (length parent-folder) 0)))
+		       (not (zerop (length parent-folder))))
 	      (condition-case nil
 		  (wl-folder-set-persistent-mark
 		   parent-folder parent-number parent-flag)

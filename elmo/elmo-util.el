@@ -1275,7 +1275,7 @@ MESSAGE is a doing part of progress message."
     (setq diff
 	  (list (- (+ (car current) (if rest -1 0)) (car before-time))
 		(- (+ (or rest 0) (nth 1 current)) (nth 1 before-time))))
-    (and (eq (car diff) 0)
+    (and (zerop (car diff))
 	 (< diff-time (nth 1 diff)))))
 
 (defalias 'elmo-field-body 'std11-fetch-field) ;;no narrow-to-region
@@ -1502,7 +1502,7 @@ ELT must be a string.  Upper-case and lower-case letters are treated as equal."
 	(i 0)
 	(sep nil)
 	content c in)
-    (if (eq len 0)
+    (if (zerop len)
 	(cons "" "")
       (while (and (< i len) (or in (null sep)))
 	(setq c (aref string i))
@@ -1530,7 +1530,7 @@ ELT must be a string.  Upper-case and lower-case letters are treated as equal."
 
 (defun elmo-parse-prefixed-element (prefix string &optional seps requirement)
   (let (parsed)
-    (if (and (not (eq (length string) 0))
+    (if (and (not (zerop (length string)))
 	     (eq (aref string 0) prefix)
 	     (setq parsed (elmo-parse-token (substring string 1) seps))
 	     (elmo-token-valid-p (car parsed) requirement))

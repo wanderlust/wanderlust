@@ -1212,7 +1212,7 @@ Returns a list of message numbers successfully appended."
 	    (progn
 ;;;	      (message "Copying messages...done")
 	      t)
-	  (if (eq len 0)
+	  (if (zerop len)
 	      (message "No message was moved.")
 	    (message "Moving messages failed.")
 	    nil ; failure

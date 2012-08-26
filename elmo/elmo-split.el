@@ -304,13 +304,13 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
     (message
      (concat
       (cond
-       ((eq count 0)
+       ((zerop count)
 	"No message is splitted")
        ((eq count 1)
 	"1 message is splitted")
        (t
 	(format "%d messages are splitted" count)))
-      (if (eq fcount 0)
+      (if (zerop fcount)
 	  "."
 	(format " (%d failure)." fcount))))
     count))

@@ -1864,7 +1864,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
     (wl-folder-set-entity-info folder newvalue)
     (setq wl-folder-info-alist-modified t)
     (when (and buf
-	       (not (eq unread-diff 0)))
+	       (not (zerop unread-diff)))
       (save-match-data
 	(with-current-buffer buf
 	  (save-excursion

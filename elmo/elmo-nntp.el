@@ -1033,7 +1033,7 @@ Don't cache if nil.")
 	(setq bol (point))
 	(end-of-line)
 	(setq line (buffer-substring bol (point)))
-	(unless (eq (forward-line 1) 0) (setq data-continue nil))
+	(unless (zerop (forward-line 1)) (setq data-continue nil))
 	(elmo-nntp-send-data-line session line)))))
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-nntp-folder)

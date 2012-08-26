@@ -470,14 +470,14 @@ that `read' can handle, whenever this is possible."
     (if (string-match
 	 "^nntp://\\([^:/]*\\):?\\([0-9]*\\)/\\([^/]*\\)/\\([0-9]*\\).*$" url)
 	(progn
-	  (if (eq (length (setq fld-name (match-string 3 url))) 0)
+	  (if (zerop (length (setq fld-name (match-string 3 url))))
 	      (setq fld-name nil))
-	  (if (eq (length (setq port (match-string 2 url))) 0)
+	  (if (zerop (length (setq port (match-string 2 url))))
 	      (setq port (number-to-string elmo-nntp-default-port)))
-	  (if (eq (length (setq server (match-string 1 url))) 0)
+	  (if (zerop (length (setq server (match-string 1 url))))
 	      (setq server elmo-nntp-default-server))
 	  (setq folder (concat "-" fld-name "@" server ":" port))
-	  (if (eq (length (setq msg (match-string 4 url))) 0)
+	  (if (zerop (length (setq msg (match-string 4 url))))
 	      (wl-summary-goto-folder-subr
 	       folder nil nil nil t)
 	    (wl-summary-goto-folder-subr
