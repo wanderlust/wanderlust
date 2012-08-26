@@ -1,3 +1,10 @@
+2012-08-26  David Maus  <dmaus@ictsoc.de>
+
+	* wl-summary.el (wl-summary-input-range): Pass default value to
+	`completing-read'.
+	* wl-util.el (wl-read-search-condition-internal): Dto.
+	* wl-action.el (wl-summary-read-folder): Dto.
+
 2012-08-19  David Maus  <dmaus@ictsoc.de>
 
 	* wl-news.el.in: Update mailing list address.
