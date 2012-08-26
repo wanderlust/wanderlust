@@ -3757,10 +3757,7 @@ Return non-nil if the mark is updated"
 	  (completing-read (format "Range (%s): " default)
 			   (mapcar
 			    (lambda (x) (cons x x))
-			    input-range-list)))
-    (if (string= range "")
-	default
-      range)))
+			    input-range-list) nil nil nil nil default))))
 
 (defun wl-summary-toggle-disp-folder (&optional arg)
   (interactive)

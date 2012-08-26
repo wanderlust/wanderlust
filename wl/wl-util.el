@@ -1054,11 +1054,9 @@ is enclosed by at least one regexp grouping construct."
 	 (field (completing-read
 		 (format "%s (%s): " prompt default)
 		 (mapcar #'list
-			 (append '("AND" "OR") (wl-search-condition-fields)))))
+			 (append '("AND" "OR") (wl-search-condition-fields)))
+		 nil nil nil nil default))
 	 value)
-    (setq field (if (string= field "")
-		    (setq field default)
-		  field))
     (cond
      ((or (string= field "AND") (string= field "OR"))
       (concat (if paren "(" "")
@@ -1075,9 +1073,9 @@ is enclosed by at least one regexp grouping construct."
 		     (mapcar
 		      (lambda (x)
 			(list (format "%s" (car x))))
-		      elmo-date-descriptions)))
-	(concat (downcase field) ":"
-		(if (equal value "") default value))))
+		      elmo-date-descriptions)
+		     nil nil nil nil default))
+	(concat (downcase field) ":" value)))
      ((string-match "!?Flag" field)
       (while (null value)
 	(setq value (downcase
