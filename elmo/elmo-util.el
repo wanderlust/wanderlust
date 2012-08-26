@@ -1879,15 +1879,7 @@ If the cache is partial file-cache, TYPE is 'partial."
   (concat "<" (elmo-recover-string-from-filename filename) ">"))
 
 (defsubst elmo-cache-get-path-subr (msgid)
-  (let ((chars '(?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9 ?A ?B ?C ?D ?E ?F))
-	(clist (string-to-char-list msgid))
-	(sum 0))
-    (while clist
-      (setq sum (+ sum (car clist)))
-      (setq clist (cdr clist)))
-    (format "%c%c"
-	    (nth (% (/ sum 16) 2) chars)
-	    (nth (% sum 16) chars))))
+  (format "%02X" (logand (apply '+ (string-to-list msgid)) 31)))
 
 ;;;
 (defun elmo-file-cache-get-path (msgid &optional section)
