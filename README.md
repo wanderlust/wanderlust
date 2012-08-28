@@ -59,14 +59,14 @@ Mailing List
 
 You can get information and help via the mailing list at:
 
-  * English: [mailto:wl-en@ml.gentei.org] ([archives][8])
+  * English: [mailto:wl-en@ml.gentei.org]() ([archives][8])
 
-  * Japanese: [mailto:wl@ml.gentei.org] ([archives][9])
+  * Japanese: [mailto:wl@ml.gentei.org]() ([archives][9])
 
 Emails to the English list are forwarded to the Japanese list.
 
-To subscribe, send an email to [mailto:wl-ctl@ml.gentei.org] (Japanese) or
-[mailto:wl-en-ctl@ml.gentei.org] (English). Use `subscribe YOUR NAME` as
+To subscribe, send an email to [mailto:wl-ctl@ml.gentei.org]() (Japanese) or
+[mailto:wl-en-ctl@ml.gentei.org]() (English). Use `subscribe YOUR NAME` as
 subject and body. To unsubscribe, use `unsubscribe` as body. To get help, use
 `# guide` as body.
 
