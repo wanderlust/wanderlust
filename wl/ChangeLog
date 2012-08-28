@@ -1,3 +1,8 @@
+2012-08-28  David Maus  <dmaus@ictsoc.de>
+
+	* wl-action.el (wl-summary-read-folder): Use default folder if
+	read folder is `wl-default-spec'.
+
 2012-08-26  David Maus  <dmaus@ictsoc.de>
 
 	* wl-summary.el (wl-summary-input-range): Pass default value to
