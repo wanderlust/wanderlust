@@ -3,7 +3,7 @@ Wanderlust - Yet Another Message Interface on Emacsen
 
 Wanderlust is a mail/news management system with [IMAP4rev1][1] support for
 [Emacs][2]. It was originally developed by
-[Yuuichi Teranishi](teranisi@gohome.org).
+[Yuuichi Teranishi](mailto:teranisi@gohome.org).
 
 For documentation, see also: [Wanderlust on EmacsWiki][3]
 
@@ -59,16 +59,16 @@ Mailing List
 
 You can get information and help via the mailing list at:
 
-  * English: [wl-en@ml.gentei.org]() ([archives][8])
+  * English: [mailto:wl-en@ml.gentei.org] ([archives][8])
 
-  * Japanese: [wl@ml.gentei.org]() ([archives][9])
+  * Japanese: [mailto:wl@ml.gentei.org] ([archives][9])
 
 Emails to the English list are forwarded to the Japanese list.
 
-To subscribe, send an email to [wl-ctl@ml.gentei.org]() (Japanese) or
-[wl-en-ctl@ml.gentei.org]() (English). Use `subscribe YOUR NAME` as subject and
-body. To unsubscribe, use `unsubscribe` as body. To get help, use `# guide` as
-body.
+To subscribe, send an email to [mailto:wl-ctl@ml.gentei.org] (Japanese) or
+[mailto:wl-en-ctl@ml.gentei.org] (English). Use `subscribe YOUR NAME` as
+subject and body. To unsubscribe, use `unsubscribe` as body. To get help, use
+`# guide` as body.
 
 
 Development
