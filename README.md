@@ -2,9 +2,10 @@ Wanderlust - Yet Another Message Interface on Emacsen
 =====================================================
 
 Wanderlust is a mail/news management system with [IMAP4rev1][1] support for
-Emacs. It was originally developed by [Yuuichi Teranishi](teranisi@gohome.org).
+[Emacs][2]. It was originally developed by
+[Yuuichi Teranishi](teranisi@gohome.org).
 
-For documentation, see also: [Wanderlust on EmacsWiki][2]
+For documentation, see also: [Wanderlust on EmacsWiki][3]
 
 
 Features
@@ -12,9 +13,9 @@ Features
 
   * Implementation in elisp only.
 
-  * Support of [IMAP4rev1][3], [NNTP][4], POP([POP3][5]/APOP), MH and Maildir.
+  * Support of [IMAP4rev1][4], [NNTP][5], POP([POP3][6]/APOP), MH and Maildir.
 
-  * Integrated access to messages based on Folder Specifications like [Mew][6].
+  * Integrated access to messages based on Folder Specifications like [Mew][7].
 
   * Key bindings and mark processing like Mew.
 
@@ -58,9 +59,9 @@ Mailing List
 
 You can get information and help via the mailing list at:
 
-  * English: [wl-en@ml.gentei.org]() ([archives][7])
+  * English: [wl-en@ml.gentei.org]() ([archives][8])
 
-  * Japanese: [wl@ml.gentei.org]() ([archives][8])
+  * Japanese: [wl@ml.gentei.org]() ([archives][9])
 
 Emails to the English list are forwarded to the Japanese list.
 
@@ -73,25 +74,25 @@ body.
 Development
 ===========
 
-Fork it on [GitHub][9].
+Fork it on [GitHub][10].
 
 
 [1]: http://en.wikipedia.org/wiki/Internet_Message_Access_Protocol
 
-[2]: http://www.emacswiki.org/emacs/WanderLust
+[2]: http://www.gnu.org/software/emacs/
 
-[2]: http://tools.ietf.org/html/rfc2060 "M. Crispin, 'INTERNET MESSAGE ACCESS PROTOCOL - VERSION 4rev1', RFC 2060, 1996"
+[3]: http://www.emacswiki.org/emacs/WanderLust
 
-[3]: http://tools.ietf.org/html/rfc977 "B. Kantor and P. Lapsley, 'Network News Transfer Protocol: A Proposed Standard for the Stream-Based Transmission of News', RFC 977, 1986"
+[4]: http://tools.ietf.org/html/rfc2060 "M. Crispin, 'INTERNET MESSAGE ACCESS PROTOCOL - VERSION 4rev1', RFC 2060, 1996"
 
-[4]: http://tools.ietf.org/html/rfc1939 "J. Myers, M. Rose, 'Post Office Protocol - Version 3', RFC 1939, 1996"
+[5]: http://tools.ietf.org/html/rfc977 "B. Kantor and P. Lapsley, 'Network News Transfer Protocol: A Proposed Standard for the Stream-Based Transmission of News', RFC 977, 1986"
 
-[5]: http://www.mew.org/ "'Mew - Messaging in the Emacs World', (Copyright (C) 1994, 1995, 1996, 1997, 1998 Mew developing team)"
+[6]: http://tools.ietf.org/html/rfc1939 "J. Myers, M. Rose, 'Post Office Protocol - Version 3', RFC 1939, 1996"
 
-[6]: ftp://ftp.jaist.ac.jp/pub/GNU/elisp/ "'tm - MIME package for GNU Emacs', (Copyright (C) 1994, 1995, 1996 MORIOKA Tomohiko)"
+[7]: http://www.mew.org/ "'Mew - Messaging in the Emacs World', (Copyright (C) 1994, 1995, 1996, 1997, 1998 Mew developing team)"
 
-[7]: http://news.gmane.org/gmane.mail.wanderlust.general
+[8]: http://news.gmane.org/gmane.mail.wanderlust.general
 
-[8]: http://news.gmane.org/gmane.mail.wanderlust.general.japanese
+[9]: http://news.gmane.org/gmane.mail.wanderlust.general.japanese
 
-[9]: https://github.com/wanderlust/wanderlust
+[10]: https://github.com/wanderlust/wanderlust
