@@ -3757,10 +3757,7 @@ Return non-nil if the mark is updated"
 	  (completing-read (format "Range (%s): " default)
 			   (mapcar
 			    (lambda (x) (cons x x))
-			    input-range-list)))
-    (if (string= range "")
-	default
-      range)))
+			    input-range-list) nil nil nil nil default))))
 
 (defun wl-summary-toggle-disp-folder (&optional arg)
   (interactive)
@@ -4684,7 +4681,7 @@ If ARG is numeric number, decode message as following:
 	  (save-excursion
 	    (setq from (std11-field-body "from")
 		  newsgroups (std11-field-body "newsgroups")
-		  message-id (std11-field-body "message-id")
+		  message-id (elmo-get-message-id-from-buffer)
 		  distribution (std11-field-body "distribution"))
 	    ;; Make sure that this article was written by the user.
 	    (unless (wl-address-user-mail-address-p
@@ -4735,7 +4732,7 @@ If ARG is numeric number, decode message as following:
 	       (wl-address-header-extract-address
 		(car (wl-parse-addresses from))))
 	(error "This article is not yours"))
-      (let* ((message-id (std11-field-body "message-id"))
+      (let* ((message-id (elmo-get-message-id-from-buffer))
 	     (followup-to (std11-field-body "followup-to"))
 	     (mail-default-headers
 	      (concat mail-default-headers

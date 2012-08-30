@@ -111,7 +111,7 @@
 					       &optional flags number)
   ;; dir-name is changed according to msgid.
   (unless (elmo-cache-folder-dir-name-internal folder)
-    (let ((msgid (std11-field-body "message-id"))
+    (let ((msgid (elmo-msgdb-get-message-id-from-buffer))
 	  file dir)
       (when msgid
 	(setq file (elmo-file-cache-get-path msgid))

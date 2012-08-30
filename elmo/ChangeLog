@@ -1,3 +1,152 @@
+2012-08-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-net.el (elmo-open-network-stream): Raise error when open
+	connection function failed.
+
+	* elmo-nntp.el (elmo-folder-initialize): Do not modify
+	elmo-network-stream-type-alist.
+
+	* elmo-vars.el (elmo-network-stream-type-alist): Check whether
+	gnutls.el or tls.el is available.
+
+2012-08-15  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-util.el (elmo-get-message-id-from-field): Fallback to std11
+	parser if regexp didn't match.
+
+	* elmo-vars.el (elmo-always-prefer-std11-parser): Renamed from
+	`elmo-prefer-std11-parser', default to nil.
+
+2012-08-14  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-nntp.el (elmo-nntp-post): Dynamically bind
+	`elmo-prefer-std11-parser'.
+	(elmo-nntp-setup-crosspost-buffer): Dto.
+
+	* elmo-util.el (elmo-get-message-id-from-field)
+	(elmo-get-message-id-from-header)
+	(elmo-get-message-id-from-buffer): Remove `strict' parameter,
+	dynamically bind `elmo-prefer-std11-parser' instead.
+
+2012-08-08  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-util.el (elmo-parse-msgid-field): Renamed from
+	`elmo-normalize-msgid-field'.
+	(elmo-get-message-id-from-field): Dto.
+
+2012-08-05  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-util.el (elmo-extract-std11-msgid-tokens): Retain order of
+	message-id values.
+
+	* elmo-vars.el (elmo-prefer-std11-parser): New
+	customizable. Prefer std11 parser over regexp.
+
+	* elmo-util.el (elmo-get-message-id-from-field): Use customizable.
+
+2012-08-05  David Maus  <dmaus@w500.major-mode.org>
+
+	* elmo-util.el (elmo-extract-std11-msgid-tokens): New
+	function. Extract msg-id tokens from std11-parsed field.
+	(elmo-normalize-msgid-field): New function. Return list of
+	message-id field values in field.
+	(elmo-get-message-id-from-field): New function. Return message-id
+	field value.
+	(elmo-get-message-id-from-header): Refactored. Use new functions.
+
+2012-08-01  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-nntp.el (elmo-nntp-post): Remove the invalid Message-ID
+	header when the recommended ID is provided.
+
+2012-08-01  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-get-message-id-from-header)
+	(elmo-get-message-id-from-buffer): New functions.
+	(elmo-msgdb-get-message-id-from-header): Use them.
+
+	* elmo-nntp.el (elmo-nntp-post): Likewise.
+	(elmo-nntp-setup-crosspost-buffer): Likewise.
+
+	* elmo-cache.el (elmo-folder-append-buffer): Use
+	elmo-msgdb-get-message-id-from-buffer.
+
+2012-07-30  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-util.el (elmo-unfold-field-body, elmo-decoded-field-body):
+	Declare obsolete.
+
+2012-07-27  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-msgdb-get-message-id-from-header): New
+	function.
+	(elmo-msgdb-get-message-id-from-buffer): Use it.
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-header):
+	Likewise.
+
+2012-07-27  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-msgdb-get-references-from-header): Renamed
+	from elmo-msgdb-get-references-from-buffer.
+
+	* elmo-shimbun.el (elmo-shimbun-update-overview): Likewise.
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-header):
+	Likewise.
+
+2012-07-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-header):
+	Rnamed from elmo-msgdb-create-message-entity-from-buffer.
+	(elmo-msgdb-create-message-entity-from-file): Likewise.
+
+	* elmo-archive.el (elmo-archive-msgdb-create-entity-subr):
+	Likewise.
+
+	* elmo-imap4.el (elmo-imap4-fetch-callback-1): Likewise.
+
+	* elmo-nntp.el (elmo-nntp-msgdb-create-message): Likewise.
+
+	* elmo-pop3.el (elmo-pop3-msgdb-create-message): Likewise.
+
+	* elmo-shimbun.el (elmo-shimbun-msgdb-create-entity): Likewise.
+
+2012-07-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-msgdb-get-message-id-from-buffer): Do not
+	assume buffer is narrowed to header.
+
+2012-07-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-decoded-fetch-field): Renamed from
+	elmo-decoded-field-body.  elmo-decoded-fetch-field is obsolete.
+
+	* elmo-spam.el (elmo-spam-buffer-spam-p)
+	(elmo-spam-message-spam-p): Likewise.
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-buffer):
+	Likewise.
+
+2012-07-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-unfold-fetch-field): Renamed from
+	elmo-unfold-field-body.  elmo-unfold-field-body is obsolete.
+	(elmo-msgdb-get-message-id-from-buffer): Likewise.
+
+2012-07-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-field-body): Obsolete.  Remove
+	eval-and-compile.  Do not care of std11-fetch-field's
+	availability.
+	(elmo-unfold-field-body, elmo-decoded-field-body)
+	(elmo-msgdb-get-message-id-from-buffer)
+	(elmo-msgdb-get-references-from-buffer): Call std11-fetch-field
+	directly.
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-buffer):
+	Likewise.
+
 2011-07-03  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-session-unselect-mailbox): New
@@ -295,7 +444,7 @@
 
 	* elmo-util.el (elmo-union): New function, make a union of two lists.
 
-        * elmo-mime.el (elmo-mime-entity-display): Fix Emacs crash in
+	* elmo-mime.el (elmo-mime-entity-display): Fix Emacs crash in
 	mime-view when displaying malformed base64 attach.
 
 	* elmo-imap4.el (elmo-imap4-folder-list-flagged): Use elmo-imap4-list

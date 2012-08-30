@@ -259,7 +259,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
       (elmo-condition-parse-error)))
 
 ;; or-expr      ::= and-expr /
-;;	            and-expr "|" or-expr
+;;		    and-expr "|" or-expr
 (defun elmo-condition-parse-or-expr ()
   (let ((left (elmo-condition-parse-and-expr)))
     (if (looking-at "| *")
@@ -1282,23 +1282,24 @@ MESSAGE is a doing part of progress message."
     (and (eq (car diff) 0)
 	 (< diff-time (nth 1 diff)))))
 
-(eval-and-compile
-  (if (fboundp 'std11-fetch-field)
-      (defalias 'elmo-field-body 'std11-fetch-field) ;;no narrow-to-region
-    (defalias 'elmo-field-body 'std11-field-body)))
+(defalias 'elmo-field-body 'std11-fetch-field) ;;no narrow-to-region
 
-(defun elmo-unfold-field-body (name)
-  (let ((value (elmo-field-body name)))
+(defun elmo-unfold-fetch-field (name)
+  (let ((value (std11-fetch-field name)))
     (and value
 	 (std11-unfold-string value))))
 
-(defun elmo-decoded-field-body (field-name &optional mode)
-  (let ((field-body (elmo-field-body field-name)))
+(make-obsolete 'elmo-unfold-field-body 'elmo-unfold-fetch-field "2012-07-30")
+
+(defun elmo-decoded-fetch-field (field-name &optional mode)
+  (let ((field-body (std11-fetch-field field-name)))
     (and field-body
 	 (or (ignore-errors
 	      (elmo-with-enable-multibyte
 		(mime-decode-field-body field-body field-name mode)))
 	     field-body))))
+
+(make-obsolete 'elmo-decoded-field-body 'elmo-decoded-fetch-field "2012-07-30")
 
 (defun elmo-address-quote-specials (word)
   "Make quoted string of WORD if needed."
@@ -2234,26 +2235,61 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
 		  (elmo-replace-in-string
 		   (buffer-substring beg (point)) "\n[ \t]*" ""))))))))
 
-(defun elmo-msgdb-get-message-id-from-buffer ()
-  (let ((msgid (elmo-field-body "message-id")))
-    (if msgid
-	(if (string-match "<\\(.+\\)>$" msgid)
-	    msgid
-	  (concat "<" msgid ">"))	; Invaild message-id.
+(defun elmo-extract-std11-msgid-tokens (msgid-string)
+  (let (ids)
+    (dolist (token msgid-string ids)
+      (when (eq (car token) 'msg-id) (setq ids (cons token ids))))
+    (nreverse ids)))
+
+(defun elmo-parse-msgid-field (field)
+  (mapcar #'std11-msg-id-string (elmo-extract-std11-msgid-tokens (std11-parse-msg-ids-string field))))
+
+(defun elmo-get-message-id-from-field (field)
+  (if (and (not elmo-always-prefer-std11-parser)
+	   (string-match "\\`[ \n\t]*\\(<[^<>]+>\\)[ \n\t]*\\'" field))
+      (match-string 1 field)
+    (let ((msgid-list (elmo-parse-msgid-field field)))
+      (when (null (cdr msgid-list)) (car msgid-list)))))
+
+(defun elmo-get-message-id-from-header (&optional when-invalid)
+  (let ((msgid-field (std11-fetch-field "message-id")))
+    (when msgid-field
+      (let ((msgid (elmo-get-message-id-from-field msgid-field)))
+	(or msgid
+	    (cond
+	     ((eq when-invalid 'none) nil)
+	     ((eq when-invalid 'msgdb) (concat "<" (std11-unfold-string msgid-field) ">"))
+	     (t (std11-unfold-string msgid-field))))))))
+
+(defun elmo-get-message-id-from-buffer (&optional when-invalid)
+  (save-excursion
+    (save-restriction
+      (std11-narrow-to-header)
+      (elmo-get-message-id-from-header when-invalid))))
+
+(defun elmo-msgdb-get-message-id-from-header ()
+  (or (elmo-get-message-id-from-header 'msgdb)
       ;; no message-id, so put dummy msgid.
       (concat "<"
-	      (if (elmo-unfold-field-body "date")
-		  (timezone-make-date-sortable (elmo-unfold-field-body "date"))
+	      (if (elmo-unfold-fetch-field "date")
+		  (timezone-make-date-sortable
+		   (elmo-unfold-fetch-field "date"))
 		(md5 (string-as-unibyte (buffer-string))))
 	      (nth 1 (eword-extract-address-components
-		      (or (elmo-field-body "from") "nobody"))) ">"))))
+		      (or (std11-fetch-field "from") "nobody"))) ">")))
 
-(defun elmo-msgdb-get-references-from-buffer ()
+(defun elmo-msgdb-get-message-id-from-buffer ()
+  (save-excursion
+    (save-restriction
+      (std11-narrow-to-header)
+      (elmo-msgdb-get-message-id-from-header))))
+
+(defun elmo-msgdb-get-references-from-header ()
   (if elmo-msgdb-prefer-in-reply-to-for-parent
-      (or (elmo-msgdb-get-last-message-id (elmo-field-body "in-reply-to"))
-	  (elmo-msgdb-get-last-message-id (elmo-field-body "references")))
-    (or (elmo-msgdb-get-last-message-id (elmo-field-body "references"))
-	(elmo-msgdb-get-last-message-id (elmo-field-body "in-reply-to")))))
+      (or (elmo-msgdb-get-last-message-id (std11-fetch-field "in-reply-to"))
+	  (elmo-msgdb-get-last-message-id (std11-fetch-field "references")))
+    (or (elmo-msgdb-get-last-message-id (std11-fetch-field "references"))
+	(elmo-msgdb-get-last-message-id (std11-fetch-field "in-reply-to")))))
 
 (defsubst elmo-msgdb-insert-file-header (file)
   "Insert the header of the article."

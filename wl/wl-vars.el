@@ -1360,7 +1360,7 @@ The configuration is applied when `wl-draft-config-exec' is called, or
 applied automatically before sending message.
 
 ex.
-'((\"^To: .*wl@lists.airs.net\"
+'((\"^To: .*wl@ml.gentei.org\"
    (\"From\" . my-from-address-for-wl-list)
    (\"Organization\" . my-organization-for-wl-list))
   (reply

@@ -31,6 +31,7 @@
 ;;; Code:
 ;;
 (require 'elmo)
+(require 'elmo-net)
 (require 'sendmail)
 (require 'wl-template)
 (require 'emu)
@@ -54,8 +55,6 @@
 
 (eval-and-compile
   (autoload 'wl-addrmgr "wl-addrmgr"))
-
-(autoload 'open-ssl-stream "ssl")
 
 (defvar wl-draft-buffer-message-number nil)
 (defvar wl-draft-field-completion-list nil)
@@ -145,7 +144,9 @@ e.g.
 	  (smtp-use-starttls (eq wl-smtp-connection-type 'starttls))
 	  (smtp-open-connection-function
 	   (if (eq wl-smtp-connection-type 'ssl)
-	       #'open-ssl-stream
+	       (let ((stream-type (elmo-get-network-stream-type 'ssl)))
+		 (require (elmo-network-stream-type-feature stream-type))
+		 (elmo-network-stream-type-function stream-type))
 	     smtp-open-connection-function))
 	  smtp-sasl-user-name smtp-sasl-properties sasl-read-passphrase)
      (setq smtp-sasl-user-name wl-smtp-posting-user
@@ -161,6 +162,8 @@ e.g.
 		(car smtp-sasl-mechanisms)
 		smtp-server)))))
      ,@body))
+
+(def-edebug-spec wl-smtp-extension-bind (body))
 
 (defun wl-draft-insert-date-field ()
   "Insert Date field."
@@ -276,7 +279,7 @@ e.g.
       (setq subject (wl-draft-forward-make-subject subject))
       (setq references (nconc
 			(std11-field-bodies '("References" "In-Reply-To"))
-			(list (std11-field-body "Message-Id"))))
+			(list (elmo-get-message-id-from-buffer))))
       (setq references (delq nil references)
 	    references (mapconcat 'identity references " ")
 	    references (wl-draft-parse-msg-id-list-string references)
@@ -301,7 +304,7 @@ e.g.
 
 (defun wl-draft-self-reply-p ()
   "Return t when From address in the current message is user's self one or not."
-  (wl-address-user-mail-address-p (or (elmo-field-body "From") "")))
+  (wl-address-user-mail-address-p (or (std11-field-body "From") "")))
 
 (defun wl-draft-find-reply-headers (rule-symbol)
   (let ((rule-list (symbol-value rule-symbol))
@@ -391,7 +394,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 		     (if decoder (funcall decoder addr) addr)))
 	     cc)))
     (setq subject (wl-draft-reply-make-subject subject))
-    (setq in-reply-to (std11-field-body "Message-Id"))
+    (setq in-reply-to (elmo-get-message-id-from-buffer))
     (setq references (nconc
 		      (std11-field-bodies '("References" "In-Reply-To"))
 		      (list in-reply-to)))
@@ -488,7 +491,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 
 (defun wl-draft-add-in-reply-to (&optional alt-field)
   (let* ((mes-id (with-current-buffer mail-reply-buffer
-		   (std11-field-body "message-id")))
+		   (elmo-get-message-id-from-buffer)))
 	 (field (or alt-field "In-Reply-To"))
 	 (ref (std11-field-body field))
 	 (ref-list nil) (st nil))
@@ -901,7 +904,7 @@ to find out how to use this."
       (wl-draft-set-sent-message 'mail 'unplugged)
     ;; send the message
     (run-hooks 'wl-mail-send-pre-hook) ;; X-PGP-Sig, Cancel-Lock
-    (let ((id (std11-field-body "Message-ID"))
+    (let ((id (elmo-get-message-id-from-buffer))
 	  (to (std11-field-body "To")))
       (case
 	  (as-binary-process
@@ -1050,7 +1053,7 @@ non-nil."
 	  (or wl-smtp-posting-server smtp-server "localhost"))
 	 (smtp-service (or wl-smtp-posting-port smtp-service))
 	 (smtp-local-domain (or smtp-local-domain wl-local-domain))
-	 (id (std11-field-body "message-id"))
+	 (id (elmo-get-message-id-from-buffer))
 	 recipients)
     (if (not (elmo-plugged-p smtp-server smtp-service))
 	(wl-draft-set-sent-message 'mail 'unplugged
@@ -1130,7 +1133,7 @@ non-nil."
   "Send the prepared message buffer with `sendmail-send-it'.
 The function `sendmail-send-it' uses the external program
 `sendmail-program'."
-  (let ((id (std11-field-body "message-id"))
+  (let ((id (elmo-get-message-id-from-buffer))
 	(to (std11-field-body "to")))
     (run-hooks 'wl-mail-send-pre-hook)
     (require 'sendmail)

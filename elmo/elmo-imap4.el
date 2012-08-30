@@ -963,7 +963,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 		   ""))
        ;; Replace all CRLF with LF.
        (elmo-delete-cr-buffer)
-       (elmo-msgdb-create-message-entity-from-buffer
+       (elmo-msgdb-create-message-entity-from-header
 	handler
 	(elmo-imap4-response-value element 'uid)
 	:size (elmo-imap4-response-value element 'rfc822size)))
