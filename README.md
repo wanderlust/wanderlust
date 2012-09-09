@@ -73,8 +73,9 @@ as body.
 Development
 ===========
 
-Fork it on [GitHub][15].
-
+The source code repository is available at [Github][15]. Patches that
+fix bugs and improve Wanderlust are welcome and can be sent to the
+Wanderlust mailing list.
 
 [1]: http://en.wikipedia.org/wiki/Internet_Message_Access_Protocol
 
@@ -84,7 +85,7 @@ Fork it on [GitHub][15].
 
 [4]: http://www.emacswiki.org/emacs/WanderLust
 
-[5]: http://tools.ietf.org/html/rfc2060 "M. Crispin, 'INTERNET MESSAGE ACCESS PROTOCOL - VERSION 4rev1', RFC 2060, 1996"
+[5]: http://tools.ietf.org/html/rfc3501 "M. Crispin, 'INTERNET MESSAGE ACCESS PROTOCOL - VERSION 4rev1', RFC 3501, 2003"
 
 [6]: http://tools.ietf.org/html/rfc977 "B. Kantor and P. Lapsley, 'Network News Transfer Protocol: A Proposed Standard for the Stream-Based Transmission of News', RFC 977, 1986"
 
