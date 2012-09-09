@@ -1,3 +1,14 @@
+2012-09-09  David Maus <dmaus@ictsoc.de>
+
+	* test-elmo-date.el: Remove `lexical-binding' file variable.
+	* test-elmo-imap4.el: Ditto.
+	* test-elmo-localdir.el: Ditto.
+	* test-elmo-util.el: Ditto.
+	* test-rfc2368.el: Ditto.
+	* test-utf7.el: Ditto.
+	* test-wl-draft.el: Ditto.
+	* test-wl-util.el: Ditto.
+
 2011-05-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 
 	* test-wl-address.el: New file.
