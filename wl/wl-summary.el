@@ -2635,8 +2635,8 @@ If ARG, without confirm."
   (string= (funcall wl-summary-subject-filter-function subject1)
 	   (funcall wl-summary-subject-filter-function subject2)))
 
-(defmacro wl-summary-put-alike (alike)
-  `(elmo-set-hash-val (format "#%d" (wl-count-lines))
+(defmacro wl-summary-put-alike (alike count)
+  `(elmo-set-hash-val (format "#%d" ,count)
 		      ,alike
 		      wl-summary-alike-hashtb))
 
@@ -2646,24 +2646,27 @@ If ARG, without confirm."
 
 (defun wl-summary-insert-headers (folder func &optional mime-decode)
   (let ((numbers (elmo-folder-list-messages folder 'visible t))
+	(count (wl-count-lines))
 	ov this last alike)
     (buffer-disable-undo (current-buffer))
     (make-local-variable 'wl-summary-alike-hashtb)
     (setq wl-summary-alike-hashtb (elmo-make-hash (* (length numbers) 2)))
     (when mime-decode
       (set-buffer-multibyte default-enable-multibyte-characters))
-    (while (setq ov (elmo-message-entity folder (pop numbers)))
-      (setq this (funcall func ov))
-      (and this (setq this (std11-unfold-string this)))
-      (if (equal last this)
-	  (setq alike (cons ov alike))
-	(when last
-	  (wl-summary-put-alike alike)
-	  (insert last ?\n))
-	(setq alike (list ov)
-	      last this)))
-    (when last
-      (wl-summary-put-alike alike)
+    (mapc (lambda (number)
+	    (setq ov (elmo-message-entity folder number))
+	    (setq this (funcall func ov))
+	    (if (equal last this)
+		(setq alike (cons ov alike))
+	      (when last
+		(wl-summary-put-alike alike count)
+		(insert last ?\n)
+		(setq count (1+ count)))
+	      (setq alike (list ov)
+		    last this)))
+	  numbers)
+    (when (null (eq last this))
+      (wl-summary-put-alike alike count)
       (insert last ?\n))
     (when mime-decode
       (decode-mime-charset-region (point-min) (point-max)
