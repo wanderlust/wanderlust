@@ -1498,6 +1498,8 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
   (setq wl-folder-buffer-cur-entity-id nil
 	wl-folder-buffer-cur-path nil
 	wl-folder-buffer-cur-point nil)
+  (when (boundp 'bidi-paragraph-direction)
+    (set 'bidi-paragraph-direction 'left-to-right))
   (wl-mode-line-buffer-identification)
   (easy-menu-add wl-folder-mode-menu)
   ;; This hook may contain the functions `wl-folder-init-icons' and
