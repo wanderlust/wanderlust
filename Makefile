@@ -22,10 +22,9 @@ PACKAGEDIR = NONE
 # For XEmacs or Emacs 21: directory where icon files should go.
 PIXMAPDIR = NONE
 
-
 ################# No need to modify following lines ####################
 BATCHFLAG = -batch
-FLAGS     = $(BATCHFLAG) -q -no-site-file
+FLAGS     = $(BATCHFLAG) -q -no-site-file $(EMACS_FLAGS)
 
 elc:
 	$(EMACS) $(FLAGS) -l WL-MK -f compile-wl-package \

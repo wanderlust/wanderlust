@@ -56,7 +56,6 @@
 (eval-and-compile
   (autoload 'wl-addrmgr "wl-addrmgr"))
 
-
 (defvar wl-draft-buffer-message-number nil)
 (defvar wl-draft-field-completion-list nil)
 (defvar wl-draft-verbose-send t)

@@ -1,3 +1,21 @@
+2012-09-09  David Maus  <dmaus@ictsoc.de>
+
+	* README.md (See): Fix reference to IMAP specs, add small section
+	about development.
+
+	* Makefile: Add EMACS_FLAGS environment variable.
+
+2012-08-28  Felix E. Klee <felix.klee@inka.de>
+
+	* README.md: New file.
+
+	* README: Removed.
+
+2012-08-19  David Maus  <dmaus@ictsoc.de>
+
+	* samples/en/dot.wl: Update mailing list address.
+	* samples/ja/dot.wl: Dto.
+
 2012-08-04  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* WL-ELS (ELMO-MODULES): Do not include utf7.el when Emacs has
@@ -935,4 +953,3 @@
 
 	* wl: New directory.
 	All wl-related files are moved to this directory.
-

@@ -15,6 +15,18 @@
 	duplicated entries when last message is not a child of thread.
 	Do not call unfolding function.
 
+2012-08-28  David Maus  <dmaus@ictsoc.de>
+
+	* wl-action.el (wl-summary-read-folder): Use default folder if
+	read folder is `wl-default-spec'.
+
+2012-08-26  David Maus  <dmaus@ictsoc.de>
+
+	* wl-summary.el (wl-summary-input-range): Pass default value to
+	`completing-read'.
+	* wl-util.el (wl-read-search-condition-internal): Dto.
+	* wl-action.el (wl-summary-read-folder): Dto.
+
 2012-08-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-action.el (wl-summary-auto-refile): Use zerop instead of eq

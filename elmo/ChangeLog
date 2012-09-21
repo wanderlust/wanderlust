@@ -607,7 +607,7 @@
 
 	* elmo-util.el (elmo-union): New function, make a union of two lists.
 
-        * elmo-mime.el (elmo-mime-entity-display): Fix Emacs crash in
+	* elmo-mime.el (elmo-mime-entity-display): Fix Emacs crash in
 	mime-view when displaying malformed base64 attach.
 
 	* elmo-imap4.el (elmo-imap4-folder-list-flagged): Use elmo-imap4-list

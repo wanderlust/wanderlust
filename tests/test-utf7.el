@@ -1,4 +1,3 @@
-;; -*- lexical-binding: t -*-
 (require 'lunit)
 
 ;; Emacs 21
