@@ -330,3 +330,14 @@
   (lunit-assert (string= "\n" (elmo-delete-cr "\r\n")))
   (lunit-assert (string= "\n\n" (elmo-delete-cr "\r\n\n")))
   (lunit-assert (string= "\n\n" (elmo-delete-cr "\r\n\r\n"))))
+
+(luna-define-method test-elmo-get-message-id-from-field ((case test-elmo-util))
+  (let ((fixtures '((:header "<foo@example.tld>" :expected "<foo@example.tld>")
+		    (:header "\n<foo@example.tld>" :expected "<foo@example.tld>")
+		    (:header "(Comment) <foo@example.tld> (Comment)" :expected "<foo@example.tld>")
+		    (:header "INVALID" :expected nil))))
+    (dolist (elmo-always-prefer-std11-parser '(nil t))
+      (dolist (fixture fixtures)
+	(lunit-assert
+	 (equal (plist-get fixture :expected) (elmo-get-message-id-from-field (plist-get fixture :header))))))))
+
