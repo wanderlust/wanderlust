@@ -2342,6 +2342,8 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	      end (null set-list)))
       results)
      (t
+      (when (string= "raw-body" search-key)
+	(setq search-key "body"))
       (setq charset
 	    (if (zerop (length (elmo-filter-value filter)))
 		(setq charset 'us-ascii)
@@ -2375,12 +2377,10 @@ If optional argument REMOVE is non-nil, remove FLAG."
 			  'unmatch)
 		      "not " "")
 		  (format "%s%s "
-			  (if (member
-			       (elmo-filter-key filter)
-			       imap-search-keys)
+			  (if (member search-key imap-search-keys)
 			      ""
 			    "header ")
-			  (elmo-filter-key filter))
+			  search-key)
 		  (elmo-imap4-astring
 		   (encode-mime-charset-string
 		    (elmo-filter-value filter) charset))))

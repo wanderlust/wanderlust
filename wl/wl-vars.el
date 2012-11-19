@@ -1962,6 +1962,7 @@ with wl-highlight-folder-many-face."
 		(const "To")
 		(const "Cc")
 		(const "Body")
+		(const "Raw-Body")
 		(const "Since")
 		(const "Before")
 		(const "Last")

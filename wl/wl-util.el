@@ -1048,7 +1048,7 @@ is enclosed by at least one regexp grouping construct."
 	 (nconc (mapcar 'capitalize elmo-msgdb-extra-fields)
 		(mapcar 'capitalize wl-additional-search-condition-fields)
 		'("Flag" "Since" "Before"
-		  "From" "Subject" "To" "Cc" "Body" "ToCc"
+		  "From" "Subject" "To" "Cc" "Body" "Raw-Body" "ToCc"
 		  "Larger" "Smaller"))))
     (append '("Last" "First")
 	    denial-fields

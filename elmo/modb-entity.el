@@ -875,12 +875,36 @@ If each field is t, function is set as default converter."
 	(case-fold-search t))
     (cond
      ((string= (elmo-filter-key condition) "body")
+      (modb-entity-match-entity-body
+       (regexp-quote (elmo-filter-value condition))
+       (mime-parse-buffer (cdr (cdr entity)))))
+     ((string= (elmo-filter-key condition) "raw-body")
       (with-current-buffer (cdr (cdr entity))
 	(goto-char (point-min))
 	(and (re-search-forward "^$" nil t)	   ; goto body
 	     (search-forward (elmo-filter-value condition) nil t))))
      (t
       (luna-call-next-method)))))
+
+(defun modb-entity-match-entity-body (regexp mime-entity)
+  (let ((content-type (mime-entity-content-type mime-entity))
+	children result)
+    (cond
+     ((setq children (mime-entity-children mime-entity))
+      (while children
+	(when (modb-entity-match-entity-body regexp (car children))
+	  (setq result t
+		children nil))
+	(setq children (cdr children)))
+      result)
+     ((eq (mime-content-type-primary-type content-type) 'text)
+      (string-match regexp
+		    (decode-mime-charset-string
+		     (mime-entity-content mime-entity)
+		     (or (mime-content-type-parameter content-type "charset")
+			 default-mime-charset)
+		     'CRLF)))
+     (t nil))))
 
 (require 'product)
 (product-provide (provide 'modb-entity) (require 'elmo-version))
