@@ -1,3 +1,11 @@
+2012-11-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo.el (elmo-message-match-condition): Do not decode a message
+	here.
+
+	* modb-entity.el (elmo-msgdb-message-match-condition): Decode
+	a message for 'raw-body' seaching.
+
 2012-11-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	elmo-folder-search by 'body' now searches only text parts and

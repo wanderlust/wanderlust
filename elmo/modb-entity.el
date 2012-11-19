@@ -880,6 +880,8 @@ If each field is t, function is set as default converter."
        (mime-parse-buffer (cdr (cdr entity)))))
      ((string= (elmo-filter-key condition) "raw-body")
       (with-current-buffer (cdr (cdr entity))
+	(decode-coding-region (point-min) (point-max)
+	 		      elmo-mime-display-as-is-coding-system)
 	(goto-char (point-min))
 	(and (re-search-forward "^$" nil t)	   ; goto body
 	     (search-forward (elmo-filter-value condition) nil t))))
