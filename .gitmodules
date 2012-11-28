@@ -1,3 +1,6 @@
 [submodule "apel"]
 	path = apel
 	url = git://github.com/wanderlust/apel.git
+[submodule "flim"]
+	path = flim
+	url = git://github.com/wanderlust/flim.git
