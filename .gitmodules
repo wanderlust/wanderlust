@@ -1,0 +1,3 @@
+[submodule "apel"]
+	path = apel
+	url = git://github.com/wanderlust/apel.git
