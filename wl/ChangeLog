@@ -1,3 +1,10 @@
+2012-12-31  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-mime.el (wl-mime-pgp-decrypted-buffers): New variable.
+	(wl-mime-pgp-kill-decrypted-buffers): New function.
+	(wl-mime-preview-application/pgp): Keep decrypted content until
+	the message buffer is killed.
+
 2012-11-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-util.el (wl-search-condition-fields): Add "Raw-Body".
