@@ -747,7 +747,14 @@ EXPUNGE for deleted messages."
     (elmo-imap4-send-command-wait
      session
      (list "examine " (elmo-imap4-mailbox mailbox)))
-    (elmo-imap4-send-command-wait session "close")))
+    (elmo-imap4-send-command-wait session "close"))
+  (elmo-imap4-session-set-current-mailbox-internal session nil))
+
+(defun elmo-imap4-session-close-mailbox (session mailbox)
+  "Closing MAILBOX in SESSION.
+This has the side effect of causing a silent EXPUNGE."
+  (elmo-imap4-send-command-wait session "close")
+  (elmo-imap4-session-set-current-mailbox-internal session nil))
 
 (defun elmo-imap4-check-validity (spec validity-file)
 ;;; Not used.
@@ -2166,7 +2173,8 @@ Return nil if no complete line has arrived."
 	  (when msgs (elmo-folder-delete-messages-internal folder msgs))
 	  ;; close selected mailbox except one with \Noselect attribute
 	  (when exists
-	    (elmo-imap4-send-command-wait session "close"))
+            (elmo-imap4-session-close-mailbox
+             session (elmo-imap4-folder-mailbox-internal folder)))
 	  (elmo-imap4-send-command-wait
 	   session
 	   (list "delete "
@@ -2179,14 +2187,12 @@ Return nil if no complete line has arrived."
 (luna-define-method elmo-folder-rename-internal ((folder elmo-imap4-folder)
 						 new-folder)
   (let ((session (elmo-imap4-get-session folder)))
-    ;; make sure the folder is selected.
     (elmo-imap4-session-select-mailbox session
 				       (elmo-imap4-folder-mailbox-internal
 					folder))
     (elmo-imap4-session-unselect-mailbox session
 					 (elmo-imap4-folder-mailbox-internal
 					  folder))
-    (elmo-imap4-send-command-wait session "close")
     (elmo-imap4-send-command-wait
      session
      (list "rename "
