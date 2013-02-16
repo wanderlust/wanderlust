@@ -123,7 +123,11 @@
     )
   "The Message buffer toolbar.")
 
-(defalias 'wl-draft-insert-signature 'insert-signature)	; for draft toolbar.
+;; for draft toolbar.
+(defalias 'wl-draft-insert-signature
+  (if (and (boundp 'mime-setup-use-signature) mime-setup-use-signature)
+      'insert-signature
+    'mime-edit-insert-signature))
 
 (defvar wl-draft-toolbar
   '([wl-draft-send-from-toolbar

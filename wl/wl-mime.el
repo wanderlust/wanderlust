@@ -965,7 +965,9 @@ With ARG, ask destination folder."
 	     'wl-original-message-mode
 	     'wl-mime-display-header)
   ;; To avoid overriding wl-draft-mode-map.
-  (when (boundp 'mime-setup-signature-key-alist)
+  (when (and (boundp 'mime-setup-signature-key-alist)
+	     (boundp 'mime-setup-use-signature)
+	     mime-setup-use-signature)
     (unless (assq 'wl-draft-mode mime-setup-signature-key-alist)
       (setq mime-setup-signature-key-alist
 	    (cons '(wl-draft-mode . "\C-c\C-w")

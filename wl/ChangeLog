@@ -1,3 +1,21 @@
+2013-02-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-e21.el (wl-draft-overload-menubar): Use
+	wl-draft-insert-signature instead of insert-signature.
+
+	* wl-mime.el (wl-mime-setup): Respect mime-setup-use-signature's
+	value.
+
+	* wl-mule.el (wl-draft-overload-menubar): Use
+	mime-edit-insert-signature when mime-setup-use-signature is nil.
+
+2013-02-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-e21.el (wl-draft-insert-signature): Define as alias to
+	mime-edit-insert-signature when mime-setup-use-signature is nil.
+
+	* wl-xmas.el (wl-draft-insert-signature): Likewise.
+
 2012-12-31  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-mime.el (wl-mime-pgp-decrypted-buffers): New variable.
