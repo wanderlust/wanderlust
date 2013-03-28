@@ -51,6 +51,34 @@
     (defvar default-enable-multibyte-characters (featurep 'mule)
       "The mock variable except for Emacs 20."))
 
+(defconst elmo-multibyte-buffer-name " *elmo-multibyte-buffer*")
+
+(defmacro elmo-with-enable-multibyte (&rest body)
+  "Evaluate BODY with `default-enable-multibyte-character'."
+  `(with-current-buffer (get-buffer-create elmo-multibyte-buffer-name)
+     ,@body))
+
+(put 'elmo-with-enable-multibyte 'lisp-indent-function 0)
+(def-edebug-spec elmo-with-enable-multibyte t)
+
+(static-cond
+ ((fboundp 'mime-charset-encode-string)
+  (defalias 'elmo-mime-charset-decode-string 'mime-charset-decode-string)
+  (defalias 'elmo-mime-charset-encode-string 'mime-charset-encode-string))
+ (t
+  (defsubst elmo-mime-charset-decode-string (string charset &optional lbt)
+    "Decode the STRING as MIME CHARSET.
+Buffer's multibyteness is ignored."
+    (elmo-with-enable-multibyte
+      (decode-mime-charset-string string charset lbt)))
+
+  (defsubst elmo-mime-charset-encode-string (string charset &optional lbt)
+    "Encode the STRING as MIME CHARSET.
+Buffer's multibyteness is ignored."
+    (elmo-with-enable-multibyte
+      (encode-mime-charset-string string charset lbt))))
+ )
+
 (defun elmo-base64-encode-string (string &optional no-line-break))
 (defun elmo-base64-decode-string (string))
 
@@ -86,16 +114,6 @@
 (put 'elmo-bind-directory 'lisp-indent-function 1)
 (def-edebug-spec elmo-bind-directory
   (form &rest form))
-
-(defconst elmo-multibyte-buffer-name " *elmo-multibyte-buffer*")
-
-(defmacro elmo-with-enable-multibyte (&rest body)
-  "Evaluate BODY with `default-enable-multibyte-character'."
-  `(with-current-buffer (get-buffer-create elmo-multibyte-buffer-name)
-     ,@body))
-
-(put 'elmo-with-enable-multibyte 'lisp-indent-function 0)
-(def-edebug-spec elmo-with-enable-multibyte t)
 
 (static-if (condition-case nil
 	       (plist-get '(one) 'other)
@@ -984,12 +1002,11 @@ Emacs 19.28 or earlier does not have `unintern'."
 (defsubst elmo-mime-string (string)
   "Normalize MIME encoded STRING."
   (and string
-       (elmo-with-enable-multibyte
-	 (encode-mime-charset-string
-	  (or (ignore-errors
-	       (eword-decode-and-unfold-unstructured-field-body string))
-	      string)
-	  elmo-mime-charset))))
+       (elmo-mime-charset-encode-string
+	(or (ignore-errors
+	      (eword-decode-and-unfold-unstructured-field-body string))
+	    string)
+	elmo-mime-charset)))
 
 (defsubst elmo-collect-field (beg end downcase-field-name)
   (save-excursion

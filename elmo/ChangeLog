@@ -1,3 +1,17 @@
+2013-03-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-mime-charset-decode-string)
+	(elmo-mime-charset-encode-string): New functions.
+	(elmo-mime-string): Use elmo-mime-charset-encode-string.
+
+	* elmo-msgdb.el (elmo-msgdb-overview-entity-get-from-no-decode)
+	(elmo-msgdb-overview-entity-get-subject-no-decode): Use
+	elmo-mime-charset-encode-string.
+
+	* modb-entity.el (elmo-msgdb-get-decoded-cache)
+	(modb-entity-string-encoder)
+	(modb-entity-encode-string-recursive): Use new functions.
+
 2012-11-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo.el (elmo-message-match-condition): Do not decode a message
