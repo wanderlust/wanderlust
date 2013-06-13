@@ -1,4 +1,4 @@
-Wanderlust - Yet Another Message Interface on Emacsen
+Wanderlust - Yet Another Message Interface on Emacsen [![Stories in Ready](http://githubkanban.herokuapp.com/huboard/wanderlust/wanderlust.png)](http://huboard.com/wanderlust/wanderlust/board)
 =====================================================
 
 Wanderlust is a mail/news management system with [IMAP4rev1][1] support for
