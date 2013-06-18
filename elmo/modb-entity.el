@@ -898,7 +898,7 @@ If each field is t, function is set as default converter."
       result)
      ((eq (mime-content-type-primary-type content-type) 'text)
       (string-match regexp
-		    (decode-mime-charset-string
+		    (elmo-mime-charset-decode-string
 		     (mime-entity-content mime-entity)
 		     (or (mime-content-type-parameter content-type "charset")
 			 default-mime-charset)

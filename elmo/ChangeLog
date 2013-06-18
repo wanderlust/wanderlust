@@ -1,3 +1,9 @@
+2013-03-31  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* modb-entity.el (modb-entity-match-entity-body): Use
+	elmo-mime-charset-decode-string instead of
+	decode-mime-charset-string.
+
 2013-03-29  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-util.el (elmo-with-enable-multibyte): Move to temporary
