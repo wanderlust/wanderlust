@@ -1,3 +1,9 @@
+2013-06-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-news.el.in: Explicitly specify file coding.
+
+	* wl-vars.el: Likewise.
+
 2013-02-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-e21.el (wl-draft-overload-menubar): Use

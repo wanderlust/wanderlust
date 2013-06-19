@@ -1,4 +1,4 @@
-;;; wl-vars.el --- Variable definitions for Wanderlust.
+;;; wl-vars.el --- Variable definitions for Wanderlust. -*-coding: iso-2022-jp-unix;-*-
 
 ;; Copyright (C) 1998,1999,2000,2001 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000,2001 Masahiro MURATA <muse@ba2.so-net.ne.jp>

@@ -1,4 +1,4 @@
-;;; elmo-vars.el --- User variables for ELMO.
+;;; elmo-vars.el --- User variables for ELMO. -*- coding: iso-2022-jp-unix -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 

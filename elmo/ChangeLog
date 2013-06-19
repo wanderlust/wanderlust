@@ -1,3 +1,7 @@
+2013-06-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-vars.el: Explicitly specify file coding.
+
 2013-03-31  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* modb-entity.el (modb-entity-match-entity-body): Use
