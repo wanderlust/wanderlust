@@ -2396,10 +2396,10 @@ Returns a list of UIDs."
                  'unmatch)
              "not " "")
          (format "%s%s "
-                 (if (member (elmo-filter-key filter) imap-search-keys)
+                 (if (member search-key imap-search-keys)
                      ""
                    "header ")
-                 (elmo-filter-key filter))
+                 search-key)
          (elmo-imap4-astring
           (encode-mime-charset-string
            (elmo-filter-value filter) charset))))))))

@@ -1,3 +1,8 @@
+2013-06-30  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-imap4-search-generate-vector): Remove
+	repeated calls to `elmo-filter-key', use `search-key' variable.
+
 2013-06-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-vars.el: Explicitly specify file coding.
