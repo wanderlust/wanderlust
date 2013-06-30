@@ -1,4 +1,4 @@
-;;; wl-vars.el --- Variable definitions for Wanderlust.
+;;; wl-vars.el --- Variable definitions for Wanderlust. -*-coding: iso-2022-jp-unix;-*-
 
 ;; Copyright (C) 1998,1999,2000,2001 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000,2001 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -907,7 +907,7 @@ and 'wl-draft-send-mail-with-pop-before-smtp."
 		(function :tag "Other"))
   :group 'wl-draft)
 
-(defcustom wl-draft-send-confirm-type 'y-or-n-p
+(defcustom wl-draft-send-confirm-type 'scroll-by-SPC/BS
   "*Confirmation type or function to use when send a message."
   :type '(choice
 	  (const :tag "y or n with scroll (j/k)" scroll-by-j/k)
@@ -1652,9 +1652,17 @@ Allowed situations are:
   :group 'wl-summary
   :group 'wl-pref)
 
-(defcustom wl-message-id-use-wl-from t
-  "*Use `wl-from' for domain part of Message-ID if non-nil."
+(defcustom wl-message-id-use-message-from
+  (if (boundp 'wl-message-id-use-wl-from)
+      wl-message-id-use-wl-from t)
+  "*When non-nil, use From: header's field value for domain part of Message-ID preferably."
   :type 'boolean
+  :group 'wl-pref)
+
+(defcustom wl-message-id-hash-function nil
+  "Indicate hash function for the local part when Message-ID is made from mail address.  Hash function receives a string and returns hashed string.  Nil means the local part is not hashed."
+  :type '(choice (const :tag "as is" nil)
+		 function)
   :group 'wl-pref)
 
 (defcustom wl-local-domain nil
@@ -1672,7 +1680,7 @@ Set this if (system-name) does not return FQDN."
 
 (defcustom wl-unique-id-suffix ".wl"
   "*Specific string in generated Message-ID
-which appear just before @."
+which appear just before @ (domain based) or % (mail address based)."
   :type 'string
   :group 'wl-pref)
 
@@ -1954,6 +1962,7 @@ with wl-highlight-folder-many-face."
 		(const "To")
 		(const "Cc")
 		(const "Body")
+		(const "Raw-Body")
 		(const "Since")
 		(const "Before")
 		(const "Last")
@@ -3084,6 +3093,10 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (defvar wl-plugged-queue-status-column 25)
 
 ;;;; Obsolete variables.
+
+;; 2012-08-19
+(elmo-define-obsolete-variable 'wl-message-id-use-wl-from
+			       'wl-message-id-use-message-from)
 
 ;; 2005-01-23
 (elmo-define-obsolete-variable 'wl-nmz-folder-icon

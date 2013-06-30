@@ -868,8 +868,6 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 						      cache-path)
 			    'unread)
 	(set-buffer-multibyte default-enable-multibyte-characters)
-	(decode-coding-region (point-min) (point-max)
-			      elmo-mime-display-as-is-coding-system)
 	(elmo-message-buffer-match-condition condition number)))))
 
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-folder))
@@ -1212,7 +1210,7 @@ Returns a list of message numbers successfully appended."
 	    (progn
 ;;;	      (message "Copying messages...done")
 	      t)
-	  (if (eq len 0)
+	  (if (zerop len)
 	      (message "No message was moved.")
 	    (message "Moving messages failed.")
 	    nil ; failure
@@ -1230,7 +1228,6 @@ Returns a list of message numbers successfully appended."
 		(dirname (file-name-nondirectory path)))
 	   (if (<= (length dirname) elmo-msgdb-path-encode-threshold)
 	       path
-	     (require 'md5)
 	     (setq dirname (md5 dirname))
 	     (when (> (length dirname) elmo-msgdb-path-encode-threshold)
 	       (error "Cannot shrink msgdb path for `%s'"

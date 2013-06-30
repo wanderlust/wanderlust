@@ -1,5 +1,5 @@
-%% TeX macros to handle Japanese texinfo files for Egg
-%% Modified by Satoru Tomura (tomura@etl.go.jp)
+%% TeX macros to handle Japanese texinfo files
+%%
 %% 92.7.8   modified for Mule Ver.0.9.5 by K.Handa <handa@etl.go.jp>
 %%      To detect type of jTeX and its version, the method
 %%      posted by Takafumi SAKURAI <sakurai@math.metro-u.ac.jp> is used.
@@ -21,6 +21,16 @@
 %% 2000.4.11 modified by Moimoi <fukusaka@xa2.so-net.ne.jp>
 %%      for texinfo.tex 1999-09-25.10
 %%      fixed for jTeX/pTeX/MulTeX
+%% 2010.06.02 modified by Shoichi Fukusaka <fukusaka@xa2.so-net.ne.jp>
+%%      for texinfo.tex 2005-01-30.17
+%%      omitted support for old NTT-jTeX/MulTex
+%%      improve macros
+%% 2010.06.03 modified by Shoichi Fukusaka <fukusaka@xa2.so-net.ne.jp>
+%%      for texinfo.tex 2010-05.22.17 modified version
+%%      minimize re-define macro
+%% 2010.06.03a modified by Shoichi Fukusaka <fukusaka@xa2.so-net.ne.jp>
+%%      for texinfo.tex 2010-05.22.17 modified version
+%%      output \special for dvipdfmx to generate pdf bookmark
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% 92.7.8 by K.Handa
 \newif\ifNTT
@@ -30,288 +40,177 @@
 \NTTfalse
 \fi
 
-\newif\ifNTTOLD
-\ifNTT
-\ifx\jendlinetype\undefined
-\NTTOLDtrue
-\else
-\NTTOLDfalse
-\fi
-\fi
-
-\newif\ifMULTEX
-\ifx\mlbaseversion\undefined
-\MULTEXfalse
-\else
-\MULTEXtrue
-\fi
-
 %% TeX macros to handle Japanese texinfo files
 %% 92/05/24 merged jtexinfo.tex (by H. Isozaki and N. Hikichi) into this
 %% Created by Satoru Tomura (tomura@etl.go.jp)
 
-\def\texinfoJPversion{2.145J.2+++}
-%% §≥§Ï§œ§…§¶ —§®§Î§Œ§¨§§§§§Œ§´§ §°
+\def\texinfoJPversion{5}
 
 \ifNTT
-\ifMULTEX
-\message{txi-ja (Multi-Lingual TeX) package [Version \texinfoJPversion]:}
-\else
 \message{txi-ja (NTT JTeX) package [Version \texinfoJPversion]:}
-\fi
 \else
-\message{txi-ja (ASCII JTeX) package [Version \texinfoJPversion]:}
+\message{txi-ja (ASCII pTeX) package [Version \texinfoJPversion]:}
 \fi
 \message{}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Set up fixed words for Japanese.
-\gdef\putwordAppendix{…’œø}
-\gdef\putwordChapter{æœ}
-\gdef\putwordfile{•’•°•§•Î}
+\gdef\putwordAppendix{‰ªòÈå≤}
+\gdef\putwordChapter{Á´†}
+\gdef\putwordfile{„Éï„Ç°„Ç§„É´}
 \gdef\putwordin{in}
-\gdef\putwordIndexIsEmpty{(∫˜∞˙§¨∂ı§«§π)}
-\gdef\putwordIndexNonexistent{(∫˜∞˙§¨§¢§Í§ﬁ§ª§Û)}
+\gdef\putwordIndexIsEmpty{(Á¥¢Âºï„ÅåÁ©∫„Åß„Åô)}
+\gdef\putwordIndexNonexistent{(Á¥¢Âºï„Åå„ÅÇ„Çä„Åæ„Åõ„Çì)}
 \gdef\putwordInfo{Info}
 \gdef\putwordInstanceVariableof{Instance Variable of}
 \gdef\putwordMethodon{Method on}
-\gdef\putwordNoTitle{Ãµ•ø•§•»•Î}
+\gdef\putwordNoTitle{ÁÑ°È°å}
 \gdef\putwordof{of}
 \gdef\putwordon{on}
 \gdef\putwordpage{p.\gobble}
-\gdef\putwordsection{¿·}
-\gdef\putwordSection{¿·}
-\gdef\putwordsee{ª≤æ»}
-\gdef\putwordSee{§Úª≤æ»§∑§∆§Ø§¿§µ§§}
-\gdef\putwordShortTOC{¥ Œ¨Ã‹º°}
-\gdef\putwordTOC{Ã‹º°}
+\gdef\putwordsection{ÁØÄ}
+\gdef\putwordSection{ÁØÄ}
+\gdef\putwordsee{„ÇíÂèÇÁÖß}
+\gdef\putwordSee{„ÇíÂèÇÁÖß„Åó„Å¶„Åè„Å†„Åï„ÅÑ}
+\gdef\putwordShortTOC{Á∞°Áï•ÁõÆÊ¨°}
+\gdef\putwordTOC{ÁõÆÊ¨°}
 %
-\global\newif\ifIGUMO\IGUMOfalse
-\gdef\igumo{\IGUMOtrue}
-\gdef\putwordMJan{À”∑Ó}
-\gdef\putwordMFeb{«°∑Ó}
-\gdef\putwordMMar{ÃÔ¿∏}
-\gdef\putwordMApr{±¨∑Ó}
-\gdef\putwordMMay{ª©∑Ó}
-\gdef\putwordMJun{øÂÃµ∑Ó}
-\gdef\putwordMJul{ ∏∑Ó}
-\gdef\putwordMAug{Õ’∑Ó}
-\gdef\putwordMSep{ƒπ∑Ó}
-\gdef\putwordMOct{\ifIGUMO{ø¿∫ﬂ∑Ó}\else{ø¿Ãµ∑Ó}\fi}
-\gdef\putwordMNov{¡˙∑Ó}
-\gdef\putwordMDec{ª’¡ˆ}
+\gdef\putwordMJan{1Êúà}
+\gdef\putwordMFeb{2Êúà}
+\gdef\putwordMMar{3Êúà}
+\gdef\putwordMApr{4Êúà}
+\gdef\putwordMMay{5Êúà}
+\gdef\putwordMJun{6Êúà}
+\gdef\putwordMJul{7Êúà}
+\gdef\putwordMAug{8Êúà}
+\gdef\putwordMSep{9Êúà}
+\gdef\putwordMOct{10Êúà}
+\gdef\putwordMNov{11Êúà}
+\gdef\putwordMDec{12Êúà}
 %
-\gdef\putwordDefmac{•ﬁ•Ø•Ì}
-\gdef\putwordDefspec{Special Form}
-\gdef\putwordDefvar{ —øÙ}
-\gdef\putwordDefopt{•™•◊•∑•Á•Û}
-\gdef\putwordDeftypevar{ —øÙ}
-\gdef\putwordDeffunc{¥ÿøÙ}
-\gdef\putwordDeftypefun{¥ÿøÙ}
+\gdef\putwordDefmac{„Éû„ÇØ„É≠}
+\gdef\putwordDefspec{ÁâπÊÆä„Éï„Ç©„Éº„É†}
+\gdef\putwordDefvar{Â§âÊï∞}
+\gdef\putwordDefopt{„Ç™„Éó„Ç∑„Éß„É≥}
+\gdef\putwordDeffunc{Èñ¢Êï∞}
 
-\def\today{\number\year «Ø \number\month ∑Ó \number\day ∆¸}
+\def\today{\number\year Âπ¥ \number\month Êúà \number\day Êó•}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% A4 size(Japanese) define, top margin = 20, bottom margin = 21,
-%  left margin = 30, right margin = 15
-%
+% Êó•Êú¨Ë™ûÁµÑ„ÅÆÊÆµËêΩ„Ç§„É≥„Éá„É≥„Éà„ÅÆ„Éá„Éï„Ç©„É´„Éà„ÇíË®≠ÂÆö
+\global\defaultparindent = 1em
+\global\def\suppressfirstparagraphindent{\relax}
 
-% ???
-%\global\def\a4book{
-%\global\lispnarrowing = 0.3in
-%\global\baselineskip 12pt
-%\global\parskip 3pt plus 1pt
-%
-%% for @cropmarks
-%%\global\hsize = 6.5in
-%% without @cropmarks
-%\global\hsize = 6.7in
-%
-%\global\doublecolumnhsize=2.4in \global\doublecolumnvsize=15.0in
-%\global\vsize=9.8in
-%\global\tolerance=700
-%\global\hfuzz=1pt
-%
-%\global\pagewidth=\hsize
-%\global\pageheight=\vsize
-%\global\font\ninett=cmtt9
-%
-%\global\let\smalllisp=\smalllispx
-%\global\let\smallexample=\smalllispx
-%\global\def\Esmallexample{\Esmalllisp}
-%
-%% for @cropmarks
-%%\global\voffset = -1.0in
-%%\global\hoffset = -0.2in
-%
-%% without @cropmarks
-%\global\voffset = 0.0in
-%%\global\hoffset = -1.0in
-%\global\hoffset = -0.2in
-%}
-
-% ∆¸À‹øÕπ•§≠§Œ•Æ•√•∑•ÍµÕ§ﬁ§√§øªÊ
-% hack please !!
-\global\def\afourbook{{\globaldefs = 1
-  \setleading{12pt}%
+% Êó•Êú¨‰∫∫Â•Ω„Åç„ÅÆ„ÇÆ„ÉÉ„Ç∑„É™Ë©∞„Åæ„Å£„ÅüÁ¥ô
+\global\def\afourpaperj{{\globaldefs = 1
   \parskip = 3pt plus 2pt minus 1pt
+  \textleading = 12pt
   %
-  \internalpagesizes{248mm}{170mm}{0mm}{-5mm}{0mm}{8mm}%
+  \internalpagesizes{248mm}{170mm}%
+                    {\voffset}{-6mm}%
+                    {\bindingoffset}{8mm}%
+                    {297mm}{210mm}%
   %
-  \tolerance = 700
+  \tolerance = 750
   \hfuzz = 1pt
+  \contentsrightmargin = 0pt
+  \defbodyindent = 5mm
 }}
 
-%% @smallbook for B5
-%\global\def\smallbook{
-%\outerhsize=182mm
-%\outervsize=257mm
-%\hoffset=-0.3in
-%\voffset=-0.3in
-%
-%% These values for secheadingskip and subsecheadingskip are
-%% experiments.  RJC 7 Aug 1992
-%\global\secheadingskip = 17pt plus 6pt minus 3pt
-%\global\subsecheadingskip = 14pt plus 6pt minus 3pt
-%
-%\global\lispnarrowing = 0.3in
-%\setleading{14pt}
-%\advance\topskip by -7mm
-%\global\parskip 3pt plus 1pt
-%\global\hsize = 5.5in
-%\global\vsize=8.25in
-%\global\tolerance=700
-%\global\hfuzz=1pt
-%\global\contentsrightmargin=0pt
-%\global\deftypemargin=0pt
-%\global\defbodyindent=.5cm
-%
-%\global\pagewidth=\hsize
-%\global\pageheight=\vsize
-%
-%\global\let\smalllisp=\smalllispx
-%\global\let\smallexample=\smalllispx
-%\global\def\Esmallexample{\Esmalllisp}
-%}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Utility routines.
+
+\def\csdef#1{\expandafter\def\csname#1\endcsname}
+
+\gdef\addcsbefore#1#2{%
+  \cslet{orig#1}{#1}%
+  \csdef{addcs#1}{#2}%
+  \csdef{#1}{%
+    \cslet{addcs}{addcs#1}%
+    \futurelet\orig\addcsbeforeyyy\expandafter\empty\csname orig#1\endcsname
+  }
+}
+\gdef\addcsbeforeyyy{\addcs\orig}
+
+\gdef\addcsafter#1#2{%
+  \cslet{orig#1}{#1}%
+  \csdef{addcs#1}{#2}%
+  \csdef{#1}{%
+    \cslet{addcs}{addcs#1}%
+    \futurelet\orig\addcsafteryyy\expandafter\empty\csname orig#1\endcsname
+  }
+}
+\gdef\addcsafteryyy{\orig\addcs}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% ∆¸À‹∏Ï•’•©•Û•»§À¥ÿ§π§Î∏ﬂ¥π¿≠
-%
-% Debian/Linux §«•—•√•±°º•∏≤Ω§µ§Ï§∆§§§Î
-%  NTT jTeX / ASCII pTeX / MulTeX(∆¸À‹∏Ï∏¬ƒÍ) §Œ§ﬂπÕŒ∏§∑§∆§§§Î°£
-% (¬æ§Œ•µ•§•»§Œ∆¸À‹∏ÏTeX§‚∆±ÕÕ§¿§»¥¸¬‘§∑§∆§Î°¢°¢°¢)
-%
-% xdvi/jdvi2kps §«ª»§√§∆§§§Î vf §ŒºÔŒ‡§œ 5,6,7,8,9,10/min,goth °£
-%
+%% Êó•Êú¨Ë™û„Éï„Ç©„É≥„Éà
 
-\ifNTT
-%\global\kanjifiletype=20 % ??
-\global\let\min=\dm\global\let\goth=\dg
-\else
-\global\let\dm=\min\global\let\dg=\goth
-\fi
-
-\def\uniJFont{%
+\def\jafont{%
 \ifNTT%
-\ifNTTOLD                       % 92.7.8 by K.Handa
-\let\next=\jTeXoldJFont%
-\else
-\ifMULTEX
-\let\next=\MulTeXJFont%
-\else
-\let\next=\jTeXJFont%
-\fi
-\fi
+\let\next=\jTeXjafont%
 \else%
-\let\next=\pTeXJFont%
+\let\next=\pTeXjafont%
 \fi%
 \next}
 
-\def\jTeXoldJFont#1#2#3#4{%
+\def\jTeXjafont#1#2#3#4{%
 \def\tempa{#2}
-\def\tempb{dm}
-\ifx\tempa\tempb% dm
-\expandafter\gjfont\csname#1\endcsname=dm#3 scaled {#4}%
-\else% dg
-\expandafter\gjfont\csname#1\endcsname=dg#3 scaled {#4}%
-\fi%
-}
-
-% backward compatibility for JTeX §« \gjfont §¨Ãµ§§§»§œ MulTeX §·°£
-
-\def\MulTeXJFont#1#2#3#4{%
-\def\tempa{#2}
-\def\tempb{dm}
-{\globaldefs=1%
-\ifx\tempa\tempb% dm
-\expandafter\jfont\csname#1\endcsname=dm#3 scaled #4%
-\else% dg
-\expandafter\jfont\csname#1\endcsname=dg#3 scaled #4%
-\fi}%
-}
-
-\def\jTeXJFont#1#2#3#4{%
-\def\tempa{#2}
-\def\tempb{dm}
-\ifx\tempa\tempb% dm
+\def\tempb{mc}
+\ifx\tempa\tempb% mc
 \expandafter\gjfont\csname#1\endcsname=dm#3 scaled #4%
-\else% dg
+\else% gt
 \expandafter\gjfont\csname#1\endcsname=dg#3 scaled #4%
 \fi%
 }
 
-\def\pTeXJFont#1#2#3#4{%
+\def\pTeXjafont#1#2#3#4{%
 \def\tempa{#2}
-\def\tempb{dm}
-\ifx\tempa\tempb% dm
+\def\tempb{mc}
+\ifx\tempa\tempb% mc
 \global\expandafter\font\csname#1\endcsname=min#3 scaled #4%
-\else% dg
+\else% gt
 \global\expandafter\font\csname#1\endcsname=goth#3 scaled #4%
 \fi
 }
 
 %
-% ∆¸À‹∏Ï•’•©•Û•»§ŒƒÍµ¡
+% Êó•Êú¨Ë™û„Éï„Ç©„É≥„Éà„ÅÆÂÆöÁæ©
 %
 
-%% Fonts for text (10pt)
-\uniJFont{textdm}{dm}{10}{1000}
-\uniJFont{textdg}{dg}{10}{1000}
+% Text fonts (11.2pt, magstep1).
+\jafont{textmc}{mc}{10}{\mainmagstep}
+\jafont{textgt}{gt}{10}{\mainmagstep}
 
-\global\setfont\textrm\rmshape{10}{1000}
-\global\setfont\texttt\ttshape{10}{1000}
-\global\setfont\textbf\bfshape{10}{1000}
-\global\setfont\textit\itshape{10}{1000}
-\global\setfont\textsl\slshape{10}{1000}
-\global\setfont\textsf\sfshape{10}{1000}
-\global\setfont\textsc\scshape{10}{1000}
-\global\setfont\textttsl\ttslshape{10}{1000}
-\global\font\texti=cmmi10
-\global\font\textsy=cmsy10
+% Fonts for indices, footnotes, small examples (9pt).
+\jafont{smallmc}{mc}{9}{1000}
+\jafont{smallgt}{gt}{9}{1000}
 
-%% Fonts for shortcontext (12pt)
-\uniJFont{shortcontdm}{dm}{10}{\magstep1}
-\uniJFont{shortcontdg}{dg}{10}{\magstep1}
+% Fonts for small examples (8pt).
+\jafont{smallermc}{mc}{8}{1000}
+\jafont{smallergt}{gt}{8}{1000}
 
-%% Fonts for title (20.74pt)
-\uniJFont{titledm}{dg}{10}{\magstep4}
+% Fonts for title page (20.4pt):
+\jafont{titlemc}{mc}{10}{\magstep4}
 
-%% Fonts for indics and small examples 
-\uniJFont{smalldm}{dm}{9}{1000}
-\uniJFont{smalldg}{dg}{9}{1000}
+% Chapter (and unnumbered) fonts (17.28pt).
+\jafont{chapmc}{mc}{10}{\magstep3}
+\jafont{chapgt}{gt}{10}{\magstep3}
 
-%% Fonts for headings (17.28pt)
-\uniJFont{chapdm}{dg}{10}{\magstep3}
-\uniJFont{chapdg}{dg}{10}{\magstep3}
+% Section fonts (14.4pt).
+\jafont{secmc}{mc}{10}{\magstep2}
+\jafont{secgt}{gt}{10}{\magstep2}
 
-%% Fonts for sections (14.40pt)
-\uniJFont{secdm}{dm}{10}{\magstep2}
-\uniJFont{secdg}{dg}{10}{\magstep2}
+% Subsection fonts (13.15pt).
+\jafont{ssecmc}{mc}{10}{1315}
+\jafont{ssecgt}{gt}{10}{1315}
 
-%% Fonts for subsections (13.15pt)
-\uniJFont{ssecdm}{dm}{10}{1315}
-\uniJFont{ssecdg}{dg}{10}{1315}
+% Reduced fonts for @acro in text (10pt).
+\jafont{reducedmc}{mc}{10}{1000}
+\jafont{reducedgt}{gt}{10}{1000}
+
+% Fonts for short table of contents. (12pt)
+\jafont{shortcontmc}{mc}{10}{\magstep1}
+\jafont{shortcontgt}{gt}{10}{\magstep1}
 
 % 95.11.2 by K.Handa
 % Reduce Overfull/Underfull \hbox by relaxing these glues.
@@ -320,244 +219,149 @@
 \global\jasciikanjiskip=2.28854pt plus 0.5pt minus -0.2pt
 \fi
 
-%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%% (^^;)
-%\global\def\tendm{}
-%\global\def\tendg{}
+\def\syncjfont#1#2{\addcsafter{#1}{\csname #2\endcsname}}
+\def\addjfonts#1#2{\addcsafter{#1fonts}{\cslet{tenmc}{#2mc}\cslet{tengt}{#2gt}}}
 
-%% Re-definitions
-\gdef\addjfont#1#2{%
-\cslet{orig#1}{#1}%
-\expandafter\def\csname#1\endcsname{\csname orig#1\endcsname\csname #2\endcsname}%
-}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\globaldefs = 1
 
-\def\gaddjfont#1#2{{\globaldefs=1\addjfont{#1}{#2}}}
+\syncjfont{rm}{tenmc}
+\syncjfont{bf}{tengt}
+\syncjfont{sl}{tengt}
+\syncjfont{authorrm}{secmc}
+\syncjfont{authortt}{secgt}
 
-\def\gaddjfonts#1#2{{\globaldefs=1%
-\cslet{orig#1fonts}{#1fonts}%
-\expandafter\def\csname#1fonts\endcsname{\csname orig#1fonts\endcsname\cslet{tendm}{#2dm}\cslet{tendg}{#2dg}}%
-}}
+\addjfonts{text}{text}
+\addjfonts{title}{title}
+\addjfonts{chap}{chap}
+\addjfonts{sec}{sec}
+\addjfonts{subsec}{ssec}
+\addjfonts{small}{small}
+\addjfonts{smaller}{smaller}
+\addjfonts{reduced}{reduced}
 
-\gaddjfont{rm}{tendm}
-\gaddjfont{bf}{tendg}
-\gaddjfont{sl}{tendg}
-\gaddjfont{authorrm}{secdm}
+\let\subsubsecfonts = \subsecfonts
+\let\smallexamplefonts = \smallfonts
 
-\gaddjfonts{text}{text}
-\gaddjfonts{title}{title}
-\gaddjfonts{chap}{chap}
-\gaddjfonts{sec}{sec}
-\gaddjfonts{subsec}{ssec}
-\gaddjfonts{small}{small}
+\textfonts \rm
 
-\global\let\subsubsecfonts = \subsecfonts
-\global\let\subsecentryfonts = \textfonts
-\global\let\subsubsecentryfonts = \textfonts
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%
-%% Utility routines.
-%%
-
-\def\gaddsequence#1{%
-\if#1[%]
-\def\next{\gaddsequencez#1}%
-\else%
-\def\next{\gaddsequencez[0]{#1}}%
-\fi%
-\next%
-}
-
-\def\gaddsequencez[#1]#2{%
-\if#2[%]
-\def\next{\gaddsequencezz[#1]#2}%
-\else%
-\def\next{\gaddsequencezz[#1][lb]{#2}}%
-\fi%
-\next%
-}
-
-\newif\ifL\newif\ifB
-\def\aslb{\Ltrue\Btrue}
-\def\asla{\Ltrue\Bfalse}
-\def\asgb{\Lfalse\Btrue}
-\def\asga{\Lfalse\Bfalse}
-
-%%
-%% ±¯§§•ﬁ•Ø•Ì§¿§ §°°¡
-%%
-
-\def\gaddsequencezz[#1][#2]#3#4{%
-\global\cslet{orig#3}{#3}%
-\csname as#2\endcsname%
-\ifcase#1%
-\ifL
- \ifB
-  \expandafter\gdef\csname#3\endcsname{{#4\csname orig#3\endcsname}}%
- \else
-  \expandafter\gdef\csname#3\endcsname{{\csname orig#3\endcsname#4}}%
- \fi
-\else
- \ifB
-  \expandafter\gdef\csname#3\endcsname{#3\csname orig#3\endcsname}%
- \else
-  \expandafter\gdef\csname#3\endcsname{\csname orig#3\endcsname#3}%
- \fi
-\fi
-\or 
-\ifL
- \ifB
-  \expandafter\gdef\csname#3\endcsname##1{{#4\csname orig#3\endcsname{##1}}}%
- \else
-  \expandafter\gdef\csname#3\endcsname##1{{\csname orig#3\endcsname{##1}#4}}%
- \fi
-\else
- \ifB
-  \expandafter\gdef\csname#3\endcsname##1{#4\csname orig#3\endcsname{##1}}%
- \else
-  \expandafter\gdef\csname#3\endcsname##1{\csname orig#3\endcsname{##1}#4}%
- \fi
-\fi
-\fi
-}
+\globaldefs = 0
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Êó•Êú¨Ë™ûË°®Ë®ò„ÅÆÊîπÂñÑ
+%  1. „Éò„ÉÉ„Éâ„ÅÆÁ´†„ÅÆË°®Ë®ò
+%  2. See Ë®≥Ë™û„Å´Âêà„Çè„Åõ„Å¶ÂãïË©û„ÅÆÂæåÁΩÆ
+%  3. „ÇØ„É≠„Çπ„É¨„Éï„Ç°„É¨„É≥„Çπ„ÅÆË°®Ë®ò
+%  4. @dfn „ÅÆË°®Ë®ò
 
-\gaddsequence[1]{initial}{%
-\addjfont{secbf}{secdg}%
-}
-
-\gaddsequence{summarycontents}{%
-\addjfont{shortcontrm}{shortcontdm}%
-\addjfont{shortcontbf}{shortcontdg}%
-\addjfont{shortcontsl}{shortcontdg}%
-}
-\global\let\shortcontents = \summarycontents
-
-\gaddsequence{shorttitlepagezzz}{%
-\addjfont{chaprm}{chapdm}%
-}
-
-%%
-%%
-
-\global\def\thischapterspace{\hskip \SETthischapterspace em}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  1. „Éò„ÉÉ„Éâ„ÅÆÁ´†„ÅÆË°®Ë®ò
+\gdef\thischapterspace{\hskip \SETthischapterspace em}
 \set thischapterspace 1
 
-\gaddsequence[1][ga]{chapterzzz}{%
-\xdef\thischapter{¬Ë\the\chapno\putwordChapter{}\thischapterspace\noexpand\thischaptername}%
+\gdef\printheadingappendix#1#2{\putwordAppendix{}#1\thischapterspace#2}
+\gdef\printheadingchapter#1#2{Á¨¨#1\putwordChapter{}\thischapterspace#2}
+
+\gdef\Ynumbered{%
+  \ifnum\secno=0
+    Á¨¨\the\chapno\putwordChapter%
+  \else \ifnum\subsecno=0
+    \the\chapno.\the\secno\putwordSection%
+  \else \ifnum\subsubsecno=0
+    \the\chapno.\the\secno.\the\subsecno\putwordSection%
+  \else
+    \the\chapno.\the\secno.\the\subsecno.\the\subsubsecno\putwordSection%
+  \fi\fi\fi
 }
 
-\gaddsequence[1][ga]{appendixzzz}{%
-\xdef\thischapter{\putwordAppendix{}\appendixletter\thischapterspace\noexpand\thischaptername}%
+\gdef\Yappendix{%
+  \ifnum\secno=0
+     \putwordAppendix@tie @char\the\appendixno{}%
+  \else \ifnum\subsecno=0
+     @char\the\appendixno.\the\secno\putwordSection%
+  \else \ifnum\subsubsecno=0
+     @char\the\appendixno.\the\secno.\the\subsecno\putwordSection%
+  \else
+     @char\the\appendixno.\the\secno.\the\subsecno.\the\subsubsecno\putwordSection%
+  \fi\fi\fi
 }
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%
-%%
-%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  2. See Ë®≥Ë™û„Å´Âêà„Çè„Åõ„Å¶ÂãïË©û„ÅÆÂæåÁΩÆ
 
-\global\def\inforefzzz #1,#2,#3,#4**{\putwordInfo{}\putwordfile{} \file{\ignorespaces #3{}},  •Œ°º•…\samp{\ignorespaces#1{}}\putwordSee{}}
+\global\def\inforefzzz #1,#2,#3,#4**{\putwordInfo{}\putwordfile{} \file{\ignorespaces #3{}},  „Éé„Éº„Éâ\samp{\ignorespaces#1{}}\putwordSee{}}
 
 \global\def\pxref#1{\xrefX[#1,,,,,,,]\putwordsee{}}
 \global\def\xref#1{\xrefX[#1,,,,,,,]\putwordSee{}}
 
-\global\def\xrefX[#1,#2,#3,#4,#5,#6]{\begingroup
-  \unsepspaces
-  \def\printedmanual{\ignorespaces #5}%
-  \def\printednodename{\ignorespaces #3}%
-  \setbox1=\hbox{\printedmanual}%
-  \setbox0=\hbox{\printednodename}%
-  \ifdim \wd0 = 0pt
-    % No printed node name was explicitly given.
-    \expandafter\ifx\csname SETxref-automatic-section-title\endcsname\relax
-      % Use the node name inside the square brackets.
-      \def\printednodename{\ignorespaces #1}%
-    \else
-      % Use the actual chapter/section title appear inside
-      % the square brackets.  Use the real section title if we have it.
-      \ifdim \wd1 > 0pt
-        % It is in another manual, so we don't have it.
-        \def\printednodename{\ignorespaces #1}%
-      \else
-        \ifhavexrefs
-          % We know the real title if we have the xref values.
-          \def\printednodename{\refx{#1-title}{}}%
-        \else
-          % Otherwise just copy the Info node name.
-          \def\printednodename{\ignorespaces #1}%
-        \fi%
-      \fi
-    \fi
-  \fi
-  %
-  % If we use \unhbox0 and \unhbox1 to print the node names, TeX does not
-  % insert empty discretionaries after hyphens, which means that it will
-  % not find a line break at a hyphen in a node names.  Since some manuals
-  % are best written with fairly long node names, containing hyphens, this
-  % is a loss.  Therefore, we give the text of the node name again, so it
-  % is as if TeX is seeing it for the first time.
-%  \ifpdf
-%    \leavevmode
-%    \getfilename{#4}%
-%    \ifnum\filenamelength>0
-%      \startlink attr{/Border [0 0 0]}%
-%	 goto file{\the\filename.pdf} name{#1@}%
-%    \else
-%      \startlink attr{/Border [0 0 0]}%
-%	 goto name{#1@}%
-%    \fi
-%    \linkcolor
-%  \fi
-  %
-  \ifdim \wd1 > 0pt
-%    \putwordsection{} ``\printednodename'' \putwordin{} \cite{\printedmanual}%
-    \cite{\printedmanual}§Œ``\printednodename''\putwordsection{}%
-  \else
-    % _ (for example) has to be the character _ for the purposes of the
-    % control sequence corresponding to the node, but it has to expand
-    % into the usual \leavevmode...\vrule stuff for purposes of
-    % printing. So we \turnoffactive for the \refx-snt, back on for the
-    % printing, back off for the \refx-pg.
-    {\normalturnoffactive
-     % Only output a following space if the -snt ref is nonempty; for
-     % @unnumbered and @anchor, it won't be.
-     \setbox2 = \hbox{\ignorespaces \refx{#1-snt}{}}%
-%     \ifdim \wd2 > 0pt \refx{#1-snt}\space\fi
-     \ifdim \wd2 > 0pt \refx{#1-snt}\fi
-    }%
-    % [mynode],
-    °÷\printednodename °◊%
-%    [\printednodename],\space
-    % page 3
-    \turnoffactive \putwordpage\tie\refx{#1-pg}{}%
-  \fi
-  \endlink
-\endgroup}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  3. „ÇØ„É≠„Çπ„É¨„Éï„Ç°„É¨„É≥„Çπ„ÅÆË°®Ë®ò
 
-\global\def\Ysectionnumberandtype{%
-\ifnum\secno=0 ¬Ë\the\chapno\putwordChapter%
-\else \ifnum \subsecno=0 \the\chapno.\the\secno\putwordSection%
-\else \ifnum \subsubsecno=0 %
-\the\chapno.\the\secno.\the\subsecno\putwordSection%
-\else %
-\the\chapno.\the\secno.\the\subsecno.\the\subsubsecno\putwordSection%
-\fi \fi \fi }
+\global\def\xrefprintinmanual#1#2{\space \putwordin{} \cite{#1}}
+\global\def\xrefprintrefinmanual#1#2{\cite{#2}„ÅÆ``#1''\putwordsection{}}
+\global\def\xrefprintnodename#1#2#3{\def\temp{#1}\ifx\empty\temp\else#1\fi„Äå#2„Äç#3}
 
-\global\def\Yappendixletterandtype{%
-\ifnum\secno=0 \putwordAppendix\xreftie'char\the\appendixno{}%
-\else \ifnum \subsecno=0 \xreftie'char\the\appendixno.\the\secno\putwordSection %
-\else \ifnum \subsubsecno=0 %
-\xreftie'char\the\appendixno.\the\secno.\the\subsecno\putwordSection %
-\else %
-\xreftie'char\the\appendixno.\the\secno.\the\subsecno.\the\subsubsecno\putwordSection %
-\fi \fi \fi }
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  4. @dfn „ÅÆË°®Ë®ò
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% @dfn
-\global\def\doublebracket#1{°ÿ#1°Ÿ}
+\global\def\doublebracket#1{„Äé#1„Äè}
 \global\let\dfn=\doublebracket
 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% for dvipdfmx
+\gdef\usedvipdfmx{
+
+  \ifnum 42146=\euc"A4A2 \special{pdf:tounicode EUC-UCS2}\else
+  \special{pdf:tounicode 90ms-RKSJ-UCS2}\fi
+
+  \global\pdfmakepagedesttrue
+  \gdef\pdfdest name##1 xyz{%
+    \iffinishedtitlepage\else
+    \special{pdf:dest (name##1) [\@thispage /XYZ \@xpos \@ypos]}%
+    \fi
+  }
+
+  \gdef\dopdfoutline##1##2##3##4{%
+    \special{pdf:out [] ##2 << /Title (##1) /A << /S /GoTo /D (name##4) >> >> }%
+  }
+
+  \gdef\entryaddpdfoutline##1##2{%
+    \global\cslet{orig##1}{##1}%
+    \csdef{##1}####1####2####3####4{%
+      \expandafter\empty\csname orig##1\endcsname{####1}{####2}{####3}{####4}%
+      \dopdfoutline{####1}{##2}{####3}{####4}%
+    }
+  }
+
+  \entryaddpdfoutline{numchapentry}{1}
+  \entryaddpdfoutline{numsecentry}{2}
+  \entryaddpdfoutline{numsubsecentry}{3}
+  \entryaddpdfoutline{numsubsubsecentry}{4}
+
+  \entryaddpdfoutline{unnchapentry}{1}
+  \entryaddpdfoutline{unnsecentry}{2}
+  \entryaddpdfoutline{unnsubsecentry}{3}
+  \entryaddpdfoutline{unnsubsubsecentry}{4}
+
+  \entryaddpdfoutline{appentry}{1}
+  \let\appsecentry=\numsecentry
+  \let\appsubsecentry=\numsubsecentry
+  \let\appsubsubsecentry=\numsubsubsecentry
+
+  \addcsbefore{contents}{%
+    \special{pdf:docinfo <<
+          /Title (\thistitle)
+          %/Subject (subject)
+          /Creator (texinfo.tex+dvipdfmx)
+          %/Author (author)
+          %/Producer (producer)
+          %/Keywords (keywords)
+        >>%
+    }
+  }
+}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

@@ -489,7 +489,6 @@ It calls following-method selected from variable
 
 (eval-when-compile
   ;; split eval-when-compile form for avoid error on `make compile-strict'
-  (require 'mime-pgp)
   (condition-case nil
       (require 'epa)
     (error
@@ -646,17 +645,27 @@ With ARG, ask coding system and encode the region with it before verifying."
 			     coding-system)))
       (wl-mime-pgp-verify-region (car region) (cdr region) coding-system))))
 
-;; XXX: encrypted multipart isn't represented as multipart
+(defvar wl-mime-pgp-decrypted-buffers nil)
+
+(defun wl-mime-pgp-kill-decrypted-buffers ()
+  (mapc (lambda (buffer)
+	  (when (bufferp buffer)
+	    (kill-buffer buffer)))
+	wl-mime-pgp-decrypted-buffers))
+
 (defun wl-mime-preview-application/pgp (parent-entity entity situation)
   (goto-char (point-max))
   (let ((p (point))
-	raw-buf to-buf representation-type child-entity)
+	representation-type child-entity buffer)
     (goto-char p)
     (save-restriction
       (narrow-to-region p p)
-      (setq to-buf (current-buffer))
-      (with-temp-buffer
-	(setq raw-buf (current-buffer))
+      (setq buffer (generate-new-buffer
+		    (concat wl-original-message-buffer-name "PGP*")))
+      (add-hook 'kill-buffer-hook 'wl-mime-pgp-kill-decrypted-buffers nil t)
+      (make-local-variable 'wl-mime-pgp-decrypted-buffers)
+      (add-to-list 'wl-mime-pgp-decrypted-buffers buffer)
+      (with-current-buffer buffer
 	(mime-insert-entity entity)
 	(when (progn
 		(goto-char (point-min))
@@ -667,14 +676,12 @@ With ARG, ask coding system and encode the region with it before verifying."
 			    (mm-expand-class-name representation-type)
 			    nil
 			    parent-entity
-			    (mime-entity-node-id-internal parent-entity)))
-	(mime-display-entity
-	 child-entity
-	 nil
-	 `((header . visible)
-	   (body . visible)
-	   (entity-button . invisible))
-	 to-buf)))))
+			    (mime-entity-node-id-internal parent-entity))
+	      buffer-read-only t))
+      (mime-display-entity
+       child-entity nil `((header . visible)
+			  (body . visible)
+			  (entity-button . invisible))))))
 
 (defun wl-mime-preview-application/pgp-encrypted (entity situation)
   (let* ((entity-node-id (mime-entity-node-id entity))
@@ -958,7 +965,9 @@ With ARG, ask destination folder."
 	     'wl-original-message-mode
 	     'wl-mime-display-header)
   ;; To avoid overriding wl-draft-mode-map.
-  (when (boundp 'mime-setup-signature-key-alist)
+  (when (and (boundp 'mime-setup-signature-key-alist)
+	     (boundp 'mime-setup-use-signature)
+	     mime-setup-use-signature)
     (unless (assq 'wl-draft-mode mime-setup-signature-key-alist)
       (setq mime-setup-signature-key-alist
 	    (cons '(wl-draft-mode . "\C-c\C-w")

@@ -532,8 +532,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	   ((eq indent wl-plugged-port-indent)  ;; toggle port plug
 	    (cond
 	     ((string-match "\\([^([]*\\)(\\([^)[]+\\))" name)
-	      (setq port (string-to-number (elmo-match-string 2 name)))
-	      (if (string-match "!" (setq name-1 (elmo-match-string 1 name)))
+	      (setq port (string-to-number (match-string 2 name)))
+	      (if (string-match "!" (setq name-1 (match-string 1 name)))
 		  (setq stream-type
 			(intern (substring name-1 (match-end 0))))))
 	     (t
@@ -542,7 +542,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	    (elmo-set-plugged plugged server port stream-type nil alist))
 	   ((eq indent wl-plugged-server-indent)  ;; toggle server plug
 	    (elmo-set-plugged plugged name nil nil nil alist))
-	   ((eq indent 0)  ;; toggle all plug
+	   ((zerop indent)  ;; toggle all plug
 	    (elmo-set-plugged plugged nil nil nil nil alist)))
 	  ;; redraw
 	  (wl-plugged-redrawing wl-plugged-alist)

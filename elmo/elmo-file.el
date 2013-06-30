@@ -86,7 +86,7 @@
   (let ((s (current-time-string (nth 5 attrs))))
     (string-match "\\`\\([A-Z][a-z][a-z]\\) +[A-Z][a-z][a-z] +[0-9][0-9]? *[0-9][0-9]?:[0-9][0-9]:[0-9][0-9] *[0-9]?[0-9]?[0-9][0-9]"
 		  s)
-    (concat (elmo-match-string 1 s) ", "
+    (concat (match-string 1 s) ", "
 	    (timezone-make-date-arpa-standard s (current-time-zone)))))
 
 (defun elmo-file-detect-content-type (file)

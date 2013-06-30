@@ -1,3 +1,7 @@
+2012-09-23  David Maus  <dmaus@ictsoc.de>
+
+	* README.md (See): Remove markdown link to INSTALL.
+
 2012-09-09  David Maus  <dmaus@ictsoc.de>
 
 	* README.md (See): Fix reference to IMAP specs, add small section
@@ -5,14 +9,33 @@
 
 	* Makefile: Add EMACS_FLAGS environment variable.
 
+2012-08-28  Felix E. Klee <felix.klee@inka.de>
+
+	* README.md: New file.
+
+	* README: Removed.
+
 2012-08-19  David Maus  <dmaus@ictsoc.de>
 
-	* README.ja: Update mailing list address.
-	* README: Dto.
-	* samples/en/dot.wl: Dto.
+	* samples/en/dot.wl: Update mailing list address.
 	* samples/ja/dot.wl: Dto.
-	* doc/wl-ja.texi: Dto, and update address of mailing list archive.
-	* doc/wl.texi: Dto, and update address of mailing list archive.
+
+2012-08-04  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* WL-ELS (ELMO-MODULES): Do not include utf7.el when Emacs has
+	utf-7-imap coding system.
+
+2011-09-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* doc/texinfo.tex, doc/txi-ja.tex: Replaced with 2010-05.22.17
+	modified version by Shoichi Fukusaka <fukusaka@xa2.so-net.ne.jp>.
+
+2011-09-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* README: Update ML's address.
+	* README.ja: Ditto
+	* doc/wl.texi (Mailing List): Ditto.
+	* doc/wl-ja.texi (Mailing List): Ditto.
 
 2011-02-01  Tetsurou Okazaki  <okazaki@be.to>
 

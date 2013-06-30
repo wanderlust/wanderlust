@@ -149,29 +149,19 @@ Header region is supposed to be narrowed.")
 
 (luna-define-method elmo-msgdb-create-message-entity-from-file
   ((handler modb-entity-handler) number file)
-  (let (insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
-	insert-file-contents-post-hook header-end
-	(attrib (file-attributes file))
-	ret-val size mtime)
+  (when (file-exists-p file)
     (with-temp-buffer
-      (if (not (file-exists-p file))
-	  ()
-	(setq size (nth 7 attrib))
-	(setq mtime (timezone-make-date-arpa-standard
-		     (current-time-string (nth 5 attrib)) (current-time-zone)))
-	;; insert header from file.
-	(catch 'done
-	  (condition-case nil
-	      (elmo-msgdb-insert-file-header file)
-	    (error (throw 'done nil)))
-	  (goto-char (point-min))
-	  (setq header-end
-		(if (re-search-forward "\\(^--.*$\\)\\|\\(\n\n\\)" nil t)
-		    (point)
-		  (point-max)))
-	  (narrow-to-region (point-min) header-end)
-	  (elmo-msgdb-create-message-entity-from-header
-	   handler number :size size :date mtime))))))
+      (setq buffer-file-name file)
+      ;; insert header from file.
+      (catch 'done
+	(condition-case nil
+	    (elmo-msgdb-insert-file-header file)
+	  (error (setq buffer-file-name nil)
+		 (throw 'done nil)))
+	(prog1
+	    (elmo-msgdb-create-message-entity-from-header
+	     handler number)
+	  (setq buffer-file-name nil))))))
 
 (luna-define-method elmo-msgdb-make-message-entity ((handler
 						     modb-entity-handler)
@@ -274,18 +264,16 @@ If each field is t, function is set as default converter."
 	(or (elmo-get-hash-val string hashtb)
 	    (prog1
 		(setq decoded
-		      (elmo-with-enable-multibyte
-			(decode-mime-charset-string string elmo-mime-charset)))
+		      (elmo-mime-charset-decode-string
+		       string elmo-mime-charset))
 	      (elmo-set-hash-val string decoded hashtb))))
-    (elmo-with-enable-multibyte
-      (decode-mime-charset-string string elmo-mime-charset))))
+    (elmo-mime-charset-decode-string string elmo-mime-charset)))
 
 (defun modb-entity-string-decoder (field value)
   (elmo-msgdb-get-decoded-cache value))
 
 (defun modb-entity-string-encoder (field value)
-  (elmo-with-enable-multibyte
-    (encode-mime-charset-string value elmo-mime-charset)))
+  (elmo-mime-charset-encode-string value elmo-mime-charset))
 
 (defun modb-entity-parse-date-string (field value)
   (if (stringp value)
@@ -341,8 +329,7 @@ If each field is t, function is set as default converter."
   (elmo-map-recursive
    (lambda (element)
      (if (stringp element)
-	 (elmo-with-enable-multibyte
-	   (encode-mime-charset-string element elmo-mime-charset))
+	 (elmo-mime-charset-encode-string element elmo-mime-charset)
        element))
    value))
 
@@ -460,7 +447,7 @@ If each field is t, function is set as default converter."
   (let ((extras elmo-msgdb-extra-fields)
 	(default-mime-charset default-mime-charset)
 	entity message-id references from subject to cc date
-	extra field-body charset size)
+	extra field-body charset size file-attrib)
     (save-excursion
       (setq entity (modb-legacy-make-message-entity args))
       (set-buffer-multibyte default-enable-multibyte-characters)
@@ -478,13 +465,26 @@ If each field is t, function is set as default converter."
 		     (elmo-mime-string (or (std11-fetch-field "subject")
 					   elmo-no-subject))
 		     "\t" " ")
-	    date (elmo-decoded-fetch-field "date")
+	    date (or (elmo-decoded-fetch-field "date")
+		     (when buffer-file-name
+		       (timezone-make-date-arpa-standard
+			(current-time-string
+			 (nth 5 (or file-attrib
+				    (setq file-attrib
+					  (file-attributes buffer-file-name)))))
+			(current-time-zone))))
 	    to   (mapconcat 'identity (elmo-multiple-field-body "to") ",")
 	    cc   (mapconcat 'identity (elmo-multiple-field-body "cc") ","))
       (unless (elmo-msgdb-message-entity-field handler entity 'size)
-	(if (setq size (std11-fetch-field "content-length"))
-	    (setq size (string-to-number size))
-	  (setq size 0)))
+	(setq size
+	      (or (std11-fetch-field "content-length")
+		  (when buffer-file-name
+		    (nth 7 (or file-attrib
+			       (setq file-attrib
+				     (file-attributes buffer-file-name)))))
+		  0))
+	(when (stringp size)
+	  (setq size (string-to-number size))))
       (while extras
 	(if (setq field-body (std11-fetch-field (car extras)))
 	    (modb-legacy-entity-set-field
@@ -597,7 +597,7 @@ If each field is t, function is set as default converter."
 
 (defvar modb-standard-entity-normalizer nil)
 (modb-set-field-converter 'modb-standard-entity-normalizer nil
-  'messgae-id	nil
+  'message-id	nil
   'number	nil
   'date		#'modb-entity-parse-date-string
   'to		#'modb-entity-parse-address-string
@@ -609,7 +609,7 @@ If each field is t, function is set as default converter."
 
 (defvar modb-standard-entity-specializer nil)
 (modb-set-field-converter 'modb-standard-entity-specializer nil
-  'messgae-id	nil
+  'message-id	nil
   'number	nil
   'date		nil
   'references	nil
@@ -617,7 +617,7 @@ If each field is t, function is set as default converter."
   'score	nil
   t		#'modb-entity-decode-string-recursive)
 (modb-set-field-converter 'modb-standard-entity-specializer 'string
-  'messgae-id	nil
+  'message-id	nil
   'number	nil
   'date		#'modb-entity-make-date-string
   'to		#'modb-entity-make-address-string
@@ -723,7 +723,7 @@ If each field is t, function is set as default converter."
 
 (luna-define-method elmo-msgdb-create-message-entity-from-header
   ((handler modb-standard-entity-handler) number args)
-  (let (entity)
+  (let (entity size field-name field-body extractor file-attrib)
     (save-excursion
       (set-buffer-multibyte default-enable-multibyte-characters)
       (setq entity
@@ -749,7 +749,14 @@ If each field is t, function is set as default converter."
 		    elmo-no-subject)
 		"\t" " ")
 	       :date
-	       (elmo-decoded-fetch-field "date" 'summary)
+	       (or (elmo-decoded-fetch-field "date" 'summary)
+		   (when buffer-file-name
+		     (timezone-make-date-arpa-standard
+		      (current-time-string
+		       (nth 5 (or file-attrib
+				  (setq file-attrib
+					(file-attributes buffer-file-name)))))
+		      (current-time-zone))))
 	       :to
 	       (mapconcat
 		(lambda (field-body)
@@ -763,14 +770,20 @@ If each field is t, function is set as default converter."
 	       :content-type
 	       (elmo-decoded-fetch-field "content-type" 'summary)
 	       :size
-	       (let ((size (std11-fetch-field "content-length")))
-		 (if size
-		     (string-to-number size)
-		   (or (plist-get args :size) 0)))))))
-      (let (field-name field-body extractor)
-	(dolist (extra (cons "newsgroups" elmo-msgdb-extra-fields))
-	  (setq field-name (intern (downcase extra))
-		extractor  (nth 1 (assq field-name
+	       (if (setq size (std11-fetch-field "content-length"))
+		   (string-to-number size)
+		 (or (plist-get args :size)
+		     (when buffer-file-name
+		       (nth 7 (or file-attrib
+				  (setq file-attrib
+					(file-attributes buffer-file-name)))))
+		     0))))))
+      (dolist (extra (cons "newsgroups"
+			   (remove "newsgroups" elmo-msgdb-extra-fields)))
+	(unless (memq (setq field-name (intern (downcase extra)))
+		      '(number message-id references from subject
+			       date to cc content-type size))
+	  (setq extractor  (nth 1 (assq field-name
 					modb-entity-field-extractor-alist))
 		field-body (if extractor
 			       (funcall extractor field-name)
@@ -859,12 +872,38 @@ If each field is t, function is set as default converter."
 	(case-fold-search t))
     (cond
      ((string= (elmo-filter-key condition) "body")
+      (modb-entity-match-entity-body
+       (regexp-quote (elmo-filter-value condition))
+       (mime-parse-buffer (cdr (cdr entity)))))
+     ((string= (elmo-filter-key condition) "raw-body")
       (with-current-buffer (cdr (cdr entity))
+	(decode-coding-region (point-min) (point-max)
+	 		      elmo-mime-display-as-is-coding-system)
 	(goto-char (point-min))
 	(and (re-search-forward "^$" nil t)	   ; goto body
 	     (search-forward (elmo-filter-value condition) nil t))))
      (t
       (luna-call-next-method)))))
+
+(defun modb-entity-match-entity-body (regexp mime-entity)
+  (let ((content-type (mime-entity-content-type mime-entity))
+	children result)
+    (cond
+     ((setq children (mime-entity-children mime-entity))
+      (while children
+	(when (modb-entity-match-entity-body regexp (car children))
+	  (setq result t
+		children nil))
+	(setq children (cdr children)))
+      result)
+     ((eq (mime-content-type-primary-type content-type) 'text)
+      (string-match regexp
+		    (elmo-mime-charset-decode-string
+		     (mime-entity-content mime-entity)
+		     (or (mime-content-type-parameter content-type "charset")
+			 default-mime-charset)
+		     'CRLF)))
+     (t nil))))
 
 (require 'product)
 (product-provide (provide 'modb-entity) (require 'elmo-version))

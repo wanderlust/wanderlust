@@ -162,6 +162,8 @@ See info under Wanderlust for full documentation.
   (wl-mode-line-buffer-identification
    '("Wanderlust: Address (" wl-addrmgr-method-name ")"))
   (use-local-map wl-addrmgr-mode-map)
+  (when (boundp 'bidi-paragraph-direction)
+    (set 'bidi-paragraph-direction 'left-to-right))
   (setq buffer-read-only t))
 
 (defun wl-addrmgr-address-entry-list (field)
