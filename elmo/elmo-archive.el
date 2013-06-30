@@ -89,6 +89,9 @@
 (luna-define-method elmo-archive-folder-path ((folder elmo-archive-folder))
   elmo-archive-folder-path)
 
+(defun elmo-intern-soft (str)
+  (if (eq str "") nil (intern-soft str)))
+
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-archive-folder)
 					    name)
@@ -98,15 +101,15 @@
 	 name)
     ;; Drive letter is OK!
     (or (elmo-archive-folder-set-archive-name-internal
-	 folder (elmo-match-string 1 name))
+	 folder (match-string 1 name))
 	(elmo-archive-folder-set-archive-name-internal
 	 folder ""))
     (or (elmo-archive-folder-set-archive-type-internal
-	 folder (intern-soft (elmo-match-string 2 name)))
+	 folder (elmo-intern-soft (match-string 2 name)))
 	(elmo-archive-folder-set-archive-type-internal
 	 folder elmo-archive-default-type))
     (or (elmo-archive-folder-set-archive-prefix-internal
-	 folder (elmo-match-string 3 name))
+	 folder (match-string 3 name))
 	(elmo-archive-folder-set-archive-prefix-internal
 	 folder "")))
   folder)
@@ -511,7 +514,7 @@ TYPE specifies the archiver's symbol."
 			      elmo-archive-suffix-alist
 			      "\\|"))))
 	(if (string-match "\\(.*\\)/$" base-folder) ; ends with '/'.
-	    (setq base-folder (elmo-match-string 1 base-folder))
+	    (setq base-folder (match-string 1 base-folder))
 	  (unless (file-directory-p path)
 	    (setq base-folder (or (file-name-directory base-folder) ""))))
 	(delq
@@ -521,11 +524,11 @@ TYPE specifies the archiver's symbol."
 	    (when (and (string-match regexp x)
 		       (eq suffix
 			   (car
-			    (rassoc (elmo-match-string 2 x)
+			    (rassoc (match-string 2 x)
 				    elmo-archive-suffix-alist))))
 	      (format "%s%s;%s%s"
 		      (elmo-folder-prefix-internal folder)
-		      (elmo-concat-path base-folder (elmo-match-string 1 x))
+		      (elmo-concat-path base-folder (match-string 1 x))
 		      suffix prefix)))
 	  flist)))
     (elmo-mapcar-list-of-list
@@ -1084,8 +1087,7 @@ TYPE specifies the archiver's symbol."
 	(setq mlist (cdr mlist))
 	(setq str (symbol-name method))
 	(string-match "elmo-archive-\\([^-].*\\)-method-alist$" str)
-	(setq type (intern-soft
-		    (elmo-match-string 1 str)))
+	(setq type (intern-soft (match-string 1 str)))
 	(setq elmo-archive-method-alist
 	      (cons (cons type
 			  (symbol-value method))

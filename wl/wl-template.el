@@ -60,7 +60,7 @@
 
 (defun wl-template-apply (name)
   "Apply NAME template to draft."
-  (let (template)
+  (let (template wl-draft-idle-highlight)
     (when name
       (if (string= name "")
 	  (setq name wl-template-default-name))
@@ -97,7 +97,6 @@ Entering WL-Template mode calls the value of `wl-template-mode-hook'."
   (interactive "P")
   (unless wl-template-alist
     (error "Please set `wl-template-alist'"))
-  (setq wl-draft-config-exec-flag t)
   (if (not (if arg
 	       (not wl-template-visible-select)
 	     wl-template-visible-select))

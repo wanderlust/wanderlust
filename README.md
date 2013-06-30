@@ -50,7 +50,7 @@ Features
 Installation
 ============
 
-See: [INSTALL](INSTALL)
+See: `Install'
 
 
 Mailing List

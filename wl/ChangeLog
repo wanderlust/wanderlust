@@ -1,10 +1,57 @@
+2013-06-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-news.el.in: Explicitly specify file coding.
+
+	* wl-vars.el: Likewise.
+
+2013-02-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-e21.el (wl-draft-overload-menubar): Use
+	wl-draft-insert-signature instead of insert-signature.
+
+	* wl-mime.el (wl-mime-setup): Respect mime-setup-use-signature's
+	value.
+
+	* wl-mule.el (wl-draft-overload-menubar): Use
+	mime-edit-insert-signature when mime-setup-use-signature is nil.
+
+2013-02-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-e21.el (wl-draft-insert-signature): Define as alias to
+	mime-edit-insert-signature when mime-setup-use-signature is nil.
+
+	* wl-xmas.el (wl-draft-insert-signature): Likewise.
+
+2012-12-31  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-mime.el (wl-mime-pgp-decrypted-buffers): New variable.
+	(wl-mime-pgp-kill-decrypted-buffers): New function.
+	(wl-mime-preview-application/pgp): Keep decrypted content until
+	the message buffer is killed.
+
+2012-11-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-util.el (wl-search-condition-fields): Add "Raw-Body".
+
+	* wl-vars.el (wl-fldmgr-make-filter-default): Add entry for
+	"Raw-Body" search.
+
+2012-09-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-addrmgr.el (wl-addrmgr-mode): Set the value of
+	bidi-paragraph-direction to left-to-right when needed.
+
+	* wl-folder.el (wl-folder-mode): Ditto.
+
+	* wl-summary.el (wl-summary-mode): Ditto.
+
 2012-09-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
-       * wl-summary.el (wl-summary-put-alike): Require second argument
-       COUNT.
-       (wl-summary-insert-headers): Fix slowness on large summary and
-       duplicated entries when last message is not a child of thread.
-       Do not call unfolding function.
+	* wl-summary.el (wl-summary-put-alike): Require second argument
+	COUNT.
+	(wl-summary-insert-headers): Fix slowness on large summary and
+	duplicated entries when last message is not a child of thread.
+	Do not call unfolding function.
 
 2012-08-28  David Maus  <dmaus@ictsoc.de>
 
@@ -18,17 +65,59 @@
 	* wl-util.el (wl-read-search-condition-internal): Dto.
 	* wl-action.el (wl-summary-read-folder): Dto.
 
-2012-08-19  David Maus  <dmaus@ictsoc.de>
+2012-08-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
-	* wl-news.el.in: Update mailing list address.
-	* wl-vars.el: Dto.
+	* wl-action.el (wl-summary-auto-refile): Use zerop instead of eq
+	with 0.
 
-2012-08-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+	* wl-draft.el (wl-draft-send): Likewise.
 
-	* wl-draft.el: Do not define autoload for `open-ssl-stream'.
-	(wl-template): Require elmo-net.el.
-	(wl-smtp-extension-bind): Respect `elmo-network-stream-type-alist'
-	for over SSL/TLS connection.
+	* wl-folder.el (wl-folder-update-unread): Likewise.
+
+	* wl-summary.el (wl-summary-sync-update): Likewise.
+
+	* wl-util.el (wl-url-nntp): Likewise.
+
+	* wl.el (wl-plugged-toggle): Likewise.
+
+2012-08-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl.el (wl-plugged-toggle): Call `match-string' directly instead
+	of `elmo-match-string'.
+
+	* wl-address.el (wl-address-expand-aliases): Likewise.
+
+	* wl-expire.el (wl-expire-archive-get-max-number): Likewise.
+
+	* wl-folder.el (wl-create-folder-entity-from-buffer): Likewise.
+
+	* wl-util.el (wl-url-news, wl-url-nntp): Likewise
+
+	* wl-version.el (wl-extended-emacs-version)
+	(wl-extended-emacs-version2, wl-extended-emacs-version3):
+	Likewise.  Do not require elmo-date.el
+
+2012-08-20  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-vars.el (wl-message-id-hash-function): New customizable
+	variable.
+
+	* wl-util.el (wl-draft-make-message-id-from-address): New function.
+	(wl-draft-make-message-id-string): Use it.
+
+2012-08-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-vars.el (wl-unique-id-suffix): Fix docstring.
+
+2012-08-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-util.el (wl-draft-make-message-id-string): When
+	wl-message-id-use-message-from is non-nil, make string from
+	buffer's From field value prior to wl-from.  Use lexical analyzer
+	to extract mailing address.
+
+	* wl-vars.el (wl-message-id-use-message-from): New customizable
+	variable.  Obsolete `wl-message-id-use-wl-from'.
 
 2012-08-01  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
@@ -56,10 +145,69 @@
 	* wl-draft.el (wl-draft-self-reply-p): Call std11-fetch-field
 	directly.
 
+2012-06-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-draft.el (wl-draft-save): Delete the old draft after encoding
+	to avoid data loss by Emacs crash.
+
+2012-06-14  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-draft.el (wl-draft-idle-highlight-set-timer): Require
+	timer.el.
+
+2012-05-06  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-template.el (wl-template-select): Do not modify
+	wl-draft-config-exec-flag (Reverted the change on 2011-01-09 by
+	David Maus).  We can make wl-draft-config-exec not to modify
+	messages by a template which binds wl-draft-config-exec-flag to
+	nil.
+
+2012-04-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-highlight.el (wl-highlight-message): Check eobp after
+	skipping invisible region.
+
 2012-03-18  David Maus  <dmaus@ictsoc.de>
 
 	* wl-mime.el: Remove hard dependency on mime-pgp.
 	* wl.el (wl-init): Remove hard dependency on wl-news.
+
+2012-04-14  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-draft.el (wl-draft-config-exec): Suppress real-time
+	highlighting.
+
+	* wl-template.el (wl-template-apply): Likewise.
+
+	* wl-highlight.el (wl-highlight-message): Refined.  Fix the case
+	of too big headers with body-only option.  Avoid stop highlighting
+	the case of wl-highlight-force-citation-header-regexp and/or
+	wl-highlight-citation-prefix-regexp are nil.  Highlight
+	mail-header-separator only once.  Skip invisible regions.
+
+2012-04-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Real-time draft highlighting is supported.
+	* wl-draft.el (wl-draft-highlight): New function.  Highlighting part
+	of wl-draft-highlight-and-recenter are separated from it.
+	(wl-draft-highlight-and-recenter): Likewise.
+	(wl-draft-idle-highlight, wl-draft-idle-highlight-idle-time)
+	(wl-draft-idle-highlight-function)
+	(wl-draft-idle-highlight-timer): New variables.
+	(wl-draft-idle-highlight, wl-draft-default-idle-highlight)
+	(wl-draft-idle-highlight-timer)
+	(wl-draft-idle-highlight-set-timer): New functions.
+
+	* wl-e21.el (wl-draft-mode-setup): Enable idle highlighting.
+
+	* wl-xmas.el (wl-draft-mode-setup): Ditto.
+
+2012-04-07  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-draft.el (wl-smtp-extension-bind): Use
+	elmo-get-network-stream-type.
+>>>>>>> master
 
 2012-02-18  David Maus  <dmaus@ictsoc.de>
 
@@ -76,15 +224,21 @@
 
 	* wl-demo.el (wl-demo-copyright-notice): Add 2012.
 
+2011-12-31  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-summary.el (wl-summary-target-mark-operation): Use
+	wl-summary-set-persistent-mark-internal.
+
+2011-09-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-vars.el (wl-draft-config-alist): Update ML's address.
+
+	* wl-news.el.in (wl-news-send-news): Update bot's address.
+
 2011-07-20  Katsumi Yamaoka  <yamaoka@jpl.org>
 
 	* wl-e21.el (wl-e21-make-toolbar-buttons): No need to take care of
 	the tool-bar default bindings for Emacs 24.
-
-2011-07-19  Katsumi Yamaoka  <yamaoka@jpl.org>
-
-	* wl-e21.el (wl-e21-make-toolbar-buttons): Work around the Emacs
-	24 error: "`keymap' is reserved for embedded parent maps"
 
 2011-07-15  Herbert J. Skuhra  <hskuhra@fastmail.fm>
 
@@ -98,6 +252,16 @@
 	* wl-vars.el (wl-draft-send-mail-function): Add function to list
 	of prepared send mail functions.
 
+2011-06-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-folder.el (wl-folder-buffer-search-entity): Build search
+	string out of loop.
+
+	* wl-vars.el (wl-draft-send-confirm-type): Change default value to
+	scroll-by-SPC/BS.
+
+	* wl-util.el (wl-y-or-n-p-with-scroll): Do not use case().
+
 2011-06-05  David Maus  <dmaus@ictsoc.de>
 
 	* wl-draft.el (wl-draft-save): Obtain number of appended draft
@@ -108,6 +272,22 @@
 
 	* wl-vars.el (wl-summary-line-format): Document missing control
 	strings.
+
+2011-05-24  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-summary.el (wl-summary-view-old-p): Small refining.
+
+	* wl-thread.el (wl-thread-make-number-list): Do not assume
+	`wl-thread-entity-list' is non-nil.
+
+2011-05-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-mime.el: Do not require mime-pgp.el
+
+	* wl-draft.el: Do not define autoload for `open-ssl-stream'.
+	(wl-template): Require elmo-net.el.
+	(wl-smtp-extension-bind): Respect `elmo-network-stream-type-alist'
+	for over SSL/TLS connection.
 
 2011-01-30  TAKAHASHI Kaoru  <kaoru@kaisei.org>
 

@@ -1,13 +1,123 @@
-2012-08-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+2013-06-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
-	* elmo-net.el (elmo-open-network-stream): Raise error when open
-	connection function failed.
+	* elmo-vars.el: Explicitly specify file coding.
 
-	* elmo-nntp.el (elmo-folder-initialize): Do not modify
-	elmo-network-stream-type-alist.
+2013-03-31  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
-	* elmo-vars.el (elmo-network-stream-type-alist): Check whether
-	gnutls.el or tls.el is available.
+	* modb-entity.el (modb-entity-match-entity-body): Use
+	elmo-mime-charset-decode-string instead of
+	decode-mime-charset-string.
+
+2013-03-29  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-with-enable-multibyte): Move to temporary
+	buffer only when FLIM's MIME-charset decodes/encoders require
+	multibyte buffer.
+
+2013-03-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-mime-charset-decode-string)
+	(elmo-mime-charset-encode-string): New functions.
+	(elmo-mime-string): Use elmo-mime-charset-encode-string.
+
+	* elmo-msgdb.el (elmo-msgdb-overview-entity-get-from-no-decode)
+	(elmo-msgdb-overview-entity-get-subject-no-decode): Use
+	elmo-mime-charset-encode-string.
+
+	* modb-entity.el (elmo-msgdb-get-decoded-cache)
+	(modb-entity-string-encoder)
+	(modb-entity-encode-string-recursive): Use new functions.
+
+2012-11-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo.el (elmo-message-match-condition): Do not decode a message
+	here.
+
+	* modb-entity.el (elmo-msgdb-message-match-condition): Decode
+	a message for 'raw-body' seaching.
+
+2012-11-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	elmo-folder-search by 'body' now searches only text parts and
+	decodes them before searching.  Previous behavior is available as
+	seaching by 'raw-body'.
+
+	* elmo-imap4.el (elmo-imap4-search-internal-primitive): Treat
+	'raw-body' search as the same with 'body' search.
+
+	* elmo-nntp.el (elmo-nntp-use-server-search-p): Deal the case of
+	'raw-body' search.
+
+	* modb-entity.el (modb-entity-match-entity-body): New function.
+	(elmo-msgdb-message-match-condition): Use it for 'body' searching.
+	Previous 'body' search is available as 'raw-body' search.
+
+2012-08-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-cache-get-path-subr): Refactored.
+
+	* elmo-date.el (elmo-replace-in-string): Use
+	replace-regexp-in-string if available.
+
+2012-08-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-imap4.el (elmo-imap4-parse-namespace-subr)
+	(elmo-imap4-parse-flag-list)
+	(elmo-imap4-search-internal-primitive): Use zerop instead of eq
+	with 0.
+
+	* elmo-nntp.el (elmo-nntp-send-buffer): Likewise.
+
+	* elmo-split.el (elmo-split): Likewise.
+
+	* elmo-util.el (elmo-time-expire, elmo-parse-token)
+	(elmo-parse-prefixed-element): Likewise.
+
+	* elmo.el (elmo-folder-move-messages): Likewise.
+
+2012-08-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-archive.el (Top, elmo-folder-initialize)
+	(elmo-archive-folder-list-subfolders): Use match-string directly
+	instead of elmo-match-string.
+
+	* elmo-cache.el (elmo-folder-initialize): Likewise
+
+	* elmo-date.el (elmo-replace-in-string, elmo-date-get-datevec):
+	Likewise.
+
+	* elmo-file.el (elmo-file-make-date-string): Likewise.
+
+	* elmo-filter.el (elmo-folder-initialize): Likewise.
+
+	* elmo-imap4.el (elmo-imap4-parse-capability)
+	(elmo-folder-initialize): Likewise.
+
+	* elmo-maildir.el (elmo-maildir-list-location)
+	(elmo-maildir-set-mark, elmo-maildir-delete-mark): Likewise.
+
+	* elmo-nntp.el (elmo-folder-list-messages-plugged)
+	(elmo-nntp-folder-status, elmo-nntp-post): Likewise.
+
+	* elmo-pipe.el (elmo-folder-initialize): Likewise.
+
+	* elmo-shimbun.el (elmo-folder-initialize): Likewise.
+
+	* elmo-util.el (elmo-msgid-to-cache): Likewise.
+
+2012-08-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-date.el (elmo-match-string): Obsolete. Use match-string
+	directly.
+	(elmo-match-buffer): Use `match-string-no-properties' if
+	available.
+
+2012-08-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo.el (elmo-folder-msgdb-path): Do not require md5.el.
+	Autoload cookie is already defined.
+
+	* elmo-util.el (elmo-string-to-list): Refactored.
 
 2012-08-15  David Maus  <dmaus@ictsoc.de>
 
@@ -53,6 +163,26 @@
 	(elmo-get-message-id-from-field): New function. Return message-id
 	field value.
 	(elmo-get-message-id-from-header): Refactored. Use new functions.
+
+2012-08-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-unfold-field-body, elmo-decoded-field-body):
+	Call make-obsolete with 2 arguments.  Emacs 20.x don't accept
+	3 arguments.
+
+2012-08-04  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el : Do not require utf7.el.
+
+2012-08-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-imap4.el : Don't require utf7.el unconditionally.  Add
+	autoload settings for `utf7-decode' and `utf7-encode'.
+	(elmo-imap4-use-modified-utf7): Set t when internal coding system
+	for modified UTF-7 is available.  Fix typo of docstring.
+	(elmo-imap4-decode-folder-string)
+	(elmo-imap4-encode-folder-string): Use internal coding system if
+	available.
 
 2012-08-01  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
@@ -147,6 +277,7 @@
 	* modb-entity.el (elmo-msgdb-create-message-entity-from-buffer):
 	Likewise.
 
+<<<<<<< HEAD
 2011-11-30  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-maildir.el (elmo-folder-append-buffer): Correctly get the
@@ -179,6 +310,76 @@
 	(elmo-imap4-search-generate): New function. Return search in
 	folder.
 	(elmo-imap4-search-internal): Use new search functions.
+=======
+2012-05-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-file):
+	Stop to get file attributes here.  Stop to let-bind
+	insert-file-contents-pre-hook and insert-file-contents-post-hook.
+	Pass filename to temporary buffer.
+	(elmo-msgdb-create-message-entity-from-buffer): Get file
+	attributes here.  Get file attributes and build date string from
+	mtime only when needed.
+
+2012-04-27  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-file):
+	Check whether file exists at first.  Do not narrow.
+
+	* elmo-util.el (elmo-delete-cr-region): New inline function.
+	(elmo-delete-cr-buffer): Use it.
+	(elmo-msgdb-insert-file-header): Fix failure to detect the end of
+	headers in some cases.  Delete contents after inserted headers.
+
+2012-04-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-buffer):
+	(modb-standard-rntity-handler) Avoid redundant fetching
+	field-value.  Reduce use of let().
+
+2012-04-24  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-msgdb-get-message-id-from-buffer): Normalize
+	result string.
+
+	* modb-entity.el (modb-standard-entity-normalizer)
+	(modb-standard-entity-specializer): Fix typo.
+
+2012-04-07  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-net.el (elmo-open-tls-stream): Removed.
+
+	* elmo-vars.el (elmo-network-stream-type-alist): Use
+	open-tls-stream instead of elmo-open-tls-stream.
+
+2012-04-07  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-net.el (elmo-open-network-stream): Raise error when open
+	connection function failed.
+
+2012-04-07  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-net.el (elmo-open-tls-stream): Removed.
+
+	* elmo-vars.el (elmo-network-stream-type-alist): Use
+	open-tls-stream instead of elmo-open-tls-stream.
+
+2012-04-07  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-net.el (elmo-open-network-stream): Raise error when open
+	connection function failed.
+
+2012-04-07  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-net.el (elmo-network-stream-type-from-symbol): Removed.
+	elmo-get-network-stream-type has slipped out of my check, which
+	had the same functionality.
+
+2012-03-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-nntp.el (elmo-folder-initialize): Do not modify
+	elmo-network-stream-type-alist.
+>>>>>>> master
 
 2011-07-03  David Maus  <dmaus@ictsoc.de>
 
@@ -206,6 +407,7 @@
 	(elmo-imap4-parse-response): Remove superfluous third argument to
 	split-string.
 
+<<<<<<< HEAD
 2011-05-29  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-maildir.el (elmo-folder-append-buffer): Return number of
@@ -223,6 +425,20 @@
 	* elmo-cache.el (elmo-folder-append-buffer): Dto.
 	* elmo-archive.el (elmo-folder-append-buffer)
 	(elmo-archive-folder-append-buffer): Dto.
+=======
+2011-05-24  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-uniq-sorted-list, elmo-uniq-list): Fix typo
+	in the docstring.
+
+2011-05-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-net.el (elmo-network-stream-type-from-symbol): New function.
+	(elmo-open-tls-stream): New function.
+
+	* elmo-vars.el (elmo-network-stream-type-alist): Check whether
+	gnutls.el or tls.el is available.
+>>>>>>> master
 
 2011-01-12  David Maus  <dmaus@ictsoc.de>
 
@@ -414,6 +630,11 @@
 	* elmo-imap4.el (elmo-imap4-folder-list-flagged)
 	(elmo-imap4-search-internal-primitive): Pass filter type to imap
 	search when performing search for flagged messages.
+
+2010-03-02  Katsuyoshi Ohara <ohara@air.s.kanazawa-u.ac.jp>
+
+	* elmo-archive.el (elmo-intern-soft): New function.
+	(elmo-folder-initialize): Use it.
 
 2010-01-22  Vitaly Mayatskih  <v.mayatskih@gmail.com>
 

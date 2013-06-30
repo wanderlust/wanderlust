@@ -461,7 +461,7 @@ that `read' can handle, whenever this is possible."
   (interactive "sURL: ")
   (if (string-match "^news:\\(.*\\)$" url)
       (wl-summary-goto-folder-subr
-       (concat "-" (elmo-match-string 1 url)) nil nil nil t)
+       (concat "-" (match-string 1 url)) nil nil nil t)
     (message "Not a news: url.")))
 
 (defun wl-url-nntp (url &rest args)
@@ -470,18 +470,14 @@ that `read' can handle, whenever this is possible."
     (if (string-match
 	 "^nntp://\\([^:/]*\\):?\\([0-9]*\\)/\\([^/]*\\)/\\([0-9]*\\).*$" url)
 	(progn
-	  (if (eq (length (setq fld-name
-				(elmo-match-string 3 url))) 0)
+	  (if (zerop (length (setq fld-name (match-string 3 url))))
 	      (setq fld-name nil))
-	  (if (eq (length (setq port
-				(elmo-match-string 2 url))) 0)
+	  (if (zerop (length (setq port (match-string 2 url))))
 	      (setq port (number-to-string elmo-nntp-default-port)))
-	  (if (eq (length (setq server
-				(elmo-match-string 1 url))) 0)
+	  (if (zerop (length (setq server (match-string 1 url))))
 	      (setq server elmo-nntp-default-server))
 	  (setq folder (concat "-" fld-name "@" server ":" port))
-	  (if (eq (length (setq msg
-				(elmo-match-string 4 url))) 0)
+	  (if (zerop (length (setq msg (match-string 4 url))))
 	      (wl-summary-goto-folder-subr
 	       folder nil nil nil t)
 	    (wl-summary-goto-folder-subr
@@ -622,23 +618,37 @@ that `read' can handle, whenever this is possible."
      ;; might otherwise generate the same ID via another algorithm.
      wl-unique-id-suffix)))
 
+(defun wl-draft-make-message-id-from-address (string)
+  (when (and (stringp string)
+	     (string-match "\\`\\(.+\\)@\\([^@]+\\)\\'" string))
+    (let ((local (match-string 1 string))
+	  (domain (match-string 2 string)))
+      (format "<%s%%%s@%s>"
+	      (wl-unique-id)
+	      (if wl-message-id-hash-function
+		  (concat "%" (funcall wl-message-id-hash-function local))
+		local)
+	      domain))))
+
 (defvar wl-message-id-function 'wl-draft-make-message-id-string)
 (defun wl-draft-make-message-id-string ()
   "Return Message-ID field value."
-  (concat "<" (wl-unique-id)
-	  (let (from user domain)
-	    (if (and wl-message-id-use-wl-from
-		     (progn
-		       (setq from (wl-address-header-extract-address wl-from))
-		       (and (string-match "^\\(.*\\)@\\(.*\\)$" from)
-			    (setq user   (match-string 1 from))
-			    (setq domain (match-string 2 from)))))
-		(format "%%%s@%s>" user domain)
-	      (format "@%s>"
-		      (or wl-message-id-domain
-			  (if wl-local-domain
-			      (concat (system-name) "." wl-local-domain)
-			    (system-name))))))))
+  (or (and wl-message-id-use-message-from
+	   (catch :done
+	     (mapc (lambda (string)
+		     (when (setq string
+				 (wl-draft-make-message-id-from-address
+				  (std11-address-string
+				   (car (std11-parse-address-string string)))))
+		       (throw :done string)))
+		   (list (or (std11-fetch-field "from") "") wl-from))
+	     nil))
+      (format "<%s@%s>"
+	      (wl-unique-id)
+	      (or wl-message-id-domain
+		  (if wl-local-domain
+		      (concat (system-name) "." wl-local-domain)
+		    (system-name))))))
 
 ;;; Profile loading.
 (defvar wl-load-profile-function 'wl-local-load-profile)
@@ -1038,7 +1048,7 @@ is enclosed by at least one regexp grouping construct."
 	 (nconc (mapcar 'capitalize elmo-msgdb-extra-fields)
 		(mapcar 'capitalize wl-additional-search-condition-fields)
 		'("Flag" "Since" "Before"
-		  "From" "Subject" "To" "Cc" "Body" "ToCc"
+		  "From" "Subject" "To" "Cc" "Body" "Raw-Body" "ToCc"
 		  "Larger" "Smaller"))))
     (append '("Last" "First")
 	    denial-fields
@@ -1109,20 +1119,21 @@ is enclosed by at least one regexp grouping construct."
     (catch 'done
       (while t
 	(discard-input)
-	(case (let ((cursor-in-echo-area t))
-		(cdr (wl-read-event-char prompt)))
-	  ((?y ?Y)
-	   (throw 'done t))
-	  ((string-to-char " ")
-	   (if scroll-by-SPC
-	       (ignore-errors (scroll-up))
-	     (throw 'done t)))
-	  ((?v ?j ?J next)
-	   (ignore-errors (scroll-up)))
-	  ((?^ ?k ?K prior backspace)
-	   (ignore-errors (scroll-down)))
-	  (t
-	   (throw 'done nil)))))))
+	(let ((key (let ((cursor-in-echo-area t))
+		     (cdr (wl-read-event-char prompt)))))
+	  (cond
+	   ((memq key '(?y ?Y))
+	    (throw 'done t))
+	   ((eq key (string-to-char " "))
+	    (if scroll-by-SPC
+		(ignore-errors (scroll-up))
+	      (throw 'done t)))
+	   ((memq key '(?v ?j ?J next))
+	    (ignore-errors (scroll-up)))
+	   ((memq key '(?^ ?k ?K prior backspace))
+	    (ignore-errors (scroll-down)))
+	   ((memq key '(?n ?N))
+	    (throw 'done nil))))))))
 
 (defun wl-find-region (beg-regexp end-regexp)
   (if (or (re-search-forward end-regexp nil t)

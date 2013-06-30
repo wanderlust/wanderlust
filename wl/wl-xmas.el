@@ -123,7 +123,11 @@
     )
   "The Message buffer toolbar.")
 
-(defalias 'wl-draft-insert-signature 'insert-signature)	; for draft toolbar.
+;; for draft toolbar.
+(defalias 'wl-draft-insert-signature
+  (if (and (boundp 'mime-setup-use-signature) mime-setup-use-signature)
+      'insert-signature
+    'mime-edit-insert-signature))
 
 (defvar wl-draft-toolbar
   '([wl-draft-send-from-toolbar
@@ -525,7 +529,10 @@
 See info under Wanderlust for full documentation.
 
 Special commands:
-\\{wl-draft-mode-map}"))
+\\{wl-draft-mode-map}"
+    (add-hook 'after-change-functions
+	      'wl-draft-idle-highlight-set-timer nil t)
+    ))
 
 (defun wl-draft-key-setup ()
   (define-key wl-draft-mode-map "\C-c\C-y" 'wl-draft-yank-original)

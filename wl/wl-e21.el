@@ -153,7 +153,11 @@
     )
   "The Message buffer toolbar.")
 
-(defalias 'wl-draft-insert-signature 'insert-signature)	; for draft toolbar.
+;; for draft toolbar.
+(defalias 'wl-draft-insert-signature
+  (if (and (boundp 'mime-setup-use-signature) mime-setup-use-signature)
+      'insert-signature
+    'mime-edit-insert-signature))
 
 (defvar wl-draft-toolbar
   '([wl-draft-send-from-toolbar
@@ -635,7 +639,7 @@
     (define-key keymap [menu-bar mail yank]
       '("Cite Message" . wl-draft-yank-original))
     (define-key keymap [menu-bar mail signature]
-      '("Insert Signature" . insert-signature))
+      '("Insert Signature" . wl-draft-insert-signature))
     (define-key keymap [menu-bar headers fcc]
       '("Fcc" . wl-draft-fcc))))
 
@@ -647,7 +651,10 @@ See info under Wanderlust for full documentation.
 
 Special commands:
 \\{wl-draft-mode-map}"
-    (setq font-lock-defaults nil)))
+    (setq font-lock-defaults nil)
+    (add-hook 'after-change-functions
+	      'wl-draft-idle-highlight-set-timer nil t)
+    ))
 
 (defun wl-draft-key-setup ()
   (define-key wl-draft-mode-map "\C-c\C-y" 'wl-draft-yank-original)

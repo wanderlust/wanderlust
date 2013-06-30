@@ -247,16 +247,14 @@
 	  nil))))
 
 (defun wl-folder-buffer-search-entity (folder &optional searchname)
-  (let ((search (or searchname (wl-folder-get-petname folder)))
+  (let ((regexp (concat
+		 "^[ \t]*"
+		 (regexp-quote (or searchname (wl-folder-get-petname folder)))
+		 ":[-0-9\\*-]+/[0-9\\*-]+/[0-9\\*-]+"))
 	case-fold-search
 	result)
     (catch 'found
-      (while (setq result
-		   (re-search-forward
-		    (concat
-		     "^[ \t]*"
-		     (regexp-quote search) ":[-0-9\\*-]+/[0-9\\*-]+/[0-9\\*-]+")
-		    nil t))
+      (while (setq result (re-search-forward regexp nil t))
 	(when (string= (wl-folder-get-entity-from-buffer) folder)
 	  (throw 'found result))))))
 
@@ -1278,11 +1276,10 @@ If current line is group folder, all subfolders are marked."
     (let ((rest (elmo-match-buffer 1))
 	  petname)
       (when (string-match "\\(\"[^\"]*\"\\)[\t ]*$" rest)
-	(setq petname (elmo-delete-char ?\" (elmo-match-string 1 rest)))
+	(setq petname (elmo-delete-char ?\" (match-string 1 rest)))
 	(setq rest (substring rest 0 (match-beginning 0))))
       (when (string-match "^[\t ]*\\(.*[^\t ]+\\)[\t ]+$" rest)
-	(wl-folder-append-petname (elmo-match-string 1 rest)
-				  petname))
+	(wl-folder-append-petname (match-string 1 rest) petname))
       'ignore))
    ((looking-at "^[ \t]*}[ \t]*$") ; end of group
     nil)
@@ -1292,15 +1289,14 @@ If current line is group folder, all subfolders are marked."
 	  realname petname)
       (if (string-match "\\(\"[^\"]*\"\\)[\t ]*$" rest)
 	  (progn
-	    (setq petname (elmo-delete-char ?\" (elmo-match-string 1 rest)))
+	    (setq petname (elmo-delete-char ?\" (match-string 1 rest)))
 	    (setq rest (substring rest 0 (match-beginning 0)))
 	    (when (string-match "^[\t ]*\\(.*[^\t ]+\\)[\t ]+$" rest)
 	      (wl-folder-append-petname
-	       (setq realname (elmo-match-string 1 rest))
-	       petname)
+	       (setq realname (match-string 1 rest)) petname)
 	      realname))
 	(if (string-match "^[\t ]*\\(.+\\)$" rest)
-	    (elmo-match-string 1 rest)
+	    (match-string 1 rest)
 	  rest))))))
 
 (defun wl-folder-create-folder-entity ()
@@ -1502,6 +1498,8 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
   (setq wl-folder-buffer-cur-entity-id nil
 	wl-folder-buffer-cur-path nil
 	wl-folder-buffer-cur-point nil)
+  (when (boundp 'bidi-paragraph-direction)
+    (set 'bidi-paragraph-direction 'left-to-right))
   (wl-mode-line-buffer-identification)
   (easy-menu-add wl-folder-mode-menu)
   ;; This hook may contain the functions `wl-folder-init-icons' and
@@ -1868,7 +1866,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
     (wl-folder-set-entity-info folder newvalue)
     (setq wl-folder-info-alist-modified t)
     (when (and buf
-	       (not (eq unread-diff 0)))
+	       (not (zerop unread-diff)))
       (save-match-data
 	(with-current-buffer buf
 	  (save-excursion

@@ -946,6 +946,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (buffer-disable-undo (current-buffer))
   (setq selective-display t
 	selective-display-ellipses nil)
+  (when (boundp 'bidi-paragraph-direction)
+    (set 'bidi-paragraph-direction 'left-to-right))
   (wl-mode-line-buffer-identification '(wl-summary-buffer-mode-line))
   (easy-menu-add wl-summary-mode-menu)
   (setq wl-summary-buffer-window-scroll-functions
@@ -1442,7 +1444,7 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
 	 (cons (nth 1 components)
 	       (and (car components)
 		    (eword-decode-string
-		     (decode-mime-charset-string
+		     (elmo-mime-charset-decode-string
 		      (car components)
 		      mime-charset)))))
        candidates))))
@@ -2048,8 +2050,8 @@ This function is defined for `window-scroll-functions'"
 		    (elmo-database-close))
 		(run-hooks 'wl-summary-sync-updated-hook)
 		(setq mes
-		      (if (and (eq (length delete-list) 0)
-			       (eq num 0))
+		      (if (and (zerop (length delete-list))
+			       (zerop num))
 			  (format
 			   "No updates for \"%s\"" (elmo-folder-name-internal
 						    folder))
@@ -3077,10 +3079,8 @@ The mark is decided according to the FOLDER and STATUS."
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
 	  wl-summary-buffer-disp-msg)
-      (funcall
-       (intern (format "wl-summary-mark-as-%s-internal" flag))
-       inverse
-       wl-summary-buffer-target-mark-list)
+      (wl-summary-set-persistent-mark-internal
+       inverse flag wl-summary-buffer-target-mark-list)
       (wl-summary-delete-all-target-marks))))
 
 (defun wl-summary-target-mark-mark-as-important (&optional remove)
@@ -3437,10 +3437,10 @@ Return non-nil if the mark is updated"
 
 (defun wl-summary-view-old-p ()
   "Return non-nil when summary view cache has old format."
-  (save-excursion
-    (goto-char (point-min))
-    (and wl-summary-buffer-number-list
-	 (not (re-search-forward "\r-?[0-9]+" (point-at-eol) t)))))
+  (when wl-summary-buffer-number-list
+    (save-excursion
+      (goto-char (point-min))
+      (not (re-search-forward "\r-?[0-9]+" (point-at-eol) t)))))
 
 (defun wl-summary-line-format-changed-p ()
   "Return non-nil when summary line format is changed."

@@ -1,0 +1,9 @@
+[submodule "apel"]
+	path = apel
+	url = git://github.com/wanderlust/apel.git
+[submodule "flim"]
+	path = flim
+	url = git://github.com/wanderlust/flim.git
+[submodule "semi"]
+	path = semi
+	url = git://github.com/wanderlust/semi.git

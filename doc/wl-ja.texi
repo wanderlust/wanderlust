@@ -5137,10 +5137,10 @@ Wanderlust $B$N%*%U%i%$%s%b!<%I(B/$B%*%s%i%$%s%b!<%I$r%H%0%k$7$^$9!#(B
 $B=i4|@_Dj$O(B @code{t}$B!#(B
 Non-nil $B$J$i!"Aw?.;~$K(B @samp{Message-ID:} $B%U%#!<%k%I$r<+F0E*$KA^F~$7$^$9!#(B
 
-@item wl-message-id-use-wl-from
-@vindex wl-message-id-use-wl-from
-$B=i4|@_Dj$O(B @code{nil}$B!#(BNon-nil $B$J$i!"(B@samp{Message-ID:} $B$N%I%a%$%s%Q!<%H$K(B 
-@code{wl-from} $B$rMxMQ$7$^$9!#(B
+@item wl-message-id-use-message-from
+@vindex wl-message-id-use-message-from
+$B=i4|@_Dj$O(B @code{t}$B!#(BNon-nil $B$J$i!"(B@samp{Message-ID:} $B$N%I%a%$%s%Q!<%H$K(B 
+@samp{From:} $B%U%#!<%k%I!"$b$7$/$O(B @code{wl-from} $B$NCM$rMxMQ$7$^$9!#(B
 
 @item wl-local-domain
 @vindex wl-local-domain
@@ -5166,8 +5166,8 @@ Non-nil $B$J$i!"Aw?.;~$K(B @samp{Message-ID:} $B%U%#!<%k%I$r<+F0E*$KA^F~$7$^$
 
 @item wl-unique-id-suffix
 @vindex wl-unique-id-suffix
-$B=i4|@_Dj$O(B @samp{.wl}$B!#(BMessage-ID $B$r@8@.$9$k:]$K(B @samp{@@} $B$ND>A0$K8=$l$k(B
-$BJ8;zNs$r;XDj$7$^$9!#(B
+$B=i4|@_Dj$O(B @samp{.wl}$B!#(BMessage-ID $B$r@8@.$9$k:]$K(B @samp{@@} $B$^$?$O(B 
+@samp{%} $B$ND>A0$K8=$l$kJ8;zNs$r;XDj$7$^$9!#(B
 
 @item wl-draft-config-alist
 @vindex wl-draft-config-alist
@@ -8985,7 +8985,7 @@ Wanderlust List in English @t{<wl-en@@ml.gentei.org>}
 @t{<wl-en@@ml.gentei.org>} $B$KEj9F$5$l$?%a%C%;!<%8(B
 
 @example
-@uref{http://lists.airs.net/wl-en/archive/}
+@uref{http://dir.gmane.org/gmane.mail.wanderlust.general}
 @uref{news://gmane.mail.wanderlust.general@@news.gmane.org}
 @end example
 

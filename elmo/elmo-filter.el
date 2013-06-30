@@ -50,7 +50,7 @@
     (if (string-match "^ */\\(.*\\)$" (cdr pair))
 	(elmo-filter-folder-set-target-internal
 	 folder
-	 (elmo-get-folder (elmo-match-string 1 (cdr pair))))
+	 (elmo-get-folder (match-string 1 (cdr pair))))
       (error "Folder syntax error `%s'" (elmo-folder-name-internal folder)))
     (elmo-filter-folder-set-require-msgdb-internal
      folder

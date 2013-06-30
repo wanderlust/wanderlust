@@ -15,7 +15,7 @@
    ))
 
 (defconst ELMO-MODULES '(
-   utf7 pldap acap slp mmimap
+   pldap acap slp mmimap
    elmo-signal elmo-date elmo-util elmo-version
    elmo-vars elmo elmo-msgdb
    elmo-net elmo-imap4 elmo-pop3 elmo-nntp
@@ -32,6 +32,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Emacsen
 ;; (< 20 emacs-major-version) && !(featurep 'mule)
+(unless (coding-system-p 'utf-7-imap)
+  (add-to-list 'ELMO-MODULES 'utf7))
+
 (cond
  ((featurep 'xemacs)
   (setq WL-MODULES (append WL-MODULES (list 'wl-dnd 'wl-xmas)))

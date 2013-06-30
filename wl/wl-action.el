@@ -873,7 +873,7 @@ Return number if put mark succeed"
 		(incf count))
 	    (message "Marking...%d message(s)." count)))
 	(forward-line))
-      (if (eq count 0)
+      (if (zerop count)
 	  (message "No message was marked.")
 	(message "Marked %d message(s)." count)))))
 

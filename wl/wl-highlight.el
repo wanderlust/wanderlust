@@ -30,6 +30,7 @@
 ;;; Code:
 ;;
 
+(require 'invisible)
 (if (and (featurep 'xemacs)
 	 (featurep 'dragdrop))
     (require 'wl-dnd))
@@ -1201,109 +1202,100 @@ interpreted as cited text.)"
   (if (< end start)
       (let ((s start)) (setq start end end s)))
   (let ((too-big (and wl-highlight-max-message-size
-		      (> (- end start)
-			 wl-highlight-max-message-size)))
+		      (> (- end start) wl-highlight-max-message-size)))
 	(real-end end)
-	current  beg
-	e p hend)
+	current beg
+	e p hend
+	wl-draft-idle-highlight)
     (unless too-big
       (save-excursion
 	(save-restriction
 	  (widen)
 	  ;; take off signature
-	  (if (and hack-sig (not too-big))
-	      (setq end (funcall wl-highlight-signature-search-function
-				 (- end wl-max-signature-size) end)))
-	  (if (and hack-sig
-		   (not (eq end real-end)))
+	  (when hack-sig
+	    (setq end (funcall wl-highlight-signature-search-function
+			       (- end wl-max-signature-size) end))
+	    (when (not (eq end real-end))
 	      (put-text-property end (point-max)
-				 'face 'wl-highlight-message-signature))
+				 'face 'wl-highlight-message-signature)))
 	  (narrow-to-region start end)
-	  (save-restriction
-	    ;; narrow down to just the headers...
-	    (goto-char start)
-	    ;; If this search fails then the narrowing performed above
-	    ;; is sufficient
-	    (if (re-search-forward (format
-				    "^\\(%s\\)?$"
-				    (regexp-quote mail-header-separator))
-				   nil t)
-		(narrow-to-region (point-min) (match-beginning 0)))
-	    ;; highlight only when header is not too-big.
-	    (when (or (null wl-highlight-max-header-size)
-		      (< (point) wl-highlight-max-header-size))
-	      (goto-char start)
-	      (while (and (not body-only)
-			  (not (eobp)))
-		(if (looking-at "^[^ \t\n:]+[ \t]*:[ \t]*")
-		    (progn
-		      (put-text-property (match-beginning 0) (match-end 0)
-					 'face 'wl-highlight-message-headers)
-		      (setq p (match-end 0))
-		      (setq hend (save-excursion (std11-field-end end)))
-		      (or (catch 'match
-			    (let ((regexp-alist wl-highlight-message-header-alist))
-			      (while regexp-alist
-				(when (save-match-data
-					(looking-at (caar regexp-alist)))
-				  (put-text-property p hend 'face
-						     (cdar regexp-alist))
-				  (throw 'match t))
-				(setq regexp-alist (cdr regexp-alist)))
-			      (throw 'match nil)))
-			  (put-text-property
-			   p hend 'face 'wl-highlight-message-header-contents))
-		      (goto-char hend))
-		  ;; ignore non-header field name lines
-		  (forward-line 1)))))
+	  ;; narrow down to just the headers...
+	  (goto-char start)
+	  (unless body-only
+	    (save-restriction
+	      ;; If this search fails then the narrowing performed above
+	      ;; is sufficient
+	      (if (re-search-forward
+		   (format "^\\(%s\\)?$" (regexp-quote mail-header-separator))
+		   nil t)
+		  (narrow-to-region (point-min) (match-beginning 0)))
+	      ;; highlight only when header is not too-big.
+	      (if  (and wl-highlight-max-header-size
+			(>= (point) wl-highlight-max-header-size))
+		  (goto-char (point-max))
+		(goto-char start)
+		(while (not (eobp))
+		  (if (looking-at "^[^ \t\n:]+[ \t]*:[ \t]*")
+		      (progn
+			(setq p (match-end 0))
+			(put-text-property (match-beginning 0) p
+					   'face 'wl-highlight-message-headers)
+			(setq hend (save-excursion (std11-field-end end)))
+			(put-text-property
+			 p hend 'face
+			 (catch 'match
+			   (let ((regexp-alist wl-highlight-message-header-alist))
+			     (while regexp-alist
+			       (when (looking-at (caar regexp-alist))
+				 (throw 'match (cdar regexp-alist)))
+			       (setq regexp-alist (cdr regexp-alist))))
+			   'wl-highlight-message-header-contents))
+			(goto-char hend))
+		    ;; ignore non-header field name lines
+		    (forward-line 1))))))
+	  (when (looking-at
+		 (format "^%s$" (regexp-quote mail-header-separator)))
+	    (put-text-property (match-beginning 0) (match-end 0)
+			       'face 'wl-highlight-header-separator-face)
+	    (forward-line 1))
 	  (let (prefix prefix-face-alist pair end)
-	    (while (not (eobp))
+	    (while (null (progn
+			     ;; Skip invisible region.
+			   (when (invisible-p (point))
+			     (goto-char (next-visible-point (point))))
+			   (eobp)))
 	      (cond
-	       ((looking-at (concat "^" (regexp-quote mail-header-separator) "$"))
-		(put-text-property (match-beginning 0) (match-end 0)
-				   'face 'wl-highlight-header-separator-face)
-		(goto-char (match-end 0)))
-	       ((null wl-highlight-force-citation-header-regexp)
-		nil)
-	       ((looking-at wl-highlight-force-citation-header-regexp)
+	       ((and wl-highlight-force-citation-header-regexp
+		     (looking-at wl-highlight-force-citation-header-regexp))
 		(setq current 'wl-highlight-message-citation-header)
 		(setq end (match-end 0)))
-	       ((null wl-highlight-citation-prefix-regexp)
-		nil)
-	       ((looking-at wl-highlight-citation-prefix-regexp)
+	       ((and wl-highlight-citation-prefix-regexp
+		     (looking-at wl-highlight-citation-prefix-regexp))
 		(setq prefix (buffer-substring (point)
 					       (match-end 0)))
 		(setq pair (assoc prefix prefix-face-alist))
 		(unless pair
+		  (setq pair (cons prefix
+				   (nth (% (length prefix-face-alist)
+					   (length
+					    wl-highlight-citation-face-list))
+					wl-highlight-citation-face-list)))
 		  (setq prefix-face-alist
-			(append prefix-face-alist
-				(list
-				 (setq pair
-				       (cons
-					prefix
-					(nth
-					 (% (length prefix-face-alist)
-					    (length
-					     wl-highlight-citation-face-list))
-					 wl-highlight-citation-face-list)))))))
+			(cons pair prefix-face-alist)))
 		(unless wl-highlight-highlight-citation-too
 		  (goto-char (match-end 0)))
 		(setq current (cdr pair)))
-	       ((null wl-highlight-citation-header-regexp)
-		nil)
-	       ((looking-at wl-highlight-citation-header-regexp)
+	       ((and wl-highlight-citation-header-regexp
+		     (looking-at wl-highlight-citation-header-regexp))
 		(setq current 'wl-highlight-message-citation-header)
 		(setq end (match-end 0)))
 	       (t (setq current nil)))
-	      (cond (current
-		     (setq p (point))
-		     (forward-line 1) ; this is to put the \n in the face too
-		     (let ()
-;;;		       ((inhibit-read-only t))
-		       (put-text-property p (or end (point))
-					  'face current)
-		       (setq end nil))
-		     (forward-char -1)))
+	      (when current
+		(setq p (point))
+		(forward-line 1) ; this is to put the \n in the face too
+		(put-text-property p (or end (point)) 'face current)
+		(setq end nil)
+		(forward-char -1))
 	      (forward-line 1)))
 	  (run-hooks 'wl-highlight-message-hook))))))
 
