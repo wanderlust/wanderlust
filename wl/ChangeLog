@@ -1,3 +1,16 @@
+2013-12-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-draft.el: Use NOERROR option of require funciton instead of
+	condition-case.
+
+	* wl-folder.el: Likewise.
+
+	* wl-mime.el: Likewise.
+
+	* wl-summary.el: Likewise.
+
+	* wl-util.el: Likewise.
+
 2013-12-23  Herbert J. Skuhra  <hskuhra@eumx.net>
 
 	* wl.el (TOP, wl-init): Fix the case that wl-news.el does not

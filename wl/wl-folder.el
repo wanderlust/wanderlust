@@ -35,9 +35,7 @@
 (require 'elmo-util)
 (require 'elmo)
 (require 'wl-vars)
-(condition-case ()
-    (require 'easymenu) ; needed here.
-  (error))
+(require 'easymenu nil t) ; needed here.
 
 (eval-when-compile
   (require 'cl)

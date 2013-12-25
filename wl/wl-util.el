@@ -40,7 +40,7 @@
 (eval-when-compile (require 'cl))
 (eval-when-compile (require 'static))
 
-(condition-case nil (require 'pp) (error nil))
+(require 'pp nil t)
 
 (eval-when-compile
   (require 'time-stamp)

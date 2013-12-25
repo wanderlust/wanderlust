@@ -489,22 +489,18 @@ It calls following-method selected from variable
 
 (eval-when-compile
   ;; split eval-when-compile form for avoid error on `make compile-strict'
-  (condition-case nil
-      (require 'epa)
-    (error
-     (wl-define-dummy-functions epg-make-context
-				epg-decrypt-string
-				epg-verify-string
-				epg-context-set-progress-callback
-				epg-context-result-for
-				epg-verify-result-to-string
-				epa-display-info)))
-  (condition-case nil
-      (require 'pgg)
-    (error
-     (wl-define-dummy-functions pgg-decrypt-region
-				pgg-verify-region
-				pgg-display-output-buffer))))
+  (unless (require 'epa nil t)
+    (wl-define-dummy-functions epg-make-context
+			       epg-decrypt-string
+			       epg-verify-string
+			       epg-context-set-progress-callback
+			       epg-context-result-for
+			       epg-verify-result-to-string
+			       epa-display-info))
+  (unless (require 'pgg nil t)
+    (wl-define-dummy-functions pgg-decrypt-region
+			       pgg-verify-region
+			       pgg-display-output-buffer)))
 
 (defun wl-epg-progress-callback (context what char current total reporter)
   (let ((label (elmo-progress-counter-label reporter)))

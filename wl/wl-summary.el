@@ -43,14 +43,14 @@
 (require 'wl-highlight)
 (require 'wl-refile)
 (require 'wl-util)
-(condition-case nil (require 'timezone) (error nil))
-(condition-case nil (require 'easymenu) (error nil))
+(require 'timezone nil t)
+(require 'easymenu nil t)
 (require 'elmo-date)
-(condition-case nil (require 'ps-print) (error nil))
+(require 'ps-print nil t)
 
 (eval-when-compile
   (require 'cl)
-  (condition-case () (require 'timer) (error nil))
+  (require 'timer nil t)
   (defalias-maybe 'ps-print-buffer-with-faces 'ignore)
   (defalias-maybe 'elmo-database-msgid-put 'ignore)
   (defalias-maybe 'elmo-database-close 'ignore)
