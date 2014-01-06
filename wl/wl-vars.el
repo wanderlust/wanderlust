@@ -2041,8 +2041,9 @@ Attributes specified in the `wl-draft-preview-attributes-list' are displayed."
 
 (defcustom wl-draft-preview-attributes-list '((mail recipients
 						    envelope-from
-						    smtp-posting-server
-						    smtp-posting-port)
+						    send-mail-method
+						    smtp-settings
+						    pop-before-smtp-settings)
 					      (news newsgroups
 						    nntp-posting-server
 						    nntp-posting-port))
@@ -2050,8 +2051,11 @@ Attributes specified in the `wl-draft-preview-attributes-list' are displayed."
 Candidates are following:
 `recipients'
 `envelope-from'
+`send-mail-method'
 `smtp-posting-server'
 `smtp-posting-port'
+`smtp-settings'
+`pop-before-smtp-settings'
 `newsgroups'
 `nntp-posting-server'
 `nntp-posting-port'
@@ -2063,9 +2067,10 @@ Also variables which begin with `wl-' can be specified
 		 (repeat symbol))
   :group 'wl-draft)
 
-(defcustom wl-draft-preview-attributes-buffer-lines 5
-  "*Buffer height for the draft attribute preview."
-  :type 'integer
+(defcustom wl-draft-preview-attributes-buffer-lines t
+  "*Buffer height for the draft attribute preview.  Non-integer means decide height from number of attributes automatically.  Negative-integer means add absolute value to automated height."
+  :type '(choice integer
+		 (const :tag "Automated" t))
   :group 'wl-draft)
 
 (defcustom wl-draft-preview-attributes-buffer-name "*Preview Attributes*"

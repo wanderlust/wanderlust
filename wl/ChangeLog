@@ -1,3 +1,27 @@
+2014-01-06  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-mime.el (wl-draft-preview-message): Hide attribute whose
+	value is nil.
+	(wl-draft-attribute-show-smtp-settings-functions)
+	(wl-draft-attribute-smtp-settings)
+	(wl-draft-attribute-show-pop-before-smtp-settings-functions)
+	(wl-draft-attribute-pop-before-smtp-settings)
+	(wl-draft-attribute-hide-send-mail-method-functions)
+	(wl-draft-attribute-send-mail-method-table)
+	(wl-draft-attribute-send-mail-method): New functions and variables.
+
+	* wl-vars.el (wl-draft-preview-attributes-list): Use them by
+	default.
+
+2014-01-04  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-mime.el (wl-draft-show-attributes-buffer): when
+	wl-draft-preview-attributes-buffer-lines is negative or
+	non-integer, calculate buffer's height from number of attributes.
+
+	* wl-vars.el (wl-draft-preview-attributes-buffer-lines):
+	Likewise. Now default is t.
+
 2013-12-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-draft.el: Use NOERROR option of require funciton instead of

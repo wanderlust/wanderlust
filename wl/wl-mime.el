@@ -185,13 +185,22 @@ It calls following-method selected from variable
 
 (defun wl-draft-show-attributes-buffer (attribute-values)
   (let* ((cur-win (selected-window))
-	 (size (min
-		(- (window-height cur-win)
-		   window-min-height 1)
-		(- (window-height cur-win)
-		   (max
-		    window-min-height
-		    (1+ wl-draft-preview-attributes-buffer-lines))))))
+	 (size
+	  (min
+	   (- (window-height cur-win)
+	      window-min-height 1)
+	   (- (window-height cur-win)
+	      (max
+	       window-min-height
+	       (cond
+		((null (integerp wl-draft-preview-attributes-buffer-lines))
+		 (1+ (length attribute-values)))
+		((<= 0 wl-draft-preview-attributes-buffer-lines)
+		 (1+ wl-draft-preview-attributes-buffer-lines))
+		(t
+		 ;; wl-draft-preview-attributes-buffer-lines is negative.
+		 (- (length attribute-values)
+		    wl-draft-preview-attributes-buffer-lines))))))))
     (split-window cur-win (if (> size 0) size window-min-height))
     (select-window (next-window))
     (let ((pop-up-windows nil))
@@ -251,6 +260,68 @@ It calls following-method selected from variable
 (defun wl-draft-attribute-smtp-posting-port ()
   (or wl-smtp-posting-port
       (progn (require 'smtp) smtp-service)))
+
+(defvar wl-draft-attribute-show-smtp-settings-functions
+  '(wl-draft-send-mail-with-smtp
+    wl-draft-send-mail-with-pop-before-smtp))
+
+(defun wl-draft-attribute-smtp-settings ()
+  (when (memq wl-draft-send-mail-function
+	      wl-draft-attribute-show-smtp-settings-functions)
+    (concat
+     (and wl-smtp-authenticate-type
+	  (format "%s/%s@"
+		  wl-smtp-posting-user
+		  (if (listp wl-smtp-authenticate-type)
+		      (concat "["
+			      (mapconcat
+			       'identity wl-smtp-authenticate-type ", ")
+			      "]")
+		    wl-smtp-authenticate-type)))
+     (format "%s:%s, %s"
+	     (wl-draft-attribute-smtp-posting-server)
+	     (wl-draft-attribute-smtp-posting-port)
+	     (or wl-smtp-connection-type "direct")))))
+
+(defvar wl-draft-attribute-show-pop-before-smtp-settings-functions
+  '(wl-draft-send-mail-with-pop-before-smtp))
+
+(defun wl-draft-attribute-pop-before-smtp-settings ()
+  (when (memq wl-draft-send-mail-function
+	      wl-draft-attribute-show-pop-before-smtp-settings-functions)
+    (format "%s/%s@%s:%s, %s"
+	    (or wl-pop-before-smtp-user
+		elmo-pop3-default-user)
+	    (or wl-pop-before-smtp-authenticate-type
+		elmo-pop3-default-authenticate-type)
+	    (or wl-pop-before-smtp-server
+		elmo-pop3-default-server)
+	    (or wl-pop-before-smtp-port
+		elmo-pop3-default-port)
+	    (or (elmo-get-network-stream-type
+		 (or wl-pop-before-smtp-stream-type
+		     elmo-pop3-default-stream-type))
+		"direct"))))
+
+(defvar wl-draft-attribute-hide-send-mail-method-functions
+  '(wl-draft-send-mail-with-smtp
+    wl-draft-send-mail-with-pop-before-smtp))
+
+(defvar wl-draft-attribute-send-mail-method-table
+'((wl-draft-send-mail-with-qmail . "qmail")
+  (wl-draft-send-mail-with-sendmail . "sendmail")))
+
+(defun wl-draft-attribute-send-mail-method ()
+  (cond
+   ((memq wl-draft-send-mail-function
+	  wl-draft-attribute-hide-send-mail-method-functions)
+    nil)
+   ((assq wl-draft-send-mail-function
+	  wl-draft-attribute-send-mail-method-table)
+    (cdr (assq wl-draft-send-mail-function
+	       wl-draft-attribute-send-mail-method-table)))
+   (t
+    wl-draft-send-mail-function)))
 
 (defun wl-draft-attribute-newsgroups ()
   (std11-field-body "Newsgroups"))
@@ -340,12 +411,14 @@ It calls following-method selected from variable
 	       (run-hooks 'wl-draft-send-hook)
 	       (condition-case err
 		   (setq attribute-values
-			 (mapcar
-			  (lambda (attr)
-			    (cons attr (wl-draft-attribute-value attr)))
-			  (if wl-draft-preview-attributes
-			      (wl-draft-preview-attributes-list)
-			    '(recipients))))
+			 (delq nil
+			       (mapcar
+				(lambda (attr)
+				  (let ((value (wl-draft-attribute-value attr)))
+				    (and value (cons attr value))))
+				(if wl-draft-preview-attributes
+				    (wl-draft-preview-attributes-list)
+				  '(recipients)))))
 		 (error
 		  (kill-buffer (current-buffer))
 		  (signal (car err) (cdr err))))))
