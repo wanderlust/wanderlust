@@ -409,8 +409,8 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 
 (defvar elmo-have-link-count
   (not
-   ;; OS/2: EMX always returns the link count "1" :-(
-   (or (memq system-type '(OS/2 emx))
+   ;; OS/2 (EMX) and Cygwin always return the link count "1" :-(
+   (or (memq system-type '(OS/2 emx cygwin))
        ;; Meadow seems to have pseudo link count.(suggestion by S.YAMAGUCHI)
        (and (eq system-type 'windows-nt) (not (featurep 'meadow)))))
   "Your file system has link count, or not.")
