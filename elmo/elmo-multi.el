@@ -55,7 +55,7 @@
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-multi-folder)
 					    name)
-  (while (> (length (car (setq name (elmo-parse-token name ",")))) 0)
+  (while (> (length (car (setq name (elmo-parse-token name "," nil t)))) 0)
     (elmo-multi-folder-set-children-internal
      folder
      (nconc (elmo-multi-folder-children-internal

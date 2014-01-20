@@ -1516,8 +1516,9 @@ ELT must be a string.  Upper-case and lower-case letters are treated as equal."
 	((functionp requirement)
 	 (funcall requirement token))))
 
-(defun elmo-parse-token (string &optional seps requirement)
-  "Parse atom from STRING using SEPS as a string of separator char list."
+(defun elmo-parse-token (string &optional seps requirement asis)
+  "Parse atom from STRING using SEPS as a string of separator char list.
+When optional argument ASIS is non-nil, keep '\\' and '\"' from result."
   (let ((len (length string))
 	(seps (and seps (string-to-char-list seps)))
 	(i 0)
@@ -1529,10 +1530,14 @@ ELT must be a string.  Upper-case and lower-case letters are treated as equal."
 	(setq c (aref string i))
 	(cond
 	 ((and in (eq c ?\\))
+	  (when asis
+	    (setq content (cons c content)))
 	  (setq i (1+ i)
 		content (cons (aref string i) content)
 		i (1+ i)))
 	 ((eq c ?\")
+	  (when asis
+	    (setq content (cons c content)))
 	  (setq in (not in)
 		i (1+ i)))
 	 (in (setq content (cons c content)
