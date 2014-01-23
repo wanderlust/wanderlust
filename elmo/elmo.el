@@ -45,7 +45,7 @@
 	(featurep 'berkeley-db))
     (require 'elmo-database))
 
-(defcustom elmo-message-fetch-threshold 30000
+(defcustom elmo-message-fetch-threshold nil
   "Fetch threshold."
   :type '(choice (integer :tag "Threshold (bytes)")
 		 (const :tag "No limitation" nil))
