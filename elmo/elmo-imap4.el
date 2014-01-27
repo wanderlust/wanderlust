@@ -1446,7 +1446,11 @@ Return nil if no complete line has arrived."
       (+ (progn
 	   (skip-chars-forward " ")
 	   (list 'continue-req (buffer-substring (point) (point-max)))))
-      (* (case (prog1 (setq token (read (current-buffer)))
+      (* (case (prog1
+		 (progn
+		   (upcase-word 1)
+		   (backward-word)
+		   (setq token (read (current-buffer))))
 		 (elmo-imap4-forward))
 	   (OK         (elmo-imap4-parse-resp-text-code))
 	   (NO         (elmo-imap4-parse-resp-text-code))
