@@ -725,32 +725,39 @@ With ARG, ask coding system and encode the region with it before verifying."
 (defun wl-mime-preview-application/pgp (parent-entity entity situation)
   (goto-char (point-max))
   (let ((p (point))
-	representation-type child-entity buffer)
+	representation-type child-entity buffer failed)
     (goto-char p)
     (save-restriction
       (narrow-to-region p p)
       (setq buffer (generate-new-buffer
 		    (concat wl-original-message-buffer-name "PGP*")))
-      (add-hook 'kill-buffer-hook 'wl-mime-pgp-kill-decrypted-buffers nil t)
-      (make-local-variable 'wl-mime-pgp-decrypted-buffers)
-      (add-to-list 'wl-mime-pgp-decrypted-buffers buffer)
       (with-current-buffer buffer
 	(mime-insert-entity entity)
 	(when (progn
 		(goto-char (point-min))
 		(re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t))
-	  (wl-mime-pgp-decrypt-region (point-min) (point-max) 'no-decode)
+	  (condition-case error
+	      (wl-mime-pgp-decrypt-region (point-min) (point-max) 'no-decode)
+	    (error (setq failed error)))
 	  (setq representation-type 'elmo-buffer))
-	(setq child-entity (mime-parse-message
-			    (mm-expand-class-name representation-type)
-			    nil
-			    parent-entity
-			    (mime-entity-node-id-internal parent-entity))
-	      buffer-read-only t))
-      (mime-display-entity
-       child-entity nil `((header . visible)
-			  (body . visible)
-			  (entity-button . invisible))))))
+	(unless failed
+	  (setq child-entity (mime-parse-message
+			      (mm-expand-class-name representation-type)
+			      nil
+			      parent-entity
+			      (mime-entity-node-id-internal parent-entity))
+		buffer-read-only t)))
+      (if failed
+	  (progn
+	    (insert (format "%s" (cdr failed)))
+	    (kill-buffer buffer))
+	(add-hook 'kill-buffer-hook 'wl-mime-pgp-kill-decrypted-buffers nil t)
+	(make-local-variable 'wl-mime-pgp-decrypted-buffers)
+	(add-to-list 'wl-mime-pgp-decrypted-buffers buffer)
+	(mime-display-entity
+	 child-entity nil `((header . visible)
+			    (body . visible)
+			    (entity-button . invisible)))))))
 
 (defun wl-mime-preview-application/pgp-encrypted (entity situation)
   (let* ((entity-node-id (mime-entity-node-id entity))
