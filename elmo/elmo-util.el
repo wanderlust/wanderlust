@@ -449,10 +449,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 
 (defsubst elmo-delete-cr-region (start end)
   "Delete CR from region."
-  (save-excursion
-    (goto-char start)
-    (while (search-forward "\r\n" end t)
-      (replace-match "\n")) ))
+  (decode-coding-region start (or end (point-max)) 'raw-text-dos))
 
 (defsubst elmo-delete-cr-buffer ()
   "Delete CR from buffer."
@@ -460,21 +457,13 @@ Return value is a cons cell of (STRUCTURE . REST)"
 
 (defsubst elmo-delete-cr-get-content-type ()
   (save-excursion
-    (goto-char (point-min))
-    (while (search-forward "\r\n" nil t)
-      (replace-match "\n"))
+    (elmo-delete-cr-buffer)
     (goto-char (point-min))
     (or (std11-field-body "content-type")
 	t)))
 
 (defun elmo-delete-cr (string)
-  (save-match-data
-    (elmo-set-work-buf
-      (insert string)
-      (goto-char (point-min))
-      (while (search-forward "\r\n" nil t)
-	(replace-match "\n"))
-      (buffer-string))))
+  (decode-coding-string string 'raw-text-dos))
 
 (defun elmo-last (list)
   (and list (nth (1- (length list)) list)))
