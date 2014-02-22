@@ -891,7 +891,8 @@ This function is imported from Emacs 20.7."
 
 (defun wl-biff-check-folder (folder)
   (if (eq (elmo-folder-type-internal folder) 'pop3)
-      (unless (elmo-pop3-get-session folder 'any-exists)
+      (if (elmo-pop3-get-session folder 'any-exists)
+	  (make-list 3 0)
 	(wl-folder-check-one-entity (elmo-folder-name-internal folder)
 				    'biff))
     (wl-folder-check-one-entity (elmo-folder-name-internal folder)
