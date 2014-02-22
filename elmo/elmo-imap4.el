@@ -1181,7 +1181,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 	     (elmo-imap4-send-command-wait session "namespace")
 	     'namespace)))))
 
-(defun elmo-imap4-setup-send-buffer (&optional string)
+(defun elmo-imap4-setup-send-buffer (&optional string file)
   (let ((send-buf (get-buffer-create " *elmo-imap4-setup-send-buffer*"))
 	(source-buf (unless string (current-buffer))))
     (save-excursion
@@ -1189,36 +1189,24 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 	(set-buffer send-buf)
 	(erase-buffer)
 	(set-buffer-multibyte nil)
-	(if string
-	    (insert string)
+	(cond
+	 (string
+	  (insert string))
+	 (file
+	  (as-binary-input-file
+	   (insert-file-contents file)))
+	 (t
 	  (with-current-buffer source-buf
-	    (copy-to-buffer send-buf (point-min) (point-max))))
+	    (copy-to-buffer send-buf (point-min) (point-max)))))
 	(goto-char (point-min))
 	(if (eq (re-search-forward "^$" nil t)
 		(point-max))
 	    (insert "\n"))
-	(goto-char (point-min))
-	(while (search-forward "\n" nil t)
-	  (replace-match "\r\n"))))
+	(decode-coding-region (point-min) (point-max) 'raw-text-dos)))
     send-buf))
 
 (defun elmo-imap4-setup-send-buffer-from-file (file)
-  (let ((tmp-buf (get-buffer-create
-		  " *elmo-imap4-setup-send-buffer-from-file*")))
-    (save-excursion
-      (save-match-data
-	(set-buffer tmp-buf)
-	(erase-buffer)
-	(as-binary-input-file
-	 (insert-file-contents file))
-	(goto-char (point-min))
-	(if (eq (re-search-forward "^$" nil t)
-		(point-max))
-	    (insert "\n"))
-	(goto-char (point-min))
-	(while (search-forward "\n" nil t)
-	  (replace-match "\r\n"))))
-    tmp-buf))
+  (elmo-imap4-setup-send-buffer nil file))
 
 (luna-define-method elmo-delete-message-safe ((folder elmo-imap4-folder)
 					      number msgid)
