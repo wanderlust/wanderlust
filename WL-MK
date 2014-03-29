@@ -253,6 +253,8 @@
 
 
 (defun compile-wl-package ()
+  ;; to avoid to read situation-examples-file at compile time.
+  (setq mime-situation-examples-file nil)
   (config-wl-package)
   (make-wl-news)
   (mapc
@@ -329,6 +331,8 @@
 
 ;; from SEMI-MK
 (defun compile-wl-package-xmas ()
+  ;; to avoid to read situation-examples-file at compile time.
+  (setq mime-situation-examples-file nil)
   (config-wl-package-xmas)
   (make-wl-news)
   (setq autoload-package-name "wl")
