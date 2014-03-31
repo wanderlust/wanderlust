@@ -449,7 +449,8 @@ Return value is a cons cell of (STRUCTURE . REST)"
 
 (defsubst elmo-delete-cr-region (start end)
   "Delete CR from region."
-  (decode-coding-region start (or end (point-max)) 'raw-text-dos))
+  (let (inhibit-eol-conversion)
+    (decode-coding-region start (or end (point-max)) 'raw-text-dos)))
 
 (defsubst elmo-delete-cr-buffer ()
   "Delete CR from buffer."
@@ -463,7 +464,8 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	t)))
 
 (defun elmo-delete-cr (string)
-  (decode-coding-string string 'raw-text-dos))
+  (let (inhibit-eol-conversion)
+    (decode-coding-string string 'raw-text-dos)))
 
 (defun elmo-last (list)
   (and list (nth (1- (length list)) list)))
