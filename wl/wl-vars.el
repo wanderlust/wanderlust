@@ -170,12 +170,19 @@ Supersede `wl-user-mail-address-list'."
   :type 'directory
   :group 'wl)
 
-(defcustom wl-icon-directory (if (fboundp 'locate-data-directory)
-				 (locate-data-directory "wl")
-			       (let ((icons (expand-file-name "wl/icons/"
+(defcustom wl-icon-directory (or
+                              (and (fboundp 'locate-data-directory)
+                                   (locate-data-directory "wl"))
+                              (let ((icons (expand-file-name "wl/icons/"
 							      data-directory)))
-				 (if (file-directory-p icons)
-				     icons)))
+                                (if (file-directory-p icons)
+                                    icons))
+                              (if load-file-name
+                                  (let ((icons (expand-file-name
+                                                "icons"
+                                                (file-name-directory load-file-name))))
+                                    (if (file-directory-p icons)
+                                        icons))))
   "*Directory to load the icon files from, or nil if none."
   :type '(choice (const :tag "none" nil)
 		 string)
