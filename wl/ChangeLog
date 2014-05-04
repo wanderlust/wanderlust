@@ -219,6 +219,11 @@
 	* wl-highlight.el (wl-highlight-message): Check eobp after
 	skipping invisible region.
 
+2012-03-18  David Maus  <dmaus@ictsoc.de>
+
+	* wl-mime.el: Remove hard dependency on mime-pgp.
+	* wl.el (wl-init): Remove hard dependency on wl-news.
+
 2012-04-14  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-draft.el (wl-draft-config-exec): Suppress real-time
@@ -253,6 +258,7 @@
 
 	* wl-draft.el (wl-smtp-extension-bind): Use
 	elmo-get-network-stream-type.
+>>>>>>> master
 
 2012-02-18  David Maus  <dmaus@ictsoc.de>
 
@@ -306,6 +312,12 @@
 	scroll-by-SPC/BS.
 
 	* wl-util.el (wl-y-or-n-p-with-scroll): Do not use case().
+
+2011-06-05  David Maus  <dmaus@ictsoc.de>
+
+	* wl-draft.el (wl-draft-save): Obtain number of appended draft
+	message by `elmo-folder-append-buffer', handle case UID of
+	appended message could not be found.
 
 2011-06-03  Erik Hetzner  <egh@e6h.org>
 

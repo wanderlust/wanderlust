@@ -301,16 +301,13 @@ If optional IN-MSGDB is non-nil, retrieve flag information from msgdb.")
 
 (luna-define-method elmo-folder-list-flagged ((folder elmo-folder) flag
 					      &optional in-msgdb)
-  (let ((msgs (if in-msgdb
-		  t
-		(elmo-folder-list-flagged-internal folder flag))))
-    (unless (listp msgs)
-      (setq msgs (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) flag)))
-    (if in-msgdb
-	msgs
-      (elmo-uniq-list
-       (nconc (elmo-folder-list-global-flag-messages folder flag) msgs)
-       #'delq))))
+  (if in-msgdb
+      (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) flag)
+    (let ((msgs (elmo-folder-list-flagged-internal folder flag)))
+      (unless (listp msgs)
+	(setq msgs (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) flag)))
+      (elmo-folder-merge-flagged
+       folder (elmo-folder-list-global-flag-messages folder flag) msgs))))
 
 (luna-define-generic elmo-folder-list-flagged-internal (folder flag)
   "Return a list of message in the FOLDER with FLAG.
@@ -319,6 +316,14 @@ Return t if the message list is not available.")
 (luna-define-method elmo-folder-list-flagged-internal ((folder elmo-folder)
 						       flag)
   t)
+
+(luna-define-generic elmo-folder-merge-flagged (folder local remote)
+  "Merge messages of flag folder and messages of remote folder.
+LOCAL is the list of messages from flag folder.
+REMOTE is the list of messages from remote folder.")
+
+(luna-define-method elmo-folder-merge-flagged ((folder elmo-folder) local remote)
+  (elmo-uniq-list (nconc local remote) #'delq))
 
 (luna-define-generic elmo-folder-list-subfolders (folder &optional one-level)
   "Returns a list of subfolders contained in FOLDER.
@@ -424,7 +429,7 @@ If optional IS-LOCAL is non-nil, update only local (not server) status.")
 FOLDER is the ELMO folder structure.")
 
 (luna-define-generic elmo-folder-append-buffer (folder &optional flags
-						       number)
+						       number return-number)
   "Append current buffer as a new message.
 FOLDER is the destination folder (ELMO folder structure).
 FLAGS is the flag list for the appended message (list of symbols).
@@ -432,6 +437,9 @@ If FLAGS contain `read', the message is appended as `not-unread'.
 If it is nil, the appended message will be treated as `new'.
 If optional argument NUMBER is specified, the new message number is set
 \(if possible\).
+If optional argument RETURN-NUMBER is non-nil, return the number
+of the appended message if possible. If the number could not be
+obtained return t.
 Return nil on failure.")
 
 (luna-define-generic elmo-folder-pack-numbers (folder)

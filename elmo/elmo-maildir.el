@@ -428,9 +428,11 @@ file name for maildir directories."
       (rename-file src dst)))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-maildir-folder)
-					       &optional flags number)
+					       &optional flags number
+					       return-number)
   (let ((basedir (elmo-maildir-folder-directory-internal folder))
 	(src-buf (current-buffer))
+	(number (elmo-folder-next-message-number folder))
 	dst-buf filename)
     (condition-case nil
 	(with-temp-buffer
@@ -447,7 +449,7 @@ file name for maildir directories."
 	    basedir))
 	  (elmo-folder-preserve-flags
 	   folder (elmo-msgdb-get-message-id-from-buffer) flags)
-	  t)
+	  (if return-number number t))
       ;; If an error occured, return nil.
       (error))))
 

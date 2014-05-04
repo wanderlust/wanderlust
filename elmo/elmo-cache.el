@@ -108,7 +108,8 @@
     new-msgdb))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-cache-folder)
-					       &optional flags number)
+					       &optional flags number
+					       return-number)
   ;; dir-name is changed according to msgid.
   (unless (elmo-cache-folder-dir-name-internal folder)
     (let ((msgid (elmo-msgdb-get-message-id-from-buffer))
