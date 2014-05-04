@@ -356,10 +356,11 @@ Don't cache if nil.")
 	  (response-continue t)
 	  response match-end)
       (while response-continue
-	(goto-char elmo-nntp-read-point)
-	(while (not (search-forward "\r\n" nil t))
-	  (accept-process-output process)
-	  (goto-char elmo-nntp-read-point))
+	(setq match-end elmo-nntp-read-point)
+	(while (null (progn (goto-char match-end)
+			    (search-forward "\r\n" nil t)))
+	  (setq match-end (1- (point)))
+	  (accept-process-output process))
 	(setq match-end (point))
 	(setq response-string
 	      (buffer-substring elmo-nntp-read-point (- match-end 2)))
@@ -398,29 +399,30 @@ Don't cache if nil.")
 
 (defun elmo-nntp-read-contents (session)
   (with-current-buffer (elmo-network-session-buffer session)
-    (goto-char elmo-nntp-read-point)
-    (while (not (re-search-forward "^\\.\r\n" nil t))
-      (accept-process-output (elmo-network-session-process-internal
-			      session))
-      (goto-char elmo-nntp-read-point))
-    (elmo-delete-cr
-     (buffer-substring elmo-nntp-read-point
-		       (- (point) 3)))))
+    (let ((point elmo-nntp-read-point))
+      (while (null (progn (goto-char (1- point))
+			  (search-forward "\n.\r\n" nil t)))
+  	(setq point (max (- (point-max) 2) elmo-nntp-read-point))
+	(accept-process-output (elmo-network-session-process-internal
+				session)))
+      (elmo-delete-cr (buffer-substring
+		       elmo-nntp-read-point (- (point) 3))))))
 
 (defun elmo-nntp-read-body (session outbuf)
   (with-current-buffer (elmo-network-session-buffer session)
-    (goto-char elmo-nntp-read-point)
-    (while (not (re-search-forward "^\\.\r\n" nil t))
-      (accept-process-output (elmo-network-session-process-internal session))
-      (goto-char elmo-nntp-read-point))
-    (let ((start elmo-nntp-read-point)
-	  (end  (point)))
-      (with-current-buffer outbuf
-	(erase-buffer)
-	(insert-buffer-substring (elmo-network-session-buffer session)
-				 start (- end 3))
-	(elmo-delete-cr-buffer)))
-    t))
+    (let ((point elmo-nntp-read-point))
+      (while (null (progn (goto-char (1- point))
+			  (search-forward "\n.\r\n" nil t)))
+	(setq point (max (- (point-max) 2) elmo-nntp-read-point))
+	(accept-process-output
+	 (elmo-network-session-process-internal session)))
+      (setq point (point))
+      (set-buffer outbuf)
+      (erase-buffer)
+      (insert-buffer-substring
+       (elmo-network-session-buffer session) elmo-nntp-read-point (- point 3))
+      (elmo-delete-cr-buffer)))
+  t)
 
 (defun elmo-nntp-select-group (session group &optional force)
   (let (response)
