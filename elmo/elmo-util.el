@@ -58,9 +58,9 @@
   ;; Check whether FLIM's MIME-charset string encoder/decoders work on
   ;; unibyte buffer.
   (static-if (fboundp 'mime-charset-encode-string)
-      `(with-current-buffer (get-buffer-create elmo-multibyte-buffer-name)
-	 ,@body))
-  `(progn ,@body))
+      `(progn ,@body)
+    `(with-current-buffer (get-buffer-create elmo-multibyte-buffer-name)
+       ,@body)))
 
 (put 'elmo-with-enable-multibyte 'lisp-indent-function 0)
 (def-edebug-spec elmo-with-enable-multibyte t)

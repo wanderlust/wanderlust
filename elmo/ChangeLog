@@ -1,3 +1,9 @@
+2014-05-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-with-enable-multibyte): Fix the last change.
+	Check result was interpreted reversely.  Reported by Juliusz
+	Chroboczek.
+
 2014-04-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-pop3.el (elmo-pop3-read-contents): Do not bind
