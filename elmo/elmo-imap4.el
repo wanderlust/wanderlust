@@ -1454,6 +1454,14 @@ Return nil if no complete line has arrived."
 	((looking-at "\\* BYE ")
 	 (setq elmo-imap4-status 'closed))))
 
+(defun elmo-imap4-case-read (buffer)
+  (save-current-buffer
+    (progn
+      (set-buffer buffer)
+      (upcase-word 1)
+      (backward-word)
+      (read buffer))))
+
 (defun elmo-imap4-parse-response ()
   "Parse a IMAP command response."
   (elmo-imap4-debug "[%s] -> %s" (format-time-string "%T") (buffer-substring (point) (point-max)))
@@ -1462,7 +1470,7 @@ Return nil if no complete line has arrived."
       (+ (progn
 	   (skip-chars-forward " ")
 	   (list 'continue-req (buffer-substring (point) (point-max)))))
-      (* (case (prog1 (setq token (read (current-buffer)))
+      (* (case (prog1 (setq token (elmo-imap4-case-read (current-buffer)))
 		 (elmo-imap4-forward))
 	   (OK         (elmo-imap4-parse-resp-text-code))
 	   (NO         (elmo-imap4-parse-resp-text-code))
@@ -1489,7 +1497,7 @@ Return nil if no complete line has arrived."
 						     (point) (point-max)))
 				      ")"))))
 	   (ACL (elmo-imap4-parse-acl))
-	   (t       (case (prog1 (read (current-buffer))
+	   (t       (case (prog1 (elmo-imap4-case-read (current-buffer))
 			    (elmo-imap4-forward))
 		      (EXISTS  (list 'exists token))
 		      (RECENT  (list 'recent token))
@@ -1498,7 +1506,7 @@ Return nil if no complete line has arrived."
 		      (t       (list 'garbage (buffer-string)))))))
       (t (if (not (string-match elmo-imap4-seq-prefix (symbol-name token)))
 	     (list 'garbage (buffer-string))
-	   (case (prog1 (read (current-buffer))
+	   (case (prog1 (elmo-imap4-case-read (current-buffer))
 		   (elmo-imap4-forward))
 	     (OK  (progn
 		    (setq elmo-imap4-parsing nil)
@@ -1623,7 +1631,7 @@ Return nil if no complete line has arrived."
     (let (element list)
       (while (not (eq (char-after (point)) ?\)))
 	(elmo-imap4-forward)
-	(let ((token (read (current-buffer))))
+	(let ((token (elmo-imap4-case-read (current-buffer))))
 	  (elmo-imap4-forward)
 	  (setq element
 		(cond ((eq token 'UID)
@@ -1673,7 +1681,7 @@ Return nil if no complete line has arrived."
       (while (not (eq (char-after (point)) ?\)))
 	(setq status
 	      (cons
-	       (let ((token (read (current-buffer))))
+	       (let ((token (elmo-imap4-case-read (current-buffer))))
 		 (case (intern (upcase (symbol-name token)))
 		   (MESSAGES
 		    (list 'messages (read (current-buffer))))
