@@ -540,8 +540,9 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 	      (wl-draft-add-references)
 	    (if wl-draft-add-in-reply-to
 		(wl-draft-add-in-reply-to)))
-      (wl-highlight-headers 'for-draft)) ; highlight when added References:
-    (when wl-highlight-body-too
+      (unless wl-draft-jit-highlight
+        (wl-highlight-headers 'for-draft))) ; highlight when added References:
+    (when (and wl-highlight-body-too (not wl-draft-jit-highlight))
       (wl-highlight-body-region beg (point-max)))))
 
 (defun wl-message-news-p ()
@@ -1808,7 +1809,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (when wl-draft-write-file-function
       (add-hook 'local-write-file-hooks wl-draft-write-file-function))
     (wl-draft-overload-functions)
-    (wl-highlight-headers 'for-draft)
+    (unless wl-draft-jit-highlight
+      (wl-highlight-headers 'for-draft))
     (wl-draft-save)
     (clear-visited-file-modtime)))
 
@@ -2012,7 +2014,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (setq wl-draft-parent-folder ""))
     (when wl-draft-write-file-function
       (add-hook 'local-write-file-hooks wl-draft-write-file-function))
-    (wl-highlight-headers 'for-draft)
+    (unless wl-draft-jit-highlight
+      (wl-highlight-headers 'for-draft))
     (goto-char body-top)
     (run-hooks 'wl-draft-reedit-hook)
     (goto-char (point-max))
@@ -2200,7 +2203,8 @@ Automatically applied in draft sending time."
 	  (setq wl-draft-config-exec-flag nil))
       (run-hooks 'wl-draft-config-exec-hook)
       (put-text-property (point-min)(point-max) 'face nil)
-      (wl-highlight-message (point-min)(point-max) t)
+      (unless wl-draft-jit-highlight
+        (wl-highlight-message (point-min)(point-max) t))
       (setq wl-draft-config-variables
 	    (elmo-uniq-list local-variables)))))
 
@@ -2617,7 +2621,8 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 	      t)
 	    (setq headers (cdr headers))))
 	;; highlight headers (from wl-draft in wl-draft.el)
-	(wl-highlight-headers 'for-draft)
+        (unless wl-draft-jit-highlight
+          (wl-highlight-headers 'for-draft))
 	;; insert body
 	(let ((body (wl-string-match-assoc "\\`body\\'"
 					   wl-user-agent-headers-and-body-alist
@@ -2648,8 +2653,20 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
       (rename-file old-name new-name 'ok-if-already-exists))))
 
 ;; Real-time draft highlighting
+(defcustom wl-draft-jit-highlight (featurep 'jit-lock)
+  "When non-nil, enable real-time highlighting using jit-lock-mode.
+This only works in Emacs 21 and later."
+  :type 'boolean
+  :group 'wl-draft)
+
+(defcustom wl-draft-jit-highlight-function 'wl-draft-default-jit-highlight
+  "The function used for real-time highlighting using jit-lock-mode."
+  :type 'function
+  :group 'wl-draft)
+
 (defcustom wl-draft-idle-highlight t
-  "When non-nil, enable real-time highlighting."
+  "When non-nil, enable real-time highlighting using a timer.
+This is ignored when wl-draft-jit-highlight is set."
   :type 'boolean
   :group 'wl-draft)
 
@@ -2659,9 +2676,38 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
   :group 'wl-draft)
 
 (defcustom wl-draft-idle-highlight-function 'wl-draft-default-idle-highlight
-  "A function for real-time highlighting."
+  "The function for real-time highlighting using a timer."
   :type 'function
   :group 'wl-draft)
+
+(defun wl-draft-default-jit-highlight (start end)
+  (goto-char start)
+  (let ((in-header (wl-draft-point-in-header-p)))
+    ;; check for multi-line header, extend region if necessary
+    (when in-header
+      (while (and (> start (point-min)) (looking-at "^[ \t]"))
+        (forward-line -1))
+      (setq start (point)))
+    ;; check for multi-line attribution
+    (when (not in-header)
+      (forward-line -1)
+      (when (looking-at wl-highlight-citation-prefix-regexp)
+        (setq start (point))))
+    ;; check for signature
+    (let ((hack-sig
+           (cond
+             ((= end (point-max)) t)
+             ((< end (- (point-max) wl-max-signature-size)) nil)
+             (t
+              (let ((sig (funcall wl-highlight-signature-search-function
+                                  (- (point-max) wl-max-signature-size))))
+                (cond
+                  ((>= start sig) (setq start sig end (point-max)) t)
+                  ((>= end sig) (setq end (point-max)) t)
+                  (t nil)))))))
+      (put-text-property start end 'face nil)
+      (wl-highlight-message start end hack-sig
+                            (not (wl-draft-point-in-header-p))))))
 
 (defvar wl-draft-idle-highlight-timer nil)
 
@@ -2682,13 +2728,13 @@ If STATE is positive, enable real-time highlighting, and disable it otherwise.  
   (save-match-data (wl-draft-highlight)))
 
 (defun wl-draft-idle-highlight-timer (buffer)
-  (when (and wl-draft-idle-highlight
+  (when (and (not wl-draft-jit-highlight) wl-draft-idle-highlight
 	     (buffer-live-p buffer))
     (with-current-buffer buffer
       (funcall wl-draft-idle-highlight-function))))
 
 (defun wl-draft-idle-highlight-set-timer (beg end len)
-  (when wl-draft-idle-highlight
+  (when (and (not wl-draft-jit-highlight) wl-draft-idle-highlight)
     (require 'timer)
     (when (timerp wl-draft-idle-highlight-timer)
       (cancel-timer wl-draft-idle-highlight-timer))
