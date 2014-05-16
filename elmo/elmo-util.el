@@ -537,7 +537,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	)))
 
 (defun elmo-max-of-list (nlist)
-  (apply #'max nlist))
+  (apply #'max 0 nlist))
 
 (defun elmo-concat-path (path filename)
   (if (not (string= path ""))
