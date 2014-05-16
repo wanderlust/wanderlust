@@ -1,5 +1,10 @@
 2014-05-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo-util.el (elmo-max-of-list, elmo-cache-get-path-subr)
+	(elmo-warning): Explicit function's symbols.
+
+2014-05-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* elmo-util.el (elmo-max-of-list): Refactored.
 
 2014-05-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>

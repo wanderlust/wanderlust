@@ -537,7 +537,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	)))
 
 (defun elmo-max-of-list (nlist)
-  (apply 'max nlist))
+  (apply #'max nlist))
 
 (defun elmo-concat-path (path filename)
   (if (not (string= path ""))
@@ -1898,7 +1898,7 @@ If the cache is partial file-cache, TYPE is 'partial."
   (concat "<" (elmo-recover-string-from-filename filename) ">"))
 
 (defsubst elmo-cache-get-path-subr (msgid)
-  (format "%02X" (logand (apply '+ (string-to-list msgid)) 31)))
+  (format "%02X" (logand (apply #'+ (string-to-list msgid)) 31)))
 
 ;;;
 (defun elmo-file-cache-get-path (msgid &optional section)
@@ -2186,7 +2186,7 @@ Optional argument DAYS specifies the days to expire caches."
     "Display a warning. ARGS are passed to `format'."
     (with-current-buffer (get-buffer-create elmo-warning-buffer-name)
       (goto-char (point-max))
-      (funcall 'insert (apply 'format (append args '("\n"))))
+      (funcall #'insert (apply #'format (append args '("\n"))))
       (ignore-errors (recenter 1))
       (display-buffer elmo-warning-buffer-name))))
 
