@@ -1994,7 +1994,7 @@ This function is defined for `window-scroll-functions'"
 					    (not disable-killed)
 					    'in-msgdb)
 					   wl-summary-buffer-number-list))
-		(setq append-list (sort (car diff) #'<))
+		(setq append-list (car diff))
 		(setq delete-list (cadr diff))
 
 		(when delete-list

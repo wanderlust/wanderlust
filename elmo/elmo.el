@@ -1657,7 +1657,6 @@ If update process is interrupted, return nil.")
 	   (elmo-list-diff (elmo-folder-list-messages folder)
 			   (elmo-folder-list-messages folder nil 'in-msgdb)))
 	  (when diff-new
-	    (setq diff-new (sort diff-new #'<))
 	    (unless disable-killed
 	      (setq diff-new (elmo-living-messages diff-new killed-list)))
 	    (when (and mask (not ignore-msgdb))
@@ -1668,7 +1667,7 @@ If update process is interrupted, return nil.")
 	  (when (not (eq (length diff-new)
 			 (length new-list)))
 	    (let* ((diff (elmo-list-diff diff-new new-list))
-		   (disappeared (sort (car diff) #'<)))
+		   (disappeared (car diff)))
 	      (when disappeared
 		(elmo-folder-kill-messages-range folder
 						 (car disappeared)
