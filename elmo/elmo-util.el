@@ -2296,12 +2296,20 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
       (std11-narrow-to-header)
       (elmo-msgdb-get-message-id-from-header))))
 
+(defun elmo-msgdb-get-message-ids-from-header (field)
+  (mapcar 'std11-msg-id-string
+	  (std11-parse-msg-ids-string (std11-fetch-field field))))
+
 (defun elmo-msgdb-get-references-from-header ()
-  (if elmo-msgdb-prefer-in-reply-to-for-parent
-      (or (elmo-msgdb-get-last-message-id (std11-fetch-field "in-reply-to"))
-	  (elmo-msgdb-get-last-message-id (std11-fetch-field "references")))
-    (or (elmo-msgdb-get-last-message-id (std11-fetch-field "references"))
-	(elmo-msgdb-get-last-message-id (std11-fetch-field "in-reply-to")))))
+  (let ((irt (elmo-msgdb-get-message-ids-from-header "in-reply-to"))
+	(refs (elmo-msgdb-get-message-ids-from-header "references")))
+    (delq nil
+	  (elmo-uniq-list
+	   (nreverse
+	    (if elmo-msgdb-prefer-in-reply-to-for-parent
+		(nconc refs irt)
+	      (nconc irt refs)))))))
+
 
 (defsubst elmo-msgdb-insert-file-header (file)
   "Insert the header of the article.  Buffer contents after point are deleted."

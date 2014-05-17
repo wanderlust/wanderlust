@@ -487,10 +487,16 @@ If it is the symbol `all', update overview for all shimbun folders."
 
 (luna-define-method elmo-message-entity-parent ((folder elmo-shimbun-folder)
 						entity)
-  (let ((references (elmo-message-entity-field entity 'references)))
-    (and references
-	 (elmo-get-hash-val references
-			    (elmo-shimbun-folder-entity-hash folder)))))
+  (let ((references (elmo-message-entity-field entity 'references))
+	parent)
+    (while references
+      (setq references
+	    (if (setq parent (elmo-get-hash-val
+			      (car references)
+			      (elmo-shimbun-folder-entity-hash folder)))
+		nil
+	      (cdr references))))
+    parent))
 
 (require 'product)
 (product-provide (provide 'elmo-shimbun) (require 'elmo-version))

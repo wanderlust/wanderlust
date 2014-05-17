@@ -250,9 +250,14 @@
 
 (luna-define-method elmo-message-entity-parent ((folder
 						 elmo-multi-folder) entity)
-  (elmo-message-entity
-   folder
-   (elmo-message-entity-field entity 'references)))
+  (let ((references (elmo-message-entity-field entity 'references))
+	parent)
+    (while references
+      (setq references
+	    (if (setq parent (elmo-message-entity folder (car references)))
+		nil
+	      (cdr references))))
+    parent))
 
 (luna-define-method elmo-message-field ((folder elmo-multi-folder)
 					number field &optional type)

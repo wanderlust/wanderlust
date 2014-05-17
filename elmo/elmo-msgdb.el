@@ -92,8 +92,14 @@
 ENTITY is the message entity structure obtained by `elmo-message-entity'.
 FIELD is the symbol of the field name.
 If optional argument TYPE is specified, return converted value."
-  (elmo-msgdb-message-entity-field (elmo-message-entity-handler entity)
-				   entity field type))
+  (if (eq field 'references)
+      (let ((result (elmo-msgdb-message-entity-field
+		     (elmo-message-entity-handler entity) entity field type)))
+	(if (listp result)
+	    result
+	  (list result)))
+    (elmo-msgdb-message-entity-field (elmo-message-entity-handler entity)
+				     entity field type)))
 
 (defsubst elmo-message-entity-set-field (entity field value)
   "Set message entity field value.
@@ -168,7 +174,13 @@ VALUE is the field value."
 (defsubst elmo-msgdb-get-parent-entity (entity msgdb)
   (setq entity (elmo-message-entity-field entity 'references))
   ;; entity is parent-id.
-  (and entity (elmo-msgdb-message-entity msgdb entity)))
+  (let (parent)
+    (while entity
+      (setq entity
+	    (if (setq parent (elmo-msgdb-message-entity msgdb (car entity)))
+		nil
+	      (cdr entity))))
+    parent))
 
 ;;;
 (defsubst elmo-msgdb-append-element (list element)
@@ -426,7 +438,10 @@ header separator."
   (elmo-message-entity-set-number entity number))
 
 (defsubst elmo-msgdb-overview-entity-get-references (entity)
-  (elmo-message-entity-field entity 'references))
+  (let ((references (elmo-message-entity-field entity 'references)))
+    (if (listp references)
+	references
+      (list references))))
 
 (defsubst elmo-msgdb-overview-entity-set-references (entity references)
   (elmo-message-entity-set-field entity 'references references))

@@ -246,8 +246,15 @@ If RULE does not match ENTITY, returns nil."
 	  (wl-refile-get-account-part-from-address from))))))
 
 (defun wl-refile-guess-by-msgid (entity)
-  (cdr (assoc (elmo-message-entity-field entity 'references)
-	      wl-refile-msgid-alist)))
+  (let ((references (elmo-message-entity-field entity 'references))
+	result)
+    (while references
+      (setq references
+	    (if (setq result
+		      (cdr (assoc (car references) wl-refile-msgid-alist)))
+		nil
+	      (cdr references)))
+      result)))
 
 (defun wl-refile-guess-by-subject (entity)
   (cdr (assoc (funcall wl-summary-subject-filter-function

@@ -1,5 +1,32 @@
 2014-05-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	Keep multiple parent Message-IDs in msgdb.  Msgdb structure has
+	slightly changed.  Older wl can load new msgdb without any error,
+	but will fail to search parent message.  New wl can load old msgdb
+	but new feature is available only for newly added messages.
+
+	* elmo-msgdb.el (elmo-message-entity-field): Return list of
+	Message-IDs for reference field.
+	(elmo-msgdb-get-parent-entity): Assume references field's value is
+	list.
+	(elmo-msgdb-overview-entity-get-references): Return list of
+	Message-IDs.
+
+	* elmo-multi.el (elmo-message-entity-parent): Assume references
+	field's value is list.
+
+	* elmo-nntp.el (elmo-nntp-create-msgdb-from-overview-string): Make
+	references field as list of Message-IDs.
+
+	* elmo-shimbun.el (elmo-message-entity-parent): Assume references
+	field's value is list.
+
+	* elmo-util.el (elmo-msgdb-get-message-ids-from-header): New function.
+	(elmo-msgdb-get-references-from-header): Use it.  Return list of
+	Message-IDs.
+
+2014-05-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	Improve performance of uniquifying large list of sortable numbers.
 
 	* elmo-util.el (elmo-sort-uniq-number-list): New function.

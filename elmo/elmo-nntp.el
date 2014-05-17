@@ -727,8 +727,10 @@ Don't cache if nil.")
 		      (elmo-msgdb-message-entity-handler new-msgdb)
 		      :message-id (aref ov-entity 4)
 		      :number     num
-		      :references (elmo-msgdb-get-last-message-id
-				    (aref ov-entity 5))
+		      :references (nreverse
+				   (mapcar 'std11-msg-id-string
+					   (std11-parse-msg-ids-string
+					    (aref ov-entity 5))))
 		      :from       (elmo-with-enable-multibyte
 				    (eword-decode-string
 				     (elmo-delete-char  ?\"
