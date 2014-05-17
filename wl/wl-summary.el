@@ -2629,9 +2629,11 @@ If ARG, without confirm."
       nil)))
 
 (defun wl-summary-default-subject-filter (subject)
-  (setq subject (elmo-replace-in-string subject "[ \t]*\\(re\\|was\\)[:>]" ""))
-  (setq subject (elmo-replace-in-string subject "[ \t]" ""))
-  (elmo-replace-in-string subject "^\\[[^]]*\\]" ""))
+  (setq subject (elmo-replace-in-string
+		 subject "\\(\\(re\\|was\\)[:>]\\|[ \t]+\\)+" ""))
+  (if (string-match "^\\[[^]]*\\]" subject)
+      (substring subject (match-end 0))
+    subject))
 
 (defun wl-summary-subject-equal (subject1 subject2)
   (string= (funcall wl-summary-subject-filter-function subject1)

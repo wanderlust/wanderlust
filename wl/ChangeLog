@@ -1,5 +1,10 @@
 2014-05-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* wl-summary.el (wl-summary-default-subject-filter): Minor
+	refactoring.
+
+2014-05-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* wl-summary.el (wl-summary-delete-messages-on-buffer)
 	(wl-summary-sync-update): Use elmo-sort-uniq-number-list instead
 	of elmo-uniq-list.
