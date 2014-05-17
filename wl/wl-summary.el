@@ -2791,11 +2791,10 @@ If ARG, without confirm."
 		       (or (elmo-message-entity-field parent-entity
 						      'subject) ""))))
 	    (setq parent-number nil))
-	(setq retval
-	      (wl-thread-insert-message entity
-					number parent-number update linked))
-	(and retval
-	     (wl-append update-list (list retval)))
+	(when (setq retval (wl-thread-insert-message
+			    entity number parent-number update linked))
+	  (wl-append update-list (list retval)))
+	(elmo-progress-notify 'wl-summary-insert-line)
 	(setq entity nil) ; exit loop
 	(while (setq delayed-entity (assq number wl-summary-delayed-update))
 	  (setq wl-summary-delayed-update

@@ -1,5 +1,9 @@
 2014-05-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* wl-summary.el (wl-summary-insert-thread): Report progress.
+
+2014-05-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* wl-summary.el (wl-summary-sync-update): Do not sort
 	elmo-list-diff's result.
 
