@@ -1,3 +1,22 @@
+2014-05-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Improve performance of uniquifying large list of sortable numbers.
+
+	* elmo-util.el (elmo-sort-uniq-number-list): New function.
+	(elmo-union): Use it.
+
+	* elmo-filter.el (elmo-folder-list-messages): Likewise.
+
+	* elmo-imap4.el (elmo-folder-merge-flagged): Likewise.
+
+	* elmo-nntp.el (elmo-nntp-search-internal): Likewise.
+
+	* elmo.el (elmo-folder-list-messages, elmo-folder-merge-flagged):
+	Likewise.
+
+	* modb-standard.el (modb-standard-cleanup-stale-entities):
+	Likewise.
+
 2014-05-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-util.el (elmo-max-of-list): Fix the last change for the

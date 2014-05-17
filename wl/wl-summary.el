@@ -1870,7 +1870,7 @@ If ARG is non-nil, checking is omitted."
 		      (delq (car msgs) wl-summary-buffer-number-list)))))
 	(setq msgs (cdr msgs)))
       (when (eq wl-summary-buffer-view 'thread)
-	(let ((updates (elmo-uniq-list update-list)))
+	(let ((updates (elmo-sort-uniq-number-list update-list)))
 	  (elmo-with-progress-display (wl-thread-update-line (length updates))
 	      "Updating deleted thread"
 	    (wl-thread-update-line-msgs updates)
@@ -2040,7 +2040,7 @@ This function is defined for `window-scroll-functions'"
 		(when (and (eq wl-summary-buffer-view 'thread)
 			   update-top-list)
 		  (wl-thread-update-indent-string-thread
-		   (elmo-uniq-list update-top-list)))
+		   (elmo-sort-uniq-number-list update-top-list)))
 		(when (or delete-list append-list)
 		  (wl-summary-set-message-modified))
 		(when (and sync-all (eq wl-summary-buffer-view 'thread))

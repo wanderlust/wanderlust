@@ -1160,12 +1160,11 @@ Returns a list of cons cells like (NUMBER . VALUE)"
       (setq result (elmo-nntp-search-internal folder
 					      (nth 1 condition)
 					      from-msgs)
-	    result (elmo-uniq-list
+	    result (elmo-sort-uniq-number-list
 		    (nconc result
-			   (elmo-nntp-search-internal folder
-						      (nth 2 condition)
-						      from-msgs)))
-	    result (sort result '<))))))
+			   (elmo-nntp-search-internal
+			    folder (nth 2 condition) from-msgs))
+		    ))))))
 
 (defun elmo-nntp-use-server-search-p (condition)
   (if (vectorp condition)

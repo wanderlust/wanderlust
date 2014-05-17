@@ -251,10 +251,9 @@
   (message "Removing stale entities...")
   (let* ((entity-regex
 	  (concat "^" modb-standard-entity-filename "-\\([0-9]+\\)"))
-	 (entities (elmo-uniq-list
-		    (mapcar
-		     (lambda (x) (/ x modb-standard-divide-number))
-		     (modb-standard-number-list-internal modb))))
+	 (entities (elmo-sort-uniq-number-list
+		    (mapcar (lambda (x) (/ x modb-standard-divide-number))
+			    (modb-standard-number-list-internal modb))))
 	 (files (mapcar (lambda(x)
 			  (when (string-match entity-regex x)
 			    (string-to-number (match-string 1 x))))

@@ -2043,7 +2043,7 @@ Return nil if no complete line has arrived."
 
 (luna-define-method elmo-folder-merge-flagged ((folder elmo-imap4-folder) local remote)
   (case elmo-imap4-flags-sync-method
-    (union (elmo-uniq-list (nconc local remote) #'delq))
+    (union (elmo-sort-uniq-number-list (nconc local remote)))
     (server->client remote)
     (otherwise (error "Unknown method for syncing flags: %s" elmo-imap4-flags-sync-method))))
 

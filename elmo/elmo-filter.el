@@ -282,9 +282,8 @@
     (if visible-only
 	(elmo-living-messages list killed-list)
       (if (and in-msgdb killed-list list)
-	  (elmo-uniq-sorted-list
-	   (sort (nconc (elmo-number-set-to-number-list killed-list) list) #'<)
-	   #'eq)
+	  (elmo-sort-uniq-number-list
+	   (nconc (elmo-number-set-to-number-list killed-list) list))
 	list))))
 
 (luna-define-method elmo-folder-list-messages-internal
