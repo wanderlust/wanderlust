@@ -312,6 +312,11 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 
 ;;; Session commands.
 
+(defun elmo-imap4-command-tag (session)
+  "Return new command tag for SESSION."
+  (with-current-buffer (process-buffer (elmo-network-session-process-internal session))
+    (concat elmo-imap4-seq-prefix (number-to-string (incf elmo-imap4-seqno)))))
+
 ;;;(defun elmo-imap4-send-command-wait (session command)
 ;;;  "Send COMMAND to the SESSION and wait for response.
 ;;;Returns RESPONSE (parsed lisp object) of IMAP session."
@@ -336,11 +341,9 @@ Returns a TAG string which is assigned to the COMMAND."
 			   command
 			 (list command)))
 	 (process (elmo-network-session-process-internal session))
-	 cmdstr tag token kind)
+	 (tag (elmo-imap4-command-tag session))
+	 cmdstr token kind)
     (with-current-buffer (process-buffer process)
-      (setq tag (concat elmo-imap4-seq-prefix
-			(number-to-string
-			 (setq elmo-imap4-seqno (+ 1 elmo-imap4-seqno)))))
       (setq cmdstr (concat tag " "))
 ;;; No need.
 ;;;      (erase-buffer)

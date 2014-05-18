@@ -1,5 +1,10 @@
 2014-05-18  David Maus  <dmaus@ictsoc.de>
 
+	* elmo-imap4.el (elmo-imap4-command-tag): New function. Return IMAP command tag.
+	(elmo-imap4-send-command): Use new function to obtain command tag.
+
+2014-05-18  David Maus  <dmaus@ictsoc.de>
+
 	* elmo-imap4.el (elmo-imap4-send-command): Refactor sending of literals, add logging.
 
 2014-05-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
