@@ -366,19 +366,15 @@ Returns a TAG string which is assigned to the COMMAND."
 				    cmdstr
 				    (elmo-imap4-format-quoted (nth 1 token)))))
 		     ((eq kind 'literal)
-		      (if (elmo-imap4-session-capable-p session 'literal+)
-			  ;; rfc2088
-			  (progn
-			    (setq cmdstr (concat cmdstr
-						 (format "{%d+}" (nth 2 token))
-						 "\r\n"))
-			    (process-send-string process cmdstr)
-			    (setq cmdstr nil))
-			(setq cmdstr (concat cmdstr
-					     (format "{%d}" (nth 2 token))
-					     "\r\n"))
-			(process-send-string process cmdstr)
-			(setq cmdstr nil)
+		      (setq cmdstr
+			    (concat cmdstr
+				    (format
+				     (if (elmo-imap4-session-capable-p session 'literal+) "{%d+}" "{%d}")
+				     (nth 2 token))))
+		      (elmo-imap4-debug "[%s] <- %s" (format-time-string "%T") cmdstr)
+		      (process-send-string process (concat cmdstr "\r\n"))
+		      (setq cmdstr nil)
+		      (unless (elmo-imap4-session-capable-p session 'literal+)
 			(elmo-imap4-accept-continue-req session))
 		      (cond ((stringp (nth 1 token))
 			     (setq cmdstr (nth 1 token)))
