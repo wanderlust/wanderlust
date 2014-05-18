@@ -1,5 +1,14 @@
 2014-05-18  David Maus  <dmaus@ictsoc.de>
 
+	* elmo-imap4.el (with-elmo-imap4-session-process-buffer): New
+	macro. Execute BODY in a sessions' process buffer.
+	(elmo-imap4-command-tag): Use new macro.
+	(elmo-imap4-session-wait-response-maybe): New function. Wait for
+	server response when in parsing state.
+	(elmo-imap4-send-command): Use new function.
+
+2014-05-18  David Maus  <dmaus@ictsoc.de>
+
 	* elmo-imap4.el (elmo-imap4-command-tag): New function. Return IMAP command tag.
 	(elmo-imap4-send-command): Use new function to obtain command tag.
 

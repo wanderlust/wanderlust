@@ -312,9 +312,14 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 
 ;;; Session commands.
 
+(defmacro with-elmo-imap4-session-process-buffer (session &rest body)
+  `(with-current-buffer (process-buffer (elmo-network-session-process-internal ,session))
+     ,@body))
+(put 'with-elmo-imap4-session-process-buffer 'lisp-indent-function 1)
+
 (defun elmo-imap4-command-tag (session)
   "Return new command tag for SESSION."
-  (with-current-buffer (process-buffer (elmo-network-session-process-internal session))
+  (with-elmo-imap4-session-process-buffer session
     (concat elmo-imap4-seq-prefix (number-to-string (incf elmo-imap4-seqno)))))
 
 ;;;(defun elmo-imap4-send-command-wait (session command)
@@ -324,6 +329,15 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 ;;;			    (elmo-imap4-send-command
 ;;;			     session
 ;;;			     command)))
+
+(defun elmo-imap4-session-wait-response-maybe (session)
+  "Wait for a server response when in parsing state."
+  (with-elmo-imap4-session-process-buffer session
+    (when elmo-imap4-parsing
+      (message "Waiting for IMAP response...")
+      (accept-process-output (elmo-network-session-process-internal
+			      session))
+      (message "Waiting for IMAP response...done"))))
 
 (defun elmo-imap4-send-command-wait (session command)
   "Send COMMAND to the SESSION.
@@ -351,11 +365,7 @@ Returns a TAG string which is assigned to the COMMAND."
       (when (elmo-imap4-response-bye-p elmo-imap4-current-response)
 	(elmo-imap4-process-bye session))
       (setq elmo-imap4-current-response nil)
-      (when elmo-imap4-parsing
-	(message "Waiting for IMAP response...")
-	(accept-process-output (elmo-network-session-process-internal
-				session))
-	(message "Waiting for IMAP response...done"))
+      (elmo-imap4-session-wait-response-maybe session)
       (setq elmo-imap4-parsing t)
       (while (setq token (car command-args))
 	(cond ((stringp token)   ; formatted
@@ -2321,10 +2331,10 @@ If optional argument REMOVE is non-nil, remove FLAG."
 search command."
   (let ((charset (car search)))
     (append '("uid search")
-            (if (not (null charset))
-                (list " CHARSET " charset))
-            '(" ")
-            (cdr search))))
+	    (if (not (null charset))
+		(list " CHARSET " charset))
+	    '(" ")
+	    (cdr search))))
 
 (defun elmo-imap4-search-perform (session search-or-uids)
   "Perform an IMAP search.
@@ -2350,7 +2360,7 @@ Returns a list of UIDs."
     (cond
      ((string= "last" search-key)
       (let ((numbers (or from-msgs (elmo-folder-list-messages folder)))
-            (length (length from-msgs)))
+	    (length (length from-msgs)))
 	(nthcdr (max (- (length numbers)
 			(string-to-number (elmo-filter-value filter)))
 		     0)
@@ -2369,32 +2379,32 @@ Returns a list of UIDs."
       (list
        nil
        (if (eq (elmo-filter-type filter)
-               'unmatch)
-           "not " "")
+	       'unmatch)
+	   "not " "")
        (concat "sent" search-key)
        " "
        (elmo-date-get-description
-        (elmo-date-get-datevec
-         (elmo-filter-value filter)))))
+	(elmo-date-get-datevec
+	 (elmo-filter-value filter)))))
      (t
       (let ((charset (elmo-imap4-detect-search-charset
-                      (elmo-filter-value filter))))
-        (when (string= search-key "raw-body")
-          (setq search-key "body"))
-        (list
-         (elmo-imap4-astring
-          (symbol-name charset))
-         (if (eq (elmo-filter-type filter)
-                 'unmatch)
-             "not " "")
-         (format "%s%s "
-                 (if (member search-key imap-search-keys)
-                     ""
-                   "header ")
-                 search-key)
-         (elmo-imap4-astring
-          (encode-mime-charset-string
-           (elmo-filter-value filter) charset))))))))
+		      (elmo-filter-value filter))))
+	(when (string= search-key "raw-body")
+	  (setq search-key "body"))
+	(list
+	 (elmo-imap4-astring
+	  (symbol-name charset))
+	 (if (eq (elmo-filter-type filter)
+		 'unmatch)
+	     "not " "")
+	 (format "%s%s "
+		 (if (member search-key imap-search-keys)
+		     ""
+		   "header ")
+		 search-key)
+	 (elmo-imap4-astring
+	  (encode-mime-charset-string
+	   (elmo-filter-value filter) charset))))))))
 
 (defun elmo-imap4-search-mergeable-p (a b)
   "Return t if A and B are two mergeable IMAP searches.
@@ -2402,12 +2412,12 @@ Returns a list of UIDs."
 A is the result of a call to elmo-imap4-search-generate.
 B is the result of a call to elmo-imap4-search-generate."
   (let ((cara (car a))
-        (carb (car b)))
+	(carb (car b)))
     (and (not (numberp cara))
-         (not (numberp carb))
-         (or (null cara)
-             (null carb)
-             (equal cara carb)))))
+	 (not (numberp carb))
+	 (or (null cara)
+	     (null carb)
+	     (equal cara carb)))))
 
 (defun elmo-imap4-search-mergeable-charset (a b)
   "Return the charset of two searches for merging.
@@ -2423,9 +2433,9 @@ B is the result of a call to elmo-imap4-search-generate."
 A search is a list of the form (CHARSET IMAP-SEARCH-COMMAND ...)
 which is to be evaluated at a future time."
   (list nil
-        (concat "uid "
-                (cdr (car
-                      (elmo-imap4-make-number-set-list msgs))))))
+	(concat "uid "
+		(cdr (car
+		      (elmo-imap4-make-number-set-list msgs))))))
 
 (defun elmo-imap4-search-generate-and (session a b)
   "Return a search that returns the intersection of A and B in SESSION.
@@ -2439,9 +2449,9 @@ IMAP-SEARCH-COMMAND ...) which is to be evaluated at a future
 time."
   (if (elmo-imap4-search-mergeable-p a b)
       (append (list (elmo-imap4-search-mergeable-charset a b))
-              (cdr a) '(" ") (cdr b))
+	      (cdr a) '(" ") (cdr b))
     (elmo-list-filter (elmo-imap4-search-perform session a)
-                      (elmo-imap4-search-perform session b))))
+		      (elmo-imap4-search-perform session b))))
 
 (defun elmo-imap4-search-generate-or (session a b)
   "Return a search that returns the union of A and B in SESSION.
@@ -2455,9 +2465,9 @@ IMAP-SEARCH-COMMAND ...) which is to be evaluated at a future
 time."
   (if (elmo-imap4-search-mergeable-p a b)
       (append (list (elmo-imap4-search-mergeable-charset a b))
-              '("OR " "(") (cdr a) '(")" " " "(") (cdr b) '(")"))
+	      '("OR " "(") (cdr a) '(")" " " "(") (cdr b) '(")"))
     (elmo-uniq-list (append (elmo-imap4-search-perform session a)
-                            (elmo-imap4-search-perform session b)))))
+			    (elmo-imap4-search-perform session b)))))
 
 (defun elmo-imap4-search-generate (folder session condition from-msgs)
   "Return search in FOLDER for CONDITON and FROM-MSGS.
@@ -2473,23 +2483,23 @@ time."
   (if (vectorp condition)
       (elmo-imap4-search-generate-vector folder condition from-msgs)
     (let ((a (elmo-imap4-search-generate folder session (nth 1 condition)
-                                          from-msgs))
-          (b (elmo-imap4-search-generate folder session (nth 2 condition)
-                                          from-msgs)))
+					  from-msgs))
+	  (b (elmo-imap4-search-generate folder session (nth 2 condition)
+					  from-msgs)))
       (cond
        ((eq (car condition) 'and)
-        (elmo-imap4-search-generate-and session a b))
+	(elmo-imap4-search-generate-and session a b))
        ((eq (car condition) 'or)
-        (elmo-imap4-search-generate-or session a b))))))
+	(elmo-imap4-search-generate-or session a b))))))
 
 (defun elmo-imap4-search-internal (folder session condition from-msgs)
   (let* ((imap-search
-          (if from-msgs
-              (elmo-imap4-search-generate-and
-               session
-               (elmo-imap4-search-generate-uid from-msgs)
-               (elmo-imap4-search-generate folder session condition from-msgs))
-            (elmo-imap4-search-generate folder session condition from-msgs))))
+	  (if from-msgs
+	      (elmo-imap4-search-generate-and
+	       session
+	       (elmo-imap4-search-generate-uid from-msgs)
+	       (elmo-imap4-search-generate folder session condition from-msgs))
+	    (elmo-imap4-search-generate folder session condition from-msgs))))
     (when imap-search
       (elmo-imap4-search-perform session imap-search))))
 
@@ -2797,7 +2807,7 @@ time."
 	   folder (elmo-msgdb-get-message-id-from-buffer) flags)
 	  (when return-number
 	    (unless (setq result (cadadr (assq 'appenduid (cdar result))))
-	      (let ((candidates 
+	      (let ((candidates
 		     (elmo-imap4-response-value
 		      (elmo-imap4-send-command-wait
 		       session
@@ -2806,7 +2816,7 @@ time."
 			(car (split-string internaldate " ")))) 'search)))
 		(if (null candidates)
 		    (setq result t)
-		  (setq candidates 
+		  (setq candidates
 			(elmo-imap4-response-value-all
 			 (elmo-imap4-send-command-wait
 			  session
@@ -2816,7 +2826,7 @@ time."
 			   " (internaldate)")) 'fetch))
 		  (while candidates
 		    (if (string= (cadar candidates) internaldate)
-			(setq result (cons 
+			(setq result (cons
 				      (cadadr candidates)
 				      result)))
 		    (setq candidates (cddr candidates)))
