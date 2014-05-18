@@ -352,58 +352,55 @@ If response is not `OK', causes error with IMAP response text."
   "Send COMMAND to the SESSION.
 Returns a TAG string which is assigned to the COMMAND."
   (let* ((command-args (if (listp command)
-			   command
-			 (list command)))
-	 (process (elmo-network-session-process-internal session))
-	 (tag (elmo-imap4-command-tag session))
-	 cmdstr token kind)
+                           command
+                         (list command)))
+         (process (elmo-network-session-process-internal session))
+         (tag (elmo-imap4-command-tag session))
+         cmdlist token kind)
     (with-current-buffer (process-buffer process)
-      (setq cmdstr (concat tag " "))
+      (push tag cmdlist)
 ;;; No need.
 ;;;      (erase-buffer)
       (goto-char (point-min))
       (when (elmo-imap4-response-bye-p elmo-imap4-current-response)
-	(elmo-imap4-process-bye session))
+        (elmo-imap4-process-bye session))
       (setq elmo-imap4-current-response nil)
       (elmo-imap4-session-wait-response-maybe session)
       (setq elmo-imap4-parsing t)
       (while (setq token (car command-args))
-	(cond ((stringp token)   ; formatted
-	       (setq cmdstr (concat cmdstr token)))
-	      ((listp token)     ; unformatted
-	       (setq kind (car token))
-	       (cond ((eq kind 'atom)
-		      (setq cmdstr (concat cmdstr (nth 1 token))))
-		     ((eq kind 'quoted)
-		      (setq cmdstr (concat
-				    cmdstr
-				    (elmo-imap4-format-quoted (nth 1 token)))))
-		     ((eq kind 'literal)
-		      (setq cmdstr
-			    (concat cmdstr
-				    (format
-				     (if (elmo-imap4-session-capable-p session 'literal+) "{%d+}" "{%d}")
-				     (nth 2 token))))
-                      (elmo-imap4-session-process-send-string session cmdstr)
-		      (setq cmdstr nil)
-		      (unless (elmo-imap4-session-capable-p session 'literal+)
-			(elmo-imap4-accept-continue-req session))
-		      (cond ((stringp (nth 1 token))
-			     (setq cmdstr (nth 1 token)))
-			    ((bufferp (nth 1 token))
-			     (with-current-buffer (nth 1 token)
-			       (process-send-region
-				process
-				(point-min)
-				(+ (point-min) (nth 2 token)))))
-			    (t
-			     (error "Wrong argument for literal"))))
-		     (t
-		      (error "Unknown token kind %s" kind))))
-	      (t
-	       (error "Invalid argument")))
-	(setq command-args (cdr command-args)))
-      (elmo-imap4-session-process-send-string session cmdstr)
+        (cond ((stringp token)   ; formatted
+               (unless (string-empty-p token)
+                 (push token cmdlist)))
+              ((listp token)     ; unformatted
+               (setq kind (car token))
+               (cond ((eq kind 'atom)
+                      (push (nth 1 token) cmdlist))
+                     ((eq kind 'quoted)
+                      (push (elmo-imap4-format-quoted (nth 1 token)) cmdlist))
+                     ((eq kind 'literal)
+                      (push (format
+                             (if (elmo-imap4-session-capable-p session 'literal+) "{%d+}" "{%d}")
+                             (nth 2 token)) cmdlist)
+                      (elmo-imap4-session-process-send-string session (mapconcat #'identity (nreverse cmdlist) " "))
+                      (setq cmdlist nil)
+                      (unless (elmo-imap4-session-capable-p session 'literal+)
+                        (elmo-imap4-accept-continue-req session))
+                      (cond ((stringp (nth 1 token))
+                             (push (nth 1 token) cmdlist))
+                            ((bufferp (nth 1 token))
+                             (with-current-buffer (nth 1 token)
+                               (process-send-region
+                                process
+                                (point-min)
+                                (+ (point-min) (nth 2 token)))))
+                            (t
+                             (error "Wrong argument for literal"))))
+                     (t
+                      (error "Unknown token kind %s" kind))))
+              (t
+               (error "Invalid argument")))
+        (setq command-args (cdr command-args)))
+      (elmo-imap4-session-process-send-string session (mapconcat #'identity (nreverse cmdlist) " "))
       tag)))
 
 (defun elmo-imap4-session-process-send-string (session string)
@@ -727,8 +724,8 @@ BUFFER must be a single-byte buffer."
 (luna-define-method elmo-create-folder-plugged ((folder elmo-imap4-folder))
   (elmo-imap4-send-command-wait
    (elmo-imap4-get-session folder)
-   (list "create " (elmo-imap4-mailbox
-		    (elmo-imap4-folder-mailbox-internal folder)))))
+   (list "create" (elmo-imap4-mailbox
+                   (elmo-imap4-folder-mailbox-internal folder)))))
 
 (defun elmo-imap4-get-session (folder &optional if-exists)
   (elmo-network-get-session 'elmo-imap4-session
@@ -757,7 +754,7 @@ Returns response value if selecting folder succeed. "
 		 (elmo-imap4-send-command
 		  session
 		  (list
-		   "select "
+		   "select"
 		   (elmo-imap4-mailbox mailbox)))))
 	(if (setq result (elmo-imap4-response-ok-p response))
 	    (progn
@@ -788,7 +785,7 @@ EXPUNGE for deleted messages."
       (elmo-imap4-send-command-wait session "unselect")
     (elmo-imap4-send-command-wait
      session
-     (list "examine " (elmo-imap4-mailbox mailbox)))
+     (list "examine" (elmo-imap4-mailbox mailbox)))
     (elmo-imap4-send-command-wait session "close"))
   (elmo-imap4-session-set-current-mailbox-internal session nil)
   (elmo-imap4-session-set-current-mailbox-size-internal session nil))
@@ -1029,9 +1026,8 @@ If CHOP-LENGTH is not specified, message set is not chopped."
       session
       (elmo-imap4-send-command
        session
-       (list "login "
+       (list "login"
 	     (elmo-imap4-userid (elmo-network-session-user-internal session))
-	     " "
 	     (elmo-imap4-password
 	      (elmo-get-passwd (elmo-network-session-password-key session))))))
      (signal 'elmo-authenticate-error '(elmo-imap4-clear-login)))))
@@ -1287,10 +1283,10 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 	    elmo-imap4-server-diff-async-callback-data))
     (elmo-imap4-send-command session
 			     (list
-			      "status "
+			      "status"
 			      (elmo-imap4-mailbox
 			       (elmo-imap4-folder-mailbox-internal folder))
-			      " (recent unseen messages)"))))
+			      "(recent unseen messages)"))))
 
 ;;; IMAP parser.
 
@@ -2010,10 +2006,10 @@ Return nil if no complete line has arrived."
     (setq status (elmo-imap4-response-value
 		  (elmo-imap4-send-command-wait
 		   session
-		   (list "status "
+		   (list "status"
 			 (elmo-imap4-mailbox
 			  (elmo-imap4-folder-mailbox-internal folder))
-			 " (uidnext messages)"))
+			 "(uidnext messages)"))
 		  'status))
     (cons
      (- (elmo-imap4-response-value status 'uidnext) 1)
@@ -2084,7 +2080,7 @@ Return nil if no complete line has arrived."
     (setq result (elmo-imap4-response-get-selectable-mailbox-list
 		  (elmo-imap4-send-command-wait
 		   session
-		   (list "list " (elmo-imap4-mailbox root) " *"))))
+		   (list "list" (elmo-imap4-mailbox root) "*"))))
     ;; The response of Courier-imap doesn't contain a specified folder itself.
     (unless (member root result)
       (setq result
@@ -2092,7 +2088,7 @@ Return nil if no complete line has arrived."
 		    (elmo-imap4-response-get-selectable-mailbox-list
 		     (elmo-imap4-send-command-wait
 		      session
-		      (list "list \"\" " (elmo-imap4-mailbox
+		      (list "list \"\"" (elmo-imap4-mailbox
 					  root-nodelim)))))))
     (when (or (not (string= (elmo-net-folder-user-internal folder)
 			    elmo-imap4-default-user))
@@ -2202,7 +2198,7 @@ Return nil if no complete line has arrived."
 	    (elmo-imap4-send-command-wait session "close"))
 	  (elmo-imap4-send-command-wait
 	   session
-	   (list "delete "
+	   (list "delete"
 		 (elmo-imap4-mailbox
 		  (elmo-imap4-folder-mailbox-internal folder)))))
 	(elmo-imap4-session-set-current-mailbox-internal session nil)
@@ -2224,7 +2220,7 @@ Return nil if no complete line has arrived."
     (elmo-imap4-send-command-wait session "close")
     (elmo-imap4-send-command-wait
      session
-     (list "rename "
+     (list "rename"
 	   (elmo-imap4-mailbox
 	    (elmo-imap4-folder-mailbox-internal folder))
 	   " "
@@ -2247,8 +2243,8 @@ Return nil if no complete line has arrived."
 					(list
 					 (format
 					  (if elmo-imap4-use-uid
-					      "uid copy %s "
-					    "copy %s ")
+					      "uid copy %s"
+					    "copy %s")
 					  (cdr (car set-list)))
 					 (elmo-imap4-mailbox
 					  (elmo-imap4-folder-mailbox-internal
@@ -2308,7 +2304,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 	   (elmo-imap4-session-capable-p session 'uidplus))
       (elmo-imap4-send-command-wait
        session (list
-		"uid expunge "
+		"uid expunge"
 		(mapconcat 'number-to-string numbers ","))))
      ((and deleted elmo-imap4-use-uid)
       (unless (elmo-imap4-set-flag folder deleted "\\Deleted" 'remove)
@@ -2631,11 +2627,11 @@ time."
       (setq response
 	    (elmo-imap4-send-command-wait session
 					  (list
-					   "status "
+					   "status"
 					   (elmo-imap4-mailbox
 					    (elmo-imap4-folder-mailbox-internal
 					     folder))
-					   " (recent unseen messages)")))
+					   "(recent unseen messages)")))
       (setq response (elmo-imap4-response-value response 'status))
       (setq messages (elmo-imap4-response-value response 'messages))
       (setq new (elmo-imap4-response-value response 'recent)
@@ -2662,7 +2658,7 @@ time."
 	      (setq session (elmo-imap4-get-session folder)
 		    mailbox (elmo-imap4-folder-mailbox-internal folder)
 		    tag (elmo-imap4-send-command session
-						 (list "select "
+						 (list "select"
 						       (elmo-imap4-mailbox
 							mailbox))))
 	      (message "Selecting %s..."
@@ -2760,7 +2756,7 @@ time."
 (luna-define-method elmo-folder-create-plugged ((folder elmo-imap4-folder))
   (elmo-imap4-send-command-wait
    (elmo-imap4-get-session folder)
-   (list "create "
+   (list "create"
 	 (elmo-imap4-mailbox
 	  (elmo-imap4-folder-mailbox-internal folder)))))
 
@@ -2791,14 +2787,14 @@ time."
 		  (elmo-imap4-send-command-wait
 		   session
 		   (list
-		    "append "
+		    "append"
 		    (elmo-imap4-mailbox (elmo-imap4-folder-mailbox-internal
 					 folder))
 		    (if (and flags (elmo-folder-use-flag-p folder))
 			(concat " (" (elmo-imap4-flags-to-imap flags) ") ")
-		      " () ")
+		      "()")
 		    (if return-number
-			(concat " \"" internaldate "\" ")
+			(concat "\"" internaldate "\"")
 		      "")
 		    (elmo-imap4-buffer-literal send-buffer))))
 	  (kill-buffer send-buffer))
@@ -2812,7 +2808,7 @@ time."
 		      (elmo-imap4-send-command-wait
 		       session
 		       (list
-			"uid search since "
+			"uid search since"
 			(car (split-string internaldate " ")))) 'search)))
 		(if (null candidates)
 		    (setq result t)
@@ -2821,7 +2817,7 @@ time."
 			 (elmo-imap4-send-command-wait
 			  session
 			  (list
-			   "uid fetch "
+			   "uid fetch"
 			   (mapconcat 'number-to-string candidates ",")
 			   " (internaldate)")) 'fetch))
 		  (while candidates
@@ -2872,11 +2868,11 @@ time."
     (setq response
 	  (elmo-imap4-send-command-wait session
 					(list
-					 "status "
+					 "status"
 					 (elmo-imap4-mailbox
 					  (elmo-imap4-folder-mailbox-internal
 					   folder))
-					 " (uidnext)"))
+					 "(uidnext)"))
 	  response (elmo-imap4-response-value response 'status))
     (elmo-imap4-response-value response 'uidnext)))
 
@@ -2963,7 +2959,7 @@ time."
 	 (elmo-imap4-send-command-wait session
 				       (concat
 					(if elmo-imap4-use-uid
-					    "uid ")
+					    "uid")
 					(format
 					 "fetch %s (body.peek[header.fields (%s)])"
 					 number field)))

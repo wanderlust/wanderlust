@@ -1,3 +1,20 @@
+2014-05-18  David Maus  <dmaus@x60s.major-mode.org>
+
+	* elmo-imap4.el (elmo-create-folder-plugged): Remove leading and
+	trainling space from IMAP command particle.
+	(elmo-imap4-session-select-mailbox)
+	(elmo-imap4-session-unselect-mailbox, elmo-imap4-clear-login)
+	(elmo-imap4-server-diff-async, elmo-imap4-folder-status-plugged)
+	(elmo-folder-list-subfolders, elmo-folder-delete)
+	(elmo-folder-rename-internal, elmo-imap4-copy-messages)
+	(elmo-folder-delete-messages-plugged)
+	(elmo-imap4-folder-diff-plugged, elmo-folder-open)
+	(elmo-folder-create-plugged, elmo-folder-append-buffer)
+	(elmo-folder-next-message-number-plugged)
+	(elmo-message-fetch-field): Dto.
+	(elmo-imap4-send-command): Use a list to build final command
+	string.
+
 2014-05-18  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-session-process-send-string): New
