@@ -384,8 +384,7 @@ Returns a TAG string which is assigned to the COMMAND."
 				    (format
 				     (if (elmo-imap4-session-capable-p session 'literal+) "{%d+}" "{%d}")
 				     (nth 2 token))))
-		      (elmo-imap4-debug "[%s] <- %s" (format-time-string "%T") cmdstr)
-		      (process-send-string process (concat cmdstr "\r\n"))
+                      (elmo-imap4-session-process-send-string session cmdstr)
 		      (setq cmdstr nil)
 		      (unless (elmo-imap4-session-capable-p session 'literal+)
 			(elmo-imap4-accept-continue-req session))
@@ -404,9 +403,14 @@ Returns a TAG string which is assigned to the COMMAND."
 	      (t
 	       (error "Invalid argument")))
 	(setq command-args (cdr command-args)))
-      (elmo-imap4-debug "[%s] <- %s" (format-time-string "%T") cmdstr)
-      (process-send-string process (concat cmdstr "\r\n"))
+      (elmo-imap4-session-process-send-string session cmdstr)
       tag)))
+
+(defun elmo-imap4-session-process-send-string (session string)
+  "Send STRING to process of SESSION."
+  (elmo-imap4-debug "[%s] <-- %s" (format-time-string "%T") string)
+  (process-send-string (elmo-network-session-process-internal session) string)
+  (process-send-string (elmo-network-session-process-internal session) "\r\n"))
 
 (defun elmo-imap4-send-string (session string)
   "Send STRING to the SESSION."
@@ -414,11 +418,7 @@ Returns a TAG string which is assigned to the COMMAND."
 			(elmo-network-session-process-internal session))
     (setq elmo-imap4-current-response nil)
     (goto-char (point-min))
-    (elmo-imap4-debug "[%s] <-- %s" (format-time-string "%T") string)
-    (process-send-string (elmo-network-session-process-internal session)
-			 string)
-    (process-send-string (elmo-network-session-process-internal session)
-			 "\r\n")))
+    (elmo-imap4-session-process-send-string session string)))
 
 (defun elmo-imap4-read-response (session tag)
   "Read parsed response from SESSION.

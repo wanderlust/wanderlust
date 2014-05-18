@@ -1,5 +1,13 @@
 2014-05-18  David Maus  <dmaus@ictsoc.de>
 
+	* elmo-imap4.el (elmo-imap4-session-process-send-string): New
+	function. Send string to session process, facoted out from
+	`elmo-imap4-send-string`.
+	(elmo-imap4-send-string): Use factord out function.
+	(elmo-imap4-send-command): Use new function to send to process.
+
+2014-05-18  David Maus  <dmaus@ictsoc.de>
+
 	* elmo-imap4.el (with-elmo-imap4-session-process-buffer): New
 	macro. Execute BODY in a sessions' process buffer.
 	(elmo-imap4-command-tag): Use new macro.
