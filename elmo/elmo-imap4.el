@@ -2325,12 +2325,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
 (defun elmo-imap4-search-build-full-command (search)
   "Process charset at beginning of SEARCH and build a full IMAP
 search command."
-  (let ((charset (car search)))
-    (append '("uid search")
-	    (if (not (null charset))
-		(list " CHARSET " charset))
-	    '(" ")
-	    (cdr search))))
+  (append '("uid search") (when (car search) (list "CHARSET" (car search))) (cdr search)))
 
 (defun elmo-imap4-search-perform (session search-or-uids)
   "Perform an IMAP search.
@@ -2376,9 +2371,8 @@ Returns a list of UIDs."
        nil
        (if (eq (elmo-filter-type filter)
 	       'unmatch)
-	   "not " "")
+	   "not" "")
        (concat "sent" search-key)
-       " "
        (elmo-date-get-description
 	(elmo-date-get-datevec
 	 (elmo-filter-value filter)))))
@@ -2392,11 +2386,11 @@ Returns a list of UIDs."
 	  (symbol-name charset))
 	 (if (eq (elmo-filter-type filter)
 		 'unmatch)
-	     "not " "")
-	 (format "%s%s "
+	     "not" "")
+	 (format "%s%s"
 		 (if (member search-key imap-search-keys)
 		     ""
-		   "header ")
+		   "header")
 		 search-key)
 	 (elmo-imap4-astring
 	  (encode-mime-charset-string
@@ -2445,7 +2439,7 @@ IMAP-SEARCH-COMMAND ...) which is to be evaluated at a future
 time."
   (if (elmo-imap4-search-mergeable-p a b)
       (append (list (elmo-imap4-search-mergeable-charset a b))
-	      (cdr a) '(" ") (cdr b))
+	      (cdr a) (cdr b))
     (elmo-list-filter (elmo-imap4-search-perform session a)
 		      (elmo-imap4-search-perform session b))))
 
@@ -2461,7 +2455,7 @@ IMAP-SEARCH-COMMAND ...) which is to be evaluated at a future
 time."
   (if (elmo-imap4-search-mergeable-p a b)
       (append (list (elmo-imap4-search-mergeable-charset a b))
-	      '("OR " "(") (cdr a) '(")" " " "(") (cdr b) '(")"))
+	      '("OR " "(") (cdr a) '(")" "(") (cdr b) '(")"))
     (elmo-uniq-list (append (elmo-imap4-search-perform session a)
 			    (elmo-imap4-search-perform session b)))))
 

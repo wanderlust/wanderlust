@@ -1,3 +1,10 @@
+2014-05-18  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-imap4-search-build-full-command): Simplified.
+	(elmo-imap4-search-generate-vector)
+	(elmo-imap4-search-generate-and, elmo-imap4-search-generate-or):
+	Remove trailing spaces.
+
 2014-05-18  David Maus  <dmaus@x60s.major-mode.org>
 
 	* elmo-imap4.el (elmo-create-folder-plugged): Remove leading and
