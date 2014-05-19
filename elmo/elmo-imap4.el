@@ -369,7 +369,7 @@ Returns a TAG string which is assigned to the COMMAND."
       (setq elmo-imap4-parsing t)
       (while (setq token (car command-args))
         (cond ((stringp token)   ; formatted
-               (unless (string-empty-p token)
+               (unless (string= "" token)
                  (push token cmdlist)))
               ((listp token)     ; unformatted
                (setq kind (car token))

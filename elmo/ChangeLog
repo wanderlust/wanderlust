@@ -1,3 +1,8 @@
+2014-05-19  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-imap4-send-command): Don't use
+	string-empty-p to check for empty string.
+
 2014-05-18  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-search-build-full-command): Simplified.
