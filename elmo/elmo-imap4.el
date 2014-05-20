@@ -2813,7 +2813,7 @@ time."
 			  (list
 			   "uid fetch"
 			   (mapconcat 'number-to-string candidates ",")
-			   " (internaldate)")) 'fetch))
+			   "(internaldate)")) 'fetch))
 		  (while candidates
 		    (if (string= (cadar candidates) internaldate)
 			(setq result (cons
