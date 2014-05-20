@@ -2785,7 +2785,7 @@ time."
 		    (elmo-imap4-mailbox (elmo-imap4-folder-mailbox-internal
 					 folder))
 		    (if (and flags (elmo-folder-use-flag-p folder))
-			(concat " (" (elmo-imap4-flags-to-imap flags) ") ")
+			(concat "(" (elmo-imap4-flags-to-imap flags) ")")
 		      "()")
 		    (if return-number
 			(concat "\"" internaldate "\"")
