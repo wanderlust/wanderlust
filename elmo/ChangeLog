@@ -1,3 +1,13 @@
+2014-05-20  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-folder-append-buffer): Fix even more
+	trailing and leading whitespace.
+
+2014-05-20  David Maus  <dmaus@ictsoc.de>
+
+	* elmo-imap4.el (elmo-folder-append-buffer): Remove trailing space
+	from command particle.
+
 2014-05-19  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-send-command): Don't use
