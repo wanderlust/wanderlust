@@ -2707,8 +2707,7 @@ This is ignored when wl-draft-jit-highlight is set."
                   ((>= end sig) (setq end (point-max)) t)
                   (t nil)))))))
       (put-text-property start end 'face nil)
-      (wl-highlight-message start end hack-sig
-                            (not (wl-draft-point-in-header-p))))))
+      (wl-highlight-message start end hack-sig (not in-header)))))
 
 (defvar wl-draft-idle-highlight-timer nil)
 
