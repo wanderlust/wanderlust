@@ -1239,7 +1239,8 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 	(if (eq (re-search-forward "^$" nil t)
 		(point-max))
 	    (insert "\n"))
-	(decode-coding-region (point-min) (point-max) 'raw-text-dos)))
+	(let (inhibit-eol-conversion)
+	  (encode-coding-region (point-min) (point-max) 'raw-text-dos))))
     send-buf))
 
 (defun elmo-imap4-setup-send-buffer-from-file (file)
