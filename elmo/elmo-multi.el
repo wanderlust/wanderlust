@@ -252,6 +252,8 @@
 						 elmo-multi-folder) entity)
   (let ((references (elmo-message-entity-field entity 'references))
 	parent)
+    (when (stringp references)
+      (setq references (list references)))
     (while references
       (setq references
 	    (if (setq parent (elmo-message-entity folder (car references)))

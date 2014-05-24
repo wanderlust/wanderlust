@@ -1,3 +1,8 @@
+2014-05-24  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-refile.el (wl-refile-guess-by-msgid): Check type of
+	references field's value.
+
 2014-05-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-summary.el (wl-summary-insert-thread): Report progress.

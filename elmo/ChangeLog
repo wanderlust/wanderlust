@@ -1,3 +1,15 @@
+2014-05-24  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-msgdb.el (elmo-message-entity-field): Revert the last change.
+	(elmo-msgdb-get-parent-entity): Check type of references field's
+	value.
+	(elmo-msgdb-overview-entity-get-references): Revert the last change.
+
+	* elmo-multi.el (elmo-message-entity-parent): Check type of
+	references field's value.
+
+	* elmo-shimbun.el (elmo-message-entity-parent): Likewise.
+
 2014-05-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-pop3.el (elmo-pop3-read-body): Fix trying to access buffer

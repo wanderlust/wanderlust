@@ -248,6 +248,8 @@ If RULE does not match ENTITY, returns nil."
 (defun wl-refile-guess-by-msgid (entity)
   (let ((references (elmo-message-entity-field entity 'references))
 	result)
+    (when (stringp references)
+      (setq references (list references)))
     (while references
       (setq references
 	    (if (setq result

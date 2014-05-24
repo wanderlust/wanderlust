@@ -489,6 +489,8 @@ If it is the symbol `all', update overview for all shimbun folders."
 						entity)
   (let ((references (elmo-message-entity-field entity 'references))
 	parent)
+    (when (stringp references)
+      (setq references (list references)))
     (while references
       (setq references
 	    (if (setq parent (elmo-get-hash-val
