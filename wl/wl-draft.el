@@ -1463,7 +1463,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	  (if (not (numberp next-number))
 	      (setq wl-draft-buffer-message-number nil)
 	    (setq wl-draft-buffer-message-number next-number)
-	    (rename-buffer (format "%s/%d" wl-draft-folder next-number) t)
+	    (rename-buffer (format "%s/%d" (if (memq 'modeline wl-use-folder-petname)
+					       (wl-folder-get-petname wl-draft-folder)
+					     wl-draft-folder) next-number) t)
 	    (wl-draft-config-info-operation wl-draft-buffer-message-number 'save))
 	  (setq buffer-file-name (buffer-name))
 	  (set-buffer-modified-p nil)
@@ -1972,7 +1974,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	(wl-draft-reedit t)
 	(num 0)
 	buffer change-major-mode-hook body-top)
-    (setq buffer (get-buffer-create (format "%s/%d" wl-draft-folder
+    (setq buffer (get-buffer-create (format "%s/%d" (if (memq 'modeline wl-use-folder-petname)
+							(wl-folder-get-petname wl-draft-folder)
+						      wl-draft-folder)
 					    number)))
     (if wl-draft-use-frame
 	(switch-to-buffer-other-frame buffer)
@@ -2636,7 +2640,9 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 (defun wl-draft-buffer-change-number (old-number new-number)
   (when (eq wl-draft-buffer-message-number old-number)
     (setq wl-draft-buffer-message-number new-number)
-    (rename-buffer (format "%s/%d" wl-draft-folder new-number) t)
+    (rename-buffer (format "%s/%d" (if (memq 'modeline wl-use-folder-petname)
+				       (wl-folder-get-petname wl-draft-folder)
+				     wl-draft-folder) new-number) t)
     (setq buffer-file-name (buffer-name))
     (set-buffer-modified-p nil)))
 

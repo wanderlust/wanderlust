@@ -522,7 +522,9 @@ that `read' can handle, whenever this is possible."
     result))
 
 (defun wl-collect-draft ()
-  (let ((draft-regexp (concat "^" (regexp-quote wl-draft-folder)))
+  (let ((draft-regexp (concat "^" (regexp-quote (if (memq 'modeline wl-use-folder-petname)
+                                                    (wl-folder-get-petname wl-draft-folder)
+                                                  wl-draft-folder))))
 	result)
     (dolist (buffer (buffer-list))
       (when (with-current-buffer buffer
