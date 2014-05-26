@@ -1583,8 +1583,9 @@ Return nil if no complete line has arrived."
 				  (match-string 2)
 				  (match-string 3))))
 	    ((search-forward "ALERT] " nil t)
-	     (message "IMAP server information: %s"
-		      (buffer-substring (point) (point-max))))
+	     (let ((message (buffer-substring (point) (point-max))))
+	       (message "IMAP server information: %s" message)
+	       (list 'alert message)))
 	    (t (list 'unknown))))))
 
 (defun elmo-imap4-parse-data-list ()
