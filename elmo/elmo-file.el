@@ -233,16 +233,14 @@
   (delq nil
 	(mapcar
 	 (lambda (file)
-	   (when (not (file-directory-p file))
-	     (concat
-	      file "/"
-	      (mapconcat
-	       'number-to-string
-	       (nth 5 (file-attributes (expand-file-name
-					file
-					(elmo-file-folder-file-path-internal
-					 folder))))
-	       ":"))))
+	   (let ((name (expand-file-name
+			file
+			(elmo-file-folder-file-path-internal folder))))
+	     (when (not (file-directory-p name))
+	       (concat
+		file "/"
+		(mapconcat 'number-to-string (nth 5 (file-attributes name))
+			   ":")))))
 	 (directory-files (elmo-file-folder-file-path-internal folder)))))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-file-folder))
