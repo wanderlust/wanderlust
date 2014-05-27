@@ -50,11 +50,7 @@
   :group 'elmo)
 
 (defcustom elmo-file-command-argument
-  (let ((magic-file (elmo-file-find
-		     '("/usr/share/magic.mime"
-		       "/usr/share/file/magic.mime"
-		       "/cygwin/usr/share/file/magic.mime"))))
-    (if magic-file (list "-m" magic-file)))
+  '("-i")
   "*Argument list for the `file' command.
 \(It should return the MIME content type\)"
   :type '(repeat string)
@@ -110,16 +106,12 @@
 		      (when (re-search-forward ": *" nil t)
 			(setq type (buffer-substring (match-end 0)
 						     (point-at-eol))))
-		      (cond
-		       ((string= "empty" type)
-			"application/octet-stream")
-		       ((string-match "text" type)
-			"text/plain")
-		       (t
-			(car (split-string type)))))
-		  "application/octet-stream"))
-	    (concat (nth 0 type) "/" (nth 1 type)))
-	(concat (nth 0 type) "/" (nth 1 type))))))
+		      (if (string-match "/" type)
+			  type
+			  "application/octet-stream"))
+		    "application/octet-stream"))
+	      (concat (nth 0 type) "/" (nth 1 type)))
+	  (concat (nth 0 type) "/" (nth 1 type))))))
 
 (defun elmo-file-msgdb-create-entity (msgdb folder number)
   "Create msgdb entity for the message in the FOLDER with NUMBER."
@@ -191,7 +183,7 @@
 					    &optional section unseen)
   (let ((file (expand-file-name (car (split-string location "/"))
 				(elmo-file-folder-file-path-internal folder)))
-	charset guess uid is-text)
+	charset guess uid is-text tweak-charset)
     (when (file-exists-p file)
       (set-buffer-multibyte nil)
       (prog1
@@ -202,13 +194,18 @@
 	  (setq guess (elmo-file-detect-content-type file))
 	  (setq is-text (string-match "^text/" guess))
 	  (when is-text
-	    (set-buffer-multibyte t)
-	    (decode-coding-region
-	     (point-min) (point-max)
-	     elmo-mime-display-as-is-coding-system)
-	    (setq charset (detect-mime-charset-region (point-min)
-						      (point-max))))
-	  (goto-char (point-min))
+	    (when (string-match "; *charset=\\([-_a-zA-Z0-9]+\\)" guess)
+	      (setq charset (intern (downcase (match-string 1 guess))))
+	      (unless (mime-charset-to-coding-system charset)
+		(setq charset nil)))
+	    (unless charset
+	      (setq tweak-charset t)
+	      (set-buffer-multibyte t)
+	      (decode-coding-region
+	       (point-min) (point-max)
+	       elmo-mime-display-as-is-coding-system)
+	      (setq charset (detect-mime-charset-region (point-min)
+							(point-max)))))
 	  (setq uid (nth 2 (file-attributes file)))
 	  (insert "From: " (concat (user-full-name uid)
 				   " <"(user-login-name uid) "@"
@@ -222,14 +219,14 @@
 			  "@" (system-name) ">\n"))
 	  (insert "Content-Type: "
 		  guess
-		  (or (and is-text
+		  (or (and is-text tweak-charset
 			   (concat
-			    "; charset=" (upcase (symbol-name charset))))
+			    "; charset=" (symbol-name charset)))
 		      "")
 		  "\nMIME-Version: 1.0\n\n")
-	  (when is-text
-	    (encode-mime-charset-region (point-min) (point-max) charset))
-	  (set-buffer-multibyte nil))))))
+	  (when tweak-charset
+	    (encode-mime-charset-region (point-min) (point-max) charset)
+	    (set-buffer-multibyte nil)))))))
 
 (luna-define-method elmo-map-folder-list-message-locations
   ((folder elmo-file-folder))
