@@ -1,5 +1,16 @@
 2014-05-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	Fix for https://github.com/wanderlust/wanderlust/issues/59
+
+	* elmo-imap4.el (elmo-imap4-search-generate-vector): Call
+	elmo-imap4-flag-to-imap-criteria instead of
+	elmo-imap4-flag-to-imap-search-key.
+
+	* elmo-nntp.el (elmo-nntp-use-server-search-p): Return nil for
+	flag search.
+
+2014-05-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* elmo-msgdb.el (elmo-msgdb-get-parent-entity): Add the comment
 	for old msgdb.
 

@@ -2364,7 +2364,7 @@ Returns a list of UIDs."
      ((string= "flag" search-key)
       (list nil
 	    (if (eq (elmo-filter-type filter) 'unmatch) "not " "")
-	    (elmo-imap4-flag-to-imap-search-key
+	    (elmo-imap4-flag-to-imap-criteria
 	     (intern (elmo-filter-value filter)))))
      ((or (string= "since" search-key)
 	  (string= "before" search-key))

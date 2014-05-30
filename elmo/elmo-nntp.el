@@ -1170,7 +1170,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 
 (defun elmo-nntp-use-server-search-p (condition)
   (if (vectorp condition)
-      (not (member (elmo-filter-key condition) '("raw-body" "body")))
+      (not (member (elmo-filter-key condition) '("raw-body" "body" "flag")))
     (and (elmo-nntp-use-server-search-p (nth 1 condition))
 	 (elmo-nntp-use-server-search-p (nth 2 condition)))))
 
