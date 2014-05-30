@@ -252,6 +252,7 @@
 						 elmo-multi-folder) entity)
   (let ((references (elmo-message-entity-field entity 'references))
 	parent)
+    ;; In old msgdb, references's field is a string.
     (when (stringp references)
       (setq references (list references)))
     (while references

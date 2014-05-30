@@ -166,8 +166,9 @@ VALUE is the field value."
        (error)))))
 
 (defsubst elmo-msgdb-get-parent-entity (entity msgdb)
+  ;; Set parent-ids to entity.
   (setq entity (elmo-message-entity-field entity 'references))
-  ;; entity is parent-id.
+  ;; In old msgdb, references's field is a string.
   (when (stringp entity)
     (setq entity (list entity)))
   (let (parent)
