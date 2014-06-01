@@ -527,6 +527,8 @@ file name for maildir directories."
 					    location strategy
 					    &optional section unseen)
   (let ((file (elmo-maildir-message-file-name folder location)))
+    (unless (stringp file)
+      (error "Unable to fetch message %s from maildir folder" location))
     (when (file-exists-p file)
       (insert-file-contents-as-raw-text file)
       (unless unseen
