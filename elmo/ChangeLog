@@ -1,3 +1,47 @@
+2014-05-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Fix for https://github.com/wanderlust/wanderlust/issues/59
+
+	* elmo-imap4.el (elmo-imap4-search-generate-vector): Call
+	elmo-imap4-flag-to-imap-criteria instead of
+	elmo-imap4-flag-to-imap-search-key.
+
+	* elmo-nntp.el (elmo-nntp-use-server-search-p): Return nil for
+	flag search.
+
+2014-05-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-get-parent-entity): Add the comment
+	for old msgdb.
+
+	* elmo-multi.el (elmo-message-entity-parent): Likewise.
+
+	* elmo-shimbun.el (elmo-message-entity-parent): Likewise.
+
+2014-05-24  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-msgdb.el (elmo-message-entity-field): Revert the last change.
+	(elmo-msgdb-get-parent-entity): Check type of references field's
+	value.
+	(elmo-msgdb-overview-entity-get-references): Revert the last change.
+
+	* elmo-multi.el (elmo-message-entity-parent): Check type of
+	references field's value.
+
+	* elmo-shimbun.el (elmo-message-entity-parent): Likewise.
+
+2014-05-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-pop3.el (elmo-pop3-read-body): Fix trying to access buffer
+	local variable from another buffer.
+	Cf. https://github.com/wanderlust/wanderlust/commit/f1b56519a392a6087f5209afae52fb3324e65490#commitcomment-6424927
+
+2014-05-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-imap4.el (elmo-imap4-setup-send-buffer): Fix typo.  Bind
+	inhibit-eol-conversion to nil before code conversion.
+	Cf. https://github.com/wanderlust/wanderlust/commit/88b9596f95b106dc04aba77e890a97252e32b516#commitcomment-6425013
+
 2014-05-20  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-folder-append-buffer): Fix even more
@@ -62,6 +106,73 @@
 2014-05-18  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-send-command): Refactor sending of literals, add logging.
+
+2014-05-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-list-diff): Simplified.  Sort each element of
+	return value.
+
+	* elmo.el (elmo-folder-synchronize): Do not sort elmo-list-diff's result.
+
+2014-05-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Keep multiple parent Message-IDs in msgdb.  Msgdb structure has
+	slightly changed.  Older wl can load new msgdb without any error,
+	but will fail to search parent message.  New wl can load old msgdb
+	but new feature is available only for newly added messages.
+
+	* elmo-msgdb.el (elmo-message-entity-field): Return list of
+	Message-IDs for reference field.
+	(elmo-msgdb-get-parent-entity): Assume references field's value is
+	list.
+	(elmo-msgdb-overview-entity-get-references): Return list of
+	Message-IDs.
+
+	* elmo-multi.el (elmo-message-entity-parent): Assume references
+	field's value is list.
+
+	* elmo-nntp.el (elmo-nntp-create-msgdb-from-overview-string): Make
+	references field as list of Message-IDs.
+
+	* elmo-shimbun.el (elmo-message-entity-parent): Assume references
+	field's value is list.
+
+	* elmo-util.el (elmo-msgdb-get-message-ids-from-header): New function.
+	(elmo-msgdb-get-references-from-header): Use it.  Return list of
+	Message-IDs.
+
+2014-05-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Improve performance of uniquifying large list of sortable numbers.
+
+	* elmo-util.el (elmo-sort-uniq-number-list): New function.
+	(elmo-union): Use it.
+
+	* elmo-filter.el (elmo-folder-list-messages): Likewise.
+
+	* elmo-imap4.el (elmo-folder-merge-flagged): Likewise.
+
+	* elmo-nntp.el (elmo-nntp-search-internal): Likewise.
+
+	* elmo.el (elmo-folder-list-messages, elmo-folder-merge-flagged):
+	Likewise.
+
+	* modb-standard.el (modb-standard-cleanup-stale-entities):
+	Likewise.
+
+2014-05-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-max-of-list): Fix the last change for the
+	case argument is nil.
+
+2014-05-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-max-of-list, elmo-cache-get-path-subr)
+	(elmo-warning): Explicit function's symbols.
+
+2014-05-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-max-of-list): Refactored.
 
 2014-05-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 

@@ -1239,7 +1239,8 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 	(if (eq (re-search-forward "^$" nil t)
 		(point-max))
 	    (insert "\n"))
-	(decode-coding-region (point-min) (point-max) 'raw-text-dos)))
+	(let (inhibit-eol-conversion)
+	  (encode-coding-region (point-min) (point-max) 'raw-text-dos))))
     send-buf))
 
 (defun elmo-imap4-setup-send-buffer-from-file (file)
@@ -2048,7 +2049,7 @@ Return nil if no complete line has arrived."
 
 (luna-define-method elmo-folder-merge-flagged ((folder elmo-imap4-folder) local remote)
   (case elmo-imap4-flags-sync-method
-    (union (elmo-uniq-list (nconc local remote) #'delq))
+    (union (elmo-sort-uniq-number-list (nconc local remote)))
     (server->client remote)
     (otherwise (error "Unknown method for syncing flags: %s" elmo-imap4-flags-sync-method))))
 
@@ -2363,7 +2364,7 @@ Returns a list of UIDs."
      ((string= "flag" search-key)
       (list nil
 	    (if (eq (elmo-filter-type filter) 'unmatch) "not " "")
-	    (elmo-imap4-flag-to-imap-search-key
+	    (elmo-imap4-flag-to-imap-criteria
 	     (intern (elmo-filter-value filter)))))
      ((or (string= "since" search-key)
 	  (string= "before" search-key))

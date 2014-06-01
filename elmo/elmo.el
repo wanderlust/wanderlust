@@ -275,9 +275,8 @@ If second optional IN-MSGDB is non-nil, only messages in the msgdb are listed.")
     (if visible-only
 	(elmo-living-messages list killed-list)
       (if (and in-msgdb killed-list)
-	  (elmo-uniq-sorted-list
-	   (sort (nconc (elmo-number-set-to-number-list killed-list) list) #'<)
-	   #'eq)
+	  (elmo-sort-uniq-number-list
+	   (nconc (elmo-number-set-to-number-list killed-list) list))
 	list))))
 
 (luna-define-generic elmo-folder-list-messages-internal (folder &optional
@@ -323,7 +322,7 @@ LOCAL is the list of messages from flag folder.
 REMOTE is the list of messages from remote folder.")
 
 (luna-define-method elmo-folder-merge-flagged ((folder elmo-folder) local remote)
-  (elmo-uniq-list (nconc local remote) #'delq))
+  (elmo-sort-uniq-number-list (nconc local remote)))
 
 (luna-define-generic elmo-folder-list-subfolders (folder &optional one-level)
   "Returns a list of subfolders contained in FOLDER.
@@ -1658,7 +1657,6 @@ If update process is interrupted, return nil.")
 	   (elmo-list-diff (elmo-folder-list-messages folder)
 			   (elmo-folder-list-messages folder nil 'in-msgdb)))
 	  (when diff-new
-	    (setq diff-new (sort diff-new #'<))
 	    (unless disable-killed
 	      (setq diff-new (elmo-living-messages diff-new killed-list)))
 	    (when (and mask (not ignore-msgdb))
@@ -1669,7 +1667,7 @@ If update process is interrupted, return nil.")
 	  (when (not (eq (length diff-new)
 			 (length new-list)))
 	    (let* ((diff (elmo-list-diff diff-new new-list))
-		   (disappeared (sort (car diff) #'<)))
+		   (disappeared (car diff)))
 	      (when disappeared
 		(elmo-folder-kill-messages-range folder
 						 (car disappeared)

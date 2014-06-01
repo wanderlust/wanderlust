@@ -1870,7 +1870,7 @@ If ARG is non-nil, checking is omitted."
 		      (delq (car msgs) wl-summary-buffer-number-list)))))
 	(setq msgs (cdr msgs)))
       (when (eq wl-summary-buffer-view 'thread)
-	(let ((updates (elmo-uniq-list update-list)))
+	(let ((updates (elmo-sort-uniq-number-list update-list)))
 	  (elmo-with-progress-display (wl-thread-update-line (length updates))
 	      "Updating deleted thread"
 	    (wl-thread-update-line-msgs updates)
@@ -1994,7 +1994,7 @@ This function is defined for `window-scroll-functions'"
 					    (not disable-killed)
 					    'in-msgdb)
 					   wl-summary-buffer-number-list))
-		(setq append-list (sort (car diff) #'<))
+		(setq append-list (car diff))
 		(setq delete-list (cadr diff))
 
 		(when delete-list
@@ -2040,7 +2040,7 @@ This function is defined for `window-scroll-functions'"
 		(when (and (eq wl-summary-buffer-view 'thread)
 			   update-top-list)
 		  (wl-thread-update-indent-string-thread
-		   (elmo-uniq-list update-top-list)))
+		   (elmo-sort-uniq-number-list update-top-list)))
 		(when (or delete-list append-list)
 		  (wl-summary-set-message-modified))
 		(when (and sync-all (eq wl-summary-buffer-view 'thread))
@@ -2629,9 +2629,11 @@ If ARG, without confirm."
       nil)))
 
 (defun wl-summary-default-subject-filter (subject)
-  (setq subject (elmo-replace-in-string subject "[ \t]*\\(re\\|was\\)[:>]" ""))
-  (setq subject (elmo-replace-in-string subject "[ \t]" ""))
-  (elmo-replace-in-string subject "^\\[[^]]*\\]" ""))
+  (setq subject (elmo-replace-in-string
+		 subject "\\(\\(re\\|was\\)[:>]\\|[ \t]+\\)+" ""))
+  (if (string-match "^\\[[^]]*\\]" subject)
+      (substring subject (match-end 0))
+    subject))
 
 (defun wl-summary-subject-equal (subject1 subject2)
   (string= (funcall wl-summary-subject-filter-function subject1)
@@ -2789,11 +2791,10 @@ If ARG, without confirm."
 		       (or (elmo-message-entity-field parent-entity
 						      'subject) ""))))
 	    (setq parent-number nil))
-	(setq retval
-	      (wl-thread-insert-message entity
-					number parent-number update linked))
-	(and retval
-	     (wl-append update-list (list retval)))
+	(when (setq retval (wl-thread-insert-message
+			    entity number parent-number update linked))
+	  (wl-append update-list (list retval)))
+	(elmo-progress-notify 'wl-summary-insert-line)
 	(setq entity nil) ; exit loop
 	(while (setq delayed-entity (assq number wl-summary-delayed-update))
 	  (setq wl-summary-delayed-update

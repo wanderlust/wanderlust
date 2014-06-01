@@ -727,8 +727,10 @@ Don't cache if nil.")
 		      (elmo-msgdb-message-entity-handler new-msgdb)
 		      :message-id (aref ov-entity 4)
 		      :number     num
-		      :references (elmo-msgdb-get-last-message-id
-				    (aref ov-entity 5))
+		      :references (nreverse
+				   (mapcar 'std11-msg-id-string
+					   (std11-parse-msg-ids-string
+					    (aref ov-entity 5))))
 		      :from       (elmo-with-enable-multibyte
 				    (eword-decode-string
 				     (elmo-delete-char  ?\"
@@ -1160,16 +1162,15 @@ Returns a list of cons cells like (NUMBER . VALUE)"
       (setq result (elmo-nntp-search-internal folder
 					      (nth 1 condition)
 					      from-msgs)
-	    result (elmo-uniq-list
+	    result (elmo-sort-uniq-number-list
 		    (nconc result
-			   (elmo-nntp-search-internal folder
-						      (nth 2 condition)
-						      from-msgs)))
-	    result (sort result '<))))))
+			   (elmo-nntp-search-internal
+			    folder (nth 2 condition) from-msgs))
+		    ))))))
 
 (defun elmo-nntp-use-server-search-p (condition)
   (if (vectorp condition)
-      (not (member (elmo-filter-key condition) '("raw-body" "body")))
+      (not (member (elmo-filter-key condition) '("raw-body" "body" "flag")))
     (and (elmo-nntp-use-server-search-p (nth 1 condition))
 	 (elmo-nntp-use-server-search-p (nth 2 condition)))))
 

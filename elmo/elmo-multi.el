@@ -250,9 +250,17 @@
 
 (luna-define-method elmo-message-entity-parent ((folder
 						 elmo-multi-folder) entity)
-  (elmo-message-entity
-   folder
-   (elmo-message-entity-field entity 'references)))
+  (let ((references (elmo-message-entity-field entity 'references))
+	parent)
+    ;; In old msgdb, references's field is a string.
+    (when (stringp references)
+      (setq references (list references)))
+    (while references
+      (setq references
+	    (if (setq parent (elmo-message-entity folder (car references)))
+		nil
+	      (cdr references))))
+    parent))
 
 (luna-define-method elmo-message-field ((folder elmo-multi-folder)
 					number field &optional type)

@@ -773,7 +773,8 @@ until the login delay period has expired"))
 
 (defun elmo-pop3-read-body (process outbuf)
   (with-current-buffer (process-buffer process)
-    (let ((point elmo-pop3-read-point))
+    (let ((point elmo-pop3-read-point)
+	  (read-point elmo-pop3-read-point))
       (while (and (goto-char (1- point))
 		  (null (search-forward "\n.\r\n" nil t)))
 	(setq point (max (- (point-max) 2) elmo-pop3-read-point))
@@ -782,7 +783,7 @@ until the login delay period has expired"))
       (set-buffer outbuf)
       (erase-buffer)
       (insert-buffer-substring
-       (process-buffer process) elmo-pop3-read-point (- point 3))))
+       (process-buffer process) read-point (- point 3))))
   t)
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-pop3-folder))

@@ -500,9 +500,12 @@ Return value is a cons cell of (STRUCTURE . REST)"
       (setq list (cdr list))))
   list)
 
+(defun elmo-sort-uniq-number-list (list)
+  (elmo-uniq-sorted-list (sort list #'<) #'eq))
+
 (defun elmo-union (l1 l2)
   "Make a union of two lists"
-  (elmo-uniq-sorted-list (sort (append l1 l2) #'<)))
+  (elmo-sort-uniq-number-list (append l1 l2)))
 
 (defun elmo-list-insert (list element after)
   (let* ((match (memq after list))
@@ -537,13 +540,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	)))
 
 (defun elmo-max-of-list (nlist)
-  (let ((l nlist)
-	(max-num 0))
-    (while l
-      (if (< max-num (car l))
-	  (setq max-num (car l)))
-      (setq l (cdr l)))
-    max-num))
+  (apply #'max 0 nlist))
 
 (defun elmo-concat-path (path filename)
   (if (not (string= path ""))
@@ -929,28 +926,19 @@ the directory becomes empty after deletion."
   (let ((clist1 (sort (copy-sequence list1) #'<))
 	(clist2 (sort (copy-sequence list2) #'<))
 	list1-only list2-only)
-    (while (or clist1 clist2)
-      (cond
-       ((null clist1)
-	(while clist2
-	  (setq list2-only (cons (car clist2) list2-only))
-	  (setq clist2 (cdr clist2))))
-       ((null clist2)
-	(while clist1
-	  (setq list1-only (cons (car clist1) list1-only))
-	  (setq clist1 (cdr clist1))))
-       ((< (car clist1) (car clist2))
-	(while (and clist1 (< (car clist1) (car clist2)))
-	  (setq list1-only (cons (car clist1) list1-only))
-	  (setq clist1 (cdr clist1))))
-       ((< (car clist2) (car clist1))
-	(while (and clist2 (< (car clist2) (car clist1)))
-	  (setq list2-only (cons (car clist2) list2-only))
-	  (setq clist2 (cdr clist2))))
-       ((= (car clist1) (car clist2))
-	(setq clist1 (cdr clist1)
-	      clist2 (cdr clist2)))))
-    (list list1-only list2-only)))
+    (while (and clist1 clist2)
+      (cond ((= (car clist1) (car clist2))
+	     (setq clist1 (cdr clist1)
+		   clist2 (cdr clist2)))
+	    ((< (car clist1) (car clist2))
+	     (setq list1-only (cons (car clist1) list1-only)
+		   clist1 (cdr clist1)))
+	    (t ;; (< (car clist2) (car clist1))
+	     (setq list2-only (cons (car clist2) list2-only)
+		   clist2 (cdr clist2)))))
+    ;; Keep sorted orders.
+    (list (nconc (nreverse list1-only) clist1)
+	  (nconc (nreverse list2-only) clist2))))
 
 (defun elmo-list-diff-nonsortable (list1 list2)
   (let ((clist1 (copy-sequence list1))
@@ -1904,7 +1892,7 @@ If the cache is partial file-cache, TYPE is 'partial."
   (concat "<" (elmo-recover-string-from-filename filename) ">"))
 
 (defsubst elmo-cache-get-path-subr (msgid)
-  (format "%02X" (logand (apply '+ (string-to-list msgid)) 31)))
+  (format "%02X" (logand (apply #'+ (string-to-list msgid)) 31)))
 
 ;;;
 (defun elmo-file-cache-get-path (msgid &optional section)
@@ -2192,7 +2180,7 @@ Optional argument DAYS specifies the days to expire caches."
     "Display a warning. ARGS are passed to `format'."
     (with-current-buffer (get-buffer-create elmo-warning-buffer-name)
       (goto-char (point-max))
-      (funcall 'insert (apply 'format (append args '("\n"))))
+      (funcall #'insert (apply #'format (append args '("\n"))))
       (ignore-errors (recenter 1))
       (display-buffer elmo-warning-buffer-name))))
 
@@ -2299,12 +2287,20 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
       (std11-narrow-to-header)
       (elmo-msgdb-get-message-id-from-header))))
 
+(defun elmo-msgdb-get-message-ids-from-header (field)
+  (mapcar 'std11-msg-id-string
+	  (std11-parse-msg-ids-string (std11-fetch-field field))))
+
 (defun elmo-msgdb-get-references-from-header ()
-  (if elmo-msgdb-prefer-in-reply-to-for-parent
-      (or (elmo-msgdb-get-last-message-id (std11-fetch-field "in-reply-to"))
-	  (elmo-msgdb-get-last-message-id (std11-fetch-field "references")))
-    (or (elmo-msgdb-get-last-message-id (std11-fetch-field "references"))
-	(elmo-msgdb-get-last-message-id (std11-fetch-field "in-reply-to")))))
+  (let ((irt (elmo-msgdb-get-message-ids-from-header "in-reply-to"))
+	(refs (elmo-msgdb-get-message-ids-from-header "references")))
+    (delq nil
+	  (elmo-uniq-list
+	   (nreverse
+	    (if elmo-msgdb-prefer-in-reply-to-for-parent
+		(nconc refs irt)
+	      (nconc irt refs)))))))
+
 
 (defsubst elmo-msgdb-insert-file-header (file)
   "Insert the header of the article.  Buffer contents after point are deleted."
