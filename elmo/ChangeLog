@@ -1,3 +1,8 @@
+2014-06-03  Juliusz Chroboczek  <jch@pps.univ-paris-diderot.fr>
+
+	* elmo-imap4.el (elmo-imap4-parse-resp-text-code): Fix parsing of
+	IMAP ALERT replies.
+
 2014-06-01  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-maildir.el (elmo-map-message-fetch): Signal error if
