@@ -246,7 +246,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 
 (defun elmo-time-less-p (lhs rhs)
   (while (and (car lhs) (car rhs))
-    (cond ((< (car lhs) (car rhs))
+    (cond ((car-less-than-car lhs rhs)
 	   (setq lhs nil))
 	  ((= (car lhs) (car rhs))
 	   (setq lhs (cdr lhs)

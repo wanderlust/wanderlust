@@ -376,7 +376,7 @@ If third optional argument ENTIRE is non-nil, fetch entire message at once."
 	(with-current-buffer rawbuf
 	  (let (buffer-read-only
 		(outer-header (car pieces))
-		(pieces (sort (cdr pieces) (lambda (l r) (< (car l) (car r)))))
+		(pieces (sort (cdr pieces) #'car-less-than-car))
 		contents entity)
 	    (erase-buffer)
 	    (while pieces

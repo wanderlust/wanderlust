@@ -930,10 +930,10 @@ the directory becomes empty after deletion."
       (cond ((= (car clist1) (car clist2))
 	     (setq clist1 (cdr clist1)
 		   clist2 (cdr clist2)))
-	    ((< (car clist1) (car clist2))
+	    ((car-less-than-car clist1 clist2)
 	     (setq list1-only (cons (car clist1) list1-only)
 		   clist1 (cdr clist1)))
-	    (t ;; (< (car clist2) (car clist1))
+	    (t ;; (car-less-than-car clist2 clist1)
 	     (setq list2-only (cons (car clist2) list2-only)
 		   clist2 (cdr clist2)))))
     ;; Keep sorted orders.
