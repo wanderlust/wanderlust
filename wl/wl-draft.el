@@ -1592,18 +1592,18 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (let ((id (std11-field-body "Message-ID"))
 	    (elmo-enable-disconnected-operation t))
 	(while fcc-list
-	  (if (elmo-folder-append-buffer
-	       (wl-folder-get-elmo-folder
-		(eword-decode-string (car fcc-list)))
-	       (and wl-fcc-force-as-read '(read)))
-	      (wl-draft-write-sendlog 'ok 'fcc nil (car fcc-list) id)
-	    (wl-draft-write-sendlog 'failed 'fcc nil (car fcc-list) id))
-	  (if (and wl-draft-fcc-append-read-folder-history
-		   (boundp 'wl-read-folder-history))
-	      (or (equal (car fcc-list) (car wl-read-folder-history))
-		  (setq wl-read-folder-history
-			(append (list (car fcc-list)) wl-read-folder-history))))
-	  (setq fcc-list (cdr fcc-list)))))))
+          (let ((folder (wl-folder-get-elmo-folder
+                         (eword-decode-string (car fcc-list)))))
+            (elmo-folder-open folder)
+            (if (elmo-folder-append-buffer folder (and wl-fcc-force-as-read '(read)))
+                (wl-draft-write-sendlog 'ok 'fcc nil (car fcc-list) id)
+              (wl-draft-write-sendlog 'failed 'fcc nil (car fcc-list) id))
+            (if (and wl-draft-fcc-append-read-folder-history
+                     (boundp 'wl-read-folder-history))
+                (or (equal (car fcc-list) (car wl-read-folder-history))
+                    (setq wl-read-folder-history
+                          (append (list (car fcc-list)) wl-read-folder-history))))
+            (setq fcc-list (cdr fcc-list))))))))
 
 (defun wl-draft-on-field-p ()
   (if (< (point)
