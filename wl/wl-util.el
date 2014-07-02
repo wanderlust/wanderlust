@@ -625,7 +625,7 @@ that `read' can handle, whenever this is possible."
 	     (string-match "\\`\\(.+\\)@\\([^@]+\\)\\'" string))
     (let ((local (match-string 1 string))
 	  (domain (match-string 2 string)))
-      (format "<%s%%%s@%s>"
+      (format "<%s.%s@%s>"
 	      (wl-unique-id)
 	      (if wl-message-id-hash-function
 		  (concat "%" (funcall wl-message-id-hash-function local))
