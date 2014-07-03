@@ -1,3 +1,7 @@
+2014-07-03  Juliusz Chroboczek  <jch@pps.univ-paris-diderot.fr>
+
+	* wl-draft.el: Require wl-util, since we're using macros from there.
+
 2014-06-09  David Maus  <dmaus@ictsoc.de>
 
 	* wl-draft.el (wl-draft-do-fcc): Open fcc folder before appending
