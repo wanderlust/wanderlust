@@ -38,6 +38,7 @@
 (require 'timezone nil t)
 (require 'std11)
 (require 'eword-encode)
+(require 'wl-util)
 (require 'wl-vars)
 
 (defvar x-face-add-x-face-version-header)
