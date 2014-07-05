@@ -1135,6 +1135,7 @@ The function `sendmail-send-it' uses the external program
 `sendmail-program'."
   (let ((id (elmo-get-message-id-from-buffer))
 	(to (std11-field-body "to")))
+    (setq buffer-file-coding-system 'raw-text)
     (run-hooks 'wl-mail-send-pre-hook)
     (require 'sendmail)
     (condition-case err
