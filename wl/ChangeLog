@@ -1,3 +1,11 @@
+2014-07-06  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-draft.el (wl-draft-send-mail-with-sendmail): Set
+	buffer-file-coding-system to raw-text.  let-bind
+	select-safe-coding-system-function to nil before calling
+	sendmail-send-it.
+	Cf. https://github.com/wanderlust/wanderlust/issues/66
+
 2014-07-03  Juliusz Chroboczek  <jch@pps.univ-paris-diderot.fr>
 
 	* wl-draft.el: Require wl-util, since we're using macros from there.

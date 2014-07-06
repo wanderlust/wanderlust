@@ -1139,7 +1139,11 @@ The function `sendmail-send-it' uses the external program
     (run-hooks 'wl-mail-send-pre-hook)
     (require 'sendmail)
     (condition-case err
-	(sendmail-send-it)
+	;; Prevent select-message-coding-system checks from checking for
+	;; a MIME charset -- message is already encoded.
+	(let (select-safe-coding-system-function)
+	  (setq buffer-file-coding-system 'raw-text)
+	  (sendmail-send-it))
       (error
        (wl-draft-write-sendlog 'failed 'sendmail nil (list to) id)
        (signal (car err) (cdr err))))
