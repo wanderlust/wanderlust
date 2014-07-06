@@ -1172,6 +1172,15 @@ Returns start point of signature."
 	 (point)))	;; if no separator found, returns end.
      )))
 
+(defun wl-highlight-citation-prefix-index (prefix)
+  "Return a face index for a given citation prefix"
+  (apply '+ (mapcar (lambda (ch)
+                      (cond
+                        ((memq ch '(?> ?| ?: ?})) 1)
+                        ((memq ch '(9 32)) 0)
+                        (t ch)))
+		    prefix)))
+
 (defun wl-highlight-message (start end hack-sig &optional body-only)
   "Highlight message headers between start and end.
 Faces used:
@@ -1258,7 +1267,7 @@ interpreted as cited text.)"
 	    (put-text-property (match-beginning 0) (match-end 0)
 			       'face 'wl-highlight-header-separator-face)
 	    (forward-line 1))
-	  (let (prefix prefix-face-alist pair end)
+	  (let (prefix end)
 	    (while (null (progn
 			     ;; Skip invisible region.
 			   (when (invisible-p (point))
@@ -1273,18 +1282,12 @@ interpreted as cited text.)"
 		     (looking-at wl-highlight-citation-prefix-regexp))
 		(setq prefix (buffer-substring (point)
 					       (match-end 0)))
-		(setq pair (assoc prefix prefix-face-alist))
-		(unless pair
-		  (setq pair (cons prefix
-				   (nth (% (length prefix-face-alist)
-					   (length
-					    wl-highlight-citation-face-list))
-					wl-highlight-citation-face-list)))
-		  (setq prefix-face-alist
-			(cons pair prefix-face-alist)))
 		(unless wl-highlight-highlight-citation-too
 		  (goto-char (match-end 0)))
-		(setq current (cdr pair)))
+		(setq current
+                      (nth (% (wl-highlight-citation-prefix-index prefix)
+                              (length wl-highlight-citation-face-list))
+                           wl-highlight-citation-face-list)))
 	       ((and wl-highlight-citation-header-regexp
 		     (looking-at wl-highlight-citation-header-regexp))
 		(setq current 'wl-highlight-message-citation-header)
