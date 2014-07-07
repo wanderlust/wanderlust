@@ -620,15 +620,22 @@ that `read' can handle, whenever this is possible."
      ;; might otherwise generate the same ID via another algorithm.
      wl-unique-id-suffix)))
 
+(defcustom wl-draft-make-message-id-from-address-delimiter "-"
+  "A string between unique and addr-spec of Message-ID built from e-mail address.  It should be consist of atext (described in RFC 5322)."
+  :type 'string
+  :group 'wl-draft)
+
 (defun wl-draft-make-message-id-from-address (string)
   (when (and (stringp string)
 	     (string-match "\\`\\(.+\\)@\\([^@]+\\)\\'" string))
     (let ((local (match-string 1 string))
 	  (domain (match-string 2 string)))
-      (format "<%s%%%s@%s>"
+      (format "<%s%s%s@%s>"
 	      (wl-unique-id)
+	      wl-draft-make-message-id-from-address-delimiter
 	      (if wl-message-id-hash-function
-		  (concat "%" (funcall wl-message-id-hash-function local))
+		  (concat wl-draft-make-message-id-from-address-delimiter
+			  (funcall wl-message-id-hash-function local))
 		local)
 	      domain))))
 
