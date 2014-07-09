@@ -1315,11 +1315,16 @@ MESSAGE is a doing part of progress message."
 	(prin1-to-string word)
       word)))
 
-(defmacro elmo-string (string)
-  "STRING without text property."
-  `(let ((obj (copy-sequence ,string)))
-     (and obj (set-text-properties 0 (length obj) nil obj))
-     obj))
+(static-cond
+ ((fboundp 'substring-no-properties)
+  (defalias 'elmo-string 'substring-no-properties))
+ (t
+  (defmacro elmo-string (string &optional from to)
+    "Return a substring of STRING, without text properties.
+It starts at zero-indexed index FROM and ends before TO."
+    `(let ((obj (subsgtring ,string (or ,from 0) ,to)))
+       (and obj (set-text-properties 0 (length obj) nil obj))
+       obj))))
 
 (defun elmo-flatten (list-of-list)
   "Flatten LIST-OF-LIST."
