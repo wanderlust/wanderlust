@@ -301,12 +301,7 @@ or between BEG and END."
 	retval)))
 
 (defsubst wl-repeat-string (str times)
-  (let ((loop times)
-	ret-val)
-    (while (> loop 0)
-      (setq ret-val (concat ret-val str))
-      (setq loop (- loop 1)))
-    ret-val))
+  (apply #'concat (make-list times str)))
 
 (defun wl-append-assoc-list (item value alist)
   "make assoc list '((item1 value1-1 value1-2 ...)) (item2 value2-1 ...)))"
