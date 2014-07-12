@@ -1323,7 +1323,7 @@ MESSAGE is a doing part of progress message."
     "Return a substring of STRING, without text properties.
 It starts at zero-indexed index FROM and ends before TO."
     `(let ((obj (subsgtring ,string (or ,from 0) ,to)))
-       (and obj (set-text-properties 0 (length obj) nil obj))
+       (set-text-properties 0 (length obj) nil obj)
        obj))))
 
 (defun elmo-flatten (list-of-list)
