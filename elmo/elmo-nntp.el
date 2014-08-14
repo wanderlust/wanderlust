@@ -894,27 +894,16 @@ Don't cache if nil.")
     (nreverse response)))
 
 (defun elmo-nntp-parse-overview-string (string)
-  (save-excursion
-    (let ((tmp-buffer (get-buffer-create " *ELMO Overview TMP*"))
-	  ret-list ret-val beg)
-      (set-buffer tmp-buffer)
-      (erase-buffer)
-      (set-buffer-multibyte nil)
-      (insert string)
-      (goto-char (point-min))
-      (setq beg (point))
-      (while (not (eobp))
-	(end-of-line)
-	(setq ret-list (save-match-data
-			 (apply 'vector (split-string
-					 (buffer-substring beg (point))
-					 "\t"))))
-	(beginning-of-line)
-	(forward-line 1)
-	(setq beg (point))
-	(setq ret-val (nconc ret-val (list ret-list))))
-;;;      (kill-buffer tmp-buffer)
-      ret-val)))
+  (let ((index 0)
+	(length (length string))
+	next result)
+    (while (or (setq next (string-match "\n" string index))
+	       (null (eq index length)))
+      (setq result (cons (apply 'vector (split-string
+					 (substring string index next) "\t"))
+			 result)
+	    index (if next (1+ next) length)))
+    (nreverse result)))
 
 (defun elmo-nntp-get-newsgroup-by-msgid (msgid server user port type)
   "Get nntp header string."
