@@ -416,7 +416,7 @@ Return number if put mark succeed"
 		     'trash)))
       (cond ((stringp type)
 	     type)
-	    ((or (equal type 'remove) (equal type 'null))
+	    ((memq type '(remove null))
 	     'null)
 	    (t;; (equal type 'trash)
 	     (let ((trash-folder (wl-folder-get-elmo-folder wl-trash-folder)))
