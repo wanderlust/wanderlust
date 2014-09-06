@@ -2319,11 +2319,10 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
       ;; Read until header separator is found.
       (while (null done)
 	(setq done
-	      (null
-	       (eq elmo-msgdb-file-header-chop-length
-		   (nth 1 (insert-file-contents-as-binary
-			   file nil beg
-			   (incf beg elmo-msgdb-file-header-chop-length))))))
+	      (/= elmo-msgdb-file-header-chop-length
+		  (nth 1 (insert-file-contents-as-binary
+			  file nil beg
+			  (incf beg elmo-msgdb-file-header-chop-length)))))
 	(if first
 	    (setq first nil)
 	  (forward-char -1))

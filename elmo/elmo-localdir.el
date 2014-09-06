@@ -331,7 +331,7 @@
 	"Packing"
       (dolist (old-number numbers)
 	(setq entity (elmo-msgdb-message-entity msgdb old-number))
-	(when (not (eq old-number new-number)) ; why \=() is wrong..
+	(when (/= old-number new-number)
 	  (elmo-bind-directory dir
 	    ;; xxx  nfs,hardlink
 	    (rename-file (number-to-string old-number)

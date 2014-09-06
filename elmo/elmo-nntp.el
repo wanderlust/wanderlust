@@ -898,7 +898,7 @@ Don't cache if nil.")
 	(length (length string))
 	next result)
     (while (or (setq next (string-match "\n" string index))
-	       (null (eq index length)))
+	       (/= index length))
       (setq result (cons (apply 'vector (split-string
 					 (substring string index next) "\t"))
 			 result)

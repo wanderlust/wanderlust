@@ -1,3 +1,14 @@
+2014-09-06  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-localdir.el (elmo-folder-pack-numbers): Use `/=' instead of
+	not+eq for number comparison.
+
+	* elmo-nntp.el (elmo-nntp-parse-overview-string): Likewise.
+
+	* elmo-util.el (elmo-msgdb-insert-file-header): Likewise.
+
+	* elmo.el (elmo-folder-synchronize): Likewise.
+
 2014-08-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-nntp.el (elmo-nntp-parse-overview-string): Do not use
