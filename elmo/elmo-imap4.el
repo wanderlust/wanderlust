@@ -2349,7 +2349,7 @@ Returns a list of UIDs."
 (defun elmo-imap4-search-generate-vector (folder filter from-msgs)
   (let ((search-key (elmo-filter-key filter))
 	(imap-search-keys '("bcc" "body" "cc" "from" "subject" "to"
-			    "larger" "smaller" "flag")))
+			    "larger" "smaller" "flag" "x-gm-raw")))
     (cond
      ((string= "last" search-key)
       (let ((numbers (or from-msgs (elmo-folder-list-messages folder)))
