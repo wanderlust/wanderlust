@@ -103,6 +103,17 @@ REGEXP should have a grouping for namespace prefix.")
 (defvar elmo-imap4-flags-sync-method 'union
   "Method used when syncing server and client flags.")
 
+(defvar elmo-imap4-strict-flag-availability-check nil
+  "Perform a strict check if a flag is available.
+
+When set to a non-nil value a flag is considered to be available
+if and only if it appears in the server's FLAGS or PERMAFLAGS
+response. 
+
+Otherwise a flag is also reported to be available if the
+PERMAFLAGS response includes the special flag \* indicating that
+a user can create custom flags.")
+
 ;;
 ;;; internal variables
 ;;
@@ -868,7 +879,11 @@ EXPUNGE for deleted messages."
       (concat "\\" (symbol-name flag))
       (elmo-imap4-session-flags-internal session)))
     (t
-     (member "\\*" (elmo-imap4-session-flags-internal session)))))
+     (elmo-string-member-ignore-case
+      (if elmo-imap4-strict-flag-availability-check 
+          (symbol-name flag)
+        "\\*")
+      (elmo-imap4-session-flags-internal session)))))
 
 (defun elmo-imap4-flag-to-imap-search-key (flag)
   (case flag
