@@ -114,7 +114,18 @@ Otherwise a flag is also reported to be available if the
 PERMAFLAGS response includes the special flag \* indicating that
 a user can create custom flags.")
 
-;;
+(defvar elmo-imap4-search-keys
+  '("all" "answered" "bcc" "before" "body" "cc" "deleted" "draft" 
+    "flagged" "from" "header" "keyword" "larger" "new" "not" "old" 
+    "on" "or" "recent" "seen" "sentbefore" "senton" "sentsince" 
+    "since" "smaller" "subject" "text" "to" "uid" "unanswered" 
+    "undeleted" "undraft" "unflagged" "unkeyword" "unseen")
+  "List of known IMAP search keys.
+
+This list is used in `elmo-imap4-search-generate-vector' to
+differentiate between IMAP4 search keys and searches for message
+header values.")
+
 ;;; internal variables
 ;;
 (defvar elmo-imap4-seq-prefix "elmo-imap4")
@@ -2362,9 +2373,7 @@ Returns a list of UIDs."
      'search)))
 
 (defun elmo-imap4-search-generate-vector (folder filter from-msgs)
-  (let ((search-key (elmo-filter-key filter))
-	(imap-search-keys '("bcc" "body" "cc" "from" "subject" "to"
-			    "larger" "smaller" "flag")))
+  (let ((search-key (elmo-filter-key filter)))
     (cond
      ((string= "last" search-key)
       (let ((numbers (or from-msgs (elmo-folder-list-messages folder)))
@@ -2405,7 +2414,7 @@ Returns a list of UIDs."
 		 'unmatch)
 	     "not" "")
 	 (format "%s%s"
-		 (if (member search-key imap-search-keys)
+		 (if (member search-key elmo-imap4-search-keys)
 		     ""
 		   "header")
 		 search-key)
