@@ -2413,7 +2413,7 @@ folder, create it after confirmation.
 Create a folder group.
 (@code{wl-fldmgr-make-group})
 
-@itemx m A
+@item m A
 @kindex m A (Folder)
 @findex wl-fldmgr-make-access-group
 Create an access group.
@@ -9040,7 +9040,7 @@ in Japanese.}
 I would like to express my thanks to the members of the mailing list for
 valuable advice and many pieces of code they contributed.
 
-@subsection Archive
+@section Archive
 
 You can read messages posted to the mailing list on the web or in
 NetNews.

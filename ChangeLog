@@ -1,3 +1,11 @@
+2014-10-18  Erik Hetzner  <egh@e6h.org> / Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Cf. https://github.com/wanderlust/wanderlust/pull/73
+
+	* doc/wl-ja.texi (Folder Manager, Mailing List): Fix for makeinfo.
+
+	* doc/wl.texi (Folder Manager, Mailing List): Likewise.
+
 2014-03-29  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* WL-MK (compile-wl-package, compile-wl-package-xmas): Set

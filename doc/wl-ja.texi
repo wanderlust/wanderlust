@@ -2428,7 +2428,7 @@ subscribe し、削除は unsubscribe したことと同じです。
 グループを作成します。
 (@code{wl-fldmgr-make-group})
 
-@itemx m A
+@item m A
 @kindex m A (Folder)
 @findex wl-fldmgr-make-access-group
 アクセスグループを作成します。
@@ -8970,7 +8970,7 @@ Wanderlust List in English @t{<wl-en@@ml.gentei.org>}
 メーリングリストの皆様には貴重な御助言、コードをたくさん御提供いただいて
 おります。この場を借りてお礼申し上げます。
 
-@subsection アーカイブ
+@section アーカイブ
 
 メーリングリストに投稿されたメッセージは、ウェブや NetNews でも読むこと
 ができます。
