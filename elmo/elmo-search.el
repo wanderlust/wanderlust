@@ -365,6 +365,14 @@ If the value is a list, all elements are used as index paths for namazu."
 	(setq files (cons (expand-file-name filename dirname) files))))
     files))
 
+(defun elmo-search-split-pattern-list (engine pattern)
+  "ENGINE is ignored.  Splits query PATTERN into list of strings, with ' and \" quoting phrases."
+  (split-string-and-unquote
+   (elmo-search-replace-single-quotes engine pattern)))
+
+(defun elmo-search-replace-single-quotes (engine pattern)
+  "ENGINE is ignored.  Replace single quotes with double quotes in PATTERN."
+  (replace-regexp-in-string "\'" "\"" pattern nil t))
 
 ;;; Setup `elmo-search-engine-alist'
 (unless noninteractive
@@ -378,7 +386,19 @@ If the value is a list, all elements are used as index paths for namazu."
       (elmo-search-register-engine
        'grep 'local-file
        :prog "grep"
-       :args '("-l" "-e" pattern elmo-search-grep-target))))
+       :args '("-l" "-e" pattern elmo-search-grep-target)))
+  (or (assq 'mu elmo-search-engine-alist)
+      (elmo-search-register-engine
+       'mu 'local-file
+       :prog "mu"
+       :args '("find" elmo-search-split-pattern-list "--fields" "l")
+       :charset 'utf-8))
+  (or (assq 'notmuch elmo-search-engine-alist)
+      (elmo-search-register-engine
+       'notmuch 'local-file
+       :prog "notmuch"
+       :args '("search" "--output=files" elmo-search-replace-single-quotes)
+       :charset 'utf-8)))
 
 (require 'product)
 (product-provide (provide 'elmo-search) (require 'elmo-version))

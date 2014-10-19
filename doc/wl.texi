@@ -1365,6 +1365,8 @@ be assigned by @code{elmo-search-default-engine}.
 @menu
 * namazu::      namazu
 * grep::        grep
+* mu::          mu
+* notmuch::     notmuch
 @end menu
 
 
@@ -1470,6 +1472,61 @@ Example:
 @end group
 @end example
 
+@node mu
+@subsection mu
+@pindex mu
+
+Search mail using mu (@uref{http://www.djcbsoftware.nl/code/mu/}).
+
+Examples (from the mu cheatsheet)
+
+@example
+@group
+[Helsinki]
+    -> messages about Helsinki (in message body, subject, sender, …)
+
+[to:Jack subject:jellyfish tumbleweed]
+    -> messages to Jack with subject jellyfish containing the word tumbleweed
+
+[size:2k..2m date:20091201..20093112 flag:attach from:bill]
+    -> messages between 2 kilobytes and a 2Mb, written in December 2009 with an attachment from Bill
+
+[subject:soc* flag:unread]
+    -> unread messages about things starting with 'soc' (soccer, society, socrates, …)
+
+[mime:image/*]
+    -> messages with images as attachment
+
+['foo bar']
+    -> search for messages with the phrase “foo bar”
+
+@end group
+@end example
+
+@node notmuch
+@subsection notmuch
+@pindex notmuch
+
+Search mail using notmuch (@uref{http://notmuchmail.org/}).
+
+Examples (from the notmuch manual)
+
+@example
+@group
+[term1]
+    -> messages that contain 'term1'
+
+[-term1]
+    -> messages that DO NOT contain 'term1'
+
+[term1 term2]
+    -> messages containing term1 and term2
+
+['foo bar']
+    -> search for messages with the phrase “foo bar”
+
+@end group
+@end example
 
 @node Multi Folder, Filter Folder, Search Folder, Folders
 @section Multi Folder
