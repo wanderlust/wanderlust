@@ -1,4 +1,4 @@
-\input texinfo @c -*-texinfo -*-
+\input texinfo @c -*-texinfo -*- coding: us-ascii -*-
 @c %**start of header
 @setfilename wl.info
 @settitle Wanderlust -- Yet Another Message Interface On Emacsen --
@@ -1448,7 +1448,7 @@ Using above alias setting, you can specify
 to execute a namazu search with keyword @samp{wanderlust} using indices in the 
 directory @file{~/.elmo/cache} and @file{~/documents}.
 
-@node grep,  , namazu, Search Folder
+@node grep, mu, namazu, Search Folder
 @subsection grep
 @pindex grep
 
@@ -1472,7 +1472,7 @@ Example:
 @end group
 @end example
 
-@node mu
+@node mu, notmuch, grep, Search Folder
 @subsection mu
 @pindex mu
 
@@ -1483,7 +1483,7 @@ Examples (from the mu cheatsheet)
 @example
 @group
 [Helsinki]
-    -> messages about Helsinki (in message body, subject, sender, …)
+    -> messages about Helsinki (in message body, subject, sender, ...)
 
 [to:Jack subject:jellyfish tumbleweed]
     -> messages to Jack with subject jellyfish containing the word tumbleweed
@@ -1492,18 +1492,18 @@ Examples (from the mu cheatsheet)
     -> messages between 2 kilobytes and a 2Mb, written in December 2009 with an attachment from Bill
 
 [subject:soc* flag:unread]
-    -> unread messages about things starting with 'soc' (soccer, society, socrates, …)
+    -> unread messages about things starting with 'soc' (soccer, society, socrates, ...)
 
 [mime:image/*]
     -> messages with images as attachment
 
 ['foo bar']
-    -> search for messages with the phrase “foo bar”
+    -> search for messages with the phrase "foo bar"
 
 @end group
 @end example
 
-@node notmuch
+@node notmuch,  , mu, Search Folder
 @subsection notmuch
 @pindex notmuch
 
@@ -1523,7 +1523,7 @@ Examples (from the notmuch manual)
     -> messages containing term1 and term2
 
 ['foo bar']
-    -> search for messages with the phrase “foo bar”
+    -> search for messages with the phrase "foo bar"
 
 @end group
 @end example
