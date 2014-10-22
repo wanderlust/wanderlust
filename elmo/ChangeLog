@@ -13,6 +13,10 @@
 	(elmo-imap4-session-flag-available-p): Use new variable and
 	conditionally perform a strict check for a flag's availability.
 
+2014-10-15 Erik Hetzner <egh@e6h.org>
+
+	* elmo-search.el: Add support for mu, notmuch search.
+
 2014-09-06  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-localdir.el (elmo-folder-pack-numbers): Use `/=' instead of
