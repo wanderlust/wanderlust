@@ -9106,14 +9106,14 @@ Read messages posted to @t{<wl@@ml.gentei.org>}
 
 @example
 @uref{http://dir.gmane.org/gmane.mail.wanderlust.general.japanese}
-@uref{news://gmane.mail.wanderlust.general.japanese@@news.gmane.org}
+@uref{news://news.gmane.org/gmane.mail.wanderlust.general.japanese}
 @end example
 
 Read messages posted to @t{<wl-en@@ml.gentei.org>}
 
 @example
 @uref{http://dir.gmane.org/gmane.mail.wanderlust.general}
-@uref{news://gmane.mail.wanderlust.general@@news.gmane.org}
+@uref{news://news.gmane.org/gmane.mail.wanderlust.general}
 @end example
 
 
