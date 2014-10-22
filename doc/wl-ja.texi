@@ -1389,6 +1389,8 @@ emacs-w3m $B$KIUB0$N(B @file{README.shimbun.ja} $B$r;2>H$7$F$/$@$5$$!#(B
 @menu
 * namazu::      namazu
 * grep::        grep
+* mu::          mu
+* notmuch::     notmuch
 @end menu
 
 
@@ -1468,7 +1470,7 @@ namazu (@uref{http://www.namazu.org/}) $B$r;H$C$F!"%$%s%G%C%/%9$KEPO?$5$l$?(B
 $B$HF~NO$9$l$P!"(B@file{~/.elmo/cache} $B$H(B @file{~/documents} $B$N%$%s%G%C%/%9$r(B
 $BBP>]$H$7$F!"%-!<%o!<%I(B @samp{wanderlust} $B$G8!:w$r9T$$$^$9!#(B
 
-@node grep,  , namazu, Search Folder
+@node grep, mu, namazu, Search Folder
 @subsection grep
 @pindex grep
 
@@ -1491,6 +1493,61 @@ grep $B$r;H$C$F!"8!:wBP>]$G;XDj$5$l$?%G%#%l%/%H%j$K$"$k%U%!%$%k$r8!:w$7$^$9!#(
 @end group
 @end example
 
+@node mu, notmuch, grep, Search Folder
+@subsection mu
+@pindex mu
+
+mu (@uref{http://www.djcbsoftware.nl/code/mu/}) $B$r;H$C$F!"J8=q$r8!:w$7$^$9!#(B
+
+$BNc(B:$B!J(BMu cheatsheet $B$h$j!K(B
+
+@example
+@group
+[Helsinki]
+    -> messages about Helsinki (in message body, subject, sender, ...)
+
+[to:Jack subject:jellyfish tumbleweed]
+    -> messages to Jack with subject jellyfish containing the word tumbleweed
+
+[size:2k..2m date:20091201..20093112 flag:attach from:bill]
+    -> messages between 2 kilobytes and a 2Mb, written in December 2009 with an attachment from Bill
+
+[subject:soc* flag:unread]
+    -> $B%5%V%8%'%/%H$,!!(B'soc' $B$G;O$^$k(B (soccer, society, socrates, ...) $BL$FI$N%a%C%;!<%8$rC5$9(B 
+
+[mime:image/*]
+    -> $B2hA|$,E:IU$5$l$?%a%C%;!<%8$rC5$9(B
+
+['foo bar']
+    -> "foo bar" $B$H$$$&%U%l!<%:$r4^$`%a%C%;!<%8$rC5$9(B
+
+@end group
+@end example
+
+@node notmuch,  , mu, Search Folder
+@subsection notmuch
+@pindex notmuch
+
+notmuch (@uref{http://notmuchmail.org/}) $B$r;H$C$F!"J8=q$r8!:w$7$^$9!#(B
+
+$BNc!J(Bnotmuch $B%^%K%e%"%k$h$j!K(B
+
+@example
+@group
+[term1]
+    -> 'term1' $B$r4^$`%a%C%;!<%8$rC5$9(B
+
+[-term1]
+    -> 'term1' $B$r(B@emph{$B4^$^$J$$(B}$B%a%C%;!<%8$rC5$9(B
+
+[term1 term2]
+    -> 'term1' $B$H(B 'term2' $B$NN>J}$r4^$`%a%C%;!<%8$rC5$9(B
+
+['foo bar']
+    -> "foo bar" $B$H$$$&%U%l!<%:$r4^$`%a%C%;!<%8$rC5$9(B
+
+@end group
+@end example
 
 @node Multi Folder, Filter Folder, Search Folder, Folders
 @section $B%^%k%A%U%)%k%@(B
