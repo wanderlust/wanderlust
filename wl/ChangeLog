@@ -1,3 +1,9 @@
+2014-10-27  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-mime.el (wl-mime-pgp-verify-region-with-epg): Set
+	epa-info-buffer's buffer to the current buffer when the buffer is
+	displyed.
+
 2014-09-06  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-action.el (wl-summary-get-dispose-folder): Minor refactoring.

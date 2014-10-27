@@ -599,7 +599,8 @@ It calls following-method selected from variable
 
 (defun wl-mime-pgp-verify-region-with-epg (beg end &optional coding-system)
   (require 'epa)
-  (let ((context (epg-make-context)))
+  (let ((context (epg-make-context))
+	window)
     (elmo-with-progress-display (epg-verify nil reporter)
 	"Verifying"
       (epg-context-set-progress-callback context
@@ -614,7 +615,10 @@ It calls following-method selected from variable
 	  'raw-text-dos))))
     (when (epg-context-result-for context 'verify)
       (epa-display-info (epg-verify-result-to-string
-			 (epg-context-result-for context 'verify))))))
+			 (epg-context-result-for context 'verify)))
+      (when (and epa-popup-info-window
+		 (setq window (get-buffer-window epa-info-buffer)))
+	(select-window window)))))
 
 (defun wl-mime-pgp-decrypt-region-with-pgg (beg end &optional no-decode)
   (require 'pgg)
