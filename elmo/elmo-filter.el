@@ -492,20 +492,32 @@
 				 no-check
 				 mask)))
     (setq numbers (elmo-folder-list-messages folder (not disable-killed)))
-    (when (and numbers
-	       (not (elmo-filter-folder-require-msgdb-internal folder)))
-      (elmo-folder-synchronize (elmo-filter-folder-target-internal folder)
-			       'disable-killed
-			       ignore-msgdb
-			       no-check
-			       (if mask
-				   (elmo-list-filter mask numbers)
-				 numbers)))
-    (when (and disable-killed ignore-msgdb)
-      (elmo-folder-set-killed-list-internal folder nil))
-    (elmo-filter-folder-set-number-list-internal folder numbers)
-    (elmo-filter-folder-set-flag-count-internal folder nil)
-    0))
+    ;; check to make sure this is not the same numbers as
+    ;; we already have
+    (when (not (equal numbers
+                      (elmo-filter-folder-number-list-internal folder)))
+      (when (and numbers
+                 (not (elmo-filter-folder-require-msgdb-internal folder))
+                 ;; check to see if there are new messages that are not in
+                 ;; the the parent folders msgdb
+                 (not (cl-subsetp
+                       numbers
+                       (elmo-folder-list-messages
+                        (elmo-filter-folder-target-internal folder)
+                        nil 'in-msgdb))))
+        (elmo-folder-synchronize (elmo-filter-folder-target-internal folder)
+                                 'disable-killed
+                                 ignore-msgdb
+                                 no-check
+                                 (if mask
+                                     (elmo-list-filter mask numbers)
+                                   numbers)
+                                 (not (null numbers))))
+      (when (and disable-killed ignore-msgdb)
+        (elmo-folder-set-killed-list-internal folder nil))
+      (elmo-filter-folder-set-number-list-internal folder numbers)
+      (elmo-filter-folder-set-flag-count-internal folder nil)))
+      0)
 
 (luna-define-method elmo-folder-detach-messages ((folder elmo-filter-folder)
 						 numbers)
