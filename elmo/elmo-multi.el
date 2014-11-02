@@ -145,7 +145,8 @@
 					     disable-killed
 					     ignore-msgdb
 					     no-check
-					     mask)
+					     mask
+					     adds-only)
   (if mask
       (dolist (element (elmo-multi-split-numbers folder mask))
 	(when (cdr element)

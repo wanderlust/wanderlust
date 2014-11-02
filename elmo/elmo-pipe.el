@@ -341,7 +341,8 @@
 					     disable-killed
 					     ignore-msgdb
 					     no-check
-					     mask)
+					     mask
+					     adds-only)
   (let ((src-folder (elmo-pipe-folder-src-internal folder))
 	(dst-folder (elmo-pipe-folder-dst-internal folder)))
     (when (and (elmo-folder-plugged-p src-folder)

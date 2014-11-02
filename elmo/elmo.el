@@ -1619,7 +1619,8 @@ If Optional LOCAL is non-nil, don't update server flag."
 					      disable-killed
 					      ignore-msgdb
 					      no-check
-					      mask)
+					      mask
+					      adds-only)
   "Synchronize the folder data to the newest status.
 FOLDER is the ELMO folder structure.
 
@@ -1629,6 +1630,9 @@ flag status.
 If NO-CHECK is non-nil, rechecking folder is skipped.
 If optional argument MASK is specified and is a list of message numbers,
 synchronize messages only which are contained the list.
+If MASK is specified and ADDS-ONLY is non-nil, only process the
+new messages from mask and do not look for deletions. This skips
+a call to elmo-folder-list-messages.
 Return amount of cross-posted messages.
 If update process is interrupted, return nil.")
 
@@ -1637,7 +1641,8 @@ If update process is interrupted, return nil.")
 					     disable-killed
 					     ignore-msgdb
 					     no-check
-					     mask)
+					     mask
+					     adds-only)
   (let ((old-msgdb (elmo-folder-msgdb folder))
 	(killed-list (elmo-folder-killed-list-internal folder))
 	(flag-table (elmo-flag-table-load (elmo-folder-msgdb-path folder)))
@@ -1651,10 +1656,16 @@ If update process is interrupted, return nil.")
 	      diff-new diff-del
 	      delete-list new-list new-msgdb crossed)
 	  (message "Checking folder diff...")
-	  (elmo-set-list
-	   '(diff-new diff-del)
-	   (elmo-list-diff (elmo-folder-list-messages folder)
-			   (elmo-folder-list-messages folder nil 'in-msgdb)))
+          ;; if adds-only, just get the new messages from mask
+          (if (and mask adds-only)
+              (setq diff-new
+                    (cadr (elmo-list-diff
+                           (elmo-folder-list-messages folder nil 'in-msgdb)
+                           mask)))
+            (elmo-set-list
+             '(diff-new diff-del)
+             (elmo-list-diff (elmo-folder-list-messages folder)
+                             (elmo-folder-list-messages folder nil 'in-msgdb))))
 	  (when diff-new
 	    (unless disable-killed
 	      (setq diff-new (elmo-living-messages diff-new killed-list)))

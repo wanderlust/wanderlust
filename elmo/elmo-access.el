@@ -118,7 +118,7 @@
 
 (luna-define-method elmo-folder-synchronize :before
   ((folder elmo-access-folder)
-   &optional disable-killed ignore-msgdb no-check mask)
+   &optional disable-killed ignore-msgdb no-check mask adds-only)
   (when (or ignore-msgdb
 	    (not no-check))
     (elmo-access-folder-update-children folder 'open ignore-msgdb)))

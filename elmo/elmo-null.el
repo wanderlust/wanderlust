@@ -79,7 +79,8 @@
 					     disable-killed
 					     ignore-msgdb
 					     no-check
-					     mask)
+					     mask
+					     adds-only)
   nil)
 
 (require 'product)
