@@ -29,6 +29,7 @@
 
 ;;; Code:
 ;;
+(require 'cl)
 (require 'elmo)
 (require 'elmo-signal)
 (require 'elmo-msgdb)
@@ -479,7 +480,8 @@
 					     disable-killed
 					     ignore-msgdb
 					     no-check
-					     mask)
+					     mask
+					     adds-only)
   (let ((killed-list (elmo-folder-killed-list-internal folder))
 	numbers)
     (unless no-check
