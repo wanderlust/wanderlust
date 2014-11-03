@@ -1,3 +1,10 @@
+2014-11-02  Erik Hetzner <egh@e6h.org>
+
+	* elmo-imap.el (elmo-imap4-search-generate-vector): Do not use
+	elmo-list-difference, use faster elmo-list-diff instead.
+
+	* elmo-util.el (elmo-list-difference): Remove unused method.
+
 2014-10-19  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-search-keys): New variable. Known IMAP
