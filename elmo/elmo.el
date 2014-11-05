@@ -1629,6 +1629,7 @@ flag status.
 If NO-CHECK is non-nil, rechecking folder is skipped.
 If optional argument MASK is specified and is a list of message numbers,
 synchronize messages only which are contained the list.
+MASK is assumed to be a subset of existing (not deleted) messages.
 Return amount of cross-posted messages.
 If update process is interrupted, return nil.")
 

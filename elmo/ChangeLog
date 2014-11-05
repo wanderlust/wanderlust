@@ -1,3 +1,9 @@
+2014-11-05  Erik Hetzner <egh@e6h.org>
+
+	* elmo.el (elmo-folder-synchronize): Avoid redundant use of
+	elmo-folder-list-messages.
+	Cf https://github.com/wanderlust/wanderlust/pull/79
+
 2014-10-19  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-search-keys): New variable. Known IMAP
