@@ -1077,11 +1077,11 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 		     0)
 		numbers)))
      ((string= "first" search-key)
-      (let* ((numbers (or from-msgs (elmo-folder-list-messages spec)))
-	     (rest (nthcdr (string-to-number (elmo-filter-value condition) )
-			   numbers)))
-	(mapc (lambda (x) (delete x numbers)) rest)
-	numbers))
+      (let ((numbers (or from-msgs (elmo-folder-list-messages spec))))
+	(car
+	 (elmo-list-diff
+	  numbers
+	  (nthcdr (string-to-number (elmo-filter-value condition)) numbers)))))
      ((or (string= "since" search-key)
 	  (string= "before" search-key))
       (let* ((specified-date (elmo-date-make-sortable-string

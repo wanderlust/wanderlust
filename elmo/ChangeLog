@@ -1,5 +1,15 @@
 2014-11-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo-imap4.el (elmo-imap4-search-generate-vector): Remove unused
+	let-binding.  Use elmo-list-diff instead of elmo-list-difference.
+
+	* elmo-nntp.el (elmo-nntp-search-primitive): Use elmo-list-diff
+	for "first" search.
+
+	* elmo-util.el (elmo-list-difference): Removed.  Not used anymore.
+
+2014-11-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* elmo-multi.el (elmo-folder-search): Rewritten.  Avoid redundant
 	use of elmo-folder-list-messages.
 

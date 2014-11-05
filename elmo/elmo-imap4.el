@@ -2376,16 +2376,17 @@ Returns a list of UIDs."
   (let ((search-key (elmo-filter-key filter)))
     (cond
      ((string= "last" search-key)
-      (let ((numbers (or from-msgs (elmo-folder-list-messages folder)))
-	    (length (length from-msgs)))
+      (let ((numbers (or from-msgs (elmo-folder-list-messages folder))))
 	(nthcdr (max (- (length numbers)
 			(string-to-number (elmo-filter-value filter)))
 		     0)
 		numbers)))
      ((string= "first" search-key)
       (let ((numbers (or from-msgs (elmo-folder-list-messages folder))))
-	(elmo-list-difference
-	 (nthcdr (string-to-number (elmo-filter-value filter)) numbers) numbers)))
+	(car
+	 (elmo-list-diff
+	  numbers
+	  (nthcdr (string-to-number (elmo-filter-value filter)) numbers)))))
      ((string= "flag" search-key)
       (list nil
 	    (if (eq (elmo-filter-type filter) 'unmatch) "not " "")
