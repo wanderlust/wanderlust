@@ -1651,15 +1651,20 @@ If update process is interrupted, return nil.")
 	      diff-new diff-del
 	      delete-list new-list new-msgdb crossed)
 	  (message "Checking folder diff...")
-	  (elmo-set-list
-	   '(diff-new diff-del)
-	   (elmo-list-diff (elmo-folder-list-messages folder)
-			   (elmo-folder-list-messages folder nil 'in-msgdb)))
-	  (when diff-new
+          ;; If MASK is supplied, compare against messagedb to
+          ;; determine what needs to be synchronized.
+          (if (and mask (not ignore-msgdb))
+              (setq diff-new
+                    (car (elmo-list-diff
+                          mask
+                          (elmo-folder-list-messages folder nil 'in-msgdb))))
+            (elmo-set-list
+             '(diff-new diff-del)
+             (elmo-list-diff (elmo-folder-list-messages folder)
+                             (elmo-folder-list-messages folder nil 'in-msgdb))))
+	  (if diff-new
 	    (unless disable-killed
-	      (setq diff-new (elmo-living-messages diff-new killed-list)))
-	    (when (and mask (not ignore-msgdb))
-	      (setq diff-new (elmo-list-filter mask diff-new))))
+	      (setq diff-new (elmo-living-messages diff-new killed-list))))
 	  (message "Checking folder diff...done")
 	  (setq new-list (elmo-folder-confirm-appends folder diff-new))
 	  ;; Append to killed list as (MIN-OF-DISAPPEARED . MAX-OF-DISAPPEARED)
