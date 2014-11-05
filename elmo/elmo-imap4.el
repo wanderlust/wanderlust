@@ -2384,8 +2384,9 @@ Returns a list of UIDs."
 		numbers)))
      ((string= "first" search-key)
       (let ((numbers (or from-msgs (elmo-folder-list-messages folder))))
-	(elmo-list-difference
-	 (nthcdr (string-to-number (elmo-filter-value filter)) numbers) numbers)))
+        (cadr (elmo-list-diff
+               (nthcdr (string-to-number (elmo-filter-value filter)) numbers)
+               numbers))))
      ((string= "flag" search-key)
       (list nil
 	    (if (eq (elmo-filter-type filter) 'unmatch) "not " "")
