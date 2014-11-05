@@ -1,3 +1,8 @@
+2014-11-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-multi.el (elmo-folder-search): Rewritten.  Avoid redundant
+	use of elmo-folder-list-messages.
+
 2014-11-05  Erik Hetzner <egh@e6h.org>
 
 	* elmo.el (elmo-folder-synchronize): Avoid redundant use of

@@ -402,26 +402,21 @@
 
 (luna-define-method elmo-folder-search ((folder elmo-multi-folder)
 					condition &optional numbers)
-  (let* ((flds (elmo-multi-folder-children-internal folder))
-	 (cur-number 0)
-	 numlist
-	 matches)
-    (setq numbers (or numbers
-		      (elmo-folder-list-messages folder)))
-    (while flds
-      (setq cur-number (+ cur-number 1))
-      (setq matches (append matches
-			    (mapcar
-			     (lambda (x)
-			       (+
-				(* (elmo-multi-folder-divide-number-internal
-				    folder)
-				   cur-number)
-				x))
-			     (elmo-folder-search
-			      (car flds) condition))))
-      (setq flds (cdr flds)))
-    (elmo-list-filter numbers matches)))
+  (apply 'nconc
+	 (delq nil
+	       (if numbers
+		   (mapcar (lambda (element)
+			     (when (cdr element)
+			       (elmo-multi-map-numbers
+				folder
+				(car element)
+				(elmo-folder-search
+				 (car element) condition (cdr element)))))
+			   (elmo-multi-split-numbers folder numbers))
+		 (mapcar (lambda (child)
+			   (elmo-multi-map-numbers
+			    folder child (elmo-folder-search child condition)))
+			 (elmo-multi-folder-children-internal folder))))))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-multi-folder)
 					      number)
