@@ -1,7 +1,7 @@
 /* XPM */
 static char * wl_draft_send_and_exit_up_xpm[] = {
 "32 32 6 1",
-" 	c #BEFBBEFBBEFB s backgroundToolBarColor",
+" 	c None",
 ".	c #000000000000",
 "X	c #618596586185",
 "o	c #FFFFFFFF0000",
