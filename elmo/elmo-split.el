@@ -413,7 +413,7 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 				       "  Test: /dev/null\n")
 				      ((eq action 'noop)
 				       "  Test: do nothing\n")
-				      ((function action)
+				      ((functionp action)
 				       (format "  Test: function:%s\n"
 					       (prin1-to-string action)))
 				      (t
