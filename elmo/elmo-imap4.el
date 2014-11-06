@@ -851,7 +851,7 @@ EXPUNGE for deleted messages."
 						     (string-to-number (car y))
 						   (cons (string-to-number (car y))
 							 (string-to-number (cadr y))))))
-					   (split-string (cadr answer) "\,"))) '<)
+					   (split-string (cadr answer) ","))) '<)
 			       (string-to-number (cadr answer))))))
 	      (t nil))
 	(setq answer (cdr answer)))

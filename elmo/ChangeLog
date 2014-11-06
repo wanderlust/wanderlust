@@ -1,5 +1,7 @@
 2014-11-06  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo-imap4.el (elmo-imap4-elist): Fix typo.
+
 	* elmo-split.el (elmo-split-subr): Fix typo.
 
 2014-11-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
