@@ -1,7 +1,7 @@
 /* XPM */
 static char * wl_message_play_content_up_xpm[] = {
 "32 32 6 1",
-" 	c #CF3CCF3CCF3C s backgroundToolBarColor",
+" 	c None",
 ".	c #000000000000",
 "X	c #BEFBBEFBBEFB",
 "o	c #69A669A669A6",

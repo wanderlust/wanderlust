@@ -1,7 +1,7 @@
 /* XPM */
 static char * wl_folder_jump_to_current_entity_up_xpm[] = {
 "32 32 20 1",
-" 	c #BEFBBEFBBEFB s backgroundToolBarColor",
+" 	c None",
 ".	c #000000000000",
 "X	c #8E38C30BFFFF",
 "o	c #8617BEFBF7DE",

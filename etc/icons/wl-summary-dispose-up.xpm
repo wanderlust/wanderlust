@@ -1,7 +1,7 @@
 /* XPM */
 static char * wl_summary_dispose_up_xpm[] = {
 "32 32 8 1",
-" 	c #BEFBBEFBBEFB s backgroundToolBarColor",
+" 	c None",
 ".	c #000000000000",
 "X	c #E79DCB2B9E79",
 "o	c #69A68E38EFBE",
