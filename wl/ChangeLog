@@ -1,3 +1,11 @@
+2014-11-08  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-folder.el (wl-folder-pick): Call elmo-folder-search with
+	setting NUMBERS to t.
+
+	* wl-summary.el (wl-summary-pick): Call elmo-folder-search with
+	setting NUMBERS to t if FROM-LIST is not specified.
+
 2014-10-27  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-mime.el (wl-mime-pgp-verify-region-with-epg): Set

@@ -1039,93 +1039,84 @@ Don't cache if nil.")
 (defun elmo-nntp-retrieve-field (spec field from-msgs)
   "Retrieve FIELD values from FROM-MSGS.
 Returns a list of cons cells like (NUMBER . VALUE)"
-  (let ((session (elmo-nntp-get-session spec)))
-    (if (elmo-nntp-xhdr-p session)
-	(progn
-	  (elmo-nntp-select-group session (elmo-nntp-folder-group-internal spec))
-	  (elmo-nntp-send-command session
-				  (format "xhdr %s %s"
-					  field
-					  (if from-msgs
-					      (format
-					       "%d-%d"
-					       (car from-msgs)
-					       (nth
-						(max
-						 (- (length from-msgs) 1) 0)
-						from-msgs))
-					    "0-")))
-	  (if (elmo-nntp-read-response session t)
-	      (elmo-nntp-parse-xhdr-response
-	       (elmo-nntp-read-contents session))
-	    (elmo-nntp-set-xhdr session nil)
-	    (error "NNTP XHDR command failed"))))))
+  (let ((session (elmo-nntp-get-session spec))
+	result)
+    (setq result
+	  (if (elmo-nntp-xhdr-p session)
+	      (progn
+		(elmo-nntp-select-group
+		 session (elmo-nntp-folder-group-internal spec))
+		(elmo-nntp-send-command
+		 session
+		 (format "xhdr %s %s"
+			 field
+			 (if from-msgs
+			     (format "%d-%d"
+				     (apply 'min from-msgs)
+				     (apply 'max from-msgs))
+			   "0-")))
+		(if (elmo-nntp-read-response session t)
+		    (elmo-nntp-parse-xhdr-response
+		     (elmo-nntp-read-contents session))
+		  (elmo-nntp-set-xhdr session nil)
+		  (error "NNTP XHDR command failed")))))
+    (if from-msgs
+	(delq nil (mapcar (lambda (pair) (when (memq (car pair) from-msgs)
+					   pair))
+			  result))
+      result)))
 
 (defun elmo-nntp-search-primitive (spec condition &optional from-msgs)
-  (let ((search-key (elmo-filter-key condition)))
+  (let ((search-key (elmo-filter-key condition))
+	(numbers (cond
+		  ((null from-msgs) (elmo-folder-list-messages spec))
+		  ((listp from-msgs) from-msgs)
+		  (t (elmo-folder-list-messages spec 'visible 'in-msgdb)))))
     (cond
      ((string= "last" search-key)
-      (let ((numbers (or from-msgs (elmo-folder-list-messages spec))))
-	(nthcdr (max (- (length numbers)
-			(string-to-number (elmo-filter-value condition)))
-		     0)
-		numbers)))
+      (nthcdr (max (- (length numbers)
+		      (string-to-number (elmo-filter-value condition)))
+		   0)
+	      numbers))
      ((string= "first" search-key)
-      (let ((numbers (or from-msgs (elmo-folder-list-messages spec))))
-	(car
-	 (elmo-list-diff
-	  numbers
-	  (nthcdr (string-to-number (elmo-filter-value condition)) numbers)))))
-     ((or (string= "since" search-key)
-	  (string= "before" search-key))
-      (let* ((specified-date (elmo-date-make-sortable-string
-			      (elmo-date-get-datevec (elmo-filter-value
-						      condition))))
-	     (since (string= "since" search-key))
-	     field-date  result)
+      (car (elmo-list-diff
+	    numbers
+	    (nthcdr (string-to-number (elmo-filter-value condition))
+		    numbers))))
+     ((member search-key '("since" "before"))
+      (let ((specified-date (elmo-date-make-sortable-string
+			     (elmo-date-get-datevec (elmo-filter-value
+						     condition))))
+	    (since (string= "since" search-key))
+	    field-date)
 	(if (eq (elmo-filter-type condition) 'unmatch)
 	    (setq since (not since)))
-	(setq result
-	      (delq nil
-		    (mapcar
-		     (lambda (pair)
-		       (setq field-date
-			     (elmo-date-make-sortable-string
-			      (timezone-fix-time
-			       (cdr pair)
-			       (current-time-zone) nil)))
-		       (if (if since
-			       (or (string= specified-date field-date)
-				   (string< specified-date field-date))
-			     (string< field-date
-				      specified-date))
-			   (car pair)))
-		     (elmo-nntp-retrieve-field spec "date" from-msgs))))
-	(if from-msgs
-	    (elmo-list-filter from-msgs result)
-	  result)))
-     ((string= "body" search-key)
-      nil)
+	(delq nil
+	      (mapcar
+	       (lambda (pair)
+		 (setq field-date
+		       (elmo-date-make-sortable-string
+			(timezone-fix-time
+			 (cdr pair)
+			 (current-time-zone) nil)))
+		 (if (if since
+			 (null (string< field-date specified-date))
+		       (string< field-date specified-date))
+		     (car pair)))
+	       (elmo-nntp-retrieve-field spec "date" numbers)))))
      (t
       (let ((val (elmo-filter-value condition))
 	    (negative (eq (elmo-filter-type condition) 'unmatch))
-	    (case-fold-search t)
-	    result)
-	(setq result
-	      (delq nil
-		    (mapcar
-		     (lambda (pair)
-		       (if (string-match val
-					 (eword-decode-string
-					  (decode-mime-charset-string
-					   (cdr pair) elmo-mime-charset)))
-			   (unless negative (car pair))
-			 (if negative (car pair))))
-		     (elmo-nntp-retrieve-field spec search-key
-					       from-msgs))))
-	(if from-msgs
-	    (elmo-list-filter from-msgs result)
-	  result))))))
+	    (case-fold-search t))
+	(delq nil
+	      (mapcar
+	       (lambda (pair)
+		 (if (string-match val (eword-decode-string
+					(decode-mime-charset-string
+					 (cdr pair) elmo-mime-charset)))
+		     (unless negative (car pair))
+		   (if negative (car pair))))
+	       (elmo-nntp-retrieve-field spec search-key numbers))))))))
 
 (defun elmo-nntp-search-internal (folder condition from-msgs)
   (let (result)

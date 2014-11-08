@@ -404,7 +404,7 @@
 					condition &optional numbers)
   (apply 'nconc
 	 (delq nil
-	       (if numbers
+	       (if (and numbers (listp numbers))
 		   (mapcar (lambda (element)
 			     (when (cdr element)
 			       (elmo-multi-map-numbers
@@ -415,7 +415,7 @@
 			   (elmo-multi-split-numbers folder numbers))
 		 (mapcar (lambda (child)
 			   (elmo-multi-map-numbers
-			    folder child (elmo-folder-search child condition)))
+			    folder child (elmo-folder-search child condition numbers)))
 			 (elmo-multi-folder-children-internal folder))))))
 
 (luna-define-method elmo-message-use-cache-p ((folder elmo-multi-folder)

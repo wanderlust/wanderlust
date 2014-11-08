@@ -374,7 +374,8 @@ Override this method by each implement of `elmo-folder'.")
 FOLDER is the ELMO folder structure.
 CONDITION is a condition structure for searching.
 If optional argument NUMBERS is specified and is a list of message numbers,
-messages are searched from the list.")
+messages are searched from the list.
+If NUMBERS is t, indicates that messages are selected for interactive folder search.")
 
 (luna-define-generic elmo-message-match-condition (folder number
 							  condition
@@ -800,10 +801,16 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 (luna-define-method elmo-folder-search ((folder elmo-folder)
 					condition
 					&optional numbers)
-  (let ((numbers (or numbers (elmo-folder-list-messages folder)))
-	(msgdb (elmo-folder-msgdb folder))
+  (let ((msgdb (elmo-folder-msgdb folder))
 	results)
-    (setq results (elmo-msgdb-search msgdb condition numbers))
+    (setq numbers (cond
+		   ((null numbers)
+		    (elmo-folder-list-messages folder))
+		   ((listp numbers)
+		    numbers)
+		   (t
+		    (elmo-folder-list-messages folder 'visible 'in-msgdb)))
+	  results (elmo-msgdb-search msgdb condition numbers))
     (if (listp results)
 	results
       (elmo-condition-optimize condition)

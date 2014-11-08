@@ -1062,12 +1062,17 @@ TYPE specifies the archiver's symbol."
 
 (luna-define-method elmo-folder-search ((folder elmo-archive-folder)
 					condition &optional from-msgs)
-  (let* ((case-fold-search nil)
+  (let ((case-fold-search nil)
 ;;;	 (args (elmo-string-to-list key))
 ;;; XXX: I don't know whether `elmo-archive-list-folder' updates match-data.
 ;;;	 (msgs (or from-msgs (elmo-archive-list-folder spec)))
-	 (msgs (or from-msgs (elmo-folder-list-messages folder)))
-	 ret-val)
+	(msgs (cond ((null from-msgs)
+		     (elmo-folder-list-messages folder))
+		    ((listp from-msgs)
+		     from-msgs)
+		    (t
+		     (elmo-folder-list-messages folder 'visible 'in-msgdb))))
+	ret-val)
     (elmo-with-progress-display (elmo-folder-search (length msgs)) "Searching"
       (dolist (number msgs)
 	(when (elmo-archive-field-condition-match

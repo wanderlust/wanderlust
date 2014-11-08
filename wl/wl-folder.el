@@ -2915,7 +2915,8 @@ Call `wl-summary-write-current-folder' with current folder name."
       (while (car folder-list)
 	(setq ret (elmo-folder-search
 		   (wl-folder-get-elmo-folder (car folder-list))
-		   condition))
+		   condition
+		   t))
 	(if ret
 	    (setq results
 		  (append results

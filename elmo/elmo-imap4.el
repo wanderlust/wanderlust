@@ -2510,13 +2510,13 @@ time."
 	(elmo-imap4-search-generate-or session a b))))))
 
 (defun elmo-imap4-search-internal (folder session condition from-msgs)
-  (let* ((imap-search
-	  (if from-msgs
-	      (elmo-imap4-search-generate-and
-	       session
-	       (elmo-imap4-search-generate-uid from-msgs)
-	       (elmo-imap4-search-generate folder session condition from-msgs))
-	    (elmo-imap4-search-generate folder session condition from-msgs))))
+  (let ((imap-search
+	 (if (and from-msgs (listp from-msgs))
+	     (elmo-imap4-search-generate-and
+	      session
+	      (elmo-imap4-search-generate-uid from-msgs)
+	      (elmo-imap4-search-generate folder session condition from-msgs))
+	   (elmo-imap4-search-generate folder session condition nil))))
     (when imap-search
       (elmo-imap4-search-perform session imap-search))))
 

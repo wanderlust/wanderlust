@@ -2848,18 +2848,12 @@ If ARG, without confirm."
 (defun wl-summary-pick (&optional from-list delete-marks)
   (interactive "i\nP")
   (save-excursion
-    (let* ((messages (or from-list
-			 (elmo-folder-list-messages
-			  wl-summary-buffer-elmo-folder
-			  'visible
-			  'in-msgdb)
-			 (error "No messages")))
-	   (condition (car (elmo-parse-search-condition
+    (let* ((condition (car (elmo-parse-search-condition
 			    (wl-read-search-condition
 			     wl-summary-pick-field-default))))
 	   (result (elmo-folder-search wl-summary-buffer-elmo-folder
 				       condition
-				       messages))
+				       (or from-list t)))
 	   num)
       (if delete-marks
 	  (let ((mlist wl-summary-buffer-target-mark-list))

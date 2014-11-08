@@ -1,5 +1,27 @@
 2014-11-08  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo.el (elmo-folder-search): Accept NUMBERS argument is set to
+	t, that indicates to select messages for interactive folder
+	search.  Default method selects visible messages from msgdb.
+
+	* elmo-archive.el (elmo-folder-search): Handle the case that
+	NUMBERS is t (select visible messages from msgdb).
+
+	* elmo-filter.el (elmo-folder-search): Likewise (select visible
+	messages from msgdb).
+
+	* elmo-imap4.el (elmo-imap4-search-internal): Likewise (treated as
+	nil).
+
+	* elmo-multi.el (elmo-folder-search): Likewise (passed through to
+	child folders).
+
+	* elmo-nntp.el (elmo-nntp-retrieve-field): Likewise (select
+	visible messages from msgdb).  Do not filter result.
+	(elmo-nntp-search-primitive): Filter result by FROM-MSGS.
+
+2014-11-08  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* elmo-nntp.el (elmo-nntp-read-response): Refined. Improve
 	performance.
 
