@@ -285,7 +285,7 @@ CODE is one of the following:
     (car response)))
 
 (defun elmo-pop3-auth-apop (session)
-  (unless (string-match "^\+OK .*\\(<[=!-;?-~]+@[=!-;?-~]+>\\)"
+  (unless (string-match "^\\+OK .*\\(<[=!-;?-~]+@[=!-;?-~]+>\\)"
 			(elmo-network-session-greeting-internal session))
     (signal 'elmo-open-error '(elmo-pop3-auth-apop)))
   ;; good, APOP ready server
@@ -598,8 +598,8 @@ until the login delay period has expired"))
       (with-current-buffer (process-buffer process)
 	(elmo-pop3-send-command process "STAT")
 	(setq response (cdr (elmo-pop3-read-response process)))
-	;; response: "^\+OK 2 7570$"
-	(if (not (string-match "^\+OK[ \t]*\\([0-9]*\\)" response))
+	;; response: "^\\+OK 2 7570$"
+	(if (not (string-match "^\\+OK[ \t]*\\([0-9]*\\)" response))
 	    (error "POP STAT command failed")
 	  (setq total
 		(string-to-number

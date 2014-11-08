@@ -1,5 +1,10 @@
 2014-11-08  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo-pop3.el (elmo-pop3-auth-apop, elmo-folder-status): Fix typo
+	of regexp.
+
+2014-11-08  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* elmo.el (elmo-folder-search): Accept NUMBERS argument is set to
 	t, that indicates to select messages for interactive folder
 	search.  Default method selects visible messages from msgdb.
