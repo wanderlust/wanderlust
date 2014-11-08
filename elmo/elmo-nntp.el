@@ -351,41 +351,35 @@ Don't cache if nil.")
 (defun elmo-nntp-read-response (session &optional not-command error-msg)
   (with-current-buffer (elmo-network-session-buffer session)
     (let ((process (elmo-network-session-process-internal session))
-	  (case-fold-search nil)
-	  (response-string nil)
+	  case-fold-search
 	  (response-continue t)
-	  response match-end)
+	  response match-end last
+	  (start elmo-nntp-read-point))
       (while response-continue
 	(setq match-end elmo-nntp-read-point)
 	(while (null (progn (goto-char match-end)
 			    (search-forward "\r\n" nil t)))
-	  (setq match-end (1- (point)))
+	  (setq match-end (max (1- (point-max)) elmo-nntp-read-point))
 	  (accept-process-output process))
-	(setq match-end (point))
-	(setq response-string
-	      (buffer-substring elmo-nntp-read-point (- match-end 2)))
-	(goto-char elmo-nntp-read-point)
-	(if (looking-at "[23][0-9]+ .*$")
-	    (progn (setq response-continue nil)
-		   (setq elmo-nntp-read-point match-end)
-		   (setq response
-			 (if response
-			     (concat response "\n" response-string)
-			   response-string)))
-	  (if (looking-at "[^23][0-9]+ .*$")
-	      (progn (setq response-continue nil)
-		     (setq elmo-nntp-read-point match-end)
-		     (setq response nil))
-	    (setq elmo-nntp-read-point match-end)
-	    (if not-command
-		(setq response-continue nil))
-	    (setq response
-		  (if response
-		      (concat response "\n" response-string)
-		    response-string)))
-	  (setq elmo-nntp-read-point match-end)))
+	(setq match-end (point)
+	      last elmo-nntp-read-point
+	      elmo-nntp-read-point match-end)
+	(goto-char last)
+	(cond
+	 ((looking-at "[23][0-9]+ ")
+	  (setq response-continue nil))
+	 ((looking-at "[^23][0-9]+ ")
+	  (setq response-continue nil
+		start nil))
+	 (not-command
+	  (setq response-continue nil))))
+      (setq response
+	    (and start
+		 (let (inhibit-eol-conversion)
+		   (decode-coding-string
+		    (buffer-substring start (- match-end 2)) 'raw-text-dos))))
       (if error-msg
-	  (cons response response-string)
+	  (cons response (buffer-substring last (- match-end 2)))
 	response))))
 
 (defun elmo-nntp-read-raw-response (session)

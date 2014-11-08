@@ -215,54 +215,37 @@ CODE is one of the following:
 'in-use      ... authentication was successful but the mailbox is in use."
   ;; buffer is in case for process is dead.
   (with-current-buffer (process-buffer process)
-    (let ((case-fold-search nil)
-	  (response-string nil)
+    (let (case-fold-search
 	  (response-continue t)
-	  (return-value nil)
-	  (err nil)
-	  match-end)
+	  err match-end
+	  (start elmo-pop3-read-point))
       (while response-continue
 	(setq match-end elmo-pop3-read-point)
 	(while (null (progn (goto-char match-end)
 			    (search-forward "\r\n" nil t)))
-	  (setq match-end (1- (point)))
+	  (setq match-end (max (1- (point-max)) elmo-pop3-read-point))
 	  (accept-process-output process 1))
 	(setq match-end (point))
-	(setq response-string
-	      (buffer-substring elmo-pop3-read-point
-				(max (- match-end 2) elmo-pop3-read-point)))
 	(goto-char elmo-pop3-read-point)
-	(if (looking-at "\\+.*$")
-	    (progn
-	      (setq response-continue nil)
-	      (setq elmo-pop3-read-point match-end)
-	      (setq return-value
-		    (if return-value
-			(concat return-value "\n" response-string)
-		      response-string)))
-	  (if (looking-at "\\-.*$")
-	      (progn
-		(when (looking-at "[^ ]+ \\[\\([^]]+\\)\\]")
-		  (setq return-value
-			(intern
-			 (downcase
-			  (buffer-substring (match-beginning 1)
-					    (match-end 1))))))
-		(setq err t
-		      response-continue nil
-		      elmo-pop3-read-point match-end
-		      return-value (cons (or return-value 'err) nil)))
-	    (setq elmo-pop3-read-point match-end)
-	    (if not-command
-		(setq response-continue nil))
-	    (setq return-value
-		  (if return-value
-		      (concat return-value "\n" response-string)
-		    response-string)))
-	  (setq elmo-pop3-read-point match-end)))
-      (if err
-	  return-value
-	(cons 'ok return-value)))))
+	(setq elmo-pop3-read-point match-end)
+	(cond
+	 ((looking-at "\\+")
+	  (setq response-continue nil))
+	 ((looking-at "\\-")
+	  (setq err (or (when (looking-at "[^ ]+ \\[\\([^]]+\\)\\]")
+			  (intern (downcase
+				   (buffer-substring (match-beginning 1)
+						     (match-end 1)))))
+			'err)
+		response-continue nil
+		start nil))
+	 (not-command
+	  (setq response-continue nil))))
+      (cons (or err 'ok)
+	    (when start
+	      (let (inhibit-eol-conversion)
+		(decode-coding-string
+		 (buffer-substring start (- match-end 2)) 'raw-text-dos)))))))
 
 (defun elmo-pop3-process-filter (process output)
   (when (buffer-live-p (process-buffer process))
