@@ -1,3 +1,89 @@
+2014-11-09  Erik Hetzner  <egh@e6h.org>
+
+	* doc/wl-ja.texi: Define @documentencoding.
+
+2014-11-09  Erik Hetzner  <egh@e6h.org>
+
+	* etc/icons/wl-draft-insert-signature-up.xpm: Fix transparency for
+	GNU Emacs.
+	Cf. https://github.com/wanderlust/wanderlust/issues/26
+
+	* etc/icons/wl-draft-kill-up.xpm: Likewise.
+
+	* etc/icons/wl-draft-save-and-exit-up.xpm: Likewise.
+
+	* etc/icons/wl-draft-send-from-toolbar-down.xpm: Likewise.
+
+	* etc/icons/wl-draft-send-from-toolbar-up.xpm: Likewise.
+
+	* etc/icons/wl-draft-up.xpm: Likewise.
+
+	* etc/icons/wl-draft-yank-original-up.xpm: Likewise.
+
+	* etc/icons/wl-exit-up.xpm: Likewise.
+
+	* etc/icons/wl-folder-check-current-entity-up.xpm: Likewise.
+
+	* etc/icons/wl-folder-empty-trash-up.xpm: Likewise.
+
+	* etc/icons/wl-folder-goto-draft-folder-up.xpm: Likewise.
+
+	* etc/icons/wl-folder-jump-to-current-entity-no-sync-up.xpm: Likewise.
+
+	* etc/icons/wl-folder-jump-to-current-entity-up.xpm: Likewise.
+
+	* etc/icons/wl-folder-next-entity-up.xpm: Likewise.
+
+	* etc/icons/wl-folder-prev-entity-up.xpm: Likewise.
+
+	* etc/icons/wl-folder-read-up.xpm: Likewise.
+
+	* etc/icons/wl-folder-sync-current-entity-up.xpm: Likewise.
+
+	* etc/icons/wl-folder-zoom-entity-up.xpm: Likewise.
+
+	* etc/icons/wl-message-extract-content-up.xpm: Likewise.
+
+	* etc/icons/wl-message-next-content-up.xpm: Likewise.
+
+	* etc/icons/wl-message-play-content-up.xpm: Likewise.
+
+	* etc/icons/wl-message-prev-content-up.xpm: Likewise.
+
+	* etc/icons/wl-message-quit-up.xpm: Likewise.
+
+	* etc/icons/wl-message-read-up.xpm: Likewise.
+
+	* etc/icons/wl-summary-delete-up.xpm: Likewise.
+
+	* etc/icons/wl-summary-dispose-up.xpm: Likewise.
+
+	* etc/icons/wl-summary-exit-up.xpm: Likewise.
+
+	* etc/icons/wl-summary-forward-up.xpm: Likewise.
+
+	* etc/icons/wl-summary-jump-to-current-message-up.xpm: Likewise.
+
+	* etc/icons/wl-summary-next-page-up.xpm: Likewise.
+
+	* etc/icons/wl-summary-next-up.xpm: Likewise.
+
+	* etc/icons/wl-summary-prev-page-up.xpm: Likewise.
+
+	* etc/icons/wl-summary-prev-up.xpm: Likewise.
+
+	* etc/icons/wl-summary-read-up.xpm: Likewise.
+
+	* etc/icons/wl-summary-reply-up.xpm: Likewise.
+
+	* etc/icons/wl-summary-reply-with-citation-up.xpm: Likewise.
+
+	* etc/icons/wl-summary-set-flags-up.xpm: Likewise.
+
+	* etc/icons/wl-summary-sync-force-update-up.xpm: Likewise.
+
+	* etc/icons/wl-write-current-folder-up.xpm: Likewise.
+
 2014-10-22  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* doc/wl-ja.texi (Mailing List): Obey RFC 5538.
