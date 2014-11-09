@@ -4,6 +4,7 @@
 @settitle Wanderlust -- Yet Another Message Interface On Emacsen --
 @c %**end of header
 @documentlanguage ja
+@documentencoding iso-2022-jp
 @include version.texi
 @synindex pg cp
 @finalout
