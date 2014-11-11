@@ -774,11 +774,13 @@ that `read' can handle, whenever this is possible."
       (if wl-biff-use-idle-timer
 	  (if (get 'wl-biff 'timer)
 	      (progn (timer-set-idle-time (get 'wl-biff 'timer)
-					  wl-biff-check-interval wl-biff-check-interval)
+					  wl-biff-check-interval
+					  wl-biff-check-interval)
 		     (timer-activate-when-idle (get 'wl-biff 'timer)))
 	    (put 'wl-biff 'timer
 		 (run-with-idle-timer
-		  wl-biff-check-interval wl-biff-check-interval 'wl-biff-event-handler)))
+		  wl-biff-check-interval
+		  wl-biff-check-interval 'wl-biff-event-handler)))
 	(if (get 'wl-biff 'timer)
 	    (progn
 	      (timer-set-time (get 'wl-biff 'timer)
