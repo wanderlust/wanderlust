@@ -725,11 +725,13 @@ that `read' can handle, whenever this is possible."
       (if (get 'wl-save-drafts 'timer)
 	  (progn
 	    (timer-set-idle-time (get 'wl-save-drafts 'timer)
-				 wl-auto-save-drafts-interval t)
+				 wl-auto-save-drafts-interval
+				 wl-auto-save-drafts-interval)
 	    (timer-activate-when-idle (get 'wl-save-drafts 'timer)))
 	(put 'wl-save-drafts 'timer
 	     (run-with-idle-timer
-	      wl-auto-save-drafts-interval t 'wl-auto-save-drafts)))))
+	      wl-auto-save-drafts-interval
+	      wl-auto-save-drafts-interval 'wl-auto-save-drafts)))))
 
   (defun wl-stop-save-drafts ()
     (when (get 'wl-save-drafts 'timer)
