@@ -725,13 +725,11 @@ that `read' can handle, whenever this is possible."
       (if (get 'wl-save-drafts 'timer)
 	  (progn
 	    (timer-set-idle-time (get 'wl-save-drafts 'timer)
-				 wl-auto-save-drafts-interval
-				 wl-auto-save-drafts-interval)
+				 wl-auto-save-drafts-interval t)
 	    (timer-activate-when-idle (get 'wl-save-drafts 'timer)))
 	(put 'wl-save-drafts 'timer
 	     (run-with-idle-timer
-	      wl-auto-save-drafts-interval
-	      wl-auto-save-drafts-interval 'wl-auto-save-drafts)))))
+	      wl-auto-save-drafts-interval t 'wl-auto-save-drafts)))))
 
   (defun wl-stop-save-drafts ()
     (when (get 'wl-save-drafts 'timer)
@@ -776,13 +774,11 @@ that `read' can handle, whenever this is possible."
       (if wl-biff-use-idle-timer
 	  (if (get 'wl-biff 'timer)
 	      (progn (timer-set-idle-time (get 'wl-biff 'timer)
-					  wl-biff-check-interval
-					  wl-biff-check-interval)
+					  wl-biff-check-interval t)
 		     (timer-activate-when-idle (get 'wl-biff 'timer)))
 	    (put 'wl-biff 'timer
 		 (run-with-idle-timer
-		  wl-biff-check-interval
-		  wl-biff-check-interval 'wl-biff-event-handler)))
+		  wl-biff-check-interval t 'wl-biff-event-handler)))
 	(if (get 'wl-biff 'timer)
 	    (progn
 	      (timer-set-time (get 'wl-biff 'timer)
