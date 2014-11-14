@@ -1,3 +1,15 @@
+2014-11-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-archive.el (elmo-archive-list-folder-subr): Remove
+	redundant code.
+
+	* elmo-dop.el (elmo-folder-next-message-number-dop): Likewise.
+
+	* elmo-localdir.el (elmo-localdir-list-subr): Likewise.
+
+	* elmo.el (elmo-folder-next-message-number)
+	(elmo-strict-folder-diff): Likewise.
+
 2014-11-08  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-pop3.el (elmo-pop3-auth-apop, elmo-folder-status): Fix typo

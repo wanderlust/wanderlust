@@ -183,7 +183,7 @@
 			nil "^[0-9]+$" t)))
 	(killed (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder))))
     (if nonsort
-	(cons (or (elmo-max-of-list flist) 0)
+	(cons (elmo-max-of-list flist)
 	      (if killed
 		  (- (length flist)
 		     (elmo-msgdb-killed-list-length killed))

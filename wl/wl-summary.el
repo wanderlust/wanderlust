@@ -2098,8 +2098,7 @@ This function is defined for `window-scroll-functions'"
 		     (not wl-summary-lazy-highlight)
 		     (not (get-text-property (point) 'face)))
 	    (save-excursion
-	      (forward-line (- 0
-			       (or
+	      (forward-line (- (or
 				wl-summary-partial-highlight-above-lines
 				wl-summary-highlight-partial-threshold)))
 	      (wl-highlight-summary (point) (point-max))))))

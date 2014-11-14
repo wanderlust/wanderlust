@@ -206,7 +206,7 @@ return value is diffs '(-new -unread -all)."
       (unless entities
 	(setq entities (wl-pop entity-stack))))
     (setq unread-diff (+ unread-diff new-diff))
-    (list (- 0 new-diff) (- 0 unread-diff) (- 0 all-diff))))
+    (list (- new-diff) (- unread-diff) (- all-diff))))
 
 ;; return value
 ;; example: '(("Desktop" group) ("+ml" access) "+ml/wl")

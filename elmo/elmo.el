@@ -1023,7 +1023,7 @@ If optional argument IF-EXISTS is nil, load on demand.
 	    (if append-list
 		(length append-list)
 	      (if delete-list
-		  (- 0 (length delete-list))
+		  (- (length delete-list))
 		0)))
 	  (length in-folder))))
 
@@ -1073,8 +1073,7 @@ If optional argument IF-EXISTS is nil, load on demand.
   (eq (elmo-folder-type-internal folder) type))
 
 (luna-define-method elmo-folder-next-message-number ((folder elmo-folder))
-  (+ 1 (elmo-max-of-list (or (elmo-folder-list-messages folder)
-			     '(0)))))
+  (1+ (elmo-max-of-list (elmo-folder-list-messages folder))))
 
 (eval-and-compile
   (luna-define-class elmo-file-tag))

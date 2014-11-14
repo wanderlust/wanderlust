@@ -310,7 +310,7 @@ TYPE specifies the archiver's symbol."
 						    (match-string 1)))))))
       (error "%s does not exist" file))
     (if nonsort
-	(cons (or (elmo-max-of-list file-list) 0)
+	(cons (elmo-max-of-list file-list)
 	      (if killed
 		  (- (length file-list)
 		     (elmo-msgdb-killed-list-length killed))

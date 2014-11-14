@@ -329,9 +329,7 @@ FOLDER is the folder structure."
 
 (defun elmo-folder-next-message-number-dop (folder)
   (let ((spool-folder (elmo-dop-spool-folder folder)))
-    (- (+ 1 (elmo-max-of-list (or (elmo-folder-list-messages
-				   spool-folder)
-				  '(0)))))))
+    (- (1+ (elmo-max-of-list (elmo-folder-list-messages spool-folder))))))
 
 ;;; Delayed operation (executed at online status).
 (defun elmo-folder-append-buffer-dop-delayed (folder flag number set-number)
