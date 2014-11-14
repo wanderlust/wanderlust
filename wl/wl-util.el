@@ -830,26 +830,35 @@ This function is imported from Emacs 20.7."
     (wl-biff-check-folders)
     ;; Do redisplay right now, if no input pending.
     (sit-for 0)
-    (let* ((current (current-time))
-	   (timer (get 'wl-biff 'timer))
-	   ;; Compute the time when this timer will run again, next.
-	   (next-time (timer-relative-time
-		       (list (aref timer 1) (aref timer 2) (aref timer 3))
-		       (* 5 (aref timer 4)) 0)))
-      ;; If the activation time is far in the past,
-      ;; skip executions until we reach a time in the future.
-      ;; This avoids a long pause if Emacs has been suspended for hours.
-      (or (> (nth 0 next-time) (nth 0 current))
-	  (and (= (nth 0 next-time) (nth 0 current))
-	       (> (nth 1 next-time) (nth 1 current)))
-	  (and (= (nth 0 next-time) (nth 0 current))
-	       (= (nth 1 next-time) (nth 1 current))
-	       (> (nth 2 next-time) (nth 2 current)))
-	  (progn
-	    (timer-set-time timer (timer-next-integral-multiple-of-time
-				   current wl-biff-check-interval)
-			    wl-biff-check-interval)
-	    (timer-activate timer)))))))
+    (let ((timer (get 'wl-biff 'timer))
+	  (access-functions (eval-when-compile (fboundp 'timer--time))))
+      ;; Only normal timer should be checked for skipping.
+      (unless (if access-functions
+		  (timer--idle-delay timer)
+		(aref timer 7))
+	(let ((current (current-time))
+	      (next-time
+	       ;; Compute the time when this timer will run again, next.
+	       (if access-functions
+		   (timer-relative-time
+		    (timer--time timer) (* 5 (timer--repeat-delay timer)))
+		 (timer-relative-time
+		  (list (aref timer 1) (aref timer 2) (aref timer 3))
+		  (* 5 (aref timer 4))))))
+	  ;; If the activation time is far in the past,
+	  ;; skip executions until we reach a time in the future.
+	  ;; This avoids a long pause if Emacs has been suspended for hours.
+	  (or (> (nth 0 next-time) (nth 0 current))
+	      (and (= (nth 0 next-time) (nth 0 current))
+		   (> (nth 1 next-time) (nth 1 current)))
+	      (and (= (nth 0 next-time) (nth 0 current))
+		   (= (nth 1 next-time) (nth 1 current))
+		   (> (nth 2 next-time) (nth 2 current)))
+	      (progn
+		(timer-set-time timer (timer-next-integral-multiple-of-time
+				       current wl-biff-check-interval)
+				wl-biff-check-interval)
+		(timer-activate timer)))))))))
 
 (defsubst wl-biff-notify (new-mails notify-minibuf)
   (when (and (not wl-modeline-biff-status) (> new-mails 0))
