@@ -1271,17 +1271,10 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 ;; from nntp.el [Gnus]
 
 (defsubst elmo-nntp-next-result-arrived-p ()
-  (cond
-   ((eq (following-char) ?2)
-    (if (re-search-forward "\n\\.\r?\n" nil t)
-	t
-      nil))
-   ((looking-at "[34]")
-    (if (search-forward "\n" nil t)
-	t
-      nil))
-   (t
-    nil)))
+  (if (eq (following-char) ?2)
+      (re-search-forward "\n\\.\r?\n" nil t)
+    (if (memq (following-char) '(?3 ?4))
+	(search-forward "\n" nil t))))
 
 (defun elmo-nntp-retrieve-headers (session outbuf articles)
   "Retrieve the headers of ARTICLES."

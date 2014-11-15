@@ -1,5 +1,9 @@
 2014-11-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo-nntp.el (elmo-nntp-next-result-arrived-p): Simplified.
+
+2014-11-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	Remove '1' argument for forward-char, backward-char and
 	forward-line.  Use following-char and preceding-char preferredly.
 
