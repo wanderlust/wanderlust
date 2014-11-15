@@ -174,7 +174,7 @@ even when invalid character is contained."
      (when (> (current-column) (abs width))
        (when (> (move-to-column (abs width)) (abs width))
 	 (condition-case nil ; ignore error
-	     (backward-char 1)
+	     (backward-char)
 	   (error)))
        (setq string (buffer-substring (point-min) (point))))
      (if (= (current-column) (abs width))
@@ -385,7 +385,7 @@ that `read' can handle, whenever this is possible."
 	      (cond
 	       ((looking-at "\\s(\\|#\\s(")
 		(while (looking-at "\\s(\\|#\\s(")
-		  (forward-char 1)))
+		  (forward-char)))
 	       ((and (looking-at "\\(quote[ \t]+\\)\\([^.)]\\)")
 		     (> (match-beginning 1) 1)
 		     (= ?\( (char-after (1- (match-beginning 1))))
@@ -394,7 +394,7 @@ that `read' can handle, whenever this is possible."
 		       (goto-char (match-beginning 2))
 		       (forward-sexp)
 		       ;; Avoid mucking with match-data; does this test work?
-		       (char-equal ?\) (char-after (point)))))
+		       (char-equal ?\) (following-char))))
 		;; -1 gets the paren preceding the quote as well.
 		(delete-region (1- (match-beginning 1)) (match-end 1))
 		(insert "'")
@@ -406,7 +406,7 @@ that `read' can handle, whenever this is possible."
 	       ((condition-case err-var
 		    (prog1 t (down-list 1))
 		  (error nil))
-		(backward-char 1)
+		(backward-char)
 		(skip-chars-backward " \t")
 		(delete-region
 		 (point)
@@ -417,7 +417,7 @@ that `read' can handle, whenever this is possible."
 		    (prog1 t (up-list 1))
 		  (error nil))
 		(while (looking-at "\\s)")
-		  (forward-char 1))
+		  (forward-char))
 		(skip-chars-backward " \t")
 		(delete-region
 		 (point)

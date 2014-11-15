@@ -892,7 +892,7 @@ text was killed."
 	   (concat "^" (regexp-quote mail-header-separator) "$\\|^$") nil t)
       (replace-match "")
       (if delete
-	  (forward-char -1))
+	  (backward-char))
       (setq delimline (point-marker)))
     delimline))
 
@@ -1447,7 +1447,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	      (if (re-search-forward "\n\n" nil t)
 		  (replace-match (concat "\n" mail-header-separator "\n"))
 		(goto-char (point-max))
-		(insert (if (eq (char-before) ?\n) "" "\n")
+		(insert (if (eq (preceding-char) ?\n) "" "\n")
 			mail-header-separator "\n")))
 	    (let ((mime-header-encode-method-alist
 		   (append
@@ -1534,13 +1534,13 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	      (delete-region
 	       (point)
 	       (progn
-		 (forward-line 1)
+		 (forward-line)
 		 (if (re-search-forward "^[^ \t]" nil t)
 		     (goto-char (match-beginning 0))
 		   (point-max))))
 	      (if replace
 		  (insert (concat field ": " replace "\n"))))
-	  (forward-line 1)
+	  (forward-line)
 	  (if (re-search-forward "^[^ \t]" nil t)
 	      (goto-char (match-beginning 0))
 	    (point-max)))))))
@@ -1572,7 +1572,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	      (wl-folder-confirm-existence
 	       (wl-folder-get-elmo-folder (eword-decode-string folder)))))
 	  (delete-region (match-beginning 0)
-			 (progn (forward-line 1) (point)))))
+			 (progn (forward-line) (point)))))
       fcc-list)))
 
 (defcustom wl-draft-fcc-append-read-folder-history t
@@ -2033,7 +2033,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 (defun wl-draft-body-goto-top ()
   (goto-char (point-min))
   (if (re-search-forward mail-header-separator nil t)
-      (forward-char 1)
+      (forward-char)
     (goto-char (point-max))))
 
 (defun wl-draft-body-goto-bottom ()
@@ -2563,7 +2563,7 @@ Automatically applied in draft sending time."
   ;; code defensively... :-P
   (goto-char (point-min))
   (search-forward mail-header-separator)
-  (forward-line 1)
+  (forward-line)
   (insert body-text)
   (or (bolp) (insert "\n")))
 

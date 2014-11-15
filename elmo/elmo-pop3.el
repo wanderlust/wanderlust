@@ -723,7 +723,7 @@ until the login delay period has expired"))
       (elmo-with-progress-display (elmo-folder-msgdb-create num)
 	  "Creating msgdb"
 	(while (not (eobp))
-	  (setq beg (save-excursion (forward-line 1) (point)))
+	  (setq beg (save-excursion (forward-line) (point)))
 	  (elmo-pop3-next-result-arrived-p)
 	  (save-excursion
 	    (forward-line -1)

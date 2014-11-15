@@ -78,7 +78,7 @@ TYPE is a symbol (one of `srvs', `attrs', `srvtypes', `as-is', `ignore')."
 	(setq host hostport
 	      port nil))
       (push (cons (list srvtype host port) lifetime) srvs)
-      (forward-line 1))
+      (forward-line))
     (list 'srvs (nreverse srvs))))
 
 (defsubst slp-forward ()
@@ -102,7 +102,7 @@ TYPE is a symbol (one of `srvs', `attrs', `srvtypes', `as-is', `ignore')."
     (while (not (eobp))
       (when (looking-at "^service:\\([^/\n]+\\)$")
 	(push (buffer-substring (match-beginning 1) (match-end 1)) types))
-      (forward-line 1))
+      (forward-line))
     (list 'srvtypes (nreverse types))))
 
 ;; Response accessor.

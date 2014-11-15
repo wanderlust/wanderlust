@@ -154,7 +154,7 @@ Return number if put mark succeed"
 				     nil nil data)
 		(setq wl-summary-buffer-target-mark-list
 		      (delq number wl-summary-buffer-target-mark-list)))))
-	  (forward-line 1))
+	  (forward-line))
 	(setq mlist wl-summary-buffer-target-mark-list)
 	(while mlist
 	  (wl-summary-register-temp-mark (car mlist)
@@ -205,14 +205,14 @@ Return number if put mark succeed"
 					 msg))
 			(when (string= (nth 1 mark-info) mark)
 			  (setq mark-list (cons mark-info mark-list)))))
-		    (forward-line 1)))
+		    (forward-line)))
 	      (let (number mark-info)
 		(while (not (eobp))
 		  (setq number (wl-summary-message-number)
 			mark-info (wl-summary-registered-temp-mark number))
 		  (when (string= (nth 1 mark-info) mark)
 		    (setq mark-list (cons mark-info mark-list)))
-		  (forward-line 1))))
+		  (forward-line))))
 	    mark-list)))
     (let (mark-list)
       (dolist (mark-info wl-summary-buffer-temp-mark-list)
@@ -567,7 +567,7 @@ Return number if put mark succeed"
       (goto-char (point-min))
       ;; Rename them all to "Resent-*".
       (while (re-search-forward "^[A-Za-z]" nil t)
-	(forward-char -1)
+	(backward-char)
 	(insert "Resent-"))
       (widen)
       (forward-line)
@@ -587,7 +587,7 @@ Return number if put mark succeed"
 				    'unread))
 	(goto-char (point-min))
 	(search-forward "\n\n")
-	(forward-char -1)
+	(backward-char)
 	(save-restriction
 	  (narrow-to-region beg (point))
 	  (wl-draft-delete-fields wl-ignored-resent-headers)
@@ -617,7 +617,7 @@ Return number if put mark succeed"
       (setq sol (point-at-bol))
       (beginning-of-line)
       (search-forward "\r")
-      (forward-char -1)
+      (backward-char)
       (setq eol (point))
       (setq rs (next-single-property-change sol 'wl-summary-action-argument
 					    buf eol))
@@ -645,11 +645,11 @@ Return number if put mark succeed"
 		(unless (wl-thread-entity-get-opened entity)
 		  (dolist (msg (wl-thread-get-children-msgs number))
 		    (setq numbers (cons msg numbers))))
-		(forward-line 1)))
+		(forward-line)))
 	  (let (number)
 	    (while (not (eobp))
 	      (setq numbers (cons (wl-summary-message-number) numbers))
-	      (forward-line 1))))
+	      (forward-line))))
 	(nreverse (delq nil numbers))))))
 
 (defun wl-summary-exec (&optional numbers)
@@ -734,7 +734,7 @@ Return number if put mark succeed"
 	  ;;(end-of-line)
 	  (beginning-of-line)
 	  (search-forward "\r")
-	  (forward-char -1)
+	  (backward-char)
 	  (setq re (point))
 	  (let ((width (cond (wl-summary-width
 			      (1- wl-summary-width))
@@ -748,7 +748,7 @@ Return number if put mark succeed"
 		  (move-to-column width)
 		  (setq c (current-column))
 		  (while (> (+ c len) width)
-		    (forward-char -1)
+		    (backward-char)
 		    (setq c (current-column)))
 		  (when (< (+ c len) width)
 		    (setq data (concat " " data)))
@@ -903,10 +903,10 @@ If MARK is non-nil, remove only the specified MARK from the summary line."
 		  ;; closed
 		  (wl-summary-delete-marks-on-buffer
 		   (wl-thread-get-children-msgs number))))
-	      (forward-line 1)))
+	      (forward-line)))
 	(while (not (eobp))
 	  (wl-summary-unmark)
-	  (forward-line 1))))))
+	  (forward-line))))))
 
 (defun wl-summary-mark-region-subr (function beg end data)
   (save-excursion
@@ -927,10 +927,10 @@ If MARK is non-nil, remove only the specified MARK from the summary line."
 		  (setq children (wl-thread-get-children-msgs number))
 		  (while children
 		    (funcall function (pop children) data)))
-		(forward-line 1))))
+		(forward-line))))
 	(while (not (eobp))
 	  (funcall function nil data)
-	  (forward-line 1))))))
+	  (forward-line))))))
 
 (defun wl-summary-target-mark-all ()
   (interactive)
@@ -940,7 +940,7 @@ If MARK is non-nil, remove only the specified MARK from the summary line."
   (goto-char (point-min))
   (while (not (eobp))
     (wl-summary-unmark nil mark)
-    (forward-line 1))
+    (forward-line))
   (if (string= mark "*")
       (setq wl-summary-buffer-target-mark-list nil)
     (let (deleted)

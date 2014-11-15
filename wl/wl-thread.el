@@ -329,7 +329,7 @@ ENTITY is returned."
       (while (not (eobp))
 	(if (wl-thread-entity-get-opened
 	     (wl-thread-get-entity (wl-summary-message-number)))
-	    (forward-line 1)
+	    (forward-line)
 	  (wl-thread-force-open)
 	  (wl-thread-goto-bottom-of-sub-thread))
 	(elmo-progress-notify 'wl-thread-open-all)))))
@@ -425,7 +425,7 @@ ENTITY is returned."
     (if (wl-summary-jump-to-msg msg)
 	(progn
 	  (setq beg (point))
-	  (forward-line 1)
+	  (forward-line)
 	  (delete-region beg (point))
 	  t)
       nil)))
@@ -564,7 +564,7 @@ ENTITY is returned."
 			 (setq grandchildren
 			       (wl-thread-entity-get-children ent))
 			 (wl-summary-jump-to-msg next-top))
-		    (forward-line 1)
+		    (forward-line)
 		    (setq insert-msgs (append (cdr insert-msgs) grandchildren)))
 		  (when top-entity (wl-thread-entity-set-opened top-entity t))
 		  (when ent (wl-thread-entity-set-opened ent t)))
@@ -845,19 +845,19 @@ Message is inserted to the summary buffer."
 ;;;(defun wl-thread-goto-bottom-of-sub-thread ()
 ;;;  (interactive)
 ;;;  (let ((depth (wl-thread-get-depth-of-current-line)))
-;;;    (forward-line 1)
+;;;    (forward-line)
 ;;;    (while (and (not (eobp))
 ;;; 		(> (wl-thread-get-depth-of-current-line)
 ;;; 		   depth))
-;;;      (forward-line 1))
+;;;      (forward-line))
 ;;;    (beginning-of-line)))
 
 (defun wl-thread-goto-bottom-of-sub-thread (&optional msg)
   (interactive)
   (let ((mynumber (or msg (wl-summary-message-number))))
-    (forward-line 1)
+    (forward-line)
     (while (wl-thread-descendant-p mynumber (wl-summary-message-number))
-      (forward-line 1))
+      (forward-line))
     (beginning-of-line)))
 
 (defun wl-thread-remove-argument-region (beg end)
@@ -867,7 +867,7 @@ Message is inserted to the summary buffer."
       (goto-char (point-min))
       (while (not (eobp))
 	(wl-summary-remove-argument)
-	(forward-line 1)))))
+	(forward-line)))))
 
 (defun wl-thread-print-argument-region (beg end)
   (if wl-summary-buffer-temp-mark-list
@@ -883,7 +883,7 @@ Message is inserted to the summary buffer."
 			 (nth 2 temp-mark)
 			 (setq pair (cons (nth 0 temp-mark)(nth 2 temp-mark))))
 		(wl-summary-print-argument (car pair) (cdr pair))))
-	    (forward-line 1))))))
+	    (forward-line))))))
 
 (defsubst wl-thread-get-children-msgs (msg &optional visible-only)
   (let ((msgs (list msg))
@@ -949,7 +949,7 @@ Message is inserted to the summary buffer."
     (wl-thread-goto-bottom-of-sub-thread)
     (wl-thread-remove-argument-region beg
 				      (point))
-    (forward-char -1)	;; needed for mouse-face.
+    (backward-char)	;; needed for mouse-face.
     (delete-region beg (point))
     (wl-thread-insert-entity (- depth 1)
 			     entity
@@ -1048,7 +1048,7 @@ Message is inserted to the summary buffer."
     (while (< (point) end)
       (save-excursion
 	(wl-thread-update-line-on-buffer-sub nil (wl-summary-message-number)))
-      (forward-line 1))))
+      (forward-line))))
 
 (defsubst wl-thread-make-indent-string (entity)
   (let ((cur entity)

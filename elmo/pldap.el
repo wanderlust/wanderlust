@@ -730,7 +730,7 @@ entry according to the value of WITHDN."
 			 (ldap/field-body "dn"))
 		     attrs-result)
 		   result))))
-	(if (not (eobp)) (forward-char 1))
+	(if (not (eobp)) (forward-char))
 	(setq start (point)))
       (if verbose
 	  (message "Parsing ldap results...done"))

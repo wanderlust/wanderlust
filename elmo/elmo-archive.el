@@ -298,7 +298,7 @@ TYPE specifies the archiver's symbol."
 	    (error "%s exited abnormally!" method))
 	  (goto-char (point-min))
 	  (when (re-search-forward elmo-archive-header-regexp nil t)
-	    (forward-line 1)
+	    (forward-line)
 	    (setq header-end (point))
 	    (when (re-search-forward elmo-archive-header-regexp nil t)
 	      (beginning-of-line)
@@ -1037,7 +1037,7 @@ TYPE specifies the archiver's symbol."
 	  (elmo-global-flags-set flags folder number message-id)
 	  (elmo-msgdb-append-entity new-msgdb entity flags)
 	  (widen)))
-      (forward-line 1)
+      (forward-line)
       (setq rest (cdr rest)))
     new-msgdb))
 

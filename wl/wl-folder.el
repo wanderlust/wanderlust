@@ -366,7 +366,7 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
 
 (defun wl-folder-next-entity ()
   (interactive)
-  (forward-line 1))
+  (forward-line))
 
 (defun wl-folder-prev-entity-skip-invalid (&optional hereto)
   "Move to previous entity. skip unsubscribed or removed entity."
@@ -382,7 +382,7 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
   (interactive)
   (beginning-of-line)
   (if (not hereto)
-      (forward-line 1))
+      (forward-line))
   (if (re-search-forward wl-folder-entity-regexp nil t)
       (beginning-of-line)
     (goto-char (point-max))))
@@ -986,7 +986,7 @@ Optional argument ARG is repeart count."
 		   (wl-folder-get-entity-from-buffer t))
 	(setq fp (cdr fp))
 	(setq wl-folder-buffer-cur-point (point)))
-      (forward-line 1))
+      (forward-line))
     (and wl-folder-buffer-cur-point
 	 (goto-char wl-folder-buffer-cur-point))))
 
@@ -1158,7 +1158,7 @@ If current line is group folder, all subfolders are marked."
 	      (message "Checking %s" entity)
 	      (wl-folder-check-one-entity entity)
 	      (sit-for 0))))
-      (forward-line 1)))
+      (forward-line)))
   (message ""))
 
 (defun wl-folder-sync-region (beg end)
@@ -1180,7 +1180,7 @@ If current line is group folder, all subfolders are marked."
 	    (wl-folder-sync-entity entity)
 	    (message "Syncing %s is done!" entity)
 	    (sit-for 0))))
-    (forward-line 1))
+    (forward-line))
   (message ""))
 
 (defun wl-folder-mark-as-read-all-region (beg end)
@@ -1202,7 +1202,7 @@ If current line is group folder, all subfolders are marked."
 	    (wl-folder-mark-as-read-all-entity entity)
 	    (message "All messages in %s are marked!" entity)
 	    (sit-for 0))))
-    (forward-line 1))
+    (forward-line))
   (message ""))
 
 (defsubst wl-create-access-init-load-p (folder)

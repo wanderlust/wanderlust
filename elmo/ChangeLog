@@ -1,5 +1,44 @@
 2014-11-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	Remove '1' argument for forward-char, backward-char and
+	forward-line.  Use following-char and preceding-char preferredly.
+
+	* acap.el (acap-parse-greeting, acap-parse-string)
+	(acap-parse-quoted, acap-parse-value-list)
+	(acap-parse-value-or-return-metalist)
+	(acap-parse-return-metalist, acap-parse-return-attr-list):
+	Likewise.
+
+	* elmo-archive.el (elmo-archive-list-folder-subr)
+	(elmo-archive-parse-mmdf): Likewise.
+
+	* elmo-imap4.el (elmo-imap4-forward, elmo-imap4-parse-string)
+	(elmo-imap4-parse-address, elmo-imap4-parse-address-list)
+	(elmo-imap4-parse-response, elmo-imap4-parse-bye)
+	(elmo-imap4-parse-resp-text-code, elmo-imap4-parse-header-list)
+	(elmo-imap4-parse-fetch-body-section, elmo-imap4-parse-fetch)
+	(elmo-imap4-parse-status, elmo-imap4-parse-acl)
+	(elmo-imap4-parse-envelope, elmo-imap4-parse-string-list)
+	(elmo-imap4-parse-body-extension, elmo-imap4-parse-body-ext)
+	(elmo-imap4-parse-body): Likewise.
+
+	* elmo-nntp.el (elmo-nntp-folder-list-subfolders)
+	(elmo-nntp-parse-xhdr-response, elmo-nntp-get-folders-info)
+	(elmo-nntp-msgdb-create-message): Likewise.
+
+	* elmo-pop3.el (elmo-pop3-msgdb-create-message): Likewise.
+
+	* elmo-search.el (elmo-search-parse-filename-list): Likewise.
+
+	* elmo-util.el (elmo-msgdb-insert-file-header)
+	(elmo-parse-addresses): Likewise.
+
+	* pldap.el (ldap-search-basic): Likewise.
+
+	* slp.el (slp-parse-srvs, slp-parse-srvtypes): Likewise.
+
+2014-11-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* elmo-archive.el (elmo-archive-list-folder-subr): Remove
 	redundant code.
 

@@ -313,7 +313,7 @@ the name exists."
       (while (and (not (bobp))
                   (string-match regex (buffer-substring-no-properties
                                        (1- (point)) (point))))
-        (forward-char -1))
+        (backward-char))
       (if (and here (not (re-search-forward (regexp-quote here) end t)))
           nil ;; "here" doesn't exist.
           (setq start (point))
@@ -329,7 +329,7 @@ the name exists."
       ()
     (goto-char (match-end 0))
     (if (looking-at "[ \t]")
-	(forward-char 1)
+	(forward-char)
       (insert " "))
     (if (eolp)
 	nil

@@ -626,7 +626,7 @@ See also variable `wl-use-petname'."
 	    (when (or (null (get-text-property (point) 'face))
 		      (wl-summary-persistent-mark-invalid-p))
 	      (wl-summary-update-persistent-mark (wl-summary-message-number)))
-	    (forward-line 1)))))
+	    (forward-line)))))
     (set-buffer-modified-p nil)))
 
 (defun wl-summary-window-scroll-functions ()
@@ -1678,7 +1678,7 @@ If ARG is non-nil, checking is omitted."
 			   targets
 			   (wl-thread-get-children-msgs-uncached
 			    msg prefetch-marks))))
-	  (forward-line 1))
+	  (forward-line))
 	(setq length (length targets))
 	(message "Prefetching...")
 	(while targets
@@ -1721,11 +1721,11 @@ If ARG is non-nil, checking is omitted."
 			     (if (wl-thread-entity-get-opened entity)
 				 (list number)
 			       (wl-thread-get-children-msgs number))))
-		(forward-line 1)))
+		(forward-line)))
 	  (while (not (eobp))
 	    (setq number-list
 		  (nconc number-list (list (wl-summary-message-number))))
-	    (forward-line 1)))
+	    (forward-line)))
 	number-list))))
 
 (defun wl-summary-mark-as-read-region (beg end)
@@ -1838,7 +1838,7 @@ If ARG is non-nil, checking is omitted."
 	(setq msgid (elmo-message-field folder number 'message-id))
 	(elmo-message-set-cached folder number
 				 (elmo-file-cache-exists-p msgid))
-	(forward-line 1))
+	(forward-line))
       (wl-summary-count-unread)
       (wl-summary-update-modeline)
       (message "Resuming cache status...done"))))
@@ -1888,7 +1888,7 @@ If ARG is non-nil, checking is omitted."
       (when (or (not check)
 		(wl-summary-persistent-mark-invalid-p))
 	(wl-summary-update-persistent-mark))
-      (forward-line 1))))
+      (forward-line))))
 
 (defun wl-summary-update-mark-window (&optional win beg)
   "Update persistent mark in visible summary window.
@@ -2141,12 +2141,12 @@ This function is defined for `window-scroll-functions'"
 	  (progn
 	    (goto-char beg)
 	    (if (re-search-forward regexp end t)
-		(progn (backward-char 1) (beginning-of-line) t)
+		(progn (backward-char) (beginning-of-line) t)
 	      (goto-char pos)
 	      nil))
 	(beginning-of-line)
 	(if (or (and (re-search-forward regexp end t)
-		     (progn (backward-char 1) t))
+		     (progn (backward-char) t))
 		(re-search-backward regexp beg t))
 	    (progn (beginning-of-line) t)
 	  nil)))))
@@ -2352,7 +2352,7 @@ If ARG, without confirm."
       (setq wl-summary-buffer-number-list
 	    (cons (wl-summary-message-number)
 		  wl-summary-buffer-number-list))
-      (forward-line 1))
+      (forward-line))
     (setq wl-summary-buffer-number-list
 	  (nreverse wl-summary-buffer-number-list))))
 
@@ -2583,11 +2583,11 @@ If ARG, without confirm."
   (interactive)
   (let ((depth (or depth
 		   (wl-thread-get-depth-of-current-line))))
-    (forward-line 1)
+    (forward-line)
     (while (and (not (eobp))
 		(>= (wl-thread-get-depth-of-current-line)
 		    depth))
-      (forward-line 1))
+      (forward-line))
     (beginning-of-line)))
 
 (defun wl-summary-insert-line (line)
@@ -2908,7 +2908,7 @@ If ARG, exit virtual folder."
 	(message "Unmarking..."))
       (while (not (eobp))
 	(wl-summary-unset-mark nil nil force)
-	(forward-line 1))
+	(forward-line))
       (unless no-msg
 	(message "Unmarking...done"))
       (setq wl-summary-buffer-target-mark-list nil)
@@ -4336,7 +4336,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
     (while (and skip
 		(not (if downward (eobp) (bobp))))
       (if downward
-	  (forward-line 1)
+	  (forward-line)
 	(forward-line -1))
       (setq skip (or (string-match skip-tmark-regexp
 				   (wl-summary-temp-mark))
@@ -4806,10 +4806,10 @@ If ARG is numeric number, decode message as following:
 		      (wl-summary-save t wl-save-dir)
 		    ;; closed
 		    (wl-summary-save t wl-save-dir))
-		  (forward-line 1))))
+		  (forward-line))))
 	  (while (not (eobp))
 	    (wl-summary-save t wl-save-dir)
-	    (forward-line 1)))))))
+	    (forward-line)))))))
 
 ;; mew-summary-pipe-message()
 (defun wl-summary-pipe-message (prefix command)

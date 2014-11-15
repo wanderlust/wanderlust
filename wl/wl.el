@@ -413,7 +413,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (goto-char (point-min))
     (while (not (eobp))
       (wl-highlight-plugged-current-line)
-      (forward-line 1)))
+      (forward-line)))
   (set-buffer-modified-p nil)
   (count-lines (point-min) (point-max)))
 
@@ -426,7 +426,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (delete-region (match-beginning 1) (match-end 1))
     (insert (wl-plugged-string switch time))
     (wl-highlight-plugged-current-line)
-    (forward-line 1)))
+    (forward-line)))
 
 (defun wl-plugged-redrawing (plugged-alist)
   (let ((buffer-read-only nil)
@@ -483,7 +483,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 		(enlarge-window 2))))
 	(error))
       (goto-char (point-min))
-      (forward-line 1)
+      (forward-line)
       (wl-plugged-move-to-next)))) ;; goto first entry
 
 (defsubst wl-plugged-get-server ()
@@ -506,9 +506,9 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	(let (variable switch name)
 	  (goto-char cur-point)
 	  (when (and (not (bobp))
-		     (not (eq (char-before) (string-to-char " "))))
+		     (not (eq (preceding-char) (string-to-char " "))))
 	    (if (re-search-backward " [^ ]+" nil t)
-		(forward-char 1)
+		(forward-char)
 	      (re-search-backward "^[^ ]+" nil t)))
 	  (when (looking-at "\\([^ :[]+\\):?\\[\\([^]]+\\)\\]")
 	    (setq name (elmo-match-buffer 1))
@@ -606,7 +606,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 
 (defun wl-plugged-move-to-previous ()
   (interactive)
-  (if (eq (char-before) ?\]) (forward-char -1))
+  (if (eq (preceding-char) ?\]) (backward-char))
   (when (re-search-backward "\\[\\([^]]+\\)\\]" nil t)
     (let ((pos (match-beginning 1)))
       (if (invisible-p pos)

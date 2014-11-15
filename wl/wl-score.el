@@ -650,7 +650,7 @@ Set `wl-score-cache' nil."
 		  ;; Found a match, update scores.
 		  (while (setq art (pop arts))
 		    (setcdr art (+ score (cdr art)))))
-		(forward-line 1))
+		(forward-line))
 	      ;; Update expiry date
 	      (cond
 	       ;; Permanent entry.
@@ -690,7 +690,7 @@ Set `wl-score-cache' nil."
 	      (setq found (setq arts (wl-score-get-alike)))
 	      (while (setq art (pop arts))
 		(setcdr art (+ score (cdr art)))))
-	    (forward-line 1))
+	    (forward-line))
 	  ;; Update expiry date
 	  (cond
 	   ;; Permanent.
@@ -770,7 +770,7 @@ Set `wl-score-cache' nil."
 			(wl-append rest (list new)))
 		      (setcdr art (+ score (cdr art))))
 		    (wl-push new news))))
-	      (forward-line 1)))
+	      (forward-line)))
 	  ;; Update expire date
 	  (cond ((null date))		;Permanent entry.
 		((and found wl-score-update-entry-dates) ;Match, update date.

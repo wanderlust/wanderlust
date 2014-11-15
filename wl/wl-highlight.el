@@ -1021,7 +1021,7 @@ Variables used:
 	  (goto-char start)
 	  (while (not (eobp))
 	    (wl-highlight-folder-current-line)
-	    (forward-line 1)))))))
+	    (forward-line)))))))
 
 (defun wl-highlight-folder-path (folder-path)
   "Highlight current folder path...overlay"
@@ -1045,7 +1045,7 @@ Variables used:
 	  (overlay-put ov 'face 'wl-highlight-folder-path-face)
 	  (overlay-put ov 'evaporate t)
 	  (overlay-put ov 'wl-momentary-overlay t))
-	(forward-line 1)))))
+	(forward-line)))))
 
 (defun wl-highlight-action-argument-string (string)
   (put-text-property 0 (length string) 'face
@@ -1081,7 +1081,7 @@ Faces used:
 	(when (or (not lazy)
 		  (null (get-text-property (point) 'face)))
 	  (wl-highlight-summary-current-line))
-	(forward-line 1))
+	(forward-line))
       (unless wl-summary-lazy-highlight
 	(message "Highlighting...done")))))
 
@@ -1130,7 +1130,7 @@ Returns start point of signature."
   (save-excursion
     (goto-char end)
     (if (re-search-backward "\n--+ *\n" beg t)
-	(if (eq (char-after (point)) ?\n)
+	(if (eq (following-char) ?\n)
 	    (1+ (point))
 	  (point))
       end)))
@@ -1261,12 +1261,12 @@ interpreted as cited text.)"
 			   'wl-highlight-message-header-contents))
 			(goto-char hend))
 		    ;; ignore non-header field name lines
-		    (forward-line 1))))))
+		    (forward-line))))))
 	  (when (looking-at
 		 (format "^%s$" (regexp-quote mail-header-separator)))
 	    (put-text-property (match-beginning 0) (match-end 0)
 			       'face 'wl-highlight-header-separator-face)
-	    (forward-line 1))
+	    (forward-line))
 	  (let (prefix end)
 	    (while (null (progn
 			     ;; Skip invisible region.
@@ -1295,11 +1295,11 @@ interpreted as cited text.)"
 	       (t (setq current nil)))
 	      (when current
 		(setq p (point))
-		(forward-line 1) ; this is to put the \n in the face too
+		(forward-line) ; this is to put the \n in the face too
 		(put-text-property p (or end (point)) 'face current)
 		(setq end nil)
-		(forward-char -1))
-	      (forward-line 1)))
+		(backward-char))
+	      (forward-line)))
 	  (run-hooks 'wl-highlight-message-hook))))))
 
 ;; highlight-mouse-line for folder mode

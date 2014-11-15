@@ -623,7 +623,7 @@ ENTRIES is a store-entry list."
     (goto-char (match-end 0))
     (acap-forward)
     (let (capabilities)
-      (while (eq (char-after (point)) ?\()
+      (while (eq (following-char) ?\()
 	(push (read (current-buffer)) capabilities)
 	(acap-forward))
       (nreverse capabilities))))
@@ -648,19 +648,19 @@ ENTRIES is a store-entry list."
 ;;   TEXT-CHAR       = <any CHAR except CR and LF>
 
 (defsubst acap-parse-string ()
-  (cond ((eq (char-after) ?\")
-	 (forward-char 1)
+  (cond ((eq (following-char) ?\")
+	 (forward-char)
 	 (let ((p (point)) (name ""))
 	   (skip-chars-forward "^\"\\\\")
 	   (setq name (buffer-substring p (point)))
-	   (while (eq (char-after) ?\\)
+	   (while (eq (following-char) ?\\)
 	     (setq p (1+ (point)))
 	     (forward-char 2)
 	     (skip-chars-forward "^\"\\\\")
 	     (setq name (concat name (buffer-substring p (point)))))
-	   (forward-char 1)
+	   (forward-char)
 	   name))
-	((eq (char-after) ?{)
+	((eq (following-char) ?{)
 	 (acap-parse-literal))))
 
 ;;   nil             = "NIL"
@@ -678,7 +678,7 @@ ENTRIES is a store-entry list."
 ;;                        ;; begins with slash
 
 (defsubst acap-parse-quoted ()
-  (if (eq (char-after) ?\")
+  (if (eq (following-char) ?\")
       (read (current-buffer))))
 
 (defun acap-parse-entry ()
@@ -691,9 +691,9 @@ ENTRIES is a store-entry list."
 ;; value-list         = "(" [value *(SP value)] ")"
 (defun acap-parse-value-list ()
   ;; same as acl.
-  (when (eq (char-after (point)) ?\()
+  (when (eq (following-char) ?\()
     (let (values)
-      (while (not (eq (char-after (point)) ?\)))
+      (while (not (eq (following-char) ?\)))
 	(acap-forward)
 	(push (acap-parse-value) values))
       (acap-forward)
@@ -720,9 +720,9 @@ ENTRIES is a store-entry list."
       (and (acap-parse-nil) nil)))
 
 (defun acap-parse-value-or-return-metalist ()
-  (when (eq (char-after (point)) ?\()
+  (when (eq (following-char) ?\()
     (let (elems)
-      (while (not (eq (char-after (point)) ?\)))
+      (while (not (eq (following-char) ?\)))
 	(acap-forward)
 	(push (or (acap-parse-value)
 		  (acap-parse-return-metalist))
@@ -734,9 +734,9 @@ ENTRIES is a store-entry list."
 ;;                        ;; occurs when multiple metadata items requested
 ;;
 (defun acap-parse-return-metalist ()
-  (when (eq (char-after (point)) ?\()
+  (when (eq (following-char) ?\()
     (let (metadatas)
-      (while (not (eq (char-after (point)) ?\)))
+      (while (not (eq (following-char) ?\)))
 	(acap-forward)
 	(push (acap-parse-return-metadata) metadatas))
       (acap-forward)
@@ -753,9 +753,9 @@ ENTRIES is a store-entry list."
 ;;   return-attr-list   = "(" return-metalist *(SP return-metalist) ")"
 ;;                        ;; occurs when "*" in RETURN pattern on SEARCH
 (defun acap-parse-return-attr-list ()
-  (when (eq (char-after (point)) ?\()
+  (when (eq (following-char) ?\()
     (let (metalists)
-      (while (not (eq (char-after (point)) ?\)))
+      (while (not (eq (following-char) ?\)))
 	(acap-forward)
 	(push (acap-parse-return-metalist) metalists))
       (acap-forward)

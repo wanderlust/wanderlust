@@ -562,7 +562,7 @@ Don't cache if nil.")
 		  (if (not (assoc top-ng ret-val))
 		      (setq ret-val (nconc ret-val (list (list top-ng))))))
 		(elmo-progress-notify 'elmo-nntp-parse-active)
-		(forward-line 1)))
+		(forward-line)))
 	  (while (re-search-forward "\\([^ ]+\\) .*\n" nil t)
 	    (setq ret-val (nconc ret-val
 				 (list (elmo-match-buffer 1))))
@@ -884,7 +884,7 @@ Don't cache if nil.")
 	    (setq response (cons (cons (string-to-number (elmo-match-buffer 1))
 				       (elmo-match-buffer 2))
 				 response)))
-	(forward-line 1)))
+	(forward-line)))
     (nreverse response)))
 
 (defun elmo-nntp-parse-overview-string (string)
@@ -1020,7 +1020,7 @@ Don't cache if nil.")
 	(setq bol (point))
 	(end-of-line)
 	(setq line (buffer-substring bol (point)))
-	(unless (zerop (forward-line 1)) (setq data-continue nil))
+	(unless (zerop (forward-line)) (setq data-continue nil))
 	(elmo-nntp-send-data-line session line)))))
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-nntp-folder)
@@ -1225,7 +1225,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 		    (set (setq group (let ((obarray hashtb)) (read cur)))
 			 (list len min max)))
 		(error (and group (symbolp group) (set group nil))))
-	      (forward-line 1))))
+	      (forward-line))))
 	(setq sessions (cdr sessions))))
     (kill-buffer cur)))
 
@@ -1333,7 +1333,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
       (elmo-with-progress-display (elmo-folder-msgdb-create len)
 	  "Creating msgdb"
 	(while (not (eobp))
-	  (setq beg (save-excursion (forward-line 1) (point)))
+	  (setq beg (save-excursion (forward-line) (point)))
 	  (setq num
 		(and (looking-at "^2[0-9]*[ ]+\\([0-9]+\\)")
 		     (string-to-number

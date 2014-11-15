@@ -245,7 +245,7 @@ If ARG is specified, narrow to ARGth page."
 	(forward-page -1)		; Beginning of current page.
       (beginning-of-buffer
        (goto-char (point-min))))
-    (forward-char 1)  ; for compatibility with emacs-19.28 and emacs-19.29
+    (forward-char)  ; for compatibility with emacs-19.28 and emacs-19.29
     (widen)
     (cond
      ((> arg 0) (forward-page arg))
@@ -838,7 +838,7 @@ Returns non-nil if bottom of message."
 	(if last
 	    (re-search-backward "^end" sp t)
 	  (re-search-backward "^M.*$" sp t)) ; uuencoded string
-	(forward-line 1)
+	(forward-line)
 	(setq ep (point))
 	(with-current-buffer outbuf
 	  (goto-char (point-max))
@@ -882,12 +882,12 @@ Returns non-nil if bottom of message."
     (goto-char (point-min))
     (while (re-search-forward hregexp nil t)
       (setq start (match-beginning 0))
-      (forward-line 1)
+      (forward-line)
       (setq end (progn (while (looking-at "^[ \t]") (forward-line))
 		       (forward-line -1)
 		       (line-end-position)))
       (if (<= (count-lines start end) wl-message-header-narrowing-lines)
-	  (forward-line 1)
+	  (forward-line)
 	(goto-char start)
 	(forward-line (1- wl-message-header-narrowing-lines))
 	(end-of-line)

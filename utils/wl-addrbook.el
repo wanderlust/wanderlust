@@ -309,7 +309,7 @@ If addresses is a string, expands it recursively."
     (goto-char (point-min))
     (while (re-search-forward ",[ \t]*$" nil t)
       (end-of-line)
-      (forward-char 1)
+      (forward-char)
       (delete-char -1)
       (delete-horizontal-space))
     ;; unquote, replace white spaces to "\0".
@@ -317,7 +317,7 @@ If addresses is a string, expands it recursively."
 	(catch 'quote
 	  (goto-char (point-min))
 	  (while (re-search-forward "[\"']" nil t)
-	    (setq qchar (char-before (point)))
+	    (setq qchar (preceding-char))
 	    ;; (point) is for backward compatibility
 	    (delete-char -1)		; delete quote
 	    (setq beg (point))

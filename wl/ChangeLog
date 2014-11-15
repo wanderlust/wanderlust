@@ -1,5 +1,62 @@
 2014-11-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	Remove '1' argument for forward-char, backward-char and
+	forward-line.  Use following-char and preceding-char preferredly.
+
+	* wl-action.el (wl-summary-target-mark-set-action)
+	(wl-summary-collect-temp-mark)
+	(wl-summary-exec-action-resend-subr, wl-summary-remove-argument)
+	(wl-summary-collect-numbers-region, wl-summary-print-argument)
+	(wl-summary-unmark-region, wl-summary-mark-region-subr)
+	(wl-summary-delete-all-mark): Likewise.
+
+	* wl-address.el (wl-address-make-alist-from-alias-file): Likewise.
+
+	* wl-draft.el (wl-draft-get-header-delimiter, wl-draft-save)
+	(wl-draft-delete-fields, wl-draft-get-fcc-list)
+	(wl-draft-body-goto-top, wl-user-agent-insert-body): Likewise.
+
+	* wl-fldmgr.el (wl-fldmgr-cut-region, wl-fldmgr-copy-region):
+	Likewise.
+
+	* wl-folder.el (wl-folder-next-entity)
+	(wl-folder-next-entity-skip-invalid, wl-folder-move-path)
+	(wl-folder-check-region, wl-folder-sync-region)
+	(wl-folder-mark-as-read-all-region): Likewise.
+
+	* wl-highlight.el (wl-highlight-folder)
+	(wl-highlight-folder-path, wl-highlight-summary)
+	(wl-highlight-signature-search-simple, wl-highlight-message): Likewise.
+
+	* wl-message.el (wl-message-narrow-to-page)
+	(wl-message-uu-substring, wl-message-header-narrowing-1): Likewise.
+
+	* wl-score.el (wl-score-string, wl-score-followup): Likewise.
+
+	* wl-summary.el (wl-summary-update-mark-and-highlight-window)
+	(wl-summary-prefetch-region-no-mark)
+	(wl-summary-number-list-from-region)
+	(wl-summary-resume-cache-status, wl-summary-update-status-marks)
+	(wl-summary-jump-to-msg, wl-summary-make-number-list)
+	(wl-summary-goto-bottom-of-sub-thread)
+	(wl-summary-delete-all-temp-marks)
+	(wl-summary-cursor-move-surface, wl-summary-save-region): Likewise.
+
+	* wl-thread.el (wl-thread-open-all)
+	(wl-thread-delete-line-from-buffer, wl-thread-delete-message)
+	(wl-thread-goto-bottom-of-sub-thread)
+	(wl-thread-remove-argument-region)
+	(wl-thread-print-argument-region, wl-thread-close)
+	(wl-thread-update-indent-string-region): Likewise.
+
+	* wl-util.el (wl-set-string-width, pp-to-string): Likewise.
+
+	* wl.el (wl-plugged-drawing, wl-plugged-redrawing-switch)
+	(wl-plugged-change, wl-plugged-toggle)
+	(wl-plugged-move-to-previous): Likewise.
+
+2014-11-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* wl-fldmgr.el (wl-fldmgr-delete-entity-hashtb): Remove redundant
 	code.
 

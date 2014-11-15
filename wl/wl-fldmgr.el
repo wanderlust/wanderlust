@@ -544,7 +544,7 @@ return value is diffs '(-new -unread -all)."
 		 (setq count (1+ count))
 		 (and (setq name (wl-folder-get-entity-from-buffer))
 		      (wl-append cut-list (list name)))
-		 (forward-line 1))
+		 (forward-line))
 		((< (length pre-indent) (length indent))
 		 (wl-folder-goto-bottom-of-current-folder pre-indent)
 		 (beginning-of-line))
@@ -663,7 +663,7 @@ return value is diffs '(-new -unread -all)."
 		     (progn
 		       (setq pre-indent indent)
 		       (wl-push name cut-list)))
-		 (forward-line 1))
+		 (forward-line))
 		((< (length pre-indent) (length indent))
 		 (wl-folder-goto-bottom-of-current-folder pre-indent)
 		 (beginning-of-line))

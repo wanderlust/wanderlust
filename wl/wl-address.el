@@ -530,7 +530,7 @@ Refresh `wl-address-list', `wl-address-completion-list', and
       (insert-file-contents file)
       (while (re-search-forward ",$" nil t)
 	(end-of-line)
-	(forward-char 1)
+	(forward-char)
 	(delete-char -1))
       (goto-char (point-min))
       (while (re-search-forward "^\\([^#;\n][^:]+\\):[ \t]*\\(.*\\)$" nil t)

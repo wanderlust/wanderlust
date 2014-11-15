@@ -273,7 +273,7 @@ Returns non-nil if fetching was succeed.")
       (setq bol (point))
       (end-of-line)
       (setq locations (cons (buffer-substring bol (point)) locations))
-      (forward-line 1))
+      (forward-line))
     (nreverse locations)))
 
 (luna-define-method elmo-search-engine-create-message-entity
