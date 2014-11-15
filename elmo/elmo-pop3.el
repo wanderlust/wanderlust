@@ -243,9 +243,7 @@ CODE is one of the following:
 	  (setq response-continue nil))))
       (cons (or err 'ok)
 	    (when start
-	      (let (inhibit-eol-conversion)
-		(decode-coding-string
-		 (buffer-substring start (- match-end 2)) 'raw-text-dos)))))))
+	      (elmo-delete-cr (buffer-substring start (- match-end 2))))))))
 
 (defun elmo-pop3-process-filter (process output)
   (when (buffer-live-p (process-buffer process))

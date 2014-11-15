@@ -375,9 +375,7 @@ Don't cache if nil.")
 	  (setq response-continue nil))))
       (setq response
 	    (and start
-		 (let (inhibit-eol-conversion)
-		   (decode-coding-string
-		    (buffer-substring start (- match-end 2)) 'raw-text-dos))))
+		 (elmo-delete-cr (buffer-substring start (- match-end 2)))))
       (if error-msg
 	  (cons response (buffer-substring last (- match-end 2)))
 	response))))
@@ -1263,9 +1261,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	   (elmo-network-session-process-internal session) 1)
 	  (discard-input)))
       ;; Now all replies are received.  We remove CRs.
-      (goto-char (point-min))
-      (while (search-forward "\r" nil t)
-	(replace-match "" t t))
+      (elmo-delete-cr-buffer)
       (copy-to-buffer outbuf (point-min) (point-max)))))
 
 ;; from nntp.el [Gnus]
