@@ -1314,7 +1314,7 @@ MESSAGE is a doing part of progress message."
   (defmacro elmo-string (string &optional from to)
     "Return a substring of STRING, without text properties.
 It starts at zero-indexed index FROM and ends before TO."
-    `(let ((obj (subsgtring ,string (or ,from 0) ,to)))
+    `(let ((obj (substring ,string (or ,from 0) ,to)))
        (set-text-properties 0 (length obj) nil obj)
        obj))))
 
