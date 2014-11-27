@@ -66,6 +66,7 @@ Id is an Atom id, an RSS guid, or, lacking the above, an SHA-1 hash."
 
 (defun elmo-rss-parse-iso-timeoffset (string)
   (cond
+    ((null string) nil)
     ((equal string "Z") '(0 "utc"))
     ((string-match "\\`[+-]\\([0-9]+\\):\\([0-9]+\\)\\'" string)
      (list
@@ -81,7 +82,7 @@ Id is an Atom id, an RSS guid, or, lacking the above, an SHA-1 hash."
   (and string
        (and (string-match
              ;; Ugh.
-             "\\`\\([0-9]+\\)-\\([0-9]+\\)-\\([0-9]+\\)t\\([0-9]+\\):\\([0-9]+\\):\\([0-9]+\\)\.?[0-9]*\\([z+-][0-9:]*\\)\\'"
+             "\\`\\([0-9]+\\)-\\([0-9]+\\)-\\([0-9]+\\)t\\([0-9]+\\):\\([0-9]+\\):\\([0-9]+\\)\.?[0-9]*\\([z+-][0-9:]*\\)?\\'"
              string)
             (timezone-make-arpa-date
              (string-to-number (match-string 1 string))
