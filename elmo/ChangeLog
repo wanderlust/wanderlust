@@ -1,3 +1,7 @@
+2014-11-27  Juliusz Chroboczek  <jch@pps.univ-paris-diderot.fr>
+
+	* elmo-rss.el: New file.
+
 2014-11-20  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-util.el (elmo-string): Fix typo.

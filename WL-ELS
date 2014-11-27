@@ -23,7 +23,7 @@
    elmo-multi elmo-access elmo-filter
    elmo-archive elmo-pipe elmo-cache
    elmo-internal elmo-flag elmo-sendlog elmo-null
-   elmo-dop elmo-search elmo-file elmo-split
+   elmo-dop elmo-search elmo-file elmo-split elmo-rss
    elmo-spam elsp-bogofilter elsp-sa elsp-bsfilter elsp-spamoracle
    modb modb-entity modb-legacy modb-standard
    ))
