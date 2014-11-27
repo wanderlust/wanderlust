@@ -1,3 +1,7 @@
+2014-11-27  Juliusz Chroboczek  <jch@pps.univ-paris-diderot.fr>
+
+	* WL-ELS: Add elmo-rss.el.
+
 2014-11-09  Erik Hetzner  <egh@e6h.org>
 
 	* doc/wl-ja.texi: Define @documentencoding.
