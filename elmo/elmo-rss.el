@@ -185,7 +185,8 @@ Id is an Atom id, an RSS guid, or, lacking the above, an SHA-1 hash."
                  (push (xml-get-attribute child 'href) urls))))
             ((eq name 'content) (setq content node))
             ((eq name 'summary) (setq summary node))))))
-    (let* ((date (elmo-rss-parse-iso-date (or published updated)))
+    (let* ((date (or (elmo-rss-parse-iso-date updated)
+                     (elmo-rss-parse-iso-date published)))
            (author-name
             (and author
                  (car (xml-node-children
