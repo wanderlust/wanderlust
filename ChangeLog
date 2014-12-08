@@ -1,5 +1,9 @@
 2014-11-09  Erik Hetzner  <egh@e6h.org>
 
+	* wanderlust-pkg.el: New file.
+
+2014-11-09  Erik Hetzner  <egh@e6h.org>
+
 	* doc/wl-ja.texi: Define @documentencoding.
 
 2014-11-09  Erik Hetzner  <egh@e6h.org>
