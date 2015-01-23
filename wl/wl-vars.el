@@ -557,6 +557,13 @@ Note: default value follows RFC2822."
   :type 'function
   :group 'wl-draft)
 
+(defcustom wl-default-draft-cite-date-format-string
+  "On %a, %e %M %Y at %T %Z"
+  "*Format string to use for first line of citation in `wl-default-draft-cite'.
+The value is passed to `format-time-string'."
+  :type 'string
+  :group 'wl-draft)
+
 (defcustom wl-default-draft-cite-decorate-author t
   "*If non-nil, the author of cited message is arranged by
 `wl-summary-from-func-internal' in `wl-default-draft-cite'."
