@@ -1,3 +1,7 @@
+2015-01-22  Erik Hetzner  <egh@e6h.org>
+
+	* wl/wl-draft.el (wl-default-draft-cite): Support custom date format string.
+
 2014-11-09  Erik Hetzner  <egh@e6h.org>
 
 	* wanderlust-pkg.el: New file.
