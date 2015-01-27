@@ -558,7 +558,7 @@ Note: default value follows RFC2822."
   :group 'wl-draft)
 
 (defcustom wl-default-draft-cite-date-format-string
-  "On %a, %e %M %Y at %T %Z"
+  "On %a, %e %b %Y at %T %Z"
   "*Format string to use for first line of citation in `wl-default-draft-cite'.
 The value is passed to `format-time-string'."
   :type 'string
