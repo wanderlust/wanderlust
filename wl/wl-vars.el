@@ -558,10 +558,12 @@ Note: default value follows RFC2822."
   :group 'wl-draft)
 
 (defcustom wl-default-draft-cite-date-format-string
-  "On %a, %e %b %Y at %T %Z"
+  "%a, %e %b %Y at %T %Z"
   "*Format string to use for first line of citation in `wl-default-draft-cite'.
-The value is passed to `format-time-string'."
-  :type 'string
+The value is passed to `format-time-string'.
+When nil, use original message's Date: field as is."
+  :type '(choice (string :tag "Format string")
+		 (const :tag "Use original Date: field." nil))
   :group 'wl-draft)
 
 (defcustom wl-default-draft-cite-decorate-author t

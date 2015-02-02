@@ -693,17 +693,23 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 	  (exchange-point-and-mark))
       (narrow-to-region (point)(point-max))
       (setq date (std11-field-body "date")
-            date-parsed (elmo-time-parse-date-string date)
 	    from (std11-field-body "from")))
     (when (or date from)
-      (insert (format "%s,\n%s wrote:\n"
-                      (if date
-                          (format-time-string wl-default-draft-cite-date-format-string date-parsed)
-                        "some time ago")
-                      (if wl-default-draft-cite-decorate-author
-                          (funcall wl-summary-from-function
-                                   (or from "you"))
-                        (or from "you")))))
+      (insert
+       (format "On %s,\n%s wrote:\n"
+	       (cond
+		((and date wl-default-draft-cite-date-format-string)
+		 (format-time-string
+		  wl-default-draft-cite-date-format-string
+		  (elmo-time-parse-date-string date)))
+		(date
+		 date)
+		(t
+		 "some time ago"))
+	       (if wl-default-draft-cite-decorate-author
+		   (funcall wl-summary-from-function
+			    (or from "you"))
+		 (or from "you")))))
     (mail-indent-citation)))
 
 (defvar wl-draft-buffer nil "Draft buffer to yank content.")
