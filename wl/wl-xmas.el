@@ -435,8 +435,8 @@
       (setq wl-modeline-biff-state-on (cons extent wl-biff-mail-glyph)
 	    wl-modeline-biff-state-off (cons extent wl-biff-nomail-glyph)))))
 
-(defun wl-make-date-string ()
-  (let ((s (current-time-string)))
+(defun wl-make-date-string (&optional time)
+  (let ((s (current-time-string time)))
     (string-match "\\`\\([A-Z][a-z][a-z]\\) +[A-Z][a-z][a-z] +[0-9][0-9]? *[0-9][0-9]?:[0-9][0-9]:[0-9][0-9] *[0-9]?[0-9]?[0-9][0-9]"
 		  s)
     (concat (wl-match-string 1 s) ", "

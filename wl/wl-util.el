@@ -439,8 +439,8 @@ that `read' can handle, whenever this is possible."
 	(put-text-property 0 1 'wl-date time date)
 	time)))
 
-(defun wl-make-date-string ()
-  (let ((s (current-time-string)))
+(defun wl-make-date-string (&optional time)
+  (let ((s (current-time-string time)))
     (string-match "\\`\\([A-Z][a-z][a-z]\\) +[A-Z][a-z][a-z] +[0-9][0-9]? *[0-9][0-9]?:[0-9][0-9]:[0-9][0-9] *[0-9]?[0-9]?[0-9][0-9]"
 		  s)
     (concat (wl-match-string 1 s) ", "

@@ -538,9 +538,9 @@
 	(setq wl-modeline-biff-state-on wl-biff-state-indicator-on
 	      wl-modeline-biff-state-off wl-biff-state-indicator-off)))))
 
-(defun wl-make-date-string ()
+(defun wl-make-date-string (&optional time)
   (let ((system-time-locale "C"))
-    (format-time-string "%a, %d %b %Y %T %z")))
+    (format-time-string "%a, %d %b %Y %T %z" time)))
 
 (defalias 'wl-setup-folder 'wl-e21-setup-folder-toolbar)
 

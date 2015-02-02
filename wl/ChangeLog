@@ -1,5 +1,13 @@
 2015-02-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* wl-e21.el (wl-make-date-string): Accept optional argument TIME.
+
+	* wl-util.el (wl-make-date-string): Likewise.
+
+	* wl-xmas.el (wl-make-date-string): Likewise.
+
+2015-02-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* wl-vars.el (wl-default-draft-cite-date-format-string): Contains
 	only date representing string.  Nil means to use original header's
 	date field (previous behavior).
