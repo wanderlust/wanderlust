@@ -696,7 +696,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 	    from (std11-field-body "from")))
     (when (or date from)
       (insert
-       (format "On %s,\n%s wrote:\n"
+       (format wl-default-draft-cite-header-format-string
 	       (if date
 		   (cond
 		    ((stringp wl-default-draft-cite-date-format-string)

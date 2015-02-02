@@ -568,6 +568,12 @@ When nil, use original message's Date: field as is."
 		 (const :tag "Use original Date: field" nil))
   :group 'wl-draft)
 
+(defcustom wl-default-draft-cite-header-format-string "On %s,\n%s wrote:\n"
+  "*Format string to generate citation header.
+The value is passed to `format' function with two string, date and author, respectively.  Should be terminated with LF."
+  :type 'string
+  :group 'wl-draft)
+
 (defcustom wl-default-draft-cite-decorate-author t
   "*If non-nil, the author of cited message is arranged by
 `wl-summary-from-func-internal' in `wl-default-draft-cite'."
