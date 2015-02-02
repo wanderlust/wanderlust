@@ -700,9 +700,12 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 	       (if date
 		   (cond
 		    ((stringp wl-default-draft-cite-date-format-string)
-		     (format-time-string
-		      wl-default-draft-cite-date-format-string
-		      (elmo-time-parse-date-string date)))
+		     (let ((system-time-locale
+			    (or wl-default-draft-cite-time-locale
+				system-time-locale)))
+		       (format-time-string
+			wl-default-draft-cite-date-format-string
+			(elmo-time-parse-date-string date))))
 		    (wl-default-draft-cite-date-format-string
 		     (wl-make-date-string (elmo-time-parse-date-string date)))
 		    (t

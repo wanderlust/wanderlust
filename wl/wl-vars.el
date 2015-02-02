@@ -568,6 +568,13 @@ When nil, use original message's Date: field as is."
 		 (const :tag "Use original Date: field" nil))
   :group 'wl-draft)
 
+(defcustom wl-default-draft-cite-time-locale "C"
+  "*Override `system-time-locale' while making time string of ciation header.
+XEmacs is not affected."
+  :type '(choice (string :tag "Specify locale")
+		 (const :tag "Do not override" nil))
+  :group 'wl-draft)
+
 (defcustom wl-default-draft-cite-header-format-string "On %s,\n%s wrote:\n"
   "*Format string to generate citation header.
 The value is passed to `format' function with two string, date and author, respectively.  Should be terminated with LF."
