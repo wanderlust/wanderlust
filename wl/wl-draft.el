@@ -697,15 +697,17 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
     (when (or date from)
       (insert
        (format "On %s,\n%s wrote:\n"
-	       (cond
-		((and date wl-default-draft-cite-date-format-string)
-		 (format-time-string
-		  wl-default-draft-cite-date-format-string
-		  (elmo-time-parse-date-string date)))
-		(date
-		 date)
-		(t
-		 "some time ago"))
+	       (if date
+		   (cond
+		    ((stringp wl-default-draft-cite-date-format-string)
+		     (format-time-string
+		      wl-default-draft-cite-date-format-string
+		      (elmo-time-parse-date-string date)))
+		    (wl-default-draft-cite-date-format-string
+		     (wl-make-date-string (elmo-time-parse-date-string date)))
+		    (t
+		     date))
+		 "some time ago")
 	       (if wl-default-draft-cite-decorate-author
 		   (funcall wl-summary-from-function
 			    (or from "you"))

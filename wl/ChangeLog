@@ -1,3 +1,11 @@
+2015-02-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-vars.el (wl-default-draft-cite-date-format-string): When
+	non-string and non-nil, specify to call wl-make-date-stirng
+	function.
+
+	* wl-draft.el (wl-default-draft-cite): Likewise.
+
 2015-02-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-e21.el (wl-make-date-string): Accept optional argument TIME.
