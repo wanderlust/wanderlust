@@ -698,23 +698,22 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
       (insert
        (format wl-default-draft-cite-header-format-string
 	       (if date
-		   (cond
-		    ((stringp wl-default-draft-cite-date-format-string)
-		     (let ((system-time-locale
-			    (or wl-default-draft-cite-time-locale
-				system-time-locale)))
-		       (format-time-string
-			wl-default-draft-cite-date-format-string
-			(elmo-time-parse-date-string date))))
-		    (wl-default-draft-cite-date-format-string
-		     (wl-make-date-string (elmo-time-parse-date-string date)))
-		    (t
-		     date))
-		 "some time ago")
-	       (if wl-default-draft-cite-decorate-author
-		   (funcall wl-summary-from-function
-			    (or from "you"))
-		 (or from "you")))))
+		   (if (stringp wl-default-draft-cite-date-format-string)
+		       (let ((system-time-locale
+			      (or wl-default-draft-cite-time-locale
+				  system-time-locale)))
+			 (format-time-string
+			  wl-default-draft-cite-date-format-string
+			  (elmo-time-parse-date-string date)))
+		     (concat "On " (if wl-default-draft-cite-date-format-string
+				       (wl-make-date-string
+					(elmo-time-parse-date-string date))
+				     date)))
+		 wl-default-draft-cite-no-date-string)
+	       (funcall (if wl-default-draft-cite-decorate-author
+			    wl-summary-from-function
+			  #'identity)
+			(or from wl-default-draft-cite-no-author-string)))))
     (mail-indent-citation)))
 
 (defvar wl-draft-buffer nil "Draft buffer to yank content.")

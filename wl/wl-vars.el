@@ -557,8 +557,7 @@ Note: default value follows RFC2822."
   :type 'function
   :group 'wl-draft)
 
-(defcustom wl-default-draft-cite-date-format-string
-  "%a, %e %b %Y at %T %Z"
+(defcustom wl-default-draft-cite-date-format-string t
   "*Format string to use for first line of citation in `wl-default-draft-cite'.
 The value is passed to `format-time-string'.
 When non-string and non-nil, call `wl-make-date-string' function.
@@ -568,16 +567,28 @@ When nil, use original message's Date: field as is."
 		 (const :tag "Use original Date: field" nil))
   :group 'wl-draft)
 
+(defcustom wl-default-draft-cite-no-date-string "Some time ago"
+  "*String to use for first line of citation in `wl-default-draft-cite'.
+The value is used as is when original message's Date: field is not found."
+  :type 'string
+  :group 'wl-draft)
+
+(defcustom wl-default-draft-cite-no-author-string "you"
+  "*String to use for second line of citation in `wl-default-draft-cite'.
+The value is used as is when original message's From: field is not found."
+  :type 'string
+  :group 'wl-draft)
+
 (defcustom wl-default-draft-cite-time-locale "C"
-  "*Override `system-time-locale' while making time string of ciation header.
+  "*Override `system-time-locale' while making time string of citaion header.
 XEmacs is not affected."
   :type '(choice (string :tag "Specify locale")
 		 (const :tag "Do not override" nil))
   :group 'wl-draft)
 
-(defcustom wl-default-draft-cite-header-format-string "On %s,\n%s wrote:\n"
+(defcustom wl-default-draft-cite-header-format-string "%s,\n%s wrote:\n"
   "*Format string to generate citation header.
-The value is passed to `format' function with two string, date and author, respectively.  Should be terminated with LF."
+The value is passed to `format' function with two string, date and author respectively.  Should be terminated with LF."
   :type 'string
   :group 'wl-draft)
 
