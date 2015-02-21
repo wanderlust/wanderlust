@@ -200,6 +200,7 @@ It calls following-method selected from variable
 		(t
 		 ;; wl-draft-preview-attributes-buffer-lines is negative.
 		 (- (length attribute-values)
+		    -1
 		    wl-draft-preview-attributes-buffer-lines))))))))
     (split-window cur-win (if (> size 0) size window-min-height))
     (select-window (next-window))
