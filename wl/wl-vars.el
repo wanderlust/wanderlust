@@ -598,6 +598,11 @@ The value is passed to `format' function with two string, date and author respec
   :type 'boolean
   :group 'wl-draft)
 
+(defcustom wl-draft-preview-process-pgp nil
+  "*When non-nil, PGP processing (encryption, sign) will be done when preview."
+  :type 'boolean
+  :group 'wl-draft)
+
 (defcustom wl-smtp-connection-type nil
   "*SMTP connection type.
 If nil, default smtp connection type is used."
@@ -2085,10 +2090,12 @@ Attributes specified in the `wl-draft-preview-attributes-list' are displayed."
 						    envelope-from
 						    send-mail-method
 						    smtp-settings
-						    pop-before-smtp-settings)
+						    pop-before-smtp-settings
+						    pgp-processings)
 					      (news newsgroups
 						    nntp-posting-server
-						    nntp-posting-port))
+						    nntp-posting-port
+						    pgp-processings))
   "*Attribute symbols to display in the draft preview.
 Candidates are following:
 `recipients'

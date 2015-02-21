@@ -353,6 +353,11 @@ It calls following-method selected from variable
    'port
    '(wl-nntp-posting-port elmo-nntp-default-port)))
 
+(defun wl-draft-attribute-pgp-processings ()
+  (when (and (null wl-draft-preview-process-pgp)
+	     wl-draft-preview-pgp-processing)
+    (mapconcat #'symbol-name wl-draft-preview-pgp-processing ", ")))
+
 (defun wl-draft-attribute-value (attr)
   (let ((name (symbol-name attr))
 	fsymbol symbol)
@@ -379,6 +384,10 @@ It calls following-method selected from variable
     (select-window window)
     (switch-to-buffer buf)))
 
+(defvar wl-draft-preview-pgp-processing nil)
+
+(make-variable-buffer-local 'wl-draft-preview-pgp-processing)
+
 (defun wl-draft-preview-message ()
   "Preview editing message."
   (interactive)
@@ -395,6 +404,8 @@ It calls following-method selected from variable
 	   (if (boundp 'mime-header-encode-method-alist)
 	       (symbol-value 'mime-header-encode-method-alist))))
 	 mime-view-ignored-field-list	; all header.
+	 wl-draft-preview-pgp-processing
+	 (mime-edit-pgp-processing mime-edit-pgp-processing)
 	 (mime-edit-translate-buffer-hook
 	  (cons
 	   (lambda ()
@@ -409,6 +420,9 @@ It calls following-method selected from variable
 			  (wl-draft-clone-local-variables))))
 	       (goto-char current-point)
 	       (run-hooks 'wl-draft-send-hook)
+	       (unless wl-draft-preview-process-pgp
+		 (setq wl-draft-preview-pgp-processing mime-edit-pgp-processing
+		       mime-edit-pgp-processing nil))
 	       (condition-case err
 		   (setq attribute-values
 			 (delq nil

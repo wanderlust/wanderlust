@@ -1,3 +1,17 @@
+2015-02-21  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Suppress PGP processing while previewing.  If you need a previous
+	behavior, set wl-draft-preview-process-pgp to t.
+
+	* wl-vars.el (wl-draft-preview-process-pgp): New variable.
+	(wl-draft-preview-attributes-list): Display PGP processing
+	information.
+
+	* wl-mime.el (wl-draft-attribute-pgp-processings): New function.
+	(wl-draft-preview-pgp-processing): New buffer-local variable.
+	(wl-draft-preview-message): Suppress PGP processings when
+	wl-draft-preview-process-pgp is nil.
+
 2015-02-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-vars.el (wl-default-draft-cite-date-format-string): Set
