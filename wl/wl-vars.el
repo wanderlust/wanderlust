@@ -2093,8 +2093,8 @@ Attributes specified in the `wl-draft-preview-attributes-list' are displayed."
 						    pop-before-smtp-settings
 						    pgp-processings)
 					      (news newsgroups
-						    nntp-posting-server
-						    nntp-posting-port
+						    nntp-method
+						    nntp-settings
 						    pgp-processings))
   "*Attribute symbols to display in the draft preview.
 Candidates are following:

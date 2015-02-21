@@ -1,5 +1,18 @@
 2015-02-21  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* wl-mime.el (wl-draft-attribute-nntp-posting-function)
+	(wl-draft-attribute-nntp-posting-user)
+	(wl-draft-attribute-nntp-posting-stream-type)
+	(wl-draft-attribute-show-nntp-settings-functions)
+	(wl-draft-attribute-nntp-method-table)
+	(wl-draft-attribute-nntp-method)
+	(wl-draft-attribute-nntp-settings): New functions and varaibles.
+
+	* wl-vars.el (wl-draft-preview-attributes-list): Adjusted to use
+	them.
+
+2015-02-21  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	Suppress PGP processing while previewing.  If you need a previous
 	behavior, set wl-draft-preview-process-pgp to t.
 

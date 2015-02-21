@@ -343,6 +343,16 @@ It calls following-method selected from variable
 	    (setq alternatives (cdr alternatives))))
 	value))))
 
+(defun wl-draft-attribute-nntp-posting-function ()
+  (wl-draft-nntp-attribute
+   'function
+   '(wl-nntp-posting-function)))
+
+(defun wl-draft-attribute-nntp-posting-user ()
+  (wl-draft-nntp-attribute
+   'user
+   '(wl-nntp-posting-user elmo-nntp-default-user)))
+
 (defun wl-draft-attribute-nntp-posting-server ()
   (wl-draft-nntp-attribute
    'server
@@ -352,6 +362,38 @@ It calls following-method selected from variable
   (wl-draft-nntp-attribute
    'port
    '(wl-nntp-posting-port elmo-nntp-default-port)))
+
+(defun wl-draft-attribute-nntp-posting-stream-type ()
+  (wl-draft-nntp-attribute
+   'stream-type
+   '(wl-nntp-posting-stream-type elmo-nntp-default-stream-type)))
+
+(defvar wl-draft-attribute-show-nntp-settings-functions
+  '(elmo-nntp-post))
+
+(defvar wl-draft-attribute-nntp-method-table nil)
+
+(defun wl-draft-attribute-nntp-method ()
+  (let ((method (wl-draft-attribute-nntp-posting-function)))
+    (cond
+     ((memq method wl-draft-attribute-show-nntp-settings-functions)
+      nil)
+     ((assq method wl-draft-attribute-nntp-method-table)
+      (cdr (assq method wl-draft-attribute-nntp-method-table)))
+     (t
+      method))))
+
+(defun wl-draft-attribute-nntp-settings ()
+  (when (memq (wl-draft-attribute-nntp-posting-function)
+	      wl-draft-attribute-show-nntp-settings-functions)
+    (let ((user (wl-draft-attribute-nntp-posting-user)))
+      (concat
+       (and user
+	    (concat user "@"))
+       (format "%s:%s, %s"
+	       (wl-draft-attribute-nntp-posting-server)
+	       (wl-draft-attribute-nntp-posting-port)
+	       (or (wl-draft-attribute-nntp-posting-stream-type) "direct"))))))
 
 (defun wl-draft-attribute-pgp-processings ()
   (when (and (null wl-draft-preview-process-pgp)
