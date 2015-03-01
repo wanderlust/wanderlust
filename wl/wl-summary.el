@@ -4774,9 +4774,10 @@ If ARG is numeric number, decode message as following:
     (if num
 	(save-excursion
 	  (setq filename (concat (number-to-string num) wl-summary-save-file-suffix))
-	  (when (or (null arg)
-		    (file-exists-p filename))
-	    (setq filename (expand-file-name (read-file-name "Save to file: " wl-save-dir nil nil filename))))
+	  (if (or (null arg)
+                  (file-exists-p filename))
+              (setq filename (expand-file-name (read-file-name "Save to file: " wl-save-dir nil nil filename)))
+            (setq filename (expand-file-name filename wl-save-dir)))
 	  (wl-summary-set-message-buffer-or-redisplay)
 	  (set-buffer (wl-message-get-original-buffer))
 	  (when (or arg
