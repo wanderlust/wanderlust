@@ -2,6 +2,8 @@
 
 	* wl-summary.el (wl-summary-save): Make sure that filename is
 	inside `wl-save-dir'.
+	(wl-summary-save): Use absolute filename when checking if a file
+	with the same name already exists.
 
 2015-02-21  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
