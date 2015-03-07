@@ -31,6 +31,7 @@
 ;;; Code:
 ;;
 
+(require 'std11)
 (require 'elmo)
 (require 'wl-version)			; reduce recursive-load-depth
 
@@ -749,7 +750,25 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (run-hooks 'wl-init-hook)))
 
 (defun wl-check-environment (no-check-folder)
-  (unless wl-from (error "Please set `wl-from' to your mail address"))
+  ;; wl-from
+  (let* ((lal (std11-lexical-analyze wl-from))
+	 (ret (std11-parse-mailbox lal))
+	 address)
+    (unless
+	;; Copied and modified from wl-draft-std11-parse-addresses.
+	(when (or (and (eq (length lal) 1)
+		       (eq (car (car lal)) 'spaces))
+		  ret)
+	  (setq lal (cdr ret))
+	  (while (eq 'spaces (car (car lal)))
+	    (setq lal (cdr lal)))
+	  (null lal))
+      (error "Please set `wl-from' to your mail address"))
+    (setq address (std11-address-string (car ret)))
+    (when (string-match "@[^.]+$" address)
+      (elmo-warning
+       "Domain portion of `wl-from' seems to be a local hostname.")))
+
   ;; Message-ID
   (when wl-insert-message-id
     (let ((message-id (funcall wl-message-id-function))
