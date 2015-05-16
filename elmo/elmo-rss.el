@@ -60,15 +60,18 @@ Setting this to true will annoy the pedants."
   :group 'elmo)
 
 (defun elmo-rss-id-to-message-id (id url)
-  "Convert an Atom/RSS id into something suitable for use as a Message-ID.
-
-Id is an Atom id, an RSS guid, or, lacking the above, an SHA-1 hash."
-  ;; URLs often contain confidential data in the parameter part
-  (let ((sanitised-url
-         (if (string-match "\\([^?]*\\)\\?.*" url)
-             (match-string 1 url)
-             url)))
-    (concat "<" id "@" sanitised-url ">")))
+  "Convert an Atom/RSS id into something suitable for use as a Message-ID."
+  (let* ((host (or (ignore-errors (url-host (url-generic-parse-url url)))
+                  "unknown"))
+         ;; this should probably be improved in order to generate readable
+         ;; IDs more often.
+         (id* (if (string-match "\\`tag:\\(.*\\)\\'" id)
+                  (match-string 1 id)
+                  id))
+         (msg-id (concat "<" id* "@" host ">")))
+    (if (std11-parse-msg-id-string msg-id)
+        msg-id
+        (concat "<" (sha1 id) "@" host ">"))))
 
 (defun elmo-rss-parse-iso-timeoffset (string)
   (cond
