@@ -53,6 +53,12 @@
   (luna-define-internal-accessors 'elmo-rss-folder)
   )
 
+(defcustom elmo-rss-use-raw-utf8-in-headers nil
+  "*Whether to use raw UTF-8 in headers of RSS messages.
+Setting this to true will annoy the pedants."
+  :type 'boolean
+  :group 'elmo)
+
 (defun elmo-rss-id-to-message-id (id url)
   "Convert an Atom/RSS id into something suitable for use as a Message-ID.
 
@@ -395,6 +401,14 @@ Id is an Atom id, an RSS guid, or, lacking the above, an SHA-1 hash."
      (error "Unplugged")))
   (mapcar #'car (elmo-rss-folder-entries-internal folder)))
 
+(defun elmo-rss-encode-field-body (body)
+  "Encode a header body depending on elmo-rss-use-raw-utf8-in-headers."
+  (if elmo-rss-use-raw-utf8-in-headers
+      (encode-coding-string body 'utf-8 t)
+      ;; since From fields don't necessarily have the syntax of an e-mail
+      ;; address, we always encode them as an unstructured field.
+      (mime-encode-field-body body "Subject")))
+
 (defun elmo-rss-format-message (entry url)
   "Format a parsed entry as a mail message."
   (let* ((id (car entry))
@@ -407,11 +421,10 @@ Id is an Atom id, an RSS guid, or, lacking the above, an SHA-1 hash."
          (body (nth 7 entry))
          (time (current-time))
          (boundary (format "%d-%d" (cadr time) (nth 3 time))))
-    ;; I hereby declare raw UTF-8 in message headers as the new standard
     (when author
-      (insert "From: " (encode-coding-string author 'utf-8 t) "\n"))
+      (insert "From: " (elmo-rss-encode-field-body author) "\n"))
     (when subject
-      (insert "Subject: " (encode-coding-string subject 'utf-8 t) "\n"))
+      (insert "Subject: " (elmo-rss-encode-field-body subject) "\n"))
     (when date (insert "Date: " date "\n"))
     (insert "Message-Id: " (elmo-rss-id-to-message-id id url) "\n")
     (when in-reply-to
