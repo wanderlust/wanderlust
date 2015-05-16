@@ -159,10 +159,11 @@ Saved queue is old version(2.6).  Clear all pending operations? ")
 	      (while queue
 		(when (eq (elmo-dop-queue-method (car queue))
 			  'elmo-folder-append-buffer-dop-delayed)
-		  (elmo-folder-delete-messages
+		  (elmo-folder-move-messages
 		   (elmo-dop-spool-folder
 		    (elmo-get-folder (elmo-dop-queue-fname (car queue))))
-		   (list (nth 1 (elmo-dop-queue-arguments (car queue))))))
+		   (list (nth 1 (elmo-dop-queue-arguments (car queue))))
+		   (elmo-get-folder elmo-lost+found-folder)))
 		(setq elmo-dop-queue (delq (car queue) elmo-dop-queue))
 		(setq queue (cdr queue)))
 	      (message "Pending operations are cleared.")

@@ -1,3 +1,8 @@
+2015-05-15  Erik Hetzner  <egh@e6h.org>
+
+	* elmo-dop.el (elmo-dop-queue-flush): Move messages to
+	`elmo-lost+found-folder' when clearing queue, do not delete them.
+
 2014-11-29  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-imap4-search-generate-vector): Provide
