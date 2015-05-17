@@ -336,6 +336,7 @@ Setting this to true will annoy the pedants."
 (defun elmo-rss-parse (body &optional url)
   "Parse a feed (Atom or RSS), return a list of entries."
   (let* ((feed (assoc 'feed body))
+         (entry (assoc 'entry body))
          (rss (assoc 'rss body))
          (rdf (assoc 'rdf:RDF body))
          (channel (and (or rss rdf)
@@ -343,9 +344,14 @@ Setting this to true will annoy the pedants."
          (opml (assoc 'opml body))
          (opml-body (and opml (assoc 'body (xml-node-children opml)))))
     (cond
+      ;; Atom feed
       (feed (elmo-rss-parse-atom feed url))
+      ;; RSS feed
       ((and rss channel) (elmo-rss-parse-rss channel nil url))
       ((and rdf channel) (elmo-rss-parse-rss channel rdf url))
+      ;; Single Atom entry
+      (entry (elmo-rss-parse-atom (cons 'feed (cons nil (list entry)))))
+      ;; OPML outline
       (opml-body (elmo-rss-parse-opml opml-body url))
       (t (error "Couldn't find Atom, RSS or OPML at %s." url)))))
 
