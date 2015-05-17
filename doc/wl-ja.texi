@@ -715,6 +715,7 @@ Filter, Pipe, File, Access, Internal の 15 種類です。
 * Internal Folder::          @samp{'} -- 内部フォルダ
 * File Folder::                  -- ファイルフォルダ
 * Access Folder::                -- アクセスフォルダ
+* RSS Folder::                   -- RSS フォルダ
 @end menu
 
 
@@ -1904,7 +1905,7 @@ file:/etc       -> @file{/etc}
 @end example
 
 
-@node Access Folder,  , File Folder, Folders
+@node Access Folder, RSS Folder, File Folder, Folders
 @section アクセスフォルダ
 @cindex Access Folder
 
@@ -1925,6 +1926,32 @@ access:%INBOX -> %INBOX 以下の IMAP のメールボックスの全て
 access:'cache -> 全ての 'cache フォルダ
 @end group
 @end example
+
+@node RSS Folder,  , Access Folder, Folders
+@section RSS Folder
+@cindex RSS Folder
+@cindex Atom Folder
+
+An RSS folder presents the messages contained in an RSS or Atom feed:
+
+@example
+rss:https://github.com/wanderlust/wanderlust/commits/master.atom
+@end example
+
+This folder type attempts to automatically handle all known versions of
+RSS and Atom.  Should you need more configurability, please use
+a Shimbun folder (@pxref{Shimbun Folder}) instead.
+
+Since this folder doesn't do any persistent caching, messages will
+disappear as soon as they expire from the feed.  Should you want
+persistent messages, combine this with a pipe folder:
+
+@example
+|rss:http://lwn.net/http://lwn.net/headlines/newrss|+lwn
+@end example
+
+You may also use an RSS, Atom or OPML feed as an access group, in which
+case related feeds will appear as subfolders.
 
 
 @node Folder, Summary, Folders, Top
