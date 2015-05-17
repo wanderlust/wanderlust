@@ -1,3 +1,8 @@
+2015-05-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-rss.el (elmo-rss-msgdb-create-entity): Use elmo-no-from and
+	elmo-no-subject.
+
 2015-05-17  Juliusz Chroboczek  <jch@pps.univ-paris-diderot.fr>
 
 	* elmo-rss.el: New file.

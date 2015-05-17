@@ -480,8 +480,8 @@ Setting this to true will annoy the pedants."
      :message-id (elmo-rss-id-to-message-id location url)
      :number number
      :date (cadr entry)
-     :from (or (nth 2 entry) "(nobody)")
-     :subject (or (nth 3 entry) "(no subject)")
+     :from (or (nth 2 entry) elmo-no-from)
+     :subject (or (nth 3 entry) elmo-no-subject)
      :references (mapcar #'(lambda (ref) (elmo-rss-id-to-message-id ref url))
                          (nth 4 entry)))))
 
