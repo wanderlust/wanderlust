@@ -1,3 +1,8 @@
+2015-05-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* WL-ELS: Install elmo-rss.el only when required libraries are
+	available.
+
 2015-05-17  Juliusz Chroboczek  <jch@pps.univ-paris-diderot.fr>
 
 	* WL-ELS: Add elmo-rss.el.

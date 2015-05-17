@@ -23,7 +23,7 @@
    elmo-multi elmo-access elmo-filter
    elmo-archive elmo-pipe elmo-cache
    elmo-internal elmo-flag elmo-sendlog elmo-null
-   elmo-dop elmo-search elmo-file elmo-split elmo-rss
+   elmo-dop elmo-search elmo-file elmo-split
    elmo-spam elsp-bogofilter elsp-sa elsp-bsfilter elsp-spamoracle
    modb modb-entity modb-legacy modb-standard
    ))
@@ -52,6 +52,10 @@
 	;; static
 	(fboundp 'open-database))
     (add-to-list 'ELMO-MODULES 'elmo-database))
+
+(if (and (module-installed-p 'xml)
+	 (module-installed-p 'url))
+    (add-to-list 'ELMO-MODULES 'elmo-rss))
 
 (if (module-installed-p 'shimbun)
     (add-to-list 'ELMO-MODULES 'elmo-shimbun))
