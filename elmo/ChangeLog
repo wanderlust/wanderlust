@@ -1,3 +1,7 @@
+2015-05-17  Juliusz Chroboczek  <jch@pps.univ-paris-diderot.fr>
+
+	* elmo-rss.el: New file.
+
 2015-05-15  Erik Hetzner  <egh@e6h.org>
 
 	* elmo-dop.el (elmo-dop-queue-flush): Move messages to
