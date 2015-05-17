@@ -1,5 +1,11 @@
 2015-05-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo-rss.el (elmo-rss-format-message): Use USEC of current-time
+	instead of PSEC.  PSEC is available on only Emacs 24.3 and later
+	and possible PSEC value's range is narrower than USEC.
+
+2015-05-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* elmo-rss.el (elmo-rss-msgdb-create-entity): Use elmo-no-from and
 	elmo-no-subject.
 

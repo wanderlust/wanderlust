@@ -423,7 +423,7 @@ Setting this to true will annoy the pedants."
          (content-type (nth 6 entry))
          (body (nth 7 entry))
          (time (current-time))
-         (boundary (format "%d-%d" (cadr time) (nth 3 time))))
+         (boundary (format "%d-%d" (cadr time) (nth 2 time))))
     (when author
       (insert "From: " (elmo-rss-encode-field-body author) "\n"))
     (when subject
