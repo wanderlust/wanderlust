@@ -1,3 +1,8 @@
+2015-05-24  Juliusz Chroboczek  <jch@pps.univ-paris-diderot.fr>
+
+	* wl-draft.el (wl-draft-default-jit-highlight): Move to BOL before
+	fontifying, this fixes Emacs 25.
+
 2015-03-08  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl.el (wl-check-environment): Checking Message-ID part is almost

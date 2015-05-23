@@ -2706,6 +2706,8 @@ This is ignored when wl-draft-jit-highlight is set."
 
 (defun wl-draft-default-jit-highlight (start end)
   (goto-char start)
+  (beginning-of-line)
+  (setq start (point))
   (let ((in-header (wl-draft-point-in-header-p)))
     ;; check for multi-line header, extend region if necessary
     (when in-header
