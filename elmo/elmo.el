@@ -670,7 +670,7 @@ If second optional argument UNREAD is non-nil, message is not flaged as read.
 Returns non-nil if fetching was succeed.")
 
 (luna-define-generic elmo-message-fetch-field (folder number field)
-  "Fetch a message field value.
+  "Fetch a message field value bypassing cache, return nil if not easily available.
 FOLDER is the ELMO folder structure.
 NUMBER is the number of the message in the FOLDER.
 FIELD is a symbol of the field name.")
