@@ -2978,7 +2978,7 @@ time."
          (elmo-imap4-send-command-wait session
                                        (concat
                                         (if elmo-imap4-use-uid
-                                            "uid")
+                                            "uid ")
                                         (format
                                          "fetch %s (body.peek[header.fields (%s)])"
                                          number field)))
