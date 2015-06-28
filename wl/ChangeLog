@@ -1,3 +1,8 @@
+2015-06-18  Juliusz Chroboczek  <jch@pps.univ-paris-diderot.fr>
+
+	* wl-draft.el (wl-draft-default-jit-highlight): Extend region to EOL,
+	completes previous fix for Emacs 25.
+
 2015-05-24  Juliusz Chroboczek  <jch@pps.univ-paris-diderot.fr>
 
 	* wl-draft.el (wl-draft-default-jit-highlight): Move to BOL before
