@@ -2302,12 +2302,10 @@ Use `wl-subscribed-mailing-list'."
   (elmo-quit)
   ;(if (fboundp 'mmelmo-cleanup-entity-buffers)
   ;(mmelmo-cleanup-entity-buffers))
-  (bury-buffer wl-folder-buffer-name)
-  (dolist (summary-buf (wl-collect-summary))
-    (bury-buffer summary-buf))
-  (dolist (draft-buf (wl-collect-draft))
-    (bury-buffer draft-buf))
-  (delete-windows-on wl-folder-buffer-name t))
+  (dolist (buf (cons wl-folder-buffer-name
+		     (nconc (wl-collect-summary) (wl-collect-draft))))
+    (bury-buffer buf)
+    (delete-windows-on buf t)))
 
 (defun wl-folder-info-save ()
   (when (and wl-folder-info-save

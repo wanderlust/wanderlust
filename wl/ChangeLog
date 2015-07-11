@@ -1,3 +1,7 @@
+2015-07-11  Kenichi OKADA <okada@opaopa.org>
+
+	* wl-folder.el (wl-folder-suspend): Hide all related buffers.
+
 2015-06-18  Juliusz Chroboczek  <jch@pps.univ-paris-diderot.fr>
 
 	* wl-draft.el (wl-draft-default-jit-highlight): Extend region to EOL,
