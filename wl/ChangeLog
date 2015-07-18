@@ -1,3 +1,8 @@
+2015-07-18  David Maus  <dmaus@ictsoc.de>
+
+	* wl.el (wl-init): Retain default value of `elmo-no-subject' and
+	`elmo-no-from' when respective wl-* variables are nil.
+
 2015-07-11  Kenichi OKADA <okada@opaopa.org>
 
 	* wl-folder.el (wl-folder-suspend): Hide all related buffers.
