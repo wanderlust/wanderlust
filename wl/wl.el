@@ -771,6 +771,12 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
       (elmo-warning
        "Domain portion of `wl-from' seems to be a local hostname.")))
 
+  ;; No-from and no-subject message
+  (unless (stringp wl-summary-no-from-message)
+    (elmo-warning "`wl-summary-no-from-message' must be a string."))
+  (unless (stringp wl-summary-no-subject-message)
+    (elmo-warning "`wl-summary-no-subject-message' must be a string."))
+
   ;; Message-ID
   (when wl-insert-message-id
     (let ((message-id (funcall wl-message-id-function))

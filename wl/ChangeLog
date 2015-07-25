@@ -1,3 +1,9 @@
+2015-07-25  David Maus  <dmaus@ictsoc.de>
+
+	* wl.el (wl-check-environment): Warn if
+	`wl-summary-no-from-message' or `wl-summary-no-subject-message' is
+	not a string.
+
 2015-07-18  David Maus  <dmaus@ictsoc.de>
 
 	* wl.el (wl-init): Retain default value of `elmo-no-subject' and
