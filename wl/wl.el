@@ -726,9 +726,9 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
        (nth 1 spec)))
     (setq elmo-get-folder-function #'wl-folder-make-elmo-folder
 	  elmo-progress-callback-function #'wl-progress-callback-function)
-    (when wl-summary-no-from-message
+    (when (stringp wl-summary-no-from-message)
       (setq elmo-no-from wl-summary-no-from-message))
-    (when wl-summary-no-subject-message
+    (when (stringp wl-summary-no-subject-message)
       (setq elmo-no-subject wl-summary-no-subject-message))
     (elmo-global-flags-initialize (mapcar 'car wl-summary-flag-alist))
     (elmo-connect-signal

@@ -1,5 +1,10 @@
 2015-07-25  David Maus  <dmaus@ictsoc.de>
 
+	* wl.el (wl-init): Do not set `elmo-no-subject' and `elmo-no-from'
+	if respective wl-* variables are of the wrong type.
+
+2015-07-25  David Maus  <dmaus@ictsoc.de>
+
 	* wl.el (wl-check-environment): Warn if
 	`wl-summary-no-from-message' or `wl-summary-no-subject-message' is
 	not a string.
