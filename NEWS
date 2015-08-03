@@ -15,6 +15,13 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 ** New option `elmo-imap4-set-seen-flag-explicitly'.
 
+** Fixed copying new messsages via pipe folder.
+
+** Multiple condition can be indicated for summary sorting.
+   Indicate multiple condition separated by ",".
+
+** Analyze network folder name more strictly.
+
 ** Optimize refiling.
    Interpret filter, pipe and multi folder and select the most suitable method.
 
