@@ -379,7 +379,7 @@ If response is not `OK', causes error with IMAP response text."
                         (concat (car tail) " ")
                       (car tail))) command)))
 
-(defun elmo-imap4-flatten-command (command)
+(defun elmo-imap4-flatten-command (command &optional literal+)
   (let (bucket flatcmd)
     (dolist (token command)
       (cond
@@ -391,6 +391,7 @@ If response is not `OK', causes error with IMAP response text."
           (atom (push (nth 1 token) bucket))
           (quoted (push (elmo-imap4-format-quoted (nth 1 token)) bucket))
           (literal (progn
+                     (push (format (if literal+ "{%d+}" "{%d}") (nth 2 token)) bucket)
                      (push (elmo-imap4-flatten-command-string (reverse bucket)) flatcmd)
                      (push token flatcmd)
                      (setq bucket nil)))
@@ -407,7 +408,8 @@ If response is not `OK', causes error with IMAP response text."
 Returns a TAG string which is assigned to the COMMAND."
   (with-current-buffer (process-buffer (elmo-network-session-process-internal session))
       (let ((command (if (listp command) command (list command)))
-            (tag (elmo-imap4-command-tag session)))
+            (tag (elmo-imap4-command-tag session))
+            (literal+ (elmo-imap4-session-capable-p session 'literal+)))
         (push tag command)
         (goto-char (point-min))
         (when (elmo-imap4-response-bye-p elmo-imap4-current-response)
@@ -415,21 +417,20 @@ Returns a TAG string which is assigned to the COMMAND."
         (setq elmo-imap4-current-response nil)
         (elmo-imap4-session-wait-response-maybe session)
         (setq elmo-imap4-parsing t)
-        (dolist (token (elmo-imap4-flatten-command command))
+        (dolist (token (elmo-imap4-flatten-command command literal+))
           (typecase token
             (string (elmo-imap4-session-process-send-string session token))
             (list (elmo-imap4-session-process-send-literal session token))))
         tag)))
 
 (defun elmo-imap4-session-process-send-literal (session literal)
-  (elmo-imap4-session-process-send-string
-   session (format (if (elmo-imap4-session-capable-p session 'literal+) "{%d+}" "{%d}") (nth 2 literal)))
   (unless (elmo-imap4-session-capable-p session 'literal+)
     (elmo-imap4-accept-continue-req session))
   (typecase (nth 1 literal)
     (string (elmo-imap4-session-process-send-string (nth 1 literal)))
     (buffer (with-current-buffer (nth 1 literal)
-              (process-send-region (elmo-network-session-process-internal session) (point-min) (+ (point-min) (nth 2 token)))))
+              (process-send-region (elmo-network-session-process-internal session) (point-min) (+ (point-min) (nth 2 token)))
+              (process-send-string (elmo-network-session-process-internal session) "\r\n")))
     (otherwise
      (error "Invalid literal type: %s" (nth 1 literal)))))
 
