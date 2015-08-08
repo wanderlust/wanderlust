@@ -1,7 +1,32 @@
-
 Wanderlust NEWS -- User-visible changes in Wanderlust.
 
 * Changes in 2.16.0 from 2.14.x
+
+** This is not official release, developed by volunteers at github.
+   ( https://github.com/wanderlust )
+
+** Addresses of mailing lists have been changed.
+
+** Added new type of folders: rss folder
+
+** Fix accidental loss of messages related with moving in offline.
+   After messages were moved in offline state and you became online,
+   some operations possibly made messages lost.  Such messages will be
+   moved into elmo-lost+found-folder folder (default is
+   "+lost+found").
+
+** Use built-in GnuTLS or tls.el for SSL/TLS connection if available.
+
+** Use jit-lock-mode for real-time draft highlighting.
+   Using idle-timer is also supported.
+
+** Use utf-7-imap coding system for IMAP4 if available.
+   In this case, the default value of elmo-imap4-use-modified-utf7 is
+   `t' and utf7.el is not installed.
+
+** Searching via wl-summary-pick and so on by `body' searches only
+   decoded text parts if possible.  If you need old `body' search,
+   search by `raw-body'.
 
 ** Added support for sending mail with sendmail package
 
@@ -38,6 +63,8 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** Use EasyPG (http://www.easypg.org) if it is available.
 
 ** A folder type `namazu' is abolished.  New folder type `search' is added instead.
+   Not only namazu but also external search programs (grep, mu and
+   notmuch) are supported.
 
 ** Fixed against overwriting existing messages in archive folders.
    There was a bug on appending messages.
