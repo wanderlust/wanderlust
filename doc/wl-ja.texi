@@ -254,9 +254,9 @@ SEMI $B$O(B SEMI-EPG $B$H$$$&%Q%C%1!<%8L>$K$J$j$^$9!#(B
 
 @example
 @group
-APEL:     https://github.com/wanderlust/apel
-FLIM:     https://github.com/wanderlust/flim
-SEMI-EPG: https://github.com/wanderlust/semi
+APEL:     @uref{https://github.com/wanderlust/apel}
+FLIM:     @uref{https://github.com/wanderlust/flim}
+SEMI-EPG: @uref{https://github.com/wanderlust/semi}
 @end group
 @end example
 
@@ -264,9 +264,9 @@ SEMI-EPG: https://github.com/wanderlust/semi
 
 @example
 @group
-APEL:   http://git.chise.org/elisp/dist/semi/
-FLIM:   http://git.chise.org/elisp/dist/apel/
-SEMI:   http://git.chise.org/elisp/dist/semi/
+APEL:   @uref{http://git.chise.org/elisp/dist/semi/}
+FLIM:   @uref{http://git.chise.org/elisp/dist/apel/}
+SEMI:   @uref{http://git.chise.org/elisp/dist/semi/}
 @end group
 @end example
 
@@ -309,14 +309,14 @@ Wanderlust $BK\BN$O0J2<$N>l=j$+$i%@%&%s%m!<%I$G$-$^$9!#(B
 $B0l<!G[I[85(B:
 
 @example
-https://github.com/wanderlust/wanderlust
+@uref{https://github.com/wanderlust/wanderlust}
 @end example
 
 $B%_%i!<$7$F$$$?$@$$$F$$$k(B ftp, http $B%5%$%H(B:
 
 @example
 @group
-http://www.jpl.org/ftp/pub/github-snapshots/
+@uref{http://www.jpl.org/ftp/pub/github-snapshots/}
 @end group
 @end example
 
@@ -360,7 +360,7 @@ SSL $B$NMxMQ7ABV$K$O!"%3%M%/%7%g%s$HF1;~$K(B SSL negotiation $B$r;O$a$k$b$N$H
 starttls $B%Q%C%1!<%8$O0J2<$N>l=j$+$iF~<j$G$-$^$9!#(B
 
 @example
-ftp://opaopa.org/pub/elisp/
+@uref{ftp://opaopa.org/pub/elisp/}
 @end example
 
 
@@ -504,7 +504,7 @@ XEmacs $B$N(B package $B$H$7$F%$%s%9%H!<%k$7$?>l9g$O<+F0E*$K(B Info $B%U%!%
 $B$^$?!"2<5-$K$b%^%K%e%"%k$,$"$j$^$9!#(B
 
 @example
-http://wanderlust.github.io/wl-docs/wl-ja.html
+@uref{http://wanderlust.github.io/wl-docs/wl-ja.html}
 @end example
 
 
@@ -846,7 +846,7 @@ Mule-UCS $B$O0J2<$N(B Emacsen $B$GF0:n$7$^$9!#(B
 Mule-UCS $B$O0J2<$+$i(B2004$BG/$N%9%J%C%W%7%g%C%H$,F~<j2DG=$G$9!#(B
 
 @example
-http://www.jpl.org/ftp/pub/tmp/
+@uref{http://www.jpl.org/ftp/pub/tmp/}
 @end example
 
 
@@ -5044,7 +5044,7 @@ POP-before-SMTP $BMQ$NJQ?t(B (@code{wl-pop-before-smtp-*})$B$r@_Dj$7$F$$$J$$>
 
 @example
 @group
-http://www.iecc.com/pop-before-smtp.html
+@uref{http://www.iecc.com/pop-before-smtp.html}
 @end group
 @end example
 
@@ -7552,7 +7552,7 @@ SpamAssassin $B$N3X=,MQ%W%m%0%i%`(B @command{sa-learn} $B<B9T;~$KM?$($k(B
 @subsection SpamOracle
 @cindex SpamOracle
 
-SpamOracle (`http://pauillac.inria.fr/~xleroy/software.html#spamoracle')
+SpamOracle (@uref{http://pauillac.inria.fr/~xleroy/software.html#spamoracle})
 $B$O!"(BObjective Caml $B$G<BAu$5$l$?(B spam $B%U%#%k%?$G$9(B.
 
 @file{SpamOracle} $B$r;HMQ$9$k$K$O!"(B@file{~/.wl}$B$J$I$K0J2<$N@_Dj$r5-=R$7$^$9!#(B

@@ -231,9 +231,9 @@ SEMI-EPG is corresponding package to SEMI.
 
 @example
 @group
-APEL:     https://github.com/wanderlust/apel
-FLIM:     https://github.com/wanderlust/flim
-SEMI-EPG: https://github.com/wanderlust/semi
+APEL:     @uref{https://github.com/wanderlust/apel}
+FLIM:     @uref{https://github.com/wanderlust/flim}
+SEMI-EPG: @uref{https://github.com/wanderlust/semi}
 @end group
 @end example
 
@@ -241,9 +241,9 @@ You can download original APEL, FLIM and SEMI from following URLs:
 
 @example
 @group
-APEL:   http://git.chise.org/elisp/dist/semi/
-FLIM:   http://git.chise.org/elisp/dist/apel/
-SEMI:   http://git.chise.org/elisp/dist/semi/
+APEL:   @uref{http://git.chise.org/elisp/dist/semi/}
+FLIM:   @uref{http://git.chise.org/elisp/dist/apel/}
+SEMI:   @uref{http://git.chise.org/elisp/dist/semi/}
 @end group
 @end example
 
@@ -283,14 +283,14 @@ You can download Wanderlust package from following sites:
 
 Original site:
 @example
-https://github.com/wanderlust/wanderlust
+@uref{https://github.com/wanderlust/wanderlust}
 @end example
 
 Mirrored ftp/http sites:
 
 @example
 @group
-http://www.jpl.org/ftp/pub/github-snapshots/
+@uref{http://www.jpl.org/ftp/pub/github-snapshots/}
 @end group
 @end example
 
@@ -330,7 +330,7 @@ defninition of @code{starttls-use-gnutls}, you need starttls package.
 You can download starttls package from the following site.
 
 @example
-ftp://opaopa.org/pub/elisp/
+@uref{ftp://opaopa.org/pub/elisp/}
 @end example
 
 @node Install, Minimal Settings, Download, Start Me Up
@@ -469,7 +469,7 @@ configured by @code{INFODIR} in @file{Makefile}.
 You can read manual at the following URL:
 
 @example
-http://wanderlust.github.io/wl-docs/wl.html
+@uref{http://wanderlust.github.io/wl-docs/wl.html}
 @end example
 
 @node Minimal Settings, Folder Definition, Install, Start Me Up
@@ -827,7 +827,7 @@ Mule-UCS works on following Emacsen.
 You can obtain Mule-UCS package (snapshot of 2004) from following URL.
 
 @example
-http://www.jpl.org/ftp/pub/tmp/
+@uref{http://www.jpl.org/ftp/pub/tmp/}
 @end example
 
 @node NNTP Folder, MH Folder, IMAP Folder, Folders
@@ -5061,7 +5061,7 @@ Refer to the following URL about POP-before-SMTP.
 
 @example
 @group
-http://www.iecc.com/pop-before-smtp.html
+@uref{http://www.iecc.com/pop-before-smtp.html}
 @end group
 @end example
 
@@ -7627,7 +7627,7 @@ stored in the buffer named @code{"*Debug ELMO SpamAssassin*"}.
 @subsection SpamOracle
 @cindex SpamOracle
 
-SpamOracle (`http://pauillac.inria.fr/~xleroy/software.html#spamoracle')
+SpamOracle (@uref{http://pauillac.inria.fr/~xleroy/software.html#spamoracle})
 is a spam filter implemented by Objective Caml language.
 
 To use spam filter with @file{spamoracle}, write following setting in
