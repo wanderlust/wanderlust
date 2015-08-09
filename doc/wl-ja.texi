@@ -246,41 +246,44 @@ Wanderlust $B$r5/F0$9$k$^$G$KI,MW$J<j=g$r=gHV$K@bL@$7$^$9!#(B
 @pindex FLIM
 @pindex SEMI
 
-Wanderlust $B$r;H$&$?$a$K$O!"$^$:@h$K(B SEMI $B$r%$%s%9%H!<%k$7$F$*$/(B
-$BI,MW$,$"$j$^$9!#(B
+Wanderlust $B$r;H$&$?$a$K$O!"(BAPEL, FLIM, SEMI $B$H8F$P$l$k(B
+$B%Q%C%1!<%8$,I,MW$G$9!#(B
 
-SEMI $B$O0J2<$N>l=j$+$i%@%&%s%m!<%I$G$-$^$9!#(B
-
-@example
-@group
-SEMI:   ftp://ftp.m17n.org/pub/mule/semi/
-@end group
-@end example
-
-SEMI $B$K$O(B APEL, FLIM $B$H8F$P$l$k%Q%C%1!<%8$bI,MW$G$9!#(B
-APEL, FLIM $B$O0J2<$N>l=j$+$i%@%&%s%m!<%I$G$-$^$9!#(B
+Emacs 23 $B0J9_$K$D$$$F$O!"0J2<$N>l=j$K$"$k$b$N$r;HMQ$7$F$/$@$5$$!#(B
+SEMI $B$O(B SEMI-EPG $B$H$$$&%Q%C%1!<%8L>$K$J$j$^$9!#(B
 
 @example
 @group
-APEL:   ftp://ftp.m17n.org/pub/mule/apel/
-FLIM:   ftp://ftp.m17n.org/pub/mule/flim/
+APEL:     https://github.com/wanderlust/apel
+FLIM:     https://github.com/wanderlust/flim
+SEMI-EPG: https://github.com/wanderlust/semi
 @end group
 @end example
 
-APEL, FLIM, SEMI $B$N=g$K%$%s%9%H!<%k$7$F$/$@$5$$!#(B
+$B%*%j%8%J%k$N(B APEL, FLIM, SEMI $B$O0J2<$N>l=j$+$i%@%&%s%m!<%I$G$-$^$9!#(B
+
+@example
+@group
+APEL:   http://git.chise.org/elisp/dist/semi/
+FLIM:   http://git.chise.org/elisp/dist/apel/
+SEMI:   http://git.chise.org/elisp/dist/semi/
+@end group
+@end example
+
+APEL, FLIM, SEMI[-EPG] $B$N=g$K%$%s%9%H!<%k$7$F$/$@$5$$!#(B
 $B4pK\E*$K$9$Y$F(B @samp{make install} $B$N<B9T$G:Q$`$O$:$G$9(B
 (XEmacs 21 $B$G$O(B @samp{make install-package})$B!#(B
 
 $B%$%s%9%H!<%k$NJ}K!$N>\:Y$K$D$$$F$O!"3F%Q%C%1!<%8$KE:IU$5$l$F$$$k%I%-%e%a(B
 $B%s%H$r;2>H$7$F$/$@$5$$(B @footnote{Emacs 19.34 $B%Y!<%9$N(B Mule $B$r;H$C$F$$$k(B
-$B>l9g!"(B@* @uref{http://www.jpl.org/elips/INSTALL-SEMI-ja.html} $B$,;29M$K$J(B
+$B>l9g!"(B@* @uref{http://www.jpl.org/ftp/attic/INSTALL-SEMI-ja.html} $B$,;29M$K$J(B
 $B$k$+$b$7$l$^$;$s!#(B}$B!#(B
 
 
 $B?d>)$5$l$k(B APEL, FLIM, SEMI $B$N%P!<%8%g%s$NAH9g$;$O!"0J2<$NDL$j$G$9!#(B
 
 @itemize @minus
-@item APEL 10.6, FLIM 1.14.6, SEMI 1.14.6
+@item APEL 10.8, FLIM 1.14.9, SEMI-EPG 1.14.7
 @end itemize
 
 $B$=$NB>!"(BFLIM, SEMI $B$K$O$$$m$$$m$JJQ7A%P!<%8%g%s$,B8:_$7$^$9$,!"(B
@@ -306,17 +309,14 @@ Wanderlust $BK\BN$O0J2<$N>l=j$+$i%@%&%s%m!<%I$G$-$^$9!#(B
 $B0l<!G[I[85(B:
 
 @example
-ftp://ftp.gohome.org/wl/
+https://github.com/wanderlust/wanderlust
 @end example
 
 $B%_%i!<$7$F$$$?$@$$$F$$$k(B ftp, http $B%5%$%H(B:
 
 @example
 @group
-@c ftp://ftp.jaist.ac.jp/pub/GNU/elisp/ftp.gohome.org/wl/
-http://www.jpl.org/elips/wl/
-http://www.ring.gr.jp/archives/text/elisp/wl/
-ftp://ftp.ring.gr.jp/pub/text/elisp/wl/
+http://www.jpl.org/ftp/pub/github-snapshots/
 @end group
 @end example
 
@@ -342,12 +342,20 @@ SSL $B$NMxMQ7ABV$K$O!"%3%M%/%7%g%s$HF1;~$K(B SSL negotiation $B$r;O$a$k$b$N$H
 @command{STARTTLS} command $B$N8e$K(B SSL negotiation $B$r;O$a$k$b$N$NFs<oN`(B
 $B$,$"$j$^$9!#(B
 
-$BDL>o$N(B SSL $B$rMxMQ$9$k$K$O(B $BK\%Q%C%1!<%8$N(B @file{utils} $B%G%#%l%/%H%j$K$"$k(B
+$BA0<T$K$D$$$F$O!"(BEmacs 24 $B0J9_$G%5%]!<%H$5$l$?!"AH$_9~$_(B GnuTLS $B$,(B
+$BMxMQ2DG=$J>l9g$O$=$l$r;H$$$^$9!#(B
+$B<!$K!"(B @file{tls.el} $B$,B8:_$9$l$P$=$l$r;H$$$^$9!#$3$N;~$K(B GnuTLS $B$K(B
+$B4^$^$l$k(B @command{gnutls-cli} $B$K%Q%9$,DL$C$F$$$kI,MW$,$"$j$^$9!#(B
+$B$I$A$i$b$J$$>l9g$O!"K\%Q%C%1!<%8$N(B @file{utils} $B%G%#%l%/%H%j$K$"$k(B
 @file{ssl.el} $B$r%$%s%9%H!<%k$9$kI,MW$,$"$j$^$9!#$J$*$+$D!"(BOpenSSL $B$K4^$^(B
 $B$l$k(B @command{openssl} $B$K%Q%9$,DL$C$F$$$kI,MW$,$"$j$^$9!#(B
 
-STARTTLS $B$rMxMQ$9$k$K$O!"$5$i$K!"(Bstarttls $B%Q%C%1!<%8$r%$%s%9%H!<%k(B
-$B$9$kI,MW$,$"$j$^$9!#(B
+$B8e<T$K$D$$$F$O(B @file{starttls.el} $B$,I,MW$K$J$j$^$9!#(B
+$BJQ?t(B @code{starttls-use-gnutls} $B$NCM$K$h$C$F!"(BGnuTLS $B$b$7$/$O(B starttls
+$B%Q%C%1!<%8$,I,MW$G$9!#(B
+@file{starttls.el} $B$,L5$$!"$b$7$/$O(B @file{starttls.el} $BFb$K(B
+@code{starttls-use-gnutls} $B$NDj5A$,L5$$>l9g$O(B starttls $B%Q%C%1!<%8$r(B
+$B%$%s%9%H!<%k$9$kI,MW$,$"$j$^$9!#(B
 
 starttls $B%Q%C%1!<%8$O0J2<$N>l=j$+$iF~<j$G$-$^$9!#(B
 
@@ -496,7 +504,7 @@ XEmacs $B$N(B package $B$H$7$F%$%s%9%H!<%k$7$?>l9g$O<+F0E*$K(B Info $B%U%!%
 $B$^$?!"2<5-$K$b%^%K%e%"%k$,$"$j$^$9!#(B
 
 @example
-http://www.gohome.org/wl/doc/wl-euc_toc.html
+http://wanderlust.github.io/wl-docs/wl-ja.html
 @end example
 
 
@@ -786,10 +794,6 @@ default $BCM(B:
 @end group
 @end lisp
 
-(OpenSSL $B$K4^$^$l$k(B @command{openssl} $B$K%Q%9$,DL$C$F$$$kI,MW$,$"$j$^$9!#(B
-STARTTLS $B$rMxMQ$9$k$K$O!"$5$i$K!"(Bstarttls $B%Q%C%1!<%8$r%$%s%9%H!<%k$9$kI,(B
-$BMW$,$"$j$^$9!#(B)
-
 $BG'>ZK!$H$7$F!"(B@code{login}$B!"(B@code{cram-md5} $B$b$7$/$O(B @code{digest-md5} 
 $B$r;XDj$7$?>l9g!"%Q%9%o!<%I$r%(%s%3!<%I$7$FAw?.$7$^$9!#$?$@$7!"%5!<%PB&$,(B
 $B%Q%9%o!<%I$r%(%s%3!<%I$7$F<u$1<h$kG=NO$,L5$$>l9g$O!"3NG'$N8e!"(B
@@ -825,31 +829,24 @@ STARTTLS $B$rMxMQ$9$k$K$O!"$5$i$K!"(Bstarttls $B%Q%C%1!<%8$r%$%s%9%H!<%k$9$kI
 @pindex Mule-UCS
 @pindex ucs-conv
 
-Emacs $B$,(B UTF-7 $B$KBP1~$7$F$$$l$P!$JQ?t(B 
-@code{elmo-imap4-use-modified-utf7} $B$K(Bnon-nil $B$NCM$r@_Dj$9$l$P(B($B%G%U%)%k(B
-$B%H$O(B @code{nil})$B!"F|K\8l(B($B$d$=$NB>$N1Q8l0J30$N8@8l(B)$B$G%a!<%k%\%C%/%9L>$r;X(B
-$BDj$9$k$3$H$,$G$-$^$9!#(B
+Emacs $B$,(B UTF-7 $B$KBP1~$7$F$$$l$P!$JQ?t(B
+@code{elmo-imap4-use-modified-utf7} $B$K(B non-nil $B$NCM$r@_Dj$9$l$P(B ($B%G%U%)%k(B
+$B%H$O(B Emacs 23 $B0J9_$G$O(B @code{t}$B!"$=$l0J30$G$O(B @code{nil})$B!"F|K\8l(B ($B$d!"(B
+$B$=$NB>$N1Q8l0J30$N8@8l(B) $B$G%a!<%k%\%C%/%9L>$r;XDj$9$k$3$H$,$G$-$^$9!#(B
 
-$B8=:_!"(BEmacs $B$r(B UTF-7 $B$KBP1~$5$;$k$K$O!"(BMule-UCS $B$rJL$K%$%s%9%H!<%k$9$k(B
-$BI,MW$,$"$j$^$9!#(BMule-UCS $B$O0J2<$N(B Emacsen $B$GF0:n$7$^$9!#(B
+Emacs 23 $B0J9_$G$ODI2C$N%Q%C%1!<%8$OITMW$G$9!#(B
+$B$=$l0J30$N(B Emacsen $B$G$O!"(BMule-UCS $B$rJL$K%$%s%9%H!<%k$9$kI,MW$,$"$j$^$9!#(B
+Mule-UCS $B$O0J2<$N(B Emacsen $B$GF0:n$7$^$9!#(B
 
 @itemize @bullet
 @item Emacs 20.3 $B0J9_(B
 @item XEmacs 21.2.37 $B0J9_(B
 @end itemize
 
-Mule-UCS $B$O0J2<$+$iF~<j2DG=$G$9!#(B
+Mule-UCS $B$O0J2<$+$i(B2004$BG/$N%9%J%C%W%7%g%C%H$,F~<j2DG=$G$9!#(B
 
 @example
-ftp://ftp.m17n.org/pub/mule/Mule-UCS/
-@end example
-
-@example
-@group
-cvs -d :pserver:anonymous@@cvs.m17n.org:/cvs/root login
-Password: @var{NULL} (Just enter return key)
-cvs -d :pserver:anonymous@@cvs.m17n.org:/cvs/root checkout ucs-conv
-@end group
+http://www.jpl.org/ftp/pub/tmp/
 @end example
 
 
@@ -1299,12 +1296,6 @@ archive $B$+$iF~<j2DG=$G$9(B(GPL2)$B!#(B
 $BJQ?t(B @code{elmo-pop3-default-stream-type} $B$NCM$,(B @code{ssl} $B$J$i!"(B@samp{!} $B$rIU$1(B
 $B$J$/$F$b(B SSL $B$r;H$$$^$9!#(B@code{starttls} $B$J$i(B @samp{!!} $B$r0UL#$7$^$9!#(B
 $B$3$l$i$N>l9g!"DL>o$N@\B3$r$9$k$K$O%U%)%k%@L>$N:G8e$K(B@samp{!direct} $B$rIU$1$^$9!#(B
-
-(SSL $B$rMxMQ$9$k$K$O(B $BK\%Q%C%1!<%8$N(B @file{utils/ssl.el} $B$r%$%s%9%H!<%k$9$k(B
-$BI,MW$,$"$j$^$9!#$J$*$+$D!"(BOpenSSL $B$K4^$^$l$k(B @file{openssl} $B$K%Q%9$,DL$C$F$$$k(B
-$BI,MW$,$"$j$^$9!#(B
-STARTTLS $B$rMxMQ$9$k$K$O!"$5$i$K!"(Bstarttls $B%Q%C%1!<%8$r%$%s%9%H!<%k(B
-$B$9$kI,MW$,$"$j$^$9!#(B)
 
 
 @node Shimbun Folder, Search Folder, POP Folder, Folders
@@ -7709,6 +7700,11 @@ The Insidious Big Brother Database (@uref{http://bbdb.sourceforge.net/})
 $B$r(B Wanderlust $B$H6&$K;H$&$K$O!"(B @file{util/bbdb-wl.el} $B$r(B @code{load-path}
 $B$KCV$$$F0J2<$N$h$&$K@_Dj$9$l$P(B OK $B$G$9!#(B
 
+$B$?$@$7!"(B@file{util/bbdb-wl.el} $B$O(B @uref{http://savannah.nongnu.org/projects/bbdb/} $B$G(B
+$B3+H/$5$l$F$$$k!"(BBBDB 3.x $B$H$O8_49@-$,$"$j$^$;$s!#(B
+$B$3$N>l9g$O!"(BBBDBV3-Wl (@uref{https://gna.org/projects/bbdbv3-wl/}) $B$,!"(B
+$BM-MQ$+$b$7$l$^$;$s!#(B
+
 $B%$%s%9%H!<%k;~$K(B @code{load-path} $B>e$K(B BBDB $B$,$"$l$P!"(B
 @file{bbdb-wl.el} $B$O%P%$%H%3%s%Q%$%k(B/$B%$%s%9%H!<%k$5$l$^$9!#(B
 @xref{Install}.
@@ -7948,6 +7944,7 @@ emacs-w3m (@uref{http://emacs-w3m.namazu.org/}) $B$KIUB0$N(B
 @file{mime-w3m.el} $B$r;H$C$F!"%a%C%;!<%8$N(B html $B%Q!<%H$r(B
 $BI=<($5$;$k$3$H$,=PMh$^$9!#@_DjJ}K!$O(B @file{mime-w3m.el} $B$N(B
 $B@hF,$N%3%a%s%H$r;2>H$7$F$/$@$5$$!#(B
+SEMI $B$,(B SEMI-EPG $B$G$"$k>l9g$O!"FCJL$J@_Dj$OITMW$G$9!#(B
 
 
 @node Highlights, Biff, Living with other packages, Advanced Issues
