@@ -1215,7 +1215,7 @@ interpreted as cited text.)"
 	(real-end end)
 	current beg
 	e p hend
-	wl-draft-idle-highlight)
+	wl-draft-real-time-highlight)
     (unless too-big
       (save-excursion
 	(save-restriction
