@@ -1,3 +1,10 @@
+2015-08-10  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-multi.el (elmo-multi-max-number): New variable.
+	(elmo-multi-check-divide-number): New macro.
+	(elmo-folder-list-messages, elmo-folder-list-flagged): Check
+	whether elmo-multi-divide-number is large enough.
+
 2015-05-26  David Maus  <dmaus@ictsoc.de>
 
 	* elmo-imap4.el (elmo-message-fetch-field): Fix typo.

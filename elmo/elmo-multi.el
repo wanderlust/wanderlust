@@ -37,6 +37,8 @@
 (defvar elmo-multi-divide-number 100000
   "*Multi divider number.")
 
+(defvar elmo-multi-max-number 1)
+
 ;;; ELMO Multi folder
 (eval-and-compile
   (luna-define-class elmo-multi-folder (elmo-folder)
@@ -51,6 +53,13 @@
 	       1) (elmo-multi-folder-children-internal ,folder))
 	 (% ,number (elmo-multi-folder-divide-number-internal
 		     ,folder))))
+
+(defmacro elmo-multi-check-divide-number (max)
+  `(when (and (>= ,max elmo-multi-divide-number)
+	      (> ,max elmo-multi-max-number))
+     (elmo-warning
+      "`elmo-multi-number' is too small.  It must be larger than %d" ,max)
+     (setq elmo-multi-max-number ,max)))
 
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-multi-folder)
@@ -353,20 +362,18 @@
   ((folder elmo-multi-folder) &optional visible-only in-msgdb)
   (let* ((flds (elmo-multi-folder-children-internal folder))
 	 (cur-number 0)
-	 list numbers)
+	 (max 0)
+	 list numbers base)
     (while flds
-      (setq cur-number (+ cur-number 1))
-      (setq list (elmo-folder-list-messages (car flds) visible-only in-msgdb))
-      (setq numbers
-	    (nconc
-	     numbers
-	     (mapcar
-	      (lambda (x)
-		(+
-		 (* (elmo-multi-folder-divide-number-internal
-		     folder) cur-number) x))
-	      list)))
-      (setq flds (cdr flds)))
+      (setq cur-number (+ cur-number 1)
+	    list (elmo-folder-list-messages (car flds) visible-only in-msgdb)
+	    max (apply 'max max list)
+	    base (* (elmo-multi-folder-divide-number-internal folder)
+		    cur-number)
+	    numbers (nconc numbers (mapcar (lambda (x) (+ base x))
+					   list))
+	    flds (cdr flds)))
+    (elmo-multi-check-divide-number max)
     numbers))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-multi-folder))
@@ -491,18 +498,16 @@
 					      flag
 					      &optional in-msgdb)
   (let ((cur-number 0)
-	numbers)
+	(max 0)
+	base numbers list)
     (dolist (child (elmo-multi-folder-children-internal folder))
-      (setq cur-number (+ cur-number 1)
-	    numbers
-	    (nconc
-	     numbers
-	     (mapcar
-	      (lambda (x)
-		(+
-		 (* (elmo-multi-folder-divide-number-internal folder)
-		    cur-number) x))
-	      (elmo-folder-list-flagged child flag in-msgdb)))))
+      (setq list (elmo-folder-list-flagged child flag in-msgdb)
+	    max (apply 'max max list)
+	    cur-number (1+ cur-number)
+	    base (* (elmo-multi-folder-divide-number-internal folder)
+		    cur-number)
+	    numbers (nconc numbers (mapcar (lambda (x) (+ base x)) list))))
+    (elmo-multi-check-divide-number max)
     numbers))
 
 (luna-define-method elmo-folder-commit ((folder elmo-multi-folder))
