@@ -541,9 +541,10 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 	      (wl-draft-add-references)
 	    (if wl-draft-add-in-reply-to
 		(wl-draft-add-in-reply-to)))
-      (unless wl-draft-jit-highlight
+      (unless (eq wl-draft-real-time-highlight 'jit)
         (wl-highlight-headers 'for-draft))) ; highlight when added References:
-    (when (and wl-highlight-body-too (not wl-draft-jit-highlight))
+    (when (and wl-highlight-body-too
+	       (not (eq wl-draft-real-time-highlight 'jit)))
       (wl-highlight-body-region beg (point-max)))))
 
 (defun wl-message-news-p ()
@@ -1829,7 +1830,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (when wl-draft-write-file-function
       (add-hook 'local-write-file-hooks wl-draft-write-file-function))
     (wl-draft-overload-functions)
-    (unless wl-draft-jit-highlight
+    (unless (eq wl-draft-real-time-highlight 'jit)
       (wl-highlight-headers 'for-draft))
     (wl-draft-save)
     (clear-visited-file-modtime)))
@@ -2036,7 +2037,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
       (setq wl-draft-parent-folder ""))
     (when wl-draft-write-file-function
       (add-hook 'local-write-file-hooks wl-draft-write-file-function))
-    (unless wl-draft-jit-highlight
+    (unless (eq wl-draft-real-time-highlight 'jit)
       (wl-highlight-headers 'for-draft))
     (goto-char body-top)
     (run-hooks 'wl-draft-reedit-hook)
@@ -2185,7 +2186,7 @@ Automatically applied in draft sending time."
 	(reply-buf (or reply-buf (and (buffer-live-p wl-draft-reply-buffer)
 				      wl-draft-reply-buffer)))
 	(local-variables wl-draft-config-variables)
-	wl-draft-idle-highlight
+	wl-draft-real-time-highlight
 	key clist found)
     (when (and (or (interactive-p)
 		   wl-draft-config-exec-flag)
@@ -2225,8 +2226,8 @@ Automatically applied in draft sending time."
 	  (setq wl-draft-config-exec-flag nil))
       (run-hooks 'wl-draft-config-exec-hook)
       (put-text-property (point-min)(point-max) 'face nil)
-      (unless wl-draft-jit-highlight
-        (wl-highlight-message (point-min)(point-max) t))
+      (unless (eq wl-draft-real-time-highlight 'jit)
+	(wl-highlight-message (point-min)(point-max) t))
       (setq wl-draft-config-variables
 	    (elmo-uniq-list local-variables)))))
 
@@ -2451,7 +2452,7 @@ Automatically applied in draft sending time."
 (defun wl-draft-highlight ()
   (when wl-highlight-body-too
     (let ((modified (buffer-modified-p))
-	  wl-draft-idle-highlight)
+	  wl-draft-real-time-highlight)
       (unwind-protect
 	  (progn
 	    (put-text-property (point-min) (point-max) 'face nil)
@@ -2643,7 +2644,7 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 	      t)
 	    (setq headers (cdr headers))))
 	;; highlight headers (from wl-draft in wl-draft.el)
-        (unless wl-draft-jit-highlight
+        (unless (eq wl-draft-real-time-highlight 'jit)
           (wl-highlight-headers 'for-draft))
 	;; insert body
 	(let ((body (wl-string-match-assoc "\\`body\\'"
@@ -2677,21 +2678,20 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
       (rename-file old-name new-name 'ok-if-already-exists))))
 
 ;; Real-time draft highlighting
-(defcustom wl-draft-jit-highlight (featurep 'jit-lock)
-  "When non-nil, enable real-time highlighting using jit-lock-mode.
-This only works in Emacs 21 and later."
-  :type 'boolean
+(defcustom wl-draft-real-time-highlight (if (featurep 'jit-lock) 'jit 'idle)
+  "Incdicate real-time draft highlighting method.
+Possible values are `jit', `idle' or nil.
+`jit' means using jit-lock-mode.
+`idle' means using idle-timer.
+nil means real-time highlighting is disabled."
+  :type '(choice (const :tag "Use jit-lock-mode" jit)
+		 (const :tag "Use idle timer" idle)
+		 (const :tag "Don't highlight automatically" nil))
   :group 'wl-draft)
 
 (defcustom wl-draft-jit-highlight-function 'wl-draft-default-jit-highlight
   "The function used for real-time highlighting using jit-lock-mode."
   :type 'function
-  :group 'wl-draft)
-
-(defcustom wl-draft-idle-highlight t
-  "When non-nil, enable real-time highlighting using a timer.
-This is ignored when wl-draft-jit-highlight is set."
-  :type 'boolean
   :group 'wl-draft)
 
 (defcustom wl-draft-idle-highlight-idle-time 0.5
@@ -2737,32 +2737,42 @@ This is ignored when wl-draft-jit-highlight is set."
       (put-text-property start end 'face nil)
       (wl-highlight-message start end hack-sig (not in-header)))))
 
+(defun wl-draft-jit-highlight (start end)
+  (when (eq wl-draft-real-time-highlight 'jit)
+    (funcall wl-draft-jit-highlight-function start end)))
+
 (defvar wl-draft-idle-highlight-timer nil)
 
-(defun wl-draft-idle-highlight (&optional state)
-  "Toggle real-time highlighting.
-If STATE is positive, enable real-time highlighting, and disable it otherwise.  When called non-interactively, enable it if STATE is omitted or nil, and toggle it if STATE is `toggle'."
-  (interactive (if current-prefix-arg "P" '(toggle)))
-  (setq wl-draft-idle-highlight
-	(if (eq state 'toggle)
-	    (null wl-draft-idle-highlight)
-	  (> (prefix-numeric-value state) 0)))
+(defun wl-draft-real-time-highlight (&optional state)
+  "Toggle real-time highlighting."
+  (interactive)
+  (let ((candidates (if (featurep 'jit-lock)
+			'(nil jit idle)
+		      '(nil idle))))
+    (setq wl-draft-real-time-highlight
+	  (if state
+	      (and (memq state candidates) state)
+	    (cadr (memq wl-draft-real-time-highlight candidates)))))
   (when (interactive-p)
-    (message "Real-time highlighting is %sabled"
-	     (if wl-draft-idle-highlight "en" "dis")))
-  wl-draft-idle-highlight)
+    (if wl-draft-real-time-highlight
+	(message "Real-time highlighting is using %s."
+		 (cdr (assq wl-draft-real-time-highlight
+			    '((jit . "jit-lock-mode")
+			      (idle . "idle timer")))))
+      (message "Real-time highlighting is disabled.")))
+  wl-draft-real-time-highlight)
 
 (defun wl-draft-default-idle-highlight ()
   (save-match-data (wl-draft-highlight)))
 
 (defun wl-draft-idle-highlight-timer (buffer)
-  (when (and (not wl-draft-jit-highlight) wl-draft-idle-highlight
+  (when (and (eq wl-draft-real-time-highlight 'idle)
 	     (buffer-live-p buffer))
     (with-current-buffer buffer
       (funcall wl-draft-idle-highlight-function))))
 
 (defun wl-draft-idle-highlight-set-timer (beg end len)
-  (when (and (not wl-draft-jit-highlight) wl-draft-idle-highlight)
+  (when (eq wl-draft-real-time-highlight 'idle)
     (require 'timer)
     (when (timerp wl-draft-idle-highlight-timer)
       (cancel-timer wl-draft-idle-highlight-timer))

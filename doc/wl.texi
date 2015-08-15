@@ -222,40 +222,45 @@ here.
 @pindex FLIM
 @pindex SEMI
 
-You must install SEMI beforehand to use Wanderlust.
+You must install packages named APEL, FLIM and SEMI beforehand to use
+Wanderlust.
 
-SEMI can be downloaded from following site:
-
-@example
-@group
-SEMI:   ftp://ftp.m17n.org/pub/mule/semi/
-@end group
-@end example
-
-You need packages named APEL and FLIM to use SEMI.
-You can download APEL and FLIM from following URLs:
+For Emacs 23 or later, downloading from below URLs is highly
+recommended.
+SEMI-EPG is corresponding package to SEMI.
 
 @example
 @group
-APEL:   ftp://ftp.m17n.org/pub/mule/apel/
-FLIM:   ftp://ftp.m17n.org/pub/mule/flim/
+APEL:     @uref{https://github.com/wanderlust/apel}
+FLIM:     @uref{https://github.com/wanderlust/flim}
+SEMI-EPG: @uref{https://github.com/wanderlust/semi}
 @end group
 @end example
 
-You have to install APEL, FLIM and SEMI in this order.  Generally,
+You can download original APEL, FLIM and SEMI from following URLs:
+
+@example
+@group
+APEL:   @uref{http://git.chise.org/elisp/dist/semi/}
+FLIM:   @uref{http://git.chise.org/elisp/dist/apel/}
+SEMI:   @uref{http://git.chise.org/elisp/dist/semi/}
+@end group
+@end example
+
+You have to install APEL, FLIM and SEMI[-EPG] in this order.  Generally,
 @samp{make install} will do the job.  (In XEmacs 21, @samp{make
 install-package}.)
 
 Refer to the documents of each package for detailed installation
 procedure @footnote{If you want to use SEMI on Emacs 19.34. @*
-@uref{http://www.jpl.org/elips/INSTALL-SEMI-ja.html} (In Japanese)
+@uref{http://www.jpl.org/ftp/attic/INSTALL-SEMI-ja.html} (In Japanese)
 may help you.}.
 
 
 Recommended combination of APEL, FLIM and SEMI are following:
 
 @itemize @minus
-@item APEL 10.6, FLIM 1.14.6 and SEMI 1.14.6
+@item APEL 10.8, FLIM 1.14.9, SEMI-EPG 1.14.7
 @end itemize
 
 You can also use many other FLIM/SEMI variants. Combination of the
@@ -278,17 +283,14 @@ You can download Wanderlust package from following sites:
 
 Original site:
 @example
-ftp://ftp.gohome.org/wl/
+@uref{https://github.com/wanderlust/wanderlust}
 @end example
 
 Mirrored ftp/http sites:
 
 @example
 @group
-@c ftp://ftp.jaist.ac.jp/pub/GNU/elisp/ftp.gohome.org/wl/
-http://www.jpl.org/elips/wl/
-http://www.ring.gr.jp/archives/text/elisp/wl/
-ftp://ftp.ring.gr.jp/pub/text/elisp/wl/
+@uref{http://www.jpl.org/ftp/pub/github-snapshots/}
 @end group
 @end example
 
@@ -314,15 +316,21 @@ There are two ways to use SSL. One is to start SSL negotiation just
 after the connection establishment (generic way). The other one is to
 start SSL negotiation by invoking STARTTLS command in the each session.
 
-To use the formal SSL (generic SSL), you must set @env{PATH} to the
-directory that OpenSSL commands are installed.
+For the formal SSL (generic SSL), Emacs 24 or later uses built-in GnuTLS
+if available. if not available, Emacs try to use @file{tls.el}. In this
+case, GnuTLS's @command{gnutls-cli} is needed. if neither avialable,
+@file{ssl.el} of @file{utils} directory and OpenSSL's @command{openssl}.
 
-To use the latter SSL(STARTTLS), you must install starttls package in
-addition to above.
+For the latter SSL (STARTTLS), you need @file{starttls.el}. Moreover,
+GnuTLS or starttls package is needed according to
+@code{starttls-use-gnutls} variable's value.  If your Emacs doesn't have
+@file{starttls.el} neither @file{starttls.el} doesn't have the
+defninition of @code{starttls-use-gnutls}, you need starttls package.
+
 You can download starttls package from the following site.
 
 @example
-ftp://opaopa.org/pub/elisp/
+@uref{ftp://opaopa.org/pub/elisp/}
 @end example
 
 @node Install, Minimal Settings, Download, Start Me Up
@@ -461,7 +469,7 @@ configured by @code{INFODIR} in @file{Makefile}.
 You can read manual at the following URL:
 
 @example
-http://www.gohome.org/wl/doc/wl_toc.html
+@uref{http://wanderlust.github.io/wl-docs/wl.html}
 @end example
 
 @node Minimal Settings, Folder Definition, Install, Start Me Up
@@ -804,9 +812,11 @@ Example:
 You can use international mailbox names in @var{mailbox} part, if you
 are using Emacs with UTF-7 support and
 @code{elmo-imap4-use-modified-utf7} is set to non-nil value (default
-value is @code{nil}).
+value is @code {t} on Emacs 23 or later and @code{nil} on other
+Emacsen).
 
-Currently, Mule-UCS package is required to use UTF-7.
+Emacs 23 or later doesn't need additional package.
+Other Emacsen needs Mule-UCS package to use UTF-7.
 Mule-UCS works on following Emacsen.
 
 @itemize @bullet
@@ -814,10 +824,10 @@ Mule-UCS works on following Emacsen.
 @item XEmacs 21.2.37 or later
 @end itemize
 
-You can obtain Mule-UCS package from following URL.
+You can obtain Mule-UCS package (snapshot of 2004) from following URL.
 
 @example
-ftp://ftp.m17n.org/pub/mule/Mule-UCS/
+@uref{http://www.jpl.org/ftp/pub/tmp/}
 @end example
 
 @node NNTP Folder, MH Folder, IMAP Folder, Folders
@@ -5051,7 +5061,7 @@ Refer to the following URL about POP-before-SMTP.
 
 @example
 @group
-http://www.iecc.com/pop-before-smtp.html
+@uref{http://www.iecc.com/pop-before-smtp.html}
 @end group
 @end example
 
@@ -7617,7 +7627,7 @@ stored in the buffer named @code{"*Debug ELMO SpamAssassin*"}.
 @subsection SpamOracle
 @cindex SpamOracle
 
-SpamOracle (`http://pauillac.inria.fr/~xleroy/software.html#spamoracle')
+SpamOracle (@uref{http://pauillac.inria.fr/~xleroy/software.html#spamoracle})
 is a spam filter implemented by Objective Caml language.
 
 To use spam filter with @file{spamoracle}, write following setting in
@@ -7762,6 +7772,10 @@ settings.
 To use The Insidious Big Brother Database (@uref{http://bbdb.sourceforge.net/})
 with Wanderlust, place @file{util/bbdb-wl.el} on the @code{load-path}
 and do the following settings.
+
+But, @file{util/bbdb-wl.el} is not compatible with BBDB 3.x
+(@uref{http://savannah.nongnu.org/projects/bbdb/}).
+For BBDB 3.x, BBDBV3-Wl (@uref{https://gna.org/projects/bbdbv3-wl/}) may be useful.
 
 If BBDB is on the @code{load-path} at the installation, @file{bbdb-wl.el} is
 byte-compiled and installed.
@@ -7997,6 +8011,7 @@ Place @file{util/wl-addrbook.el} and @file{util/wl-complete.el} on the
 You can display html part by using @file{mime-w3m.el}
 distributed with emacs-w3m (@uref{http://emacs-w3m.namazu.org/}).
 You can find the usage in comment region at the head of @file{mime-w3m.el}.
+If you use SEMI-EPG, no additional setting is needed.
 
 
 @node Highlights, Biff, Living with other packages, Advanced Issues
