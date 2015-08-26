@@ -47,12 +47,10 @@
 
 (defmacro elmo-multi-real-folder-number (folder number)
   "Returns a cons cell of real FOLDER and NUMBER."
-  `(cons (nth (-
-	       (/ ,number
-		  (elmo-multi-folder-divide-number-internal ,folder))
-	       1) (elmo-multi-folder-children-internal ,folder))
-	 (% ,number (elmo-multi-folder-divide-number-internal
-		     ,folder))))
+  `(cons (nth (1- (/ ,number
+		     (elmo-multi-folder-divide-number-internal ,folder)))
+	      (elmo-multi-folder-children-internal ,folder))
+	 (% ,number (elmo-multi-folder-divide-number-internal ,folder))))
 
 (defmacro elmo-multi-check-divide-number (max)
   `(when (and (>= ,max elmo-multi-divide-number)
@@ -113,19 +111,13 @@
      (memq sender (elmo-multi-folder-children-internal folder)))))
 
 (defun elmo-multi-map-numbers (folder child numbers)
-  (let ((multi (catch 'found
-		 (let ((children (elmo-multi-folder-children-internal folder))
-		       (index 0))
-		   (while children
-		     (setq index (1+ index))
-		     (when (eq (car children) child)
-		       (throw 'found index))
-		     (setq children (cdr children)))))))
-    (when multi
-      (let ((offset (* (elmo-multi-folder-divide-number-internal folder)
-		       multi)))
+  (let ((children (elmo-multi-folder-children-internal folder))
+	hit offset)
+    (when (setq hit (memq child children))
+      (setq offset (* (elmo-multi-folder-divide-number-internal folder)
+		      (- (length children) (length hit) -1)))
       (mapcar (lambda (number) (+ offset number))
-	      numbers)))))
+	      numbers))))
 
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-multi-folder))
@@ -291,25 +283,23 @@
 	(folders (elmo-multi-folder-children-internal folder))
 	(divider (elmo-multi-folder-divide-number-internal folder))
 	(cur-number 0)
-	one-list numbers-list)
+	(offset 0)
+	one-list numbers-list limit)
     (while numbers
-      (setq one-list (list (nth cur-number folders)))
-      (setq cur-number (+ cur-number 1))
+      (setq one-list (list (car folders))
+	    cur-number (1+ cur-number)
+	    offset (+ offset divider)
+	    limit (+ offset divider))
       (while (and numbers
-		  (eq 0
-		      (/ (- (car numbers)
-			    (* divider cur-number))
-			 divider)))
-	(setq one-list (nconc
-			one-list
-			(list
-			 (if as-is
-			     (car numbers)
-			   (% (car numbers)
-			      (* divider cur-number))))))
-	(setq numbers (cdr numbers)))
-      (setq numbers-list (nconc numbers-list (list one-list))))
-    numbers-list))
+		  (> limit (car numbers)))
+	(setq one-list (cons (if as-is
+				 (car numbers)
+			       (- (car numbers) offset))
+			     one-list)
+	      numbers (cdr numbers)))
+      (setq folders (cdr folders)
+	    numbers-list (cons (nreverse one-list) numbers-list)))
+    (nreverse numbers-list)))
 
 (luna-define-method elmo-folder-process-crosspost ((folder elmo-multi-folder))
   (dolist (child (elmo-multi-folder-children-internal folder))
@@ -515,10 +505,8 @@
     (elmo-folder-commit child)))
 
 (luna-define-method elmo-folder-length ((folder elmo-multi-folder))
-  (let ((sum 0))
-    (dolist (child (elmo-multi-folder-children-internal folder))
-      (setq sum (+ sum (elmo-folder-length child))))
-    sum))
+  (apply '+ (mapcar 'elmo-folder-length
+		    (elmo-multi-folder-children-internal folder))))
 
 (luna-define-method elmo-folder-count-flags ((folder elmo-multi-folder))
   (let (flag-alist element)
@@ -544,19 +532,19 @@
 				   'elmo-folder-append-messages-multi-*)
     (let ((divider (elmo-multi-folder-divide-number-internal src-folder))
 	  (cur-number 0)
+	  (offset 0)
 	  succeeds)
       (dolist (element (elmo-multi-split-numbers src-folder numbers))
-	(setq cur-number (+ cur-number 1))
+	(setq cur-number (1+ cur-number)
+	      offset (+ offset divider))
 	(when (cdr element)
 	  (setq succeeds
-		(nconc
-		 succeeds
-		 (mapcar
-		  (lambda (x)
-		    (+ (* divider cur-number) x))
-		  (elmo-folder-append-messages
-		   dst-folder (car element) (cdr element)))))))
-      succeeds)))
+		(cons (mapcar (lambda (x) (+ offset x))
+			      (elmo-folder-append-messages
+			       dst-folder (car element) (cdr element)))
+		      succeeds))))
+      (apply 'nconc succeeds))))
+
 
 (require 'product)
 (product-provide (provide 'elmo-multi) (require 'elmo-version))
