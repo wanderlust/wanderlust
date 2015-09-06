@@ -1,3 +1,9 @@
+2015-09-06  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-imap4.el (elmo-folder-append-buffer): Fix the case appended
+	message number may lost when server dose not support APEENDUID
+	response code.
+
 2015-08-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-multi.el (elmo-multi-real-folder-number)

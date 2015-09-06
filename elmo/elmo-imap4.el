@@ -2828,7 +2828,9 @@ time."
                        session
                        (list
                         "uid search since"
-                        (car (split-string internaldate " ")))) 'search)))
+			(elmo-date-get-description
+			 (elmo-date-get-offset-datevec
+			  (elmo-date-get-datevec internaldate) 1)))) 'search)))
                 (if (null candidates)
                     (setq result t)
                   (setq candidates
@@ -2839,8 +2841,10 @@ time."
                            "uid fetch"
                            (mapconcat 'number-to-string candidates ",")
                            "(internaldate)")) 'fetch))
+		  (setq internaldate (elmo-date-get-datevec internaldate))
                   (while candidates
-                    (if (string= (cadar candidates) internaldate)
+                    (if (equal (elmo-date-get-datevec (cadar candidates))
+			       internaldate)
                         (setq result (cons
                                       (cadadr candidates)
                                       result)))
