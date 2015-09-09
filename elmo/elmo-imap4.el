@@ -1175,15 +1175,15 @@ If CHOP-LENGTH is not specified, message set is not chopped."
                    (elmo-network-session-server-internal session)))
 ;;;         (if elmo-imap4-auth-user-realm
 ;;;		(sasl-client-set-property client 'realm elmo-imap4-auth-user-realm))
+            (setq sasl-read-passphrase
+                  (lambda (prompt)
+                    (elmo-get-passwd
+                     (elmo-network-session-password-key session))))
             (setq name (sasl-mechanism-name mechanism)
                   step (sasl-next-step client nil))
             (elmo-network-session-set-auth-internal
              session
              (intern (downcase name)))
-            (setq sasl-read-passphrase
-                  (lambda (prompt)
-                    (elmo-get-passwd
-                     (elmo-network-session-password-key session))))
             (setq tag
                   (elmo-imap4-send-command
                    session
