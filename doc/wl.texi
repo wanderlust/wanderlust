@@ -119,6 +119,7 @@ This manual is for Wanderlust @value{VERSION}.
 * Expire and Archive::       Automatic expiration and archiving of messages
 * Scoring::                  Score of the messages
 * Address Book::             Management of Address Book
+* Quick Search::             Quickly search your mail archive
 * Spam Filter::              Spam filtering
 * Advanced Issues::          Advanced Issues
 * Migration::                Switch from older version of Wanderlust
@@ -7096,8 +7097,69 @@ Delete entry.
 Edit entry.
 @end table
 
+@node Quick Search, Spam Filter, Address Book, Top
+@chapter Quick Search
+@cindex Quick Search
 
-@node Spam Filter, Advanced Issues, Address Book, Top
+@code{wl-qs} provides an interface to quickly search your mail archive.
+It can use an external search engine (@ref{Search Folder}), Gmail
+search, or a filter folder (@ref{Filter Folder}).
+
+@code{wl-qs} provides the command
+@code{wl-quicksearch-goto-search-folder}. Using it will first prompt for
+a search, and then jump to the search results.
+
+@menu
+* Setup::                       Setup
+* Searching::                   Searching
+@end menu
+
+@node Setup
+@section Setup of @code{wl-qs}
+
+To setup, first add @code{(require 'wl-qs)} to your @file{~/.wl} file.
+You will also need configure the value of @code{wl-quicksearch-folder}.
+This should be the name of the folder you would like to search. For
+example, @samp{%[Gmail]/All Mail:username@@imap.gmail.com},
+@samp{.archive} or @samp{[]}. The latter is advised if you use a mail
+index, such as mu, notmuch or namazu, as it is quite fast.
+
+@node Searching
+@section Searching
+
+To search your mail archive, use the command
+@code{wl-quicksearch-goto-search-folder}, which can be called using
+@kbd{'} in a Summary buffer or the Folder buffer. You will be prompted
+for a search, and then will immediately jump to the search results.
+
+@subsection Search folder
+
+If you use specified @samp{[} as the value of
+@code{wl-quicksearch-folder}, you will be accessing a search folder
+(@ref{Search Folder}). You will be prompted for a search string. The
+syntax of the search will depend on the value of
+@code{elmo-search-default-engine}. Quotes will be escaped for you
+automatically and passed on to the search program.
+
+(If you are using the grep search engine, you must specify a target
+folder. Your @code{wl-quicksearch-folder} should look like
+@samp{[]~/Mail/semi!grep}.)
+
+@subsection Gmail
+
+If you use a gmail folder as your @code{wl-quicksearch-folder}, you will be prompted for a
+Gmail search query
+(@uref{https://support.google.com/mail/answer/7190?hl=en}). You may use
+any Gmail search operator; the search is handled by Gmail's server.
+
+@subsection Filter folder
+
+If you are using any other type of folder, you will be prompted for a
+query using the interactive query builder. When you have finished your
+query, you will be directed to a filter folder for your
+@code{wl-quicksearch-folder}.
+
+@node Spam Filter, Advanced Issues, Quick Search, Top
 @chapter Spam Filter
 @cindex Spam Filter
 
