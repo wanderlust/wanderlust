@@ -4,9 +4,6 @@
 
 2015-09-13  Erik Hetzner <egh@e6h.org>
 
-	* wl/wl-qs.el: New file. Adds a quick search feature for searching
-	an email archive.
-
 	* doc/wl-en.texi (Quick Search): Document wl-qs.
 
 2015-08-09  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>

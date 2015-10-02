@@ -1,3 +1,8 @@
+2015-09-13  Erik Hetzner <egh@e6h.org>
+
+	* wl-qs.el: New file. Adds a quick search feature for searching an
+	email archive.
+
 2015-08-09  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-draft.el (wl-draft-jit-highlight, wl-draft-idle-highlight):
