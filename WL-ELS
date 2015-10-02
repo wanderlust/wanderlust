@@ -11,7 +11,7 @@
    wl-vars wl-draft wl-util wl-version wl-address wl-addrmgr
    wl-highlight wl-demo wl-refile wl-thread
    wl-fldmgr wl-expire wl-template wl-score wl-acap wl-news
-   wl-spam wl-batch
+   wl-spam wl-batch wl-qs
    ))
 
 (defconst ELMO-MODULES '(
