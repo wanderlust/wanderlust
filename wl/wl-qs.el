@@ -80,8 +80,7 @@ Folder is the same BASE-FOLDER but with a new search pattern."
    (concat "/"
            (wl-read-search-condition
             wl-fldmgr-make-filter-default)
-           "/" (or (wl-quicksearch-get-archive-folder)
-                   base-folder))))
+           "/" (elmo-folder-name-internal base-folder))))
 
 (luna-define-method wl-quicksearch-goto-search-folder :around ((base-folder elmo-imap4-folder))
   "Jump to the quicksearch folder for BASE-FOLDER.
