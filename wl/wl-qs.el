@@ -49,6 +49,11 @@ Any other type of folder will be searched using a filter folder."
 ;; Needed for Gmail search.
 (add-to-list 'elmo-imap4-search-keys "x-gm-raw")
 
+(defun wl-quicksearch-goto-search-folder-subr (folder-name)
+  (if (eq major-mode 'wl-folder-mode)
+      (wl-folder-goto-folder-subr folder-name)
+    (wl-summary-goto-folder-subr folder-name 'all)))
+
 (luna-define-generic wl-quicksearch-goto-search-folder (base-folder)
   "Prompt for a query and jump to the quicksearch folder for BASE-FOLDER.")
 
@@ -63,7 +68,7 @@ Folder is the same BASE-FOLDER but with a new search pattern."
                           elmo-search-default-engine))
          (q (wl-quicksearch-escape-query-string
              (read-string (format "%s query: " engine-type)))))
-    (wl-folder-goto-folder-subr
+    (wl-quicksearch-goto-search-folder-subr
      (format (format "[\"%s\"]%s!%s" q
                      (elmo-search-engine-param-internal engine)
                      engine-type)))))
@@ -76,7 +81,7 @@ Folder is the same BASE-FOLDER but with a new search pattern."
 
 (luna-define-method wl-quicksearch-goto-search-folder ((base-folder elmo-folder))
   "Prompt for a search condition and jump to filter folder that searches BASE-FOLDER."
-  (wl-folder-goto-folder-subr
+  (wl-quicksearch-goto-search-folder-subr
    (concat "/"
            (wl-read-search-condition
             wl-fldmgr-make-filter-default)
@@ -92,7 +97,7 @@ Otherwise call parent method."
       (luna-call-next-method)
     (let* ((q (wl-quicksearch-escape-query-string
                (read-string "gmail query: "))))
-      (wl-folder-goto-folder-subr
+      (wl-quicksearch-goto-search-folder-subr
        (format "/x-gm-raw:\"%s\"/%s" q
                (elmo-folder-name-internal base-folder))))))
 

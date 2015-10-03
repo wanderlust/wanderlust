@@ -1,5 +1,12 @@
 2015-10-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	Fix the case quicksearch is caled from Summary buffer.
+	* wl-qs.el (wl-quicksearch-goto-search-folder-subr): New function.
+	(wl-quicksearch-goto-search-folder): use it instead of direct
+	calling wl-folder-goto-folder-subr.
+
+2015-10-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* wl-qs.el: Remove key definitions.
 	(wl-quicksearch-goto-search-folder-wrapper): Add autoload cokkie.
 
