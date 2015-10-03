@@ -6967,7 +6967,7 @@ pop3                      N     E     E     E
 @end example
 
 
-@node Address Book, Spam Filter, Scoring, Top
+@node Address Book, Quick Search, Scoring, Top
 @chapter Address Book
 @cindex Address Book
 
@@ -7117,8 +7117,7 @@ a search, and then jump to the search results.
 @node Setup
 @section Setup of @code{wl-qs}
 
-To setup, first add @code{(require 'wl-qs)} to your @file{~/.wl} file.
-You will also need configure the value of @code{wl-quicksearch-folder}.
+To setup, configure the value of @code{wl-quicksearch-folder}.
 This should be the name of the folder you would like to search. For
 example, @samp{%[Gmail]/All Mail:username@@imap.gmail.com},
 @samp{.archive} or @samp{[]}. The latter is advised if you use a mail
@@ -7149,7 +7148,7 @@ folder. Your @code{wl-quicksearch-folder} should look like
 
 If you use a gmail folder as your @code{wl-quicksearch-folder}, you will be prompted for a
 Gmail search query
-(@uref{https://support.google.com/mail/answer/7190?hl=en}). You may use
+(@uref{https://support.google.com/mail/answer/7190}). You may use
 any Gmail search operator; the search is handled by Gmail's server.
 
 @subsection Filter folder
