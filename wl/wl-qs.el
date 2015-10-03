@@ -93,13 +93,15 @@ Folder is the same BASE-FOLDER but with a new search pattern."
 If BASE-FOLDER is a gmail.com folder, use raw gmail query.
 
 Otherwise call parent method."
-  (if (not (string-match "gmail.com$" (elmo-net-folder-server-internal base-folder)))
-      (luna-call-next-method)
-    (let* ((q (wl-quicksearch-escape-query-string
-               (read-string "gmail query: "))))
-      (wl-quicksearch-goto-search-folder-subr
-       (format "/x-gm-raw:\"%s\"/%s" q
-               (elmo-folder-name-internal base-folder))))))
+  (if (and (elmo-folder-plugged-p base-folder)
+	   (string-match "gmail.com$"
+			 (elmo-net-folder-server-internal base-folder)))
+      (let* ((q (wl-quicksearch-escape-query-string
+		 (read-string "gmail query: "))))
+	(wl-quicksearch-goto-search-folder-subr
+	 (format "/x-gm-raw:\"%s\"/%s" q
+		 (elmo-folder-name-internal base-folder))))
+    (luna-call-next-method)))
 
 ;;;###autoload
 (defun wl-quicksearch-goto-search-folder-wrapper ()
