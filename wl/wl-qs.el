@@ -30,6 +30,11 @@
 (require 'wl-summary)
 (require 'wl-util)
 
+(defgroup wl-quicksearch nil
+  "Wanderlust Quicksearch feature."
+  :prefix "wl-"
+  :group 'wl)
+
 (defcustom wl-quicksearch-folder
   nil
   "Folder to use for wl-quicksearch search.
@@ -44,7 +49,13 @@ To use Gmail's raw search, use a gmail folder, e.g.
 
 Any other type of folder will be searched using a filter folder."
   :group 'wl-quicksearch
-  :type '(string))
+  :type 'string)
+
+(defcustom wl-quicksearch-gmail-servers "gmail\\.com$"
+  "Use Gmail's raw search when imap server name is matched with this regexp."
+  :group 'wl-quicksearch
+  :type '(choice (const :tag "Never use Gmail's raw search" nil)
+		 regexp))
 
 ;; Needed for Gmail search.
 (add-to-list 'elmo-imap4-search-keys "x-gm-raw")
@@ -93,8 +104,10 @@ Folder is the same BASE-FOLDER but with a new search pattern."
 If BASE-FOLDER is a gmail.com folder, use raw gmail query.
 
 Otherwise call parent method."
-  (if (and (elmo-folder-plugged-p base-folder)
-	   (string-match "gmail.com$"
+  (if (and wl-quicksearch-gmail-servers
+	   (elmo-folder-plugged-p base-folder)
+	   (eq (elmo-folder-type-internal base-folder) 'imap4)
+	   (string-match wl-quicksearch-gmail-servers
 			 (elmo-net-folder-server-internal base-folder)))
       (let* ((q (wl-quicksearch-escape-query-string
 		 (read-string "gmail query: "))))
