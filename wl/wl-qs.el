@@ -63,7 +63,8 @@ Any other type of folder will be searched using a filter folder."
 (defun wl-quicksearch-goto-search-folder-subr (folder-name)
   (if (eq major-mode 'wl-folder-mode)
       (wl-folder-goto-folder-subr folder-name)
-    (wl-summary-goto-folder-subr folder-name 'all)))
+    (let (wl-ask-range)
+      (wl-summary-goto-folder-subr folder-name))))
 
 (luna-define-generic wl-quicksearch-goto-search-folder (base-folder)
   "Prompt for a query and jump to the quicksearch folder for BASE-FOLDER.")
