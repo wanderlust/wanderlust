@@ -93,6 +93,7 @@
     ["Expire Current Folder" wl-folder-expire-current-entity t]
     "----"
     ["Go to Draft Folder" wl-folder-goto-draft-folder t]
+    ["Quick search" wl-quicksearch-goto-search-folder-wrapper t]
     ["Empty trash" wl-folder-empty-trash t]
     ["Flush queue" wl-folder-flush-queue t]
     "----"
@@ -214,6 +215,8 @@
     'wl-folder-goto-top-of-current-folder)
   (define-key wl-folder-mode-map "\M-\C-e"
     'wl-folder-goto-bottom-of-current-folder)
+  ;; quicksearch
+  (define-key wl-folder-mode-map "'" 'wl-quicksearch-goto-search-folder-wrapper)
 
   (wl-folder-setup-mouse)
   (easy-menu-define

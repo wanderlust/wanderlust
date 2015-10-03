@@ -995,7 +995,9 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
       wl-score-edit-file wl-score-flush-cache wl-summary-rescore
       wl-score-set-mark-below wl-score-set-expunge-below
       wl-summary-increase-score wl-summary-lower-score )
-     ("wl-draft" wl-draft-rename-saved-config))))
+     ("wl-draft" wl-draft-rename-saved-config)
+     ("wl-qs" :interactive t
+      wl-quicksearch-goto-search-folder-wrapper))))
 
 ;; for backward compatibility
 (defalias 'wl-summary-from-func-petname 'wl-summary-default-from)

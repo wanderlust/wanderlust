@@ -96,6 +96,7 @@ Otherwise call parent method."
        (format "/x-gm-raw:\"%s\"/%s" q
                (elmo-folder-name-internal base-folder))))))
 
+;;;###autoload
 (defun wl-quicksearch-goto-search-folder-wrapper ()
   "Call `wl-quicksearch-goto-search-folder' on a folder built from `wl-quicksearch-folder'."
   (interactive)
@@ -103,21 +104,6 @@ Otherwise call parent method."
       (error "The variable `wl-quicksearch-folder' is not set.  Please customize"))
   (wl-quicksearch-goto-search-folder
    (wl-folder-make-elmo-folder wl-quicksearch-folder)))
-
-(define-key wl-folder-mode-map "'" 'wl-quicksearch-goto-search-folder-wrapper)
-(define-key wl-summary-mode-map "'" 'wl-quicksearch-goto-search-folder-wrapper)
-
-(define-key-after
-  (lookup-key wl-folder-mode-map [menu-bar Folder])
-  [quicksearch]
-  '("Quick search" . wl-quicksearch-goto-search-folder-wrapper)
-  (intern "Go to Draft Folder"))
-
-(define-key-after
-  (lookup-key wl-summary-mode-map [menu-bar Summary])
-  [quicksearch]
-  '("Quick search" . wl-quicksearch-goto-search-folder-wrapper)
-  (intern "Go to other folder"))
 
 (provide 'wl-qs)
 ;;; wl-qs.el ends here

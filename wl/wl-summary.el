@@ -259,6 +259,7 @@ See also variable `wl-use-petname'."
     ["Sync"            wl-summary-sync t]
     ["Execute"         wl-summary-exec t]
     ["Go to other folder" wl-summary-goto-folder t]
+    ["Quick search" wl-quicksearch-goto-search-folder-wrapper t]
     ["Pick" wl-summary-pick t]
     ["Mark as read all" wl-summary-mark-as-read-all t]
     ["Unmark all"      wl-summary-unmark-all t]
@@ -558,6 +559,9 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "hF"   'wl-score-flush-cache)
   (define-key wl-summary-mode-map "hm"	 'wl-score-set-mark-below)
   (define-key wl-summary-mode-map "hx"   'wl-score-set-expunge-below)
+
+  ;; quicksearch
+  (define-key wl-summary-mode-map "'" 'wl-quicksearch-goto-search-folder-wrapper)
 
   ;; misc
   (define-key wl-summary-mode-map "\C-c\C-f" 'wl-summary-toggle-header-narrowing)
