@@ -57,9 +57,6 @@ Any other type of folder will be searched using a filter folder."
   :type '(choice (const :tag "Never use Gmail's raw search" nil)
 		 regexp))
 
-;; Needed for Gmail search.
-(add-to-list 'elmo-imap4-search-keys "x-gm-raw")
-
 (defun wl-quicksearch-goto-search-folder-subr (folder-name)
   (if (eq major-mode 'wl-folder-mode)
       (wl-folder-goto-folder-subr folder-name)

@@ -126,6 +126,11 @@ This list is used in `elmo-imap4-search-generate-vector' to
 differentiate between IMAP4 search keys and searches for message
 header values.")
 
+(defvar elmo-imap4-capability-search-keys-alist
+  '((x-gm-ext-1 "x-gm-raw" "x-gm-msgid" "x-gm-thrid" "x-gm-lables"))
+  "*Alist of capability and extra IMAP4 search attributes.
+When server has specified capability, server is assumed to accept extra search keys.")
+
 ;;; internal variables
 ;;
 (defvar elmo-imap4-seq-prefix "elmo-imap4")
@@ -2508,13 +2513,21 @@ time."
         (elmo-imap4-search-generate-or session a b))))))
 
 (defun elmo-imap4-search-internal (folder session condition from-msgs)
-  (let ((imap-search
-         (if (and from-msgs (listp from-msgs))
-             (elmo-imap4-search-generate-and
-              session
-              (elmo-imap4-search-generate-uid from-msgs)
-              (elmo-imap4-search-generate folder session condition from-msgs))
-           (elmo-imap4-search-generate folder session condition nil))))
+  (let* ((elmo-imap4-search-keys
+	  (apply 'append
+		 elmo-imap4-search-keys
+		 (mapcar (lambda (elt)
+			   (when (elmo-imap4-session-capable-p
+				  session (car elt))
+			     (cdr elt)))
+			 elmo-imap4-capability-search-keys-alist)))
+	 (imap-search
+	  (if (and from-msgs (listp from-msgs))
+	      (elmo-imap4-search-generate-and
+	       session
+	       (elmo-imap4-search-generate-uid from-msgs)
+	       (elmo-imap4-search-generate folder session condition from-msgs))
+	    (elmo-imap4-search-generate folder session condition nil))))
     (when imap-search
       (elmo-imap4-search-perform session imap-search))))
 
