@@ -813,7 +813,7 @@ Example:
 You can use international mailbox names in @var{mailbox} part, if you
 are using Emacs with UTF-7 support and
 @code{elmo-imap4-use-modified-utf7} is set to non-nil value (default
-value is @code {t} on Emacs 23 or later and @code{nil} on other
+value is @code{t} on Emacs 23 or later and @code{nil} on other
 Emacsen).
 
 Emacs 23 or later doesn't need additional package.
@@ -1292,7 +1292,7 @@ normal connection in these cases, add @samp{!direct} at the end of
 folder name.
 
 
-@node Shimbun Folder, Search Folder, POP Folder, Folders
+@node Shimbun Folder, RSS Folder, POP Folder, Folders
 @section Shimbun Folder
 @cindex @samp{@@}
 @cindex Shimbun Folder
@@ -1347,8 +1347,41 @@ Example:
 Update summary view automatically after fetching.
 @end table
 
+@node RSS Folder, Search Folder, Shimbun Folder, Folders
+@section RSS Folder
+@cindex RSS Folder
+@cindex Atom Folder
 
-@node Search Folder, Multi Folder, Shimbun Folder, Folders
+An RSS folder presents the messages contained in an RSS or Atom feed:
+
+Format:
+
+@example
+@samp{rss:} @var{URL for RSS or Atom}
+@end example
+
+Example:
+
+@example
+rss:https://github.com/wanderlust/wanderlust/commits/master.atom
+@end example
+
+This folder type attempts to automatically handle all known versions of
+RSS and Atom.  Should you need more configurability, please use
+a Shimbun folder (@pxref{Shimbun Folder}) instead.
+
+Since this folder doesn't do any persistent caching, messages will
+disappear as soon as they expire from the feed.  Should you want
+persistent messages, combine this with a pipe folder (@pxref{Pipe Folder}):
+
+@example
+|rss:http://lwn.net/http://lwn.net/headlines/newrss|+lwn
+@end example
+
+You may also use an RSS, Atom or OPML feed as an access group, in which
+case related feeds will appear as subfolders.
+
+@node Search Folder, Multi Folder, RSS Folder, Folders
 @section Search Folder
 @cindex @samp{[}
 @cindex Search Folder
@@ -1501,10 +1534,12 @@ Examples (from the mu cheatsheet)
     -> messages to Jack with subject jellyfish containing the word tumbleweed
 
 [size:2k..2m date:20091201..20093112 flag:attach from:bill]
-    -> messages between 2 kilobytes and a 2Mb, written in December 2009 with an attachment from Bill
+    -> messages between 2 kilobytes and a 2Mb,
+       written in December 2009 with an attachment from Bill
 
 [subject:soc* flag:unread]
-    -> unread messages about things starting with 'soc' (soccer, society, socrates, ...)
+    -> unread messages about things starting with 'soc'
+       (soccer, society, socrates, ...)
 
 [mime:image/*]
     -> messages with images as attachment
@@ -1892,7 +1927,7 @@ file:/etc       -> @file{/etc}
 @end example
 
 
-@node Access Folder, RSS Folder, File Folder, Folders
+@node Access Folder,, File Folder, Folders
 @section Access folder
 @cindex Access Folder
 
@@ -1916,31 +1951,6 @@ access:'cache -> All of 'cache folder
 @end group
 @end example
 
-@node RSS Folder,  , Access Folder, Folders
-@section RSS Folder
-@cindex RSS Folder
-@cindex Atom Folder
-
-An RSS folder presents the messages contained in an RSS or Atom feed:
-
-@example
-rss:https://github.com/wanderlust/wanderlust/commits/master.atom
-@end example
-
-This folder type attempts to automatically handle all known versions of
-RSS and Atom.  Should you need more configurability, please use
-a Shimbun folder (@pxref{Shimbun Folder}) instead.
-
-Since this folder doesn't do any persistent caching, messages will
-disappear as soon as they expire from the feed.  Should you want
-persistent messages, combine this with a pipe folder:
-
-@example
-|rss:http://lwn.net/http://lwn.net/headlines/newrss|+lwn
-@end example
-
-You may also use an RSS, Atom or OPML feed as an access group, in which
-case related feeds will appear as subfolders.
 
 @node Folder, Summary, Folders, Top
 @chapter Folder mode

@@ -1299,7 +1299,7 @@ archive $B$+$iF~<j2DG=$G$9(B(GPL2)$B!#(B
 $B$3$l$i$N>l9g!"DL>o$N@\B3$r$9$k$K$O%U%)%k%@L>$N:G8e$K(B@samp{!direct} $B$rIU$1$^$9!#(B
 
 
-@node Shimbun Folder, Search Folder, POP Folder, Folders
+@node Shimbun Folder, RSS Folder, POP Folder, Folders
 @section $B?7J9%U%)%k%@(B
 @cindex @samp{@@}
 @cindex Shimbun Folder
@@ -1355,7 +1355,42 @@ emacs-w3m $B$KIUB0$N(B @file{README.shimbun.ja} $B$r;2>H$7$F$/$@$5$$!#(B
 @end table
 
 
-@node Search Folder, Multi Folder, Shimbun Folder, Folders
+@node RSS Folder, Archive Folder, Shimbun Folder, Folders
+@section RSS $B%U%)%k%@(B
+@cindex RSS Folder
+@cindex Atom Folder
+
+RSS $B$d(B Atom $B%U%#!<%I$K4^$^$l$k%a%C%;!<%8$r1\Mw$9$k0Y$N%U%)%k%@$G$9!#(B
+
+$B=q<0(B:
+
+@example
+@samp{rss:} @var{RSS $B$^$?$O(B Atom $B$N(BURL}
+@end example
+
+$BNc(B:
+
+@example
+rss:https://github.com/wanderlust/wanderlust/commits/master.atom
+@end example
+
+$B%5%]!<%H$9$k(B RSS $B$d(B Atom $B$OA4$F<+F0E*$K07$o$l$^$9!#(B
+$B$h$j:Y$+$$@_Dj$,I,MW$J>l9g$O!"?7J9%U%)%k%@(B (@pxref{Shimbun Folder}) $B$r(B
+$B;H$C$F$/$@$5$$!#(B
+
+$B%a%C%;!<%8$N%-%c%C%7%e$O;}$?$J$$$N$G!"%a%C%;!<%8$O%U%#!<%I$+$iL5$/$J$k$H(B
+$B%U%)%k%@$+$i$bD>$A$K>C<:$7$^$9!#(B
+$BJ]B8$9$kI,MW$,$"$k>l9g$O%Q%$%W%U%)%k%@(B (@pxref{Pipe Folder}) $B$H(B
+$BAH$_9g$o$;$F$/$@$5$$!#(B
+
+@example
+|rss:http://lwn.net/http://lwn.net/headlines/newrss|+lwn
+@end example
+
+RSS $B$d(B Atom $B5Z$S(B OPML $B$r%"%/%;%9%0%k!<%W$H$7$F07$&$3$H$,$G$-!"(B
+$B$=$N>l9g!"4XO"$9$k%U%#!<%I$O%5%V%U%)%k%@Fb$K8=$l$^$9!#(B
+
+@node Search Folder, Multi Folder, RSS Folder, Folders
 @section $B8!:w%U%)%k%@(B
 @cindex Search Folder
 @cindex @samp{[}
@@ -1504,10 +1539,12 @@ mu (@uref{http://www.djcbsoftware.nl/code/mu/}) $B$r;H$C$F!"J8=q$r8!:w$7$^$9!#
     -> messages to Jack with subject jellyfish containing the word tumbleweed
 
 [size:2k..2m date:20091201..20093112 flag:attach from:bill]
-    -> messages between 2 kilobytes and a 2Mb, written in December 2009 with an attachment from Bill
+    -> messages between 2 kilobytes and a 2Mb,
+       written in December 2009 with an attachment from Bill
 
 [subject:soc* flag:unread]
-    -> $B%5%V%8%'%/%H$,!!(B'soc' $B$G;O$^$k(B (soccer, society, socrates, ...) $BL$FI$N%a%C%;!<%8$rC5$9(B 
+    -> $B%5%V%8%'%/%H$,!!(B'soc' $B$G;O$^$k(B (soccer, society, socrates, ...)
+       $BL$FI$N%a%C%;!<%8$rC5$9(B
 
 [mime:image/*]
     -> $B2hA|$,E:IU$5$l$?%a%C%;!<%8$rC5$9(B
@@ -1897,7 +1934,7 @@ file:/etc       -> @file{/etc}
 @end example
 
 
-@node Access Folder, RSS Folder, File Folder, Folders
+@node Access Folder,, File Folder, Folders
 @section $B%"%/%;%9%U%)%k%@(B
 @cindex Access Folder
 
@@ -1918,32 +1955,6 @@ access:%INBOX -> %INBOX $B0J2<$N(B IMAP $B$N%a!<%k%\%C%/%9$NA4$F(B
 access:'cache -> $BA4$F$N(B 'cache $B%U%)%k%@(B
 @end group
 @end example
-
-@node RSS Folder,  , Access Folder, Folders
-@section RSS Folder
-@cindex RSS Folder
-@cindex Atom Folder
-
-An RSS folder presents the messages contained in an RSS or Atom feed:
-
-@example
-rss:https://github.com/wanderlust/wanderlust/commits/master.atom
-@end example
-
-This folder type attempts to automatically handle all known versions of
-RSS and Atom.  Should you need more configurability, please use
-a Shimbun folder (@pxref{Shimbun Folder}) instead.
-
-Since this folder doesn't do any persistent caching, messages will
-disappear as soon as they expire from the feed.  Should you want
-persistent messages, combine this with a pipe folder:
-
-@example
-|rss:http://lwn.net/http://lwn.net/headlines/newrss|+lwn
-@end example
-
-You may also use an RSS, Atom or OPML feed as an access group, in which
-case related feeds will appear as subfolders.
 
 
 @node Folder, Summary, Folders, Top
