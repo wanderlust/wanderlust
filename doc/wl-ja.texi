@@ -7027,7 +7027,6 @@ LDAP を利用する場合は、@code{wl-ldap-server}、@code{wl-ldap-port},
 @chapter Quick Search
 @cindex Quick Search
 
-@node Spam Filter, Advanced Issues, Address Book, Top
 @code{wl-qs} provides an interface to quickly search your mail archive.
 It can use an external search engine (@ref{Search Folder}), Gmail
 search, or a filter folder (@ref{Filter Folder}).
