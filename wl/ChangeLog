@@ -1,3 +1,10 @@
+2015-11-19  Yasushi SHOJI
+
+	* wl-folder.el (wl-folder-goto-folder-subr): Let-bind this-command
+	variable to the current value.  This change fixes the problem with
+	ido-migemo.
+	Cf. https://github.com/wanderlust/wanderlust/issues/109
+
 2015-10-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-qs.el (wl-quicksearch-goto-search-folder-subr): Set

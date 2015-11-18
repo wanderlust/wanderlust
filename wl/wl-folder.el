@@ -2278,7 +2278,7 @@ Use `wl-subscribed-mailing-list'."
 ;;;	    (assoc fld-name wl-folder-group-alist))
     (setq fld-name wl-default-folder)
     (setq fld-name (or folder
-		       (let (this-command)
+		       (let ((this-command this-command))
 			 (wl-summary-read-folder fld-name))))
     (if (and (setq entity
 		   (wl-folder-search-entity-by-name fld-name
