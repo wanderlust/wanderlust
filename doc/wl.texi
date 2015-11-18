@@ -694,6 +694,7 @@ types.
 * Archive Folder::              @samp{$} -- Archive folder
 * POP Folder::                  @samp{&} -- POP folder
 * Shimbun Folder::              @samp{@@} -- Shimbun Folder
+* RSS Folder::                  @samp{rss} -- RSS folder
 * Search Folder::               @samp{[} -- Search Folder
 * Multi Folder::                @samp{*} -- Multi folder
 * Filter Folder::               @samp{/} -- Filter folder
@@ -701,7 +702,6 @@ types.
 * Internal Folder::             @samp{'} -- Internal folder
 * File Folder::                          -- File folder
 * Access Folder::                        -- Access folder
-* RSS Folder::                           -- RSS folder
 @end menu
 
 

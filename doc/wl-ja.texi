@@ -717,6 +717,7 @@ Filter, Pipe, File, Access, Internal の 15 種類です。
 * Archive Folder::           @samp{$} -- アーカイブフォルダ
 * POP Folder::               @samp{&} -- POP フォルダ
 * Shimbun Folder::           @samp{@@} -- 新聞フォルダ
+* RSS Folder::               @samp{rss} -- RSS フォルダ
 * Search Folder::            @samp{[} -- 検索フォルダ
 * Multi Folder::             @samp{*} -- マルチフォルダ
 * Filter Folder::            @samp{/} -- フィルタフォルダ
@@ -724,7 +725,6 @@ Filter, Pipe, File, Access, Internal の 15 種類です。
 * Internal Folder::          @samp{'} -- 内部フォルダ
 * File Folder::                  -- ファイルフォルダ
 * Access Folder::                -- アクセスフォルダ
-* RSS Folder::                   -- RSS フォルダ
 @end menu
 
 
@@ -1355,7 +1355,7 @@ emacs-w3m に付属の @file{README.shimbun.ja} を参照してください。
 @end table
 
 
-@node RSS Folder, Archive Folder, Shimbun Folder, Folders
+@node RSS Folder, Search Folder, Shimbun Folder, Folders
 @section RSS フォルダ
 @cindex RSS Folder
 @cindex Atom Folder
