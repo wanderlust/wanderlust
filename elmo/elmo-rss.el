@@ -29,7 +29,7 @@
 ;;
 ;; In order to cache previously downloaded messages, use a pipe folder:
 ;;
-;;   m a |rss:http://lwn.net/http://lwn.net/headlines/newrss|+lwn
+;;   m a |rss:http://lwn.net/headlines/newrss|+lwn
 ;;
 ;; An Atom, RSS or OPML feed can be used for an access group:
 ;;
