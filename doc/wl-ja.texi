@@ -1384,7 +1384,7 @@ rss:https://github.com/wanderlust/wanderlust/commits/master.atom
 組み合わせてください。
 
 @example
-|rss:http://lwn.net/http://lwn.net/headlines/newrss|+lwn
+|rss:http://lwn.net/headlines/newrss|+lwn
 @end example
 
 RSS や Atom 及び OPML をアクセスグループとして扱うことができ、

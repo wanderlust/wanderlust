@@ -1375,7 +1375,7 @@ disappear as soon as they expire from the feed.  Should you want
 persistent messages, combine this with a pipe folder (@pxref{Pipe Folder}):
 
 @example
-|rss:http://lwn.net/http://lwn.net/headlines/newrss|+lwn
+|rss:http://lwn.net/headlines/newrss|+lwn
 @end example
 
 You may also use an RSS, Atom or OPML feed as an access group, in which
