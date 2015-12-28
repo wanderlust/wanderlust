@@ -522,6 +522,7 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "mU"   'wl-summary-target-mark-uudecode)
   (define-key wl-summary-mode-map "ma"   'wl-summary-target-mark-all)
   (define-key wl-summary-mode-map "mt"   'wl-summary-target-mark-thread)
+  (define-key wl-summary-mode-map "mT"   'wl-summary-target-mark-threads)
   (define-key wl-summary-mode-map "mA"   'wl-summary-target-mark-reply-with-citation)
   (define-key wl-summary-mode-map "mf"   'wl-summary-target-mark-forward)
   (define-key wl-summary-mode-map "m?"   'wl-summary-target-mark-pick)
@@ -3133,6 +3134,23 @@ The mark is decided according to the FOLDER and STATUS."
   (interactive)
   (wl-summary-check-target-mark)
   (wl-summary-pick wl-summary-buffer-target-mark-list 'delete))
+
+(defun wl-summary-target-mark-threads ()
+  "Put target mark on all the messages of the threads which contain already target marked message."
+  (interactive)
+  (if wl-summary-buffer-target-mark-list
+      (let ((length (length wl-summary-buffer-target-mark-list))
+	    (mark-list wl-summary-buffer-target-mark-list))
+	(save-excursion
+	  (dolist (number mark-list)
+	    (wl-summary-jump-to-msg number)
+	    (wl-summary-target-mark-thread)))
+	(if (eq length (length wl-summary-buffer-target-mark-list))
+	    ;; No newly marked message.
+	    (when (y-or-n-p "Do you want to mark this thread?")
+	      (wl-summary-target-mark-thread))))
+    ;; No message is marked.  Mark thread at current point.
+    (wl-summary-target-mark-thread)))
 
 (defun wl-summary-update-persistent-mark (&optional number)
   "Synch up persistent mark of current line with msgdb's.

@@ -4089,6 +4089,13 @@ Put target mark @samp{*} on the messages in the current thread.
 @findex wl-summary-target-mark-thread
 (@code{wl-summary-target-mark-thread})
 
+@item m T
+@kindex m T (Summary)
+Put target mark @samp{*} on all the messages of the threads which
+contain already target marked message.
+@findex wl-summary-target-mark-threads
+(@code{wl-summary-target-mark-threads})
+
 @item m r
 @kindex m r (Summary)
 @findex wl-summary-target-mark-region

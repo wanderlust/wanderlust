@@ -1,3 +1,8 @@
+2015-12-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-summary.el (wl-summary-target-mark-threads): New function.
+	(wl-summary-mode-map): Assign "mT" to it.
+
 2015-11-19  Yasushi SHOJI
 
 	* wl-folder.el (wl-folder-goto-folder-subr): Let-bind this-command

@@ -4059,6 +4059,12 @@ prefix argument $B$D$-$J$i$P%+!<%=%k9T$,$"$k%a%C%;!<%8$r4^$`%9%l%C%IA4BN$rJ]B8$
 @findex wl-summary-target-mark-thread
 (@code{wl-summary-target-mark-thread})
 
+@item m T
+@kindex m T (Summary)
+$B$^$H$a=hM}MQ%^!<%/(B @samp{*} $B$r!"8=:_%^!<%/$5$l$?%a%C%;!<%8$r4^$`%9%l%C%IA4BN$K3HBg$7$^$9!#(B
+@findex wl-summary-target-mark-threads
+(@code{wl-summary-target-mark-threads})
+
 @item m r
 @kindex m r (Summary)
 @findex wl-summary-target-mark-region
