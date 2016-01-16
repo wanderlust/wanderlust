@@ -7127,11 +7127,11 @@ search, or a filter folder (@ref{Filter Folder}).
 a search, and then jump to the search results.
 
 @menu
-* Setup::                       Setup
-* Searching::                   Searching
+* Setup of Quick Search::       Setup
+* Usage of Quick Search::       Searching
 @end menu
 
-@node Setup
+@node Setup of Quick Search, Usage of Quick Search,, Quick Search
 @section Setup of @code{wl-qs}
 
 To setup, configure the value of @code{wl-quicksearch-folder}.
@@ -7140,7 +7140,7 @@ example, @samp{%[Gmail]/All Mail:username@@imap.gmail.com},
 @samp{.archive} or @samp{[]}. The latter is advised if you use a mail
 index, such as mu, notmuch or namazu, as it is quite fast.
 
-@node Searching
+@node Usage of Quick Search,, Setup of Quick Search, Quick Search
 @section Searching
 
 To search your mail archive, use the command
