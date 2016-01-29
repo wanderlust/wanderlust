@@ -73,7 +73,9 @@ has Non-nil value\)"
 	      (wl-mime-preview-follow-no-mime
 	       (wl-message-buffer-display-type)))
 	     (t
-	      (mime-preview-follow-current-entity)))))
+	      (save-excursion
+		(goto-char (point-min))
+		(mime-preview-follow-current-entity))))))
       (error "No message."))))
 
 ;; modified mime-preview-follow-current-entity from mime-view.el

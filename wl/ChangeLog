@@ -1,3 +1,10 @@
+2016-01-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-mime.el (wl-draft-yank-current-message-entity): Move point to
+	the beginning of a message buffer before calling
+	mime-preview-follow-current-entity.  It prevents
+	wl-summary-reply-with-citation from citing hidden entity.
+
 2015-12-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-summary.el (wl-summary-target-mark-threads): New function.
