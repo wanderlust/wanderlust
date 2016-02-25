@@ -2847,9 +2847,10 @@ Call `wl-summary-write-current-folder' with current folder name."
 (defun wl-folder-mimic-kill-buffer ()
   "Kill the current (Folder) buffer with query."
   (interactive)
-  (let ((bufname (read-buffer (format "Kill buffer: (default %s) "
-				      (buffer-name))))
-	wl-interactive-exit)
+  (let* ((default (buffer-name))
+	 (bufname (read-buffer (format "Kill buffer: (default %s) " default)
+			       default))
+         wl-interactive-exit)
     (if (or (not bufname)
 	    (string-equal bufname "")
 	    (string-equal bufname (buffer-name)))

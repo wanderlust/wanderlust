@@ -1495,9 +1495,10 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 (defun wl-draft-mimic-kill-buffer ()
   "Kill the current (draft) buffer with query."
   (interactive)
-  (let ((bufname (read-buffer (format "Kill buffer: (default %s) "
-				      (buffer-name))))
-	wl-draft-use-frame)
+  (let* ((default (buffer-name))
+	 (bufname (read-buffer (format "Kill buffer: (default %s) " default)
+			       default))
+	 wl-draft-use-frame)
     (if (or (not bufname)
 	    (string-equal bufname "")
 	    (string-equal bufname (buffer-name)))
