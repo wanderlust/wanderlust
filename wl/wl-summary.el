@@ -3770,13 +3770,11 @@ Return non-nil if the mark is updated"
 		      wl-folder-sync-range-alist
 		      folder
 		      'function)
-		     wl-default-sync-range))
-	range)
-    (setq range
-	  (completing-read (format "Range (%s): " default)
-			   (mapcar
-			    (lambda (x) (cons x x))
-			    input-range-list) nil nil nil nil default))))
+		     wl-default-sync-range)))
+    (completing-read (format "Range (%s): " default)
+		     (mapcar (lambda (x) (cons x x))
+			     input-range-list)
+		     nil nil nil nil default)))
 
 (defun wl-summary-toggle-disp-folder (&optional arg)
   (interactive)

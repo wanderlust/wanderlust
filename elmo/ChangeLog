@@ -1,3 +1,8 @@
+2016-03-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-cache-expire): Use DEF parameter for
+	completing-read.
+
 2015-11-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-rss.el: Fix the example of combination with pipe folder.

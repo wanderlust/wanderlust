@@ -662,8 +662,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 	      (if (memq 'read-folder wl-use-folder-petname)
 		  (wl-folder-get-entity-with-petname)
 		wl-folder-entity-hashtb)
-	      nil nil wl-default-spec
-	      'wl-read-folder-history))
+	      nil nil nil 'wl-read-folder-history wl-default-spec))
 	(number (call-interactively
 		 (function (lambda (num)
 			     (interactive "nNumber: ")

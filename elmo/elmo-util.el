@@ -2005,15 +2005,15 @@ associated with SECTION."
 
 (defun elmo-cache-expire ()
   (interactive)
-  (let* ((completion-ignore-case t)
-	 (method (completing-read (format "Expire by (%s): "
-					  elmo-cache-expire-default-method)
-				  '(("size" . "size")
-				    ("age" . "age"))
-				  nil t)))
-    (when (string= method "")
-      (setq method elmo-cache-expire-default-method))
-    (funcall (intern (concat "elmo-cache-expire-by-" method)))))
+  (let ((completion-ignore-case t))
+    (funcall (intern
+	      (concat "elmo-cache-expire-by-"
+		      (completing-read
+		       (format "Expire by (%s): "
+			       elmo-cache-expire-default-method)
+		       '(("size" . "size")
+			 ("age" . "age"))
+		       nil t nil nil elmo-cache-expire-default-method))))))
 
 (defun elmo-read-float-value-from-minibuffer (prompt &optional initial)
   (let ((str (read-from-minibuffer prompt initial)))
