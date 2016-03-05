@@ -1503,12 +1503,10 @@ If Optional LOCAL is non-nil, don't update server flag."
 		       "Too many messages(%d) in %s.  Update all? "
 		       len (elmo-folder-name-internal folder)))
 	    appends
-	  (setq in elmo-folder-update-threshold)
 	  (catch 'end
 	    (while t
-	      (setq in (read-from-minibuffer "Update number: "
-					     (number-to-string in))
-		    in (string-to-number in))
+	      (setq in (elmo-read-number "Update number: "
+					 elmo-folder-update-threshold))
 	      (if (< len in)
 		  (throw 'end len))
 	      (if (y-or-n-p (format

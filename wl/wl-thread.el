@@ -296,11 +296,10 @@ ENTITY is returned."
 (defun wl-thread-jump-to-msg (&optional number)
   "Jump to the message with specified number in the current summary."
   (interactive)
-  (let ((num (or number
-		 (string-to-number
-		  (read-from-minibuffer "Jump to Message(No.): ")))))
-    (wl-thread-entity-force-open (wl-thread-get-entity num))
-    (wl-summary-jump-to-msg num)))
+  (unless number
+    (setq number (elmo-read-number "Jump to Message(No.): " 0)))
+  (wl-thread-entity-force-open (wl-thread-get-entity number))
+  (wl-summary-jump-to-msg number))
 
 (defun wl-thread-close-all ()
   "Close all top threads."

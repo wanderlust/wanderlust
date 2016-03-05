@@ -542,6 +542,21 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defun elmo-max-of-list (nlist)
   (apply #'max 0 nlist))
 
+(defun elmo-read-number (prompt &optional default)
+  (let (result)
+    (when (numberp default)
+      (setq default (number-to-string default)))
+    (setq prompt
+	  (apply 'concat prompt (when default `("(dafeult " ,default ") "))))
+    (while (null (numberp
+		  (setq result
+			(condition-case nil
+			    (read-from-minibuffer prompt nil nil t nil default)
+			  (error nil)))))
+      (message "Please input a number.")
+      (sit-for 1))
+    result))
+
 (defun elmo-concat-path (path filename)
   (if (not (string= path ""))
       (elmo-replace-in-string
@@ -2015,29 +2030,16 @@ associated with SECTION."
 			 ("age" . "age"))
 		       nil t nil nil elmo-cache-expire-default-method))))))
 
-(defun elmo-read-float-value-from-minibuffer (prompt &optional initial)
-  (let ((str (read-from-minibuffer prompt initial)))
-    (cond
-     ((string-match "[0-9]*\\.[0-9]+" str)
-      (string-to-number str))
-     ((string-match "[0-9]+" str)
-      (string-to-number (concat str ".0")))
-     (t (error "%s is not number" str)))))
-
 (defun elmo-cache-expire-by-size (&optional kbytes)
   "Expire cache file by size.
 If KBYTES is kilo bytes (This value must be float)."
   (interactive)
-  (let ((size (or kbytes
-		  (and (interactive-p)
-		       (elmo-read-float-value-from-minibuffer
-			"Enter cache disk size (Kbytes): "
-			(number-to-string
-			 (if (integerp elmo-cache-expire-default-size)
-			     (float elmo-cache-expire-default-size)
-			   elmo-cache-expire-default-size))))
-		  (if (integerp elmo-cache-expire-default-size)
-		      (float elmo-cache-expire-default-size))))
+  (let ((size
+	 (float (or kbytes
+		    (and (interactive-p)
+			 (elmo-read-number "Enter cache disk size (Kbytes): "
+					   elmo-cache-expire-default-size))
+		    elmo-cache-expire-default-size)))
 	(count 0)
 	(Kbytes 1024)
 	total beginning)
@@ -2112,20 +2114,16 @@ If KBYTES is kilo bytes (This value must be float)."
   "Expire cache file by age.
 Optional argument DAYS specifies the days to expire caches."
   (interactive)
-  (let ((age (or (and days (number-to-string days))
+  (let ((age (or (and (numberp days) days)
 		 (and (interactive-p)
-		      (read-from-minibuffer
-		       (format "Enter days (%s): "
-			       elmo-cache-expire-default-age)))
-		 (number-to-string elmo-cache-expire-default-age)))
+		      (elmo-read-number "Enter days: "
+					elmo-cache-expire-default-age))
+		 elmo-cache-expire-default-age))
 	(dirs (directory-files
 	       elmo-cache-directory
 	       t "^[^\\.]"))
 	(count 0)
 	curtime)
-    (if (string= age "")
-	(setq age elmo-cache-expire-default-age)
-      (setq age (string-to-number age)))
     (setq curtime (current-time))
     (setq curtime (+ (* (nth 0 curtime)
 			(float 65536)) (nth 1 curtime)))

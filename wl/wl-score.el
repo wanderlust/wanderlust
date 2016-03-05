@@ -815,7 +815,7 @@ Set `wl-score-cache' nil."
   "Automatically mark messages with score below SCORE as read."
   (interactive
    (list (or (and current-prefix-arg (prefix-numeric-value current-prefix-arg))
-	     (string-to-number (read-string "Mark below: ")))))
+	     (elmo-read-number "Mark below: " 0))))
   (setq score (or score wl-summary-default-score 0))
   (wl-score-set 'mark (list score))
   (wl-score-set 'touched '(t))
@@ -826,7 +826,7 @@ Set `wl-score-cache' nil."
   "Automatically expunge messages with score below SCORE."
   (interactive
    (list (or (and current-prefix-arg (prefix-numeric-value current-prefix-arg))
-	     (string-to-number (read-string "Expunge below: ")))))
+	     (elmo-read-number "Expunge below: " 0))))
   (setq score (or score wl-summary-default-score 0))
   (wl-score-set 'expunge (list score))
   (wl-score-set 'touched '(t)))
@@ -1060,7 +1060,7 @@ Set `wl-score-cache' nil."
 
 	  ;; read the score.
 	  (unless (or score increase)
-	    (setq score (string-to-number (read-string "Set score: ")))))
+	    (setq score (elmo-read-number "Set score: " 0))))
       (message "")
       (wl-score-kill-help-buffer))
 
