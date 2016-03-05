@@ -2355,6 +2355,7 @@ See also variable `wl-summary-next-no-unread-command'."
 
 (defcustom wl-message-buffer-name " *WL:Message*"
   "*Buffer name for message buffers."
+  :type 'string
   :group 'wl-pref
   :group 'wl-setting)
 

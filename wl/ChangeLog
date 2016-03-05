@@ -1,5 +1,9 @@
 2016-03-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* wl-vars.el (wl-message-buffer-name): Define type.
+
+2016-03-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* wl-score.el (wl-score-set-mark-below)
 	(wl-score-set-expunge-below, wl-score-get-header-entry): Use
 	elmo-read-number.
