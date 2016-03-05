@@ -1,5 +1,11 @@
 2016-03-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo-util.el (elmo-cache-expire-by-size): Fix docstring.
+
+	* elmo-vars.el (elmo-cache-expire-default-size): Likewise.
+
+2016-03-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* elmo-util.el (elmo-read-number): New function.
 	(elmo-read-float-value-from-minibuffer): Abolished.
 	(elmo-cache-expire-by-size, elmo-cache-expire-by-age): Use

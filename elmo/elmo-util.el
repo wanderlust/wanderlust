@@ -2032,7 +2032,7 @@ associated with SECTION."
 
 (defun elmo-cache-expire-by-size (&optional kbytes)
   "Expire cache file by size.
-If KBYTES is kilo bytes (This value must be float)."
+KBYTES is a number specifying size in kilo bytes."
   (interactive)
   (let ((size
 	 (float (or kbytes

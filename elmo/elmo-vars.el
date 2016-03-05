@@ -396,7 +396,7 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
   "Default expiration method.")
 
 (defvar elmo-cache-expire-default-size 30000
-  "Cache expiration disk size (Kilo bytes).  This must be float value.")
+  "Cache expiration disk size (Kilo bytes).")
 
 (defvar elmo-cache-expire-default-age 50
   "Cache expiration age (days).")
