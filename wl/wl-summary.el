@@ -1116,7 +1116,8 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
 	  wl-summary-buffer-temp-mark-list nil
 	  wl-summary-delayed-update nil)
     (elmo-kill-buffer wl-summary-search-buf-name)
-    (elmo-with-progress-display (wl-summary-insert-line num)
+    (elmo-with-progress-display (wl-summary-insert-line
+				 (+ num (length wl-summary-delayed-update)))
 	"Constructing summary structure"
       (dolist (number numbers)
 	(wl-summary-insert-message (elmo-message-entity
@@ -1907,9 +1908,10 @@ This function is defined for `window-scroll-functions'"
 	(wl-summary-update-status-marks start end 'check)))))
 
 (defun wl-summary-insert-message (&rest args)
-  (if (eq wl-summary-buffer-view 'thread)
-      (apply 'wl-summary-insert-thread args)
-    (apply 'wl-summary-insert-sequential args)))
+  (prog1 (if (eq wl-summary-buffer-view 'thread)
+	     (apply 'wl-summary-insert-thread args)
+	   (apply 'wl-summary-insert-sequential args))
+    (elmo-progress-notify 'wl-summary-insert-line)))
 
 (defun wl-summary-sort (reverse)
   "Sort summary lines into the selected order; argument means descending order."
@@ -2013,7 +2015,9 @@ This function is defined for `window-scroll-functions'"
 		(setq num (length append-list))
 		(setq wl-summary-delayed-update nil)
 		(elmo-kill-buffer wl-summary-search-buf-name)
-		(elmo-with-progress-display (wl-summary-insert-line num)
+		(elmo-with-progress-display
+		    (wl-summary-insert-line
+		     (+ num (length wl-summary-delayed-update)))
 		    (if (eq wl-summary-buffer-view 'thread)
 			"Making thread"
 		      "Inserting message")
@@ -2614,7 +2618,6 @@ If ARG, without confirm."
       (put-text-property
        (point-at-bol) (point-at-eol)
        'mouse-face nil))
-  (elmo-progress-notify 'wl-summary-insert-line)
   (ignore-errors
     (run-hooks 'wl-summary-line-inserted-hook)))
 
@@ -2798,7 +2801,6 @@ If ARG, without confirm."
 	(when (setq retval (wl-thread-insert-message
 			    entity number parent-number update linked))
 	  (wl-append update-list (list retval)))
-	(elmo-progress-notify 'wl-summary-insert-line)
 	(setq entity nil) ; exit loop
 	(while (setq delayed-entity (assq number wl-summary-delayed-update))
 	  (setq wl-summary-delayed-update
