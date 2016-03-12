@@ -215,8 +215,7 @@ CODE is one of the following:
 'in-use      ... authentication was successful but the mailbox is in use."
   ;; buffer is in case for process is dead.
   (with-current-buffer (process-buffer process)
-    (let (case-fold-search
-	  (response-continue t)
+    (let ((response-continue t)
 	  err match-end
 	  (start elmo-pop3-read-point))
       (while response-continue
@@ -229,9 +228,9 @@ CODE is one of the following:
 	(goto-char elmo-pop3-read-point)
 	(setq elmo-pop3-read-point match-end)
 	(cond
-	 ((looking-at "\\+")
+	 ((eq (following-char) ?+)
 	  (setq response-continue nil))
-	 ((looking-at "\\-")
+	 ((eq (following-char) ?-)
 	  (setq err (or (when (looking-at "[^ ]+ \\[\\([^]]+\\)\\]")
 			  (intern (downcase
 				   (buffer-substring (match-beginning 1)
@@ -489,45 +488,35 @@ until the login delay period has expired"))
 
 (defun elmo-pop3-parse-uidl-response (string)
   (let ((buffer (current-buffer))
-	number list size)
+	list)
     (with-temp-buffer
-      (let (number uid list)
-	(insert string)
-	(goto-char (point-min))
-	(while (re-search-forward "^\\([0-9]+\\)[\t ]+\\([^ \n]+\\)$" nil t)
-	  (setq number  (elmo-match-buffer 1))
-	  (setq uid (elmo-match-buffer 2))
-	  (with-current-buffer buffer
-	    (elmo-set-hash-val uid number elmo-pop3-uidl-number-hash)
-	    (elmo-set-hash-val (concat "#" number) uid
-			       elmo-pop3-number-uidl-hash))
-	  (setq list (cons uid list)))
-	(with-current-buffer buffer (setq elmo-pop3-uidl-done t))
-	(nreverse list)))))
+      (insert string)
+      (goto-char (point-min))
+      (while (re-search-forward "^\\([0-9]+\\)[\t ]+\\([^ \n]+\\)$" nil t)
+	(setq list (cons (cons (elmo-match-buffer 1) (elmo-match-buffer 2))
+			 list))))
+    (setq elmo-pop3-uidl-done t)
+    (dolist (elt list (nreverse (mapcar 'cdr list)))
+      (elmo-set-hash-val (cdr elt) (car elt) elmo-pop3-uidl-number-hash)
+      (elmo-set-hash-val (concat "#" (car elt)) (cdr elt)
+			 elmo-pop3-number-uidl-hash))))
 
 (defun elmo-pop3-parse-list-response (string)
   (let ((buffer (current-buffer))
-	(count 0)
-	alist)
+	count alist)
     (with-temp-buffer
       (insert string)
       (goto-char (point-min))
       (while (re-search-forward "^\\([0-9]+\\)[\t ]+\\([0-9]+\\)$" nil t)
-	(setq alist
-	      (cons
-	       (cons (elmo-match-buffer 1)
-		     (elmo-match-buffer 2))
-	       alist))
-	(setq count (1+ count)))
-      (with-current-buffer buffer
-	(setq elmo-pop3-size-hash (elmo-make-hash (* (length alist) 2)))
-	(while alist
-	  (elmo-set-hash-val (concat "#" (car (car alist)))
-			     (cdr (car alist))
-			     elmo-pop3-size-hash)
-	  (setq alist (cdr alist)))
-	(setq elmo-pop3-list-done t))
-      count)))
+	(setq alist (cons (cons (elmo-match-buffer 1) (elmo-match-buffer 2))
+			  alist))))
+    (setq count (length alist)
+	  elmo-pop3-size-hash (elmo-make-hash (* count 2))
+	  elmo-pop3-list-done t)
+    (dolist (elt alist count)
+      (elmo-set-hash-val (concat "#" (car elt))
+			 (cdr elt)
+			 elmo-pop3-size-hash))))
 
 (defun elmo-pop3-list-location (folder)
   (with-current-buffer (process-buffer
@@ -610,13 +599,9 @@ until the login delay period has expired"))
 (defsubst elmo-pop3-next-result-arrived-p ()
   (cond
    ((eq (following-char) ?+)
-    (if (re-search-forward "\n\\.\r?\n" nil t)
-	t
-      nil))
-   ((looking-at "-")
-    (if (search-forward "\n" nil t)
-	t
-      nil))
+    (re-search-forward "\n\\.\r?\n" nil t))
+   ((eq (following-char) ?-)
+    (search-forward "\n" nil t))
    (t
     nil)))
 

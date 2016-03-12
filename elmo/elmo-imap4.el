@@ -433,8 +433,8 @@ Returns a TAG string which is assigned to the COMMAND."
 (defun elmo-imap4-session-process-send-string (session string)
   "Send STRING to process of SESSION."
   (elmo-imap4-debug "[%s] <-- %s" (format-time-string "%T") string)
-  (process-send-string (elmo-network-session-process-internal session) string)
-  (process-send-string (elmo-network-session-process-internal session) "\r\n"))
+  (process-send-string (elmo-network-session-process-internal session)
+		       (concat string "\r\n")))
 
 (defun elmo-imap4-send-string (session string)
   "Send STRING to the SESSION."

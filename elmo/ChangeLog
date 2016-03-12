@@ -1,3 +1,40 @@
+2016-03-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-nntp.el (elmo-nntp-folder-list-subfolders)
+	(elmo-nntp-list-folders-get-cache): Refactored.  Fix
+	mis-generating cache and mis-checking for cache usability.
+
+2016-03-09  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-nntp.el (elmo-nntp-catchup-msgdb): Assume MAX-NUMBER
+	argument is always non-nil.
+
+2016-03-09  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-nntp.el (elmo-nntp-catchup-msgdb, elmo-nntp-send-buffer)
+	(elmo-nntp-groups-read-response): Refactored.
+
+	* elmo-pop3.el (elmo-pop3-read-response)
+	(elmo-pop3-parse-list-response, elmo-pop3-next-result-arrived-p):
+	Refactored.
+	(elmo-pop3-parse-uidl-response): Refactored.  Reduce changing
+	current buffer.
+
+2016-03-09  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-nntp.el (elmo-nntp-read-response): Don't let-bind
+	case-fold-search.
+
+	* elmo-pop3.el (elmo-pop3-read-response): Likewise.
+
+2016-03-09  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-imap4.el (elmo-imap4-session-process-send-string):
+	Concatenate strings before sending.
+
+	* elmo-nntp.el (elmo-nntp-send-command, elmo-nntp-send-data-line):
+	Likewise.
+
 2016-03-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-util.el (elmo-cache-expire-by-size): Fix docstring.

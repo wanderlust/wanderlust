@@ -343,15 +343,12 @@ Don't cache if nil.")
       (goto-char (point-min)))
     (setq elmo-nntp-read-point (point))
     (elmo-nntp-debug "SEND: %s\n" (if no-log "<NO LOGGING>" command))
-    (process-send-string (elmo-network-session-process-internal
-			  session) command)
-    (process-send-string (elmo-network-session-process-internal
-			  session) "\r\n")))
+    (process-send-string (elmo-network-session-process-internal session)
+			 (concat command "\r\n"))))
 
 (defun elmo-nntp-read-response (session &optional not-command error-msg)
   (with-current-buffer (elmo-network-session-buffer session)
     (let ((process (elmo-network-session-process-internal session))
-	  case-fold-search
 	  (response-continue t)
 	  response match-end last
 	  (start elmo-nntp-read-point))
@@ -434,42 +431,25 @@ Don't cache if nil.")
 	     elmo-nntp-list-folders-cache
 	     (string-match (concat "^"
 				   (regexp-quote
-				    (or
-				     (nth 1 elmo-nntp-list-folders-cache)
-				     "")))
+				    (or (nth 1 elmo-nntp-list-folders-cache)
+					"")))
 			   (or group ""))
-	     (string-match (concat "^"
-				   (regexp-quote
-				    (or
-				     (nth 2 elmo-nntp-list-folders-cache)
-				     "")))
-			   (or server "")))
-    (let* ((cache-time (car elmo-nntp-list-folders-cache)))
-      (unless (elmo-time-expire cache-time
-				elmo-nntp-list-folders-use-cache)
-	(with-current-buffer buf
-	  (erase-buffer)
-	  (insert (nth 3 elmo-nntp-list-folders-cache))
-	  (goto-char (point-min))
-	  (or (string= group "")
-	      (and group
-		   (keep-lines (concat "^" (regexp-quote group) "\\."))))
-	  t
-	  )))))
+	     (string= (or (nth 2 elmo-nntp-list-folders-cache) "")
+		      (or server "")))
+    (unless (elmo-time-expire (car elmo-nntp-list-folders-cache)
+			      elmo-nntp-list-folders-use-cache)
+      (with-current-buffer buf
+	(let ((regexp (concat "^" (regexp-quote group) ".*$"))
+	      (string (nth 3 elmo-nntp-list-folders-cache))
+	      start)
+	  (while (string-match regexp string start)
+	    (insert (match-string 0 string) "\n")
+	    (setq start (match-end 0)))))
+      t)))
 
 (defsubst elmo-nntp-catchup-msgdb (msgdb max-number)
-  (let ((numbers (elmo-msgdb-list-messages msgdb))
-	msgdb-max)
-    (setq msgdb-max (if numbers (apply #'max numbers) 0))
-    (when (and msgdb-max
-	       max-number
-	       (< msgdb-max max-number))
-      (let ((i (1+ msgdb-max))
-	    killed)
-	(while (<= i max-number)
-	  (setq killed (cons i killed))
-	  (incf i))
-	(nreverse killed)))))
+  (elmo-make-number-list (elmo-max-of-list (elmo-msgdb-list-messages msgdb))
+			 max-number))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-nntp-folder)
 						 &optional one-level)
@@ -477,61 +457,53 @@ Don't cache if nil.")
 
 (defun elmo-nntp-folder-list-subfolders (folder one-level)
   (let ((session (elmo-nntp-get-session folder))
-	(case-fold-search nil)
-	response ret-val top-ng username append-serv use-list-active start)
+	(group (elmo-nntp-folder-group-internal folder))
+	(server (elmo-net-folder-server-internal folder))
+	(username (or (elmo-net-folder-user-internal folder) ""))
+	(port (elmo-net-folder-port-internal folder))
+	(stream-type (elmo-net-folder-stream-type-internal folder))
+	case-fold-search
+	response ret-val top-ng append-serv prefix start regexp)
+    (setq append-serv
+	  (concat
+	   (unless (string= username (or elmo-nntp-default-user ""))
+	     (concat ":" (elmo-quote-syntactical-element
+			  username 'user elmo-nntp-folder-name-syntax)))
+	   (unless (string= server elmo-nntp-default-server)
+	     (concat "@" server))
+	   (unless (eq port elmo-nntp-default-port)
+	     (concat ":" (number-to-string port)))
+	   (unless (eq (elmo-network-stream-type-symbol stream-type)
+		       elmo-nntp-default-stream-type)
+	     (elmo-network-stream-type-spec-string stream-type)))
+	  prefix (char-to-string (car (rassq 'nntp elmo-folder-type-alist))))
+    (when (string= group "") (setq group nil))
     (with-temp-buffer
       (set-buffer-multibyte nil)
-      (if (and (elmo-nntp-folder-group-internal folder)
-	       (elmo-nntp-select-group
-		session
-		(elmo-nntp-folder-group-internal folder)))
+      (if (and group (elmo-nntp-select-group session group))
 	  ;; add top newsgroups
-	  (setq ret-val (list (elmo-nntp-folder-group-internal folder))))
-      (unless (setq response (elmo-nntp-list-folders-get-cache
-			      (elmo-nntp-folder-group-internal folder)
-			      (elmo-net-folder-server-internal folder)
-			      (current-buffer)))
-	(when (setq use-list-active (elmo-nntp-list-active-p session))
-	  (elmo-nntp-send-command
-	   session
-	   (concat "list"
-		   (if (and (elmo-nntp-folder-group-internal folder)
-			    (not (string= (elmo-nntp-folder-group-internal
-					   folder) "")))
-		       (concat " active"
-			       (format
-				" %s.*"
-				(elmo-nntp-folder-group-internal folder))))))
+	  (setq ret-val (list (concat prefix group append-serv))))
+      (unless (elmo-nntp-list-folders-get-cache group server (current-buffer))
+	(when (and group (elmo-nntp-list-active-p session))
+	  (elmo-nntp-send-command session (concat "list active " group ".*"))
 	  (if (elmo-nntp-read-response session t)
 	      (if (null (setq response (elmo-nntp-read-contents session)))
 		  (error "NNTP List folders failed")
 		(when elmo-nntp-list-folders-use-cache
 		  (setq elmo-nntp-list-folders-cache
-			(list (current-time)
-			      (elmo-nntp-folder-group-internal folder)
-			      (elmo-net-folder-server-internal folder)
-			      response)))
-		(erase-buffer)
+			(list (current-time) group server response)))
 		(insert response))
-	    (elmo-nntp-set-list-active session nil)
-	    (setq use-list-active nil)))
-	(when (null use-list-active)
+	    (elmo-nntp-set-list-active session nil)))
+	(unless response
 	  (elmo-nntp-send-command session "list")
-	  (if (null (and (elmo-nntp-read-response session t)
-			 (setq response (elmo-nntp-read-contents session))))
-	      (error "NNTP List folders failed"))
+	  (unless (and (elmo-nntp-read-response session t)
+		       (setq response (elmo-nntp-read-contents session)))
+	    (error "NNTP List folders failed"))
 	  (when elmo-nntp-list-folders-use-cache
 	    (setq elmo-nntp-list-folders-cache
-		  (list (current-time) nil nil response)))
-	  (erase-buffer)
-	  (setq start nil)
-	  (while (string-match (concat "^"
-				       (regexp-quote
-					(or
-					 (elmo-nntp-folder-group-internal
-					  folder)
-					 "")) ".*$")
-			       response start)
+		  (list (current-time) nil server response)))
+	  (setq regexp (concat "^" (regexp-quote group) ".*$"))
+	  (while (string-match regexp response start)
 	    (insert (match-string 0 response) "\n")
 	    (setq start (match-end 0)))))
       (goto-char (point-min))
@@ -539,60 +511,28 @@ Don't cache if nil.")
 	  (elmo-nntp-parse-active (count-lines (point-min) (point-max)))
 	  "Parsing active"
 	(if one-level
-	    (let ((regexp
-		   (format "^\\(%s[^. ]+\\)\\([. ]\\).*\n"
-			   (if (and (elmo-nntp-folder-group-internal folder)
-				    (null (string=
-					   (elmo-nntp-folder-group-internal
-					    folder) "")))
-			       (concat (elmo-nntp-folder-group-internal
-					folder)
-				       "\\.")
-			     ""))))
+	    (progn
+	      (setq regexp (concat "^\\("
+				   (when group
+				     (regexp-quote (concat group ".")))
+				   "[^. ]+\\)\\([. ]\\).*\n"))
 	      (while (looking-at regexp)
-		(setq top-ng (elmo-match-buffer 1))
+		(setq top-ng (concat prefix (elmo-match-buffer 1) append-serv))
 		(if (string= (elmo-match-buffer 2) " ")
-		    (if (not (or (member top-ng ret-val)
-				 (assoc top-ng ret-val)))
-			(setq ret-val (nconc ret-val (list top-ng))))
-		  (if (member top-ng ret-val)
-		      (setq ret-val (delete top-ng ret-val)))
-		  (if (not (assoc top-ng ret-val))
-		      (setq ret-val (nconc ret-val (list (list top-ng))))))
+		    (unless (or (member top-ng ret-val)
+				(assoc top-ng ret-val))
+		      (setq ret-val (cons top-ng ret-val)))
+		  (setq ret-val (delete top-ng ret-val))
+		  (unless (assoc top-ng ret-val)
+		    (setq ret-val (cons (list top-ng) ret-val))))
 		(elmo-progress-notify 'elmo-nntp-parse-active)
 		(forward-line)))
 	  (while (re-search-forward "\\([^ ]+\\) .*\n" nil t)
-	    (setq ret-val (nconc ret-val
-				 (list (elmo-match-buffer 1))))
+	    (setq ret-val (cons (concat prefix (elmo-match-buffer 1)
+					append-serv)
+				ret-val))
 	    (elmo-progress-notify 'elmo-nntp-parse-active)))))
-
-    (setq username (or (elmo-net-folder-user-internal folder) ""))
-    (unless (string= username (or elmo-nntp-default-user ""))
-      (setq append-serv (concat append-serv
-				":" (elmo-quote-syntactical-element
-				     username
-				     'user elmo-nntp-folder-name-syntax))))
-    (unless (string= (elmo-net-folder-server-internal folder)
-		     elmo-nntp-default-server)
-      (setq append-serv (concat append-serv
-				"@" (elmo-net-folder-server-internal folder))))
-    (unless (eq (elmo-net-folder-port-internal folder) elmo-nntp-default-port)
-      (setq append-serv (concat append-serv
-				":" (number-to-string
-				     (elmo-net-folder-port-internal folder)))))
-    (unless (eq (elmo-network-stream-type-symbol
-		 (elmo-net-folder-stream-type-internal folder))
-		elmo-nntp-default-stream-type)
-      (setq append-serv
-	    (concat append-serv
-		    (elmo-network-stream-type-spec-string
-		     (elmo-net-folder-stream-type-internal folder)))))
-    (mapcar (lambda (fld)
-	      (if (consp fld)
-		  (list (concat "-" (elmo-nntp-decode-group-string (car fld))
-				append-serv))
-		(concat "-" (elmo-nntp-decode-group-string fld) append-serv)))
-	    ret-val)))
+    (nreverse ret-val)))
 
 (defun elmo-nntp-make-msglist (beg-str end-str)
   (elmo-make-number-list (string-to-number beg-str)
@@ -820,14 +760,12 @@ Don't cache if nil.")
     ;; to max-number(inn 2.3?).
     (when (and (elmo-nntp-max-number-precedes-list-active-p)
 	       (elmo-nntp-list-active-p session))
-      (elmo-nntp-send-command session
-			      (format "list active %s"
-				      (elmo-nntp-folder-group-internal
-				       folder)))
-      (if (null (elmo-nntp-read-response session))
-	  (progn
-	    (elmo-nntp-set-list-active session nil)
-	    (error "NNTP list command failed")))
+      (elmo-nntp-send-command
+       session (format "list active %s"
+		       (elmo-nntp-folder-group-internal folder)))
+      (unless (elmo-nntp-read-response session)
+	(elmo-nntp-set-list-active session nil)
+	(error "NNTP list command failed"))
       (let ((killed (elmo-nntp-catchup-msgdb
 		     new-msgdb
 		     (nth 1 (read (concat "(" (elmo-nntp-read-contents
@@ -998,14 +936,10 @@ Don't cache if nil.")
 
 (defsubst elmo-nntp-send-data-line (session line)
   "Send LINE to SESSION."
-  ;; Escape "." at start of a line
-  (if (eq (string-to-char line) ?.)
-      (process-send-string (elmo-network-session-process-internal
-			    session) "."))
-  (process-send-string (elmo-network-session-process-internal
-			session) line)
-  (process-send-string (elmo-network-session-process-internal
-			session) "\r\n"))
+  (process-send-string
+   (elmo-network-session-process-internal session)
+   ;; Escape "." at start of a line
+   (concat (if (eq (string-to-char line) ?.) ".") line "\r\n")))
 
 (defun elmo-nntp-send-buffer (session databuf)
   "Send data content of DATABUF to SESSION."
@@ -1013,13 +947,10 @@ Don't cache if nil.")
 	line bol)
     (with-current-buffer databuf
       (goto-char (point-min))
-      (while data-continue
-	(beginning-of-line)
-	(setq bol (point))
-	(end-of-line)
-	(setq line (buffer-substring bol (point)))
-	(unless (zerop (forward-line)) (setq data-continue nil))
-	(elmo-nntp-send-data-line session line)))))
+      (while (null (eobp))
+	(elmo-nntp-send-data-line
+	 session (buffer-substring (point) (goto-char (line-end-position))))
+	(forward-line)))))
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-nntp-folder)
 						 numbers)
@@ -1242,6 +1173,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 		 (goto-char last-point)
 		 ;; Count replies.
 		 (while (re-search-forward "^[0-9]" nil t)
+		   (forward-line)
 		   (setq received (1+ received)))
 		 (setq last-point (point))
 		 (< received count))
@@ -1253,7 +1185,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
       ;; Wait for the reply from the final command.
       (goto-char (point-max))
       (re-search-backward "^[0-9]" nil t)
-      (when (looking-at "^[23]")
+      (when (memq (following-char) '(?2 ?3))
 	(while (progn
 		 (goto-char (point-max))
 		 (not (re-search-backward "\r?\n" (- (point) 3) t)))
