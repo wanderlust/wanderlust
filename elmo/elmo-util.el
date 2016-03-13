@@ -456,13 +456,6 @@ Return value is a cons cell of (STRUCTURE . REST)"
   "Delete CR from buffer."
   (elmo-delete-cr-region (point-min) nil))
 
-(defsubst elmo-delete-cr-get-content-type ()
-  (save-excursion
-    (elmo-delete-cr-buffer)
-    (goto-char (point-min))
-    (or (std11-field-body "content-type")
-	t)))
-
 (defun elmo-delete-cr (string)
   (let (inhibit-eol-conversion)
     (decode-coding-string string 'raw-text-dos)))
@@ -2220,19 +2213,6 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
     (elmo-resque-obsolete-variable (cdr pair)
 				   (car pair))))
 
-(defsubst elmo-msgdb-get-last-message-id (string)
-  (if string
-      (save-match-data
-	(let (beg)
-	  (elmo-set-work-buf
-	    (insert string)
-	    (goto-char (point-max))
-	    (when (search-backward "<" nil t)
-	      (setq beg (point))
-	      (if (search-forward ">" nil t)
-		  (elmo-replace-in-string
-		   (buffer-substring beg (point)) "\n[ \t]*" ""))))))))
-
 (defun elmo-extract-std11-msgid-tokens (msgid-string)
   (let (ids)
     (dolist (token msgid-string ids)
@@ -2252,12 +2232,11 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
 (defun elmo-get-message-id-from-header (&optional when-invalid)
   (let ((msgid-field (std11-fetch-field "message-id")))
     (when msgid-field
-      (let ((msgid (elmo-get-message-id-from-field msgid-field)))
-	(or msgid
-	    (cond
-	     ((eq when-invalid 'none) nil)
-	     ((eq when-invalid 'msgdb) (concat "<" (std11-unfold-string msgid-field) ">"))
-	     (t (std11-unfold-string msgid-field))))))))
+      (or (elmo-get-message-id-from-field msgid-field)
+	  (cond
+	   ((eq when-invalid 'none) nil)
+	   ((eq when-invalid 'msgdb) (concat "<" (std11-unfold-string msgid-field) ">"))
+	   (t (std11-unfold-string msgid-field)))))))
 
 (defun elmo-get-message-id-from-buffer (&optional when-invalid)
   (save-excursion

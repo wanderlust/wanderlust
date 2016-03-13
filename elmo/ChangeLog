@@ -1,3 +1,8 @@
+2016-03-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-delete-cr-get-content-type)
+	(elmo-msgdb-get-last-message-id): Abolished.
+
 2016-03-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-nntp.el (elmo-nntp-folder-list-subfolders)
