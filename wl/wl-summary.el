@@ -1859,22 +1859,29 @@ If ARG is non-nil, checking is omitted."
 	  (i 0)
 	  update-list)
       (elmo-kill-buffer wl-summary-search-buf-name)
-      (while msgs
+      (elmo-with-progress-display (wl-summary-delete-messages (length msgs))
+	  "Delete messages on summary buffer"
 	(if (eq wl-summary-buffer-view 'thread)
-	    (progn
+	    (while msgs
 	      ;; don't use wl-append(nconc), because list is broken. ...why?
 	      (setq update-list
 		    (append update-list
-			    (wl-thread-delete-message (car msgs))))
-	      (setq update-list (delq (car msgs) update-list)))
+			    (wl-thread-delete-message (car msgs)))
+		    update-list (delq (car msgs) update-list)
+		    msgs (cdr msgs))
+	      (elmo-progress-notify 'wl-summary-delete-messages))
 	  (goto-char (point-min))
-	  (if (wl-summary-jump-to-msg (car msgs))
-	      (progn
-		(delete-region (point-at-bol) (point-at-eol))
-		(delete-char 1) ; delete '\n'
-		(setq wl-summary-buffer-number-list
-		      (delq (car msgs) wl-summary-buffer-number-list)))))
-	(setq msgs (cdr msgs)))
+	  (setq msgs (copy-sequence msgs))
+	  (let (number)
+	    (while (re-search-forward "^.*\r\\([0-9]+\\)\n" nil t)
+	      (when (memq (setq number (string-to-number (match-string 1)))
+			  msgs)
+		(setq msgs (delq number msgs)
+		      wl-summary-buffer-number-list
+		      (delq number wl-summary-buffer-number-list))
+		(goto-char (match-beginning 0)) ;; needed?
+		(delete-region (match-beginning 0) (match-end 0))
+		(elmo-progress-notify 'wl-summary-delete-messages))))))
       (when (eq wl-summary-buffer-view 'thread)
 	(let ((updates (elmo-sort-uniq-number-list update-list)))
 	  (elmo-with-progress-display (wl-thread-update-line (length updates))
