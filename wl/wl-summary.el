@@ -2150,22 +2150,12 @@ This function is defined for `window-scroll-functions'"
 (defun wl-summary-jump-to-msg (&optional number beg end)
   (interactive "NJump to Message (No.): ")
   (when number
-    (let ((pos (point))
-	  regexp)
-      (setq regexp (concat "\r" (number-to-string number) "[^0-9]"))
-      (if (and beg end (or (< pos beg) (< end pos)))
-	  (progn
-	    (goto-char beg)
-	    (if (re-search-forward regexp end t)
-		(progn (backward-char) (beginning-of-line) t)
-	      (goto-char pos)
-	      nil))
-	(beginning-of-line)
-	(if (or (and (re-search-forward regexp end t)
-		     (progn (backward-char) t))
-		(re-search-backward regexp beg t))
-	    (progn (beginning-of-line) t)
-	  nil)))))
+    (let ((pos (point)))
+      (goto-char (or beg (point-min)))
+      (if (search-forward (concat "\r" (number-to-string number) "\n") end t)
+	  (forward-line -1)
+	(goto-char pos)
+	nil))))
 
 (defun wl-summary-highlight-msgs (msgs)
   (save-excursion

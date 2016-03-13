@@ -1,5 +1,9 @@
 2016-03-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* wl-summary.el (wl-summary-jump-to-msg): Refactored.
+
+2016-03-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* wl-summary.el (wl-summary-delete-messages-on-buffer): Report
 	progress.  Improve performance of deleting many messages on
 	sequential view.
