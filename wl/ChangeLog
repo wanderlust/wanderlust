@@ -1,3 +1,12 @@
+2016-03-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Fix duplicated default value in promprt for read-buffer function.
+	* wl-util.el (wl-read-buffer): New function.
+
+	* wl-draft.el (wl-draft-mimic-kill-buffer): Use it
+
+	* wl-folder.el (wl-folder-mimic-kill-buffer): Use it.
+
 2016-03-09  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-summary.el (wl-summary-rescan, wl-summary-sync-update): Fix

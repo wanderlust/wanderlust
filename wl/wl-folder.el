@@ -36,10 +36,10 @@
 (require 'elmo)
 (require 'wl-vars)
 (require 'easymenu nil t) ; needed here.
+(require 'wl-util)
 
 (eval-when-compile
   (require 'cl)
-  (require 'wl-util)
   (provide 'wl-folder)
   (require 'wl)
   (require 'elmo-nntp))
@@ -2848,8 +2848,7 @@ Call `wl-summary-write-current-folder' with current folder name."
   "Kill the current (Folder) buffer with query."
   (interactive)
   (let* ((default (buffer-name))
-	 (bufname (read-buffer (format "Kill buffer: (default %s) " default)
-			       default))
+	 (bufname (wl-read-buffer "Kill buffer: " default))
          wl-interactive-exit)
     (if (or (not bufname)
 	    (string-equal bufname "")
