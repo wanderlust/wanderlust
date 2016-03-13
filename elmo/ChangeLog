@@ -2,6 +2,7 @@
 
 	* elmo-util.el (elmo-delete-cr-get-content-type)
 	(elmo-msgdb-get-last-message-id): Abolished.
+	(elmo-get-message-id-from-header): Remove redundant let().
 
 2016-03-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
