@@ -3028,6 +3028,7 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (defcustom wl-display-progress-threshold
   '((wl-folder-insert-entity . 100)
     (elmo-retrieve-message . 3000)
+    (elmo-list-diff . 10000)
     (t . 20))
   "*Displaying progress message if number of total are more than this value."
   :type '(choice (const :tag "No display" nil)

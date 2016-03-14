@@ -1,3 +1,8 @@
+2016-03-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-list-diff): Check equality of lists before
+	calculating diff.  Report progress.
+
 2016-03-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-util.el (elmo-delete-cr-get-content-type)
