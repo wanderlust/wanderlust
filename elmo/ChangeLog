@@ -1,5 +1,10 @@
 2016-03-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo.el (elmo-strict-folder-diff): Do not sort argmuent for
+	elmo-list-diff.
+
+2016-03-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* elmo-util.el (elmo-list-diff): Check equality of lists before
 	calculating diff.  Report progress.
 

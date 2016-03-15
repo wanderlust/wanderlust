@@ -1012,8 +1012,8 @@ If optional argument IF-EXISTS is nil, load on demand.
 
 (defsubst elmo-strict-folder-diff (folder)
   "Return folder diff information strictly from FOLDER."
-  (let ((in-db (sort (elmo-folder-list-messages folder nil 'in-msgdb) '<))
-	(in-folder  (elmo-folder-list-messages folder))
+  (let ((in-db (elmo-folder-list-messages folder nil 'in-msgdb))
+	(in-folder (elmo-folder-list-messages folder))
 	append-list delete-list diff)
     (cons (if (equal in-folder in-db)
 	      0
