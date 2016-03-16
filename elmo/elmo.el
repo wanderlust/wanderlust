@@ -1666,7 +1666,8 @@ If update process is interrupted, return nil.")
             (elmo-set-list
              '(diff-new diff-del)
              (elmo-list-diff (elmo-folder-list-messages folder)
-                             (elmo-folder-list-messages folder nil 'in-msgdb))))
+                             (elmo-folder-list-messages folder nil 'in-msgdb)
+			     "Getting diff between folder and msgdb")))
 	  (if diff-new
 	    (unless disable-killed
 	      (setq diff-new (elmo-living-messages diff-new killed-list))))

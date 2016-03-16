@@ -2003,11 +2003,12 @@ This function is defined for `window-scroll-functions'"
 		    num diff entity)
 		;; Setup sync-all
 		(if sync-all (wl-summary-sync-all-init))
-		(setq diff (elmo-list-diff (elmo-folder-list-messages
-					    folder
-					    (not disable-killed)
-					    'in-msgdb)
-					   wl-summary-buffer-number-list))
+		(setq diff
+		      (elmo-list-diff
+		       (elmo-folder-list-messages folder (not disable-killed)
+						  'in-msgdb)
+		       wl-summary-buffer-number-list
+		       "Getting diff between msgdb and summary buffer"))
 		(setq append-list (car diff))
 		(setq delete-list (cadr diff))
 

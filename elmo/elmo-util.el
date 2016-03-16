@@ -922,7 +922,7 @@ the directory becomes empty after deletion."
       (setq list (cdr list)))
     ret-val))
 
-(defun elmo-list-diff (list1 list2)
+(defun elmo-list-diff (list1 list2 &optional message)
   (if (equal list1 list2)
       (list nil nil)
     (let ((clist1 (sort (copy-sequence list1) #'<))
@@ -932,9 +932,9 @@ the directory becomes empty after deletion."
 	  (list nil nil)
 	(elmo-with-progress-display
 	    (elmo-list-diff (+ (length clist1) (length clist2)))
-	    "Getting diff of number lists"
+	    (or message "Getting diff of number lists")
 	  (while (and clist1 clist2)
-	    (cond ((= (car clist1) (car clist2))
+	    (cond ((eq (car clist1) (car clist2))
 		   (setq clist1 (cdr clist1)
 			 clist2 (cdr clist2))
 		   (elmo-progress-notify 'elmo-list-diff :inc 2))
