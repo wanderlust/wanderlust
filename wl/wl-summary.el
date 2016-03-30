@@ -1873,7 +1873,7 @@ If ARG is non-nil, checking is omitted."
 	  (goto-char (point-min))
 	  (setq msgs (copy-sequence msgs))
 	  (let (number)
-	    (while (re-search-forward "^.*\r\\([0-9]+\\)\n" nil t)
+	    (while (and msgs (re-search-forward "^.*\r\\([0-9]+\\)\n" nil t))
 	      (when (memq (setq number (string-to-number (match-string 1)))
 			  msgs)
 		(setq msgs (delq number msgs)
@@ -2007,8 +2007,7 @@ This function is defined for `window-scroll-functions'"
 		      (elmo-list-diff
 		       (elmo-folder-list-messages folder (not disable-killed)
 						  'in-msgdb)
-		       wl-summary-buffer-number-list
-		       "Getting diff between msgdb and summary buffer"))
+		       wl-summary-buffer-number-list))
 		(setq append-list (car diff))
 		(setq delete-list (cadr diff))
 

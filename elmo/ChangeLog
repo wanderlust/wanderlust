@@ -1,3 +1,10 @@
+2016-03-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo.el (elmo-folder-synchronize): Rvert the last change.
+
+	* elmo-util.el (elmo-list-diff): Revert optional argment and
+	progress report.  Check equality only when before sorting.
+
 2016-03-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-util.el (elmo-list-diff): New optional argument MESSAGE is
