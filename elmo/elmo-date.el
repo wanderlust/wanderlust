@@ -244,18 +244,22 @@ Otherwise treat \\ in NEWTEXT string as special:
   (let ((system-time-locale "C"))
     (format-time-string "%d-%b-%Y %T %z")))
 
-(defun elmo-time-less-p (lhs rhs)
-  (while (and (car lhs) (car rhs))
-    (cond ((car-less-than-car lhs rhs)
-	   (setq lhs nil))
-	  ((= (car lhs) (car rhs))
-	   (setq lhs (cdr lhs)
-		 rhs (cdr rhs)))
-	  (t
-	   (setq rhs nil))))
-  (not (null rhs)))
-
-(defalias 'elmo-time< 'elmo-time-less-p)
+(static-cond
+ ((fboundp 'time-less-p)
+  (defalias 'elmo-time-less-p 'time-less-p)
+  (defalias 'elmo-time< 'time-less-p))
+ (t
+  (defun elmo-time-less-p (lhs rhs)
+    (while (and (car lhs) (car rhs))
+      (cond ((car-less-than-car lhs rhs)
+	     (setq lhs nil))
+	    ((= (car lhs) (car rhs))
+	     (setq lhs (cdr lhs)
+		   rhs (cdr rhs)))
+	    (t
+	     (setq rhs nil))))
+    (not (null rhs)))
+  (defalias 'elmo-time< 'elmo-time-less-p)))
 
 (defun elmo-time-to-days (time)
   (let ((date (decode-time time)))

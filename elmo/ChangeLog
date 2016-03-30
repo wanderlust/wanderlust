@@ -1,5 +1,10 @@
 2016-03-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo-date.el (elmo-time-less-p, elmo-time<): Use time-less-p if
+	available.
+
+2016-03-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* elmo.el (elmo-folder-synchronize): Rvert the last change.
 
 	* elmo-util.el (elmo-list-diff): Revert optional argment and
