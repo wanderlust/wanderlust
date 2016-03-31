@@ -1170,6 +1170,19 @@ is enclosed by at least one regexp grouping construct."
      (if (> total 0) (floor (* (/ current (float total)) 100)) 0)
      action)))
 
+(defvar wl-progress-next-update-time nil)
+
+(defun wl-progress-set-next-update-time ()
+  (let ((time (current-time))
+	(l (floor wl-progress-update-interval))
+	usec)
+    (setq usec (+ (nth 2 time)
+		  (floor (* (- wl-progress-update-interval l) 1000000)))
+	  l (+ (/ usec 1000000) (nth 1 time) l)
+	  wl-progress-next-update-time (list (+ (/ l 65536) (car time))
+					     (logand l 65535)
+					     (% usec 1000000)))))
+
 (defun wl-progress-callback-function (label action current total)
   (case current
     (query
@@ -1180,11 +1193,17 @@ is enclosed by at least one regexp grouping construct."
        (and threshold
 	    (>= total threshold))))
     (start
+     (wl-progress-set-next-update-time)
      (message "%s..." action))
     (done
+     (wl-progress-set-next-update-time)
      (message "%s...done" action))
     (t
-     (when wl-display-progress-function
+     (when (and wl-display-progress-function
+		(or (null wl-progress-next-update-time)
+		    (elmo-time-less-p wl-progress-next-update-time
+				      (current-time))))
+       (wl-progress-set-next-update-time)
        (funcall wl-display-progress-function label action current total)))))
 
 ;; read multiple strings with completion

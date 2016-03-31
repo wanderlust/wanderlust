@@ -3047,6 +3047,11 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 		 (function :tag "Function"))
   :group 'wl-pref)
 
+(defcustom wl-progress-update-interval 0.3
+  "The minimum interval in seconds between displaying progress messages."
+  :type 'number
+  :group 'wl-pref)
+
 ;;; Internal variables
 (defvar wl-init nil)
 
