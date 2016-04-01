@@ -1270,7 +1270,9 @@ is enclosed by at least one regexp grouping construct."
 			 (null (featurep 'xemacs)))
 		    (format "%s(default %s) " prompt def)
 		  prompt)))
-    (read-buffer prompt def require-match predicate)))
+    (if (< emacs-major-version 25)
+	(read-buffer prompt def require-match)
+      (read-buffer prompt def require-match predicate))))
 
 (require 'product)
 (product-provide (provide 'wl-util) (require 'wl-version))
