@@ -1264,13 +1264,13 @@ is enclosed by at least one regexp grouping construct."
  (t
   (defalias 'wl-read-shell-command 'read-from-minibuffer)))
 
-(defun wl-read-buffer (prompt &optional def require-match predicate)
+(defun wl-read-buffer (prompt &optional def require-match)
   (let ((prompt (if (and def
 			 (< emacs-major-version 22)
 			 (null (featurep 'xemacs)))
 		    (format "%s(default %s) " prompt def)
 		  prompt)))
-    (read-buffer prompt def require-match predicate)))
+    (read-buffer prompt def require-match)))
 
 (require 'product)
 (product-provide (provide 'wl-util) (require 'wl-version))

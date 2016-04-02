@@ -1,3 +1,9 @@
+2016-04-01  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-util.el (wl-read-buffer): Remove 4th argument PREDICATE,
+	because Wanderlust doesn't use it and Emacs 24 and earlier don't
+	support it.
+
 2016-03-31  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Suppress too frequent progress report.
