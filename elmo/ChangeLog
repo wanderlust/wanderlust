@@ -1,3 +1,10 @@
+2016-04-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-localdir.el (elmo-folder-pack-numbers): Return t.  Report
+	progress.
+
+	* elmo-map.el (elmo-folder-pack-numbers): Likewise.
+
 2016-03-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-date.el (elmo-time-less-p, elmo-time<): Use time-less-p if

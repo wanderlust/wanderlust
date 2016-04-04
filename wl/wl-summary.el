@@ -4957,9 +4957,10 @@ If ARG is numeric number, decode message as following:
 
 (defun wl-summary-pack-number (&optional arg)
   (interactive "P")
-  (elmo-folder-pack-numbers wl-summary-buffer-elmo-folder)
-  (let (wl-use-scoring)
-    (wl-summary-rescan nil nil nil t)))
+  (if (elmo-folder-pack-numbers wl-summary-buffer-elmo-folder)
+      (let (wl-use-scoring)
+	(wl-summary-rescan nil nil nil t))
+    (error "This folder doesn't support packing numbers")))
 
 (defun wl-summary-target-mark-uudecode ()
   (interactive)

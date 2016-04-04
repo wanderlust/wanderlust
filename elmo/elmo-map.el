@@ -221,10 +221,11 @@ Return new location alist."
 			  (elmo-map-message-location folder old-number))
 		    location))
 	(elmo-emit-signal 'message-number-changed folder old-number number)
+	(elmo-progress-notify 'elmo-folder-pack-numbers)
 	(setq number (1+ number))))
-    (message "Packing...done")
     (elmo-location-map-setup folder (nreverse location))
-    (elmo-folder-set-msgdb-internal folder new-msgdb)))
+    (elmo-folder-set-msgdb-internal folder new-msgdb))
+  t)
 
 (luna-define-method elmo-folder-open-internal ((folder elmo-map-folder))
   (unless (elmo-location-map-alist folder)

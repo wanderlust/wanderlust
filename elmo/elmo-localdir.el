@@ -340,9 +340,10 @@
 	(elmo-msgdb-append-entity new-msgdb entity
 				  (elmo-msgdb-flags msgdb old-number))
 	(elmo-emit-signal 'message-number-changed folder old-number new-number)
+	(elmo-progress-notify 'elmo-folder-pack-numbers)
 	(setq new-number (1+ new-number))))
-    (message "Packing...done")
-    (elmo-folder-set-msgdb-internal folder new-msgdb)))
+    (elmo-folder-set-msgdb-internal folder new-msgdb))
+  t)
 
 (luna-define-method elmo-folder-message-file-p ((folder elmo-localdir-folder))
   t)
