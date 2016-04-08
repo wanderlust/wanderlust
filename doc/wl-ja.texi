@@ -569,7 +569,7 @@ Wanderlust $B$K8GM-$N@_Dj$O(B @file{~/.wl} $B$K5-=R$7$F$*$/$H@0M}$7$d$9$$$G$7
 $B$h$&$K$J$j$^$9!#(BWanderlust $B$r(B Emacs $B>e$NI8=`%a!<%i$H$7$F;H$$$?$$>l9g$O@_(B
 $BDj$7$F$*$/$HNI$$$G$7$g$&!#$?$@$7!"$3$l$O(B @code{mail-user-agent} $B$NDj5A$,(B
 $B2DG=$J(B Emacsen $B$N>l9g$N$_M-8z$G$9!#(B
-@xref{Mail Methods, , ,emacs-ja, The Emacs Editor}.
+@xref{Mail Methods, , Mail-Composition Methods, emacs-ja, GNU Emacs Manual}.
 
 @lisp
 @group
@@ -6443,7 +6443,7 @@ prefix argument $B$rIU$1$F(B @kbd{C-u M-x wl-summary-archive} $B$G<B9T$9$k$H!
 $B$3$N%9%3%"5!G=$O(B Gnus $B$N%9%3%"$H$[$\F1Ey$N5!G=$r;}$A!"$^$?%9%3%"%U%!%$%k$N(B
 $B=q<0$b$[$\F1$8$G$9!#$?$@$7!"4v$D$+$OL$BP1~$G$"$C$?$j(B Wanderlust $BFCM-$N5!G=(B
 $B$,$"$C$?$j$7$^$9!#(B
-@xref{Scoring, , ,gnus-ja, The gnus Newsreader}.
+@xref{Scoring, , ,gnus-ja, Gnus Manual}.
 
 @menu
 * Score Commands::             $B%9%3%"$K4X$9$k%3%^%s%I(B
@@ -6764,7 +6764,7 @@ Non-nil $B$J$i$P!"%5%^%jF14|;~$KL$FI(B/$B=EMW%^!<%/$bF14|$7$^$9!#(B
 $B%9%3%"%U%!%$%k$,$=$N$^$^MxMQ$G$-$^$9!#(B
 $B$?$@$7!"4v$D$+$N%-!<$OBP1~$7$F$$$J$+$C$?$j(B Wanderlust $BFCM-$N%-!<$,$"$C$?$j(B
 $B$7$^$9$N$G!"40A4$K8_49@-$,$"$k$o$1$G$O$"$j$^$;$s!#(B
-@xref{Score File Format, , ,gnus-ja, The gnus Newsreader}.
+@xref{Score File Format, , ,gnus-ja, Gnus Manual}.
 
 @lisp
 @group

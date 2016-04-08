@@ -1,3 +1,9 @@
+2016-04-09  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* doc/wl.texi: Update @xref for external documents.
+
+	* doc/wl-ja.texi: Likewise.
+
 2016-02-24  Erik Hetzner  <egh@e6h.org>
 
 	* wl-draft.wl (wl-draft-mimic-kill-buffer): Provide default to

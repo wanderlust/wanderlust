@@ -538,7 +538,7 @@ This means it enables you to run Wanderlust as a default mail composer
  of Emacsen.
 
 It is effective only when your Emacs can define @code{mail-user-agent}.
-@xref{Mail Methods, , ,emacs, The Emacs Editor}.
+@xref{Mail Methods, , Mail-Composition Methods, emacs, GNU Emacs Manual}.
 
 @lisp
 @group
@@ -6499,7 +6499,7 @@ on the ones you do not want to read, for example spam articles.
 This scoring function has a capability and a format similar to the one
 that Gnus has, although there are some unsupported features and
 Wanderlust specifics.
-@xref{Scoring, , ,gnus, The gnus Newsreader}.
+@xref{Scoring, , ,gnus, Gnus Manual}.
 
 @menu
 * Score Commands::             Score Commands
@@ -6824,7 +6824,7 @@ The initial setting is @code{t}.
 The format of score files are the same as Gnus, and basically you can
 use Gnus score files as they are.  But they are not fully compatible
 because some keys are not supported and there are Wanderlust specifics.
-@xref{Score File Format, , ,gnus, The gnus Newsreader}.
+@xref{Score File Format, , ,gnus, Gnus Manual}.
 
 @lisp
 @group
