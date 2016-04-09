@@ -4805,8 +4805,11 @@ a MIME user interface for GNU Emacs}.
 You can also see help by @kbd{C-c C-x ?} in draft buffer.
 
 If you save the draft buffer you are editing, it is appended to the
-folder specified by @code{wl-draft-folder}.  You can leave draft buffer
-after storing it for future editing by @kbd{C-c C-z} (@code{wl-draft-save-and-exit}).
+draft folder specified by @code{wl-draft-folder}.  You can leave draft
+buffer after storing it for future editing by @kbd{C-c C-z}
+(@code{wl-draft-save-and-exit}) and resume editing by pressing @kbd{E}
+(@code{wl-summary-reedit}) in the draft folder (@pxref{Key Bindings of
+Summary}).
 
 If you have finished editing, you can send message by @kbd{C-c C-c}.
 
@@ -5145,8 +5148,6 @@ Kills the current draft.
 @findex wl-draft-save-and-exit
 Saves the current draft, and erases the draft buffer.
 This is useful if you want to suspend editing of the draft.
-You can resume editing by pressing @kbd{E} (@code{wl-summary-reedit}) in
-the @samp{+draft} folder.
 (@code{wl-draft-save-and-exit})
 
 @item C-c C-r

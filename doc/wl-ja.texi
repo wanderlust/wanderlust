@@ -4793,7 +4793,8 @@ Non-nil $B$J$i!"@_Dj$5$l$?CM$r%I%i%U%H$N(B @samp{Bcc:} $B$H$7$F:G=i$+$iA^F~$7
 $BJT=8Cf$N%I%i%U%H$r%;!<%V$9$k$H!"(B@code{wl-draft-folder} $B$G@_Dj$7$?%I%i%U(B
 $B%H%U%)%k%@$KDI2C$5$l$^$9!#(B@kbd{C-c C-z} (@code{wl-draft-save-and-exit})
 $B$K$h$j!"8e$+$iJT=8$G$-$k$h$&$K$=$l$r%;!<%V$7$?>e$G%I%i%U%H%P%C%U%!$rN%C&(B
-$B$G$-$^$9!#(B
+$B$G$-$^$9!#%I%i%U%H%U%)%k%@$KF~$C$F(B @kbd{E} (@code{wl-summary-reedit}) $B$r(B
+$B2!$;$P!"JT=8$r:F3+$G$-$^$9(B (@pxref{Key Bindings of Summary})$B!#(B
 
 $B%a%C%;!<%8$NJT=8$,40N;$7$?$i!"(B@kbd{C-c C-c} $B$GAw?.$G$-$^$9!#(B
 
@@ -5128,8 +5129,6 @@ MIME $B$N%^%k%A%Q!<%H%a%C%;!<%8$N3NG'$K;H$&$HJXMx$G$9!#(B
 @findex wl-draft-save-and-exit
 $B8=:_$N%I%i%U%H$r%;!<%V$7!"%I%i%U%H%P%C%U%!$r>C5n$7$^$9!#(B
 $B%I%i%U%H$NJT=8$rCfCG$7$?$$$H$-$KJXMx$G$9!#(B
-@samp{+draft} $B%U%)%k%@$KF~$C$F(B @kbd{E} (@code{wl-summary-reedit} $B$r2!$;$P!"(B
-$BJT=8$r:F3+$G$-$^$9!#(B
 (@code{wl-draft-save-and-exit})
 
 @item C-c C-r
