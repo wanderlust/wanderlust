@@ -1,3 +1,9 @@
+2016-04-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl.el (wl-init): Add `elmo-quit' into kill-emacs-hook.
+	(wl-exit): Remove `elmo-quit' from kill-emacs-hook.
+	Cf. http://emacs.stackexchange.com/questions/21819/wanderlust-save-restore-queued-operations-accross-sessions
+
 2016-04-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-summary.el (wl-summary-pack-number): Do not rescan if current
