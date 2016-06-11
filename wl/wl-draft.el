@@ -2596,7 +2596,7 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
   ;; protect these -- to and subject get bound at some point, so it looks
   ;; to be necessary to protect the values used w/in
   (let ((wl-user-agent-headers-and-body-alist other-headers)
-	(wl-draft-use-frame (eq switch-function 'switch-to-buffer-other-frame))
+	(wl-draft-use-frame (or wl-draft-use-frame (eq switch-function 'switch-to-buffer-other-frame)))
 	(wl-draft-buffer-style switch-function)
 	tem)
     (if to
