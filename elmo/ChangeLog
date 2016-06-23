@@ -1,3 +1,13 @@
+2016-06-22  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* modb-standard.el (modb-standard-save-entity-1): Fix the problem
+	that large unneeded file is created instead of deleting.
+	(modb-standard-cleanup-stale-entities): Detect entity files
+	strictly.  Minor refactoring.
+	(modb-standard-save-entity): Fix the case that
+	modb-standard-divide-number is nil and the case that msgdb is
+	unmodified.
+
 2016-04-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-localdir.el (elmo-folder-pack-numbers): Return t.  Report
