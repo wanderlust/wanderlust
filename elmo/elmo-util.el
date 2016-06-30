@@ -540,7 +540,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
     (when (numberp default)
       (setq default (number-to-string default)))
     (setq prompt
-	  (apply 'concat prompt (when default `("(dafeult " ,default ") "))))
+	  (apply 'concat prompt (when default `("(default " ,default ") "))))
     (while (null (numberp
 		  (setq result
 			(condition-case nil
