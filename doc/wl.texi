@@ -3141,7 +3141,7 @@ To execute auto refile on all messages, set following.
 The buffer of the `sticky summary' does not killed by typing @kbd{q}.
 
 By entering the summary by typing @kbd{Shift RET} in Folder mode or
-@kbd{G} in some suummary sticky summary buffer is created.
+@kbd{G} in some summary sticky summary buffer is created.
 Also typing @kbd{M-s} (@code{wl-summary-stick}) on the normal summary
 makes current one sticky.
 
@@ -8855,7 +8855,7 @@ this value as @code{iso-2022-jp}.)
 
 @item wl-highlight-folder-with-icon
 @vindex wl-highlight-folder-with-icon
-This is meaningful for XEmacs or Emacs 21..  The initial setting depends
+This is meaningful for XEmacs or Emacs 21.  The initial setting depends
 on Emacsen (@code{t} for XEmacs or Emacs 21 with icons).
 
 @item wl-strict-diff-folders
