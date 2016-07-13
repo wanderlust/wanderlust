@@ -765,33 +765,39 @@ that `read' can handle, whenever this is possible."
 
  (t
   (defun wl-biff-stop ()
-    (when (get 'wl-biff 'timer)
-      (cancel-timer (get 'wl-biff 'timer))))
+    (mapc (lambda (elt)
+	    (when (timerp elt) (cancel-timer elt)))
+	  (get 'wl-biff 'timers))
+    (put 'wl-biff 'timers nil))
 
   (defun wl-biff-start ()
     (require 'timer)
-    (when wl-biff-check-folder-list
-      (if wl-biff-use-idle-timer
-	  (if (get 'wl-biff 'timer)
-	      (progn (timer-set-idle-time (get 'wl-biff 'timer)
-					  wl-biff-check-interval t)
-		     (timer-activate-when-idle (get 'wl-biff 'timer)))
-	    (put 'wl-biff 'timer
-		 (run-with-idle-timer
-		  wl-biff-check-interval t 'wl-biff-event-handler)))
-	(if (get 'wl-biff 'timer)
-	    (progn
-	      (timer-set-time (get 'wl-biff 'timer)
-			      (timer-next-integral-multiple-of-time
-			       (current-time) wl-biff-check-interval)
-			      wl-biff-check-interval)
-	      (timer-activate (get 'wl-biff 'timer)))
-	  (put 'wl-biff 'timer
-	       (run-at-time
-		(timer-next-integral-multiple-of-time
-		 (current-time) wl-biff-check-interval)
-		wl-biff-check-interval
-		'wl-biff-event-handler))))))
+    (if wl-biff-check-folder-list
+	(let ((timers (get 'wl-biff 'timers)))
+	  (if wl-biff-use-idle-timer
+	      (if (car timers)
+		  (progn (timer-set-idle-time
+			  (car timers) wl-biff-check-interval)
+			 (timer-activate-when-idle (car timers)))
+		(put 'wl-biff 'timers
+		     (list
+		      (run-with-idle-timer
+		       wl-biff-check-interval nil 'wl-biff-event-handler))))
+	    (if (car timers)
+		(progn
+		  (timer-set-time (car timers)
+				  (timer-next-integral-multiple-of-time
+				   (current-time) wl-biff-check-interval)
+				  wl-biff-check-interval)
+		  (timer-activate (car timers)))
+	      (put 'wl-biff 'timers
+		   (list (run-at-time
+			  (timer-next-integral-multiple-of-time
+			   (current-time) wl-biff-check-interval)
+			  wl-biff-check-interval
+			  'wl-biff-event-handler))))))
+      (message "No folder is specified for biff")
+      (wl-biff-stop)))
 
   (defun-maybe timer-next-integral-multiple-of-time (time secs)
     "Yield the next value after TIME that is an integral multiple of SECS.
@@ -827,15 +833,32 @@ This function is imported from Emacs 20.7."
 
   (defun wl-biff-event-handler ()
     ;; PAKURing from FSF:time.el
-    (wl-biff-check-folders)
+    (condition-case signal
+	(wl-biff-check-folders)
+      (error
+       (message "wl-biff: %s (%s)" (car signal) (cdr signal))))
+    (message "Starting to chcek new mail...done")
     ;; Do redisplay right now, if no input pending.
     (sit-for 0)
-    (let ((timer (get 'wl-biff 'timer))
+    (let ((timer (car (get 'wl-biff 'timers)))
 	  (access-functions (eval-when-compile (fboundp 'timer--time))))
       ;; Only normal timer should be checked for skipping.
-      (unless (if access-functions
-		  (timer--idle-delay timer)
-		(aref timer 7))
+      (if (if access-functions
+	      (timer--idle-delay timer)
+	    (aref timer 7))
+	  (progn
+	    (mapc (lambda (elt)
+		    (when (timerp elt) (cancel-timer elt)))
+		  (get 'wl-biff 'timers))
+	    (timer-set-idle-time timer wl-biff-check-interval)
+	    (timer-activate-when-idle timer)
+	    (put 'wl-biff 'timers
+		 (list timer
+		       (when (fboundp 'current-idle-time)
+			 (run-with-idle-timer
+			  (+ wl-biff-check-interval
+			     (time-to-seconds (current-idle-time)))
+			  nil 'wl-biff-event-handler)))))
 	(let ((current (current-time))
 	      (next-time
 	       ;; Compute the time when this timer will run again, next.
@@ -858,7 +881,9 @@ This function is imported from Emacs 20.7."
 		(timer-set-time timer (timer-next-integral-multiple-of-time
 				       current wl-biff-check-interval)
 				wl-biff-check-interval)
-		(timer-activate timer)))))))))
+		(timer-activate timer))))))
+    ))
+
 
 (defsubst wl-biff-notify (new-mails notify-minibuf)
   (when (and (not wl-modeline-biff-status) (> new-mails 0))

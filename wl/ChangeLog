@@ -1,3 +1,14 @@
+2016-07-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-util.el (wl-biff-start, wl-biff-stop, wl-biff-event-handler):
+	Periodically check new mail even when wl-biff-use-idle-timer is
+	non-nil and Emacs keeps idle.
+
+2016-07-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-util.el (wl-biff-event-handler): Handle errors of
+	wl-biff-check-folders function.
+
 2016-04-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl.el (wl-init): Add `elmo-quit' into kill-emacs-hook.
