@@ -1,8 +1,23 @@
+2016-07-14  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-vars.el (wl-biff-use-idle-timer): Update docstring.
+	(wl-biff-check-delay): New customizable variable.
+	(wl-biff-check-interval): Change variable type from integer to
+	number.
+
+	* wl-util.el (wl-biff-launch-handler) [Emacs]: New function.
+	(timer-next-integral-multiple-of-time) [Emacs]: Removed.
+	(wl-biff-start) [Emacs]: Run non-repeat timer.  Use
+	wl-biff-launch-handler instead of wl-biff-event-handler when
+	wl-biff-use-idle-timer is nil.
+	(wl-biff-event-handler) [Emacs]: Start next timer here.
+
 2016-07-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
-	* wl-util.el (wl-biff-start, wl-biff-stop, wl-biff-event-handler):
-	Periodically check new mail even when wl-biff-use-idle-timer is
-	non-nil and Emacs keeps idle.
+	* wl-util.el (wl-biff-start, wl-biff-stop, wl-biff-event-handler)
+	[Emacs]: Periodically check new mail even when
+	wl-biff-use-idle-timer is non-nil and Emacs keeps idle for a long
+	time on Emacs 22 or later.
 
 2016-07-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 

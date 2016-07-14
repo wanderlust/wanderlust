@@ -773,63 +773,20 @@ that `read' can handle, whenever this is possible."
   (defun wl-biff-start ()
     (require 'timer)
     (if wl-biff-check-folder-list
-	(let ((timers (get 'wl-biff 'timers)))
-	  (if wl-biff-use-idle-timer
-	      (if (car timers)
-		  (progn (timer-set-idle-time
-			  (car timers) wl-biff-check-interval)
-			 (timer-activate-when-idle (car timers)))
-		(put 'wl-biff 'timers
-		     (list
-		      (run-with-idle-timer
-		       wl-biff-check-interval nil 'wl-biff-event-handler))))
-	    (if (car timers)
-		(progn
-		  (timer-set-time (car timers)
-				  (timer-next-integral-multiple-of-time
-				   (current-time) wl-biff-check-interval)
-				  wl-biff-check-interval)
-		  (timer-activate (car timers)))
-	      (put 'wl-biff 'timers
-		   (list (run-at-time
-			  (timer-next-integral-multiple-of-time
-			   (current-time) wl-biff-check-interval)
-			  wl-biff-check-interval
-			  'wl-biff-event-handler))))))
-      (message "No folder is specified for biff")
-      (wl-biff-stop)))
+	;; If biff timer already started, do nothing.
+	(unless (get 'wl-biff 'timers)
+	  (put 'wl-biff 'timers
+	       (if wl-biff-use-idle-timer
+		   (list (run-with-idle-timer
+			  wl-biff-check-interval nil 'wl-biff-event-handler))
+		 (list (run-at-time wl-biff-check-interval nil
+				    'wl-biff-launch-handler)))))
+      (message "No folder is specified for biff")))
 
-  (defun-maybe timer-next-integral-multiple-of-time (time secs)
-    "Yield the next value after TIME that is an integral multiple of SECS.
-More precisely, the next value, after TIME, that is an integral multiple
-of SECS seconds since the epoch.  SECS may be a fraction.
-This function is imported from Emacs 20.7."
-    (let ((time-base (ash 1 16)))
-      (if (fboundp 'atan)
-	  ;; Use floating point, taking care to not lose precision.
-	  (let* ((float-time-base (float time-base))
-		 (million 1000000.0)
-		 (time-usec (+ (* million
-				  (+ (* float-time-base (nth 0 time))
-				     (nth 1 time)))
-			       (nth 2 time)))
-		 (secs-usec (* million secs))
-		 (mod-usec (mod time-usec secs-usec))
-		 (next-usec (+ (- time-usec mod-usec) secs-usec))
-		 (time-base-million (* float-time-base million)))
-	    (list (floor next-usec time-base-million)
-		  (floor (mod next-usec time-base-million) million)
-		  (floor (mod next-usec million))))
-	;; Floating point is not supported.
-	;; Use integer arithmetic, avoiding overflow if possible.
-	(let* ((mod-sec (mod (+ (* (mod time-base secs)
-				   (mod (nth 0 time) secs))
-				(nth 1 time))
-			     secs))
-	       (next-1-sec (+ (- (nth 1 time) mod-sec) secs)))
-	  (list (+ (nth 0 time) (floor next-1-sec time-base))
-		(mod next-1-sec time-base)
-		0)))))
+
+  (defun wl-biff-launch-handler ()
+    (put 'wl-biff 'timers
+	 (run-with-idle-timer wl-biff-check-delay nil 'wl-biff-event-handler)))
 
   (defun wl-biff-event-handler ()
     ;; PAKURing from FSF:time.el
@@ -837,52 +794,22 @@ This function is imported from Emacs 20.7."
 	(wl-biff-check-folders)
       (error
        (message "wl-biff: %s (%s)" (car signal) (cdr signal))))
-    (message "Starting to chcek new mail...done")
     ;; Do redisplay right now, if no input pending.
     (sit-for 0)
-    (let ((timer (car (get 'wl-biff 'timers)))
-	  (access-functions (eval-when-compile (fboundp 'timer--time))))
-      ;; Only normal timer should be checked for skipping.
-      (if (if access-functions
-	      (timer--idle-delay timer)
-	    (aref timer 7))
-	  (progn
-	    (mapc (lambda (elt)
-		    (when (timerp elt) (cancel-timer elt)))
-		  (get 'wl-biff 'timers))
-	    (timer-set-idle-time timer wl-biff-check-interval)
-	    (timer-activate-when-idle timer)
-	    (put 'wl-biff 'timers
-		 (list timer
-		       (when (fboundp 'current-idle-time)
-			 (run-with-idle-timer
-			  (+ wl-biff-check-interval
-			     (time-to-seconds (current-idle-time)))
-			  nil 'wl-biff-event-handler)))))
-	(let ((current (current-time))
-	      (next-time
-	       ;; Compute the time when this timer will run again, next.
-	       (if access-functions
-		   (timer-relative-time
-		    (timer--time timer) (* 5 (timer--repeat-delay timer)))
-		 (timer-relative-time
-		  (list (aref timer 1) (aref timer 2) (aref timer 3))
-		  (* 5 (aref timer 4))))))
-	  ;; If the activation time is far in the past,
-	  ;; skip executions until we reach a time in the future.
-	  ;; This avoids a long pause if Emacs has been suspended for hours.
-	  (or (> (nth 0 next-time) (nth 0 current))
-	      (and (= (nth 0 next-time) (nth 0 current))
-		   (> (nth 1 next-time) (nth 1 current)))
-	      (and (= (nth 0 next-time) (nth 0 current))
-		   (= (nth 1 next-time) (nth 1 current))
-		   (> (nth 2 next-time) (nth 2 current)))
-	      (progn
-		(timer-set-time timer (timer-next-integral-multiple-of-time
-				       current wl-biff-check-interval)
-				wl-biff-check-interval)
-		(timer-activate timer))))))
-    ))
+    (wl-biff-stop)
+    (wl-biff-start)
+    (let ((idle (and wl-biff-use-idle-timer
+		     ;; Available on Emacs 22 or later.
+		     (fboundp 'current-idle-time)
+		     (current-idle-time))))
+      (when idle
+	;; Run idle timer for the case Emacs keeps idle.
+	(put 'wl-biff 'timers
+	     (cons (run-with-idle-timer
+		    (+ wl-biff-check-interval (float-time idle))
+		    nil 'wl-biff-event-handler)
+		   (get 'wl-biff 'timers))))))
+  ))
 
 
 (defsubst wl-biff-notify (new-mails notify-minibuf)

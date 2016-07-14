@@ -2243,11 +2243,17 @@ every intervals specified by `wl-biff-check-interval'."
 
 (defcustom wl-biff-check-interval 40
   "Number of seconds between updates of new mails in the mode line."
-  :type 'integer
+  :type 'number
+  :group 'wl-setting)
+
+(defcustom wl-biff-check-delay 0
+  "After interval specified by `wl-biff-check-interval', automatically checking new mail will start when Emacs keeps idle longer than specified seconds by this varaible.
+It has no effect on XEmacs or for the case which `wl-biff-use-idle-timer' is non-nil."
+  :type 'number
   :group 'wl-setting)
 
 (defcustom wl-biff-use-idle-timer nil
-  "Non-nil to use idle timer instead of strict timer for wl-biff"
+  "Non-nil means that Emacs will not use normal timer for wl-biff."
   :type 'boolean
   :group 'wl-setting)
 
