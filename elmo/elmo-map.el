@@ -66,11 +66,8 @@
    (elmo-msgdb-location-load directory)))
 
 (defun elmo-location-map-save (location-map directory)
-  (let ((alist (elmo-location-map-alist location-map)))
-    (elmo-msgdb-location-save
-     directory
-     (cons (cons (elmo-location-map-max-number location-map) nil)
-	   alist))))
+  (elmo-msgdb-location-save
+   directory (elmo-location-map-alist location-map)))
 
 (defun elmo-location-map-setup (location-map &optional locations)
   "Setup internal data of LOCATION-MAP by LOCATIONS.

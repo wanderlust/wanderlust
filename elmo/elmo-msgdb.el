@@ -410,10 +410,15 @@ header separator."
   (nth 1 (elmo-folder-get-info folder)))
 
 (defsubst elmo-msgdb-location-load (dir)
-  (elmo-object-load
-   (expand-file-name
-    elmo-msgdb-location-filename
-    dir)))
+  (let ((result (elmo-object-load
+		 (expand-file-name
+		  elmo-msgdb-location-filename
+		  dir))))
+    ;; The leading elements may be a list contains only max-number.
+    (when result
+      (while (null (cdar result))
+	(setq result (cdr result))))
+    result))
 
 (defsubst elmo-msgdb-location-add (alist number location)
   (let ((ret-val alist))
@@ -423,9 +428,8 @@ header separator."
 
 (defsubst elmo-msgdb-location-save (dir alist)
   (elmo-object-save
-   (expand-file-name
-    elmo-msgdb-location-filename
-    dir) alist))
+   (expand-file-name elmo-msgdb-location-filename dir)
+   alist))
 
 ;;; For backward compatibility.
 (defsubst elmo-msgdb-overview-entity-get-number (entity)
