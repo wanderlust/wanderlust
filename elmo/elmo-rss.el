@@ -389,6 +389,10 @@ Setting this to true will annoy the pedants."
 (luna-define-method elmo-folder-local-p ((folder elmo-rss-folder))
   nil)
 
+(luna-define-method elmo-message-use-cache-p ((folder elmo-rss-folder)
+                                              number)
+  t)
+
 (luna-define-method elmo-folder-close-internal :after ((folder elmo-rss-folder))
   (elmo-rss-folder-set-downloaded-internal folder nil)
   (elmo-rss-folder-set-entries-internal folder nil)
