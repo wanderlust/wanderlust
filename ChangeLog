@@ -1,3 +1,9 @@
+2016-07-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* doc/wl.texi (Biff): Adapt to recent change.
+
+	* doc/wl-ja.texi (Biff): Ditto.
+
 2016-07-04  Piotr Trojanek <piotr.trojanek@altran.com>
 
 	* doc/wl.texi (Sticky Summary, Customizable Variables): Fix typo.

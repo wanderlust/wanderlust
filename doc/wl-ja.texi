@@ -8284,7 +8284,14 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 @item wl-biff-check-interval
 @vindex wl-biff-check-interval
 $B=i4|@_Dj$O(B 40 ($BC10L(B:$BIC(B)$B!#(B
-$B$3$NCM$4$H$K%a!<%kCe?.$N%A%'%C%/$r9T$J$$$^$9!#(B
+$B$3$NCM$4$H$K%a!<%kCe?.$N%A%'%C%/$r9T$J$*$&$H$7$^$9!#(B
+
+@item wl-biff-check-delay
+@vindex wl-biff-check-delay
+$B=i4|@_Dj$O(B 0 ($BC10L(B:$BIC(B)$B!#(B
+@code{wl-biff-check-interval} $B$G;XDj$7$?;~4V$,7P2a$7!"$+$D!"(B
+$B$3$NJQ?t$G;XDj$5$l$?;~4V$@$1%"%$%I%k>uBV$,B3$$$?>l9g$K%A%'%C%/$r9T$$$^$9!#(B
+XEmacs $B$G$OL58z$G$9!#(B
 
 @item wl-biff-use-idle-timer
 @vindex wl-biff-use-idle-timer
@@ -8301,8 +8308,12 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 (setq wl-biff-notify-hook '(ding))
 @end lisp
 $B2;$rLD$i$7$?$j$7$J$$>l9g$O(B @code{nil} $B$K@_Dj$7$F$/$@$5$$!#(B
-@end table
 
+@item wl-biff-unnotify-hook
+@vindex wl-biff-unnotify-hook
+$BA02s$N%A%'%C%/$G?7$7$$%a!<%k$,FO$$$F$*$j!"(B
+$B:#2s$N%A%'%C%/$G?7$7$$%a!<%k$,L5$/$J$C$?:]$K<B9T$5$l$k%U%C%/!#(B
+@end table
 
 @node Password Management, Split messages, Biff, Advanced Issues
 @section $B%Q%9%o!<%I$N4IM}(B

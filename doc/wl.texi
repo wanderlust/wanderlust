@@ -8363,6 +8363,13 @@ If @code{nil}, wl doesn't check mail arrival.
 The initial setting is 40 (in seconds).
 Check mail arrival in this period.
 
+@item wl-biff-check-delay
+@vindex wl-biff-check-delay
+The initial setting is 0 (in seconds).
+Check mail when the time spcified by @code{wl-biff-check-interval} has
+passed and idling time exceeds specified seconds by this variable.
+This is ignored on XEmacs.
+
 @item wl-biff-use-idle-timer
 @vindex wl-biff-use-idle-timer
 The initial setting is @code{nil}.
@@ -8373,11 +8380,16 @@ mail arrival when idling time exceeds @code{wl-biff-check-interval}.
 @item wl-biff-notify-hook
 @vindex wl-biff-notify-hook
 This hook is run at the arrival of new mail.
-To beep with mail arrival(initial setting), set as follows.
+To beep with mail arrival (initial setting), set as follows.
 @lisp
 (setq wl-biff-notify-hook '(ding))
 @end lisp
 For silence, set to @code{nil}.
+
+@item wl-biff-unnotify-hook
+@vindex wl-biff-unnotify-hook
+This hook is run if there were new mails at the last check and there is
+no new mail at the current check.
 @end table
 
 
