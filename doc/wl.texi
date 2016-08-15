@@ -8404,7 +8404,7 @@ since encoded plain passwords are there.
 If you invoke @kbd{M-x elmo-passwd-alist-save} while you have stored
 passwords, then they are saved on the file, and it will save you to
 input passwords. In this case, the risk that someone reads your
-keystroke might decrease, but please not that plain passwords are
+keystroke might decrease, but please note that plain passwords are
 stored on a file. You should treat them very carefully.
 To remove saved passwords on file, invoke @kbd{M-x elmo-passwd-alist-clear}
 and then @kbd{M-x elmo-passwd-alist-save}.
