@@ -7057,7 +7057,7 @@ the program @command{ldapsearch}.
 @section Address Manager
 @cindex Address Manager
 
-You can type @kbd{C-c C-a} to enter address manger mode.  you can edit
+You can type @kbd{C-c C-a} to enter address manger mode.  You can edit
 the address book and insert address to draft buffer.
 
 @subsection Key Bindings
