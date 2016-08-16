@@ -626,62 +626,17 @@ Return value is a cons cell of (STRUCTURE . REST)"
   (let (pass-cons)
     (while (setq pass-cons (assoc key elmo-passwd-alist))
       (unwind-protect
-	  (fillarray (cdr pass-cons) 0)
+	  (clear-string (cdr pass-cons))
 	(setq elmo-passwd-alist
 	      (delete pass-cons elmo-passwd-alist))))))
 
-(defmacro elmo-read-char-exclusive ()
-  (cond ((featurep 'xemacs)
-	 '(let ((table (quote ((backspace . ?\C-h) (delete . ?\C-?)
-			       (left . ?\C-h))))
-		event key)
-	    (while (not
-		    (and
-		     (key-press-event-p (setq event (next-command-event)))
-		     (setq key (or (event-to-character event)
-				   (cdr (assq (event-key event) table)))))))
-	    key))
-	((fboundp 'read-char-exclusive)
-	 '(read-char-exclusive))
-	(t
-	 '(read-char))))
-
 (defun elmo-read-passwd (prompt &optional stars)
   "Read a single line of text from user without echoing, and return it."
-  (let ((ans "")
-	(c 0)
-	(echo-keystrokes 0)
-	(cursor-in-echo-area t)
-	(log-message-max-size 0)
-	message-log-max	done msg truncate)
-    (while (not done)
-      (if (or (not stars) (string= "" ans))
-	  (setq msg prompt)
-	(setq msg (concat prompt (make-string (length ans) ?.)))
-	(setq truncate
-	      (1+ (- (length msg) (window-width (minibuffer-window)))))
-	(and (> truncate 0)
-	     (setq msg (concat "$" (substring msg (1+ truncate))))))
-      (message "%s" msg)
-      (setq c (elmo-read-char-exclusive))
-      (cond ((= c ?\C-g)
-	     (setq quit-flag t
-		   done t))
-	    ((or (= c ?\r) (= c ?\n) (= c ?\e))
-	     (setq done t))
-	    ((= c ?\C-u)
-	     (setq ans ""))
-	    ((and (/= c ?\b) (/= c ?\177))
-	     (setq ans (concat ans (char-to-string c))))
-	    ((> (length ans) 0)
-	     (setq ans (substring ans 0 -1)))))
-    (if quit-flag
-	(prog1
-	    (setq quit-flag nil)
-	  (message "Quit")
-	  (beep t))
-      (message "")
-      ans)))
+  ; Binding read-hide-char to nil does not currently work in GNU Emacs,
+  ; but it is most likely a bug. Anyway, in WL this is never used, as
+  ; start is always explicitly set to t.
+  (let ((read-hide-char (if stars read-hide-char nil)))
+    (read-passwd prompt)))
 
 (defun elmo-string-to-list (string)
   (read (concat "(" string ")")))
