@@ -48,12 +48,12 @@
   :group 'wl-addrmgr)
 
 (defcustom wl-addrmgr-default-sort-key 'realname
-  "Default element for sort."
+  "Default key for sorting."
   :type '(choice '(address realname petname none))
   :group 'wl-addrmgr)
 
 (defcustom wl-addrmgr-default-sort-order 'ascending
-  "Default element for sort."
+  "Default sorting order."
   :type '(choice '(ascending descending))
   :group 'wl-addrmgr)
 
@@ -88,7 +88,7 @@
   :group 'wl-addrmgr)
 
 (defcustom wl-addrmgr-default-method 'local
-  "Default access method for address entries."
+  "Default access method for address entries." ;; ???
   :type 'symbol
   :group 'wl-addrmgr)
 
@@ -178,7 +178,7 @@ See info under Wanderlust for full documentation.
      ","))))
 
 (defun wl-addrmgr-pickup-entry-list (buffer)
-  "Return a list of address entiry from BUFFER."
+  "Return a list of address entries from BUFFER."
   (when buffer
     (with-current-buffer buffer
       (mapcar
@@ -195,7 +195,7 @@ See info under Wanderlust for full documentation.
 	 ","))))))
 
 (defun wl-addrmgr-merge-entries (base-list append-list)
-  "Return a merged list of address entiry."
+  "Return a merged list of address entries."
   (dolist (entry append-list)
     (unless (assoc (car entry) base-list)
       (setq base-list (nconc base-list (list entry)))))
@@ -259,7 +259,7 @@ See info under Wanderlust for full documentation.
   (wl-addrmgr-redraw))
 
 (defun wl-addrmgr-redraw ()
-  "Redraw addresses entries."
+  "Redraw address entries."
   (interactive)
   (let ((rcpt (wl-addrmgr-mark-check)))
     (wl-addrmgr-draw (list (cons 'to (nth 0 rcpt))
@@ -406,7 +406,7 @@ Return nil if no ADDRESS exists."
 	(switch-to-buffer-other-window draft-buffer))))
 
 (defun wl-addrmgr-quit ()
-  "Exit from electric reference mode without inserting reference."
+  "Exit from electric reference mode without inserting reference." ;; ???
   (interactive)
   (let ((rcpt (wl-addrmgr-mark-check)))
     (if (or (nth 0 rcpt)
