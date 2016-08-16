@@ -29,20 +29,20 @@ System Requirements
 Select MIME Module
 ==================
 
-  For each Emacsen, Recommended combination of MIME module package
+  For each Emacsen, recommended combination of MIME module package
   follows.
 
   (a) XEmacs 21.1 or later
 
 	APEL 10.8, FLIM 1.14.9, SEMI 1.14.6
 
-    Installation as a XEmacs package, If possible.
+    Installation as a XEmacs package, if possible.
 
   (b) Emacs 20.4 or later
 
 	APEL 10.8, FLIM 1.14.9, SEMI 1.14.6
 
- (c) Emacs 20.1 to 20.3
+  (c) Emacs 20.1 to 20.3
 
 	APEL 10.8, CLIME 1.14.6, SEMI 1.14.6
 
