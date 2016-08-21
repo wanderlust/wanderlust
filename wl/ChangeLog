@@ -1,3 +1,7 @@
+2016-08-21  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* wl-addrmgr.el: Fix docstrings.
+
 2016-07-14  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-vars.el (wl-biff-use-idle-timer): Update docstring.

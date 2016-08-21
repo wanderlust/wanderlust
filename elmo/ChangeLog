@@ -1,15 +1,6 @@
 2016-08-21  Piotr Trojanek  <piotr.trojanek@gmail.com>
 
-	* INSTALL: Typografic fixes.
-
-	* elmo/elmo-util.el: Extra blank line removed.
-
-	* doc/wl.texi: Fix typos and grammar in folder and address manager
-	documentation.
-
-	* .gitignore: Added.
-
-	* wl/wl-addrmgr.el: Fix docstrings.
+	* elmo-util.el: Extra blank line removed.
 
 2016-07-28  Juliusz Chroboczek  <jch@pps.univ-paris-diderot.fr>
 

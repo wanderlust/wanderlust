@@ -1,3 +1,12 @@
+2016-08-21  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* .gitignore: Added.
+
+	* INSTALL: Typografic fixes.
+
+	* doc/wl.texi: Fix typos and grammar in folder and address manager
+	documentation.
+
 2016-08-11  Piotr Trojanek <piotr.trojanek@altran.com>
 
 	* doc/wl.texi (Password Management): Fix typo.
