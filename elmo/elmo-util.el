@@ -710,7 +710,6 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	      tlist)))
     str))
 
-
 (defun elmo-plug-on-by-servers (alist &optional servers)
   (let ((server-list (or servers elmo-plug-on-servers)))
     (catch 'plugged

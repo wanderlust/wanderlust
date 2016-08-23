@@ -2008,10 +2008,10 @@ It changes its color if it has many new messages.
 
 The whole folder mode is a folder group named @samp{Desktop}.
 Folder group open/close by return key.
-A operation to a folder group is treated as operations on the
+An operation on a folder group is treated as operations on the
 children folders.
 For example, when you type @kbd{s} on @samp{[-]Emacsen},
-six children folders update its unread number status.
+seven children folders update their unread number status.
 
 @subsubsection Select Folder
 
@@ -2186,7 +2186,7 @@ Search the folders with the condition specified.
 @item o
 @kindex o (Folder)
 @findex wl-folder-open-all-unread-folder
-All unread folder is opened.
+All unread folders are opened.
 (@code{wl-folder-open-all-unread-folder})
 
 @item x
@@ -2204,13 +2204,13 @@ Folder group is opened/closed.
 @item [
 @kindex [ (Folder)
 @findex wl-folder-open-all
-All folder group is opened.
+All folder groups are opened.
 (@code{wl-folder-open-all})
 
 @item ]
 @kindex ] (Folder)
 @findex wl-folder-close-all
-All folder group is closed.
+All folder groups are closed.
 (@code{wl-folder-close-all})
 
 @item q
@@ -7057,7 +7057,7 @@ the program @command{ldapsearch}.
 @section Address Manager
 @cindex Address Manager
 
-You can type @kbd{C-c C-a} to enter address manger mode.  you can edit
+You can type @kbd{C-c C-a} to enter address manger mode.  You can edit
 the address book and insert address to draft buffer.
 
 @subsection Key Bindings

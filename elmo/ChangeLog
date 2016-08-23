@@ -1,3 +1,7 @@
+2016-08-21  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* elmo-util.el: Extra blank line removed.
+
 2016-07-28  Juliusz Chroboczek  <jch@pps.univ-paris-diderot.fr>
 
 	RSS folder now uses cahce to enable searching text.  Please remove
@@ -15,7 +19,7 @@
 	No one use it and elmo-location-map-load function assumes it is
 	not contained.
 
-2016-06-30  Piotr Trojanek <piotr.trojanek@altran.com>
+2016-06-30  Piotr Trojanek <piotr.trojanek@gmail.com>
 
 	* elmo-util.el (elmo-read-number): Fix typo.
 

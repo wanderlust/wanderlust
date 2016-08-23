@@ -1,0 +1,5 @@
+# byte-compiled emacs code
+*.elc
+
+# auto-generated elisp version of NEWS
+wl-news.el
