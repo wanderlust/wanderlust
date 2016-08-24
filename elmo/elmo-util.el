@@ -580,7 +580,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
   (interactive)
   (dolist (pair elmo-passwd-alist)
     (when (stringp (cdr-safe pair))
-      (fillarray (cdr pair) 0)))
+      (elmo-clear-string (cdr pair))))
   (setq elmo-passwd-alist nil))
 
 (defun elmo-passwd-alist-save ()
@@ -611,7 +611,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
     (if pair
 	(elmo-base64-decode-string (cdr pair))
       (setq pass (elmo-read-passwd (format "Password for %s: "
-					   key) t))
+					   key)))
       (setq elmo-passwd-alist
 	    (append elmo-passwd-alist
 		    (list (cons key
@@ -626,17 +626,12 @@ Return value is a cons cell of (STRUCTURE . REST)"
   (let (pass-cons)
     (while (setq pass-cons (assoc key elmo-passwd-alist))
       (unwind-protect
-	  (clear-string (cdr pass-cons))
+	  (elmo-clear-string (cdr pass-cons))
 	(setq elmo-passwd-alist
 	      (delete pass-cons elmo-passwd-alist))))))
 
-(defun elmo-read-passwd (prompt &optional stars)
-  "Read a single line of text from user without echoing, and return it."
-  ; Binding read-hide-char to nil does not currently work in GNU Emacs,
-  ; but it is most likely a bug. Anyway, in WL this is never used, as
-  ; start is always explicitly set to t.
-  (let ((read-hide-char (if stars read-hide-char nil)))
-    (read-passwd prompt)))
+(defalias 'elmo-read-passwd 'read-passwd
+  "Read a single line of text from user without echoing, and return it.")
 
 (defun elmo-string-to-list (string)
   (read (concat "(" string ")")))
@@ -664,6 +659,11 @@ Return value is a cons cell of (STRUCTURE . REST)"
 		(symbol-name tlist)
 	      tlist)))
     str))
+
+(eval-and-compile
+  (if (fboundp 'clear-string)
+      (defalias 'elmo-clear-string 'clear-string)
+    (defun elmo-clear-string (s) (fillarray s 0))))
 
 (defun elmo-plug-on-by-servers (alist &optional servers)
   (let ((server-list (or servers elmo-plug-on-servers)))

@@ -1,9 +1,14 @@
-2016-08-23  Piotr Trojanek  <piotr.trojanek@gmail.com>
+2016-08-24  Piotr Trojanek  <piotr.trojanek@gmail.com>
 
 	* elmo-util.el (elmo-get-passwd): Use read-passwd for getting
-	user's password.
+	user's password; remove stars argument.
+	(elmo-get-passwd): remove argument stars in call to
+	elmo-get-passwd.
 	(elmo-read-char-exclusive): Removed, no longer needed.
-	(elmo-remove-passwd): Use clear-passwd for clearing passwords.
+	(elmo-clear-string): added to use more efficient clear-string, if
+	present.
+	(elmo-remove-passwd, elmo-passwd-alist-clear): Use
+	elmo-clear-passwd.
 
 2016-08-21  Piotr Trojanek  <piotr.trojanek@gmail.com>
 
