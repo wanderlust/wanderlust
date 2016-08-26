@@ -580,7 +580,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
   (interactive)
   (dolist (pair elmo-passwd-alist)
     (when (stringp (cdr-safe pair))
-      (fillarray (cdr pair) 0)))
+      (elmo-clear-string (cdr pair))))
   (setq elmo-passwd-alist nil))
 
 (defun elmo-passwd-alist-save ()
@@ -611,7 +611,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
     (if pair
 	(elmo-base64-decode-string (cdr pair))
       (setq pass (elmo-read-passwd (format "Password for %s: "
-					   key) t))
+					   key)))
       (setq elmo-passwd-alist
 	    (append elmo-passwd-alist
 		    (list (cons key
@@ -626,62 +626,12 @@ Return value is a cons cell of (STRUCTURE . REST)"
   (let (pass-cons)
     (while (setq pass-cons (assoc key elmo-passwd-alist))
       (unwind-protect
-	  (fillarray (cdr pass-cons) 0)
+	  (elmo-clear-string (cdr pass-cons))
 	(setq elmo-passwd-alist
 	      (delete pass-cons elmo-passwd-alist))))))
 
-(defmacro elmo-read-char-exclusive ()
-  (cond ((featurep 'xemacs)
-	 '(let ((table (quote ((backspace . ?\C-h) (delete . ?\C-?)
-			       (left . ?\C-h))))
-		event key)
-	    (while (not
-		    (and
-		     (key-press-event-p (setq event (next-command-event)))
-		     (setq key (or (event-to-character event)
-				   (cdr (assq (event-key event) table)))))))
-	    key))
-	((fboundp 'read-char-exclusive)
-	 '(read-char-exclusive))
-	(t
-	 '(read-char))))
-
-(defun elmo-read-passwd (prompt &optional stars)
-  "Read a single line of text from user without echoing, and return it."
-  (let ((ans "")
-	(c 0)
-	(echo-keystrokes 0)
-	(cursor-in-echo-area t)
-	(log-message-max-size 0)
-	message-log-max	done msg truncate)
-    (while (not done)
-      (if (or (not stars) (string= "" ans))
-	  (setq msg prompt)
-	(setq msg (concat prompt (make-string (length ans) ?.)))
-	(setq truncate
-	      (1+ (- (length msg) (window-width (minibuffer-window)))))
-	(and (> truncate 0)
-	     (setq msg (concat "$" (substring msg (1+ truncate))))))
-      (message "%s" msg)
-      (setq c (elmo-read-char-exclusive))
-      (cond ((= c ?\C-g)
-	     (setq quit-flag t
-		   done t))
-	    ((or (= c ?\r) (= c ?\n) (= c ?\e))
-	     (setq done t))
-	    ((= c ?\C-u)
-	     (setq ans ""))
-	    ((and (/= c ?\b) (/= c ?\177))
-	     (setq ans (concat ans (char-to-string c))))
-	    ((> (length ans) 0)
-	     (setq ans (substring ans 0 -1)))))
-    (if quit-flag
-	(prog1
-	    (setq quit-flag nil)
-	  (message "Quit")
-	  (beep t))
-      (message "")
-      ans)))
+(defalias 'elmo-read-passwd 'read-passwd
+  "Read a single line of text from user without echoing, and return it.")
 
 (defun elmo-string-to-list (string)
   (read (concat "(" string ")")))
@@ -709,6 +659,11 @@ Return value is a cons cell of (STRUCTURE . REST)"
 		(symbol-name tlist)
 	      tlist)))
     str))
+
+(eval-and-compile
+  (if (fboundp 'clear-string)
+      (defalias 'elmo-clear-string 'clear-string)
+    (defun elmo-clear-string (s) (fillarray s 0))))
 
 (defun elmo-plug-on-by-servers (alist &optional servers)
   (let ((server-list (or servers elmo-plug-on-servers)))
