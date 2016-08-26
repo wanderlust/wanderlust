@@ -610,8 +610,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
     (setq pair (assoc key elmo-passwd-alist))
     (if pair
 	(elmo-base64-decode-string (cdr pair))
-      (setq pass (elmo-read-passwd (format "Password for %s: "
-					   key)))
+      (setq pass (read-passwd (format "Password for %s: " key)))
       (setq elmo-passwd-alist
 	    (append elmo-passwd-alist
 		    (list (cons key
@@ -629,9 +628,6 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	  (elmo-clear-string (cdr pass-cons))
 	(setq elmo-passwd-alist
 	      (delete pass-cons elmo-passwd-alist))))))
-
-(defalias 'elmo-read-passwd 'read-passwd
-  "Read a single line of text from user without echoing, and return it.")
 
 (defun elmo-string-to-list (string)
   (read (concat "(" string ")")))
