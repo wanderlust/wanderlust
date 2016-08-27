@@ -73,7 +73,6 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
   (let ((hashtable (make-vector 29 0))
 	(new-list nil)
 	sym-string sym)
-    (fillarray hashtable 0)
     (while list
       (setq sym-string
 	    (if hack-addresses
