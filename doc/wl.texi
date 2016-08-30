@@ -1074,7 +1074,7 @@ archiver of Wanderlust because they cannot include multiple
 files. Archivers that cannot extract files to standard output are also
 not supported.
 
-@subsection OS specific information about archiver.
+@subsection OS specific information about archiver
 
 Behaviors of the following archivers are confirmed by further experiences.
 (@samp{*} mark means recommended archiver).
@@ -2398,7 +2398,7 @@ then execute append command in the next line.
 You can cut folder by @kbd{C-k}, paste by @kbd{C-y}.
 Thus, you can change folder position as if you were editing a normal file.
 
-@subsubsection Create Multi Folder.
+@subsubsection Create Multi Folder
 
 @enumerate
 @item
@@ -2424,7 +2424,7 @@ the folder group above. It is difficult to explain by words so try it.
 In other words, appended position depends on the
 open/close status of the upper one.
 
-@subsubsection Charset of the Folders File.
+@subsubsection Charset of the Folders File
 
 @code{wl-mime-charset} is used for saving @code{wl-folders-file}.
 
@@ -6160,7 +6160,7 @@ matching @code{wl-expire-alist} expire.
 
 @section Tips
 
-@subsection Treating archive folders.
+@subsection Treating archive folders
 To treat archive folders created by @code{wl-expire-archive-number1} and so on,
 you must set non-nil value to @code{elmo-archive-treat-file}.
 
@@ -9122,7 +9122,7 @@ You may only use @samp{important} flag. The other global flags may not
 be available.
 @end enumerate
 
-@subsection Changes from @samp{'mark} folder to  @samp{'flag}.
+@subsection Changes from @samp{'mark} folder to  @samp{'flag}
 
 The folder @samp{'mark} will be automatically converted to @samp{'flag}
 folder when you first start the new version of Wanderlust.

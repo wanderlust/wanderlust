@@ -1,3 +1,7 @@
+2016-08-30  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* doc/wl.texi: remove trailing periods in section headers.
+
 2016-08-21  Piotr Trojanek  <piotr.trojanek@gmail.com>
 
 	* .gitignore: Added.
