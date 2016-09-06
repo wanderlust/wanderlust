@@ -1,3 +1,7 @@
+2016-09-07  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* elmo-vars.el: Cosmetic change.
+
 2016-08-27  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-util.el (elmo-get-passwd): Call read-passwd directly.
