@@ -1,3 +1,13 @@
+2016-08-29  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* wl-summary.el (wl-summary-mode-menu-spec): add summary menu
+	entry for wl-summary-delete-region.
+
+2016-08-27  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* wl-util.el (wl-delete-duplicates): remove useless
+	re-initialization of hashtable vector.
+
 2016-08-21  Piotr Trojanek  <piotr.trojanek@gmail.com>
 
 	* wl-addrmgr.el: Fix docstrings.

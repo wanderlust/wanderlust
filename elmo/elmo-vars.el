@@ -127,6 +127,7 @@ you have to add it to `elmo-digest-flags'.
   "A hook called just before the nntp posting.")
 
 ;;; IMAP4
+
 (defcustom elmo-imap4-set-seen-flag-explicitly
   nil
   "*Set Seen flag explicitly (avoid bug in Google Mail)"
@@ -177,7 +178,6 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 
 ;;; NNTP
 
-;; User options
 (defcustom elmo-nntp-default-server "localhost"
   "*Default NNTP server."
   :type 'string
@@ -210,7 +210,6 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 
 ;;; POP3
 
-;; POP3
 (defcustom elmo-pop3-default-user (or (getenv "USER")
 				      (getenv "LOGNAME")
 				      (user-login-name))
@@ -219,7 +218,7 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
   :group 'elmo
   :group 'elmo-setting)
 
-(defcustom elmo-pop3-default-server  "localhost"
+(defcustom elmo-pop3-default-server "localhost"
   "*Default POP3 server."
   :type 'string
   :group 'elmo

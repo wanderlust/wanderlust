@@ -318,6 +318,7 @@ See also variable `wl-use-petname'."
      ["Mark as unread" wl-summary-mark-as-unread-region t]
      ["Mark as answered" wl-summary-mark-as-answered-region t]
      ["Set dispose mark" wl-summary-dispose-region t]
+     ["Set delete mark" wl-summary-delete-region t]
      ["Set refile mark" wl-summary-refile-region t]
      ["Set copy mark" wl-summary-copy-region t]
      ["Prefetch" wl-summary-prefetch-region t]
