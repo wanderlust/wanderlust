@@ -1,3 +1,9 @@
+2016-09-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-spam.el (wl-summary-register-as-spam-all)
+	(wl-summary-register-as-good-all): Confirm before execution.
+	Cf. https://github.com/wanderlust/wanderlust/issues/125
+
 2016-08-29  Piotr Trojanek  <piotr.trojanek@gmail.com>
 
 	* wl-summary.el (wl-summary-mode-menu-spec): add summary menu

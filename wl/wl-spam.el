@@ -306,8 +306,9 @@ With prefix argument, it affects on the all messages in the thread tree."
   "Register all messages in the folder as spam.
 Put spam mark unless current folder is a spam folder."
   (interactive)
-  (wl-spam-register-spam-messages wl-summary-buffer-elmo-folder
-				  wl-summary-buffer-number-list))
+  (when (y-or-n-p "Register all messages as spam, OK? ")
+    (wl-spam-register-spam-messages wl-summary-buffer-elmo-folder
+				    wl-summary-buffer-number-list)))
 
 (defun wl-summary-target-mark-register-as-spam ()
   "Register messages with the target mark as spam.
@@ -354,8 +355,9 @@ With prefix argument, it affects on the all messages in the thread tree."
   "Register all messages in the folder as non-spam.
 Remove spam mark."
   (interactive)
-  (wl-spam-register-good-messages wl-summary-buffer-elmo-folder
-				  wl-summary-buffer-number-list))
+  (when (y-or-n-p "Register all messages as non-spam, OK? ")
+    (wl-spam-register-good-messages wl-summary-buffer-elmo-folder
+				    wl-summary-buffer-number-list)))
 
 (defun wl-summary-target-mark-register-as-good ()
   "Register messages with the target mark as non-spam.
