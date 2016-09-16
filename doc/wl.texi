@@ -7025,7 +7025,7 @@ The format is very simple. Like this. @refill
 # @r{Format of each line:}
 # @var{email-address}  "@var{nickname} "@var{realname}"
 #
-teranisi@@gohome.org            "Yuuichi"      "Yuuichi Teranishi"
+teranisi@@gohome.org            "Yuuichi"    "Yuuichi Teranishi"
 foo@@bar.gohome.org             "Mr. Foo"    "John Foo"
 bar@@foo.gohome.org             "Mr. Bar"    "Michael Bar"
 @end group
