@@ -1,3 +1,7 @@
+2016-09-22  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-date.el (elmo-match-substring): Abolished.
+
 2016-09-07  Piotr Trojanek  <piotr.trojanek@gmail.com>
 
 	* elmo-vars.el: Cosmetic change.

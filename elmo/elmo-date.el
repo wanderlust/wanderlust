@@ -35,12 +35,6 @@
 (require 'elmo-vars)
 (eval-when-compile (require 'cl))
 
-(defmacro elmo-match-substring (pos string from)
-  "Substring of POSth matched string of STRING."
-  `(substring ,string
-	      (+ (match-beginning ,pos) ,from)
-	      (match-end ,pos)))
-
 ;; 2012-08-26
 (make-obsolete 'elmo-match-string 'match-string)
 
