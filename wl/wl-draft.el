@@ -218,7 +218,7 @@ e.g.
 		cl))
     (setq wl-draft-field-completion-list cl)
     (setq wl-address-complete-header-regexp
-	  (wl-regexp-opt
+	  (elmo-regexp-opt
 	   (append wl-address-complete-header-list
 		   (list (concat wl-draft-mime-bcc-field-name  ":")))))))
 

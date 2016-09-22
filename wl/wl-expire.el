@@ -313,7 +313,7 @@ If REFILE-LIST includes reserve mark message, so copy."
 Refile to archive folder followed message number."
   (let* ((elmo-archive-treat-file t)	;; treat archive folder as a file.
 	 (dst-folder-expand (and dst-folder-arg
-				 (wl-expand-newtext
+				 (elmo-expand-newtext
 				  dst-folder-arg
 				  (elmo-folder-name-internal folder))))
 	 (dst-folder-fmt (funcall
@@ -364,7 +364,7 @@ Refile to archive folder followed message number."
 Refile to archive folder followed the number of message in one archive folder."
   (let* ((elmo-archive-treat-file t)	;; treat archive folder as a file.
 	 (dst-folder-expand (and dst-folder-arg
-				 (wl-expand-newtext
+				 (elmo-expand-newtext
 				  dst-folder-arg
 				  (elmo-folder-name-internal folder))))
 	 (dst-folder-fmt (funcall
@@ -424,7 +424,7 @@ Refile to archive folder followed the number of message in one archive folder."
 Refile to archive folder followed message date."
   (let* ((elmo-archive-treat-file t)	;; treat archive folder as a file.
 	 (dst-folder-expand (and dst-folder-arg
-				 (wl-expand-newtext
+				 (elmo-expand-newtext
 				  dst-folder-arg
 				  (elmo-folder-name-internal folder))))
 	 (dst-folder-fmt (funcall
@@ -516,7 +516,7 @@ Refile to archive folder followed message date."
 Refile to localdir folder by message date.
 ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
   (let* ((dst-folder-expand (and dst-folder-arg
-				 (wl-expand-newtext
+				 (elmo-expand-newtext
 				  dst-folder-arg
 				  (elmo-folder-name-internal folder))))
 	 (dst-folder-fmt (funcall
@@ -650,7 +650,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
     (when targets
       (or wl-expired-alist
 	  (setq wl-expired-alist (wl-expired-alist-load)))
-      ;; evaluate string-match for wl-expand-newtext
+      ;; evaluate string-match for elmo-expand-newtext
       (wl-expire-folder-p folder-name)
       (prog1
 	  (cond ((eq action nil) nil)
@@ -664,7 +664,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 		 (car (wl-expire-refile
 		       folder
 		       targets
-		       (wl-expand-newtext action folder-name))))
+		       (elmo-expand-newtext action folder-name))))
 		((fboundp action)
 		 (apply action folder targets args))
 		(t

@@ -1,3 +1,18 @@
+2016-09-22  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-util.el (wl-regexp-opt, wl-expand-newtext): Obsolete.  use
+	elmo-regexp-opt, elmo-expand-newtext respectively.
+
+	* wl-draft.el (wl-draft-setup): Likewise.
+
+	* wl-expire.el (wl-expire-archive-number1)
+	(wl-expire-archive-number2, wl-expire-archive-date)
+	(wl-expire-localdir-date, wl-expire-folder): Likewise.
+
+	* wl-refile.el (wl-refile-evaluate-rule): Likewise.
+
+	* wl-summary.el (wl-summary-cursor-move-surface): Likewise.
+
 2016-09-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-spam.el (wl-summary-register-as-spam-all)

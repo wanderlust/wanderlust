@@ -898,20 +898,11 @@ that `read' can handle, whenever this is possible."
 	    (setq wl-biff-check-folders-running nil))))
     (setq wl-biff-check-folders-running nil)))
 
-(if (and (fboundp 'regexp-opt)
-	 (not (featurep 'xemacs)))
-    (defalias 'wl-regexp-opt 'regexp-opt)
-  (defun wl-regexp-opt (strings &optional paren)
-    "Return a regexp to match a string in STRINGS.
-Each string should be unique in STRINGS and should not contain any regexps,
-quoted or not.  If optional PAREN is non-nil, ensure that the returned regexp
-is enclosed by at least one regexp grouping construct."
-    (let ((open-paren (if paren "\\(" "")) (close-paren (if paren "\\)" "")))
-      (concat open-paren (mapconcat 'regexp-quote strings "\\|")
-	      close-paren))))
+;; 2016-09-22
+(make-obsolete 'wl-expand-newtext 'elmo-expand-newtext)
 
-(defalias 'wl-expand-newtext 'elmo-expand-newtext)
-(defalias 'wl-regexp-opt 'elmo-regexp-opt)
+;; 2016-09-22
+(make-obsolete 'wl-regexp-opt 'elmo-regexp-opt)
 
 (defun wl-region-exists-p ()
   "Return non-nil if a region exists on current buffer."

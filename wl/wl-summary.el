@@ -4348,7 +4348,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
   (if wl-summary-move-direction-toggle
       (setq wl-summary-move-direction-downward downward))
   (let ((start (point))
-	(skip-tmark-regexp (wl-regexp-opt wl-summary-skip-mark-list))
+	(skip-tmark-regexp (elmo-regexp-opt wl-summary-skip-mark-list))
 	(skip t)
 	(column (current-column))
 	goto-next next-entity finfo)

@@ -189,7 +189,7 @@ If RULE does not match ENTITY, returns nil."
 		 (string-match
 		  (car (car pairs))
 		  value)
-		 (setq guess (wl-expand-newtext
+		 (setq guess (elmo-expand-newtext
 			      (wl-refile-evaluate-rule (cdr (car pairs))
 						       entity)
 			      value)))
