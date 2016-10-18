@@ -255,6 +255,7 @@ File content is encoded with MIME-CHARSET."
 			 mime-charset))))
 	(goto-char (point-min))
 	(insert ";;; -*- mode: emacs-lisp; coding: "
+		;; coding system object is not a symbol on XEmacs.
 		(symbol-name (if (and (featurep 'xemacs)
 				      (coding-system-p coding))
 				 (coding-system-name coding)

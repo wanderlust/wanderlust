@@ -245,6 +245,7 @@ See also variable `wl-use-petname'."
 (defvar wl-summary-mode-menu-spec
   `("Summary"
     ["Read" wl-summary-read t]
+    ;; :visible keyword is not accepted on XEmacs.
     ,@(if wl-on-xemacs
 	  '(["Edit draft message" wl-summary-reedit t])
 	'(["Edit draft message" wl-summary-reedit :visible (string= (wl-summary-buffer-folder-name) wl-draft-folder)]))
