@@ -243,9 +243,11 @@ See also variable `wl-use-petname'."
 (defvar wl-summary-default-sort-spec 'date)
 
 (defvar wl-summary-mode-menu-spec
-  '("Summary"
+  `("Summary"
     ["Read" wl-summary-read t]
-    ["Edit draft message" wl-summary-reedit :visible (string= (wl-summary-buffer-folder-name) wl-draft-folder)]
+    ,@(if wl-on-xemacs
+	  '(["Edit draft message" wl-summary-reedit t])
+	'(["Edit draft message" wl-summary-reedit :visible (string= (wl-summary-buffer-folder-name) wl-draft-folder)]))
     ["Prev page" wl-summary-prev-page t]
     ["Next page" wl-summary-next-page t]
     ["Top"       wl-summary-display-top t]

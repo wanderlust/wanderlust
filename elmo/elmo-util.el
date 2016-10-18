@@ -255,7 +255,11 @@ File content is encoded with MIME-CHARSET."
 			 mime-charset))))
 	(goto-char (point-min))
 	(insert ";;; -*- mode: emacs-lisp; coding: "
-		(symbol-name coding) " -*-\n")
+		(symbol-name (if (and (featurep 'xemacs)
+				      (coding-system-p coding))
+				 (coding-system-name coding)
+			       coding))
+		" -*-\n")
 	(encode-coding-region (point-min) (point-max) coding)))
     (elmo-save-buffer filename)))
 

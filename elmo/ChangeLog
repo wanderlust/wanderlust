@@ -1,3 +1,7 @@
+2016-10-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-object-save): Fix error on XEmacs.
+
 2016-09-22  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-date.el (elmo-match-substring): Abolished.
