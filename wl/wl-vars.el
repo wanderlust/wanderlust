@@ -954,7 +954,8 @@ and 'wl-draft-send-mail-with-pop-before-smtp."
 		(function :tag "Other"))
   :group 'wl-draft)
 
-(defcustom wl-draft-send-confirm-type 'scroll-by-SPC/BS
+(defcustom wl-draft-send-confirm-type
+  (if wl-on-xemacs 'y-or-n-p 'scroll-by-SPC/BS)
   "*Confirmation type or function to use when send a message."
   :type '(choice
 	  (const :tag "y or n with scroll (j/k)" scroll-by-j/k)
