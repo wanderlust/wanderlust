@@ -1,3 +1,8 @@
+2016-11-09  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* doc/wl.texi: fix of minor grammar issues and a typo in reference
+	to a doc-variable.
+
 2016-08-30  Piotr Trojanek  <piotr.trojanek@gmail.com>
 
 	* doc/wl.texi: remove trailing periods in section headers.

@@ -3062,7 +3062,7 @@ set the variable @code{elmo-msgdb-extra-fields} like following.
 @noindent
 By this setting, Wanderlust saves extra fields in the msgdb.  You have
 to type @kbd{s all} to get extra fields for the messages that are
-already exists in the summary.
+already in the summary.
 
 Then, specify the refile rule.  The refile target folder of auto
 refiling is decided by the value of @code{wl-refile-rule-alist}.
@@ -5976,7 +5976,7 @@ to @code{t}, especially in the initial stage.
 @end group
 @end lisp
 
-Items in the list has the format of:
+Items in the list have the format of:
 
 @example
 (@var{regexp-for-folders} @var{specification-of-messages-to-be-deleted} @var{destination})
@@ -5990,7 +5990,7 @@ the third element of the item is @code{nil}, expiration will not take
 place.
 
 You can use any one of the following for
-@var{specification-of-message-to-be-deleted}:
+@var{specification-of-messages-to-be-deleted}:
 
 @table @code
 @item (number @var{n1} [@var{n2}])
@@ -6035,7 +6035,7 @@ You can use any one of the following in the place of @var{destination}:
 deletes the messages instantly.
 
 @item @code{hide}
-hide the messages from summary (messages are not deleted).
+hides the messages from summary (messages are not deleted).
 
 @item @code{trash}
 moves the messages to @code{wl-trash-folder}.
@@ -6054,7 +6054,7 @@ To the @var{function}, three arguments are passed: a folder name, a list
 of messages to be deleted, and msgdb information of the summary.  You
 can specify function-specific arguments after the name of the
 @var{function}.  Note that the list contains messages with marks in
-@code{wl-summary-expire-reserve-marks}, be careful in writing your own
+@code{wl-summary-expire-reserve-marks}, so be careful in writing your own
 function.
 
 These are four standard functions; three of them move messages to an archive
@@ -6124,7 +6124,7 @@ If you omit the argument, consecutive numbers from 1 are assigned for
 each archiving folder.
 
 @item wl-expire-localdir-date
-divedes messages depending on its date (year and month) to MH folders
+divides messages depending on their date (year and month) to MH folders
 e.g. to @samp{+ml/wl/1999_11/}, @samp{+ml/wl/1999_12/}.
 @end table
 @end table
@@ -6136,7 +6136,7 @@ standard function, messages with marks in
 @code{wl-summary-expire-reserve-marks} (which are called @dfn{reserved
 messages} thereafter) are retained.
 
-Per default, this variable include the important, new, and unread marks,
+By default, this variable includes the important, new, and unread marks,
 so that messages with these marks are not removed.
 Note that you cannot include the temporary mark (i.e. temporary marks
 are removed anyway), and be sure to process temporary marks before you
