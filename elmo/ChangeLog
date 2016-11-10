@@ -1,3 +1,8 @@
+2016-11-09  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* elmo-util.el (elmo-get-passwd): while new password was appended
+	the old ones were becaming a garbage without being erased.
+
 2016-10-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-util.el (elmo-object-save): Fix error on XEmacs.
