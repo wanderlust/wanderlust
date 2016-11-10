@@ -1790,12 +1790,16 @@ which are replaced by the given information:
   :group 'wl-pref
   :type 'string)
 
-(defcustom wl-message-truncate-lines default-truncate-lines
+(defcustom wl-message-truncate-lines (if (boundp 'default-truncate-lines)
+					 default-truncate-lines
+				       truncate-lines)
   "*Truncate lines in Message Buffer."
   :type 'boolean
   :group 'wl-pref)
 
-(defcustom wl-draft-truncate-lines default-truncate-lines
+(defcustom wl-draft-truncate-lines (if (boundp 'default-truncate-lines)
+				       default-truncate-lines
+				     truncate-lines)
   "*Truncate lines in Draft Buffer."
   :type 'boolean
   :group 'wl-draft

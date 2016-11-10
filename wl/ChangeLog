@@ -1,3 +1,10 @@
+2016-11-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-vars.el (wl-message-truncate-lines)
+	(wl-draft-truncate-lines): Refer to truncate-lines if
+	default-truncate-lines is not bound.
+	Cf. [wl-en:6329], https://github.com/wanderlust/wanderlust/issues/132
+
 2016-10-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-vars.el (wl-draft-send-confirm-type): Revert default value on
