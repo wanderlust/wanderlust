@@ -97,18 +97,18 @@ Yet Another Message Interface On Emacsen"
 
 (defun wl-demo-image-type-alist ()
   "Return an alist of available logo image types on the current frame."
-  (if (or (and (featurep 'xemacs)
+  (if (or (and wl-on-xemacs
 	       (device-on-window-system-p))
 	  window-system)
       (let ((xpm
-	     (when (or (and (featurep 'xemacs)
+	     (when (or (and wl-on-xemacs
 			    (featurep 'xpm))
 		       (and wl-on-emacs21
 			    (display-images-p)
 			    (image-type-available-p 'xpm)))
 	       '("xpm" . xpm)))
 	    (xbm
-	     (when (or (featurep 'xemacs)
+	     (when (or wl-on-xemacs
 		       (and wl-on-emacs21
 			    (display-images-p)
 			    (image-type-available-p 'xbm))
@@ -118,7 +118,7 @@ Yet Another Message Interface On Emacsen"
 			    (setq wl-demo-bitmap-mule-available-p t)))
 	       '("xbm" . xbm)))
 	    (bitmap
-	     (when (and (not (featurep 'xemacs))
+	     (when (and (not wl-on-xemacs)
 			(or (eq t wl-demo-bitmap-mule-available-p)
 			    (and (eq 'unknown wl-demo-bitmap-mule-available-p)
 				 (module-installed-p 'bitmap)
@@ -158,7 +158,7 @@ Return a number of lines that an image occupies in the buffer."
 		    ((eq 'xbm image-type)
 		     (concat (wl-demo-icon-name) ".xbm"))))
 	image width height)
-    (when (featurep 'xemacs)
+    (when wl-on-xemacs
       (when (boundp 'default-gutter-visible-p)
 	(set-specifier (symbol-value 'default-gutter-visible-p)
 		       nil (current-buffer)))
@@ -179,7 +179,7 @@ Return a number of lines that an image occupies in the buffer."
 	       (message "File not found: %s" file)
 	       nil))
 	(progn
-	  (cond ((featurep 'xemacs)
+	  (cond (wl-on-xemacs
 		 (setq width (window-pixel-width)
 		       height (window-pixel-height)
 		       image (make-glyph
@@ -326,7 +326,7 @@ Return a number of lines that an image occupies in the buffer."
 					(list ':background bg))))
 	    (put-text-property end (point-max) 'face oblique))
 	(put-text-property (point-min) (point-max) 'face oblique))))
-   ((and (featurep 'xemacs)
+   ((and wl-on-xemacs
 	 (face-background-name 'wl-highlight-demo-face))
     (set-face-background 'default
 			 (face-background-name 'wl-highlight-demo-face)

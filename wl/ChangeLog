@@ -1,3 +1,22 @@
+2016-11-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-demo.el (wl-demo-image-type-alist, wl-demo-insert-image)
+	(wl-demo-setup-properties): Use defined constant for checking
+	environment.
+
+	* wl-draft.el (wl-draft-highlight-and-recenter): Likewise.
+
+	* wl-message.el (wl-message-buffer-prefetch-clear-timer):
+	Likewise.
+
+	* wl-util.el (wl-ask-folder, wl-set-string-width)
+	(wl-region-exists-p, wl-deactivate-region, wl-read-buffer):
+	Likewise.
+
+	* wl-vars.el (wl-biff-state-indicator-on)
+	(wl-biff-state-indicator-off, wl-highlight-folder-with-icon)
+	(wl-demo-display-logo): Likewise.
+
 2016-11-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-vars.el (wl-message-truncate-lines)

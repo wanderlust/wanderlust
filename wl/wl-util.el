@@ -112,7 +112,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 
 (defun wl-ask-folder (func mes-string)
   (let* (key keve
-	     (cmd (if (featurep 'xemacs)
+	     (cmd (if wl-on-xemacs
 		      (event-to-character last-command-event)
 		    (string-to-char (format "%s" (this-command-keys))))))
     (message "%s" mes-string)
@@ -150,7 +150,7 @@ If optional 4th argument is non-nil, don't use `wl-invalid-character-message'
 even when invalid character is contained."
   (static-cond
    ((and (fboundp 'string-width) (fboundp 'truncate-string-to-width)
-	 (not (featurep 'xemacs)))
+	 (not wl-on-xemacs))
     (if (> (string-width string) (abs width))
 	(setq string (truncate-string-to-width string (abs width))))
     (if (= (string-width string) (abs width))
@@ -906,13 +906,13 @@ that `read' can handle, whenever this is possible."
 
 (defun wl-region-exists-p ()
   "Return non-nil if a region exists on current buffer."
-  (static-if (featurep 'xemacs)
+  (static-if wl-on-xemacs
       (region-active-p)
     (and transient-mark-mode mark-active)))
 
 (defun wl-deactivate-region ()
   "Deactivate region on current buffer"
-  (static-if (not (featurep 'xemacs))
+  (static-unless wl-on-xemacs
       (setq mark-active nil)))
 
 (defvar wl-line-string)
@@ -1209,7 +1209,7 @@ that `read' can handle, whenever this is possible."
 (defun wl-read-buffer (prompt &optional def require-match)
   (let ((prompt (if (and def
 			 (< emacs-major-version 22)
-			 (null (featurep 'xemacs)))
+			 (null wl-on-xemacs))
 		    (format "%s(default %s) " prompt def)
 		  prompt)))
     (read-buffer prompt def require-match)))

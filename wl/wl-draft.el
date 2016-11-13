@@ -2461,7 +2461,7 @@ Automatically applied in draft sending time."
 (defun wl-draft-highlight-and-recenter (&optional n)
   (interactive "P")
   (wl-draft-highlight)
-  (static-when (featurep 'xemacs)
+  (static-when wl-on-xemacs
     ;; Cope with one of many XEmacs bugs that `recenter' takes
     ;; a long time if there are a lot of invisible text lines.
     (redraw-frame))

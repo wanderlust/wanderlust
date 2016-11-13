@@ -2262,8 +2262,8 @@ It has no effect on XEmacs or for the case which `wl-biff-use-idle-timer' is non
   :type 'boolean
   :group 'wl-setting)
 
-(defcustom wl-biff-state-indicator-on (if (and (featurep 'xemacs)
-					       (not (featurep 'mule)))
+(defcustom wl-biff-state-indicator-on (if (and wl-on-xemacs
+					       (not wl-on-mule))
 					  "[Mail]"
 					(decode-coding-string
 					 ;; Youbin mark
@@ -2275,8 +2275,8 @@ It has no effect on XEmacs or for the case which `wl-biff-use-idle-timer' is non
   :type 'string
   :group 'wl-setting)
 
-(defcustom wl-biff-state-indicator-off (if (and (featurep 'xemacs)
-						(not (featurep 'mule)))
+(defcustom wl-biff-state-indicator-off (if (and wl-on-xemacs
+						(not wl-on-mule))
 					   "[--]"
 					  ;; Japanese short hyphen
 					 "[‐]")
@@ -2974,7 +2974,7 @@ Handler take two arguments elmo-folder and message number and return string."
 
 ;; highilght about folder
 (defcustom wl-highlight-folder-with-icon
-  (or (and (featurep 'xemacs)
+  (or (and wl-on-xemacs
 	   (featurep 'xpm))
       wl-on-emacs21)
   "*Highlight folder with icon(XEmacs or Emacs 21)."
@@ -3005,7 +3005,7 @@ If it is a number, only numbers will be highlighted."
   :type 'boolean
   :group 'wl-pref)
 
-(defcustom wl-demo-display-logo (if (or (featurep 'xemacs)
+(defcustom wl-demo-display-logo (if (or wl-on-xemacs
 					(module-installed-p 'image)
 					(module-installed-p 'bitmap))
 				    t)

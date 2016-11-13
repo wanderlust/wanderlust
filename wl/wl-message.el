@@ -656,7 +656,7 @@ Returns non-nil if bottom of message."
 ;;; cannot use for the bug of fsf-compat package (1.09).
 ;;;  (cancel-function-timers 'wl-message-buffer-prefetch-subr)
   (if (fboundp 'run-with-idle-timer)
-      (if (featurep 'xemacs)
+      (if wl-on-xemacs
 	  (let ((p itimer-list))
 	    (while (car p)
 	      (if (eq 'wl-message-buffer-prefetch-subr
