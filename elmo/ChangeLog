@@ -1,3 +1,8 @@
+2016-11-14  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* elmo-util.el (elmo-get-passwd): fix previous change to this
+	routine, where passwords were only appended to non-empty alists.
+
 2016-11-09  Piotr Trojanek  <piotr.trojanek@gmail.com>
 
 	* elmo-util.el (elmo-get-passwd): while new password was appended
