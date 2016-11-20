@@ -19,6 +19,7 @@
 2016-11-20  Piotr Trojanek  <piotr.trojanek@gmail.com>
 
 	* elmo-util.el (elmo-list-insert): improve performance.
+	(elmo-get-file-string): simplify.
 
 2016-11-14  Piotr Trojanek  <piotr.trojanek@gmail.com>
 
