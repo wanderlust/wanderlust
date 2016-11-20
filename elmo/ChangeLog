@@ -16,6 +16,10 @@
 	(elmo-msgdb-create-message-entity-from-header):
 	[modb-standard-entity-handler] Use them.  Improve performance.
 
+2016-11-20  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* elmo-util.el (elmo-list-insert): improve performance.
+
 2016-11-14  Piotr Trojanek  <piotr.trojanek@gmail.com>
 
 	* elmo-util.el (elmo-get-passwd): fix previous change to this
