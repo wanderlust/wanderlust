@@ -1,3 +1,14 @@
+2016-11-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* modb-entity.el (modb-standard-collect-field-values-from-header)
+	(modb-standard-get-references-for-entity)
+	(modb-standard-get-message-id-for-entity)
+	(modb-standard-set-field-name-cache): New functions.
+	(modb-standard-reserved-fields): New constant.
+	(modb-standard-field-name-cache): New variable.
+	(elmo-msgdb-create-message-entity-from-header):
+	[modb-standard-entity-handler] Use them.  Improve performance.
+
 2016-11-14  Piotr Trojanek  <piotr.trojanek@gmail.com>
 
 	* elmo-util.el (elmo-get-passwd): fix previous change to this

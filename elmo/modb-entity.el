@@ -721,76 +721,146 @@ If each field is t, function is set as default converter."
 	  (cons (car (cdr entity))
 		(copy-sequence (cdr (cdr entity)))))))
 
-(luna-define-method elmo-msgdb-create-message-entity-from-header
-  ((handler modb-standard-entity-handler) number args)
-  (let (entity size field-name field-body extractor file-attrib)
+(defvar modb-standard-field-name-cache nil)
+
+(defconst modb-standard-reserved-fields
+  '("number" "message-id" "references" "from" "subject" "date" "to" "cc"
+    "content-type" "size"))
+
+(defun modb-standard-set-field-name-cache ()
+  (let (extras all)
+    (dolist (extra (cons "newsgroups"
+			 (mapcar 'downcase elmo-msgdb-extra-fields)))
+      (unless (or (member extra modb-standard-reserved-fields)
+		  (member extra extras))
+	(setq extras (cons extra extras))))
+    (setq all (append modb-standard-reserved-fields extras)
+	  modb-standard-field-name-cache
+	  (list elmo-msgdb-extra-fields
+		extras
+		;; used, but not reserved fields
+		(dolist (elt '("in-reply-to" "content-length") all)
+		  (unless (member elt all)
+		    (setq all (cons elt all))))))))
+
+(defun modb-standard-get-message-id-for-entity (values)
+  (let ((field (cdr (assoc "message-id" values))))
+    (if field
+	(or (elmo-get-message-id-from-field field)
+	    (concat "<" (std11-unfold-string field) ">"))
+      (concat "<"
+	      (if (setq field (cdr (assoc "date" values)))
+		  (timezone-make-date-sortable
+		   (std11-unfold-string field))
+		(md5 (string-as-unibyte (buffer-string))))
+	      (nth 1 (eword-extract-address-components
+		      (or (cdr (assoc "from" values)) "nobody")))
+	      ">"))))
+
+(defun modb-standard-get-references-for-entity (values)
+  (let ((irt (cdr (assoc "in-reply-to" values)))
+	(refs (cdr (assoc "references" values))))
+    (elmo-uniq-list
+     (nreverse
+      (delq nil
+	    (mapcar 'std11-msg-id-string
+		    (std11-parse-msg-ids-string
+		     (if elmo-msgdb-prefer-in-reply-to-for-parent
+			 (concat refs "\n " irt)
+		       (concat irt "\n " refs)))))))))
+
+(defun modb-standard-collect-field-values-from-header ()
+  (let ((extras (nth 1 modb-standard-field-name-cache))
+	(all-field (nth 2 modb-standard-field-name-cache))
+	(regexp (concat "\\(" std11-field-head-regexp "\\)[ \t]*"))
+	value values field)
     (save-excursion
       (set-buffer-multibyte default-enable-multibyte-characters)
-      (setq entity
-	    (modb-standard-make-message-entity
-	     handler
-	     (append
-	      args
-	      (list
-	       :number
-	       number
-	       :message-id
-	       (elmo-msgdb-get-message-id-from-header)
-	       :references
-	       (elmo-msgdb-get-references-from-header)
-	       :from
-	       (elmo-replace-in-string
-		(or (elmo-decoded-fetch-field "from" 'summary)
-		    elmo-no-from)
-		"\t" " ")
-	       :subject
-	       (elmo-replace-in-string
-		(or (elmo-decoded-fetch-field "subject" 'summary)
-		    elmo-no-subject)
-		"\t" " ")
-	       :date
-	       (or (elmo-decoded-fetch-field "date" 'summary)
+      (goto-char (point-min))
+      (while (re-search-forward regexp nil t)
+	(setq field (downcase (buffer-substring-no-properties
+			       (match-beginning 0) (1- (match-end 1)))))
+	(cond
+	 ((member field '("cc" "to"))
+	  (setq value (buffer-substring-no-properties
+		       (match-end 0) (std11-field-end))
+		values (cons (cons field (cons value
+					       (cdr (assoc field values))))
+			     (delq (assoc field values) values))))
+	 ((and (member field all-field)
+	       (null (assoc field values)))
+	  (setq value (buffer-substring-no-properties
+		       (match-end 0) (std11-field-end))
+		values (cons (cons field value) values))))
+	(forward-line)))
+    values))
+
+(luna-define-method elmo-msgdb-create-message-entity-from-header
+  ((handler modb-standard-entity-handler) number args)
+  (let ((decoder
+	 #'(lambda (name values)
+	     (let ((body (cdr (assoc name values))))
+	       (when body
+		 (or (ignore-errors
+		       (elmo-with-enable-multibyte
+			 (mime-decode-field-body body name 'summary)))
+		     body)))))
+	entity value values field file-attrib extractor)
+    (unless (eq elmo-msgdb-extra-fields (car modb-standard-field-name-cache))
+      (modb-standard-set-field-name-cache))
+    (setq values (modb-standard-collect-field-values-from-header))
+    (setq entity
+	  (modb-standard-make-message-entity
+	   handler
+	   (append
+	    args
+	    (list
+	     :number number
+	     :message-id (modb-standard-get-message-id-for-entity values)
+	     :references (modb-standard-get-references-for-entity values)
+	     :from
+	     (elmo-replace-in-string (or (funcall decoder "from" values)
+					 elmo-no-from)
+				     "\t" " ")
+	     :subject
+	     (elmo-replace-in-string (or (funcall decoder "subject" values)
+					 elmo-no-subject)
+				     "\t" " ")
+	     :date
+	     (or (funcall decoder "date" values)
+		 (when buffer-file-name
+		   (timezone-make-date-arpa-standard
+		    (current-time-string
+		     (nth 5 (setq file-attrib
+				  (file-attributes buffer-file-name))))
+		    (current-time-zone))))
+	     :to
+	     (mapconcat (lambda (field-body)
+			  (mime-decode-field-body field-body "to" 'summary))
+			(nreverse (cdr (assoc "to" values))) ",")
+	     :cc
+	     (mapconcat (lambda (field-body)
+			  (mime-decode-field-body field-body "cc" 'summary))
+			(nreverse (cdr (assoc "cc" values))) ",")
+	     :content-type
+	     (funcall decoder "content-type" values)
+	     :size
+	     (if (setq value (cdr (assoc "content-length" values)))
+		 (string-to-number value)
+	       (or (plist-get args :size)
 		   (when buffer-file-name
-		     (timezone-make-date-arpa-standard
-		      (current-time-string
-		       (nth 5 (or file-attrib
-				  (setq file-attrib
-					(file-attributes buffer-file-name)))))
-		      (current-time-zone))))
-	       :to
-	       (mapconcat
-		(lambda (field-body)
-		  (mime-decode-field-body field-body "to" 'summary))
-		(elmo-multiple-field-body "to") ",")
-	       :cc
-	       (mapconcat
-		(lambda (field-body)
-		  (mime-decode-field-body field-body "cc" 'summary))
-		(elmo-multiple-field-body "cc") ",")
-	       :content-type
-	       (elmo-decoded-fetch-field "content-type" 'summary)
-	       :size
-	       (if (setq size (std11-fetch-field "content-length"))
-		   (string-to-number size)
-		 (or (plist-get args :size)
-		     (when buffer-file-name
-		       (nth 7 (or file-attrib
-				  (setq file-attrib
-					(file-attributes buffer-file-name)))))
-		     0))))))
-      (dolist (extra (cons "newsgroups"
-			   (remove "newsgroups" elmo-msgdb-extra-fields)))
-	(unless (memq (setq field-name (intern (downcase extra)))
-		      '(number message-id references from subject
-			       date to cc content-type size))
-	  (setq extractor  (nth 1 (assq field-name
-					modb-entity-field-extractor-alist))
-		field-body (if extractor
-			       (funcall extractor field-name)
-			     (elmo-decoded-fetch-field extra 'summary)))
-	  (when field-body
-	    (modb-standard-entity-set-field entity field-name field-body))))
-      entity)))
+		     (nth 7 (or file-attrib
+				(setq file-attrib
+				      (file-attributes buffer-file-name)))))
+		   0))))))
+    (dolist (extra (nth 1 modb-standard-field-name-cache) entity)
+      (setq field (intern extra)
+	    extractor (nth 1 (assq field modb-entity-field-extractor-alist))
+	    value (if extractor
+		      (funcall extractor field)
+		    (funcall decoder extra values)))
+      (when value
+	(modb-standard-entity-set-field entity field value)))))
 
 
 ;; mailing list info handling
