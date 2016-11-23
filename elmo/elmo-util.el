@@ -616,11 +616,11 @@ Return value is a cons cell of (STRUCTURE . REST)"
     (if pair
 	(elmo-base64-decode-string (cdr pair))
       (setq pass (read-passwd (format "Password for %s: " key)))
-      ;; setq and append would make the original list with passwords a garbage;
-      ;; nconc, unlike append, does not copy the original list
-      (nconc elmo-passwd-alist
-             (list (cons key
-                         (elmo-base64-encode-string pass))))
+      ;; put key and passwd at the front of the alist
+      (setq elmo-passwd-alist
+            (cons (cons key
+                        (elmo-base64-encode-string pass))
+                  elmo-passwd-alist))
       (if elmo-passwd-life-time
 	  (run-with-timer elmo-passwd-life-time nil
 			  `(lambda () (elmo-remove-passwd ,key))))
