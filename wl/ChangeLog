@@ -8,6 +8,7 @@
 
 	* wl-summary.el (wl-summary-line-formatter): remove unreferenced
 	variable.
+	(wl-summary-sync-update): simplify detection of for zero-length list.
 
 	* wl-folder.el (wl-folder-create-folder-entity): remove useless
 	setq.
