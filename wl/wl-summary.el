@@ -3449,9 +3449,6 @@ Return non-nil if the mark is updated"
     (elmo-folder-recover-messages wl-summary-buffer-elmo-folder
 				  (list number))))
 
-;;; Summary line.
-(defvar wl-summary-line-formatter nil)
-
 (defun wl-summary-view-old-p ()
   "Return non-nil when summary view cache has old format."
   (when wl-summary-buffer-number-list

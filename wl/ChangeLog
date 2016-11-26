@@ -6,6 +6,9 @@
 
 2016-11-26  Piotr Trojanek  <piotr.trojanek@gmail.com>
 
+	* wl-summary.el (wl-summary-line-formatter): remove unreferenced
+	variable.
+
 	* wl-folder.el (wl-folder-create-folder-entity): remove useless
 	setq.
 
