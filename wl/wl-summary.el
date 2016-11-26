@@ -977,12 +977,10 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   ;; of system internal to accord facilities for the Emacs variants.
   (run-hooks 'wl-summary-mode-hook))
 
-;;;
 (defun wl-summary-overview-entity-compare-by-size (x y)
    "Compare entity X and Y by size."
    (< (elmo-message-entity-field x 'size)
       (elmo-message-entity-field y 'size)))
-
 
 (defun wl-summary-overview-entity-compare-by-date (x y)
   "Compare entity X and Y by date."
