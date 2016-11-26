@@ -4,6 +4,11 @@
 	always.
 	Cf. [wl-en:06335]
 
+2016-11-26  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* wl-folder.el (wl-folder-create-folder-entity): remove useless
+	setq.
+
 2016-11-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-demo.el (wl-demo-image-type-alist, wl-demo-insert-image)
