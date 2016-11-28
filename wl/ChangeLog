@@ -4,6 +4,16 @@
 	always.
 	Cf. [wl-en:06335]
 
+2016-11-28  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* wl-thread.el (wl-thread-insert-top): rewrite with dolist; remove
+	repeated calls to length; reindent.
+	(wl-thread-get-parent-list): rewrite with dolist; replace append
+	with consing followed by nreverse.
+	(wl-thread-cleanup-symbols): rewrite with dolist.
+	(wl-thread-delete-line-from-buffer): replace explicit ELSE branch
+	by WHEN; limit scope of LET.
+
 2016-11-26  Piotr Trojanek  <piotr.trojanek@gmail.com>
 
 	* wl-summary.el (wl-summary-line-formatter): remove unreferenced
