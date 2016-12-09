@@ -1,3 +1,9 @@
+2016-12-10  Pascal Haakmat  <pascalh@gmail.com>
+
+	* wl-util.el (wl-biff-launch-handler): Do the post processing
+	always.
+	Cf. [wl-en:06335]
+
 2016-11-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-demo.el (wl-demo-image-type-alist, wl-demo-insert-image)

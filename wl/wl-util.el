@@ -789,26 +789,28 @@ that `read' can handle, whenever this is possible."
 
   (defun wl-biff-event-handler ()
     ;; PAKURing from FSF:time.el
-    (condition-case signal
-	(wl-biff-check-folders)
-      (error
-       (message "wl-biff: %s (%s)" (car signal) (cdr signal))))
-    ;; Do redisplay right now, if no input pending.
-    (sit-for 0)
-    (wl-biff-stop)
-    (wl-biff-start)
-    (let ((idle (and wl-biff-use-idle-timer
-		     ;; Available on Emacs 22 or later.
-		     (fboundp 'current-idle-time)
-		     (current-idle-time))))
-      (when idle
-	;; Run idle timer for the case Emacs keeps idle.
-	(put 'wl-biff 'timers
-	     (cons (run-with-idle-timer
-		    (+ wl-biff-check-interval (float-time idle))
-		    nil 'wl-biff-event-handler)
-		   (get 'wl-biff 'timers))))))
-  ))
+    (unwind-protect
+	(progn
+	  (condition-case signal
+	      (wl-biff-check-folders)
+	    (error
+	     (message "wl-biff: %s (%s)" (car signal) (cdr signal))))
+	  ;; Do redisplay right now, if no input pending.
+	  (sit-for 0))
+      (wl-biff-stop)
+      (wl-biff-start)
+      (let ((idle (and wl-biff-use-idle-timer
+		       ;; Available on Emacs 22 or later.
+		       (fboundp 'current-idle-time)
+		       (current-idle-time))))
+	(when idle
+	  ;; Run idle timer for the case Emacs keeps idle.
+	  (put 'wl-biff 'timers
+	       (cons (run-with-idle-timer
+		      (+ wl-biff-check-interval (float-time idle))
+		      nil 'wl-biff-event-handler)
+		     (get 'wl-biff 'timers))))))
+    )))
 
 
 (defsubst wl-biff-notify (new-mails notify-minibuf)
