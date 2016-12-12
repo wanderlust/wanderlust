@@ -806,7 +806,9 @@ If each field is t, function is set as default converter."
 			 (mime-decode-field-body body name 'summary)))
 		     body)))))
 	entity value values field file-attrib extractor)
-    (unless (eq elmo-msgdb-extra-fields (car modb-standard-field-name-cache))
+    (unless (and modb-standard-field-name-cache
+		 (eq elmo-msgdb-extra-fields
+		     (car modb-standard-field-name-cache)))
       (modb-standard-set-field-name-cache))
     (setq values (modb-standard-collect-field-values-from-header))
     (setq entity
