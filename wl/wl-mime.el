@@ -780,10 +780,9 @@ With ARG, ask coding system and encode the region with it before verifying."
 (defvar wl-mime-pgp-decrypted-buffers nil)
 
 (defun wl-mime-pgp-kill-decrypted-buffers ()
-  (mapc (lambda (buffer)
-	  (when (bufferp buffer)
-	    (kill-buffer buffer)))
-	wl-mime-pgp-decrypted-buffers))
+  (dolist (buffer wl-mime-pgp-decrypted-buffers)
+    (when (bufferp buffer)
+      (kill-buffer buffer))))
 
 (defun wl-mime-preview-application/pgp (parent-entity entity situation)
   (goto-char (point-max))
