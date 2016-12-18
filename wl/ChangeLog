@@ -1,3 +1,9 @@
+2016-12-18  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* wl-mime.el (wl-mime-pgp-decrypt-region): fix grammar in message
+	for missing PGP support.
+	(wl-mime-pgp-verify-region): Likewise.
+
 2016-12-10  Pascal Haakmat  <pascalh@gmail.com>
 
 	* wl-util.el (wl-biff-launch-handler): Do the post processing

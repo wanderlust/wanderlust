@@ -719,7 +719,7 @@ It calls following-method selected from variable
     (pgg
      (wl-mime-pgp-decrypt-region-with-pgg beg end no-decode))
     (t
-     (error "Don't support PGP decryption"))))
+     (error "No support for PGP decryption"))))
 
 (defsubst wl-mime-pgp-verify-region (beg end &optional coding-system)
   (case wl-use-pgp-module
@@ -728,7 +728,7 @@ It calls following-method selected from variable
     (pgg
      (wl-mime-pgp-verify-region-with-pgg beg end coding-system))
     (t
-     (error "Don't support PGP decryption"))))
+     (error "No support for PGP verification"))))
 
 (defun wl-message-decrypt-pgp-nonmime ()
   "Decrypt PGP encrypted region"
