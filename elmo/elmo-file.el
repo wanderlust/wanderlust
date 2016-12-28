@@ -90,8 +90,7 @@
   (if (or (not (file-exists-p file))
 	  (file-directory-p file))
       "application/octet-stream"
-    (let (type)
-      (setq type (mime-find-file-type file))
+    (let ((type (mime-find-file-type file)))
       (if (and (string= (nth 0 type) "application")
 	       (string= (nth 1 type) "octet-stream"))
 	  (if (and elmo-file-command

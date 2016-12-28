@@ -96,7 +96,7 @@
 	(setq wl-summary-buffer-number-list (nreverse
 					     wl-summary-buffer-number-list)))
     (setq wl-summary-buffer-number-list nil)))
-  
+
 (defun wl-thread-entity-make-number-list-from-children (entity)
   (let ((msgs (list (car entity)))
 	msgs-stack children)
@@ -420,25 +420,21 @@ ENTITY is returned."
 
 (defun wl-thread-delete-line-from-buffer (msg)
   "Simply delete msg line."
-  (let (beg)
-    (if (wl-summary-jump-to-msg msg)
-	(progn
-	  (setq beg (point))
-	  (forward-line)
-	  (delete-region beg (point))
-	  t)
-      nil)))
+  (when (wl-summary-jump-to-msg msg)
+    (let ((beg (point)))
+      (forward-line)
+      (delete-region beg (point)))
+    t))
 
 (defun wl-thread-cleanup-symbols (msgs)
   (let (entity)
-    (while msgs
-      (when (setq entity (wl-thread-get-entity (car msgs)))
+    (dolist (msg msgs)
+      (when (setq entity (wl-thread-get-entity msg))
 	;; delete entity.
 	(setq wl-thread-entities (delq entity wl-thread-entities))
 	;; free symbol.
-	(elmo-clear-hash-val (format "#%d" (car msgs))
-			     wl-thread-entity-hashtb))
-      (setq msgs (cdr msgs)))))
+	(elmo-clear-hash-val (format "#%d" msg)
+			     wl-thread-entity-hashtb)))))
 
 (defun wl-thread-get-exist-children (msg &optional include-self)
   (let ((msgs (list msg))
@@ -656,15 +652,13 @@ Message is inserted to the summary buffer."
 
 (defun wl-thread-get-parent-list (msgs)
   ;; return connected ancestors
-  (let ((ptr msgs)
-	parent ret)
-    (while (car ptr)
-      (setq parent (wl-thread-entity-get-parent (wl-thread-get-entity (car ptr))))
+  (let (parent ret)
+    (dolist (msg msgs)
+      (setq parent (wl-thread-entity-get-parent (wl-thread-get-entity msg)))
       (when (or (not parent)
 		(not (memq parent msgs)))
-	(setq ret (append ret (list (car ptr)))))
-      (setq ptr (cdr ptr)))
-    ret))
+	(setq ret (cons msg ret))))
+    (nreverse ret)))
 
 (defun wl-thread-update-indent-string-thread (top-list)
   (let ((top-list (wl-thread-get-parent-list top-list))
@@ -756,20 +750,18 @@ Message is inserted to the summary buffer."
 	  (wl-thread-force-open (wl-thread-entity-get-number notopen))))))
 
 (defun wl-thread-insert-top ()
-  (let ((elist wl-thread-entity-list)
-	(len (length wl-thread-entity-list)))
+  (let ((len (length wl-thread-entity-list)))
     (elmo-with-progress-display
-	(wl-thread-insert-entity (length wl-thread-entity-list))
-	"Inserting message"
+        (wl-thread-insert-entity len)
+        "Inserting message"
       (wl-delete-all-overlays)
-      (while elist
-	(wl-thread-insert-entity
-	 0
-	 (wl-thread-get-entity (car elist))
-	 nil
-	 len)
-	(elmo-progress-notify 'wl-thread-insert-entity)
-	(setq elist (cdr elist))))))
+      (dolist (e wl-thread-entity-list)
+        (wl-thread-insert-entity
+         0
+         (wl-thread-get-entity e)
+         nil
+         len)
+        (elmo-progress-notify 'wl-thread-insert-entity)))))
 
 (defsubst wl-thread-insert-entity-sub (indent entity parent-entity all)
   (let (msg-num

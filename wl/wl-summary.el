@@ -977,12 +977,10 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   ;; of system internal to accord facilities for the Emacs variants.
   (run-hooks 'wl-summary-mode-hook))
 
-;;;
 (defun wl-summary-overview-entity-compare-by-size (x y)
    "Compare entity X and Y by size."
    (< (elmo-message-entity-field x 'size)
       (elmo-message-entity-field y 'size)))
-
 
 (defun wl-summary-overview-entity-compare-by-date (x y)
   "Compare entity X and Y by date."
@@ -2070,7 +2068,7 @@ This function is defined for `window-scroll-functions'"
 		    (elmo-database-close))
 		(run-hooks 'wl-summary-sync-updated-hook)
 		(setq mes
-		      (if (and (zerop (length delete-list))
+		      (if (and (null delete-list)
 			       (zerop num))
 			  (format
 			   "No updates for \"%s\"" (elmo-folder-name-internal
@@ -3450,9 +3448,6 @@ Return non-nil if the mark is updated"
       (message "No message.")
     (elmo-folder-recover-messages wl-summary-buffer-elmo-folder
 				  (list number))))
-
-;;; Summary line.
-(defvar wl-summary-line-formatter nil)
 
 (defun wl-summary-view-old-p ()
   "Return non-nil when summary view cache has old format."

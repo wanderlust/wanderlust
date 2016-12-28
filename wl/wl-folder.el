@@ -1316,7 +1316,7 @@ If current line is group folder, all subfolders are marked."
 		(wl-append ret-val (list entity)))))
 	  (kill-buffer tmp-buf))
       (file-error nil))
-    (setq ret-val (list wl-folder-desktop-name 'group ret-val))))
+    (list wl-folder-desktop-name 'group ret-val)))
 
 (defun wl-folder-entity-assign-id (entity &optional hashtb on-noid)
   (let ((hashtb (or hashtb

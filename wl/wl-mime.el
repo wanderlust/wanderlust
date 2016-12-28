@@ -719,7 +719,7 @@ It calls following-method selected from variable
     (pgg
      (wl-mime-pgp-decrypt-region-with-pgg beg end no-decode))
     (t
-     (error "Don't support PGP decryption"))))
+     (error "No support for PGP decryption"))))
 
 (defsubst wl-mime-pgp-verify-region (beg end &optional coding-system)
   (case wl-use-pgp-module
@@ -728,7 +728,7 @@ It calls following-method selected from variable
     (pgg
      (wl-mime-pgp-verify-region-with-pgg beg end coding-system))
     (t
-     (error "Don't support PGP decryption"))))
+     (error "No support for PGP verification"))))
 
 (defun wl-message-decrypt-pgp-nonmime ()
   "Decrypt PGP encrypted region"
@@ -780,10 +780,9 @@ With ARG, ask coding system and encode the region with it before verifying."
 (defvar wl-mime-pgp-decrypted-buffers nil)
 
 (defun wl-mime-pgp-kill-decrypted-buffers ()
-  (mapc (lambda (buffer)
-	  (when (bufferp buffer)
-	    (kill-buffer buffer)))
-	wl-mime-pgp-decrypted-buffers))
+  (dolist (buffer wl-mime-pgp-decrypted-buffers)
+    (when (bufferp buffer)
+      (kill-buffer buffer))))
 
 (defun wl-mime-preview-application/pgp (parent-entity entity situation)
   (goto-char (point-max))

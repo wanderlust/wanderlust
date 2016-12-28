@@ -1,8 +1,35 @@
+2016-12-18  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* wl-mime.el (wl-mime-pgp-decrypt-region): fix grammar in message
+	for missing PGP support.
+	(wl-mime-pgp-verify-region): Likewise.
+	(wl-mime-pgp-kill-decrypted-buffers): simplify MAPC and LAMBDA
+	with DOLIST.
+
 2016-12-10  Pascal Haakmat  <pascalh@gmail.com>
 
 	* wl-util.el (wl-biff-launch-handler): Do the post processing
 	always.
 	Cf. [wl-en:06335]
+
+2016-11-28  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* wl-thread.el (wl-thread-insert-top): rewrite with dolist; remove
+	repeated calls to length; reindent.
+	(wl-thread-get-parent-list): rewrite with dolist; replace append
+	with consing followed by nreverse.
+	(wl-thread-cleanup-symbols): rewrite with dolist.
+	(wl-thread-delete-line-from-buffer): replace explicit ELSE branch
+	by WHEN; limit scope of LET.
+
+2016-11-26  Piotr Trojanek  <piotr.trojanek@gmail.com>
+
+	* wl-summary.el (wl-summary-line-formatter): remove unreferenced
+	variable.
+	(wl-summary-sync-update): simplify detection of for zero-length list.
+
+	* wl-folder.el (wl-folder-create-folder-entity): remove useless
+	setq.
 
 2016-11-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 

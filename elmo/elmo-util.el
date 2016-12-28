@@ -506,27 +506,26 @@ Return value is a cons cell of (STRUCTURE . REST)"
   (elmo-sort-uniq-number-list (append l1 l2)))
 
 (defun elmo-list-insert (list element after)
-  (let* ((match (memq after list))
-	 (rest (and match (cdr (memq after list)))))
+  (let ((match (memq after list)))
     (if match
-	(progn
-	  (setcdr match (list element))
-	  (nconc list rest))
-      (nconc list (list element)))))
+        (progn
+          (setcdr match (cons element (cdr match)))
+          list)
+      (nconc list (cons element nil)))))
 
 (defun elmo-get-file-string (filename &optional remove-final-newline)
-  (elmo-set-work-buf
-    (let (insert-file-contents-pre-hook	; To avoid autoconv-xmas...
-	  insert-file-contents-post-hook)
-      (when (file-exists-p filename)
-	(if filename
-	    (as-binary-input-file (insert-file-contents filename)))
-	(when (and remove-final-newline
-		   (> (buffer-size) 0)
-		   (= (char-after (1- (point-max))) ?\n))
-	  (goto-char (point-max))
-	  (delete-char -1))
-	(buffer-string)))))
+  (if (file-exists-p filename)
+      (elmo-set-work-buf
+        (let (insert-file-contents-pre-hook	; To avoid autoconv-xmas...
+              insert-file-contents-post-hook)
+          (as-binary-input-file (insert-file-contents filename)))
+        (when (and remove-final-newline
+                   (> (buffer-size) 0)
+                   (= (char-before (point-max)) ?\n))
+          (goto-char (point-max))
+          (delete-char -1))
+        (buffer-string))
+    ""))
 
 (defun elmo-save-string (string filename)
   (if string
