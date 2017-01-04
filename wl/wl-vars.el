@@ -887,6 +887,10 @@ The cursor point is located at top of the body.")
   "A hook called when a biff-notification is invoked.")
 (defvar wl-biff-unnotify-hook nil
   "A hook called when a biff-notification is removed.")
+(defvar wl-biff-new-mail-functions nil
+  "A hook called when `wl-biff-notify' found non-zero new
+  mails. The hook functions receive the number of new mails as
+  the first argument.")
 (defvar wl-auto-check-folder-pre-hook nil
   "A hook called before auto check folders.")
 (defvar wl-auto-check-folder-hook nil
@@ -2251,14 +2255,19 @@ every intervals specified by `wl-biff-check-interval'."
   :type 'number
   :group 'wl-setting)
 
-(defcustom wl-biff-check-delay 0
-  "After interval specified by `wl-biff-check-interval', automatically checking new mail will start when Emacs keeps idle longer than specified seconds by this varaible.
-It has no effect on XEmacs or for the case which `wl-biff-use-idle-timer' is non-nil."
+(defcustom wl-biff-check-idle-delay nil
+  "Number of seconds that Emacs has to be idle before checking
+for new mail. If nil, Emacs will check for new mail every
+`wl-biff-check-interval' seconds whether Emacs is idle or
+not. This setting does nothing when `wl-biff-use-idle-timer' is
+non-nil."
   :type 'number
   :group 'wl-setting)
 
 (defcustom wl-biff-use-idle-timer nil
-  "Non-nil means that Emacs will not use normal timer for wl-biff."
+  "Non-nil means that Emacs will use the idle timer to check for
+new mail. The idle timer fires only once after Emacs becomes
+idle, after `wl-biff-check-interval' seconds."
   :type 'boolean
   :group 'wl-setting)
 

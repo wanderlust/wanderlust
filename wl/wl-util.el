@@ -772,52 +772,63 @@ that `read' can handle, whenever this is possible."
   (defun wl-biff-start ()
     (require 'timer)
     (if wl-biff-check-folder-list
-	;; If biff timer already started, do nothing.
-	(unless (get 'wl-biff 'timers)
-	  (put 'wl-biff 'timers
-	       (if wl-biff-use-idle-timer
-		   (list (run-with-idle-timer
-			  wl-biff-check-interval nil 'wl-biff-event-handler))
-		 (list (run-at-time wl-biff-check-interval nil
-				    'wl-biff-launch-handler)))))
+        (if (and wl-biff-check-interval
+                 (> wl-biff-check-interval 0))
+            ;; If biff timer already started, do nothing.
+            (unless (get 'wl-biff 'timers)
+              (put 'wl-biff 'timers
+                   (if wl-biff-use-idle-timer
+                       (list (run-with-idle-timer
+                              ;; Set idle timer to repeat 
+                              wl-biff-check-interval wl-biff-check-interval 'wl-biff-event-handler))
+                     (list (run-at-time wl-biff-check-interval nil
+                                        'wl-biff-event-handler)))))
+          (message "wl-biff-check-interval is not set or <0"))
       (message "No folder is specified for biff")))
 
 
-  (defun wl-biff-launch-handler ()
-    (put 'wl-biff 'timers
-	 (run-with-idle-timer wl-biff-check-delay nil 'wl-biff-event-handler)))
-
   (defun wl-biff-event-handler ()
-    ;; PAKURing from FSF:time.el
+    ;; Stop timer if not an idle timer to prevent recursion
+    (when (not wl-biff-use-idle-timer)
+      (wl-biff-stop))
     (unwind-protect
-	(progn
-	  (condition-case signal
-	      (wl-biff-check-folders)
-	    (error
-	     (message "wl-biff: %s (%s)" (car signal) (cdr signal))))
-	  ;; Do redisplay right now, if no input pending.
-	  (sit-for 0))
-      (wl-biff-stop)
-      (wl-biff-start)
-      (let ((idle (and wl-biff-use-idle-timer
-		       ;; Available on Emacs 22 or later.
-		       (fboundp 'current-idle-time)
-		       (current-idle-time))))
-	(when idle
-	  ;; Run idle timer for the case Emacs keeps idle.
-	  (put 'wl-biff 'timers
-	       (cons (run-with-idle-timer
-		      (+ wl-biff-check-interval (float-time idle))
-		      nil 'wl-biff-event-handler)
-		     (get 'wl-biff 'timers))))))
-    )))
-
+        (let ((idle (and
+                     ;; Available on Emacs 22 or later.
+                     (fboundp 'current-idle-time) 
+                     (current-idle-time))))
+          (message "idle=%s [%s], wl-biff-check-idle-delay=%s" idle (and idle (float-time idle)) wl-biff-check-idle-delay)
+          (when (or
+                 ;; Ignore wl-biff-check-idle-delay when using idle
+                 ;; timer
+                 wl-biff-use-idle-timer
+                 ;; If wl-biff-check-idle-delay is not set, always
+                 ;; check mail
+                 (null wl-biff-check-idle-delay)
+                 ;; Otherwise only check mail if Emacs has been idle
+                 ;; for at least wl-biff-check-idle-delay seconds
+                 (and
+                  idle
+                  (> (float-time idle) wl-biff-check-idle-delay)))
+            (condition-case signal
+                (wl-biff-check-folders)
+              (error
+               (message "wl-biff: %s (%s)" (car signal) (cdr signal))))
+            ;; Do redisplay right now, if no input pending.
+            (sit-for 0)))
+      ;; Restart timer if not an idle timer (idle timer repeats
+      ;; automatically)
+      (when (not wl-biff-use-idle-timer)
+        (wl-biff-start))))
+  ))
+ 
 
 (defsubst wl-biff-notify (new-mails notify-minibuf)
   (when (and (not wl-modeline-biff-status) (> new-mails 0))
     (run-hooks 'wl-biff-notify-hook))
   (when (and wl-modeline-biff-status (eq new-mails 0))
     (run-hooks 'wl-biff-unnotify-hook))
+  (when (> new-mails 0)
+    (run-hook-with-args 'wl-biff-new-mail-functions new-mails))
   (setq wl-modeline-biff-status (> new-mails 0))
   (force-mode-line-update t)
   (when notify-minibuf
@@ -841,7 +852,7 @@ that `read' can handle, whenever this is possible."
 	  folder)
       (if (eq (length flist) 1)
 	  (wl-biff-check-folder-async (wl-folder-get-elmo-folder
-				       (car flist) 'biff) (interactive-p))
+                                       (car flist) 'biff) (interactive-p))
 	(unwind-protect
 	    (while flist
 	      (setq folder (wl-folder-get-elmo-folder (car flist))
