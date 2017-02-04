@@ -823,10 +823,13 @@ that `read' can handle, whenever this is possible."
 
 
 (defsubst wl-biff-notify (new-mails notify-minibuf)
-  (when (and (not wl-modeline-biff-status) (> new-mails 0))
-    (run-hooks 'wl-biff-notify-hook))
-  (when (and wl-modeline-biff-status (eq new-mails 0))
-    (run-hooks 'wl-biff-unnotify-hook))
+  (if (> new-mails 0)
+      (progn
+	(unless wl-modeline-biff-status
+	  (run-hooks 'wl-biff-notify-hook))
+	(run-hook-with-args 'wl-biff-new-mail-hook new-mails))
+    (when (and wl-modeline-biff-status (eq new-mails 0))
+      (run-hooks 'wl-biff-unnotify-hook)))
   (setq wl-modeline-biff-status (> new-mails 0))
   (force-mode-line-update t)
   (when notify-minibuf

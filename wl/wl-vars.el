@@ -887,6 +887,10 @@ The cursor point is located at top of the body.")
   "A hook called when a biff-notification is invoked.")
 (defvar wl-biff-unnotify-hook nil
   "A hook called when a biff-notification is removed.")
+(defvar wl-biff-new-mail-hook nil
+  "A hook called when `wl-biff-notify' found non-zero new
+mails. The hook functions receive the number of new mails as
+the first argument.")
 (defvar wl-auto-check-folder-pre-hook nil
   "A hook called before auto check folders.")
 (defvar wl-auto-check-folder-hook nil
