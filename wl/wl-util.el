@@ -775,17 +775,22 @@ that `read' can handle, whenever this is possible."
 	;; If biff timer already started, do nothing.
 	(unless (get 'wl-biff 'timers)
 	  (put 'wl-biff 'timers
-	       (if wl-biff-use-idle-timer
-		   (list (run-with-idle-timer
-			  wl-biff-check-interval nil 'wl-biff-event-handler))
-		 (list (run-at-time wl-biff-check-interval nil
+	       (list (if wl-biff-use-idle-timer
+			 (run-with-idle-timer
+			  wl-biff-check-interval t 'wl-biff-event-handler)
+		       (run-at-time t wl-biff-check-interval
 				    'wl-biff-launch-handler)))))
       (message "No folder is specified for biff")))
 
 
   (defun wl-biff-launch-handler ()
-    (put 'wl-biff 'timers
-	 (run-with-idle-timer wl-biff-check-delay nil 'wl-biff-event-handler)))
+    (let ((timers (get 'wl-biff 'timers)))
+      (unless (or wl-biff-check-folders-running
+		  (cdr timers))
+	(put 'wl-biff 'timers
+	     (cons (run-with-idle-timer
+		    wl-biff-check-delay nil 'wl-biff-event-handler)
+		   timers)))))
 
   (defun wl-biff-event-handler ()
     ;; PAKURing from FSF:time.el
@@ -797,20 +802,24 @@ that `read' can handle, whenever this is possible."
 	     (message "wl-biff: %s (%s)" (car signal) (cdr signal))))
 	  ;; Do redisplay right now, if no input pending.
 	  (sit-for 0))
-      (wl-biff-stop)
       (wl-biff-start)
-      (let ((idle (and wl-biff-use-idle-timer
-		       ;; Available on Emacs 22 or later.
-		       (fboundp 'current-idle-time)
-		       (current-idle-time))))
-	(when idle
-	  ;; Run idle timer for the case Emacs keeps idle.
-	  (put 'wl-biff 'timers
-	       (cons (run-with-idle-timer
-		      (+ wl-biff-check-interval (float-time idle))
-		      nil 'wl-biff-event-handler)
-		     (get 'wl-biff 'timers))))))
-    )))
+      (put 'wl-biff 'timers
+	   (let ((timers (get 'wl-biff 'timers)))
+	     ;; Cancel existing extra idle timer (normaly only 1 at most).
+	     (while (cdr timers)
+	       (when (timerp (car timers)) (cancel-timer (car timers)))
+	       (setq timers (cdr timers)))
+	     (if (and wl-biff-use-idle-timer
+		      ;; Available on Emacs 22 or later.
+		      (fboundp 'current-idle-time))
+		 ;; Run extra idle timer for the case Emacs keeps idle.
+		 (cons (run-with-idle-timer
+			(+ wl-biff-check-interval
+			   (float-time (current-idle-time)))
+			nil 'wl-biff-event-handler)
+		       timers)
+		   timers)))))
+  ))
 
 
 (defsubst wl-biff-notify (new-mails notify-minibuf)
