@@ -365,6 +365,9 @@ If the value is a list, all elements are used as index paths for namazu."
 	(setq files (cons (expand-file-name filename dirname) files))))
     files))
 
+(defun elmo-search-rgrep-target (engine pattern)
+  (expand-file-name (elmo-search-engine-param-internal engine)))
+
 (defun elmo-search-split-pattern-list (engine pattern)
   "ENGINE is ignored.  Splits query PATTERN into list of strings, with ' and \" quoting phrases."
   (split-string-and-unquote
@@ -387,6 +390,11 @@ If the value is a list, all elements are used as index paths for namazu."
        'grep 'local-file
        :prog "grep"
        :args '("-l" "-e" pattern elmo-search-grep-target)))
+  (or (assq 'rgrep elmo-search-engine-alist)
+      (elmo-search-register-engine
+       'rgrep 'local-file
+       :prog "grep"
+       :args '("-r" "-l" "-e" pattern elmo-search-rgrep-target)))
   (or (assq 'mu elmo-search-engine-alist)
       (elmo-search-register-engine
        'mu 'local-file
