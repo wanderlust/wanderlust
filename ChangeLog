@@ -1,3 +1,10 @@
+2017-03-10  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* doc/wl-ja.texi (rgrep): New node.
+	(grep): Add tips for too many file searching.
+
+	* doc/wl.texi (rgrep): Likewise.
+
 2016-11-09  Piotr Trojanek  <piotr.trojanek@gmail.com>
 
 	* doc/wl.texi: fix of minor grammar issues and a typo in reference

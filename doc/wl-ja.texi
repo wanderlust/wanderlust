@@ -1418,6 +1418,7 @@ RSS $B$d(B Atom $B5Z$S(B OPML $B$r%"%/%;%9%0%k!<%W$H$7$F07$&$3$H$,$G$-!"(B
 @menu
 * namazu::      namazu
 * grep::        grep
+* rgrep::       rgrep
 * mu::          mu
 * notmuch::     notmuch
 @end menu
@@ -1499,9 +1500,10 @@ namazu (@uref{http://www.namazu.org/}) $B$r;H$C$F!"%$%s%G%C%/%9$KEPO?$5$l$?(B
 $B$HF~NO$9$l$P!"(B@file{~/.elmo/cache} $B$H(B @file{~/documents} $B$N%$%s%G%C%/%9$r(B
 $BBP>]$H$7$F!"%-!<%o!<%I(B @samp{wanderlust} $B$G8!:w$r9T$$$^$9!#(B
 
-@node grep, mu, namazu, Search Folder
+@node grep, rgrep, namazu, Search Folder
 @subsection grep
 @pindex grep
+@pindex find
 
 grep $B$r;H$C$F!"8!:wBP>]$G;XDj$5$l$?%G%#%l%/%H%j$K$"$k%U%!%$%k$r8!:w$7$^$9!#(B
 
@@ -1522,7 +1524,46 @@ grep $B$r;H$C$F!"8!:wBP>]$G;XDj$5$l$?%G%#%l%/%H%j$K$"$k%U%!%$%k$r8!:w$7$^$9!#(
 @end group
 @end example
 
-@node mu, notmuch, grep, Search Folder
+$B8!:wBP>]$H$J$k%U%!%$%kL>$r$9$Y$F0z?t$H$7$F(B grep $B$r5/F0EO$9$?$a!"(B
+$B%U%!%$%k$,B?$9$.$k$H<:GT$9$k>l9g$,$"$j$^$9!#(B
+find $B$,(B @samp{-maxdepth} $B%*%W%7%g%s$r<u$1IU$1$k$N$G$"$l$P!"(B
+@file{~/.wl} $B$K0J2<$N$h$&$K5-:\$9$k;v$G$3$NLdBj$r2sHr$G$-$^$9!#(B
+
+@example
+(eval-after-load "elmo-search"
+  '(elmo-search-register-engine
+    'grep 'local-file
+    :prog "find"
+    :args '(elmo-search-rgrep-target
+            "-maxdepth" "1" "-type" "f" "-exec" "grep" "-l" "-e"
+            pattern "@{@}" "+")))
+@end example
+
+find $B$N(B @samp{-exec command @{@} +} $B%*%W%7%g%s$,@5$7$/F0:n$7$J$$(B
+$B>l9g$O(B $B:G8e$N(B @samp{+} $B$r(B @samp{;} $B$KJQ$($k$HF0:n$9$k$+$b$7$l$^$;$s$,!"(B
+$B$b$N$9$4$/CY$$$+$b$7$l$^$;$s!#(B
+
+@node rgrep, mu, grep, Search Folder
+@subsection rgrep
+
+grep $B$N(B @samp{-r} $B%*%W%7%g%s$r$r;H$C$F!"8!:wBP>]$G;XDj$5$l$?(B
+$B%G%#%l%/%H%j0J2<$K$"$k%U%!%$%k$r8!:w$7$^$9!#(B
+@samp{-r} $B%*%W%7%g%s$r<u$1IU$1$k(B grep $B$,I,MW$G$9!#(B
+
+$B8!:wJ}<0(B grep $B$H$O0[$J$j!"BP>]%G%#%l%/%H%j$N%5%V%G%#%l%/%H%j$K$"$k(B
+$B%U%!%$%k$b8!:wBP>]$K$J$j$^$9(B (@pxref{grep})$B!#(B
+$B$^$?!"%U%!%$%k?t$K4X$9$k@)8B$O@8$8$^$;$s!#(B
+$B$=$NB>!"=q<0$J$I$O8!:wJ}<0(Bgrep$B$K=`$8$^$9!#(B
+
+@example
+@group
+[wanderlust]~/Mail/inbox!rgrep
+    -> $B%G%#%l%/%H%j(B "~/Mail/inbox" $B0J2<$+$i(B
+       "wanderlust" $B$K%^%C%A$9$k$b$N$rC5$9(B
+@end group
+@end example
+
+@node mu, notmuch, rgrep, Search Folder
 @subsection mu
 @pindex mu
 

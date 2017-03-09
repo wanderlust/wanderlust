@@ -1410,6 +1410,7 @@ be assigned by @code{elmo-search-default-engine}.
 @menu
 * namazu::      namazu
 * grep::        grep
+* rgrep::       rgrep
 * mu::          mu
 * notmuch::     notmuch
 @end menu
@@ -1493,9 +1494,10 @@ Using above alias setting, you can specify
 to execute a namazu search with keyword @samp{wanderlust} using indices in the 
 directory @file{~/.elmo/cache} and @file{~/documents}.
 
-@node grep, mu, namazu, Search Folder
+@node grep, rgrep, namazu, Search Folder
 @subsection grep
 @pindex grep
+@pindex find
 
 The files that exists in the directory specified with the @var{search
 target} are found by using grep.
@@ -1517,7 +1519,46 @@ Example:
 @end group
 @end example
 
-@node mu, notmuch, grep, Search Folder
+Because this method passes all target filenames to grep process as
+arguments, starting grep process may fail when there are too many files
+in the target directory.  If your find proram accepts @samp{-maxdepth}
+option, adding the below code in @file{~/.wl} may resolve the problem.
+
+@example
+(eval-after-load "elmo-search"
+  '(elmo-search-register-engine
+    'grep 'local-file
+    :prog "find"
+    :args '(elmo-search-rgrep-target
+            "-maxdepth" "1" "-type" "f" "-exec" "grep" "-l" "-e"
+            pattern "@{@}" "+")))
+@end example
+
+If your find program can't handle @samp{-exec command @{@} +} option
+correctly, replacing the last @samp{+} with @samp{;} would do the trick,
+but it is probably very slow.
+
+@node rgrep, mu, grep, Search Folder
+@subsection rgrep
+
+Using grep with @samp{-r} option to search files in subdirectories of
+the target directory.
+Grep must accept @samp{-r} option.
+
+There is no limitation about the number of files such as grep method (@pxref{grep}).
+Syntax is similar to grep method.
+
+Example:
+
+@example
+@group
+[wanderlust]~/Mail/inbox!rgrep
+    -> search messages matched with "wanderlust"
+       from the directory "~/Mail/inbox" including subdirectories.
+@end group
+@end example
+
+@node mu, notmuch, rgrep, Search Folder
 @subsection mu
 @pindex mu
 
