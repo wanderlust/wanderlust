@@ -1114,9 +1114,15 @@ that `read' can handle, whenever this is possible."
 	    (cons beg end)))))
 
 (defun wl-simple-display-progress (label action current total)
-  (message "%s... %d%%"
-	   action
-	   (if (> total 0) (floor (* (/ current (float total)) 100)) 0)))
+  (when (> total 0)
+    (let ((progress (* (/ current (float total)) 100)))
+      (if (< total 10000)
+	  (message "%s... %d%%"
+		   action (floor progress))
+	(message (format "%%s... %%.%df%%%%"
+			 (- (length (number-to-string total)) 4))
+		 action
+		 progress)))))
 
 (when (fboundp 'progress-feedback-with-label)
   (defun wl-display-progress-with-gauge (label action current total)
