@@ -132,14 +132,13 @@ If nil, just once. If t, until success."
   `(nth 3 ,stream-type))
 
 (defsubst elmo-network-session-password-key (session)
-  (format "%s:%s/%s@%s:%d"
-	  (upcase
-	   (nth 1 (split-string (symbol-name
-				 (luna-class-name session)) "[4-]")))
-	  (elmo-network-session-user-internal session)
-	  (elmo-network-session-auth-internal session)
-	  (elmo-network-session-server-internal session)
-	  (elmo-network-session-port-internal session)))
+  (list (upcase
+	 (nth 1 (split-string (symbol-name
+			       (luna-class-name session)) "[4-]")))
+	(elmo-network-session-user-internal session)
+	(elmo-network-session-auth-internal session)
+	(elmo-network-session-server-internal session)
+	(elmo-network-session-port-internal session)))
 
 (defvar elmo-network-session-cache nil)
 

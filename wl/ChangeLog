@@ -1,3 +1,9 @@
+2017-03-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-draft.el (wl-smtp-password-key): Make list as key.  4th
+	argument SERVICE is required.
+	(wl-smtp-extension-bind, wl-draft-send-mail-with-smtp): Likewise.
+
 2017-03-19  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-util.el (wl-simple-display-progress): Display decimal

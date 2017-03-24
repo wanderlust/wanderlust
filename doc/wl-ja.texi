@@ -8359,11 +8359,13 @@ XEmacs では無効です。
 @node Password Management, Split messages, Biff, Advanced Issues
 @section パスワードの管理
 
-サーバに接続する為に入力したパスワードは変数 @code{elmo-passwd-alist} に
+サーバに接続する為に入力したパスワードは変数 @code{elmo-passwd-storage}  に
 接続毎に保持されます。この変数にはエンコードされた生のパスワードが保持さ
 れており、Emacs を他人に触られるとパスワードを見られる危険性があるので十
 分に注意して下さい。
 
+@findex elmo-passwd-alist-clear
+@findex elmo-passwd-alist-save
 パスワードが保持されている状態で @kbd{M-x elmo-passwd-alist-save} を実行
 するとパスワードがファイルに保存され、パスワードの入力が不要になります。
 この場合、キー入力を盗み見られる危険性は減るかもしれませんが、生のパスワ
@@ -8386,6 +8388,32 @@ Non-nil な値が設定された場合は、新規にパスワードが入力されてから
 @code{elmo-passwd-life-time} 秒後にパスワードを消去するタイマが、
 セットされます。@code{nil} の場合は入力されたパスワードを消去しません。
 @end table
+
+@menu
+* Auth-source:: auth-source を利用したパスワードの管理
+@end menu
+
+
+@node Auth-source, , Password Management, Password Management
+@subsection auth-source を利用したパスワードの管理
+@cindex auth-source
+
+@vindex elmo-passwd-storage-type
+@file{~/.wl} に @code{(setq elmo-passwd-storage-type 'auth-source)}
+のように記述するとパスワードの管理に auth-source
+(@pxref{Top, , ,auth, Emacs auth-source}) を利用するようになります。
+
+
+@subsubsection auth-source 利用時の制限
+
+auth-source 使用時は以下の制限があります。
+
+@itemize @bullet
+@item プロトコル名や認証メカニズムによるパスワードの区別を行いません。
+@item netrc バックエンドの制限かもしれませんが、
+同一ホスト名に複数アカウントが存在する場合、インタラクティブにパスワードを
+入力することができず、あらかじめエントリを作成しておく必要があります。
+@end itemize
 
 
 @node Split messages, Batch Processing, Password Management, Advanced Issues

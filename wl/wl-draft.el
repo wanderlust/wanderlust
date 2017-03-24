@@ -130,9 +130,8 @@ e.g.
 (defvar wl-draft-folder-internal nil
   "Internal variable for caching `opened' draft folder.")
 
-(defsubst wl-smtp-password-key (user mechanism server)
-  (format "SMTP:%s/%s@%s"
-	  user mechanism server))
+(defsubst wl-smtp-password-key (user mechanism server service)
+  (list "SMTP" user mechanism server (if (integerp service) service 25)))
 
 (defmacro wl-smtp-extension-bind (&rest body)
   `(let ((smtp-sasl-mechanisms
@@ -160,7 +159,8 @@ e.g.
 	       (wl-smtp-password-key
 		smtp-sasl-user-name
 		(car smtp-sasl-mechanisms)
-		smtp-server)))))
+		smtp-server
+		smtp-service)))))
      ,@body))
 
 (def-edebug-spec wl-smtp-extension-bind (body))
@@ -1104,7 +1104,8 @@ non-nil."
 			  (wl-smtp-password-key
 			   smtp-sasl-user-name
 			   (car smtp-sasl-mechanisms)
-			   smtp-server)))
+			   smtp-server
+			   smtp-service)))
 		     (signal (car err) (cdr err)))
 		    (quit
 		     (wl-draft-write-sendlog 'uncertain 'smtp smtp-server

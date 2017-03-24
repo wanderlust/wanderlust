@@ -8438,10 +8438,12 @@ no new mail at the current check.
 @section Manage Passwords
 
 If you input passwords to connect servers, they are stored in the
-variable @code{elmo-passwd-alist} per connection. You should be careful
+variable @code{elmo-passwd-storage} per connection. You should be careful
 that others might read your passwords if they can touch your Emacs,
 since encoded plain passwords are there.
 
+@findex elmo-passwd-alist-clear
+@findex elmo-passwd-alist-save
 If you invoke @kbd{M-x elmo-passwd-alist-save} while you have stored
 passwords, then they are saved on the file, and it will save you to
 input passwords. In this case, the risk that someone reads your
@@ -8465,6 +8467,33 @@ If the value is some number, timer is set to remove password entry after
 @code{nil} means never to remove passwords.
 @end table
 
+@menu
+* Auth-source:: Using auth-source for password managament
+@end menu
+
+
+@node Auth-source, , Password Management, Password Management
+@subsection Using auth-source for password managament
+@cindex auth-source
+
+@vindex elmo-passwd-storage-type
+If you write as @code{(setq elmo-passwd-storage-type 'auth-source)} in
+your @file{~/.wl}, you can use auth-source (@pxref{Top, , ,auth, Emacs
+auth-source}) for password management.
+
+
+@subsubsection Limitations of using auth-source
+
+Thre are some limitations for auth-source.
+
+@itemize @bullet
+@item password is not distinguished by protocol name nor authentication
+mechanism.
+@item  If you have multiple accounts on the one host,
+you have to prepare password entry before use.
+In such case, you can't input password interactively.
+It may be limitaion of netrc backend.
+@end itemize
 
 @node Split messages, Batch Processing, Password Management, Advanced Issues
 @section Message splitting

@@ -564,75 +564,40 @@ Return value is a cons cell of (STRUCTURE . REST)"
        elmo-path-sep)
     filename))
 
-(defvar elmo-passwd-alist nil)
-
-(defun elmo-passwd-alist-load ()
-  (let ((filename (expand-file-name elmo-passwd-alist-file-name
-				    elmo-msgdb-directory)))
-    (if (not (file-readable-p filename))
-	()
-      (with-temp-buffer
-	(let (insert-file-contents-pre-hook ; To avoid autoconv-xmas...
-	      insert-file-contents-post-hook)
-	  (insert-file-contents filename)
-	  (goto-char (point-min))
-	  (ignore-errors
-	   (read (current-buffer))))))))
+(eval-and-compile
+  (autoload 'elmo-passwd-clear "elmo-passwd")
+  (autoload 'elmo-passwd-save "elmo-passwd")
+  (autoload 'elmo-passwd-get "elmo-passwd")
+  (autoload 'elmo-passwd-remove "elmo-passwd"))
+  
+(defun elmo-passwd-storage ()
+  (require 'elmo-passwd)
+  (if elmo-passwd-storage
+      elmo-passwd-storage
+    (setq elmo-passwd-storage
+	  (luna-make-entity
+	   (intern (concat "elmo-passwd-"
+			   (symbol-name elmo-passwd-storage-type)))))))
 
 (defun elmo-passwd-alist-clear ()
   "Clear password cache."
   (interactive)
-  (dolist (pair elmo-passwd-alist)
-    (when (stringp (cdr-safe pair))
-      (elmo-clear-string (cdr pair))))
-  (setq elmo-passwd-alist nil))
+  (when elmo-passwd-storage
+    (elmo-passwd-clear elmo-passwd-storage)
+    (setq elmo-passwd-storage nil)))
 
 (defun elmo-passwd-alist-save ()
   "Save password into file."
   (interactive)
-  (with-temp-buffer
-    (let ((filename (expand-file-name elmo-passwd-alist-file-name
-				      elmo-msgdb-directory))
-	  print-length print-level)
-      (prin1 elmo-passwd-alist (current-buffer))
-      (princ "\n" (current-buffer))
-;;;      (if (and (file-exists-p filename)
-;;;	       (not (equal 384 (file-modes filename))))
-;;;	  (error "%s is not safe.chmod 600 %s!" filename filename))
-      (if (file-writable-p filename)
-	  (progn
-	    (write-region (point-min) (point-max)
-			  filename nil 'no-msg)
-	    (set-file-modes filename 384))
-	(message "%s is not writable." filename)))))
+  (elmo-passwd-save (elmo-passwd-storage)))
 
 (defun elmo-get-passwd (key)
   "Get password from password pool."
-  (let (pair pass)
-    (if (not elmo-passwd-alist)
-	(setq elmo-passwd-alist (elmo-passwd-alist-load)))
-    (setq pair (assoc key elmo-passwd-alist))
-    (if pair
-	(elmo-base64-decode-string (cdr pair))
-      (setq pass (read-passwd (format "Password for %s: " key)))
-      ;; put key and passwd at the front of the alist
-      (setq elmo-passwd-alist
-            (cons (cons key
-                        (elmo-base64-encode-string pass))
-                  elmo-passwd-alist))
-      (if elmo-passwd-life-time
-	  (run-with-timer elmo-passwd-life-time nil
-			  `(lambda () (elmo-remove-passwd ,key))))
-      pass)))
+  (elmo-passwd-get (elmo-passwd-storage) key))
 
 (defun elmo-remove-passwd (key)
   "Remove password from password pool (for failure)."
-  (let (pass-cons)
-    (while (setq pass-cons (assoc key elmo-passwd-alist))
-      (unwind-protect
-	  (elmo-clear-string (cdr pass-cons))
-	(setq elmo-passwd-alist
-	      (delete pass-cons elmo-passwd-alist))))))
+  (elmo-passwd-remove (elmo-passwd-storage) key))
 
 (defun elmo-string-to-list (string)
   (read (concat "(" string ")")))

@@ -17,7 +17,7 @@
 (defconst ELMO-MODULES '(
    pldap acap slp mmimap
    elmo-signal elmo-date elmo-util elmo-version
-   elmo-vars elmo elmo-msgdb
+   elmo-vars elmo elmo-msgdb elmo-passwd
    elmo-net elmo-imap4 elmo-pop3 elmo-nntp
    elmo-localdir elmo-localnews elmo-map elmo-maildir
    elmo-multi elmo-access elmo-filter

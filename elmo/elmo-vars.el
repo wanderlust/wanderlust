@@ -107,14 +107,15 @@ you have to add it to `elmo-digest-flags'.
   :type 'directory
   :group 'elmo
   :group 'elmo-setting)
-(defvar elmo-passwd-alist-file-name "passwd"
-  "*ELMO Password filename.")
-(defcustom elmo-passwd-life-time nil
-  "*Duration of ELMO Password in seconds.  nil means infinity."
-  :type '(choice (const :tag "Infinity" nil)
-		 number)
+
+(defcustom elmo-passwd-storage-type 'alist
+  "Specify ELMO password storage type.  If you want to use `auth-source', set its value to symbol auth-source."
+  :type '(choice (const alist :tag "alist")
+		 (const auth-source :tag "Use auth-source"))
   :group 'elmo
   :group 'elmo-setting)
+
+(defvar elmo-passwd-storage nil)
 
 (defvar elmo-warning-threshold 30000
   "*Display warning when the bytes of message exceeds this value.")

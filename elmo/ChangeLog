@@ -1,3 +1,24 @@
+2017-03-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Now elmo can use auth-source for managing password.  If you want
+	to use auth-source, write "(setq elmo-passwd-storage-type
+	'auth-source)" in your ~/.wl.  There are some limitation.  Please
+	see the document.
+
+	* elmo-vars.el (elmo-passwd-alist-file-name)
+	(elmo-passwd-life-time): Moved to elmo-passwd.el.
+	(elmo-passwd-storage-type, elmo-passwd-storage): New variable.
+
+	* elmo-util.el (elmo-passwd-alist, elmo-passwd-alist-load):
+	Abolished.
+	(elmo-passwd-storage): New function.
+	(elmo-passwd-alist-clear, elmo-passwd-alist-save, elmo-get-passwd)
+	(elmo-remove-passwd): Use elmo-passwd.el.
+
+	* elmo-passwd.el: New file.
+
+	* elmo-net.el (elmo-network-session-password-key): Make list as key.
+
 2017-03-05  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-search.el (top): Add entry for rgrep (recursive grep) in
