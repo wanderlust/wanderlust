@@ -2066,17 +2066,16 @@ Optional argument DAYS specifies the days to expire caches."
   "Get path for cache file associated with MSGID, FOLDER, and NUMBER."
   (if (setq msgid (elmo-msgid-to-cache msgid))
       (expand-file-name
-       (expand-file-name
-	(if folder
-	    (format "%s/%s/%s@%s"
-		    (elmo-cache-get-path-subr msgid)
-		    msgid
-		    (or number "")
-		    (elmo-safe-filename folder))
-	  (format "%s/%s"
-		  (elmo-cache-get-path-subr msgid)
-		  msgid))
-	elmo-cache-directory))))
+       (if folder
+	   (format "%s/%s/%s@%s"
+		   (elmo-cache-get-path-subr msgid)
+		   msgid
+		   (or number "")
+		   (elmo-safe-filename folder))
+	 (format "%s/%s"
+		 (elmo-cache-get-path-subr msgid)
+		 msgid))
+       elmo-cache-directory)))
 
 ;;;
 ;; Warnings.

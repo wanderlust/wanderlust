@@ -1,3 +1,8 @@
+2017-03-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-cache-get-path): Remove redundant
+	expand-file-name.
+
 2017-03-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Now elmo can use auth-source for managing password.  If you want
