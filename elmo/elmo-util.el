@@ -603,28 +603,17 @@ Return value is a cons cell of (STRUCTURE . REST)"
   (read (concat "(" string ")")))
 
 (defun elmo-list-to-string (list)
-  (let ((tlist list)
-	str)
-    (if (listp tlist)
-	(progn
-	  (setq str "(")
-	  (while (car tlist)
-	    (setq str
-		  (concat str
-			  (if (symbolp (car tlist))
-			      (symbol-name (car tlist))
-			    (car tlist))))
-	    (if (cdr tlist)
-		(setq str
-		      (concat str " ")))
-	    (setq tlist (cdr tlist)))
-	  (setq str
-		(concat str ")")))
-      (setq str
-	    (if (symbolp tlist)
-		(symbol-name tlist)
-	      tlist)))
-    str))
+  (if (listp list)
+      (concat "("
+	      (mapconcat (lambda (elt)
+			   (if (symbolp elt)
+			       (symbol-name elt)
+			     elt))
+			 list " ")
+	      ")")
+    (if (symbolp list)
+	(symbol-name list)
+      list)))
 
 (eval-and-compile
   (if (fboundp 'clear-string)
