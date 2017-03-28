@@ -154,7 +154,8 @@ Special commands:
   (define-key wl-draft-mode-map "\C-c\C-c" 'wl-draft-send-and-exit)
   (define-key wl-draft-mode-map "\C-c\C-z" 'wl-draft-save-and-exit)
   (define-key wl-draft-mode-map "\C-c\C-k" 'wl-draft-kill)
-  (define-key wl-draft-mode-map "\C-l"     'wl-draft-highlight-and-recenter)
+  (define-key wl-draft-mode-map [remap recenter-top-bottom]
+    'wl-draft-highlight-and-recenter)
   (define-key wl-draft-mode-map "\C-i"     'wl-complete-field-body-or-tab)
   (define-key wl-draft-mode-map "\C-c\C-r" 'wl-draft-caesar-region)
   (define-key wl-draft-mode-map "\M-t"     'wl-toggle-plugged)
