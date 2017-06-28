@@ -1,3 +1,8 @@
+2017-06-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-passwd.el (elmo-passwd-alist-ignore-smtp-port): Fix typo in
+	the docstring.
+
 2017-03-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-util.el (elmo-list-to-string): Refactored.

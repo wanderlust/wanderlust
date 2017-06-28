@@ -125,7 +125,8 @@ It is used to remove executed timer function.")
   :group 'elmo-passwd)
 
 (defcustom elmo-passwd-alist-ignore-smtp-port t
-  "Wen non-nil, share SMTP password between the same host with different ports."  :type 'boolean
+  "When non-nil, share SMTP password between the same host with different ports."
+  :type 'boolean
   :group 'elmo-passwd)
 
 (eval-and-compile
