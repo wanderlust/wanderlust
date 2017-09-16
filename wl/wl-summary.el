@@ -2617,8 +2617,11 @@ If ARG, without confirm."
       (put-text-property
        (point-at-bol) (point-at-eol)
        'mouse-face nil))
-  (ignore-errors
-    (run-hooks 'wl-summary-line-inserted-hook)))
+  (condition-case error
+      (run-hooks 'wl-summary-line-inserted-hook)
+    (error
+     (message "Error occured in running wl-summary-line-inserted-hook, %s"
+	      (cdr error)))))
 
 (defun wl-summary-insert-sequential (entity folder &rest args)
   (when entity

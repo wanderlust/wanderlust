@@ -523,7 +523,10 @@ Returns non-nil if bottom of message."
 	       (not (wl-message-display-all-header-p display-type)))
       (wl-message-header-narrowing))
     (goto-char (point-min))
-    (ignore-errors (run-hooks 'wl-message-redisplay-hook))
+    (condition-case error
+	(run-hooks 'wl-message-redisplay-hook)
+      (error (message "Error occured in running wl-message-redisplay-hook, %s"
+		      (cdr error))))
     ;; go back to summary mode
     (set-buffer-modified-p nil)
     (setq buffer-read-only t)

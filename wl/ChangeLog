@@ -1,3 +1,10 @@
+2017-09-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-message.el (wl-message-redisplay): Report error on hook
+	functions.
+
+	* wl-summary.el (wl-summary-insert-line): Ditto.
+
 2017-03-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-news.el.in: Remove EOL type from coding cookie for old
