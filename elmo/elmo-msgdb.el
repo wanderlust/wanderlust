@@ -323,28 +323,15 @@ header separator."
   (elmo-number-set-append killed-list msg))
 
 (defun elmo-msgdb-killed-list-length (killed-list)
-  (let ((killed killed-list)
-	(ret-val 0))
-    (while (car killed)
-      (if (consp (car killed))
-	  (setq ret-val (+ ret-val 1 (- (cdar killed) (caar killed))))
-	(setq ret-val (+ ret-val 1)))
-      (setq killed (cdr killed)))
-    ret-val))
+  (let ((result (length killed-list)))
+    (dolist (elt killed-list result)
+      (when (consp elt)
+	(setq result (+ result (cdr elt) (- (car elt))))))))
 
 (defun elmo-msgdb-max-of-killed (killed-list)
-  (let ((klist killed-list)
-	(max 0)
-	k)
-    (while (car klist)
-      (if (< max
-	     (setq k
-		   (if (consp (car klist))
-		       (cdar klist)
-		     (car klist))))
-	  (setq max k))
-      (setq klist (cdr klist)))
-    max))
+  (let ((result 0))
+    (dolist (elt killed-list result)
+      (setq result (max result (if (consp elt) (cdr elt) elt))))))
 
 (defun elmo-living-messages (messages killed-list)
   (if killed-list

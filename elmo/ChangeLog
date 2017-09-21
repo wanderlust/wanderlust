@@ -1,3 +1,8 @@
+2017-09-21  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-msgdb.el (elmo-msgdb-killed-list-length)
+	(elmo-msgdb-max-of-killed): Refactored.
+
 2017-06-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-passwd.el (elmo-passwd-alist-ignore-smtp-port): Fix typo in
