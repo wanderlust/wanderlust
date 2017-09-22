@@ -1,5 +1,6 @@
 (require 'lunit)
 (require 'elmo-util)
+(require 'elmo-passwd)
 
 (luna-define-class test-elmo-util (lunit-test-case))
 
@@ -168,43 +169,86 @@
 
 (luna-define-method test-elmo-remove-passwd-1 ((case test-elmo-util))
   "Check shred password."
-  (let* ((password "cGFzc3dk")
-	 (elmo-passwd-alist (list (cons "key" password))))
-    (elmo-remove-passwd "key")
+  (let* ((elmo-passwd-storage-type 'alist)
+	 elmo-passwd-storage
+	 (storage (elmo-passwd-storage))
+	 (key '("AAA" "test" "PLAIN" "example.com" 30))
+	 (password "cGFzc3dk"))
+    (elmo-passwd-alist-set-alist-internal
+     storage (list (cons (elmo-passwd-alist-generate-key storage key)
+			 password)))
+    (elmo-remove-passwd key)
     (lunit-assert
      (string= "\0\0\0\0\0\0\0\0" password))))
 
 (luna-define-method test-elmo-remove-passwd-2 ((case test-elmo-util))
   "Check remove target pair only.  Not rassoc."
-  (let ((password "cGFzc3dk")
-	(elmo-passwd-alist '(("foo" . "key")
-			     ("key" . "ok")
-			     ("bar" . "baz"))))
-    (elmo-remove-passwd "key")
+  (let* ((elmo-passwd-storage-type 'alist)
+	 elmo-passwd-storage
+	 (storage (elmo-passwd-storage))
+	 (keys '((nil    "AAA" "test1" "PLAIN" "example.com" 30)
+		 ("KEY2" "BBB" "test2" "PLAIN" "example.com" 30)
+		 ("KEY3" "CCC" "test3" "PLAIN" "example.com" 30)
+		 ("KEY4" "DDD" "test4" "PLAIN" "example.com" 30))))
+    (elmo-passwd-alist-set-alist-internal
+     storage (mapcar
+	      (lambda (elt)
+		(cons (elmo-passwd-alist-generate-key storage (cdr elt))
+		      (or (car elt)
+			  (elmo-passwd-alist-generate-key
+			   storage (cdr (cadr keys))))))
+	      keys))
+    (elmo-remove-passwd (cdr (cadr keys)))
     (lunit-assert
-     (equal '(("foo" . "key")
-	      ("bar" . "baz"))
-	    elmo-passwd-alist))))
+     (equal (mapcar (lambda (elt)
+		      (cons (elmo-passwd-alist-generate-key storage (cdr elt))
+			    (or (car elt)
+				(elmo-passwd-alist-generate-key
+				 storage (cdr (cadr keys))))))
+		    (cons (car keys) (cddr keys)))
+	    (elmo-passwd-alist-alist-internal storage)))))
 
 (luna-define-method test-elmo-remove-passwd-3 ((case test-elmo-util))
   "Multiple same key."
-  (let ((password "cGFzc3dk")
-	(elmo-passwd-alist '(("foo" . "key")
-			     ("key" . "ok")
-			     ("key" . "ok2")
-			     ("bar" . "baz"))))
-    (elmo-remove-passwd "key")
+  (let* ((elmo-passwd-storage-type 'alist)
+	 elmo-passwd-storage
+	 (storage (elmo-passwd-storage))
+	 (keys '(("KEY1" "AAA" "test1" "PLAIN" "example.com" 30)
+		 ("KEY2" "BBB" "test2" "PLAIN" "example.com" 30)
+		 ("KEY3" "BBB" "test2" "PLAIN" "example.com" 30)
+		 ("KEY4" "CCC" "test3" "PLAIN" "example.com" 30))))
+    (elmo-passwd-alist-set-alist-internal
+     storage (mapcar
+	      (lambda (elt)
+		(cons (elmo-passwd-alist-generate-key storage (cdr elt))
+		      (car elt)))
+	      keys))
+    (elmo-remove-passwd (cdr (cadr keys)))
     (lunit-assert
-     (equal '(("foo" . "key")
-	      ("bar" . "baz"))
-	    elmo-passwd-alist))))
+     (equal (mapcar (lambda (elt)
+		      (cons (elmo-passwd-alist-generate-key storage (cdr elt))
+			    (or (car elt)
+				(elmo-passwd-alist-generate-key
+				 storage (cdr (cadr keys))))))
+		    (list (car keys) (nth 3 keys)))
+	    (elmo-passwd-alist-alist-internal storage)))))
 
 (luna-define-method test-elmo-passwd-alist-clear-1 ((case test-elmo-util))
   "Check shred ALL password."
-  (let* ((password1 "cGFzc3dk")
+  (let* ((elmo-passwd-storage-type 'alist)
+	 elmo-passwd-storage
+	 (storage (elmo-passwd-storage))
+	 (password1 "cGFzc3dk")
 	 (password2 (copy-sequence password1))
+	 (key1 '("AAA" "test1" "PLAIN" "example.com" 30))
+	 (key2 '("BBB" "test2" "PLAIN" "example.com" 30))
+
 	 (elmo-passwd-alist (list (cons "key1" password1)
 				  (cons "key2" password2))))
+    (elmo-passwd-alist-set-alist-internal
+     storage
+     (list (cons (elmo-passwd-alist-generate-key storage key1) password1)
+	   (cons (elmo-passwd-alist-generate-key storage key2) password2)))
     (elmo-passwd-alist-clear)
     (lunit-assert
      (string= "\0\0\0\0\0\0\0\0" password1))

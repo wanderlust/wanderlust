@@ -1,5 +1,6 @@
 (require 'lunit)
 (require 'elmo-localdir)
+(require 'wl-folder)
 
 (luna-define-class test-elmo-localdir (lunit-test-case))
 
