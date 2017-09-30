@@ -863,25 +863,13 @@ the directory becomes empty after deletion."
     (list clist1 clist2)))
 
 (defmacro elmo-get-hash-val (string hashtable)
-  (static-if (fboundp 'unintern)
-      `(symbol-value (intern-soft ,string ,hashtable))
-    `(let ((sym (intern-soft ,string ,hashtable)))
-       (and (boundp sym)
-	    (symbol-value sym)))))
+  `(symbol-value (intern-soft ,string ,hashtable)))
 
 (defmacro elmo-set-hash-val (string value hashtable)
   `(set (intern ,string ,hashtable) ,value))
 
 (defmacro elmo-clear-hash-val (string hashtable)
-  (static-if (fboundp 'unintern)
-      (list 'unintern string hashtable)
-    (list 'makunbound (list 'intern string hashtable))))
-
-(defmacro elmo-unintern (string)
-  "`unintern' symbol named STRING,  When can use `unintern'.
-Emacs 19.28 or earlier does not have `unintern'."
-  (static-if (fboundp 'unintern)
-      (list 'unintern string)))
+  (list 'unintern string hashtable))
 
 (defun elmo-make-hash (&optional hashsize)
   "Make a new hash table which have HASHSIZE size."
