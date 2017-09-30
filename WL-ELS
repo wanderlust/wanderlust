@@ -83,7 +83,9 @@
   (list
    (cons ELMODIR ELMO-MODULES)
    (cons WLDIR WL-MODULES)
-   (if (module-installed-p 'bbdb)
+   (if (and (module-installed-p 'bbdb-whois)
+	    (null (module-installed-p 'bbdb-mua)))
+       ;; Excluded for BBDB3.
        (cons UTILSDIR (list 'bbdb-wl)))
    (if wl-install-utils
        (cons UTILSDIR UTILS-MODULES))))
