@@ -439,7 +439,7 @@ Don't cache if nil.")
     (unless (elmo-time-expire (car elmo-nntp-list-folders-cache)
 			      elmo-nntp-list-folders-use-cache)
       (with-current-buffer buf
-	(let ((regexp (concat "^" (regexp-quote group) ".*$"))
+	(let ((regexp (concat "^" (regexp-quote group) "\\..*$"))
 	      (string (nth 3 elmo-nntp-list-folders-cache))
 	      start)
 	  (while (string-match regexp string start)
