@@ -9289,8 +9289,8 @@ the English one) with the body
 # guide
 @end example
 
-Please send bug reports or patches to one of those lists.  You can post to
-the mailing list even though you are not a member of it.
+Please send bug reports or patches to one of those lists.  You have to
+subscribe the mailing list to post a message.
 
 If you send a bug report, please attach Backtrace with it.
 @footnote{@uref{http://www.jpl.org/elips/BUGS-ja.html} describes how to
