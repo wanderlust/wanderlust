@@ -1174,16 +1174,29 @@ MESSAGE is a doing part of progress message."
 (def-edebug-spec elmo-with-progress-display
   ((symbolp form &optional symbolp) form &rest form))
 
-(defun elmo-time-expire (before-time diff-time)
-  (let* ((current (current-time))
-	 (rest (when (< (nth 1 current) (nth 1 before-time))
-		 (expt 2 16)))
-	 diff)
-    (setq diff
-	  (list (- (+ (car current) (if rest -1 0)) (car before-time))
-		(- (+ (or rest 0) (nth 1 current)) (nth 1 before-time))))
-    (and (zerop (car diff))
-	 (< diff-time (nth 1 diff)))))
+(static-cond
+ ((condition-case nil
+      (progn (time-add 0 nil)
+	     (time-less-p 0 nil))
+    (error nil))
+  ;; Emacs 25 and later
+  (defun elmo-time-expire (before-time diff-time)
+    (time-less-p (time-add before-time diff-time) nil)))
+ ((null (and (fboundp 'time-subtract)
+	     (fboundp 'float-time)))
+  (defun elmo-time-expire (before-time diff-time)
+    (let* ((current (current-time))
+	   (rest (when (< (nth 1 current) (nth 1 before-time))
+		   (expt 2 16)))
+	   diff)
+      (setq diff
+	    (list (- (+ (car current) (if rest -1 0)) (car before-time))
+		  (- (+ (or rest 0) (nth 1 current)) (nth 1 before-time))))
+      (and (zerop (car diff))
+	   (< diff-time (nth 1 diff))))))
+ (t
+  (defun elmo-time-expire (before-time diff-time)
+    (< diff-time (float-time (time-subtract (current-time) before-time))))))
 
 (defalias 'elmo-field-body 'std11-fetch-field) ;;no narrow-to-region
 
