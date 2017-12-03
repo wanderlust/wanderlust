@@ -66,7 +66,7 @@
 	  (elmo-delete-if
 	   'file-directory-p
 	   (directory-files (elmo-cache-folder-directory-internal folder)
-			    t "^[^@]+@[^@]+$" t))))
+			    t "^\\([^@]+@[^@]+\\|[0-9A-Za-z]+\\)$" t))))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-cache-folder)
 						 &optional one-level)

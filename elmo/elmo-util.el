@@ -1805,9 +1805,6 @@ If the cache is partial file-cache, TYPE is 'partial."
   "Returns the status of the FILE-CACHE."
   `(cdr ,file-cache))
 
-(defsubst elmo-cache-to-msgid (filename)
-  (concat "<" (elmo-recover-string-from-filename filename) ">"))
-
 (defsubst elmo-cache-get-path-subr (msgid)
   (format "%02X" (logand (apply #'+ (string-to-list msgid)) 31)))
 
@@ -2049,22 +2046,27 @@ Optional argument DAYS specifies the days to expire caches."
 (defun elmo-msgid-to-cache (msgid)
   (save-match-data
     (when (and msgid
-	       (string-match "<\\(.+\\)>$" msgid))
-      (elmo-replace-string-as-filename (match-string 1 msgid)))))
+               (string-match "<\\(.+\\)>$" msgid)
+	       (setq msgid (match-string 1 msgid)))
+      (let (result)
+	(if (and elmo-msgid-to-cache-max-length
+		 (or (zerop elmo-msgid-to-cache-max-length)
+		     (> (length (setq result
+				      (elmo-replace-string-as-filename msgid)))
+			elmo-msgid-to-cache-max-length)))
+	    (if (fboundp 'secure-hash)
+		(secure-hash elmo-msgid-to-cache-algorithm msgid)
+	      (funcall elmo-msgid-to-cache-algorithm msgid))
+	  (or result
+	      (elmo-replace-string-as-filename msgid)))))))
 
-(defun elmo-cache-get-path (msgid &optional folder number)
-  "Get path for cache file associated with MSGID, FOLDER, and NUMBER."
+(defun elmo-cache-get-path (msgid)
+  "Get path for cache file associated with MSGID."
   (if (setq msgid (elmo-msgid-to-cache msgid))
       (expand-file-name
-       (if folder
-	   (format "%s/%s/%s@%s"
-		   (elmo-cache-get-path-subr msgid)
-		   msgid
-		   (or number "")
-		   (elmo-safe-filename folder))
-	 (format "%s/%s"
-		 (elmo-cache-get-path-subr msgid)
-		 msgid))
+       (format "%s/%s"
+	       (elmo-cache-get-path-subr msgid)
+	       msgid)
        elmo-cache-directory)))
 
 ;;;

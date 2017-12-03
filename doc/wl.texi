@@ -3023,6 +3023,21 @@ off-line operation.  The cache file is saved under the directory
 elmo-cache-expire-by-size}.  The command deletes cache files to the
 specified size by the order of last accessed time.
 
+@subsection Cache Filename
+
+@vindex elmo-msgid-to-cache-max-length
+@vindex elmo-msgid-to-cache-algorithm
+A filename of cache file is generated from Message-ID with minimal
+modification.  But if Message-ID is very long, cache file can't be
+created.  To avoid it, filename's length is kept constant by hash
+function when filename is longer than
+@code{elmo-msgid-to-cache-max-length}'s value.  When the value of this
+variable is @code{nil}, this feature is disabled.  An algorithm of hash
+is indicated by @code{elmo-msgid-to-cache-algorithm}.
+
+Changing the value of these variables, existing cache files may be
+unused.
+
 @subsection Buffer Cache and Prefetching
 
 The messages that are read are kept in the cache buffer so as to make

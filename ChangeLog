@@ -1,3 +1,9 @@
+2017-12-04  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* doc/wl-ja.texi (Cache): Descibe newly introduced variables.
+
+	* doc/wl.texi (Cache): Likewise.
+
 2017-12-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* doc/wl-ja.texi (Mailing List): Update ML information.  Only ML

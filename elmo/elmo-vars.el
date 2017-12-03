@@ -252,6 +252,22 @@ Any symbol value of `elmo-network-stream-type-alist' or
   "*Stream bindings for POP3.
 This is taken precedence over `elmo-network-stream-type-alist'.")
 
+(defcustom elmo-msgid-to-cache-max-length nil
+  "When cache filename generated from message-id is longer than its value, hash algorith is used to keep filename not too long.
+When value is nil, hash algorithm is never used."
+  :type '(choice (const :tag "Never use hash" nil)
+		 integer)
+  :group 'elmo-setting)
+
+(defcustom elmo-msgid-to-cache-algorithm 'sha1
+  "A hash algorithm for converting msgid to cache filename.
+On Emacs25 and later, the value is first argument for `secure-hash' function.
+On other platforms, the value indicates hash function."
+  :type `(choice ,(append '(md5 sha1)
+			  (when (functionp 'secure-hash)
+			    '(sha224 sha256 sha384 sha512))))
+  :group 'elmo-setting)
+
 (defcustom elmo-lang "ja"
   "Language for displayed messages."
   :type 'string
