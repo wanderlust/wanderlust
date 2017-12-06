@@ -534,7 +534,8 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
     (goto-char (point-min)))
   (let ((beg (point)))
     (cond (mail-citation-hook (run-hooks 'mail-citation-hook))
-	  (mail-yank-hooks (run-hooks 'mail-yank-hooks))
+	  ((and (boundp 'mail-yank-hooks) mail-yank-hooks)
+	   (run-hooks 'mail-yank-hooks))
 	  (wl-draft-cite-function (funcall wl-draft-cite-function))) ; default cite
     (run-hooks 'wl-draft-cited-hook)
     (when (if wl-draft-add-references
