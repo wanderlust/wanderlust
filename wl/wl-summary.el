@@ -3480,10 +3480,8 @@ Return non-nil if the mark is updated"
    wl-summary-buffer-mime-charset))
 
 (defun wl-summary-line-number ()
-  (wl-set-string-width
-   (- wl-summary-buffer-number-column)
-   (number-to-string
-    (elmo-message-entity-number wl-message-entity))))
+  (format (format "%%%dd" wl-summary-buffer-number-column)
+	  (elmo-message-entity-number wl-message-entity)))
 
 (defun wl-summary-line-year ()
   (aref wl-datevec 0))
