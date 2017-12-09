@@ -3220,6 +3220,12 @@ are automatically stuck.
 @node Summary View, Mark and Action, Sticky Summary, Summary
 @section Format of summary lines
 @cindex Format of summary lines
+@vindex wl-summary-line-format
+@vindex wl-summary-line-format-spec-alist
+@vindex wl-folder-summary-line-format-alist
+@vindex wl-summary-default-number-column
+@vindex wl-summary-number-column-alist
+
 You can alter the format of lines in Summary mode.
 
 Summary line format is specified by @code{wl-summary-line-format}.
@@ -3244,8 +3250,8 @@ Example:
 
 @example
 @group
-%5n   -> `1    '
-%-05n -> `00001'
+%5l   -> `1    '
+%-05l -> `00001'
 @end group
 @end example
 
@@ -3278,6 +3284,10 @@ are displayed in the following list.
 %~  ` ' only if previous column is not empty
 @end group
 @end example
+
+If you want to change the width of message number (@samp{%n}), modify
+@code{wl-summary-default-number-column} or
+@code{wl-summary-number-column-alist}.
 
 The temporary mark (@samp{%T}) and persistent mark (@samp{%P}) must
 appear at the constant column. For example, if you specify @samp{%T} or

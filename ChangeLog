@@ -1,3 +1,9 @@
+2017-12-09  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* doc/wl-ja.texi, doc/wl.texi (Summary View): Change example for
+	number prefix.  Refer to wl-summary-default-number-column and
+	wl-summary-number-column-alist.
+
 2017-12-04  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* doc/wl-ja.texi (Cache): Descibe newly introduced variables.

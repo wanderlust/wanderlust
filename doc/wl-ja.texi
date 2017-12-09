@@ -3202,6 +3202,11 @@ Non-nil $B$G$"$l$P%U%)%k%@$K0\F0$7$?;~$K:G=i$N%a%C%;!<%8$r<+F0E*$K@hFI$_$7$^$9!
 @node Summary View, Mark and Action, Sticky Summary, Summary
 @section $B%5%^%j9T$N7A<0(B
 @cindex Format of summary lines
+@vindex wl-summary-line-format
+@vindex wl-summary-line-format-spec-alist
+@vindex wl-folder-summary-line-format-alist
+@vindex wl-summary-default-number-column
+@vindex wl-summary-number-column-alist
 
 $B%5%^%j9T$N7A<0$O!"$"$kDxEY<+M3$KJQ99$G$-$^$9!#(B
 
@@ -3224,8 +3229,8 @@ Non-nil $B$G$"$l$P%U%)%k%@$K0\F0$7$?;~$K:G=i$N%a%C%;!<%8$r<+F0E*$K@hFI$_$7$^$9!
 
 @example
 @group
-%5n   -> `1    '
-%-05n -> `00001'
+%5l   -> `1    '
+%-05l -> `00001'
 @end group
 @end example
 
@@ -3257,6 +3262,10 @@ Non-nil $B$G$"$l$P%U%)%k%@$K0\F0$7$?;~$K:G=i$N%a%C%;!<%8$r<+F0E*$K@hFI$_$7$^$9!
 %~  $BD>A0$N9`L\$,6u$G$J$$>l9g$K(B ` '
 @end group
 @end example
+
+$B%a%C%;!<%8HV9f(B (@samp{%n}) $B$N7e?t$rJQ99$7$?$$>l9g$O!"(B
+@code{wl-summary-default-number-column} $B$b$7$/$O(B
+@code{wl-summary-number-column-alist} $B$NCM$rJQ99$7$F$/$@$5$$!#(B
 
 @code{wl-summary-line-format} $B$K0l;~E*%^!<%/(B (@samp{%T}) $B$H1JB3E*%^!<%/(B
 (@samp{%P}) $B$r4^$a$k>l9g$K$O!"I,$:0lDj$N0LCV$KI=<($5$l$k$h$&$KDj5A$7$J$1(B
