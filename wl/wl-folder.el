@@ -647,8 +647,8 @@ Optional argument ARG is repeart count."
 	     (looking-at wl-folder-group-regexp))
 	;; folder group
 	(save-excursion
-	  (setq indent (wl-match-buffer 1))
-	  (setq opened (wl-match-buffer 2))
+	  (setq indent (elmo-match-buffer 1))
+	  (setq opened (elmo-match-buffer 2))
 	  (if (string= opened "+")
 	      (progn
 		(setq entity (wl-folder-search-group-entity-by-name
@@ -741,7 +741,7 @@ Optional argument ARG is repeart count."
   (when (and (wl-folder-buffer-group-p)
 	     (looking-at wl-folder-group-regexp))
     (cond
-     ((string= (wl-match-buffer 2) "+")
+     ((string= (elmo-match-buffer 2) "+")
       (save-excursion
 	(if entity ()
 	  (setq entity
@@ -760,7 +760,7 @@ Optional argument ARG is repeart count."
 	      (unless (wl-folder-buffer-search-group
 		       (wl-folder-get-petname (car entity)))
 		(error "%s: not found group" (car entity)))
-	      (setq indent (wl-match-buffer 1))
+	      (setq indent (elmo-match-buffer 1))
 	      (if (eq 'access (cadr entity))
 		  (wl-folder-maybe-load-folder-list entity))
 	      (beginning-of-line)
@@ -1246,7 +1246,7 @@ If current line is group folder, all subfolders are marked."
     'ignore)
    ((looking-at "^[\t ]*\\(.+\\)[\t ]*{[\t ]*$") ; group definition
     (let (name entity flist)
-      (setq name (wl-match-buffer 1))
+      (setq name (elmo-match-buffer 1))
       (goto-char (+ 1 (match-end 0)))
       (while (setq entity (wl-create-folder-entity-from-buffer))
 	(unless (eq entity 'ignore)
@@ -1260,7 +1260,7 @@ If current line is group folder, all subfolders are marked."
 	(error "Syntax error in folder definition"))))
    ((looking-at "^[\t ]*\\([^\t \n]+\\)[\t ]*/$") ; access it!
     (let (name)
-      (setq name (wl-match-buffer 1))
+      (setq name (elmo-match-buffer 1))
       (goto-char (+ 1 (match-end 0)))
 ;;;      (condition-case ()
 ;;;	  (unwind-protect
@@ -2198,11 +2198,11 @@ Use `wl-subscribed-mailing-list'."
       (when (looking-at "^[ ]*\\(.*\\):\\([0-9\\*-]*\\)/\\([0-9\\*-]*\\)/\\([0-9\\*]*\\)")
 	;;(looking-at "^[ ]*\\([^\\[].+\\):\\([0-9\\*-]*/[0-9\\*-]*/[0-9\\*]*\\)")
 	(setq cur-new (string-to-number
-		       (wl-match-buffer 2)))
+		       (elmo-match-buffer 2)))
 	(setq cur-unread (string-to-number
-			  (wl-match-buffer 3)))
+			  (elmo-match-buffer 3)))
 	(setq cur-all (string-to-number
-		       (wl-match-buffer 4)))
+		       (elmo-match-buffer 4)))
 	(delete-region (match-beginning 2)
 		       (match-end 4))
 	(goto-char (match-beginning 2))
@@ -2486,9 +2486,9 @@ Use `wl-subscribed-mailing-list'."
 	(setq path (cdr path))
 	(if (and (wl-folder-buffer-group-p)
 		  (looking-at wl-folder-group-regexp)
-		 (string= "+" (wl-match-buffer 2)));; closed group
+		 (string= "+" (elmo-match-buffer 2)));; closed group
 	    (save-excursion
-	      (setq indent (wl-match-buffer 1))
+	      (setq indent (elmo-match-buffer 1))
 	      (setq name (wl-folder-get-entity-from-buffer))
 	      (setq entity (wl-folder-search-group-entity-by-name
 			    name
@@ -2549,7 +2549,7 @@ Use `wl-subscribed-mailing-list'."
 	  (while (re-search-forward
 		  "^\\([ ]*\\)\\[\\([+]\\)\\]\\(.+\\):[-0-9-]+/[0-9-]+/[0-9-]+$"
 		  nil t)
-	    (setq indent (wl-match-buffer 1))
+	    (setq indent (elmo-match-buffer 1))
 	    (setq name (wl-folder-get-entity-from-buffer))
 	    (setq entity (wl-folder-search-group-entity-by-name
 			  name
@@ -2598,7 +2598,7 @@ Use `wl-subscribed-mailing-list'."
     (let (indent)
       (setq indent (save-excursion
 		     (re-search-forward "\\([ ]*\\)." nil t)
-		     (wl-match-buffer 1)))
+		     (elmo-match-buffer 1)))
       (while (looking-at indent)
 	(forward-line -1)))
     (wl-folder-jump-to-current-entity)))

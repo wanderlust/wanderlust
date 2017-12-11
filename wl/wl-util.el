@@ -240,14 +240,11 @@ even when invalid character is contained."
 	(setq alist (cdr alist)))
       value)))
 
-(defun wl-match-string (pos string)
-  "Substring POSth matched STRING."
-  (substring string (match-beginning pos) (match-end pos)))
+;; 2017-12-11
+(make-obsolete 'wl-match-string 'match-string)
 
-(defun wl-match-buffer (pos)
-  "Substring POSth matched from the current buffer."
-  (buffer-substring-no-properties
-   (match-beginning pos) (match-end pos)))
+;; 2017-12-11
+(make-obsolete 'wl-match-buffer 'elmo-match-buffer)
 
 (put 'wl-as-coding-system 'lisp-indent-function 1)
 (put 'wl-as-mime-charset 'lisp-indent-function 1)
@@ -442,7 +439,7 @@ that `read' can handle, whenever this is possible."
   (let ((s (current-time-string time)))
     (string-match "\\`\\([A-Z][a-z][a-z]\\) +[A-Z][a-z][a-z] +[0-9][0-9]? *[0-9][0-9]?:[0-9][0-9]:[0-9][0-9] *[0-9]?[0-9]?[0-9][0-9]"
 		  s)
-    (concat (wl-match-string 1 s) ", "
+    (concat (match-string 1 s) ", "
 	    (timezone-make-date-arpa-standard s (current-time-zone)))))
 
 (defun wl-date-iso8601 (date)

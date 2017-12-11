@@ -89,7 +89,7 @@
 	(while (and (< (point-min) (point)) (looking-at wl-complete-lwsp))
 	  (forward-line -1))
 	(if (looking-at "\\([^:]*:\\)")
-	    (wl-string-match-assoc (wl-match-buffer 1) switch t)
+	    (wl-string-match-assoc (elmo-match-buffer 1) switch t)
 	  nil)))) ;; what a case reachs here?
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

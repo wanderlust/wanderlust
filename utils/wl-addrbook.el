@@ -290,7 +290,7 @@ If addresses is a string, expands it recursively."
 	(setq path (file-name-directory par))
 	;; include children files
 	(while (re-search-forward "^\<[ \t]*\\([^ \t\n]+\\).*$" nil t)
-	  (setq chr (expand-file-name (wl-match-buffer 1) path))
+	  (setq chr (expand-file-name (elmo-match-buffer 1) path))
 	  (delete-region (match-beginning 0) (match-end 0))
 	  (if (and (file-readable-p chr) (not (member chr files)))
 	      (progn
@@ -348,16 +348,16 @@ If addresses is a string, expands it recursively."
       wl-addrbook-file wl-addrbook-comment-regexp 'unquote)
      (goto-char (point-min))
      (while (re-search-forward "^ ?\\([^ \n:]+\\) ?\\(:?\\) ?\\([^ \n]+\\)" nil t)
-       (setq alias (wl-addrbook-strsafe (wl-match-buffer 1)))
-       (setq colon (wl-match-buffer 2))
-       (setq addrs (wl-addrbook-strsafe (wl-match-buffer 3)))
+       (setq alias (wl-addrbook-strsafe (elmo-match-buffer 1)))
+       (setq colon (elmo-match-buffer 2))
+       (setq addrs (wl-addrbook-strsafe (elmo-match-buffer 3)))
        (if (equal colon ":")
 	   (setq alist (cons (list alias addrs) alist))
 	 (and addrs (setq addrs (elmo-parse addrs "\\([^, \t\r\n]+\\)")))
 	 (if (looking-at " ?\\([^ \n]*\\) ?\\([^ \n]*\\)")
 	     (progn
-	       (setq nick (wl-addrbook-strsafe (wl-match-buffer 1)))
-	       (setq name (wl-addrbook-strsafe (wl-match-buffer 2))))
+	       (setq nick (wl-addrbook-strsafe (elmo-match-buffer 1)))
+	       (setq name (wl-addrbook-strsafe (elmo-match-buffer 2))))
 	   (setq nick nil)
 	   (setq name nil))
 	 (setq alist (cons (list alias addrs nick name) alist))))
@@ -412,7 +412,7 @@ it will add an alias."
 	  (setq shortname addrs))
 	(if (string-match "\\(.*\\)<.*>" address)
 	    (progn
-	      (setq name (wl-match-string 1 address))
+	      (setq name (match-string 1 address))
 	      (setq name (elmo-replace-in-string name "[ \t]$" ""))))
 	(wl-addrbook-prepare-template personalinfo shortname addrs nil name)))))
 

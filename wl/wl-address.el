@@ -159,7 +159,7 @@ Replace '@' in STR into list of mailbox and sub-domains."
 	    (setq dn-list (mapcar (lambda (str)
 				    (if (string-match "[a-z]+=\\(.*\\)" str)
 					(wl-ldap-alias-safe-string
-					 (wl-match-string 1 str))))
+					 (match-string 1 str))))
 				  (split-string dn "[ \t]*,[ \t]*")))))
       (setq dn-list (elmo-flatten dn-list))
       ;; prepare candidate for uniq str
@@ -534,8 +534,8 @@ Refresh `wl-address-list', `wl-address-completion-list', and
 	(delete-char -1))
       (goto-char (point-min))
       (while (re-search-forward "^\\([^#;\n][^:]+\\):[ \t]*\\(.*\\)$" nil t)
-	(setq alias (wl-match-buffer 1)
-	      expn (wl-match-buffer 2))
+	(setq alias (elmo-match-buffer 1)
+	      expn (elmo-match-buffer 2))
 	(setq alist (cons (cons alias expn) alist)))
       (wl-address-expand-aliases alist 0)
       (nreverse alist) ; return value
@@ -553,9 +553,9 @@ Refresh `wl-address-list', `wl-address-completion-list', and
 ^\\([^#\n][^ \t\n]+\\)[ \t]+\\(\".*\"\\)[ \t]+\\(\".*\"\\)[ \t]*.*$")
 	      (setq ret
 		    (cons
-		     (list (wl-match-buffer 1)
-			   (read (wl-match-buffer 2))
-			   (read (wl-match-buffer 3)))
+		     (list (elmo-match-buffer 1)
+			   (read (elmo-match-buffer 2))
+			   (read (elmo-match-buffer 3)))
 		     ret)))
 	  (forward-line))
 	(nreverse ret)))))
@@ -568,9 +568,9 @@ e.g. \"Mine Sakurai <m-sakura@example.org>\"
 e.g. \"m-sakura@example.org (Mine Sakurai)\"
   ->  \"m-sakura@example.org\"."
   (cond ((string-match ".*<\\([^>]*\\)>" str) ; .* to extract last <>
-	 (wl-match-string 1 str))
+	 (match-string 1 str))
 	((string-match "\\([^ \t\n]*@[^ \t\n]*\\)" str)
-	 (wl-match-string 1 str))
+	 (match-string 1 str))
 	(t str)))
 
 (defsubst wl-address-header-extract-realname (str)
@@ -578,7 +578,7 @@ e.g. \"m-sakura@example.org (Mine Sakurai)\"
 e.g. \"Mr. bar <hoge@example.com>\"
   ->  \"Mr. bar\"."
   (cond ((string-match "\\(.*[^ \t]\\)[ \t]*<[^>]*>" str)
-	 (wl-match-string 1 str))
+	 (match-string 1 str))
 	(t "")))
 
 

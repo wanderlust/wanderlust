@@ -465,7 +465,7 @@ return value is diffs '(-new -unread -all)."
       (if (and prev
 	       (wl-folder-buffer-group-p)
 	       (looking-at wl-folder-group-regexp)
-	       (string= (wl-match-buffer 2) "-"))
+	       (string= (elmo-match-buffer 2) "-"))
 	  (setq group-target nil)
 	(if (and prev (bobp))
 	    (error "Out of desktop group")))
@@ -535,10 +535,10 @@ return value is diffs '(-new -unread -all)."
       (save-excursion
 	(goto-char from)
 	(and (looking-at "^\\([ ]*\\)")
-	     (setq pre-indent (wl-match-buffer 1)))
+	     (setq pre-indent (elmo-match-buffer 1)))
 	(while (< (point) to)
 	  (and (looking-at "^\\([ ]*\\)")
-	       (setq indent (wl-match-buffer 1)))
+	       (setq indent (elmo-match-buffer 1)))
 	  (cond ((= (length pre-indent) (length indent))
 		 (setq pre-indent indent)
 		 (setq count (1+ count))
@@ -603,8 +603,8 @@ return value is diffs '(-new -unread -all)."
 		   (looking-at wl-folder-group-regexp))
 	      ;; group
 	      (let (beg end indent opened)
-		(setq indent (wl-match-buffer 1))
-		(setq opened (wl-match-buffer 2))
+		(setq indent (elmo-match-buffer 1))
+		(setq opened (elmo-match-buffer 2))
 		(if (string= opened "+")
 		    (wl-fldmgr-delete-line)
 		  (setq beg (point))
@@ -650,10 +650,10 @@ return value is diffs '(-new -unread -all)."
 	  (setq errmes "can't copy desktop group")
 	  (throw 'err t))
 	(and (looking-at "^\\([ ]*\\)")
-	     (setq pre-indent (wl-match-buffer 1)))
+	     (setq pre-indent (elmo-match-buffer 1)))
 	(while (< (point) to)
 	  (and (looking-at "^\\([ ]*\\)")
-	       (setq indent (wl-match-buffer 1)))
+	       (setq indent (elmo-match-buffer 1)))
 	  (if (wl-folder-buffer-group-p)
 	      (progn
 		(setq errmes "can't copy group folder")
@@ -866,7 +866,7 @@ return value is diffs '(-new -unread -all)."
       (cond
        ((and (wl-folder-buffer-group-p)
 	     (looking-at wl-folder-group-regexp)) ;; group
-	(let* ((indent (wl-match-buffer 1))
+	(let* ((indent (elmo-match-buffer 1))
 	       (old-group (wl-folder-get-entity-from-buffer))
 	       (group-entity (wl-folder-search-group-entity-by-name
 			      old-group wl-folder-entity))
@@ -1052,8 +1052,8 @@ return value is diffs '(-new -unread -all)."
 		     (y-or-n-p (format "Sort subfolders of %s? "
 				       (wl-folder-get-entity-from-buffer)))
 		   (message nil)))
-	(setq indent (wl-match-buffer 1))
-	(setq opened (wl-match-buffer 2))
+	(setq indent (elmo-match-buffer 1))
+	(setq opened (elmo-match-buffer 2))
 	(setq entity (wl-folder-search-group-entity-by-name
 		      (wl-folder-get-entity-from-buffer)
 		      wl-folder-entity))
@@ -1135,7 +1135,7 @@ return value is diffs '(-new -unread -all)."
 	 ((looking-at (format "^[ ]*%s\\[[+-]\\]\\(.*\\)" wl-folder-unsubscribe-mark))
 	  (if (and type (> type 0))
 	      nil
-	    (setq folder (list (wl-match-buffer 1) 'access nil))
+	    (setq folder (list (elmo-match-buffer 1) 'access nil))
 	    (if (wl-string-assoc (car folder) wl-folder-group-alist)
 		(message "%s: group already exists" (car folder))
 	      (wl-fldmgr-delete-line)
@@ -1147,7 +1147,7 @@ return value is diffs '(-new -unread -all)."
 	 ((looking-at (format "^[ ]*%s\\(.*\\)" wl-folder-unsubscribe-mark))
 	  (if (and type (> type 0))
 	      nil
-	    (setq folder (wl-match-buffer 1))
+	    (setq folder (elmo-match-buffer 1))
 	    (wl-fldmgr-delete-line)
 	    (when (wl-fldmgr-add folder)
 	      (setq execed t))))
@@ -1197,8 +1197,8 @@ return value is diffs '(-new -unread -all)."
 		  (looking-at wl-folder-group-regexp)))
 	(wl-folder-goto-top-of-current-folder)
 	(looking-at wl-folder-group-regexp))
-      (setq indent (wl-match-buffer 1))
-      (setq opened (wl-match-buffer 2))
+      (setq indent (elmo-match-buffer 1))
+      (setq opened (elmo-match-buffer 2))
       (setq entity (wl-folder-search-group-entity-by-name
 		    (wl-folder-get-entity-from-buffer)
 		    wl-folder-entity))
@@ -1280,7 +1280,7 @@ return value is diffs '(-new -unread -all)."
 		  (while (wl-folder-buffer-search-group old-petname)
 		    (beginning-of-line)
 		    (and (looking-at "^\\([ ]*\\)")
-			 (setq indent (wl-match-buffer 1)))
+			 (setq indent (elmo-match-buffer 1)))
 		    (wl-fldmgr-delete-line)
 		    (wl-folder-insert-entity
 		     indent
@@ -1291,7 +1291,7 @@ return value is diffs '(-new -unread -all)."
 		(save-excursion
 		  (beginning-of-line)
 		  (and (looking-at "^\\([ ]*\\)")
-		       (setq indent (wl-match-buffer 1)))
+		       (setq indent (elmo-match-buffer 1)))
 		  (wl-fldmgr-delete-line))
 		(wl-folder-insert-entity indent name)))
 	    (setq wl-fldmgr-modified t)

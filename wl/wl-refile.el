@@ -228,7 +228,7 @@ If RULE does not match ENTITY, returns nil."
 
 (defun wl-refile-get-account-part-from-address (address)
   (if (string-match "\\([^@]+\\)@[^@]+" address)
-      (wl-match-string 1 address)
+      (match-string 1 address)
     address))
 
 (defun wl-refile-guess-by-from (entity)

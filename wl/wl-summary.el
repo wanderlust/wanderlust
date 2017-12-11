@@ -2174,7 +2174,7 @@ This function is defined for `window-scroll-functions'"
     (beginning-of-line)
     (if (or (re-search-forward "\r\\(-?[0-9]+\\)" (point-at-eol) t)
 	    (re-search-forward "^ *\\(-?[0-9]+\\)" (point-at-eol) t))
-	(string-to-number (wl-match-buffer 1))
+	(string-to-number (elmo-match-buffer 1))
       nil)))
 
 (defun wl-summary-delete-all-msgs ()
@@ -3619,7 +3619,7 @@ Return non-nil if the mark is updated"
 (defsubst wl-summary-proc-wday (wday-str year month mday)
   (save-match-data
     (if (string-match "\\([A-Z][a-z][a-z]\\).*" wday-str)
-	(wl-match-string 1 wday-str)
+	(match-string 1 wday-str)
       (elmo-date-get-week year month mday))))
 
 (defvar wl-summary-move-spec-alist
@@ -4201,18 +4201,18 @@ Return t if message exists."
 	 ((and arg (not (numberp arg)) ref (not (string= ref ""))
 	       (string-match regexp ref))
 	  ;; The first message of the thread.
-	  (setq msg-id (wl-match-string 1 ref)))
+	  (setq msg-id (match-string 1 ref)))
 	 ;; "In-Reply-To:" has only one msg-id.
 	 ((and (null arg) irt (not (string= irt ""))
 	       (string-match regexp irt))
-	  (setq msg-id (wl-match-string 1 irt)))
+	  (setq msg-id (match-string 1 irt)))
 	 ((and (or (null arg) (numberp arg)) ref (not (string= ref ""))
 	       (string-match regexp ref))
 	  ;; "^" searching parent, "C-u 2 ^" looking for grandparent.
 	  (while (string-match regexp ref)
 	    (setq ref-list
 		  (append (list
-			   (wl-match-string 1 ref))
+			   (match-string 1 ref))
 			  ref-list))
 	    (setq ref (substring ref (match-end 0)))
 	    (setq i (1+ i)))

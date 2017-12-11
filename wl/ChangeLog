@@ -1,3 +1,40 @@
+2017-12-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-util.el (wl-match-string): Obsolete.  Call match-string
+	directly.
+	(wl-match-buffer): Obsolete.  Call elmo-match-buffer.
+	(wl-make-date-string): Likewise.
+
+	* wl-address.el (wl-ldap-register-dn-string)
+	(wl-address-make-alist-from-alias-file)
+	(wl-address-make-address-list)
+	(wl-address-header-extract-address)
+	(wl-address-header-extract-realname): Likewise.
+
+	* wl-address.el (wl-ldap-register-dn-string): Likewise.
+
+	* wl-fldmgr.el (wl-fldmgr-get-path-from-buffer)
+	(wl-fldmgr-cut-region, wl-fldmgr-cut, wl-fldmgr-copy-region)
+	(wl-fldmgr-rename, wl-fldmgr-sort, wl-fldmgr-unsubscribe)
+	(wl-fldmgr-access-display-all, wl-fldmgr-set-petname): Likewise.
+
+	* wl-folder.el (wl-folder-jump-to-current-entity)
+	(wl-folder-update-recursive-current-entity)
+	(wl-create-folder-entity-from-buffer)
+	(wl-folder-update-diff-line, wl-folder-open-folder-sub)
+	(wl-folder-open-all, wl-folder-open-close): Likewise.
+
+	* wl-refile.el (wl-refile-get-account-part-from-address):
+	Likewise.
+
+	* wl-summary.el (wl-summary-message-number)
+	(wl-summary-proc-wday, wl-summary-jump-to-parent-message):
+	Likewise.
+
+	* wl-util.el (wl-make-date-string): Likewise.
+
+	* wl-xmas.el (wl-make-date-string): Likewise.
+
 2017-12-09  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-summary.el (wl-summary-line-number): Refactored.
