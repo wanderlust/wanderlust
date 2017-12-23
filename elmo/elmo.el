@@ -1494,31 +1494,31 @@ If Optional LOCAL is non-nil, don't update server flag."
     0))
 
 (defun elmo-folder-confirm-appends (folder appends)
-  (let ((len (length appends))
-	in)
-    (if (and elmo-folder-update-threshold
-	     (> len elmo-folder-update-threshold)
-	     elmo-folder-update-confirm)
-	(if (y-or-n-p (format
-		       "Too many messages(%d) in %s.  Update all? "
-		       len (elmo-folder-name-internal folder)))
-	    appends
-	  (catch 'end
-	    (while t
-	      (setq in (elmo-read-number "Update number: "
-					 elmo-folder-update-threshold))
-	      (if (< len in)
-		  (throw 'end len))
-	      (if (y-or-n-p (format
-			     "%d messages are killed (not appeared). OK? "
-			     (max (- len in) 0)))
-		  (throw 'end in))))
-	  (nthcdr (max (- len in) 0) appends))
-      (if (and elmo-folder-update-threshold
-	       (> len elmo-folder-update-threshold)
-	       (not elmo-folder-update-confirm))
-	  (nthcdr (max (- len elmo-folder-update-threshold) 0) appends)
-	appends))))
+  (nthcdr
+   (let ((len (length appends))
+	 in)
+     (if (and elmo-folder-update-threshold
+	      (> len elmo-folder-update-threshold))
+	 (if elmo-folder-update-confirm
+	     (if (y-or-n-p
+		  (format "Too many messages(%d) in %s.  Update all? "
+			  len (elmo-folder-name-internal folder)))
+		 0
+	       (catch 'end
+		 (while t
+		   (setq in (elmo-read-number "Update number: "
+					      elmo-folder-update-threshold))
+		   (cond
+		    ((< len in) (throw 'end 0))
+		    ((y-or-n-p (format
+				"%d messages are killed (not appeared). OK? "
+				(setq in (- len in))))
+		     (throw 'end in))))))
+	   (message "%d messages are killed (not appeared)."
+		    (- len elmo-folder-update-threshold))
+	   (- len elmo-folder-update-threshold))
+       0))
+   appends))
 
 (luna-define-method elmo-message-fetch-bodystructure ((folder elmo-folder)
 						      number strategy)
