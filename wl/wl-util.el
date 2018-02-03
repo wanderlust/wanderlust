@@ -1231,6 +1231,17 @@ that `read' can handle, whenever this is possible."
 		  prompt)))
     (read-buffer prompt def require-match)))
 
+;; Prune functions provided temporarily to avoid compile warnings.
+(eval-when-compile
+  (dolist (fn '(next-command-event event-to-character
+		key-press-event-p button-press-event-p
+		set-process-kanji-code set-process-coding-system
+		dispatch-event))
+    (when (and (get fn 'defalias-maybe)
+	       (eq (symbol-function fn) 'ignore))
+      (put fn 'defalias-maybe nil)
+      (fmakunbound fn))))
+
 (require 'product)
 (product-provide (provide 'wl-util) (require 'wl-version))
 

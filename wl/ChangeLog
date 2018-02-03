@@ -1,3 +1,16 @@
+2018-02-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-draft.el: Prune functions provided temporarily to avoid
+	compile warnings in the end.
+
+	* wl-message.el (dolist): Likewise.
+
+	* wl-summary.el (dolist): Likewise.
+
+	* wl-util.el (dolist): Likewise.
+
+	* wl-xmas.el (dolist): Likewise.
+
 2017-12-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-util.el (wl-match-string): Obsolete.  Call match-string

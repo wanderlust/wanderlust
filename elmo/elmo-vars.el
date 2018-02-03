@@ -511,6 +511,14 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 				       (integer :tag "Match Index")))))))
   :group 'elmo)
 
+;; Prune functions provided temporarily to avoid compile warnings.
+(eval-when-compile
+  (dolist (fn '(dynamic-link dynamic-call))
+    (when (and (get fn 'defalias-maybe)
+	       (eq (symbol-function fn) 'ignore))
+      (put fn 'defalias-maybe nil)
+      (fmakunbound fn))))
+
 (require 'product)
 (product-provide (provide 'elmo-vars) (require 'elmo-version))
 

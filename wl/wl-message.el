@@ -964,6 +964,15 @@ Returns non-nil if bottom of message."
 	      (setq hn-ovs (cdr hn-ovs)))
 	  (wl-message-header-narrowing))))))
 
+;; Prune functions provided temporarily to avoid compile warnings.
+(eval-when-compile
+  (dolist (fn '(event-window posn-window event-start
+		mime-open-entity itimer-function delete-itimer))
+    (when (and (get fn 'defalias-maybe)
+	       (eq (symbol-function fn) 'ignore))
+      (put fn 'defalias-maybe nil)
+      (fmakunbound fn))))
+
 (require 'product)
 (product-provide (provide 'wl-message) (require 'wl-version))
 

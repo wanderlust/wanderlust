@@ -5126,6 +5126,15 @@ If ARG is numeric number, decode message as following:
   (wl-message-buffer-cache-clean-up)
   (wl-summary-redisplay))
 
+;; Prune functions provided temporarily to avoid compile warnings.
+(eval-when-compile
+  (dolist (fn '(ps-print-buffer-with-faces run-with-idle-timer
+		ps-print-preprint))
+    (when (and (get fn 'defalias-maybe)
+	       (eq (symbol-function fn) 'ignore))
+      (put fn 'defalias-maybe nil)
+      (fmakunbound fn))))
+
 (require 'product)
 (product-provide (provide 'wl-summary) (require 'wl-version))
 

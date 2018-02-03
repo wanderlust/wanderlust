@@ -1,3 +1,8 @@
+2018-02-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-vars.el: Prune functions provided temporarily to avoid
+	compile warnings in the end.
+
 2017-12-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo.el (elmo-folder-confirm-appends): Display message when

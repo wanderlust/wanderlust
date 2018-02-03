@@ -2782,6 +2782,14 @@ nil means real-time highlighting is disabled."
 	   wl-draft-idle-highlight-idle-time nil
 	   'wl-draft-idle-highlight-timer (current-buffer)))))
 
+;; Prune functions provided temporarily to avoid compile warnings.
+(eval-when-compile
+  (dolist (fn '(x-face-insert x-face-insert-version-header))
+    (when (and (get fn 'defalias-maybe)
+	       (eq (symbol-function fn) 'ignore))
+      (put fn 'defalias-maybe nil)
+      (fmakunbound fn))))
+
 (require 'product)
 (product-provide (provide 'wl-draft) (require 'wl-version))
 

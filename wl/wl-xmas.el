@@ -577,6 +577,14 @@ Special commands:
 	       (event-to-character event))
 	  event)))
 
+;; Prune functions provided temporarily to avoid compile warnings.
+(eval-when-compile
+  (dolist (fn '(toolbar-make-button-list))
+    (when (and (get fn 'defalias-maybe)
+	       (eq (symbol-function fn) 'ignore))
+      (put fn 'defalias-maybe nil)
+      (fmakunbound fn))))
+
 (require 'product)
 (product-provide (provide 'wl-xmas) (require 'wl-version))
 
