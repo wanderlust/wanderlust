@@ -1,3 +1,12 @@
+2018-02-11  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Fix the case NNTP folder without newsgroup (for access group).
+
+	* elmo-nntp.el (elmo-nntp-list-folders-get-cache): Fix the case
+	GROUP is nil.
+	(elmo-nntp-folder-list-subfolders): Fix the case FOLDER's group is
+	"".
+
 2018-02-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-vars.el: Prune functions provided temporarily to avoid
