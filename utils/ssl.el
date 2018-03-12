@@ -194,7 +194,9 @@ specifying a port number to connect to."
 	 (proc (eval
 		`(start-process name buffer ssl-program-name
 				,@ssl-program-arguments))))
-    (process-kill-without-query proc)
+    (if (fboundp 'set-process-query-on-exit-flag)
+	(set-process-query-on-exit-flag proc nil)
+      (process-kill-without-query proc))
     proc))
 
 (provide 'ssl)
