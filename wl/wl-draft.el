@@ -1752,8 +1752,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		 (funcall wl-draft-buffer-style buffer)
 	       (error "Invalid value for wl-draft-buffer-style"))))))
     (auto-save-mode -1)
-    (let (change-major-mode-hook)
-      (wl-draft-mode))
+    (wl-draft-mode)
     (set-buffer-multibyte t)		; draft buffer is always multibyte.
     (make-local-variable 'truncate-partial-width-windows)
     (setq truncate-partial-width-windows nil)
@@ -1815,26 +1814,25 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 (defun wl-draft-prepare-edit ()
   (unless (eq major-mode 'wl-draft-mode)
     (error "`wl-draft-create-header' must be use in wl-draft-mode"))
-  (let (change-major-mode-hook)
-    (wl-draft-editor-mode)
-    (static-when (boundp 'auto-save-file-name-transforms)
-      (make-local-variable 'auto-save-file-name-transforms)
-      (setq auto-save-file-name-transforms
-	    (cons (list (concat (regexp-quote wl-draft-folder)
-				"/\\([0-9]+\\)")
-			(concat (expand-file-name
-				 "auto-save-"
-				 (elmo-folder-msgdb-path
-				  (wl-draft-get-folder)))
-				"\\1"))
-		  auto-save-file-name-transforms)))
-    (when wl-draft-write-file-function
-      (add-hook 'local-write-file-hooks wl-draft-write-file-function))
-    (wl-draft-overload-functions)
-    (unless (eq wl-draft-real-time-highlight 'jit)
-      (wl-highlight-headers 'for-draft))
-    (wl-draft-save)
-    (clear-visited-file-modtime)))
+  (wl-draft-editor-mode)
+  (static-when (boundp 'auto-save-file-name-transforms)
+    (make-local-variable 'auto-save-file-name-transforms)
+    (setq auto-save-file-name-transforms
+	  (cons (list (concat (regexp-quote wl-draft-folder)
+			      "/\\([0-9]+\\)")
+		      (concat (expand-file-name
+			       "auto-save-"
+			       (elmo-folder-msgdb-path
+				(wl-draft-get-folder)))
+			      "\\1"))
+		auto-save-file-name-transforms)))
+  (when wl-draft-write-file-function
+    (add-hook 'local-write-file-hooks wl-draft-write-file-function))
+  (wl-draft-overload-functions)
+  (unless (eq wl-draft-real-time-highlight 'jit)
+    (wl-highlight-headers 'for-draft))
+  (wl-draft-save)
+  (clear-visited-file-modtime))
 
 (defun wl-draft-decode-header ()
   (save-excursion
@@ -1995,7 +1993,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   (let ((draft-folder (wl-draft-get-folder))
 	(wl-draft-reedit t)
 	(num 0)
-	buffer change-major-mode-hook body-top)
+	buffer body-top)
     (setq buffer (get-buffer-create (format "%s/%d" (if (memq 'modeline wl-use-folder-petname)
 							(wl-folder-get-petname wl-draft-folder)
 						      wl-draft-folder)

@@ -4018,7 +4018,6 @@ Return t if message exists."
   (wl-summary-check-target-mark)
   (let ((mlist (nreverse (copy-sequence wl-summary-buffer-target-mark-list)))
 	(summary-buf (current-buffer))
-	change-major-mode-hook
 	start-point
 	draft-buf)
     (wl-summary-jump-to-msg (car mlist))
