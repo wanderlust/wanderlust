@@ -339,7 +339,7 @@ CODE is one of the following:
 		'starttls)
 	(elmo-pop3-send-command process "stls")
 	(if (eq 'ok (car (elmo-pop3-read-response process)))
-	    (starttls-negotiate process)
+	    (elmo-network-session-starttls-negotiate session)
 	  (signal 'elmo-open-error '(elmo-pop3-starttls-error)))))))
 
 (luna-define-method elmo-network-authenticate-session ((session

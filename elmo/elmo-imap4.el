@@ -1122,7 +1122,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
             (signal 'elmo-open-error
                     '(elmo-imap4-starttls-error)))
         (elmo-imap4-send-command-wait session "starttls")
-        (starttls-negotiate process)
+	(elmo-network-session-starttls-negotiate session)
         (elmo-imap4-session-set-capability-internal
          session
          (elmo-imap4-response-value

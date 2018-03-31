@@ -1,3 +1,23 @@
+2018-03-31  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Use built-in GnuTLS library for STARTTLS cnnection on
+	IMAP/NNTP/POP folders.
+
+	* elmo-net.el (elmo-network-session-starttls-negotiate): New
+	function.
+
+	* elmo-vars.el (elmo-network-use-gnutls): New variable.
+	(elmo-network-stream-type-alist): Use open-network-stream for
+	STARTTLS connection with built-in GnuTLS library.
+
+	* elmo-imap4.el (elmo-network-initialize-session): Use
+	elmo-network-session-starttls-negotiate instead of
+	starttls-negotiate.
+
+	* elmo-nntp.el (elmo-network-initialize-session): Likewise.
+
+	* elmo-pop3.el (elmo-network-initialize-session): Likewise.
+
 2018-03-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-net.el (elmo-open-network-stream): Use

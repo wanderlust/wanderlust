@@ -49,6 +49,7 @@
 
 ;;; Session
 (eval-and-compile
+  (autoload 'gnutls-negotiate "gnutls")
   (autoload 'starttls-negotiate "starttls")
   (autoload 'sasl-find-mechanism "sasl")
   (autoload 'sasl-make-client "sasl")
@@ -237,6 +238,14 @@ if making session failed, returns nil."
     (setq buffer (get-buffer-create buffer-name))
     (elmo-network-initialize-session-buffer session buffer)
     buffer))
+
+(defun elmo-network-session-starttls-negotiate (session)
+  (let ((process (elmo-network-session-process-internal session)))
+    (if (memq (process-status process) '(run stop exit signal))
+	(starttls-negotiate process)
+      (gnutls-negotiate
+       :process process
+       :hostname (elmo-network-session-server-internal session)))))
 
 (defun elmo-network-open-session (class name server port user auth
 					stream-type)

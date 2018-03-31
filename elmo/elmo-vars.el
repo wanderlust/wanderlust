@@ -382,16 +382,23 @@ If function, return value of function.")
 (defvar elmo-date-match t
   "Date match is available or not.")
 
+(defvar elmo-network-use-gnutls (and (fboundp 'gnutls-available-p)
+				     (gnutls-available-p))
+  "Non-nil means built-in GnuTLS is used for SSL/STARTTLS connection.")
+
 (defvar elmo-network-stream-type-alist
   `(("!" ssl ,@(cond
-		((and (fboundp 'gnutls-available-p)
-		      (gnutls-available-p))
+		(elmo-network-use-gnutls
 		 '(gnutls open-gnutls-stream))
 		((module-installed-p 'tls)
 		 '(tls    open-tls-stream))
 		(t
 		 '(ssl    open-ssl-stream))))
-    ("!!"     starttls  starttls starttls-open-stream)
+    ("!!" starttls  ,@(cond
+		       (elmo-network-use-gnutls
+			'(nil   open-network-stream))
+		       (t
+			'(starttls starttls-open-stream))))
     ("!socks" socks     socks    socks-open-network-stream)
     ("!direct" direct   nil   open-network-stream))
   "An alist of (SPEC-STRING SYMBOL FEATURE OPEN-STREAM-FUNCTION).
