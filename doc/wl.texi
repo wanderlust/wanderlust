@@ -312,20 +312,21 @@ Extract the obtained package to your working directory:
 
 SSL (Secure Socket Layer) can be used for
 SMTP, IMAP, NNTP and POP connections in Wanderlust.
+Emacs 24 and later uses built-in GnuTLS if available.
 
 There are two ways to use SSL. One is to start SSL negotiation just
 after the connection establishment (generic way). The other one is to
 start SSL negotiation by invoking STARTTLS command in the each session.
 
-For the formal SSL (generic SSL), Emacs 24 or later uses built-in GnuTLS
-if available. if not available, Emacs try to use @file{tls.el}. In this
-case, GnuTLS's @command{gnutls-cli} is needed. if neither avialable,
-@file{ssl.el} of @file{utils} directory and OpenSSL's @command{openssl}.
+If built-in GnuTLS is not available, Emacs try to use @file{tls.el} for
+the formal SSL (generic SSL). In this case, GnuTLS's
+@command{gnutls-cli} is needed. if neither avialable, @file{ssl.el} of
+@file{utils} directory and OpenSSL's @command{openssl}.
 
-For the latter SSL (STARTTLS), you need @file{starttls.el}. Moreover,
-GnuTLS or starttls package is needed according to
-@code{starttls-use-gnutls} variable's value.  If your Emacs doesn't have
-@file{starttls.el} neither @file{starttls.el} doesn't have the
+For the latter SSL (STARTTLS), you need @file{starttls.el} if built-in
+GnuTLS is not available. Moreover, GnuTLS or starttls package is needed
+according to @code{starttls-use-gnutls} variable's value. If your Emacs
+doesn't have @file{starttls.el} or @file{starttls.el} doesn't have the
 defninition of @code{starttls-use-gnutls}, you need starttls package.
 
 You can download starttls package from the following site.

@@ -337,22 +337,23 @@ Wanderlust 本体は以下の場所からダウンロードできます。
 @pindex starttls
 
 Wanderlust では、SMTP, IMAP, NNTP, POP のコネクションにおいて、SSL
-(Secure Socket Layer) を使用できます。
+(Secure Socket Layer) を使用でき、Emacs 24 以降でサポートされた
+組み込み GnuTLS が利用可能な場合はそれを使います。
 
 SSL の利用形態には、コネクションと同時に SSL negotiation を始めるものと、
 @command{STARTTLS} command の後に SSL negotiation を始めるものの二種類
 があります。
 
-前者については、Emacs 24 以降でサポートされた、組み込み GnuTLS が
-利用可能な場合はそれを使います。
-次に、 @file{tls.el} が存在すればそれを使います。この時に GnuTLS に
-含まれる @command{gnutls-cli} にパスが通っている必要があります。
-どちらもない場合は、本パッケージの @file{utils} ディレクトリにある
-@file{ssl.el} をインストールする必要があります。なおかつ、OpenSSL に含ま
-れる @command{openssl} にパスが通っている必要があります。
+組み込み GnuTLS が利用不能な場合、前者については @file{tls.el} が存在すれば
+それを使います。この時に GnuTLS に含まれる @command{gnutls-cli} にパスが
+通っている必要があります。どちらもない場合は、本パッケージの
+@file{utils} ディレクトリにある@file{ssl.el} をインストールする必要があ
+ります。なおかつ、OpenSSL に含まれる @command{openssl} にパスが通ってい
+る必要があります。
 
-後者については @file{starttls.el} が必要になります。
-変数 @code{starttls-use-gnutls} の値によって、GnuTLS もしくは starttls
+後者については、組み込み GnuTLS が利用不能な場合は @file{starttls.el} が
+必要になります。
+また、変数 @code{starttls-use-gnutls} の値によって、GnuTLS もしくは starttls
 パッケージが必要です。
 @file{starttls.el} が無い、もしくは @file{starttls.el} 内に
 @code{starttls-use-gnutls} の定義が無い場合は starttls パッケージを
