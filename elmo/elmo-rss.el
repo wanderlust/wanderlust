@@ -363,7 +363,9 @@ Setting this to true will annoy the pedants."
          (xml
           (prog1
               (with-current-buffer buffer
-                (xml-parse-region (point-min) (point-max)))
+                (xml-parse-region (progn (goto-char (point-min))
+					 (search-forward "\n\n"))
+				  (point-max)))
             (kill-buffer buffer)))
          (parse (elmo-rss-parse xml url))
          (entries (car parse))
