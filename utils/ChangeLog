@@ -1,3 +1,7 @@
+2018-05-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* ssl.el (ssl-program-arguments): Fix docstring.
+
 2018-03-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* ssl.el (open-ssl-stream): Use set-process-query-on-exit-flag

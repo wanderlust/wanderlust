@@ -99,7 +99,7 @@ This means a directory of pem encoded certificates with hash symlinks."
   "*Arguments that should be passed to the program `ssl-program-name'.
 This should be used if your SSL program needs command line switches to
 specify any behaviour (certificate file locations, etc).
-The special symbols 'host and 'port may be used in the list of arguments
+The special symbols 'host and 'service may be used in the list of arguments
 and will be replaced with the hostname and service/port that will be connected
 to."
   :group 'ssl
