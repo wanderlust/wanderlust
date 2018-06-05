@@ -90,7 +90,7 @@
   elmo-archive-folder-path)
 
 (defun elmo-intern-soft (str)
-  (if (eq str "") nil (intern-soft str)))
+  (if (string= str "") nil (intern-soft str)))
 
 (luna-define-method elmo-folder-initialize ((folder
 					     elmo-archive-folder)
