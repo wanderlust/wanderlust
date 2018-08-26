@@ -230,7 +230,7 @@ Returns non-nil if fetching was succeed.")
 		      #'elmo-search-parse-filename-list)))
       (apply 'call-process
 	     (elmo-search-engine-extprog-prog-internal engine)
-	     nil t t
+	     nil (list (current-buffer)) nil
 	     (delq
 	      nil
 	      (elmo-flatten
@@ -359,11 +359,11 @@ If the value is a list, all elements are used as index paths for namazu."
 ;; grep
 (defun elmo-search-grep-target (engine pattern)
   (let ((dirname (expand-file-name (elmo-search-engine-param-internal engine)))
-	(files (list null-device)))
+	files)
     (dolist (filename (directory-files dirname))
       (unless (string-match "^\\.\\.?" filename)
 	(setq files (cons (expand-file-name filename dirname) files))))
-    files))
+    (or files (list null-device))))
 
 (defun elmo-search-rgrep-target (engine pattern)
   (expand-file-name (elmo-search-engine-param-internal engine)))
