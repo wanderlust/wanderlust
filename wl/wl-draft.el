@@ -1727,6 +1727,10 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	     (split-window-vertically)
 	     (other-window 1)
 	     (switch-to-buffer buffer))
+	    (split-horiz
+	     (split-window-horizontally)
+	     (other-window 1)
+	     (switch-to-buffer buffer))
 	    (keep
 	     (switch-to-buffer buffer))
 	    (full
@@ -1736,11 +1740,16 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	     (if (functionp wl-draft-reply-buffer-style)
 		 (funcall wl-draft-reply-buffer-style buffer)
 	       (error "Invalid value for wl-draft-reply-buffer-style"))))
+	;; otherwise we are writing an entirely new message...
 	(case wl-draft-buffer-style
 	  (split
 	   (when (eq major-mode 'wl-summary-mode)
 	     (wl-summary-toggle-disp-msg 'off))
 	   (split-window-vertically)
+	   (other-window 1)
+	   (switch-to-buffer buffer))
+	  (split-horiz
+	   (split-window-horizontally)
 	   (other-window 1)
 	   (switch-to-buffer buffer))
 	  (keep
@@ -2413,7 +2422,7 @@ Automatically applied in draft sending time."
       len)))
 
 (defun wl-jump-to-draft-buffer (&optional arg)
-  "Jump to the draft if exists."
+  "Jump to the first of the buffers that are in `wl-draft-mode'."
   (interactive "P")
   (if arg
       (wl-jump-to-draft-folder)
@@ -2431,7 +2440,35 @@ Automatically applied in draft sending time."
 				   draft-bufs)))
 	    (setq buf (car buf))
 	  (setq buf (car draft-bufs)))
-	(switch-to-buffer buf))))))
+	(when (eq major-mode 'wl-summary-mode)
+	  (wl-summary-toggle-disp-msg 'on)
+	  (save-excursion
+	    (wl-summary-set-message-buffer-or-redisplay))
+	  (wl-message-select-buffer wl-message-buffer))
+	(let ((buf-win (get-buffer-window buf)))
+	  (if buf-win
+	      (pop-to-buffer buf)
+	    ;;
+	    ;; XXX we have no way now to know if the draft was a reply or a new
+	    ;; message, so just assume it was a new message for now....
+	    ;;
+	    (case wl-draft-buffer-style
+	      (split
+	       (split-window-vertically)
+	       (other-window 1)
+	       (switch-to-buffer buf))
+	      (split-horiz
+	       (split-window-horizontally)
+	       (other-window 1)
+	       (switch-to-buffer buf))
+	      (keep
+	       (switch-to-buffer buf))
+	      (full
+	       (delete-other-windows)
+	       (switch-to-buffer buf))
+	      (t (if (functionp wl-draft-buffer-style)
+		     (funcall wl-draft-buffer-style buf)
+		   (error "Invalid value for wl-draft-buffer-style")))))))))))
 
 (defun wl-jump-to-draft-folder ()
   (let ((msgs (reverse (elmo-folder-list-messages (wl-draft-get-folder))))

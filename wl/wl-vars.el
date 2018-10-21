@@ -1510,24 +1510,34 @@ of `wl-draft-config-alist'."
   :group 'wl-draft
   :group 'wl-pref)
 
-(defcustom wl-draft-buffer-style 'full
-  "Style of draft buffer except for `wl-summary-reply' and `wl-summary-forward'
-'keep is to use current window, 'full is to use full frame window and
-'split is to split current window.
-If it is a function, it is called with the draft buffer as an argument."
+(defcustom wl-draft-buffer-style 'keep
+  "Style of draft buffer for writing new messages (i.e. except
+  for `wl-summary-reply' and `wl-summary-forward').
+
+'keep will use the current window for the new message,
+'full will use a full frame window,
+'split will split current window vertically (top-to-bottom), and
+'split-horiz will split the current window horizontally (side-by-side).
+If a function is given, it is called with the draft buffer as an argument."
   :type '(choice (const :tag "Keep window" keep)
-		 (const :tag "Split window" split)
+		 (const :tag "Split window vertically" split)
+		 (const :tag "Split window horizontally" split-horiz)
 		 (const :tag "Full window" full)
 		 (sexp :tag "Use Function"))
   :group 'wl-draft)
 
+;; ideally this should default to split-horiz if message window's width is > 144 or so
 (defcustom wl-draft-reply-buffer-style 'split
   "Style of draft buffer for `wl-summary-reply' and `wl-summary-forward'
-'keep is to use message buffer window, 'full is to use full frame window and
-'split is to split message buffer window.
-If it is a function, it is called with the draft buffer as an argument."
+
+'keep will use the existing message buffer window for the reply,
+'full will use a full frame window,
+'split will split message buffer window vertically (top-to-bottom), and
+'spilt-horiz will split the message window horizontally (side-by-side).
+If a function is given, it is called with the draft buffer as an argument."
   :type '(choice (const :tag "Keep window" keep)
-		 (const :tag "Split window" split)
+		 (const :tag "Split window vertically" split)
+		 (const :tag "Split window horizontally" split-horiz)
 		 (const :tag "Full window" full)
 		 (sexp :tag "Use Function"))
   :group 'wl-draft)

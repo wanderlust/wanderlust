@@ -4028,7 +4028,7 @@ Return t if message exists."
       (save-window-excursion
 	(while mlist
 	  (set-buffer summary-buf)
-	  (delete-other-windows)
+	  (delete-other-windows)	; xxx this may be bad!
 	  (wl-summary-jump-to-msg (car mlist))
 	  (wl-summary-redisplay)
 	  (set-buffer draft-buf)
