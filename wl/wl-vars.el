@@ -1526,7 +1526,6 @@ If a function is given, it is called with the draft buffer as an argument."
 		 (sexp :tag "Use Function"))
   :group 'wl-draft)
 
-;; ideally this should default to split-horiz if message window's width is > 144 or so
 (defcustom wl-draft-reply-buffer-style 'split
   "Style of draft buffer for `wl-summary-reply' and `wl-summary-forward'
 

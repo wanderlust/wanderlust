@@ -2422,7 +2422,13 @@ Automatically applied in draft sending time."
       len)))
 
 (defun wl-jump-to-draft-buffer (&optional arg)
-  "Jump to the first of the buffers that are in `wl-draft-mode'."
+  "Jump to the first of the buffers that are in `wl-draft-mode',
+unless called from a draft buffer, in which case switch to the
+next one.  If called from a buffer in `wl-summary-mode' then
+first try to display the message at the point.  Apply the
+`wl-draft-buffer-style' rules to display the selected draft
+buffer.  If ARG is not nil then call `wl-jump-to-draft-folder'
+instead."
   (interactive "P")
   (if arg
       (wl-jump-to-draft-folder)
@@ -2430,7 +2436,7 @@ Automatically applied in draft sending time."
 	  buf)
       (cond
        ((null draft-bufs)
-	(message "No draft buffer exist."))
+	(message "No draft buffers exist."))
        (t
 	(setq draft-bufs
 	      (sort (mapcar 'buffer-name draft-bufs)
@@ -2449,8 +2455,16 @@ Automatically applied in draft sending time."
 	  (if buf-win
 	      (pop-to-buffer buf)
 	    ;;
-	    ;; XXX we have no way now to know if the draft was a reply or a new
-	    ;; message, so just assume it was a new message for now....
+	    ;; we have no way now to know whether the draft buffer was opened as
+	    ;; a reply or as a new message, so just assume it was a new message
+	    ;; and ignore wl-draft-reply-buffer-style, though note above that if
+	    ;; called from the summary buffer then we have displayed the current
+	    ;; message, implying for some interpretations that we might be a
+	    ;; writing a reply to the current summary message -- on the other
+	    ;; hand this is also useful to write a new message only using the
+	    ;; current summary message as a reference, not a true reply -- one
+	    ;; would never call this function from the summary buffer, while
+	    ;; viewing a message, and expect the viewed message to disappear.
 	    ;;
 	    (case wl-draft-buffer-style
 	      (split
