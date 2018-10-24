@@ -2450,39 +2450,40 @@ instead."
 	  (wl-summary-toggle-disp-msg 'on)
 	  (save-excursion
 	    (wl-summary-set-message-buffer-or-redisplay))
-	  (wl-message-select-buffer wl-message-buffer))
-	(let ((buf-win (get-buffer-window buf)))
-	  (if buf-win
-	      (pop-to-buffer buf)
-	    ;;
-	    ;; we have no way now to know whether the draft buffer was opened as
-	    ;; a reply or as a new message, so just assume it was a new message
-	    ;; and ignore wl-draft-reply-buffer-style, though note above that if
-	    ;; called from the summary buffer then we have displayed the current
-	    ;; message, implying for some interpretations that we might be a
-	    ;; writing a reply to the current summary message -- on the other
-	    ;; hand this is also useful to write a new message only using the
-	    ;; current summary message as a reference, not a true reply -- one
-	    ;; would never call this function from the summary buffer, while
-	    ;; viewing a message, and expect the viewed message to disappear.
-	    ;;
-	    (case wl-draft-buffer-style
-	      (split
-	       (split-window-vertically)
-	       (other-window 1)
-	       (switch-to-buffer buf))
-	      (split-horiz
-	       (split-window-horizontally)
-	       (other-window 1)
-	       (switch-to-buffer buf))
-	      (keep
-	       (switch-to-buffer buf))
-	      (full
-	       (delete-other-windows)
-	       (switch-to-buffer buf))
-	      (t (if (functionp wl-draft-buffer-style)
-		     (funcall wl-draft-buffer-style buf)
-		   (error "Invalid value for wl-draft-buffer-style")))))))))))
+	  (wl-message-select-buffer wl-message-buffer)
+	  (let ((buf-win (get-buffer-window buf)))
+	    (if buf-win
+		(pop-to-buffer buf)
+	      ;;
+	      ;; we have no way at this point to know whether the draft buffer
+	      ;; was opened as a reply or as a new message, so just assume it
+	      ;; was a new message and ignore wl-draft-reply-buffer-style,
+	      ;; though note above that if called from the summary buffer then
+	      ;; we have displayed the current message, implying for some
+	      ;; interpretations that we might be a writing a reply to the
+	      ;; current summary message -- on the other hand this is also
+	      ;; useful to write a new message only using the current summary
+	      ;; message as a reference, not a true reply -- one would never
+	      ;; call this function from the summary buffer, while viewing a
+	      ;; message, and expect the viewed message to disappear.
+	      ;;
+	      (case wl-draft-buffer-style
+		(split
+		 (split-window-vertically)
+		 (other-window 1)
+		 (switch-to-buffer buf))
+		(split-horiz
+		 (split-window-horizontally)
+		 (other-window 1)
+		 (switch-to-buffer buf))
+		(keep
+		 (switch-to-buffer buf))
+		(full
+		 (delete-other-windows)
+		 (switch-to-buffer buf))
+		(t (if (functionp wl-draft-buffer-style)
+		       (funcall wl-draft-buffer-style buf)
+		     (error "Invalid value for wl-draft-buffer-style"))))))))))))
 
 (defun wl-jump-to-draft-folder ()
   (let ((msgs (reverse (elmo-folder-list-messages (wl-draft-get-folder))))

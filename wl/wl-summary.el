@@ -4237,10 +4237,9 @@ Return t if message exists."
 	     nil)))))
 
 (defun wl-summary-reply (&optional arg without-setup-hook)
-  "Reply to current message. See also `wl-draft-reply'."
+  "Reply to the current message. See also `wl-draft-reply'."
   (interactive "P")
-  (let ((folder wl-summary-buffer-elmo-folder)
-	(number (wl-summary-message-number))
+  (let ((number (wl-summary-message-number))
 	(summary-buf (current-buffer))
 	(winconf (current-window-configuration))
 	mes-buf)
@@ -4262,6 +4261,11 @@ Return t if message exists."
 (defun wl-summary-write (folder)
   "Write a new draft from Summary."
   (interactive (list (wl-summary-buffer-folder-name)))
+  (let ((number (wl-summary-message-number)))
+    (when number
+      (save-excursion
+	(wl-summary-set-message-buffer-or-redisplay))
+      (wl-message-select-buffer wl-message-buffer)))
   (wl-draft (list (cons 'To "")) nil nil nil nil folder)
   (run-hooks 'wl-mail-setup-hook)
   (mail-position-on-field "To"))
