@@ -4261,14 +4261,7 @@ Return t if message exists."
 (defun wl-summary-write (folder)
   "Write a new draft from Summary."
   (interactive (list (wl-summary-buffer-folder-name)))
-  (let ((number (wl-summary-message-number)))
-    (when number
-      (save-excursion
-	(wl-summary-set-message-buffer-or-redisplay))
-      (wl-message-select-buffer wl-message-buffer)))
-  (wl-draft (list (cons 'To "")) nil nil nil nil folder)
-  (run-hooks 'wl-mail-setup-hook)
-  (mail-position-on-field "To"))
+  (wl-draft (list (cons 'To "")) nil nil nil nil folder))
 
 (defvar wl-summary-write-current-folder-functions
   '(wl-folder-get-newsgroups
