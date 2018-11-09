@@ -1760,16 +1760,16 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
      ;; XXX whether toggling off the message display here makes sense or not is
      ;; higly questionable!  If it does for anyone then arguably it should split
      ;; the summary window with the same ratio as with `wl-message-window-size'.
-     (when (eq major-mode 'wl-summary-mode)
-       (wl-summary-toggle-disp-msg 'off))
+     (if (eq major-mode 'wl-summary-mode)
+	 (wl-summary-toggle-disp-msg 'off))
      (split-window-vertically)
      (other-window 1)
      (switch-to-buffer buffer))
     (msg-split
-     (if (eq major-mode 'wl-folder-mode)
-	 (progn
-	   (wl-folder-jump-to-previous-summary)
-	   (set-buffer (get-buffer wl-summary-buffer-name))))
+     (when (and (eq major-mode 'wl-folder-mode)
+		(get-buffer-window (car (wl-collect-summary))))
+       (wl-folder-jump-to-previous-summary)
+       (set-buffer (get-buffer wl-summary-buffer-name)))
      (if wl-summary-buffer-disp-msg
 	 (wl-summary-jump-to-current-message))
      (split-window-vertically)
@@ -1779,16 +1779,16 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
      (if (and (eq major-mode 'wl-folder-mode)
 	      (get-buffer-window (car (wl-collect-summary))))
 	 (wl-folder-jump-to-previous-summary))
-     (when (eq major-mode 'wl-summary-mode)
-       (wl-summary-toggle-disp-msg 'off))
+     (if (eq major-mode 'wl-summary-mode)
+	 (wl-summary-toggle-disp-msg 'off))
      (split-window-horizontally)
      (other-window 1)
      (switch-to-buffer buffer))
     (msg-split-horiz
-     (if (eq major-mode 'wl-folder-mode)
-	 (progn
-	   (wl-folder-jump-to-previous-summary)
-	   (set-buffer (get-buffer wl-summary-buffer-name))))
+     (when (and (eq major-mode 'wl-folder-mode)
+		(get-buffer-window (car (wl-collect-summary))))
+       (wl-folder-jump-to-previous-summary)
+       (set-buffer (get-buffer wl-summary-buffer-name)))
      (if wl-summary-buffer-disp-msg
 	 (wl-summary-jump-to-current-message))
      (split-window-horizontally)
