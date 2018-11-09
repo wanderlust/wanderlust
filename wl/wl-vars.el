@@ -1510,7 +1510,7 @@ of `wl-draft-config-alist'."
   :group 'wl-draft
   :group 'wl-pref)
 
-(defcustom wl-draft-buffer-style 'keep
+(defcustom wl-draft-buffer-style 'full
   "Style of draft buffer for writing new messages (i.e. except
 for `wl-summary-reply' and `wl-summary-forward').
 
