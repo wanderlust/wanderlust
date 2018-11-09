@@ -1517,16 +1517,13 @@ for `wl-summary-reply' and `wl-summary-forward').
 'keep will use the current window for the new message,
 'full will use a full frame window,
 'split will split current window vertically (top-to-bottom), and
-'msg-split will split the message buffer window vertically (top-to-bottom),
 'split-horiz will split the current window horizontally (side-by-side).
-'msg-spilt-horiz will split the message window horizontally (side-by-side).
 If a function is given, it is called with the draft buffer as an
 argument.
-For 'split, 'msg-split, 'split-horiz, and 'msg-split-horiz if the
-current window is the folder window, and the summary window is
-visible, then the summary window is visited (with
-`wl-folder-jump-to-previous-summary') before any action is
-taken."
+For 'split and 'split-horiz if the current window is the folder
+window, and the summary window is visible, then the summary
+window is visited (with `wl-folder-jump-to-previous-summary')
+before any action is taken."
   :type '(choice (const :tag "Keep window" keep)
 		 (const :tag "Split window vertically" split)
 		 (const :tag "Split window horizontally" split-horiz)
@@ -1540,14 +1537,18 @@ taken."
 'keep will use the existing message buffer window for the reply,
 'full will use a full frame window,
 'split will split the message window vertically (top-to-bottom),
+'msg-split will split the message buffer window vertically (top-to-bottom),
 'spilt-horiz will split the message window horizontally (side-by-side), and
+'msg-spilt-horiz will split the message window horizontally (side-by-side).
 If a function is given, it is called with the draft buffer as an
 argument.
-If the message window is not visible then the current window is used.
-For 'split and 'split-horiz if the current window is the folder
-window, and the summary window is visible, then the summary
-window is visited (with `wl-folder-jump-to-previous-summary')
-before any action is taken."
+If the message window is not visible then the current window is
+used.
+For 'split, 'msg-split, 'split-horiz, and 'msg-split-horiz if the
+current window is the folder window, and the summary window is
+visible, then the summary window is visited (with
+`wl-folder-jump-to-previous-summary') before any action is
+taken."
   :type '(choice (const :tag "Keep window" keep)
 		 (const :tag "Split current window vertically" split)
 		 (const :tag "Split message window vertically" msg-split)
