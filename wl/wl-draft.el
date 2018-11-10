@@ -1712,96 +1712,74 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 
 (defun wl-draft-do-reply-buffer-window-styling (buffer)
   "Internal setup of a reply draft buffer window."
-  (case wl-draft-reply-buffer-style
-    (split
-     (if (and (eq major-mode 'wl-folder-mode)
-	      (get-buffer-window (car (wl-collect-summary))))
-	 (wl-folder-jump-to-previous-summary))
-     (if wl-summary-buffer-disp-msg
-	 (wl-summary-jump-to-current-message))
-     (split-window-vertically)
-     (other-window 1)
-     (switch-to-buffer buffer))
-    (split-horiz
-     (if (and (eq major-mode 'wl-folder-mode)
-	      (get-buffer-window (car (wl-collect-summary))))
-	 (wl-folder-jump-to-previous-summary))
-     (if wl-summary-buffer-disp-msg
-	 (wl-summary-jump-to-current-message))
-     (split-window-horizontally)
-     (other-window 1)
-     (switch-to-buffer buffer))
-    ;; todo:  consider orig-split and orig-split-horiz which would re-display
-    ;; the original message (and the original summary folder) for the selected
-    ;; draft buffer (else default to what split and split-horiz do)
-    (keep
-     (if wl-summary-buffer-disp-msg
-	 (wl-summary-jump-to-current-message))
-     (switch-to-buffer buffer))
-    (full
-     (delete-other-windows)
-     (switch-to-buffer buffer))
-    (t
-     (if (functionp wl-draft-reply-buffer-style)
-	 (funcall wl-draft-reply-buffer-style buffer)
-       (error "Invalid value for wl-draft-reply-buffer-style"))))
+  (cond
+   ((memq wl-draft-reply-buffer-style '(split split-horiz))
+    (when (and (eq major-mode 'wl-folder-mode)
+	       (get-buffer-window (car (wl-collect-summary))))
+      (wl-folder-jump-to-previous-summary))
+    (when wl-summary-buffer-disp-msg
+      (wl-summary-jump-to-current-message))
+    (if (eq wl-draft-reply-buffer-style 'split)
+	(split-window-vertically)
+      (split-window-horizontally))
+    (other-window 1)
+    (switch-to-buffer buffer))
+   ;; todo:  consider orig-split and orig-split-horiz which would re-display
+   ;; the original message (and the original summary folder) for the selected
+   ;; draft buffer (else default to what split and split-horiz do)
+   ((eq wl-draft-reply-buffer-style 'keep)
+    (when wl-summary-buffer-disp-msg
+      (wl-summary-jump-to-current-message))
+    (switch-to-buffer buffer))
+   ((eq wl-draft-reply-buffer-style 'full)
+    (delete-other-windows)
+    (switch-to-buffer buffer))
+   ((functionp wl-draft-reply-buffer-style)
+    (funcall wl-draft-reply-buffer-style buffer))
+   (t
+    (error "Invalid value for wl-draft-reply-buffer-style")))
   buffer)
 
 (defun wl-draft-do-buffer-window-styling (buffer)
   "Internal setup of a new message draft buffer window."
-  (case wl-draft-buffer-style
-    (split
-     (if (and (eq major-mode 'wl-folder-mode)
-	      (get-buffer-window (car (wl-collect-summary))))
-	 (wl-folder-jump-to-previous-summary))
-     ;; xxx toggling off the message display was not working!
-     ;; it was broken by commit 57e783b147694f79ad12c0105c005f57f4b90e4a
-     ;; which introduced a call to `set-buffer' before this
-     ;; XXX whether toggling off the message display here makes sense or not is
-     ;; higly questionable!  If it does for anyone then arguably it should split
-     ;; the summary window with the same ratio as with `wl-message-window-size'.
-     (if (eq major-mode 'wl-summary-mode)
-	 (wl-summary-toggle-disp-msg 'off))
-     (split-window-vertically)
-     (other-window 1)
-     (switch-to-buffer buffer))
-    (msg-split
-     (when (and (eq major-mode 'wl-folder-mode)
-		(get-buffer-window (car (wl-collect-summary))))
-       (wl-folder-jump-to-previous-summary)
-       (set-buffer (get-buffer wl-summary-buffer-name)))
-     (if wl-summary-buffer-disp-msg
-	 (wl-summary-jump-to-current-message))
-     (split-window-vertically)
-     (other-window 1)
-     (switch-to-buffer buffer))
-    (split-horiz
-     (if (and (eq major-mode 'wl-folder-mode)
-	      (get-buffer-window (car (wl-collect-summary))))
-	 (wl-folder-jump-to-previous-summary))
-     (if (eq major-mode 'wl-summary-mode)
-	 (wl-summary-toggle-disp-msg 'off))
-     (split-window-horizontally)
-     (other-window 1)
-     (switch-to-buffer buffer))
-    (msg-split-horiz
-     (when (and (eq major-mode 'wl-folder-mode)
-		(get-buffer-window (car (wl-collect-summary))))
-       (wl-folder-jump-to-previous-summary)
-       (set-buffer (get-buffer wl-summary-buffer-name)))
-     (if wl-summary-buffer-disp-msg
-	 (wl-summary-jump-to-current-message))
-     (split-window-horizontally)
-     (other-window 1)
-     (switch-to-buffer buffer))
-    (keep
-     (switch-to-buffer buffer))
-    (full
-     (delete-other-windows)
-     (switch-to-buffer buffer))
-    (t (if (functionp wl-draft-buffer-style)
-	   (funcall wl-draft-buffer-style buffer)
-	 (error "Invalid value for wl-draft-buffer-style"))))
+  (cond
+   ((memq wl-draft-buffer-style '(split split-horiz msg-split msg-split-horiz))
+    (let ((msg (memq wl-draft-buffer-style '(msg-split msg-split-horiz)))
+	  (horiz (memq wl-draft-buffer-style '(split-horiz msg-split-horiz)))
+	  (summary (car (wl-collect-summary))))
+      (when (and summary
+		 (eq major-mode 'wl-folder-mode)
+		 (get-buffer-window summary))
+	(wl-folder-jump-to-previous-summary)
+	(when msg
+	  (set-buffer (get-buffer wl-summary-buffer-name))))
+      (cond
+       ((and msg summary)
+	(when wl-summary-buffer-disp-msg
+	  (wl-summary-jump-to-current-message)))
+       ;; xxx toggling off the message display was not working!  it was
+       ;; broken by commit 57e783b147694f79ad12c0105c005f57f4b90e4a
+       ;; which introduced a call to `set-buffer' before this XXX
+       ;; whether toggling off the message display here makes sense or
+       ;; not is higly questionable!  If it does for anyone then
+       ;; arguably it should split the summary window with the same
+       ;; ratio as with `wl-message-window-size'.
+       ((eq major-mode 'wl-summary-mode)
+	(wl-summary-toggle-disp-msg 'off)))
+      (if horiz
+	  (split-window-horizontally)
+	(split-window-vertically))
+      (other-window 1)
+      (switch-to-buffer buffer)))
+   ((eq wl-draft-buffer-style 'keep)
+    (switch-to-buffer buffer))
+   ((eq wl-draft-buffer-style 'full)
+    (delete-other-windows)
+    (switch-to-buffer buffer))
+   ((functionp wl-draft-buffer-style)
+    (funcall wl-draft-buffer-style buffer))
+   (t
+    (error "Invalid value for wl-draft-buffer-style")))
   buffer)
 
 (defun wl-draft-create-buffer (&optional parent-folder parent-number)
