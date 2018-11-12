@@ -1510,9 +1510,8 @@ of `wl-draft-config-alist'."
   :group 'wl-draft
   :group 'wl-pref)
 
-(defcustom wl-draft-buffer-style 'full
-  "Style of draft buffer for writing new messages (i.e. except
-for `wl-summary-reply' and `wl-summary-forward').
+(defcustom wl-draft-reply-buffer-style 'split
+  "Style of draft buffer for `wl-summary-reply' and `wl-summary-forward'.
 
 'keep will use the current window for the new message,
 'full will use a full frame window,
@@ -1531,8 +1530,9 @@ before any action is taken."
 		 (sexp :tag "Use Function"))
   :group 'wl-draft)
 
-(defcustom wl-draft-reply-buffer-style 'split
-  "Style of draft buffer for `wl-summary-reply' and `wl-summary-forward'.
+(defcustom wl-draft-buffer-style 'full
+  "Style of draft buffer for writing new messages (i.e. except
+for `wl-summary-reply' and `wl-summary-forward').
 
 'keep will use the existing message buffer window for the reply,
 'full will use a full frame window,
