@@ -1,3 +1,21 @@
+2018-11-15  Greg A. Woods <woods@planix.com>
+
+	* wl-draft.el (wl-draft-do-reply-buffer-window-styling)
+	(wl-draft-do-buffer-window-styling): New functions.
+	(wl-draft-create-buffer): Use them.
+	(wl-draft): Add comment.
+	(wl-draft-create-buffer): Add comment.
+	(wl-jump-to-draft-buffer): Apply wl-draft-reply-buffer-style's
+	draft style when called from Summary or Folder mode.
+
+	* wl-summary.el (wl-summary-reply): Minor fix.
+	(wl-summary-write): Add comment.
+
+	* wl-vars.el (wl-draft-reply-buffer-style): Accept new
+	symbol 'split-horiz'.
+	(wl-draft-buffer-style): Accept new symbol 'split-horiz',
+	'msg-split' and 'msg-split-horiz'.
+
 2018-03-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-summary.el (wl-summary-target-mark-reply-with-citation):
