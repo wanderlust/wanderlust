@@ -1666,6 +1666,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 
   (wl-start-save-drafts)
   (let (buffer header-alist-internal)
+    ;; note:  wl-draft-create-buffer may create a new window and switch it to
+    ;; the new buffer!
     (setq buffer (wl-draft-create-buffer parent-folder parent-number))
     (unless (cdr (assq 'From header-alist))
       (setq header-alist
@@ -1708,6 +1710,100 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	   (goto-char (point-max))))
     buffer))
 
+(defun wl-draft-do-reply-buffer-window-styling (buffer)
+  "Internal setup of a reply draft buffer window."
+  (case wl-draft-reply-buffer-style
+    (split
+     (if (and (eq major-mode 'wl-folder-mode)
+	      (get-buffer-window (car (wl-collect-summary))))
+	 (wl-folder-jump-to-previous-summary))
+     (if wl-summary-buffer-disp-msg
+	 (wl-summary-jump-to-current-message))
+     (split-window-vertically)
+     (other-window 1)
+     (switch-to-buffer buffer))
+    (split-horiz
+     (if (and (eq major-mode 'wl-folder-mode)
+	      (get-buffer-window (car (wl-collect-summary))))
+	 (wl-folder-jump-to-previous-summary))
+     (if wl-summary-buffer-disp-msg
+	 (wl-summary-jump-to-current-message))
+     (split-window-horizontally)
+     (other-window 1)
+     (switch-to-buffer buffer))
+    ;; todo:  consider orig-split and orig-split-horiz which would re-display
+    ;; the original message (and the original summary folder) for the selected
+    ;; draft buffer (else default to what split and split-horiz do)
+    (keep
+     (if wl-summary-buffer-disp-msg
+	 (wl-summary-jump-to-current-message))
+     (switch-to-buffer buffer))
+    (full
+     (delete-other-windows)
+     (switch-to-buffer buffer))
+    (t
+     (if (functionp wl-draft-reply-buffer-style)
+	 (funcall wl-draft-reply-buffer-style buffer)
+       (error "Invalid value for wl-draft-reply-buffer-style"))))
+  buffer)
+
+(defun wl-draft-do-buffer-window-styling (buffer)
+  "Internal setup of a new message draft buffer window."
+  (case wl-draft-buffer-style
+    (split
+     (if (and (eq major-mode 'wl-folder-mode)
+	      (get-buffer-window (car (wl-collect-summary))))
+	 (wl-folder-jump-to-previous-summary))
+     ;; xxx toggling off the message display was not working!
+     ;; it was broken by commit 57e783b147694f79ad12c0105c005f57f4b90e4a
+     ;; which introduced a call to `set-buffer' before this
+     ;; XXX whether toggling off the message display here makes sense or not is
+     ;; higly questionable!  If it does for anyone then arguably it should split
+     ;; the summary window with the same ratio as with `wl-message-window-size'.
+     (if (eq major-mode 'wl-summary-mode)
+	 (wl-summary-toggle-disp-msg 'off))
+     (split-window-vertically)
+     (other-window 1)
+     (switch-to-buffer buffer))
+    (msg-split
+     (when (and (eq major-mode 'wl-folder-mode)
+		(get-buffer-window (car (wl-collect-summary))))
+       (wl-folder-jump-to-previous-summary)
+       (set-buffer (get-buffer wl-summary-buffer-name)))
+     (if wl-summary-buffer-disp-msg
+	 (wl-summary-jump-to-current-message))
+     (split-window-vertically)
+     (other-window 1)
+     (switch-to-buffer buffer))
+    (split-horiz
+     (if (and (eq major-mode 'wl-folder-mode)
+	      (get-buffer-window (car (wl-collect-summary))))
+	 (wl-folder-jump-to-previous-summary))
+     (if (eq major-mode 'wl-summary-mode)
+	 (wl-summary-toggle-disp-msg 'off))
+     (split-window-horizontally)
+     (other-window 1)
+     (switch-to-buffer buffer))
+    (msg-split-horiz
+     (when (and (eq major-mode 'wl-folder-mode)
+		(get-buffer-window (car (wl-collect-summary))))
+       (wl-folder-jump-to-previous-summary)
+       (set-buffer (get-buffer wl-summary-buffer-name)))
+     (if wl-summary-buffer-disp-msg
+	 (wl-summary-jump-to-current-message))
+     (split-window-horizontally)
+     (other-window 1)
+     (switch-to-buffer buffer))
+    (keep
+     (switch-to-buffer buffer))
+    (full
+     (delete-other-windows)
+     (switch-to-buffer buffer))
+    (t (if (functionp wl-draft-buffer-style)
+	   (funcall wl-draft-buffer-style buffer)
+	 (error "Invalid value for wl-draft-buffer-style"))))
+  buffer)
+
 (defun wl-draft-create-buffer (&optional parent-folder parent-number)
   (let* ((draft-folder (wl-draft-get-folder))
 	 (reply-or-forward
@@ -1717,40 +1813,15 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	      (eq this-command 'wl-summary-target-mark-forward)
 	      (eq this-command 'wl-summary-target-mark-reply-with-citation)))
 	 (buffer (generate-new-buffer "*draft*"))) ; Just for initial name.
-    (set-buffer buffer)
-    ;; switch-buffer according to draft buffer style.
-    (if wl-draft-use-frame
-	(switch-to-buffer-other-frame buffer)
-      (if reply-or-forward
-	  (case wl-draft-reply-buffer-style
-	    (split
-	     (split-window-vertically)
-	     (other-window 1)
-	     (switch-to-buffer buffer))
-	    (keep
-	     (switch-to-buffer buffer))
-	    (full
-	     (delete-other-windows)
-	     (switch-to-buffer buffer))
-	    (t
-	     (if (functionp wl-draft-reply-buffer-style)
-		 (funcall wl-draft-reply-buffer-style buffer)
-	       (error "Invalid value for wl-draft-reply-buffer-style"))))
-	(case wl-draft-buffer-style
-	  (split
-	   (when (eq major-mode 'wl-summary-mode)
-	     (wl-summary-toggle-disp-msg 'off))
-	   (split-window-vertically)
-	   (other-window 1)
-	   (switch-to-buffer buffer))
-	  (keep
-	   (switch-to-buffer buffer))
-	  (full
-	   (delete-other-windows)
-	   (switch-to-buffer buffer))
-	  (t (if (functionp wl-draft-buffer-style)
-		 (funcall wl-draft-buffer-style buffer)
-	       (error "Invalid value for wl-draft-buffer-style"))))))
+    ;; xxx maybe frame/window setup should be done by the caller? (if so use
+    ;; `save-excursion' around the rest...)
+    (set-buffer (if wl-draft-use-frame
+		    (switch-to-buffer-other-frame buffer)
+		  ;; else switch-buffer according to draft buffer style.
+		  (if reply-or-forward
+		      (wl-draft-do-reply-buffer-window-styling buffer)
+		    ;; otherwise we are writing an entirely new message...
+		    (wl-draft-do-buffer-window-styling buffer))))
     (auto-save-mode -1)
     (wl-draft-mode)
     (set-buffer-multibyte t)		; draft buffer is always multibyte.
@@ -1760,6 +1831,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (setq wl-sent-message-via nil)
     (setq wl-sent-message-queued nil)
     (setq wl-draft-config-exec-flag t)
+    ;; if `parent-folder' is not set, use "" since this is for direct use with
+    ;; the likes of `string-match', etc. in condition expressions in
+    ;; `wl-draft-config-alist'
     (setq wl-draft-parent-folder (or parent-folder ""))
     (setq wl-draft-parent-number parent-number)
     (or (eq this-command 'wl-folder-write-current-folder)
@@ -2413,7 +2487,12 @@ Automatically applied in draft sending time."
       len)))
 
 (defun wl-jump-to-draft-buffer (&optional arg)
-  "Jump to the draft if exists."
+  "Jump to the first of the buffers that are in `wl-draft-mode',
+unless called from a draft buffer, in which case switch to the
+next one.  If the draft buffer is not already visible then apply
+the `wl-draft-buffer-style' rules to display the selected draft
+buffer.  If ARG is not nil then call `wl-jump-to-draft-folder'
+instead."
   (interactive "P")
   (if arg
       (wl-jump-to-draft-folder)
@@ -2421,7 +2500,7 @@ Automatically applied in draft sending time."
 	  buf)
       (cond
        ((null draft-bufs)
-	(message "No draft buffer exist."))
+	(message "No draft buffers exist."))
        (t
 	(setq draft-bufs
 	      (sort (mapcar 'buffer-name draft-bufs)
@@ -2431,7 +2510,18 @@ Automatically applied in draft sending time."
 				   draft-bufs)))
 	    (setq buf (car buf))
 	  (setq buf (car draft-bufs)))
-	(switch-to-buffer buf))))))
+	(if (eq major-mode 'wl-draft-mode)
+	    (switch-to-buffer buf)
+	  (let ((buf-win (get-buffer-window buf)))
+	    (if buf-win
+		(pop-to-buffer buf)
+	      ;; otherwise make buf visible and go to it
+	      ;;
+	      ;; We have no way at this point to know whether the draft buffer
+	      ;; was opened as a reply or as a new message, so just assume it
+	      ;; was a reply message and ignore `wl-draft-buffer-style'.
+	      ;;
+	      (set-buffer (wl-draft-do-reply-buffer-window-styling buf))))))))))
 
 (defun wl-jump-to-draft-folder ()
   (let ((msgs (reverse (elmo-folder-list-messages (wl-draft-get-folder))))
