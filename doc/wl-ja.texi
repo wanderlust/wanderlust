@@ -5368,18 +5368,43 @@ Non-nil ならウィンドウを表示しながらテンプレートを選択する場合、リターン
 @vindex wl-draft-buffer-style
 初期設定は @code{full}。
 (返信と転送の場合以外の)ドラフトバッファのウインドウの形態を指定します。
-@code{keep} とすると現在のウィンドウを使い、
-@code{full} とするとフレーム全体のウインドウを使います。
-@code{split} とすると現在のウィンドウを分割して使います。
+
+@table @code
+@item keep
+現在のウィンドウを使います。
+
+@item full
+フレーム全体のウインドウを使います。
+
+@item split
+現在のウィンドウを垂直に分割して使います。
+
+@item split-horiz
+現在のウィンドウを水平に分割して使います。
+
+@item msg-split
+返信時のようにメッセージバッファのウィンドウを垂直に分割して使います。
+
+@item msg-split-horiz
+返信時のようにメッセージバッファのウィンドウを水平に分割して使います。
+@end table
+
 関数が指定された場合、ドラフトバッファを引数としてそれ呼び出します。
 
 @item wl-draft-reply-buffer-style
 @vindex wl-draft-reply-buffer-style
 初期設定は @code{split}。
 返信と転送の場合のドラフトバッファのウインドウの形態を指定します。
-@code{keep} とするとメッセージバッファのウィンドウを使い、
-@code{full} とするとフレーム全体のウインドウを使います。
-@code{split} とするとメッセージバッファのウィンドウを分割して使います。
+@table @code
+@item keep
+メッセージバッファのウィンドウを使います。
+@item full
+フレーム全体のウインドウを使います。
+@item split
+メッセージバッファのウィンドウを垂直に分割して使います。
+@item split-horiz
+メッセージバッファのウィンドウを水平に分割して使います。
+@end table
 関数が指定された場合、ドラフトバッファを引数としてそれ呼び出します。
 
 @item wl-draft-use-frame

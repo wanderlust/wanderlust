@@ -5399,9 +5399,29 @@ the size of the preview window.
 @vindex wl-draft-buffer-style
 The initial setting is @code{full}.
 Style of draft buffer window (except for replying and forwarding).
-@code{keep} is to use current window,
-@code{full} is to use full frame window,
-@code{split} is to split current window and use it.
+
+@table @code
+@item keep
+is to use the current window,
+
+@item full
+is to use full frame window,
+
+@item split
+is to split the current window vertically and use it.
+
+@item msg-split
+is to split the message window vertically and use it as if
+replying message.
+
+@item split-horiz
+is to split the current window horizontally and use it.
+
+@item msg-split-horiz
+is to split the message window horizontally and use it as if
+replying message.
+@end table
+
 If some function is specified, it is called with the draft buffer
 as an argument.
 
@@ -5409,9 +5429,21 @@ as an argument.
 @vindex wl-draft-reply-buffer-style
 The initial setting is @code{split}.
 Style of draft buffer for replying and forwarding.
-@code{keep} is to use message buffer window,
-@code{full} is to use full frame window,
-@code{split} is to split message buffer window and use it.
+
+@table @code
+@item keep
+is to use the message buffer window,
+
+@item full
+is to use full frame window,
+
+@item split
+is to split the message buffer window vertically and use it.
+
+@item split-horiz
+is to split the message buffer window horizontally and use it.
+@end table
+
 If some function is specified, it is called with the draft buffer
 as an argument.
 
