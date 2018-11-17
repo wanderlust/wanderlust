@@ -1513,10 +1513,10 @@ of `wl-draft-config-alist'."
 (defcustom wl-draft-reply-buffer-style 'split
   "Style of draft buffer for `wl-summary-reply' and `wl-summary-forward'.
 
-'keep will use the current window for the new message,
+'keep will use the existing message buffer window for the reply,
 'full will use a full frame window,
-'split will split current window vertically (top-to-bottom), and
-'split-horiz will split the current window horizontally (side-by-side).
+'split will split the message window vertically (top-to-bottom), and
+'split-horiz will split the message window horizontally (side-by-side).
 If a function is given, it is called with the draft buffer as an
 argument.
 For 'split and 'split-horiz if the current window is the folder
@@ -1534,11 +1534,11 @@ before any action is taken."
   "Style of draft buffer for writing new messages (i.e. except
 for `wl-summary-reply' and `wl-summary-forward').
 
-'keep will use the existing message buffer window for the reply,
+'keep will use the current window for the new message,
 'full will use a full frame window,
-'split will split the message window vertically (top-to-bottom),
+'split will split the current window vertically (top-to-bottom),
 'msg-split will split the message buffer window vertically (top-to-bottom),
-'spilt-horiz will split the message window horizontally (side-by-side), and
+'spilt-horiz will split the current window horizontally (side-by-side), and
 'msg-spilt-horiz will split the message window horizontally (side-by-side).
 If a function is given, it is called with the draft buffer as an
 argument.

@@ -1,3 +1,8 @@
+2018-11-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-vars.el (wl-draft-reply-buffer-style)
+	(wl-draft-buffer-style): Fix docstring.
+
 2018-11-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-draft.el (wl-draft-do-reply-buffer-window-styling): Refactored.
