@@ -1,3 +1,9 @@
+2018-12-09  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-message.el (wl-message-select-buffer): Fix error when
+	resize-mini-windows is non-nil with a vertically narrow frame.
+	Cf. [wl-en:06603]
+
 2018-11-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-vars.el (wl-draft-reply-buffer-style)

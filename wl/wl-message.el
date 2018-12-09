@@ -229,8 +229,12 @@ Return its cache buffer."
 	      (let ((total (+ sum mes)))
 		(setq sum (max window-min-height (/ (* whi sum) total)))
 		(setq mes (max window-min-height (/ (* whi mes) total))))
-	      (if (< whi (+ sum mes))
-		  (enlarge-window (- (+ sum mes) whi)))))
+	      (when (and (< whi (+ sum mes))
+			 ;; Avoid error when resize-mini-windows is
+			 ;; non-nil.  frame-root-window-p is not
+			 ;; available on Emacs 23.
+			 (null (eq (selected-window) (frame-root-window))))
+		(enlarge-window (- (+ sum mes) whi)))))
 	(split-window (get-buffer-window (current-buffer)) sum)
 	(other-window 1)))
     (switch-to-buffer buffer)))
