@@ -375,66 +375,71 @@ If response is not `OK', causes error with IMAP response text."
                          session
                          command)))
 
+(defun elmo-imap4-send-command-enqueue (tokens &optional literal+ queue)
+  (dolist (token tokens)
+    (cl-etypecase token
+      (string (unless (string= token "") (insert token " ")))
+      (list (cl-ecase (nth 0 token)
+              (atom (unless (string= (nth 1 token) "") (insert (nth 1 token) " ")))
+              (quoted (insert (elmo-imap4-format-quoted (nth 1 token)) " "))
+              (group (progn
+                       (insert "(")
+                       (setq queue (elmo-imap4-send-command-enqueue (nth 1 token) literal+ queue))
+                       (unless (bobp)
+                         (delete-char -1))
+                       (insert ") ")))
+              (literal (progn
+                         (insert (format (if literal+ "{%d+}" "{%d}") (nth 2 token)))
+                         (push (buffer-string) queue)
+                         (push token queue)
+                         (erase-buffer)))))))
+  queue)
+
+(defun elmo-imap4-send-command-build-queue (tag tokens literal+)
+  (with-temp-buffer
+    (insert tag " ")
+    (let ((queue (elmo-imap4-send-command-enqueue tokens literal+)))
+      (unless (bobp)
+        (delete-char -1)
+        (push (buffer-string) queue))
+      (nreverse queue))))
+
 (defun elmo-imap4-send-command (session command)
-  "Send COMMAND to the SESSION.
-Returns a TAG string which is assigned to the COMMAND."
-  (let* ((command-args (if (listp command)
-                           command
-                         (list command)))
-         (process (elmo-network-session-process-internal session))
-         (tag (elmo-imap4-command-tag session))
-         cmdlist token kind)
-    (with-current-buffer (process-buffer process)
-      (push tag cmdlist)
-;;; No need.
-;;;      (erase-buffer)
-      (goto-char (point-min))
+  "Send COMMAND to SESSION.
+SESSION is a network session.
+COMMAND is a list of command tokens or a single command token."
+  (let* ((tag (elmo-imap4-command-tag session))
+         (queue (elmo-imap4-send-command-build-queue
+                 tag
+                 (if (listp command) command (list command))
+                 (elmo-imap4-session-capable-p session 'literal+))))
+    (with-current-buffer (elmo-network-session-buffer session)
       (when (elmo-imap4-response-bye-p elmo-imap4-current-response)
         (elmo-imap4-process-bye session))
       (setq elmo-imap4-current-response nil)
       (elmo-imap4-session-wait-response-maybe session)
       (setq elmo-imap4-parsing t)
-      (while (setq token (car command-args))
-        (cond ((stringp token)   ; formatted
-               (unless (string= "" token)
-                 (push token cmdlist)))
-              ((listp token)     ; unformatted
-               (setq kind (car token))
-               (cond ((eq kind 'atom)
-                      (push (nth 1 token) cmdlist))
-                     ((eq kind 'quoted)
-                      (push (elmo-imap4-format-quoted (nth 1 token)) cmdlist))
-                     ((eq kind 'literal)
-                      (push (format
-                             (if (elmo-imap4-session-capable-p session 'literal+) "{%d+}" "{%d}")
-                             (nth 2 token)) cmdlist)
-                      (elmo-imap4-session-process-send-string session (mapconcat #'identity (nreverse cmdlist) " "))
-                      (setq cmdlist nil)
-                      (unless (elmo-imap4-session-capable-p session 'literal+)
-                        (elmo-imap4-accept-continue-req session))
-                      (cond ((stringp (nth 1 token))
-                             (push (nth 1 token) cmdlist))
-                            ((bufferp (nth 1 token))
-                             (with-current-buffer (nth 1 token)
-                               (process-send-region
-                                process
-                                (point-min)
-                                (+ (point-min) (nth 2 token)))))
-                            (t
-                             (error "Wrong argument for literal"))))
-                     (t
-                      (error "Unknown token kind %s" kind))))
-              (t
-               (error "Invalid argument")))
-        (setq command-args (cdr command-args)))
-      (elmo-imap4-session-process-send-string session (mapconcat #'identity (nreverse cmdlist) " "))
-      tag)))
+      (dolist (chunk queue)
+        (cl-etypecase chunk
+          (string (elmo-imap4-session-process-send-string session chunk))
+          (list (elmo-imap4-session-process-send-literal session chunk)))))
+    tag))
+
+(defun elmo-imap4-session-process-send-literal (session literal)
+  (unless (elmo-imap4-session-capable-p session 'literal+)
+    (elmo-imap4-accept-continue-req session))
+  (cl-etypecase (nth 1 literal)
+    (string (elmo-imap4-session-process-send-string session (nth 1 literal)))
+    (buffer (with-current-buffer (nth 1 literal)
+              (elmo-imap4-debug "[%s] <-- #<%s>" (format-time-string "%T") (buffer-name (current-buffer)))
+              (process-send-region (elmo-network-session-process-internal session) (point-min) (+ (point-min) (nth 2 literal)))
+              (process-send-string (elmo-network-session-process-internal session) "\r\n")))))
 
 (defun elmo-imap4-session-process-send-string (session string)
   "Send STRING to process of SESSION."
   (elmo-imap4-debug "[%s] <-- %s" (format-time-string "%T") string)
-  (process-send-string (elmo-network-session-process-internal session)
-		       (concat string "\r\n")))
+  (process-send-string (elmo-network-session-process-internal session) string)
+  (process-send-string (elmo-network-session-process-internal session) "\r\n"))
 
 (defun elmo-imap4-send-string (session string)
   "Send STRING to the SESSION."
