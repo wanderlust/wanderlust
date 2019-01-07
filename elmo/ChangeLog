@@ -2,6 +2,8 @@
 
 	* elmo-imap4.el (elmo-imap4-search-generate-or): Remove trailing
 	whitespace from OR condition.
+	(elmo-imap4-search-generate-or): Use `group' token to create
+	search condition in parenthesis.
 
 2019-01-06  David Maus  <dmaus@dmaus.name>
 
