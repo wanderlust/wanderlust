@@ -2490,7 +2490,7 @@ IMAP-SEARCH-COMMAND ...) which is to be evaluated at a future
 time."
   (if (elmo-imap4-search-mergeable-p a b)
       (append (list (elmo-imap4-search-mergeable-charset a b))
-              '("OR " "(") (cdr a) '(")" "(") (cdr b) '(")"))
+              '("OR" "(") (cdr a) '(")" "(") (cdr b) '(")"))
     (elmo-uniq-list (append (elmo-imap4-search-perform session a)
                             (elmo-imap4-search-perform session b)))))
 
