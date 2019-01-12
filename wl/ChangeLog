@@ -1,3 +1,10 @@
+2019-01-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-summary.el (wl-summary-cursor-move-surface): Fix that neither
+	wl-summary-prev nor wl-summary-cursor-move-surface works when
+	wl-summary-skip-mark-list is nil.
+	Cf. https://github.com/wanderlust/wanderlust/issues/157
+
 2018-12-09  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-message.el (wl-message-select-buffer): Fix error when
