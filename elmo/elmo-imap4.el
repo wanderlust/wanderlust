@@ -377,22 +377,27 @@ If response is not `OK', causes error with IMAP response text."
 
 (defun elmo-imap4-send-command-enqueue (tokens &optional literal+ queue)
   (dolist (token tokens)
-    (cl-etypecase token
-      (string (unless (string= token "") (insert token " ")))
-      (list (cl-ecase (nth 0 token)
-              (atom (unless (string= (nth 1 token) "") (insert (nth 1 token) " ")))
-              (quoted (insert (elmo-imap4-format-quoted (nth 1 token)) " "))
-              (group (progn
-                       (insert "(")
-                       (setq queue (elmo-imap4-send-command-enqueue (nth 1 token) literal+ queue))
-                       (unless (bobp)
-                         (delete-char -1))
-                       (insert ") ")))
-              (literal (progn
-                         (insert (format (if literal+ "{%d+}" "{%d}") (nth 2 token)))
-                         (push (buffer-string) queue)
-                         (push token queue)
-                         (erase-buffer)))))))
+    (cond
+     ((stringp token)
+      (unless (string= token "") (insert token " ")))
+     ((listp token)
+      (case (car token)
+        (atom (unless (string= (nth 1 token) "") (insert (nth 1 token) " ")))
+        (quoted (insert (elmo-imap4-format-quoted (nth 1 token)) " "))
+        (group (progn
+                 (insert "(")
+                 (setq queue (elmo-imap4-send-command-enqueue
+			      (nth 1 token) literal+ queue))
+                 (unless (bobp)
+                   (delete-char -1))
+                 (insert ") ")))
+        (literal (progn
+                   (insert (format (if literal+ "{%d+}" "{%d}") (nth 2 token)))
+                   (push (buffer-string) queue)
+                   (push token queue)
+                   (erase-buffer)))
+	(t (error "Unkown token type, %s" (car token)))))
+     (t (error "Unkown token, %s" token))))
   queue)
 
 (defun elmo-imap4-send-command-build-queue (tag tokens literal+)
@@ -420,20 +425,29 @@ COMMAND is a list of command tokens or a single command token."
       (elmo-imap4-session-wait-response-maybe session)
       (setq elmo-imap4-parsing t)
       (dolist (chunk queue)
-        (cl-etypecase chunk
-          (string (elmo-imap4-session-process-send-string session chunk))
-          (list (elmo-imap4-session-process-send-literal session chunk)))))
+        (cond
+         ((stringp chunk)
+	  (elmo-imap4-session-process-send-string session chunk))
+         ((listp chunk)
+	  (elmo-imap4-session-process-send-literal session chunk))
+	 (t (error "Unkown command queues chunk, %s" chunk)))))
     tag))
 
 (defun elmo-imap4-session-process-send-literal (session literal)
   (unless (elmo-imap4-session-capable-p session 'literal+)
     (elmo-imap4-accept-continue-req session))
-  (cl-etypecase (nth 1 literal)
-    (string (elmo-imap4-session-process-send-string session (nth 1 literal)))
-    (buffer (with-current-buffer (nth 1 literal)
-              (elmo-imap4-debug "[%s] <-- #<%s>" (format-time-string "%T") (buffer-name (current-buffer)))
-              (process-send-region (elmo-network-session-process-internal session) (point-min) (+ (point-min) (nth 2 literal)))
-              (process-send-string (elmo-network-session-process-internal session) "\r\n")))))
+  (cond
+   ((stringp (nth 1 literal))
+    (elmo-imap4-session-process-send-string session (nth 1 literal)))
+   ((bufferp (nth 1 literal))
+    (with-current-buffer (nth 1 literal)
+      (elmo-imap4-debug "[%s] <-- #<%s>" (format-time-string "%T")
+			(buffer-name (current-buffer)))
+      (process-send-region (elmo-network-session-process-internal session)
+			   (point-min) (+ (point-min) (nth 2 literal)))
+      (process-send-string (elmo-network-session-process-internal session)
+			   "\r\n")))
+   (t (error "Unkown literal, %s" (nth 1 literal)))))
 
 (defun elmo-imap4-session-process-send-string (session string)
   "Send STRING to process of SESSION."
