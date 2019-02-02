@@ -334,9 +334,9 @@ CODE is one of the following:
 	   (cdr (elmo-pop3-read-response process t))) ; if ok, cdr is non-nil.
 	  (signal 'elmo-open-error
 		  '(elmo-network-intialize-session)))
-      (when (eq (elmo-network-stream-type-symbol
-		 (elmo-network-session-stream-type-internal session))
-		'starttls)
+      (when (memq (elmo-network-stream-type-symbol
+		   (elmo-network-session-stream-type-internal session))
+		  elmo-network-starttls-stream-type-list)
 	(elmo-pop3-send-command process "stls")
 	(if (eq 'ok (car (elmo-pop3-read-response process)))
 	    (elmo-network-session-starttls-negotiate session)

@@ -1134,9 +1134,9 @@ If CHOP-LENGTH is not specified, message set is not chopped."
        (elmo-imap4-response-value
         (elmo-imap4-send-command-wait session "capability")
         'capability))
-      (when (eq (elmo-network-stream-type-symbol
-                 (elmo-network-session-stream-type-internal session))
-                'starttls)
+      (when (memq (elmo-network-stream-type-symbol
+                   (elmo-network-session-stream-type-internal session))
+                  elmo-network-starttls-stream-type-list)
         (or (elmo-imap4-session-capable-p session 'starttls)
             (signal 'elmo-open-error
                     '(elmo-imap4-starttls-error)))

@@ -1,3 +1,24 @@
+2019-02-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Support SSL / STARTTLS connection via SOCKS.  Built-in GnuTLS
+	library is required.  Each connection's folder syntax is "!!socks"
+	and "!!!socks" respectively.  Connection type's symbol is
+	"socks-ssl" and "socks-starttls".
+
+	* elmo-net.el (elmo-socks-ssl-open-network-stream): New function
+
+	* elmo-vars.el (elmo-network-stream-type-alist): Add entry for SSL
+	/ STARTTLS connection via SOCKS.
+	(elmo-network-starttls-stream-type-list): New variable.
+
+	* elmo-imap4.el (elmo-network-initialize-session): Use STARTTLS
+	connection when connection type member of
+	elmo-network-starttls-stream-type-list.
+
+	* elmo-pop3.el (elmo-network-initialize-session): Likewise.
+
+	* elmo-nntp.el (elmo-network-initialize-session): Likewise.
+
 2019-01-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-imap4.el (elmo-imap4-send-command-enqueue)

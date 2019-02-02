@@ -49,6 +49,7 @@
 
 ;;; Session
 (eval-and-compile
+  (autoload 'socks-open-network-stream "socks")
   (autoload 'gnutls-negotiate "gnutls")
   (autoload 'starttls-negotiate "starttls")
   (autoload 'sasl-find-mechanism "sasl")
@@ -304,6 +305,11 @@ Returns a process object.  if making session failed, returns nil."
 	 (elmo-network-close-session session)
 	 (signal (car error) (cdr error)))))
     session))
+
+(defun elmo-socks-ssl-open-network-stream (name buffer host service)
+  (let ((process (socks-open-network-stream name buffer host service)))
+    (gnutls-negotiate :process process :hostname host)
+    process))
 
 (defun elmo-open-network-stream (name buffer server service stream-type)
   (let ((auto-plugged (and elmo-auto-change-plugged

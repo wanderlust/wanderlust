@@ -387,20 +387,24 @@ If function, return value of function.")
   "Non-nil means built-in GnuTLS is used for SSL/STARTTLS connection.")
 
 (defvar elmo-network-stream-type-alist
-  `(("!" ssl ,@(cond
-		(elmo-network-use-gnutls
-		 '(gnutls open-gnutls-stream))
-		((module-installed-p 'tls)
-		 '(tls    open-tls-stream))
-		(t
-		 '(ssl    open-ssl-stream))))
-    ("!!" starttls  ,@(cond
-		       (elmo-network-use-gnutls
-			'(nil   open-network-stream))
-		       (t
-			'(starttls starttls-open-stream))))
-    ("!socks" socks     socks    socks-open-network-stream)
-    ("!direct" direct   nil   open-network-stream))
+  (append
+   `(("!" ssl ,@(cond
+		 (elmo-network-use-gnutls
+		  '(gnutls open-gnutls-stream))
+		 ((module-installed-p 'tls)
+		  '(tls    open-tls-stream))
+		 (t
+		  '(ssl    open-ssl-stream))))
+     ("!!" starttls  ,@(cond
+			(elmo-network-use-gnutls
+			 '(nil   open-network-stream))
+			(t
+			 '(starttls starttls-open-stream))))
+     ("!socks" socks     socks    socks-open-network-stream)
+     ("!direct" direct   nil   open-network-stream))
+   (when elmo-network-use-gnutls
+     '(("!!socks"  socks-ssl      socks elmo-socks-ssl-open-network-stream)
+       ("!!!socks" socks-starttls socks socks-open-network-stream))))
   "An alist of (SPEC-STRING SYMBOL FEATURE OPEN-STREAM-FUNCTION).
 SPEC-STRING is a string for stream-type spec (it must start with '!').
 SYMBOL is a symbol which indicates the name of the stream type.
@@ -408,6 +412,9 @@ SYMBOL should be identical in this alist.
 FEATURE is a symbol of the feature for OPEN-STREAM-FUNCTION.
 OPEN-STREAM-FUNCTION is a function to open network stream.
 Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
+
+(defvar elmo-network-starttls-stream-type-list
+  '(starttls socks-starttls))
 
 (defvar elmo-folder-info-hashtb nil
   "Array of folder database information '(max length new unread).")

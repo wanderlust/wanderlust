@@ -291,9 +291,9 @@ Don't cache if nil.")
 	  (signal 'elmo-open-error (list (cdr response))))
       (if elmo-nntp-send-mode-reader
 	  (elmo-nntp-send-mode-reader session))
-      (when (eq (elmo-network-stream-type-symbol
-		 (elmo-network-session-stream-type-internal session))
-		'starttls)
+      (when (memq (elmo-network-stream-type-symbol
+		   (elmo-network-session-stream-type-internal session))
+		  elmo-network-starttls-stream-type-list)
 	(elmo-nntp-send-command session "starttls")
 	(or (elmo-nntp-read-response session)
 	    (error "Cannot open starttls session"))
