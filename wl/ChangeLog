@@ -1,3 +1,8 @@
+2019-02-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-addrmgr.el (wl-addrmgr-add, wl-addrmgr-delete)
+	(wl-addrmgr-edit): Use elmo-string instead of wl-string.
+
 2019-02-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Support plain / SSL / STARTTLS connection via SOCKS for SMTP.

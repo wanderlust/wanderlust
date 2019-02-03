@@ -500,12 +500,12 @@ Return nil if no ADDRESS exists."
 	(wl-addrmgr-reload)
       (setq wl-addrmgr-list (cons entry wl-addrmgr-list))
       (wl-addrmgr-redraw))
-    (message "Added `%s'." (wl-string (car entry)))))
+    (message "Added `%s'." (elmo-string (car entry)))))
 
 (defun wl-addrmgr-delete ()
   "Delete address entry."
   (interactive)
-  (let ((addr (wl-string (car (wl-addrmgr-address-entry))))
+  (let ((addr (elmo-string (car (wl-addrmgr-address-entry))))
 	lines)
     (when (and addr
 	       (y-or-n-p (format "Delete '%s'? " addr)))
@@ -522,7 +522,7 @@ Return nil if no ADDRESS exists."
   (interactive)
   (let ((orig (wl-addrmgr-address-entry))
 	entry lines)
-    (setq entry (wl-addrmgr-method-call 'edit (wl-string (car orig))))
+    (setq entry (wl-addrmgr-method-call 'edit (elmo-string (car orig))))
     (setq lines (count-lines (point-min) (point)))
     (if (eq wl-addrmgr-sort-key 'none)
 	(wl-addrmgr-reload)
@@ -531,7 +531,7 @@ Return nil if no ADDRESS exists."
 	    wl-addrmgr-list (cons entry wl-addrmgr-list))
       (wl-addrmgr-redraw))
     (forward-line (- lines 1))
-    (message "Modified `%s'." (wl-string (car entry)))))
+    (message "Modified `%s'." (elmo-string (car entry)))))
 
 ;;; local address book implementation.
 (defun wl-addrmgr-local-list (reload)
