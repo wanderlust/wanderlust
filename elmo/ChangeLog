@@ -1,3 +1,12 @@
+2019-02-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Do not call open-gnutls-stream directly.
+
+	* elmo-net.el (elmo-open-gnutls-stream): New function.
+
+	* elmo-vars.el (elmo-network-stream-type-alist): Use it instead of
+	open-gnutls-stream.
+
 2019-02-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Support SSL / STARTTLS connection via SOCKS.  Built-in GnuTLS

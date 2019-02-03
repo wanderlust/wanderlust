@@ -390,11 +390,11 @@ If function, return value of function.")
   (append
    `(("!" ssl ,@(cond
 		 (elmo-network-use-gnutls
-		  '(gnutls open-gnutls-stream))
+		  '(nil elmo-open-gnutls-stream))
 		 ((module-installed-p 'tls)
-		  '(tls    open-tls-stream))
+		  '(tls open-tls-stream))
 		 (t
-		  '(ssl    open-ssl-stream))))
+		  '(ssl open-ssl-stream))))
      ("!!" starttls  ,@(cond
 			(elmo-network-use-gnutls
 			 '(nil   open-network-stream))

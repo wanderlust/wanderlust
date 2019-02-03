@@ -311,6 +311,9 @@ Returns a process object.  if making session failed, returns nil."
     (gnutls-negotiate :process process :hostname host)
     process))
 
+(defun elmo-open-gnutls-stream (name buffer host service)
+  (open-network-stream name buffer host service :type 'ssl))
+
 (defun elmo-open-network-stream (name buffer server service stream-type)
   (let ((auto-plugged (and elmo-auto-change-plugged
 			   (> elmo-auto-change-plugged 0)))
