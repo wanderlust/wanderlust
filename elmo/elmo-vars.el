@@ -403,7 +403,7 @@ If function, return value of function.")
      ("!socks" socks     socks    socks-open-network-stream)
      ("!direct" direct   nil   open-network-stream))
    (when elmo-network-use-gnutls
-     '(("!!socks"  socks-ssl      socks elmo-socks-ssl-open-network-stream)
+     '(("!!socks"  socks-ssl      nil   elmo-open-socks-ssl-stream)
        ("!!!socks" socks-starttls socks socks-open-network-stream))))
   "An alist of (SPEC-STRING SYMBOL FEATURE OPEN-STREAM-FUNCTION).
 SPEC-STRING is a string for stream-type spec (it must start with '!').
