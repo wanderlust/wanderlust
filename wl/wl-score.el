@@ -35,6 +35,7 @@
 (require 'wl-util)
 (eval-when-compile
   (require 'cl)				; cadaar, cddaar
+  (require 'static)
   (require 'elmo-msgdb))		; for inline functions
 
 (defvar wl-score-edit-header-char
@@ -173,9 +174,11 @@ Remove Re, Was, Fwd etc."
   (or (elmo-message-entity-field entity 'xref)
       ""))
 
-(defun wl-string> (s1 s2)
-  (not (or (string< s1 s2)
-	   (string= s1 s2))))
+(static-if (fboundp 'string>)
+    (defalias 'wl-string> 'string>)
+  (defun wl-string> (s1 s2)
+    (not (or (string< s1 s2)
+	     (string= s1 s2)))))
 
 (defsubst wl-score-ov-entity-get (entity index &optional extra)
   (elmo-message-entity-field entity (if extra (intern extra) index)
