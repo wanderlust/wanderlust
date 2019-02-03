@@ -306,13 +306,14 @@ Returns a process object.  if making session failed, returns nil."
 	 (signal (car error) (cdr error)))))
     session))
 
-(defun elmo-open-socks-ssl-stream (name buffer host service)
-  (gnutls-negotiate :process (socks-open-network-stream
-			      name buffer host service)
-		    :hostname host))
+(when elmo-network-use-gnutls
+  (defun elmo-open-socks-ssl-stream (name buffer host service)
+    (gnutls-negotiate :process (socks-open-network-stream
+				name buffer host service)
+		      :hostname host))
 
-(defun elmo-open-gnutls-stream (name buffer host service)
-  (open-network-stream name buffer host service :type 'ssl))
+  (defun elmo-open-gnutls-stream (name buffer host service)
+    (open-network-stream name buffer host service :type 'ssl)))
 
 (defun elmo-open-network-stream (name buffer server service stream-type)
   (let ((auto-plugged (and elmo-auto-change-plugged

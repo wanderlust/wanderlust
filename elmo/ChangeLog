@@ -1,6 +1,12 @@
 2019-02-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
-	* elmo-net.el (elmo-socks-ssl-open-network-stream): Renamed from
+	* elmo-net.el (elmo-open-socks-ssl-stream)
+	(elmo-network-use-gnutls): Define only when built-in GnuTLS
+	library is available.
+
+2019-02-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-net.el (elmo-open-socks-ssl-stream): Renamed from
 	elmo-socks-ssl-open-network-stream and slightly simplified.
 
 	* elmo-vars.el (elmo-network-stream-type-alist): Likewise.
