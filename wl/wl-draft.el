@@ -141,13 +141,17 @@ e.g.
 			  wl-smtp-authenticate-type
 			(list wl-smtp-authenticate-type)))))
 	 (smtp-use-sasl wl-smtp-authenticate-type)
-	 (smtp-use-starttls (eq wl-smtp-connection-type 'starttls))
+	 (smtp-use-starttls (memq wl-smtp-connection-type
+				  elmo-network-starttls-stream-type-list))
 	 (smtp-open-connection-function
-	  (if (eq wl-smtp-connection-type 'ssl)
-	      (let ((stream-type (elmo-get-network-stream-type 'ssl)))
-		(require (elmo-network-stream-type-feature stream-type))
-		(elmo-network-stream-type-function stream-type))
-	    smtp-open-connection-function))
+	  (let ((stream-type (elmo-get-network-stream-type
+			      wl-smtp-connection-type)))
+	    (if stream-type
+		(progn
+		  (when (elmo-network-stream-type-feature stream-type)
+		    (require (elmo-network-stream-type-feature stream-type)))
+		  (elmo-network-stream-type-function stream-type))
+	      smtp-open-connection-function)))
 	 (smtp-sasl-user-name wl-smtp-posting-user)
 	 (smtp-sasl-properties (when wl-smtp-authenticate-realm
 				 (list 'realm wl-smtp-authenticate-realm)))

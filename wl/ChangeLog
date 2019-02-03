@@ -1,3 +1,14 @@
+2019-02-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Support plain / SSL / STARTTLS connection via SOCKS for SMTP.
+	Built-in GnuTLS library is required for SSL and STARTTLS
+	connection.  Each Connection type's symbol is "socks", "socks-ssl"
+	and "socks-starttls" respectively.
+
+	* wl-draft.el (wl-smtp-extension-bind): Refer to
+	elmo-network-starttls-stream-type-list and
+	elmo-network-stream-type-alist more generally.
+
 2019-01-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-summary.el (wl-summary-cursor-move-surface): Fix that neither
