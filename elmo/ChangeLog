@@ -1,7 +1,7 @@
 2019-02-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-net.el (elmo-open-socks-ssl-stream)
-	(elmo-network-use-gnutls): Define only when built-in GnuTLS
+	(elmo-open-gnutls-stream): Define only when built-in GnuTLS
 	library is available.
 
 2019-02-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
