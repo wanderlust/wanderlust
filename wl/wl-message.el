@@ -568,38 +568,36 @@ Returns non-nil if bottom of message."
       (setq hit (wl-message-buffer-cache-add (list fname number msg-id)))
       (setq redisplay t))
     (when (or force-reload redisplay)
-      (condition-case err
-	  (with-current-buffer hit
-	    (when (or force-reload
-		      (null entity)
-		      (not (elmo-mime-entity-display-p
-			    entity
-			    (if (wl-message-mime-analysis-p display-type)
-				'mime
-			      'as-is)))
-		      (if (wl-message-display-no-merge-p display-type)
-			  (elmo-mime-entity-reassembled-p entity)
-			(elmo-mime-entity-fragment-p entity)))
-	      (setq entity (elmo-message-mime-entity
-			    folder
-			    number
-			    (wl-message-get-original-buffer)
-			    (and wl-message-auto-reassemble-message/partial
-				 (not (wl-message-display-no-merge-p
-				       display-type)))
-			    force-reload
-			    unread
-			    (not (wl-message-mime-analysis-p display-type)))))
-	    (unless entity
-	      (error "Cannot display message %s/%s" fname number))
-	    (wl-message-display-internal entity display-type))
-	(quit
-	 (wl-message-buffer-cache-delete)
-	 (error "Display message %s/%s is quitted" fname number))
-	(error
-	 (wl-message-buffer-cache-delete)
-	 (signal (car err) (cdr err))
-	 nil))) ;; will not be used
+      (let (done)
+	(unwind-protect
+	    (with-current-buffer hit
+	      (when (or force-reload
+			(null entity)
+			(not (elmo-mime-entity-display-p
+			      entity
+			      (if (wl-message-mime-analysis-p display-type)
+				  'mime
+				'as-is)))
+			(if (wl-message-display-no-merge-p display-type)
+			    (elmo-mime-entity-reassembled-p entity)
+			  (elmo-mime-entity-fragment-p entity)))
+		(setq entity
+		      (elmo-message-mime-entity
+		       folder
+		       number
+		       (wl-message-get-original-buffer)
+		       (and wl-message-auto-reassemble-message/partial
+			    (not (wl-message-display-no-merge-p
+				  display-type)))
+		       force-reload
+		       unread
+		       (not (wl-message-mime-analysis-p display-type)))))
+	      (unless entity
+		(error "Cannot display message %s/%s" fname number))
+	      (wl-message-display-internal entity display-type)
+	      (setq done t))
+	  (unless done
+	    (wl-message-buffer-cache-delete)))))
     hit))
 
 (defun wl-message-display-internal (entity display-type)
