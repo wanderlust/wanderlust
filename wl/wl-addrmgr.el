@@ -399,7 +399,7 @@ Return nil if no ADDRESS exists."
 	     (buffer-live-p draft-buffer)
 	     (null (get-buffer-window draft-buffer 'visible)))
 	(switch-to-buffer draft-buffer)
-      (unless (one-window-p)
+      (if (wl-window-deletable-p)
 	(delete-window)))
     (kill-buffer wl-addrmgr-buffer-name)
     (if (and draft-buffer (not (one-window-p)))

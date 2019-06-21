@@ -1009,6 +1009,12 @@ that `read' can handle, whenever this is possible."
 	   (with-current-buffer src
 	     (symbol-value variable))))))
 
+(defsubst wl-window-deletable-p ()
+  "Return t if selected window can be safely deleted from its frame."
+  (if (fboundp 'window-deletable-p)
+      (window-deletable-p)
+    (not (one-window-p))))
+      
 ;;; Search Condition
 (defun wl-search-condition-fields ()
   (let ((denial-fields
