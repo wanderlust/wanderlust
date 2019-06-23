@@ -1,12 +1,3 @@
-2019-06-28  Erik Hetzner  <egh@e6h.org>
-
-	* wl-util.wl (wl-window-deletable-p): Add function.
-
-	* wl-addrmgr.wl (wl-addrmgr-quit-yes): Use `wl-window-deletable-p'
-	to check if window is deletable.
-
-	* wl-draft.wl (wl-draft-hide): Likewise.
-
 2018-11-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* doc/wl.texi (Variables of Draft Mode): Update descriptions of
