@@ -1,3 +1,13 @@
+2019-06-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Minor refactoring.  Mainly bind multiple if conditions into one.
+
+	* wl-summary.el (wl-summary-toggle-disp-folder)
+	(wl-summary-toggle-disp-msg, wl-summary-redisplay-internal):
+	Likewise.
+
+	* wl-address.el (wl-complete-window-delete): Likewise.
+
 2019-06-22  Erik Hetzner  <egh@e6h.org>
 
 	* wl-util.wl (wl-window-deletable-p): Add function.

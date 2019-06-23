@@ -3784,9 +3784,9 @@ Return non-nil if the mark is updated"
      ((eq arg 'on)
       (setq wl-summary-buffer-disp-folder t)
       ;; hide your folder window
-      (if (setq fld-buf (get-buffer wl-folder-buffer-name))
-	  (if (setq fld-win (get-buffer-window fld-buf))
-	      (delete-window fld-win))))
+      (when (and (setq fld-buf (get-buffer wl-folder-buffer-name))
+		 (setq fld-win (get-buffer-window fld-buf)))
+	(delete-window fld-win)))
      ((eq arg 'off)
       (setq wl-summary-buffer-disp-folder nil)
       ;; hide your wl-message window!
@@ -3810,10 +3810,9 @@ Return non-nil if the mark is updated"
       (other-window 1)
       (switch-to-buffer cur-buf))
      (t
-      (if (setq fld-buf (get-buffer wl-folder-buffer-name))
-	  (if (setq fld-win (get-buffer-window fld-buf))
-	      (setq wl-summary-buffer-disp-folder nil)
-	    (setq wl-summary-buffer-disp-folder t)))
+      (when (setq fld-buf (get-buffer wl-folder-buffer-name))
+	(setq wl-summary-buffer-disp-folder
+	      (null (setq fld-win (get-buffer-window fld-buf)))))
       (if (not wl-summary-buffer-disp-folder)
 	  ;; hide message window
 	  (let ((mes-win (and wl-message-buffer
@@ -3821,12 +3820,10 @@ Return non-nil if the mark is updated"
 		(wl-stay-folder-window t))
 	    (if mes-win (delete-window mes-win))
 	    ;; hide your folder window
-	    (if (setq fld-buf (get-buffer wl-folder-buffer-name))
-		(if (setq fld-win (get-buffer-window fld-buf))
-		    (progn
-		      (delete-window (get-buffer-window cur-buf))
-		      (select-window fld-win)
-		      (switch-to-buffer cur-buf))))
+	    (when fld-win
+	      (delete-window (get-buffer-window cur-buf))
+	      (select-window fld-win)
+	      (switch-to-buffer cur-buf))
 	    (run-hooks 'wl-summary-toggle-disp-folder-off-hook)
 	    ;; resume message window.
 	    (when mes-win
@@ -3867,13 +3864,11 @@ Return non-nil if the mark is updated"
     (cond
      ((eq arg 'on)
       (setq wl-summary-buffer-disp-msg t)
-      (save-excursion
-	;; hide your folder window
-	(if (and (not wl-stay-folder-window)
-		 (setq fld-buf (get-buffer wl-folder-buffer-name)))
-            (if (setq fld-buf (get-buffer wl-folder-buffer-name))
-	        (if (setq fld-win (get-buffer-window fld-buf))
-	            (delete-window fld-win))))))
+      ;; hide your folder window
+      (when (and (not wl-stay-folder-window)
+		 (setq fld-buf (get-buffer wl-folder-buffer-name))
+		 (setq fld-win (get-buffer-window fld-buf)))
+	(delete-window fld-win)))
      ((eq arg 'off)
       (wl-delete-all-overlays)
       (setq wl-summary-buffer-disp-msg nil)
@@ -4622,10 +4617,10 @@ If ARG is numeric number, decode message as following:
 	  (setq wl-summary-buffer-disp-msg t)
 	  (wl-summary-push-message wl-summary-buffer-current-msg)
 	  ;; hide folder window
-	  (if (and (not wl-stay-folder-window)
-		   (setq fld-buf (get-buffer wl-folder-buffer-name)))
-	      (if (setq fld-win (get-buffer-window fld-buf))
-		  (delete-window fld-win)))
+	  (when (and (not wl-stay-folder-window)
+		     (setq fld-buf (get-buffer wl-folder-buffer-name))
+		     (setq fld-win (get-buffer-window fld-buf)))
+	    (delete-window fld-win))
 	  (setq wl-current-summary-buffer (current-buffer))
 	  (wl-message-redisplay folder num
 				(wl-message-make-display-type

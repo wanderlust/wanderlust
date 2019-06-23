@@ -378,9 +378,9 @@ Matched address lists are append to CL."
 
 (defun wl-complete-window-delete ()
   (let (comp-buf comp-win)
-    (if (setq comp-buf (get-buffer wl-completion-buf-name))
-	(if (setq comp-win (get-buffer-window comp-buf))
-	    (delete-window comp-win)))))
+    (when (and (setq comp-buf (get-buffer wl-completion-buf-name))
+	       (setq comp-win (get-buffer-window comp-buf)))
+      (delete-window comp-win))))
 
 (defun wl-complete-field ()
   (interactive)
