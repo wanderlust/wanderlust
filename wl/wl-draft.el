@@ -756,7 +756,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 	  ;; hide draft frame
 	  (delete-frame)
 	;; hide draft window
-	(or (one-window-p)
+	(if (wl-window-deletable-p)
 	    (delete-window))
 	;; stay folder window if required
 	(when wl-stay-folder-window

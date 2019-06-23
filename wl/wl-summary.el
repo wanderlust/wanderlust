@@ -3871,9 +3871,9 @@ Return non-nil if the mark is updated"
 	;; hide your folder window
 	(if (and (not wl-stay-folder-window)
 		 (setq fld-buf (get-buffer wl-folder-buffer-name)))
-	    (if (setq fld-win (get-buffer-window fld-buf))
-		(unless (one-window-p fld-win)
-		  (delete-window fld-win))))))
+            (if (setq fld-buf (get-buffer wl-folder-buffer-name))
+	        (if (setq fld-win (get-buffer-window fld-buf))
+	            (delete-window fld-win))))))
      ((eq arg 'off)
       (wl-delete-all-overlays)
       (setq wl-summary-buffer-disp-msg nil)
