@@ -1012,7 +1012,7 @@ that `read' can handle, whenever this is possible."
 (defsubst wl-window-deletable-p ()
   "Return t if selected window can be safely deleted from its frame."
   (if (fboundp 'window-deletable-p)
-      (window-deletable-p)
+      (eq (window-deletable-p) t)
     (not (one-window-p))))
       
 ;;; Search Condition
