@@ -2267,8 +2267,8 @@ Quit Wanderlust.
 Suspend Wanderlust.
 (@code{wl-folder-suspend})
 
-@item M-s
-@kindex M-s (Folder)
+@item C-x C-s
+@kindex C-x C-s (Folder)
 @findex wl-save
 Save current folder status.
 (@code{wl-save})
@@ -3199,7 +3199,7 @@ The buffer of the `sticky summary' does not killed by typing @kbd{q}.
 
 By entering the summary by typing @kbd{Shift RET} in Folder mode or
 @kbd{G} in some summary sticky summary buffer is created.
-Also typing @kbd{M-s} (@code{wl-summary-stick}) on the normal summary
+Also typing @kbd{M-S} (@code{wl-summary-stick}) on the normal summary
 makes current one sticky.
 
 The buffer name of the sticky summary becomes like

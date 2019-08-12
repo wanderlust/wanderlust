@@ -2270,9 +2270,7 @@ Wanderlust $B$r=*N;$7$^$9!#(B
 Wanderlust $B$r%5%9%Z%s%I$7$^$9!#(B
 (@code{wl-folder-suspend})
 
-@item M-s
-@itemx C-x C-s
-@kindex M-s (Folder)
+@item C-x C-s
 @kindex C-x C-s (Folder)
 @findex wl-save
 $B8=:_$N%U%)%k%@$N>uBV$r%;!<%V$7$^$9!#(B
@@ -3181,7 +3179,7 @@ Non-nil $B$G$"$l$P%U%)%k%@$K0\F0$7$?;~$K:G=i$N%a%C%;!<%8$r<+F0E*$K@hFI$_$7$^$9!
 
 $B%U%)%k%@%b!<%I$+$i(B @kbd{Shift RET} $B!"$b$7$/$O%5%^%j(B $B$+$i(B @kbd{G} $B$7$F(B
 $B%5%^%j$KF~$k$H!"%9%F%#%C%-!<%5%^%j$,:n$i$l$^$9!#(B
-$B$^$?!"DL>o$N%5%^%j$G(B @kbd{M-s} (@code{wl-summary-stick}) $B$r<B9T$9$k$H(B
+$B$^$?!"DL>o$N%5%^%j$G(B @kbd{M-S} (@code{wl-summary-stick}) $B$r<B9T$9$k$H(B
 $B8=:_$N%5%^%j$,%9%F%#%C%-!<%5%^%j$K$J$j$^$9!#(B
 
 $B%9%F%#%C%-!<%5%^%j$N%P%C%U%!L>$O!"(B@samp{Summary:@var{$B%U%)%k%@L>(B}} $B$H(B

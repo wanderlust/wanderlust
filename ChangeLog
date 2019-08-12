@@ -1,3 +1,10 @@
+2019-08-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* doc/wl.texi (Selecting Folder, Sticky Summary): Update key
+	bindings.
+
+	* doc/wl-ja.texi (Selecting Folder, Sticky Summary): Likewise.
+
 2018-11-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* doc/wl.texi (Variables of Draft Mode): Update descriptions of
