@@ -209,7 +209,6 @@
   (define-key wl-folder-mode-map "L"    'wl-fldmgr-access-display-all)
   (define-key wl-folder-mode-map "Z"    'wl-status-update)
   (define-key wl-folder-mode-map "\C-x\C-s" 'wl-save)
-  (define-key wl-folder-mode-map "\M-s"     'wl-save)
   (define-key wl-folder-mode-map "\C-xk"    'wl-folder-mimic-kill-buffer)
   (define-key wl-folder-mode-map "\M-\C-a"
     'wl-folder-goto-top-of-current-folder)

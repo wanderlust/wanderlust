@@ -455,7 +455,7 @@ See also variable `wl-use-petname'."
 
   (define-key wl-summary-mode-map "s"    'wl-summary-sync)
   (define-key wl-summary-mode-map "S"    'wl-summary-sort)
-  (define-key wl-summary-mode-map "\M-s"    'wl-summary-stick)
+  (define-key wl-summary-mode-map "\M-S" 'wl-summary-stick)
   (define-key wl-summary-mode-map "T"    'wl-summary-toggle-thread)
 
   (define-key wl-summary-mode-map "l"    'wl-summary-toggle-disp-folder)

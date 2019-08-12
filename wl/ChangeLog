@@ -1,3 +1,15 @@
+2019-08-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Remove local \M-s key bindings.  \M-s has been globally defined as
+	search-map since Emacs 23.
+	Cf. [wl-en:06688]
+
+	* wl-summary.el (wl-summary-mode-map): Change wl-summary-stick's
+	key binding from \M-s to \M-S.
+
+	* wl-folder.el (wl-folder-mode-map): Remove definition of \M-s.
+	Is is redundant.
+
 2019-07-25  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-util.el (wl-window-deletable-p): Fix the case
