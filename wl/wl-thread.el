@@ -79,7 +79,10 @@
       (let* ((node (wl-thread-get-entity (car wl-thread-entity-list)))
 	     (children (wl-thread-entity-get-children node))
 	     parent sibling)
-	(setq wl-summary-buffer-number-list (list (car wl-thread-entity-list)))
+	(if (car wl-thread-entity-list)
+	    (setq wl-summary-buffer-number-list
+		  (list (car wl-thread-entity-list)))
+	  (elmo-warning "wl-thread-make-number-list: adding nil to wl-summary-buffer-number-list"))
 	(while children
 	  (wl-thread-entity-make-number-list-from-children
 	   (wl-thread-get-entity (car children)))
@@ -101,8 +104,10 @@
   (let ((msgs (list (car entity)))
 	msgs-stack children)
     (while msgs
-      (setq wl-summary-buffer-number-list (cons (car entity)
-						wl-summary-buffer-number-list))
+      (if (car entity)
+	  (setq wl-summary-buffer-number-list
+		(cons (car entity) wl-summary-buffer-number-list))
+	(elmo-warning "wl-thread-entity-make-number-list-from-children: adding nil to wl-summary-buffer-number-list"))
       (setq msgs (cdr msgs))
       (setq children (wl-thread-entity-get-children entity))
       (if children
@@ -200,6 +205,10 @@
  				      (nth (- (length curc) 1)
  					   curc))))
  			(wl-thread-entity-get-number curp)))
+    (when (memq nil wl-summary-buffer-number-list)
+      (elmo-warning "wl-thread-entity-insert-as-children: adding nil to wl-summary-buffer-number-list")
+      (setq wl-summary-buffer-number-list
+	    (delq nil wl-summary-buffer-number-list)))
     (wl-thread-entity-set-children to (wl-append children (list (car entity))))
     (setq wl-thread-entities (cons entity wl-thread-entities))
     (elmo-set-hash-val (format "#%d" (car entity)) entity

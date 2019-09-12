@@ -2357,9 +2357,12 @@ If ARG, without confirm."
     (goto-char (point-min))
     (setq wl-summary-buffer-number-list nil)
     (while (not (eobp))
-      (setq wl-summary-buffer-number-list
-	    (cons (wl-summary-message-number)
-		  wl-summary-buffer-number-list))
+      (if (wl-summary-message-number)
+	  (setq wl-summary-buffer-number-list
+		(cons (wl-summary-message-number)
+		      wl-summary-buffer-number-list))
+	(elmo-warning
+	 "wl-summary-make-number-list: adding nil to wl-summary-buffer-number-list"))
       (forward-line))
     (setq wl-summary-buffer-number-list
 	  (nreverse wl-summary-buffer-number-list))))
@@ -2632,9 +2635,12 @@ If ARG, without confirm."
       (wl-summary-insert-line
        (wl-summary-create-line entity nil nil
 			       (elmo-message-status folder number)))
-      (setq wl-summary-buffer-number-list
-	    (wl-append wl-summary-buffer-number-list
-		       (list (elmo-message-entity-number entity))))
+      (if (elmo-message-entity-number entity)
+	  (setq wl-summary-buffer-number-list
+		(wl-append wl-summary-buffer-number-list
+			   (list (elmo-message-entity-number entity))))
+	(elmo-warnig
+	 "wl-summary-insert-sequential: adding nil to wl-summary-buffer-number-list"))
       nil)))
 
 (defun wl-summary-default-subject-filter (subject)
