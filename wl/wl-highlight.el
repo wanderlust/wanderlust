@@ -974,7 +974,7 @@
 		    (or status (wl-summary-message-status number))
 		    (wl-summary-temp-mark number)
 		    (wl-thread-entity-get-parent-entity
-		     (wl-thread-get-entity number))))
+		     (wl-thread-get-entity number t))))
 	(when (car spec)
 	  (put-text-property bol eol 'face (car spec)))
 	(when (cdr spec)

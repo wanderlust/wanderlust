@@ -2722,7 +2722,7 @@ If ARG, without confirm."
 		       ;; the first element of found-entity list exists on
 		       ;; thread tree.
 		       (wl-thread-get-entity
-			(elmo-message-entity-number (car founds)))
+			(elmo-message-entity-number (car founds)) t)
 		       ;; message id is not same as myself.
 		       (not (string=
 			     (elmo-message-entity-field entity 'message-id)
@@ -2772,7 +2772,7 @@ If ARG, without confirm."
 		      cur nil))
 	    (setq relatives (cons anumber relatives)))))
       (if (and parent-number
-	       (not (wl-thread-get-entity parent-number))
+	       (not (wl-thread-get-entity parent-number t))
 	       (not force-insert))
 	  ;; parent exists in overview, but not in wl-thread-entities
 	  (progn

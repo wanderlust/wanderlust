@@ -67,8 +67,10 @@
     (setq wl-thread-entities entities)
     (setq wl-thread-entity-list top-list)
     (while entities
-      (elmo-set-hash-val (format "#%d" (car (car entities))) (car entities)
-			 wl-thread-entity-hashtb)
+      (if (wl-thread-entity-validate (car entities))
+	  (elmo-set-hash-val (format "#%d" (car (car entities))) (car entities)
+			     wl-thread-entity-hashtb)
+	(elmo-warning "wl-thread-resume-entity: %s validation failed" (car entities)))
       (setq entities (cdr entities)))
     (wl-thread-make-number-list)
     (message "Resuming thread structure...done")))
@@ -82,7 +84,7 @@
 	(setq wl-summary-buffer-number-list (list (car wl-thread-entity-list)))
 	(while children
 	  (wl-thread-entity-make-number-list-from-children
-	   (wl-thread-get-entity (car children)))
+	   (wl-thread-get-entity (car children) t))
 	  (setq children (cdr children)))
 	(while node
 	  (setq parent (wl-thread-entity-get-parent-entity node)
@@ -90,7 +92,7 @@
 			 node parent))
 	  (while sibling
 	    (wl-thread-entity-make-number-list-from-children
-	     (wl-thread-get-entity (car sibling)))
+	     (wl-thread-get-entity (car sibling) t))
 	    (setq sibling (cdr sibling)))
 	  (setq node parent))
 	(setq wl-summary-buffer-number-list (nreverse
@@ -100,7 +102,7 @@
 (defun wl-thread-entity-make-number-list-from-children (entity)
   (let ((msgs (list (car entity)))
 	msgs-stack children)
-    (while msgs
+    (while (and msgs entity)
       (setq wl-summary-buffer-number-list (cons (car entity)
 						wl-summary-buffer-number-list))
       (setq msgs (cdr msgs))
@@ -149,12 +151,28 @@
 (defsubst wl-thread-entity-get-linked (entity)
   (nth 4 entity))
 
+(defun wl-thread-entity-validate (entity)
+  (and (integerp (wl-thread-entity-get-number entity))
+       (> (wl-thread-entity-get-number entity) 0)
+       (if (wl-thread-entity-get-children entity)
+	   (let ((result t))
+	     (dolist (child (wl-thread-entity-get-children entity) result)
+	       (unless (and (integerp child) (> child 0))
+		 (setq result nil))))
+	 t)
+       (if (wl-thread-entity-get-parent entity)
+	   (and (integerp (wl-thread-entity-get-parent entity))
+		(> (wl-thread-entity-get-parent entity) 0))
+	 t)))
+
 (defsubst wl-thread-create-entity (num parent &optional opened linked)
   (list num (or opened wl-thread-insert-opened) nil parent linked))
 
-(defsubst wl-thread-get-entity (num)
+(defsubst wl-thread-get-entity (num &optional noerror)
   (and num
-       (elmo-get-hash-val (format "#%d" num) wl-thread-entity-hashtb)))
+       (or (elmo-get-hash-val (format "#%d" num) wl-thread-entity-hashtb)
+	   (unless noerror
+	     (error "Required thread-entity (%d) does not exist" num)))))
 
 (defsubst wl-thread-entity-set-parent (entity parent)
   (setcar (cdddr entity) parent)
@@ -170,22 +188,28 @@
   entity)
 
 (defsubst wl-thread-reparent-children (children parent)
-  (while children
-    (wl-thread-entity-set-parent
-     (wl-thread-get-entity (car children)) parent)
-    (wl-thread-entity-set-linked
-     (wl-thread-get-entity (car children)) t)
-    (setq children (cdr children))))
+  (let (entity)
+    (dolist (child children)
+      (if (setq entity (wl-thread-get-entity child t))
+	  (progn
+	    (wl-thread-entity-set-parent entity parent)
+	    (wl-thread-entity-set-linked entity t))
+	(elmo-warning
+	 "wl-thread-reparent-children: thread-entity (%d) does not exist" child)
+	))))
 
 (defsubst wl-thread-entity-insert-as-top (entity)
   (when (and entity
 	     (car entity))
-    (wl-append wl-thread-entity-list (list (car entity)))
-    (setq wl-thread-entities (cons entity wl-thread-entities))
-    (setq wl-summary-buffer-number-list
-	  (nconc wl-summary-buffer-number-list (list (car entity))))
-    (elmo-set-hash-val (format "#%d" (car entity)) entity
-		       wl-thread-entity-hashtb)))
+    (if (wl-thread-entity-validate entity)
+	(progn
+	  (wl-append wl-thread-entity-list (list (car entity)))
+	  (setq wl-thread-entities (cons entity wl-thread-entities))
+	  (setq wl-summary-buffer-number-list
+		(nconc wl-summary-buffer-number-list (list (car entity))))
+	  (elmo-set-hash-val (format "#%d" (car entity)) entity
+			     wl-thread-entity-hashtb))
+      (elmo-warning "wl-thread-entity-insert-as-top: %s validation failed" entity))))
 
 (defsubst wl-thread-entity-insert-as-children (to entity)
   (let ((children (wl-thread-entity-get-children to))
@@ -202,8 +226,10 @@
  			(wl-thread-entity-get-number curp)))
     (wl-thread-entity-set-children to (wl-append children (list (car entity))))
     (setq wl-thread-entities (cons entity wl-thread-entities))
-    (elmo-set-hash-val (format "#%d" (car entity)) entity
-		       wl-thread-entity-hashtb)))
+    (if (wl-thread-entity-validate entity)
+	(elmo-set-hash-val (format "#%d" (car entity)) entity
+			   wl-thread-entity-hashtb)
+      (elmo-warning "wl-thread-entity-insert-as-children: %s validation failed" entity))))
 
 (defsubst wl-thread-entity-set-opened (entity opened)
   (setcar (cdr entity) opened))
@@ -298,7 +324,7 @@ ENTITY is returned."
   (interactive)
   (unless number
     (setq number (elmo-read-number "Jump to Message(No.): " 0)))
-  (wl-thread-entity-force-open (wl-thread-get-entity number))
+  (wl-thread-entity-force-open (wl-thread-get-entity number t))
   (wl-summary-jump-to-msg number))
 
 (defun wl-thread-close-all ()
@@ -429,7 +455,7 @@ ENTITY is returned."
 (defun wl-thread-cleanup-symbols (msgs)
   (let (entity)
     (dolist (msg msgs)
-      (when (setq entity (wl-thread-get-entity msg))
+      (when (setq entity (wl-thread-get-entity msg t))
 	;; delete entity.
 	(setq wl-thread-entities (delq entity wl-thread-entities))
 	;; free symbol.
@@ -1086,7 +1112,7 @@ Message is inserted to the summary buffer."
     (if (and dst-parent
 	     (memq dst-parent (wl-thread-get-children-msgs number)))
 	(error "Parent is children or myself"))
-    (setq entity (wl-thread-get-entity number))
+    (setq entity (wl-thread-get-entity number t))
     (when (and number entity)
       ;; delete thread
       (setq update-msgs (wl-thread-delete-message number 'deep))
