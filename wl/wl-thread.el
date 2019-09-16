@@ -114,7 +114,7 @@
 	(unless msgs
 	  (while (and (null msgs) msgs-stack)
 	    (setq msgs (wl-pop msgs-stack)))))
-      (setq entity (wl-thread-get-entity (car msgs))))))
+      (setq entity (wl-thread-get-entity (car msgs) t)))))
 
 (defun wl-thread-save-entity (dir)
   (wl-thread-save-entities dir)
