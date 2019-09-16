@@ -100,7 +100,7 @@
 (defun wl-thread-entity-make-number-list-from-children (entity)
   (let ((msgs (list (car entity)))
 	msgs-stack children)
-    (while msgs
+    (while (and msgs entity)
       (setq wl-summary-buffer-number-list (cons (car entity)
 						wl-summary-buffer-number-list))
       (setq msgs (cdr msgs))
@@ -170,12 +170,12 @@
   entity)
 
 (defsubst wl-thread-reparent-children (children parent)
-  (while children
-    (wl-thread-entity-set-parent
-     (wl-thread-get-entity (car children)) parent)
-    (wl-thread-entity-set-linked
-     (wl-thread-get-entity (car children)) t)
-    (setq children (cdr children))))
+  (let (entity)
+    (dolist (child children)
+      (when (setq entity (wl-thread-get-entity child))
+        (progn
+          (wl-thread-entity-set-parent entity parent)
+          (wl-thread-entity-set-linked entity t))))))
 
 (defsubst wl-thread-entity-insert-as-top (entity)
   (when (and entity

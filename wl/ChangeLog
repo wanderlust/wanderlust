@@ -1,3 +1,10 @@
+2019-09-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-thread.el (wl-thread-entity-make-number-list-from-children)
+	(wl-thread-reparent-children): Fix the case wl-thread-get-entity
+	returns nil.
+	Cf. https://github.com/wanderlust/wanderlust/issues/168
+
 2019-08-12  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Remove local \M-s key bindings.  \M-s has been globally defined as
