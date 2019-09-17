@@ -31,6 +31,7 @@
 ;;; Code:
 ;;
 
+(require 'wl-action)
 (require 'wl-summary)
 (require 'wl-highlight)
 (eval-when-compile (require 'cl))
@@ -50,93 +51,6 @@
 (defvar wl-thread-insert-force-opened nil)
 
 ;;;;;; each entity is (number opened-or-not children parent) ;;;;;;;
-
-(defun wl-thread-resume-entity (fld)
-  (let (entities top-list)
-    (setq entities (wl-summary-load-file-object
-		    (expand-file-name wl-thread-entity-file
-				      (elmo-folder-msgdb-path fld))))
-    (setq top-list
-	  (wl-summary-load-file-object
-	   (expand-file-name wl-thread-entity-list-file
-			     (elmo-folder-msgdb-path fld))))
-    (message "Resuming thread structure...")
-    ;; set obarray value.
-    (setq wl-thread-entity-hashtb (elmo-make-hash (* (length entities) 2)))
-    ;; set buffer local variables.
-    (setq wl-thread-entities entities)
-    (setq wl-thread-entity-list top-list)
-    (while entities
-      (elmo-set-hash-val (format "#%d" (car (car entities))) (car entities)
-			 wl-thread-entity-hashtb)
-      (setq entities (cdr entities)))
-    (wl-thread-make-number-list)
-    (message "Resuming thread structure...done")))
-
-(defun wl-thread-make-number-list ()
-  "Make `wl-summary-buffer-number-list', a list of message numbers."
-  (if wl-thread-entity-list
-      (let* ((node (wl-thread-get-entity (car wl-thread-entity-list)))
-	     (children (wl-thread-entity-get-children node))
-	     parent sibling)
-	(setq wl-summary-buffer-number-list (list (car wl-thread-entity-list)))
-	(while children
-	  (wl-thread-entity-make-number-list-from-children
-	   (wl-thread-get-entity (car children)))
-	  (setq children (cdr children)))
-	(while node
-	  (setq parent (wl-thread-entity-get-parent-entity node)
-		sibling (wl-thread-entity-get-younger-brothers
-			 node parent))
-	  (while sibling
-	    (wl-thread-entity-make-number-list-from-children
-	     (wl-thread-get-entity (car sibling)))
-	    (setq sibling (cdr sibling)))
-	  (setq node parent))
-	(setq wl-summary-buffer-number-list (nreverse
-					     wl-summary-buffer-number-list)))
-    (setq wl-summary-buffer-number-list nil)))
-
-(defun wl-thread-entity-make-number-list-from-children (entity)
-  (let ((msgs (list (car entity)))
-	msgs-stack children)
-    (while (and msgs entity)
-      (setq wl-summary-buffer-number-list (cons (car entity)
-						wl-summary-buffer-number-list))
-      (setq msgs (cdr msgs))
-      (setq children (wl-thread-entity-get-children entity))
-      (if children
-	  (progn
-	    (wl-push msgs msgs-stack)
-	    (setq msgs children))
-	(unless msgs
-	  (while (and (null msgs) msgs-stack)
-	    (setq msgs (wl-pop msgs-stack)))))
-      (setq entity (wl-thread-get-entity (car msgs))))))
-
-(defun wl-thread-save-entity (dir)
-  (wl-thread-save-entities dir)
-  (wl-thread-save-top-list dir))
-
-(defun wl-thread-save-top-list (dir)
-  (let ((top-file (expand-file-name wl-thread-entity-list-file dir))
-	(entity wl-thread-entity-list)
-	print-length)
-    (with-temp-buffer
-      (when (file-writable-p top-file)
-	(prin1 entity (current-buffer))
-	(princ "\n" (current-buffer))
-	(write-region (point-min) (point-max) top-file nil 'no-msg)))))
-
-(defun wl-thread-save-entities (dir)
-  (let ((top-file (expand-file-name wl-thread-entity-file dir))
-	(entities wl-thread-entities)
-	print-length print-level)
-    (with-temp-buffer
-      (when (file-writable-p top-file)
-	(prin1 entities (current-buffer))
-	(princ "\n" (current-buffer))
-	(write-region (point-min) (point-max) top-file nil 'no-msg)))))
 
 (defsubst wl-thread-entity-get-number (entity)
   (nth 0 entity))
@@ -249,6 +163,93 @@
       (setq cur-entity (wl-thread-get-entity p-num)))
     cur-entity))
 
+(defun wl-thread-resume-entity (fld)
+  (let (entities top-list)
+    (setq entities (wl-summary-load-file-object
+		    (expand-file-name wl-thread-entity-file
+				      (elmo-folder-msgdb-path fld))))
+    (setq top-list
+	  (wl-summary-load-file-object
+	   (expand-file-name wl-thread-entity-list-file
+			     (elmo-folder-msgdb-path fld))))
+    (message "Resuming thread structure...")
+    ;; set obarray value.
+    (setq wl-thread-entity-hashtb (elmo-make-hash (* (length entities) 2)))
+    ;; set buffer local variables.
+    (setq wl-thread-entities entities)
+    (setq wl-thread-entity-list top-list)
+    (while entities
+      (elmo-set-hash-val (format "#%d" (car (car entities))) (car entities)
+			 wl-thread-entity-hashtb)
+      (setq entities (cdr entities)))
+    (wl-thread-make-number-list)
+    (message "Resuming thread structure...done")))
+
+(defun wl-thread-make-number-list ()
+  "Make `wl-summary-buffer-number-list', a list of message numbers."
+  (if wl-thread-entity-list
+      (let* ((node (wl-thread-get-entity (car wl-thread-entity-list)))
+	     (children (wl-thread-entity-get-children node))
+	     parent sibling)
+	(setq wl-summary-buffer-number-list (list (car wl-thread-entity-list)))
+	(while children
+	  (wl-thread-entity-make-number-list-from-children
+	   (wl-thread-get-entity (car children)))
+	  (setq children (cdr children)))
+	(while node
+	  (setq parent (wl-thread-entity-get-parent-entity node)
+		sibling (wl-thread-entity-get-younger-brothers
+			 node parent))
+	  (while sibling
+	    (wl-thread-entity-make-number-list-from-children
+	     (wl-thread-get-entity (car sibling)))
+	    (setq sibling (cdr sibling)))
+	  (setq node parent))
+	(setq wl-summary-buffer-number-list (nreverse
+					     wl-summary-buffer-number-list)))
+    (setq wl-summary-buffer-number-list nil)))
+
+(defun wl-thread-entity-make-number-list-from-children (entity)
+  (let ((msgs (list (car entity)))
+	msgs-stack children)
+    (while (and msgs entity)
+      (setq wl-summary-buffer-number-list (cons (car entity)
+						wl-summary-buffer-number-list))
+      (setq msgs (cdr msgs))
+      (setq children (wl-thread-entity-get-children entity))
+      (if children
+	  (progn
+	    (wl-push msgs msgs-stack)
+	    (setq msgs children))
+	(unless msgs
+	  (while (and (null msgs) msgs-stack)
+	    (setq msgs (wl-pop msgs-stack)))))
+      (setq entity (wl-thread-get-entity (car msgs))))))
+
+(defun wl-thread-save-entity (dir)
+  (wl-thread-save-entities dir)
+  (wl-thread-save-top-list dir))
+
+(defun wl-thread-save-top-list (dir)
+  (let ((top-file (expand-file-name wl-thread-entity-list-file dir))
+	(entity wl-thread-entity-list)
+	print-length)
+    (with-temp-buffer
+      (when (file-writable-p top-file)
+	(prin1 entity (current-buffer))
+	(princ "\n" (current-buffer))
+	(write-region (point-min) (point-max) top-file nil 'no-msg)))))
+
+(defun wl-thread-save-entities (dir)
+  (let ((top-file (expand-file-name wl-thread-entity-file dir))
+	(entities wl-thread-entities)
+	print-length print-level)
+    (with-temp-buffer
+      (when (file-writable-p top-file)
+	(prin1 entities (current-buffer))
+	(princ "\n" (current-buffer))
+	(write-region (point-min) (point-max) top-file nil 'no-msg)))))
+
 (defun wl-thread-entity-parent-invisible-p (entity)
   "If parent of ENTITY is invisible, the top invisible ancestor entity of
 ENTITY is returned."
@@ -343,6 +344,43 @@ ENTITY is returned."
     (if (not (wl-thread-entity-get-opened entity))
 	(wl-thread-entity-get-children-num entity))))
 
+(defun wl-thread-get-depth-of-current-line ()
+  (let ((entity (wl-thread-get-entity (wl-summary-message-number)))
+	(depth 0)
+	number)
+    (while (setq number (wl-thread-entity-get-parent entity))
+      (incf depth)
+      (setq entity (wl-thread-get-entity number)))
+    depth))
+
+(defsubst wl-thread-make-indent-string (entity)
+  (let ((cur entity)
+	(ret-val "")
+	(space-str (wl-repeat-string wl-thread-space-str-internal
+				     (1- wl-thread-indent-level-internal)))
+	parent)
+    (when (wl-thread-entity-get-number
+	   (setq parent (wl-thread-entity-get-parent-entity cur)))
+      (if (wl-thread-entity-get-younger-brothers cur)
+	  (setq ret-val wl-thread-have-younger-brother-str-internal)
+	(setq ret-val wl-thread-youngest-child-str-internal))
+      (setq ret-val (concat ret-val
+			    (wl-repeat-string
+			     wl-thread-horizontal-str-internal
+			     (1- wl-thread-indent-level-internal))))
+      (setq cur parent)
+      (while (wl-thread-entity-get-number
+	      (wl-thread-entity-get-parent-entity cur))
+	(if (wl-thread-entity-get-younger-brothers cur)
+	    (setq ret-val (concat wl-thread-vertical-str-internal
+				  space-str
+				  ret-val))
+	  (setq ret-val (concat wl-thread-space-str-internal
+				space-str
+				ret-val)))
+	(setq cur (wl-thread-entity-get-parent-entity cur))))
+    ret-val))
+
 (defsubst wl-thread-update-line-on-buffer-sub (entity msg &optional parent-msg)
   (let* ((entity (or entity (wl-thread-get-entity msg)))
 	 (parent-msg (or parent-msg (wl-thread-entity-get-parent entity)))
@@ -417,6 +455,15 @@ ENTITY is returned."
     (wl-thread-update-line-on-buffer-sub nil message)
     (elmo-progress-notify 'wl-thread-update-line)))
 
+(defun wl-thread-update-indent-string-region (beg end)
+  (interactive "r")
+  (save-excursion
+    (goto-char beg)
+    (while (< (point) end)
+      (save-excursion
+	(wl-thread-update-line-on-buffer-sub nil (wl-summary-message-number)))
+      (forward-line))))
+
 (defun wl-thread-delete-line-from-buffer (msg)
   "Simply delete msg line."
   (when (wl-summary-jump-to-msg msg)
@@ -452,6 +499,62 @@ ENTITY is returned."
 	(wl-push msgs msgs-stack)
 	(setq msgs children)))
     (unless include-self (setq ret-val (delq msg ret-val)))
+    ret-val))
+
+(defsubst wl-thread-get-children-msgs (msg &optional visible-only)
+  (let ((msgs (list msg))
+	msgs-stack children
+	entity ret-val)
+    (while msgs
+      (wl-append ret-val (list (car msgs)))
+      (setq children (wl-thread-entity-get-children
+		      (setq entity (wl-thread-get-entity (car msgs)))))
+      (if (and visible-only
+	       (not (wl-thread-entity-get-opened entity)))
+	  (setq children nil))
+      (setq msgs (cdr msgs))
+      (if (null children)
+	  (while (and (null msgs) msgs-stack)
+	    (setq msgs (wl-pop msgs-stack)))
+	(wl-push msgs msgs-stack)
+	(setq msgs children)))
+    ret-val))
+
+(defun wl-thread-get-children-msgs-uncached (msg &optional uncached-marks)
+  (let ((children-msgs (wl-thread-get-children-msgs msg))
+	mark uncached-list)
+    (while children-msgs
+      (if (and (not (eq msg (car children-msgs))) ; except itself
+	       (or (and uncached-marks
+			(setq mark (wl-summary-message-mark
+				    wl-summary-buffer-elmo-folder
+				    (car children-msgs)))
+			(member mark uncached-marks))
+		   (and (not uncached-marks)
+			(null (elmo-file-cache-exists-p
+			       (elmo-message-field
+				wl-summary-buffer-elmo-folder
+				(car children-msgs)
+				'message-id))))))
+	  (wl-append uncached-list (list (car children-msgs))))
+      (setq children-msgs (cdr children-msgs)))
+    uncached-list))
+
+(defun wl-thread-get-children-msgs-with-mark (msg mark)
+  (let ((children-msgs (wl-thread-get-children-msgs msg))
+	(check-func (cond ((string= mark "o")
+			   'wl-summary-msg-marked-as-refiled)
+			  ((string= mark "O")
+			   'wl-summary-msg-marked-as-copied)
+			  ((string= mark "D")
+			   'wl-summary-msg-marked-as-deleted)
+			  ((string= mark "*")
+			   'wl-summary-msg-marked-as-target)))
+	ret-val)
+    (while children-msgs
+      (if (funcall check-func (car children-msgs))
+	  (wl-append ret-val (list (car children-msgs))))
+      (setq children-msgs (cdr children-msgs)))
     ret-val))
 
 (defun wl-thread-delete-message (msg &optional deep update)
@@ -875,62 +978,6 @@ Message is inserted to the summary buffer."
 		(wl-summary-print-argument (car pair) (cdr pair))))
 	    (forward-line))))))
 
-(defsubst wl-thread-get-children-msgs (msg &optional visible-only)
-  (let ((msgs (list msg))
-	msgs-stack children
-	entity ret-val)
-    (while msgs
-      (wl-append ret-val (list (car msgs)))
-      (setq children (wl-thread-entity-get-children
-		      (setq entity (wl-thread-get-entity (car msgs)))))
-      (if (and visible-only
-	       (not (wl-thread-entity-get-opened entity)))
-	  (setq children nil))
-      (setq msgs (cdr msgs))
-      (if (null children)
-	  (while (and (null msgs) msgs-stack)
-	    (setq msgs (wl-pop msgs-stack)))
-	(wl-push msgs msgs-stack)
-	(setq msgs children)))
-    ret-val))
-
-(defun wl-thread-get-children-msgs-uncached (msg &optional uncached-marks)
-  (let ((children-msgs (wl-thread-get-children-msgs msg))
-	mark uncached-list)
-    (while children-msgs
-      (if (and (not (eq msg (car children-msgs))) ; except itself
-	       (or (and uncached-marks
-			(setq mark (wl-summary-message-mark
-				    wl-summary-buffer-elmo-folder
-				    (car children-msgs)))
-			(member mark uncached-marks))
-		   (and (not uncached-marks)
-			(null (elmo-file-cache-exists-p
-			       (elmo-message-field
-				wl-summary-buffer-elmo-folder
-				(car children-msgs)
-				'message-id))))))
-	  (wl-append uncached-list (list (car children-msgs))))
-      (setq children-msgs (cdr children-msgs)))
-    uncached-list))
-
-(defun wl-thread-get-children-msgs-with-mark (msg mark)
-  (let ((children-msgs (wl-thread-get-children-msgs msg))
-	(check-func (cond ((string= mark "o")
-			   'wl-summary-msg-marked-as-refiled)
-			  ((string= mark "O")
-			   'wl-summary-msg-marked-as-copied)
-			  ((string= mark "D")
-			   'wl-summary-msg-marked-as-deleted)
-			  ((string= mark "*")
-			   'wl-summary-msg-marked-as-target)))
-	ret-val)
-    (while children-msgs
-      (if (funcall check-func (car children-msgs))
-	  (wl-append ret-val (list (car children-msgs))))
-      (setq children-msgs (cdr children-msgs)))
-    ret-val))
-
 (defun wl-thread-close (entity)
   (let (depth beg)
     (wl-thread-entity-set-opened entity nil)
@@ -1021,52 +1068,6 @@ Message is inserted to the summary buffer."
 	(wl-highlight-summary-window))
       (wl-summary-set-message-modified)
       (set-buffer-modified-p nil))))
-
-(defun wl-thread-get-depth-of-current-line ()
-  (let ((entity (wl-thread-get-entity (wl-summary-message-number)))
-	(depth 0)
-	number)
-    (while (setq number (wl-thread-entity-get-parent entity))
-      (incf depth)
-      (setq entity (wl-thread-get-entity number)))
-    depth))
-
-(defun wl-thread-update-indent-string-region (beg end)
-  (interactive "r")
-  (save-excursion
-    (goto-char beg)
-    (while (< (point) end)
-      (save-excursion
-	(wl-thread-update-line-on-buffer-sub nil (wl-summary-message-number)))
-      (forward-line))))
-
-(defsubst wl-thread-make-indent-string (entity)
-  (let ((cur entity)
-	(ret-val "")
-	(space-str (wl-repeat-string wl-thread-space-str-internal
-				     (1- wl-thread-indent-level-internal)))
-	parent)
-    (when (wl-thread-entity-get-number
-	   (setq parent (wl-thread-entity-get-parent-entity cur)))
-      (if (wl-thread-entity-get-younger-brothers cur)
-	  (setq ret-val wl-thread-have-younger-brother-str-internal)
-	(setq ret-val wl-thread-youngest-child-str-internal))
-      (setq ret-val (concat ret-val
-			    (wl-repeat-string
-			     wl-thread-horizontal-str-internal
-			     (1- wl-thread-indent-level-internal))))
-      (setq cur parent)
-      (while (wl-thread-entity-get-number
-	      (wl-thread-entity-get-parent-entity cur))
-	(if (wl-thread-entity-get-younger-brothers cur)
-	    (setq ret-val (concat wl-thread-vertical-str-internal
-				  space-str
-				  ret-val))
-	  (setq ret-val (concat wl-thread-space-str-internal
-				space-str
-				ret-val)))
-	(setq cur (wl-thread-entity-get-parent-entity cur))))
-    ret-val))
 
 (defun wl-thread-set-parent (&optional parent-number)
   "Set current message's parent interactively."

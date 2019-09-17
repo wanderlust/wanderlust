@@ -1,5 +1,10 @@
 2019-09-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* wl-thread.el: Require wl-action.el.  Sort functions to suppress
+	byte compiler warnings.
+
+2019-09-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* wl-thread.el (wl-thread-entity-insert-as-children)
 	(wl-thread-close, wl-thread-make-indent-string): Minor
 	refactorings.
