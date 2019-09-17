@@ -66,6 +66,10 @@
 (defsubst wl-thread-create-entity (num parent &optional opened linked)
   (list num (or opened wl-thread-insert-opened) nil parent linked))
 
+(defsubst wl-thread-set-entity (entity)
+  (elmo-set-hash-val (format "#%d" (wl-thread-entity-get-number entity))
+		     entity wl-thread-entity-hashtb))
+
 (defsubst wl-thread-get-entity (num)
   (and num
        (elmo-get-hash-val (format "#%d" num) wl-thread-entity-hashtb)))
@@ -98,8 +102,7 @@
     (setq wl-thread-entities (cons entity wl-thread-entities))
     (setq wl-summary-buffer-number-list
 	  (nconc wl-summary-buffer-number-list (list (car entity))))
-    (elmo-set-hash-val (format "#%d" (car entity)) entity
-		       wl-thread-entity-hashtb)))
+    (wl-thread-set-entity entity)))
 
 (defsubst wl-thread-entity-insert-as-children (to entity)
   (let ((children (wl-thread-entity-get-children to))
@@ -115,8 +118,7 @@
  			(wl-thread-entity-get-number curp)))
     (wl-thread-entity-set-children to (wl-append children (list (car entity))))
     (setq wl-thread-entities (cons entity wl-thread-entities))
-    (elmo-set-hash-val (format "#%d" (car entity)) entity
-		       wl-thread-entity-hashtb)))
+    (wl-thread-set-entity entity)))
 
 (defsubst wl-thread-entity-set-opened (entity opened)
   (setcar (cdr entity) opened))
@@ -178,10 +180,7 @@
     ;; set buffer local variables.
     (setq wl-thread-entities entities)
     (setq wl-thread-entity-list top-list)
-    (while entities
-      (elmo-set-hash-val (format "#%d" (car (car entities))) (car entities)
-			 wl-thread-entity-hashtb)
-      (setq entities (cdr entities)))
+    (mapc 'wl-thread-set-entity entities)
     (wl-thread-make-number-list)
     (message "Resuming thread structure...done")))
 
