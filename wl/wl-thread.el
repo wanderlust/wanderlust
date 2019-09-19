@@ -53,7 +53,7 @@
 ;;;;;; each entity is (number opened-or-not children parent) ;;;;;;;
 
 (defsubst wl-thread-entity-get-number (entity)
-  (nth 0 entity))
+  (car entity))
 (defsubst wl-thread-entity-get-opened (entity)
   (nth 1 entity))
 (defsubst wl-thread-entity-get-children (entity)
@@ -91,17 +91,17 @@
   (let (entity)
     (dolist (child children)
       (when (setq entity (wl-thread-get-entity child))
-        (progn
-          (wl-thread-entity-set-parent entity parent)
-          (wl-thread-entity-set-linked entity t))))))
+        (wl-thread-entity-set-parent entity parent)
+        (wl-thread-entity-set-linked entity t)))))
 
 (defsubst wl-thread-entity-insert-as-top (entity)
   (when (and entity
-	     (car entity))
+	     (wl-thread-entity-get-number entity))
     (wl-append wl-thread-entity-list (list (car entity)))
     (setq wl-thread-entities (cons entity wl-thread-entities))
     (setq wl-summary-buffer-number-list
-	  (nconc wl-summary-buffer-number-list (list (car entity))))
+	  (nconc wl-summary-buffer-number-list
+		 (list (wl-thread-entity-get-number entity))))
     (wl-thread-set-entity entity)))
 
 (defsubst wl-thread-entity-insert-as-children (to entity)
@@ -116,7 +116,8 @@
  			  (setq curp (wl-thread-get-entity
 				      (car (last curc)))))
  			(wl-thread-entity-get-number curp)))
-    (wl-thread-entity-set-children to (wl-append children (list (car entity))))
+    (wl-thread-entity-set-children
+     to (wl-append children (list (wl-thread-entity-get-number entity))))
     (setq wl-thread-entities (cons entity wl-thread-entities))
     (wl-thread-set-entity entity)))
 
@@ -126,7 +127,7 @@
 (defsubst wl-thread-entity-get-children-num (entity)
   (let (children
 	ret-val msgs-stack
-	(msgs (list (car entity))))
+	(msgs (list (wl-thread-entity-get-number entity))))
    (while msgs
      (setq msgs (cdr msgs))
      (setq children (wl-thread-entity-get-children entity))
@@ -142,7 +143,7 @@
 (defun wl-thread-entity-get-descendant (entity)
   (let (children
 	ret-val msgs-stack
-	(msgs (list (car entity))))
+	(msgs (list (wl-thread-entity-get-number entity))))
    (while msgs
      (setq msgs (cdr msgs))
      (setq children (wl-thread-entity-get-children entity))
@@ -209,11 +210,12 @@
     (setq wl-summary-buffer-number-list nil)))
 
 (defun wl-thread-entity-make-number-list-from-children (entity)
-  (let ((msgs (list (car entity)))
+  (let ((msgs (list (wl-thread-entity-get-number entity)))
 	msgs-stack children)
     (while (and msgs entity)
-      (setq wl-summary-buffer-number-list (cons (car entity)
-						wl-summary-buffer-number-list))
+      (setq wl-summary-buffer-number-list
+	    (cons (wl-thread-entity-get-number entity)
+		  wl-summary-buffer-number-list))
       (setq msgs (cdr msgs))
       (setq children (wl-thread-entity-get-children entity))
       (if children
@@ -290,7 +292,8 @@ ENTITY is returned."
 	(cdr (memq (wl-thread-entity-get-number entity)
 		   brothers))
       ;; top!!
-      (cdr (memq (car entity) wl-thread-entity-list)))))
+      (cdr (memq (wl-thread-entity-get-number entity)
+		 wl-thread-entity-list)))))
 
 (defun wl-thread-jump-to-msg (&optional number)
   "Jump to the message with specified number in the current summary."
@@ -897,7 +900,7 @@ Message is inserted to the summary buffer."
 
 (defun wl-thread-insert-entity (indent entity parent-entity all)
   "Insert thread entity in current buffer."
-  (let ((msgs (list (car entity)))
+  (let ((msgs (list (wl-thread-entity-get-number entity)))
 	children msgs-stack)
     (while msgs
       (wl-thread-insert-entity-sub indent entity parent-entity all)
