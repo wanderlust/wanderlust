@@ -361,7 +361,10 @@ Refile to archive folder followed message number."
 				  &optional preserve-number dst-folder-arg
 					    no-delete)
   "Standard function for `wl-summary-expire'.
-Refile to archive folder followed the number of message in one archive folder."
+Refile to archive folder followed the number of message in one archive folder.
+`elmo-localdir-folder-path' and `elmo-archive-folder-path' should
+be different from each other when you use this function.
+Please beware that default values are the same."
   (let* ((elmo-archive-treat-file t)	;; treat archive folder as a file.
 	 (dst-folder-expand (and dst-folder-arg
 				 (elmo-expand-newtext

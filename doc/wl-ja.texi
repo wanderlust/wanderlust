@@ -6147,6 +6147,10 @@ expire を実行しないようにできます。
 なお、リファイル先のアーカイブフォルダは @code{wl-expire-archive-number1}
 と同じように決定されます。
 
+この関数を使用する場合、@code{elmo-localdir-folder-path}と
+@code{elmo-archive-folder-path}を同じディレクトリにしないで下さい。
+デフォルトでは同じディレクトになっているので、注意してください。
+
 @item wl-expire-archive-date
 メッセージの日付(年月)ごとにアーカイブフォルダにリファイルします。
 

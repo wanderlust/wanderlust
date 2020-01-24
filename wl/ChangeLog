@@ -1,3 +1,9 @@
+2020-01-24  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-expire.el (wl-expire-archive-number2): Add notice for
+	`elmo-localdir-folder-path' and `elmo-archive-folder-path'
+	variable.
+
 2020-01-23  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-summary.el (wl-summary-insert-headers): Handle the case that

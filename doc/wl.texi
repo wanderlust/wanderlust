@@ -6201,6 +6201,10 @@ to the folder up to the specified number regardless of message numbers.
 The archiving folders to which messages are re-filed are determined in the
 same way as @code{wl-expire-archive-number1}.
 
+@code{elmo-localdir-folder-path} and @code{elmo-archive-folder-path}
+should be different from each other when you use this function.  Please
+beware that default values are the same.
+
 @item wl-expire-archive-date
 re-files messages depending on its date (year and month) to archive
 folders.
