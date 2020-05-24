@@ -230,7 +230,7 @@ Remove spam mark."
 	(wl-summary-spam number)
       (wl-summary-unmark-spam number))
     (message "Checking spam...done")
-    (when (interactive-p)
+    (when (called-interactively-p 'interactive)
       (message "No: %d is %sa spam message." number (if spam "" "not ")))))
 
 (defun wl-summary-test-spam-messages (folder numbers &rest args)
@@ -251,7 +251,7 @@ Remove spam mark."
     (cond (numbers
 	   (wl-summary-test-spam-messages wl-summary-buffer-elmo-folder
 					  numbers))
-	  ((interactive-p)
+	  ((called-interactively-p 'interactive)
 	   (message "No message to test.")))))
 
 (defun wl-thread-test-spam (&optional arg)
@@ -272,7 +272,7 @@ Remove spam mark."
 	   (wl-spam-map-spam-messages wl-summary-buffer-elmo-folder
 				      numbers
 				      #'wl-summary-spam))
-	  ((interactive-p)
+	  ((called-interactively-p 'interactive)
 	   (message "No message to test.")))))
 
 (defun wl-summary-register-as-spam ()
@@ -292,7 +292,7 @@ Put spam mark unless current folder is a spam folder."
     (cond (numbers
 	   (wl-spam-register-spam-messages wl-summary-buffer-elmo-folder
 					   numbers))
-	  ((interactive-p)
+	  ((called-interactively-p 'interactive)
 	   (message "No message to register as spam.")))))
 
 (defun wl-thread-register-as-spam (&optional arg)
@@ -341,7 +341,7 @@ Remove spam mark."
     (cond (numbers
 	   (wl-spam-register-good-messages wl-summary-buffer-elmo-folder
 					   numbers))
-	  ((interactive-p)
+	  ((called-interactively-p 'interactive)
 	   (message "No message to register as good.")))))
 
 (defun wl-thread-register-as-good (&optional arg)

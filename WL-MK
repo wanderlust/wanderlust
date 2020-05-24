@@ -89,9 +89,6 @@
 
 (setq byte-compile-warnings '(free-vars unresolved callargs redefine))
 
-;; v18, v19
-(if (boundp 'MULE)
-    (setq max-lisp-eval-depth 400))
 
 ;; FIXME: it is currently needed to byte-compile with Emacs 21.
 (setq recursive-load-depth-limit nil)
@@ -266,14 +263,7 @@
   (if (not (file-directory-p PIXMAPDIR))
       (make-directory PIXMAPDIR t))
   (let* ((case-fold-search t)
-	 (icons (directory-files ICONDIR nil
-				 (cond ((featurep 'xemacs)
-					"\\.x[bp]m$")
-				       ((and (boundp 'emacs-major-version)
-					     (>= emacs-major-version 21))
-					"\\.img$\\|\\.x[bp]m$")
-				       ((featurep 'mule)
-					"\\.img$\\|\\.xbm$")))))
+	 (icons (directory-files ICONDIR nil "\\.img$\\|\\.x[bp]m$")))
     (install-files icons ICONDIR PIXMAPDIR nil 'overwrite)))
 
 (defun uninstall-wl-icons ()
@@ -310,24 +300,8 @@
   (if PIXMAPDIR
       (uninstall-wl-icons)))
 
-
 (defun config-wl-package-xmas ()
-  (if (not (featurep 'xemacs))
-      (error "This directive is only for XEmacs"))
-  (config-wl-package-subr)
-  ;; PACKAGEDIR check.
-  (let (package-dir)
-    (defvar PACKAGEDIR
-      (if (and (setq package-dir (car command-line-args-left))
-	       (not (string= "NONE" package-dir)))
-	  package-dir
-	(require 'install)
-	(install-get-default-package-directory)))
-    (princ (format "PACKAGEDIR is %s\n" PACKAGEDIR))
-    (setq command-line-args-left (cdr command-line-args-left)))
-  ;; PIXMAPDIR check.
-  (config-wl-pixmap-dir PACKAGEDIR)
-  (princ "\n"))
+  (error "This directive is only for XEmacs"))
 
 ;; from SEMI-MK
 (defun compile-wl-package-xmas ()

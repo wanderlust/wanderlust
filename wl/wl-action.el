@@ -257,7 +257,7 @@ Return number if put mark succeed"
 	    (wl-summary-remove-argument)))
 	(set-buffer-modified-p nil))))
 ;;; Move the cursor.
-;;;  (if (or interactive (interactive-p))
+;;;  (if (or interactive (called-interactively-p 'interactive))
 ;;;      (if (eq wl-summary-move-direction-downward nil)
 ;;;	  (wl-summary-prev)
 ;;;	(wl-summary-next))))
@@ -363,7 +363,7 @@ Return number if put mark succeed"
 	     ,(wl-summary-action-docstring action)
 	     (interactive)
 	     (wl-summary-set-mark ,(wl-summary-action-mark action)
-				  number (interactive-p) data)))
+				  number (called-interactively-p 'interactive) data)))
     (fset (intern (format "wl-summary-unmark-%s"
 			  (wl-summary-action-symbol action)))
 	  `(lambda (&optional number)
@@ -776,7 +776,7 @@ Return number if put mark succeed"
   (funcall (symbol-function 'wl-summary-refile)
 	   (wl-summary-message-number)
 	   wl-summary-buffer-prev-refile-destination)
-  (if (and (interactive-p)
+  (if (and (called-interactively-p 'interactive)
 	   (eq wl-summary-move-direction-downward nil))
       (wl-summary-prev)
     (wl-summary-next)))
@@ -884,7 +884,7 @@ If MARK is non-nil, remove only the specified MARK from the summary line."
   (interactive)
   (if (or (null mark)
 	  (string= mark (wl-summary-temp-mark number)))
-      (wl-summary-unset-mark number (interactive-p))))
+      (wl-summary-unset-mark number (called-interactively-p 'interactive))))
 
 (defun wl-summary-unmark-region (beg end)
   (interactive "r")

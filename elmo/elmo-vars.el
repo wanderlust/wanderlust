@@ -360,24 +360,9 @@ If function, return value of function.")
 (defvar elmo-database-dl-module
   (expand-file-name "database.so" exec-directory))
 
-(defvar elmo-database-dl-handle
-  (if (and (fboundp 'dynamic-link)
-	   (file-exists-p
-	    elmo-database-dl-module))
-      (if (fboundp 'open-database)
-	  t ;;
-	(dynamic-link elmo-database-dl-module))))
+(defvar elmo-database-dl-handle nil)
 
-(if (and elmo-database-dl-handle
-	 (integerp elmo-database-dl-handle))
-    (dynamic-call "emacs_database_init" elmo-database-dl-handle))
-
-(defvar elmo-use-database (or (featurep 'dbm)
-			      (featurep 'gnudbm)
-			      (featurep 'berkdb)
-			      (featurep 'berkeley-db)
-			      ;; static/dl-database
-			      (fboundp 'open-database)))
+(defvar elmo-use-database nil)
 
 (defvar elmo-date-match t
   "Date match is available or not.")
@@ -445,10 +430,7 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
        (and (eq system-type 'windows-nt) (not (featurep 'meadow)))))
   "Your file system has link count, or not.")
 
-(defvar elmo-use-hardlink
-  ;; Any Emacsen may have add-name-to-file(), because loadup.el
-  ;; requires it. :-p Check make-symbolic-link() instead.
-  (fboundp 'make-symbolic-link)
+(defvar elmo-use-hardlink t
   "Hardlink is available on your file system, or not.")
 
 (defvar elmo-weekday-name-en '["Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Sat"])
@@ -473,7 +455,7 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 (defvar elmo-hash-maximum-size 4095
   "Maximum size of hash table.")
 
-(defvar elmo-use-decoded-cache (featurep 'xemacs)
+(defvar elmo-use-decoded-cache nil
   "Use cache of decoded mime charset string.")
 
 (defvar elmo-inhibit-number-mapping nil
@@ -482,8 +464,7 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 (defvar elmo-dop-queue nil
   "Global variable for storing disconnected operation queues.")
 
-(defcustom elmo-mime-display-as-is-coding-system (if (boundp 'MULE)
-						     '*autoconv* 'undecided)
+(defcustom elmo-mime-display-as-is-coding-system 'undecided
   "*Coding system used when message is displayed as is."
   :type 'symbol
   :group 'elmo)

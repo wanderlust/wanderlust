@@ -1075,14 +1075,14 @@ Message is inserted to the summary buffer."
   "Set current message's parent interactively."
   (interactive)
   (let ((number (wl-summary-message-number))
-	(dst-parent (if (interactive-p)
+	(dst-parent (if (called-interactively-p 'interactive)
 			(read-from-minibuffer "Parent Message (No.): ")))
 	entity dst-parent-entity src-parent children
 	update-msgs
 	buffer-read-only)
     (if (string= dst-parent "")
 	(setq dst-parent nil)
-      (if (interactive-p)
+      (if (called-interactively-p 'interactive)
 	  (setq dst-parent (string-to-number dst-parent))
 	(setq dst-parent parent-number)))
     (if (and dst-parent

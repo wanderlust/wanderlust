@@ -343,9 +343,7 @@ Returns a process object.  if making session failed, returns nil."
 	 (sit-for 1))
        (signal (car err) (cdr err))))
     (when process
-      (if (fboundp 'set-process-query-on-exit-flag)
-	  (set-process-query-on-exit-flag process nil)
-	(process-kill-without-query process))
+      (set-process-query-on-exit-flag process nil)
       (when auto-plugged
 	(elmo-set-plugged t server service
 			  (elmo-network-stream-type-symbol stream-type)))

@@ -397,7 +397,7 @@ If nil, default acap port is used."
 ;;;		       "anyone" "") ; protect.
 	  )
       (acap-close proc))
-    (if (interactive-p)
+    (if (called-interactively-p 'interactive)
 	(message "Store completed."))))
 
 (require 'product)

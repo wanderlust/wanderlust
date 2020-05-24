@@ -1,3 +1,34 @@
+2020-05-24  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Drop old platforms support.  Now supported Emacsen are version 24
+	and later.
+
+	* elmo-archive.el: Assuse Emacs 24 or later.
+
+	* elmo-date.el: Likewise.
+
+	* elmo-imap4.el: Likewise.
+
+	* elmo-net.el: Likewise.
+
+	* elmo-pop3.el: Likewise.
+
+	* elmo-util.el: Likewise.
+
+	* elmo-vars.el: Likewise.
+
+	* elmo-version.el: Likewise.
+
+	* elmo.el: Likewise.
+
+	* modb-entity.el: Likewise.
+
+	* pldap.el: Likewise.
+
+	* elmo-database.el: Removed.
+
+	* utf7.el: Removed.
+
 2019-02-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-net.el (elmo-open-socks-ssl-stream)

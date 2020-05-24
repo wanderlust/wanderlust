@@ -32,26 +32,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Emacsen
 ;; (< 20 emacs-major-version) && !(featurep 'mule)
-(unless (coding-system-p 'utf-7-imap)
-  (add-to-list 'ELMO-MODULES 'utf7))
-
-(cond
- ((featurep 'xemacs)
-  (setq WL-MODULES (append WL-MODULES (list 'wl-dnd 'wl-xmas)))
-  (setq ELMO-MODULES (append (list 'elmo-database) ELMO-MODULES)))
- ((and (boundp 'emacs-major-version) (>= emacs-major-version 21))
-  (setq WL-MODULES (append WL-MODULES (list 'wl-e21))))
- ((featurep 'mule)
-  (setq WL-MODULES (append WL-MODULES (list 'wl-mule)))))
+(setq WL-MODULES (append WL-MODULES (list 'wl-e21)))
 
 (defconst WL-AUTOLOAD-MODULES '(
    auto-autoloads custom-load
    ))
-
-(if (or (fboundp 'dynamic-link)
-	;; static
-	(fboundp 'open-database))
-    (add-to-list 'ELMO-MODULES 'elmo-database))
 
 (if (and (module-installed-p 'xml)
 	 (module-installed-p 'url))

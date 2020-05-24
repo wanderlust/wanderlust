@@ -85,7 +85,7 @@
   "*Some imapd have to send select command to update status.
 \(ex. UW imapd 4.5-BETA?\).  For these imapd, you must set this variable t.")
 
-(defvar elmo-imap4-use-modified-utf7 (coding-system-p 'utf-7-imap)
+(defvar elmo-imap4-use-modified-utf7 t
   "*Use modified UTF-7 (rfc2060) encoding for IMAP4 folder name.")
 
 (defvar elmo-imap4-use-cache t
@@ -267,16 +267,12 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 
 (defsubst elmo-imap4-decode-folder-string (string)
   (if elmo-imap4-use-modified-utf7
-      (if (coding-system-p 'utf-7-imap)
-          (decode-coding-string string 'utf-7-imap)
-        (utf7-decode string 'imap))
+      (decode-coding-string string 'utf-7-imap)
     string))
 
 (defsubst elmo-imap4-encode-folder-string (string)
   (if elmo-imap4-use-modified-utf7
-      (if (coding-system-p 'utf-7-imap)
-          (encode-coding-string string 'utf-7-imap)
-        (utf7-encode string 'imap))
+      (encode-coding-string string 'utf-7-imap)
     string))
 
 ;;; Response
@@ -1552,14 +1548,14 @@ Return nil if no complete line has arrived."
              (OK  (progn
                     (setq elmo-imap4-parsing nil)
                     (setq token (symbol-name token))
-                    (unintern token)
+                    (unintern token obarray)
                     (elmo-imap4-debug "*%s* OK arrived" token)
                     (setq elmo-imap4-reached-tag token)
                     (list 'ok (elmo-imap4-parse-resp-text-code))))
              (NO  (progn
                     (setq elmo-imap4-parsing nil)
                     (setq token (symbol-name token))
-                    (unintern token)
+                    (unintern token obarray)
                     (elmo-imap4-debug "*%s* NO arrived" token)
                     (setq elmo-imap4-reached-tag token)
                     (let (code text)
@@ -1573,7 +1569,7 @@ Return nil if no complete line has arrived."
                     (setq elmo-imap4-parsing nil)
                     (elmo-imap4-debug "*%s* BAD arrived" token)
                     (setq token (symbol-name token))
-                    (unintern token)
+                    (unintern token obarray)
                     (setq elmo-imap4-reached-tag token)
                     (let (code text)
                       (when (eq (following-char) ?\[)
@@ -3037,8 +3033,6 @@ time."
 
 (autoload 'elmo-global-flags-set "elmo-flag")
 (autoload 'elmo-get-global-flags "elmo-flag")
-(autoload 'utf7-decode "utf7")
-(autoload 'utf7-encode "utf7")
 
 (require 'product)
 (product-provide (provide 'elmo-imap4) (require 'elmo-version))

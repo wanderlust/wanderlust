@@ -65,10 +65,7 @@ Yet Another Message Interface On Emacsen"
   "Ascii picture used to splash the startup screen.")
 
 (eval-and-compile
-  (when wl-on-emacs21
-    ;; `display-images-p' has not been available in Emacs versions
-    ;; prior to Emacs 21.0.105.
-    (defalias-maybe 'display-images-p 'display-graphic-p)))
+  (defalias-maybe 'display-images-p 'display-graphic-p))
 
 ;; Avoid byte compile warnings.
 (eval-when-compile
@@ -97,20 +94,13 @@ Yet Another Message Interface On Emacsen"
 
 (defun wl-demo-image-type-alist ()
   "Return an alist of available logo image types on the current frame."
-  (if (or (and wl-on-xemacs
-	       (device-on-window-system-p))
-	  window-system)
+  (if window-system
       (let ((xpm
-	     (when (or (and wl-on-xemacs
-			    (featurep 'xpm))
-		       (and wl-on-emacs21
-			    (display-images-p)
-			    (image-type-available-p 'xpm)))
+	     (when (and (display-images-p)
+			(image-type-available-p 'xpm))
 	       '("xpm" . xpm)))
 	    (xbm
-	     (when (or wl-on-xemacs
-		       (and wl-on-emacs21
-			    (display-images-p)
+	     (when (or (and (display-images-p)
 			    (image-type-available-p 'xbm))
 		       (eq t wl-demo-bitmap-mule-available-p)
 		       (and (eq 'unknown wl-demo-bitmap-mule-available-p)
@@ -118,14 +108,12 @@ Yet Another Message Interface On Emacsen"
 			    (setq wl-demo-bitmap-mule-available-p t)))
 	       '("xbm" . xbm)))
 	    (bitmap
-	     (when (and (not wl-on-xemacs)
-			(or (eq t wl-demo-bitmap-mule-available-p)
-			    (and (eq 'unknown wl-demo-bitmap-mule-available-p)
-				 (module-installed-p 'bitmap)
-				 (setq wl-demo-bitmap-mule-available-p t))))
+	     (when (or (eq t wl-demo-bitmap-mule-available-p)
+		       (and (eq 'unknown wl-demo-bitmap-mule-available-p)
+			    (module-installed-p 'bitmap)
+			    (setq wl-demo-bitmap-mule-available-p t)))
 	       '("bitmap" . bitmap))))
-	(if (and wl-on-emacs21
-		 (image-type-available-p 'xbm))
+	(if (image-type-available-p 'xbm)
 	    ;; Prefer xbm rather than bitmap on Emacs 21.
 	    (delq nil (list xpm xbm bitmap '("ascii")))
 	  (delq nil (list xpm bitmap xbm '("ascii")))))
@@ -158,13 +146,7 @@ Return a number of lines that an image occupies in the buffer."
 		    ((eq 'xbm image-type)
 		     (concat (wl-demo-icon-name) ".xbm"))))
 	image width height)
-    (when wl-on-xemacs
-      (when (boundp 'default-gutter-visible-p)
-	(set-specifier (symbol-value 'default-gutter-visible-p)
-		       nil (current-buffer)))
-      (when (featurep 'scrollbar)
-	(set-specifier (symbol-value 'scrollbar-height) 0 (current-buffer))
-	(set-specifier (symbol-value 'scrollbar-width) 0 (current-buffer))))
+
     (if (and file
 	     (if (and wl-icon-directory
 		      (file-directory-p wl-icon-directory))
@@ -179,29 +161,9 @@ Return a number of lines that an image occupies in the buffer."
 	       (message "File not found: %s" file)
 	       nil))
 	(progn
-	  (cond (wl-on-xemacs
-		 (setq width (window-pixel-width)
-		       height (window-pixel-height)
-		       image (make-glyph
-			      (if (eq image-type 'xbm)
-				  (vector image-type ':file file)
-				(vector image-type ':data
-					(wl-demo-image-filter
-					 file image-type)))))
-		 (when (eq 'xbm image-type)
-		   (set-glyph-face image 'wl-highlight-logo-face))
-		 (insert-char (string-to-char " ")
-			      (max 0 (/ (+ (* (- width (glyph-width image))
-					      (window-width)) width)
-					(* 2 width))))
-		 (set-extent-end-glyph (make-extent (point) (point)) image)
-		 (insert "\n")
-		 (/ (+ (* 2 (glyph-height image) (window-height)) height)
-		    (* 2 height)))
-		((and wl-on-emacs21
-		      (or (eq 'xpm image-type)
-			  (and (eq 'xbm image-type)
-			       (image-type-available-p 'xbm))))
+	  (cond ((or (eq 'xpm image-type)
+		     (and (eq 'xbm image-type)
+			  (image-type-available-p 'xbm)))
 		 ;; Use the new redisplay engine on Emacs 21.
 		 (setq image (create-image (wl-demo-image-filter file
 								 image-type)
@@ -249,8 +211,7 @@ Return a number of lines that an image occupies in the buffer."
 
 		 ;; Emacs 21.1 would fail to decode composite chars
 		 ;; if it has been built without fixing coding.c.
-		 (when (and wl-on-emacs21
-			    (>= width 80))
+		 (when (>= width 80)
 		   (erase-buffer)
 		   (let ((coding-system-for-read 'raw-text))
 		     (insert-file-contents file))
@@ -297,57 +258,33 @@ Return a number of lines that an image occupies in the buffer."
 
 (defun wl-demo-setup-properties ()
   "Set up properties of the demo buffer."
-  (cond
-   (wl-on-emacs21
-    ;; I think there should be a better way to set face background
-    ;; for the buffer only. But I don't know how to do it on Emacs21.
-    (goto-char (point-max))
-    (dotimes (i (- (window-height)
-		   (count-lines (point-min) (point))))
-      (insert ?\n))
-    (let* ((fg (face-foreground 'wl-highlight-demo-face))
-	   (bg (face-background 'wl-highlight-demo-face))
-	   (oblique (nconc '(variable-pitch :slant oblique)
-			   (when (stringp bg)
-			     (list ':background bg))
-			   (when (stringp fg)
-			     (list ':foreground fg))))
-	   (start (text-property-any (point-min) (point-max) 'fixed-width t))
-	   end)
-      (if start
-	  (progn
-	    (put-text-property (point-min) start 'face oblique)
-	    (setq end (or (text-property-not-all start (point-max)
-						 'fixed-width t)
-			  (point-max)))
-	    (put-text-property start end 'face
-			       (nconc '(wl-highlight-logo-face)
-				      (when (stringp bg)
-					(list ':background bg))))
-	    (put-text-property end (point-max) 'face oblique))
-	(put-text-property (point-min) (point-max) 'face oblique))))
-   ((and wl-on-xemacs
-	 (face-background-name 'wl-highlight-demo-face))
-    (set-face-background 'default
-			 (face-background-name 'wl-highlight-demo-face)
-			 (current-buffer)))
-   (t
-    (goto-char (point-max))
-    (dotimes (i (- (window-height)
-		   (count-lines (point-min) (point))))
-      (insert ?\n))
-    (let ((start (text-property-any (point-min) (point-max) 'fixed-width t))
-	  end)
-      (if start
-	  (progn
-	    (put-text-property (point-min) start 'face 'wl-highlight-demo-face)
-	    (setq end (or (text-property-not-all start (point-max)
-						 'fixed-width t)
-			  (point-max)))
-	    (put-text-property start end 'face 'wl-highlight-logo-face)
-	    (put-text-property end (point-max) 'face 'wl-highlight-demo-face))
-	(put-text-property (point-min) (point-max)
-			   'face 'wl-highlight-demo-face))))))
+  ;; I think there should be a better way to set face background
+  ;; for the buffer only. But I don't know how to do it on Emacs21.
+  (goto-char (point-max))
+  (dotimes (i (- (window-height)
+		 (count-lines (point-min) (point))))
+    (insert ?\n))
+  (let* ((fg (face-foreground 'wl-highlight-demo-face))
+	 (bg (face-background 'wl-highlight-demo-face))
+	 (oblique (nconc '(variable-pitch :slant oblique)
+			 (when (stringp bg)
+			   (list ':background bg))
+			 (when (stringp fg)
+			   (list ':foreground fg))))
+	 (start (text-property-any (point-min) (point-max) 'fixed-width t))
+	 end)
+    (if start
+	(progn
+	  (put-text-property (point-min) start 'face oblique)
+	  (setq end (or (text-property-not-all start (point-max)
+					       'fixed-width t)
+			(point-max)))
+	  (put-text-property start end 'face
+			     (nconc '(wl-highlight-logo-face)
+				    (when (stringp bg)
+				      (list ':background bg))))
+	  (put-text-property end (point-max) 'face oblique))
+      (put-text-property (point-min) (point-max) 'face oblique))))
 
 (defun wl-demo-insert-text (height)
   "Insert a version and the copyright message after a logo image.  HEIGHT
@@ -378,7 +315,7 @@ argument."
   (interactive "P")
   (let ((selection (wl-demo-image-type-alist))
 	type)
-    (if (and image-type (interactive-p))
+    (if (and image-type (called-interactively-p 'interactive))
 	(setq type (completing-read "Image type: " selection nil t)
 	      image-type (cdr (assoc type selection)))
       (if (setq type (assoc (format "%s" (or image-type wl-demo-display-logo))
@@ -386,8 +323,7 @@ argument."
 	  (setq image-type (cdr type))
 	(setq image-type (when wl-demo-display-logo
 			   (cdr (car selection)))))))
-  (let ((buffer (let ((default-enable-multibyte-characters t)
-		      (default-mc-flag t)
+  (let ((buffer (let ((default-mc-flag t)
 		      (default-line-spacing 0))
 		  (get-buffer-create "*WL Demo*"))))
     (switch-to-buffer buffer)

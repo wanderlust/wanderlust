@@ -53,7 +53,7 @@
   (defalias-maybe 'dispatch-event 'ignore))
 
 (defalias 'wl-set-work-buf 'elmo-set-work-buf)
-(make-obsolete 'wl-set-work-buf 'elmo-set-work-buf)
+(make-obsolete 'wl-set-work-buf 'elmo-set-work-buf "03 Apr 2000 at latest")
 
 (defmacro wl-append (val func)
   (list 'if val
@@ -61,7 +61,7 @@
     (list 'setq val func)))
 
 (defalias 'wl-parse 'elmo-parse)
-(make-obsolete 'wl-parse 'elmo-parse)
+(make-obsolete 'wl-parse 'elmo-parse "20 Feb 2001")
 
 (defun wl-delete-duplicates (list &optional all hack-addresses)
   "Delete duplicate equivalent strings from the LIST.
@@ -112,9 +112,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 
 (defun wl-ask-folder (func mes-string)
   (let* (key keve
-	     (cmd (if wl-on-xemacs
-		      (event-to-character last-command-event)
-		    (string-to-char (format "%s" (this-command-keys))))))
+	     (cmd (string-to-char (format "%s" (this-command-keys)))))
     (message "%s" mes-string)
     (setq key (car (setq keve (wl-read-event-char))))
     (if (or (equal key (string-to-char " "))
@@ -148,41 +146,21 @@ The optional 3rd arg PADDING, if non-nil, specifies a padding character
 to add the result instead of white space.
 If optional 4th argument is non-nil, don't use `wl-invalid-character-message'
 even when invalid character is contained."
-  (static-cond
-   ((and (fboundp 'string-width) (fboundp 'truncate-string-to-width)
-	 (not wl-on-xemacs))
-    (if (> (string-width string) (abs width))
-	(setq string (truncate-string-to-width string (abs width))))
-    (if (= (string-width string) (abs width))
-	string
-      (when (and (not ignore-invalid)
-		 (< (abs width) (string-width string)))
-	(setq string
-	      (truncate-string-to-width wl-invalid-character-message
-					(abs width))))
-      (let ((paddings (make-string
-		       (max 0 (- (abs width) (string-width string)))
-		       (or padding (string-to-char " ")))))
-	(if (< width 0)
-	    (concat paddings string)
-	  (concat string paddings)))))
-   (t
-    (elmo-set-work-buf
-     (set-buffer-multibyte default-enable-multibyte-characters)
-     (insert string)
-     (when (> (current-column) (abs width))
-       (when (> (move-to-column (abs width)) (abs width))
-	 (condition-case nil ; ignore error
-	     (backward-char)
-	   (error)))
-       (setq string (buffer-substring (point-min) (point))))
-     (if (= (current-column) (abs width))
-	 string
-       (let ((paddings (make-string (- (abs width) (current-column))
-				    (or padding (string-to-char " ")))))
-	 (if (< width 0)
-	     (concat paddings string)
-	   (concat string paddings))))))))
+  (if (> (string-width string) (abs width))
+      (setq string (truncate-string-to-width string (abs width))))
+  (if (= (string-width string) (abs width))
+      string
+    (when (and (not ignore-invalid)
+	       (< (abs width) (string-width string)))
+      (setq string
+	    (truncate-string-to-width wl-invalid-character-message
+				      (abs width))))
+    (let ((paddings (make-string
+		     (max 0 (- (abs width) (string-width string)))
+		     (or padding (string-to-char " ")))))
+      (if (< width 0)
+	  (concat paddings string)
+	(concat string paddings)))))
 
 (defun wl-mode-line-buffer-identification (&optional id)
   (let ((priorities '(biff plug title)))
@@ -218,7 +196,7 @@ even when invalid character is contained."
 	(force-mode-line-update t)))))
 
 (defalias 'wl-display-error 'elmo-display-error)
-(make-obsolete 'wl-display-error 'elmo-display-error)
+(make-obsolete 'wl-display-error 'elmo-display-error "03 Apr 2000 at latest")
 
 (defun wl-get-assoc-list-value (assoc-list folder &optional match)
   (catch 'found
@@ -240,61 +218,25 @@ even when invalid character is contained."
 	(setq alist (cdr alist)))
       value)))
 
-;; 2017-12-11
-(make-obsolete 'wl-match-string 'match-string)
+(make-obsolete 'wl-match-string 'match-string"11 Dec 2017")
 
-;; 2017-12-11
-(make-obsolete 'wl-match-buffer 'elmo-match-buffer)
+(make-obsolete 'wl-match-buffer 'elmo-match-buffer "11 Dec 2017")
 
 (put 'wl-as-coding-system 'lisp-indent-function 1)
 (put 'wl-as-mime-charset 'lisp-indent-function 1)
 
 (eval-and-compile
-  (cond
-   (wl-on-mule3
-    (defmacro wl-as-coding-system (coding-system &rest body)
-      `(let ((coding-system-for-read ,coding-system)
-	     (coding-system-for-write ,coding-system))
-	 ,@body)))
-   (wl-on-mule
-    (defmacro wl-as-coding-system (coding-system &rest body)
-      `(let ((file-coding-system-for-read ,coding-system)
-	     (file-coding-system ,coding-system))
-	 ,@body)))
-   (t
-    (defmacro wl-as-coding-system (coding-system &rest body)
-      `(progn ,@body)))))
+  (defmacro wl-as-coding-system (coding-system &rest body)
+    `(let ((coding-system-for-read ,coding-system)
+	   (coding-system-for-write ,coding-system))
+       ,@body)))
 
 (defmacro wl-as-mime-charset (mime-charset &rest body)
   `(wl-as-coding-system (mime-charset-to-coding-system ,mime-charset)
      ,@body))
 
 (defalias 'wl-string 'elmo-string)
-(make-obsolete 'wl-string 'elmo-string)
-
-(if (not (fboundp 'overlays-in))
-    (defun overlays-in (beg end)
-      "Return a list of the overlays that overlap the region BEG ... END.
-Overlap means that at least one character is contained within the overlay
-and also contained within the specified region.
-Empty overlays are included in the result if they are located at BEG
-or between BEG and END."
-      (let ((ovls (overlay-lists))
-	    tmp retval)
-	(if (< end beg)
-	    (setq tmp end
-		  end beg
-		  beg tmp))
-	(setq ovls (nconc (car ovls) (cdr ovls)))
-	(while ovls
-	  (setq tmp (car ovls)
-		ovls (cdr ovls))
-	  (if (or (and (<= (overlay-start tmp) end)
-		       (>= (overlay-start tmp) beg))
-		  (and (<= (overlay-end tmp) end)
-		       (>= (overlay-end tmp) beg)))
-	      (setq retval (cons tmp retval))))
-	retval)))
+(make-obsolete 'wl-string 'elmo-string "03 Apr 2000 at latest")
 
 (defsubst wl-repeat-string (str times)
   (apply #'concat (make-list times str)))
@@ -355,76 +297,6 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
 	    (setq result (cons (list y x) result))))
       (setq keys (cdr keys)))
     result))
-
-(static-unless (fboundp 'pp)
-  (defvar pp-escape-newlines t)
-  (defun pp (object &optional stream)
-    "Output the pretty-printed representation of OBJECT, any Lisp object.
-Quoting characters are printed when needed to make output that `read'
-can handle, whenever this is possible.
-Output stream is STREAM, or value of `standard-output' (which see)."
-    (princ (pp-to-string object) (or stream standard-output)))
-
-  (defun pp-to-string (object)
-    "Return a string containing the pretty-printed representation of OBJECT,
-any Lisp object.  Quoting characters are used when needed to make output
-that `read' can handle, whenever this is possible."
-    (save-excursion
-      (set-buffer (generate-new-buffer " pp-to-string"))
-      (unwind-protect
-	  (progn
-	    (lisp-mode-variables t)
-	    (let ((print-escape-newlines pp-escape-newlines))
-	      (prin1 object (current-buffer)))
-	    (goto-char (point-min))
-	    (while (not (eobp))
-	      (cond
-	       ((looking-at "\\s(\\|#\\s(")
-		(while (looking-at "\\s(\\|#\\s(")
-		  (forward-char)))
-	       ((and (looking-at "\\(quote[ \t]+\\)\\([^.)]\\)")
-		     (> (match-beginning 1) 1)
-		     (= ?\( (char-after (1- (match-beginning 1))))
-		     ;; Make sure this is a two-element list.
-		     (save-excursion
-		       (goto-char (match-beginning 2))
-		       (forward-sexp)
-		       ;; Avoid mucking with match-data; does this test work?
-		       (char-equal ?\) (following-char))))
-		;; -1 gets the paren preceding the quote as well.
-		(delete-region (1- (match-beginning 1)) (match-end 1))
-		(insert "'")
-		(forward-sexp 1)
-		(if (looking-at "[ \t]*\)")
-		    (delete-region (match-beginning 0) (match-end 0))
-		  (error "Malformed quote"))
-		(backward-sexp 1))
-	       ((condition-case err-var
-		    (prog1 t (down-list 1))
-		  (error nil))
-		(backward-char)
-		(skip-chars-backward " \t")
-		(delete-region
-		 (point)
-		 (progn (skip-chars-forward " \t") (point)))
-		(if (not (char-equal ?' (char-after (1- (point)))))
-		    (insert ?\n)))
-	       ((condition-case err-var
-		    (prog1 t (up-list 1))
-		  (error nil))
-		(while (looking-at "\\s)")
-		  (forward-char))
-		(skip-chars-backward " \t")
-		(delete-region
-		 (point)
-		 (progn (skip-chars-forward " \t") (point)))
-		(if (not (char-equal ?' (char-after (1- (point)))))
-		    (insert ?\n)))
-	       (t (goto-char (point-max)))))
-	    (goto-char (point-min))
-	    (indent-sexp)
-	    (buffer-string))
-	(kill-buffer (current-buffer))))))
 
 (defsubst wl-get-date-iso8601 (date)
   (or (get-text-property 0 'wl-date date)
@@ -545,21 +417,11 @@ that `read' can handle, whenever this is possible."
       (message "%s" (or msg ""))
       buffers)))
 
-(static-if (fboundp 'read-directory-name)
-    (defun wl-read-directory-name (prompt dir)
-      (read-directory-name prompt dir dir))
-  (defun wl-read-directory-name (prompt dir)
-    (let ((dir (read-file-name prompt dir)))
-      (unless (file-directory-p dir)
-	(error "%s is not directory" dir))
-      dir)))
+(defun wl-read-directory-name (prompt dir)
+  (read-directory-name prompt dir dir))
 
 ;; local variable check.
-(static-if (fboundp 'local-variable-p)
-    (defalias 'wl-local-variable-p 'local-variable-p)
-  (defmacro wl-local-variable-p (symbol &optional buffer)
-    `(if (assq ,symbol (buffer-local-variables ,buffer))
-	 t)))
+(defalias 'wl-local-variable-p 'local-variable-p)
 
 (defun wl-number-base36 (num len)
   (if (if (< len 0)
@@ -580,21 +442,7 @@ that `read' can handle, whenever this is possible."
 	   ;; (current-time) returns 16-bit ints,
 	   ;; and 2^16*25 just fits into 4 digits i base 36.
 	   (* 25 25)))
-  (let ((tm (static-if (fboundp 'current-time)
-		(current-time)
-	      (let* ((cts (split-string (current-time-string) "[ :]"))
-		     (m (cdr (assoc (nth 1 cts)
-				    '(("Jan" . "01") ("Feb" . "02")
-				      ("Mar" . "03") ("Apr" . "04")
-				      ("May" . "05") ("Jun" . "06")
-				      ("Jul" . "07") ("Aug" . "08")
-				      ("Sep" . "09") ("Oct" . "10")
-				      ("Nov" . "11") ("Dec" . "12"))))))
-		(list (string-to-number (concat (nth 6 cts) m
-						(substring (nth 2 cts) 0 1)))
-		      (string-to-number (concat (substring (nth 2 cts) 1)
-						(nth 4 cts) (nth 5 cts)
-						(nth 6 cts))))))))
+  (let ((tm (current-time)))
     (concat
      (if (memq system-type '(ms-dos emx vax-vms))
 	 (let ((user (downcase (user-login-name))))
@@ -698,38 +546,21 @@ that `read' can handle, whenever this is possible."
   (unless (wl-save-drafts)
     (wl-stop-save-drafts)))
 
-(static-cond
- (wl-on-xemacs
-  (defvar wl-save-drafts-timer-name "wl-save-drafts")
+(defun wl-start-save-drafts ()
+  (when (numberp wl-auto-save-drafts-interval)
+    (require 'timer)
+    (if (get 'wl-save-drafts 'timer)
+	(progn
+	  (timer-set-idle-time (get 'wl-save-drafts 'timer)
+			       wl-auto-save-drafts-interval t)
+	  (timer-activate-when-idle (get 'wl-save-drafts 'timer)))
+      (put 'wl-save-drafts 'timer
+	   (run-with-idle-timer
+	    wl-auto-save-drafts-interval t 'wl-auto-save-drafts)))))
 
-  (defun wl-start-save-drafts ()
-    (when (numberp wl-auto-save-drafts-interval)
-      (unless (get-itimer wl-save-drafts-timer-name)
-	(start-itimer wl-save-drafts-timer-name
-		      'wl-auto-save-drafts
-		      wl-auto-save-drafts-interval
-		      wl-auto-save-drafts-interval
-		      t))))
-
-  (defun wl-stop-save-drafts ()
-    (when (get-itimer wl-save-drafts-timer-name)
-      (delete-itimer wl-save-drafts-timer-name))))
- (t
-  (defun wl-start-save-drafts ()
-    (when (numberp wl-auto-save-drafts-interval)
-      (require 'timer)
-      (if (get 'wl-save-drafts 'timer)
-	  (progn
-	    (timer-set-idle-time (get 'wl-save-drafts 'timer)
-				 wl-auto-save-drafts-interval t)
-	    (timer-activate-when-idle (get 'wl-save-drafts 'timer)))
-	(put 'wl-save-drafts 'timer
-	     (run-with-idle-timer
-	      wl-auto-save-drafts-interval t 'wl-auto-save-drafts)))))
-
-  (defun wl-stop-save-drafts ()
-    (when (get 'wl-save-drafts 'timer)
-      (cancel-timer (get 'wl-save-drafts 'timer))))))
+(defun wl-stop-save-drafts ()
+  (when (get 'wl-save-drafts 'timer)
+    (cancel-timer (get 'wl-save-drafts 'timer))))
 
 (defun wl-set-auto-save-draft (&optional arg)
   (interactive "P")
@@ -739,85 +570,64 @@ that `read' can handle, whenever this is possible."
 		 ((< (prefix-numeric-value arg) 0) t)
 		 (t nil)))
     (wl-start-save-drafts))
-  (when (interactive-p)
+  (when (called-interactively-p 'interactive)
     (message "Auto save is %s (in this buffer)"
 	     (if wl-disable-auto-save "disabled" "enabled"))))
 
 ;; Biff
-(static-cond
- (wl-on-xemacs
-  (defvar wl-biff-timer-name "wl-biff")
+(defun wl-biff-stop ()
+  (mapc (lambda (elt)
+	  (when (timerp elt) (cancel-timer elt)))
+	(get 'wl-biff 'timers))
+  (put 'wl-biff 'timers nil))
 
-  (defun wl-biff-stop ()
-    (when (get-itimer wl-biff-timer-name)
-      (delete-itimer wl-biff-timer-name)))
-
-  (defun wl-biff-start ()
-    (wl-biff-stop)
-    (when wl-biff-check-folder-list
-      (start-itimer wl-biff-timer-name 'wl-biff-check-folders
-		    wl-biff-check-interval wl-biff-check-interval
-		    wl-biff-use-idle-timer))))
-
- (t
-  (defun wl-biff-stop ()
-    (mapc (lambda (elt)
-	    (when (timerp elt) (cancel-timer elt)))
-	  (get 'wl-biff 'timers))
-    (put 'wl-biff 'timers nil))
-
-  (defun wl-biff-start ()
-    (require 'timer)
-    (if wl-biff-check-folder-list
-	;; If biff timer already started, do nothing.
-	(unless (get 'wl-biff 'timers)
-	  (put 'wl-biff 'timers
-	       (list (if wl-biff-use-idle-timer
-			 (run-with-idle-timer
-			  wl-biff-check-interval t 'wl-biff-event-handler)
-		       (run-at-time t wl-biff-check-interval
-				    'wl-biff-launch-handler)))))
-      (message "No folder is specified for biff")))
-
-
-  (defun wl-biff-launch-handler ()
-    (let ((timers (get 'wl-biff 'timers)))
-      (unless (or wl-biff-check-folders-running
-		  (cdr timers))
+(defun wl-biff-start ()
+  (require 'timer)
+  (if wl-biff-check-folder-list
+      ;; If biff timer already started, do nothing.
+      (unless (get 'wl-biff 'timers)
 	(put 'wl-biff 'timers
-	     (cons (run-with-idle-timer
-		    wl-biff-check-delay nil 'wl-biff-event-handler)
-		   timers)))))
+	     (list (if wl-biff-use-idle-timer
+		       (run-with-idle-timer
+			wl-biff-check-interval t 'wl-biff-event-handler)
+		     (run-at-time t wl-biff-check-interval
+				  'wl-biff-launch-handler)))))
+    (message "No folder is specified for biff")))
 
-  (defun wl-biff-event-handler ()
-    ;; PAKURing from FSF:time.el
-    (unwind-protect
-	(progn
-	  (condition-case signal
-	      (wl-biff-check-folders)
-	    (error
-	     (message "wl-biff: %s (%s)" (car signal) (cdr signal))))
-	  ;; Do redisplay right now, if no input pending.
-	  (sit-for 0))
-      (wl-biff-start)
+(defun wl-biff-launch-handler ()
+  (let ((timers (get 'wl-biff 'timers)))
+    (unless (or wl-biff-check-folders-running
+		(cdr timers))
       (put 'wl-biff 'timers
-	   (let ((timers (get 'wl-biff 'timers)))
-	     ;; Cancel existing extra idle timer (normaly only 1 at most).
-	     (while (cdr timers)
-	       (when (timerp (car timers)) (cancel-timer (car timers)))
-	       (setq timers (cdr timers)))
-	     (if (and wl-biff-use-idle-timer
-		      ;; Available on Emacs 22 or later.
-		      (fboundp 'current-idle-time))
-		 ;; Run extra idle timer for the case Emacs keeps idle.
-		 (cons (run-with-idle-timer
-			(+ wl-biff-check-interval
-			   (float-time (current-idle-time)))
-			nil 'wl-biff-event-handler)
-		       timers)
-		   timers)))))
-  ))
+	   (cons (run-with-idle-timer
+		  wl-biff-check-delay nil 'wl-biff-event-handler)
+		 timers)))))
 
+(defun wl-biff-event-handler ()
+  ;; PAKURing from FSF:time.el
+  (unwind-protect
+      (progn
+	(condition-case signal
+	    (wl-biff-check-folders)
+	  (error
+	   (message "wl-biff: %s (%s)" (car signal) (cdr signal))))
+	;; Do redisplay right now, if no input pending.
+	(sit-for 0))
+    (wl-biff-start)
+    (put 'wl-biff 'timers
+	 (let ((timers (get 'wl-biff 'timers)))
+	   ;; Cancel existing extra idle timer (normaly only 1 at most).
+	   (while (cdr timers)
+	     (when (timerp (car timers)) (cancel-timer (car timers)))
+	     (setq timers (cdr timers)))
+	   (if wl-biff-use-idle-timer
+	       ;; Run extra idle timer for the case Emacs keeps idle.
+	       (cons (run-with-idle-timer
+		      (+ wl-biff-check-interval
+			 (float-time (current-idle-time)))
+		      nil 'wl-biff-event-handler)
+		     timers)
+	     timers)))))
 
 (defsubst wl-biff-notify (new-mails notify-minibuf)
   (if (> new-mails 0)
@@ -840,17 +650,17 @@ that `read' can handle, whenever this is possible."
 (defun wl-biff-check-folders ()
   (interactive)
   (if wl-biff-check-folders-running
-      (when (interactive-p)
+      (when (called-interactively-p 'interactive)
 	(message "Biff process is running."))
     (setq wl-biff-check-folders-running t)
-    (when (interactive-p)
+    (when (called-interactively-p 'interactive)
       (message "Checking new mails..."))
     (let ((new-mails 0)
 	  (flist (or wl-biff-check-folder-list (list wl-default-folder)))
 	  folder)
       (if (eq (length flist) 1)
 	  (wl-biff-check-folder-async (wl-folder-get-elmo-folder
-				       (car flist) 'biff) (interactive-p))
+				       (car flist) 'biff) (called-interactively-p 'interactive))
 	(unwind-protect
 	    (while flist
 	      (setq folder (wl-folder-get-elmo-folder (car flist))
@@ -862,7 +672,7 @@ that `read' can handle, whenever this is possible."
 		      (+ new-mails
 			 (nth 0 (wl-biff-check-folder folder))))))
 	  (setq wl-biff-check-folders-running nil)
-	  (wl-biff-notify new-mails (interactive-p)))))))
+	  (wl-biff-notify new-mails (called-interactively-p 'interactive)))))))
 
 (defun wl-biff-check-folder (folder)
   (if (eq (elmo-folder-type-internal folder) 'pop3)
@@ -909,22 +719,17 @@ that `read' can handle, whenever this is possible."
 	    (setq wl-biff-check-folders-running nil))))
     (setq wl-biff-check-folders-running nil)))
 
-;; 2016-09-22
-(make-obsolete 'wl-expand-newtext 'elmo-expand-newtext)
+(make-obsolete 'wl-expand-newtext 'elmo-expand-newtext "22 Sep 2016")
 
-;; 2016-09-22
-(make-obsolete 'wl-regexp-opt 'elmo-regexp-opt)
+(make-obsolete 'wl-regexp-opt 'elmo-regexp-opt "22 Sep 2016")
 
 (defun wl-region-exists-p ()
   "Return non-nil if a region exists on current buffer."
-  (static-if wl-on-xemacs
-      (region-active-p)
-    (and transient-mark-mode mark-active)))
+  (and transient-mark-mode mark-active))
 
 (defun wl-deactivate-region ()
   "Deactivate region on current buffer"
-  (static-unless wl-on-xemacs
-      (setq mark-active nil)))
+  (setq mark-active nil))
 
 (defvar wl-line-string)
 (defun wl-line-parse-format (format spec-alist)
@@ -1011,9 +816,7 @@ that `read' can handle, whenever this is possible."
 
 (defsubst wl-window-deletable-p ()
   "Return t if selected window can be safely deleted from its frame."
-  (if (fboundp 'window-deletable-p)
-      (eq (window-deletable-p) t)
-    (not (one-window-p))))
+      (eq (window-deletable-p) t))
       
 ;;; Search Condition
 (defun wl-search-condition-fields ()
@@ -1183,41 +986,22 @@ that `read' can handle, whenever this is possible."
 		      initial-input hist def inherit-input-method)
      ","))
 
-(static-when (fboundp 'completing-read-multiple)
-  (eval-when-compile
-    (require 'crm))
-  (defun wl-completing-read-multiple-2 (prompt
-					table
-					&optional predicate
-					require-match initial-input
-					hist def inherit-input-method)
-    "Read multiple strings in the minibuffer"
-    (let ((ret (completing-read-multiple prompt table predicate
-					 require-match initial-input
-					 hist def inherit-input-method)))
-      (if (and def (equal ret '("")))
-	  (split-string def crm-separator)
-	ret))))
-
-(static-cond
- ((not (fboundp 'completing-read-multiple))
-  (defalias 'wl-completing-read-multiple 'wl-completing-read-multiple-1))
- ((< emacs-major-version 22)
-  (defun wl-completing-read-multiple (prompt
+(eval-when-compile
+  (require 'crm))
+(defun wl-completing-read-multiple-2 (prompt
 				      table
 				      &optional predicate
 				      require-match initial-input
 				      hist def inherit-input-method)
-    "Read multiple strings in the minibuffer"
-    (if require-match
-	(wl-completing-read-multiple-1 prompt table predicate
-				       nil initial-input
-				       hist def inherit-input-method)
-      (wl-completing-read-multiple-2 prompt table predicate
-				     nil initial-input
-				     hist def inherit-input-method))))
- (t
-  (defalias 'wl-completing-read-multiple 'completing-read-multiple)))
+  "Read multiple strings in the minibuffer"
+  (let ((ret (completing-read-multiple prompt table predicate
+				       require-match initial-input
+				       hist def inherit-input-method)))
+    (if (and def (equal ret '("")))
+	(split-string def crm-separator)
+      ret)))
+
+(defalias 'wl-completing-read-multiple 'completing-read-multiple)
 
 
 (cond
@@ -1230,12 +1014,7 @@ that `read' can handle, whenever this is possible."
   (defalias 'wl-read-shell-command 'read-from-minibuffer)))
 
 (defun wl-read-buffer (prompt &optional def require-match)
-  (let ((prompt (if (and def
-			 (< emacs-major-version 22)
-			 (null wl-on-xemacs))
-		    (format "%s(default %s) " prompt def)
-		  prompt)))
-    (read-buffer prompt def require-match)))
+  (read-buffer prompt def require-match))
 
 ;; Prune functions provided temporarily to avoid compile warnings.
 (eval-when-compile

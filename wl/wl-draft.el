@@ -379,7 +379,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
     (setq to (wl-parse-addresses to)
 	  cc (wl-parse-addresses cc))
     (with-temp-buffer			; to keep raw buffer unibyte.
-      (set-buffer-multibyte default-enable-multibyte-characters)
+      (set-buffer-multibyte t)
       (setq decoder (mime-find-field-decoder 'Subject 'plain))
       (setq subject (if (and subject decoder)
 			(funcall decoder subject) subject))
@@ -413,7 +413,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 	    (wl-draft-make-mail-followup-to (append to cc)))
       (setq mail-followup-to (wl-delete-duplicates mail-followup-to nil t)))
     (with-temp-buffer			; to keep raw buffer unibyte.
-      (set-buffer-multibyte default-enable-multibyte-characters)
+      (set-buffer-multibyte t)
       (setq newsgroups (elmo-parse newsgroups
 				 "[ \t\f\r\n,]*\\([^ \t\f\r\n,]+\\)")
 	    newsgroups (wl-delete-duplicates newsgroups)
@@ -823,7 +823,7 @@ text was killed."
   "Move point to beginning of header value or to beginning of line."
   (interactive "p")
   (let ((zrs 'zmacs-region-stays))
-    (when (and (interactive-p) (boundp zrs))
+    (when (and (called-interactively-p 'interactive) (boundp zrs))
       (set zrs t)))
   (if (wl-draft-point-in-header-p)
       (let* ((here (point))
@@ -1679,7 +1679,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (unless (cdr (assq 'To header-alist))
       (let ((to))
 	(when (setq to (and
-			(interactive-p)
+			(called-interactively-p 'interactive)
 			""))
 	  (if (assq 'To header-alist)
 	      (setcdr (assq 'To header-alist) to)
@@ -1701,13 +1701,13 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	 content-type content-transfer-encoding))
     (wl-draft-insert-mail-header-separator)
     (wl-draft-prepare-edit)
-    (if (interactive-p)
+    (if (called-interactively-p 'interactive)
 	(run-hooks 'wl-mail-setup-hook))
     (goto-char (point-min))
     (setq buffer-undo-list nil)
     (wl-user-agent-compose-internal) ;; user-agent
     (cond ((and
-	    (interactive-p)
+	    (called-interactively-p 'interactive)
 	    (string= (cdr (assq 'To header-alist)) ""))
 	   (mail-position-on-field "To"))
 	  (t
@@ -1883,7 +1883,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 			      "\\1"))
 		auto-save-file-name-transforms)))
   (when wl-draft-write-file-function
-    (add-hook 'local-write-file-hooks wl-draft-write-file-function))
+    (add-hook 'write-file-functions wl-draft-write-file-function))
   (wl-draft-overload-functions)
   (unless (eq wl-draft-real-time-highlight 'jit)
     (wl-highlight-headers 'for-draft))
@@ -2091,7 +2091,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (unless wl-draft-parent-folder
       (setq wl-draft-parent-folder ""))
     (when wl-draft-write-file-function
-      (add-hook 'local-write-file-hooks wl-draft-write-file-function))
+      (add-hook 'write-file-functions wl-draft-write-file-function))
     (unless (eq wl-draft-real-time-highlight 'jit)
       (wl-highlight-headers 'for-draft))
     (goto-char body-top)
@@ -2243,7 +2243,7 @@ Automatically applied in draft sending time."
 	(local-variables wl-draft-config-variables)
 	wl-draft-real-time-highlight
 	key clist found)
-    (when (and (or (interactive-p)
+    (when (and (or (called-interactively-p 'interactive)
 		   wl-draft-config-exec-flag)
 	       alist)
       (save-excursion
@@ -2533,10 +2533,6 @@ instead."
 (defun wl-draft-highlight-and-recenter (&optional n)
   (interactive "P")
   (wl-draft-highlight)
-  (static-when wl-on-xemacs
-    ;; Cope with one of many XEmacs bugs that `recenter' takes
-    ;; a long time if there are a lot of invisible text lines.
-    (redraw-frame))
   (recenter n))
 
 ;; insert element from history
@@ -2824,7 +2820,7 @@ nil means real-time highlighting is disabled."
 	  (if state
 	      (and (memq state candidates) state)
 	    (cadr (memq wl-draft-real-time-highlight candidates)))))
-  (when (interactive-p)
+  (when (called-interactively-p 'interactive)
     (if wl-draft-real-time-highlight
 	(message "Real-time highlighting is using %s."
 		 (cdr (assq wl-draft-real-time-highlight

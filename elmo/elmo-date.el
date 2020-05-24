@@ -35,72 +35,20 @@
 (require 'elmo-vars)
 (eval-when-compile (require 'cl))
 
-;; 2012-08-26
-(make-obsolete 'elmo-match-string 'match-string)
+(make-obsolete 'elmo-match-string 'match-string "26 Aug 2012")
 
-(defmacro elmo-match-buffer (pos)
-  "Substring POSth matched from the current buffer."
-  (if (fboundp 'match-string-no-properties)
-      `(match-string-no-properties ,pos)
-    `(buffer-substring-no-properties
-      (match-beginning ,pos) (match-end ,pos))))
+(defalias 'elmo-match-buffer'match-string-no-properties)
 
 (eval-and-compile
-  (cond
-   ((fboundp 'replace-regexp-in-string)
-(defun elmo-replace-in-string (str regexp newtext &optional literal)
-  "Replace all matches in STR for REGEXP with NEWTEXT string.
+  (defun elmo-replace-in-string (str regexp newtext &optional literal)
+    "Replace all matches in STR for REGEXP with NEWTEXT string.
 And returns the new string.
 Optional LITERAL non-nil means do a literal replacement.
 Otherwise treat \\ in NEWTEXT string as special:
   \\& means substitute original matched text,
   \\N means substitute match for \(...\) number N,
   \\\\ means insert one \\."
-  (replace-regexp-in-string regexp newtext str t literal))
-    )
-   (t
-;; from subr.el
-(defun elmo-replace-in-string (str regexp newtext &optional literal)
-  "Replace all matches in STR for REGEXP with NEWTEXT string.
-And returns the new string.
-Optional LITERAL non-nil means do a literal replacement.
-Otherwise treat \\ in NEWTEXT string as special:
-  \\& means substitute original matched text,
-  \\N means substitute match for \(...\) number N,
-  \\\\ means insert one \\."
-  (let ((rtn-str "")
-	(start 0)
-	(special)
-	match prev-start)
-    (while (setq match (string-match regexp str start))
-      (setq prev-start start
-	    start (match-end 0)
-	    rtn-str
-	    (concat
-	     rtn-str
-	     (substring str prev-start match)
-	     (cond (literal newtext)
-		   (t (mapconcat
-		       (lambda (c)
-			 (if special
-			     (progn
-			       (setq special nil)
-			       (cond ((eq c ?\\) "\\")
-				     ((eq c ?&)
-				      (match-string 0 str))
-				     ((and (>= c ?0) (<= c ?9))
-				      (if (> c (+ ?0 (length
-						      (match-data))))
-					  ;; Invalid match num
-					  (error "Invalid match num: %c" c)
-					(setq c (- c ?0))
-					(match-string c str)))
-				     (t (char-to-string c))))
-			   (if (eq c ?\\) (progn (setq special t) nil)
-			     (char-to-string c))))
-		       newtext ""))))))
-    (concat rtn-str (substring str start))))
-    )))
+    (replace-regexp-in-string regexp newtext str t literal)))
 
 (defvar elmo-date-descriptions
   '((yesterday . [0 0 1])
@@ -238,22 +186,8 @@ Otherwise treat \\ in NEWTEXT string as special:
   (let ((system-time-locale "C"))
     (format-time-string "%d-%b-%Y %T %z")))
 
-(static-cond
- ((fboundp 'time-less-p)
-  (defalias 'elmo-time-less-p 'time-less-p)
-  (defalias 'elmo-time< 'time-less-p))
- (t
-  (defun elmo-time-less-p (lhs rhs)
-    (while (and (car lhs) (car rhs))
-      (cond ((car-less-than-car lhs rhs)
-	     (setq lhs nil))
-	    ((= (car lhs) (car rhs))
-	     (setq lhs (cdr lhs)
-		   rhs (cdr rhs)))
-	    (t
-	     (setq rhs nil))))
-    (not (null rhs)))
-  (defalias 'elmo-time< 'elmo-time-less-p)))
+(defalias 'elmo-time-less-p 'time-less-p)
+(defalias 'elmo-time< 'time-less-p)
 
 (defun elmo-time-to-days (time)
   (let ((date (decode-time time)))

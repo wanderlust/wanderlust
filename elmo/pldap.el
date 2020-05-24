@@ -38,17 +38,6 @@
 
 (eval-when-compile (require 'cl))
 
-(defmacro ldap-static-if (cond then &rest else)
-  "`if' expression but COND is evaluated at compile-time."
-  (if (eval cond)
-      then
-    `(progn ,@else)))
-
-(ldap-static-if (and (not (featurep 'pldap))
-		     (fboundp 'ldap-open))
-    ;; You have built-in ldap feature (XEmacs).
-    (require 'ldap)
-
 ;; You don't have built-in ldap feature.
 ;; Use external program.
 
@@ -813,15 +802,13 @@ entry according to the value of WITHDN."
 
 (defun ldap-decode-string (str)
   "Decode LDAP STR."
-  (if (and (fboundp 'decode-coding-string)
-	   ldap-coding-system)
+  (if ldap-coding-system
       (decode-coding-string str ldap-coding-system)
     str))
 
 (defun ldap-encode-string (str)
   "Encode LDAP STR."
-  (if (and (fboundp 'encode-coding-string)
-	   ldap-coding-system)
+  (if ldap-coding-system
       (encode-coding-string str ldap-coding-system)
     str))
 
@@ -891,7 +878,7 @@ Otherwise, invoke `ldap-search-entries'.  ARGS are passed to each function."
 
 (make-obsolete 'ldap-search
 	       "Use `ldap-search-entries' instead or
-`ldap-search-basic' for the low-level search API.")
+`ldap-search-basic' for the low-level search API." "15 Jun 2000 at latest")
 
 (defun ldap-search-entries (filter &optional host attributes attrsonly withdn)
   "Perform an LDAP search.
@@ -920,11 +907,11 @@ entry according to the value of WITHDN."
     (setq ldap (ldap-open host host-plist))
     (if ldap-verbose
 	(message "Searching with LDAP on %s..." host))
-    (setq result (ldap-search ldap (ldap-encode-string filter)
-			      (plist-get host-plist 'base)
-			      (plist-get host-plist 'scope)
-			      attributes attrsonly withdn
-			      ldap-verbose))
+    (setq result (ldap-search-basic ldap (ldap-encode-string filter)
+				    (plist-get host-plist 'base)
+				    (plist-get host-plist 'scope)
+				    attributes attrsonly withdn
+				    ldap-verbose))
     (ldap-close ldap)
     (with-temp-buffer
       (set-buffer-multibyte nil)
@@ -1063,8 +1050,6 @@ PASSWD is the corresponding password."
 	  (message "Deleting LDAP entry..."))
       (ldap-delete ldap dn))
     (ldap-close ldap)))
-;; end of ldap-static-if
-)
 
 (provide 'pldap)
 

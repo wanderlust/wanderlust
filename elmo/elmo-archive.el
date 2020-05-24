@@ -909,7 +909,7 @@ TYPE specifies the archiver's symbol."
 
 (defsubst elmo-archive-msgdb-create-entity-subr (msgdb number)
   (let (header-end)
-    (set-buffer-multibyte default-enable-multibyte-characters)
+    (set-buffer-multibyte t)
     (goto-char (point-min))
     (if (re-search-forward "\\(^--.*$\\)\\|\\(\n\n\\)" nil t)
 	(setq header-end (point))
@@ -1056,7 +1056,7 @@ TYPE specifies the archiver's symbol."
 	(when (file-exists-p arc)
 	  (as-binary-process
 	   (elmo-archive-call-method method args t))
-	  (set-buffer-multibyte default-enable-multibyte-characters)
+	  (set-buffer-multibyte t)
 	  (decode-mime-charset-region (point-min)(point-max) elmo-mime-charset)
 	  (elmo-message-buffer-match-condition condition number))))))
 

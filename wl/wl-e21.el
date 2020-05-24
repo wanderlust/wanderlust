@@ -179,13 +179,9 @@
 	  (image-type-available-p 'xpm))))
 
 (eval-and-compile
-  (if (boundp 'image-load-path)
-      (defun wl-e21-find-image (specs)
-	(let ((image-load-path (cons 'wl-icon-directory image-load-path)))
-	  (find-image specs)))
-    (defun wl-e21-find-image (specs)
-      (let ((load-path (cons wl-icon-directory load-path)))
-	(find-image specs)))))
+  (defun wl-e21-find-image (specs)
+    (let ((image-load-path (cons 'wl-icon-directory image-load-path)))
+      (find-image specs))))
 
 (defun wl-e21-setup-toolbar (bar)
   (when (and wl-use-toolbar

@@ -47,12 +47,7 @@
 (require 'wl-vars)
 (require 'wl-util)
 
-(cond (wl-on-xemacs
-       (require 'wl-xmas))
-      (wl-on-emacs21
-       (require 'wl-e21))
-      (t
-       (require 'wl-mule)))
+(require 'wl-e21)
 
 (provide 'wl)				; circular dependency
 (require 'wl-folder)
@@ -169,11 +164,8 @@
     ["Exit"           wl-plugged-exit t]))
 
 (eval-and-compile
-  (if wl-on-xemacs
-      (defun wl-plugged-setup-mouse ()
-	(define-key wl-plugged-mode-map 'button2 'wl-plugged-click))
-    (defun wl-plugged-setup-mouse ()
-      (define-key wl-plugged-mode-map [mouse-2] 'wl-plugged-click))))
+  (defun wl-plugged-setup-mouse ()
+    (define-key wl-plugged-mode-map [mouse-2] 'wl-plugged-click)))
 
 (unless wl-plugged-mode-map
   (setq wl-plugged-mode-map (make-sparse-keymap))

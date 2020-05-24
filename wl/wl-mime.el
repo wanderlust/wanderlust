@@ -490,8 +490,6 @@ It calls following-method selected from variable
       (when wl-highlight-body-too
 	(wl-highlight-body))
       (run-hooks 'wl-draft-preview-message-hook))
-    (if (fboundp 'make-local-hook)
-	(make-local-hook 'kill-buffer-hook))
     (add-hook 'kill-buffer-hook #'wl-draft-hide-attributes-buffer nil t)
     (if wl-draft-preview-attributes
 	(ignore-errors ; in case when the window is too small

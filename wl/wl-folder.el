@@ -126,21 +126,12 @@
     ["Exit"                 wl-exit t]
     ))
 
-(if wl-on-xemacs
-    (defun wl-folder-setup-mouse ()
-      (define-key wl-folder-mode-map 'button2 'wl-folder-click)
-      (define-key wl-folder-mode-map 'button4 'wl-folder-prev-entity)
-      (define-key wl-folder-mode-map 'button5 'wl-folder-next-entity)
-      (define-key wl-folder-mode-map [(shift button4)]
-	'wl-folder-prev-unread)
-      (define-key wl-folder-mode-map [(shift button5)]
-	'wl-folder-next-unread))
-  (defun wl-folder-setup-mouse ()
-    (define-key wl-folder-mode-map [mouse-2] 'wl-folder-click)
-    (define-key wl-folder-mode-map [mouse-4] 'wl-folder-prev-entity)
-    (define-key wl-folder-mode-map [mouse-5] 'wl-folder-next-entity)
-    (define-key wl-folder-mode-map [S-mouse-4] 'wl-folder-prev-unread)
-    (define-key wl-folder-mode-map [S-mouse-5] 'wl-folder-next-unread)))
+(defun wl-folder-setup-mouse ()
+  (define-key wl-folder-mode-map [mouse-2] 'wl-folder-click)
+  (define-key wl-folder-mode-map [mouse-4] 'wl-folder-prev-entity)
+  (define-key wl-folder-mode-map [mouse-5] 'wl-folder-next-entity)
+  (define-key wl-folder-mode-map [S-mouse-4] 'wl-folder-prev-unread)
+  (define-key wl-folder-mode-map [S-mouse-5] 'wl-folder-next-unread))
 
 (if wl-folder-mode-map
     nil
@@ -1386,7 +1377,7 @@ If current line is group folder, all subfolders are marked."
 (defun wl-folder-toggle-disp-summary (&optional arg folder)
   (interactive)
   (if (or (and folder (assoc folder wl-folder-group-alist))
-	  (and (interactive-p) (wl-folder-buffer-group-p)))
+	  (and (called-interactively-p 'interactive) (wl-folder-buffer-group-p)))
       (error "This command is not available on Group"))
   (beginning-of-line)
   (let (wl-auto-select-first
@@ -1498,8 +1489,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
   (setq wl-folder-buffer-cur-entity-id nil
 	wl-folder-buffer-cur-path nil
 	wl-folder-buffer-cur-point nil)
-  (when (boundp 'bidi-paragraph-direction)
-    (set 'bidi-paragraph-direction 'left-to-right))
+  (set 'bidi-paragraph-direction 'left-to-right)
   (wl-mode-line-buffer-identification)
   (easy-menu-add wl-folder-mode-menu)
   ;; This hook may contain the functions `wl-folder-init-icons' and

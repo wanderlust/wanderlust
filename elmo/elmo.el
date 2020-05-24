@@ -880,7 +880,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 						      nil
 						      cache-path)
 			    'unread)
-	(set-buffer-multibyte default-enable-multibyte-characters)
+	(set-buffer-multibyte t)
 	(elmo-message-buffer-match-condition condition number)))))
 
 (luna-define-method elmo-folder-pack-numbers ((folder elmo-folder))
@@ -1936,10 +1936,9 @@ A value in this structure is cached at first access."
 
 
 ;; Obsolete functions.
-;; 2001-12-11: *-dir -> *-directory
 (defalias 'elmo-folder-make-temp-dir 'elmo-folder-make-temporary-directory)
 (make-obsolete 'elmo-folder-make-temp-dir
-	       'elmo-folder-make-temporary-directory)
+	       'elmo-folder-make-temporary-directory "11 Dec 2001")
 
 (require 'product)
 (product-provide (provide 'elmo) (require 'elmo-version))

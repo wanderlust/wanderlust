@@ -47,14 +47,10 @@
 (defvar elmo-work-buf-name " *elmo work*")
 (defvar elmo-temp-buf-name " *elmo temp*")
 
-(or (boundp 'default-enable-multibyte-characters)
-    (defvar default-enable-multibyte-characters (featurep 'mule)
-      "The mock variable except for Emacs 20."))
-
 (defconst elmo-multibyte-buffer-name " *elmo-multibyte-buffer*")
 
 (defmacro elmo-with-enable-multibyte (&rest body)
-  "Evaluate BODY with `default-enable-multibyte-character' when needed."
+  "Evaluate BODY with multibyte buffer when needed."
   ;; Check whether FLIM's MIME-charset string encoder/decoders work on
   ;; unibyte buffer.
   (static-if (fboundp 'mime-charset-encode-string)
@@ -103,7 +99,7 @@ Buffer's multibyteness is ignored."
 (defmacro elmo-set-work-buf (&rest body)
   "Execute BODY on work buffer.  Work buffer remains."
   `(with-current-buffer (get-buffer-create elmo-work-buf-name)
-     (set-buffer-multibyte default-enable-multibyte-characters)
+     (set-buffer-multibyte t)
      (erase-buffer)
      ,@body))
 
@@ -119,89 +115,23 @@ Buffer's multibyteness is ignored."
 (def-edebug-spec elmo-bind-directory
   (form &rest form))
 
-(static-if (condition-case nil
-	       (plist-get '(one) 'other)
-	     (error t))
-    (defmacro elmo-safe-plist-get (plist prop)
-      `(ignore-errors
-	 (plist-get ,plist ,prop)))
-  (defalias 'elmo-safe-plist-get 'plist-get))
-
-(eval-when-compile
-  (unless (fboundp 'coding-system-base)
-    (defalias 'coding-system-base 'ignore))
-  (unless (fboundp 'coding-system-name)
-    (defalias 'coding-system-name 'ignore))
-  (unless (fboundp 'find-file-coding-system-for-read-from-filename)
-    (defalias 'find-file-coding-system-for-read-from-filename 'ignore))
-  (unless (fboundp 'find-operation-coding-system)
-    (defalias 'find-operation-coding-system 'ignore)))
+(defalias 'elmo-safe-plist-get 'plist-get)
 
 (defun elmo-set-auto-coding (&optional filename)
   "Find coding system used to decode the contents of the current buffer.
 This function looks for the coding system magic cookie or examines the
 coding system specified by `file-coding-system-alist' being associated
 with FILENAME which defaults to `buffer-file-name'."
-  (cond
-   ((boundp 'set-auto-coding-function) ;; Emacs
-    (if filename
-	(or (funcall (symbol-value 'set-auto-coding-function)
-		     filename (- (point-max) (point-min)))
-	    (car (find-operation-coding-system 'insert-file-contents
-					       filename)))
-      (let (auto-coding-alist)
-	(condition-case nil
-	    (funcall (symbol-value 'set-auto-coding-function)
-		     nil (- (point-max) (point-min)))
-	  (error nil)))))
-   ((featurep 'file-coding) ;; XEmacs
-    (let ((case-fold-search t)
-	  (end (point-at-eol))
-	  codesys start)
-      (or
-       (and (re-search-forward "-\\*-+[\t ]*" end t)
-	    (progn
-	      (setq start (match-end 0))
-	      (re-search-forward "[\t ]*-+\\*-" end t))
-	    (progn
-	      (setq end (match-beginning 0))
-	      (goto-char start)
-	      (or (looking-at "coding:[\t ]*\\([^\t ;]+\\)")
-		  (re-search-forward
-		   "[\t ;]+coding:[\t ]*\\([^\t ;]+\\)"
-		   end t)))
-	    (find-coding-system (setq codesys
-				      (intern (match-string 1))))
-	    codesys)
-       (and (re-search-forward "^[\t ]*;+[\t ]*Local[\t ]+Variables:"
-			       nil t)
-	    (progn
-	      (setq start (match-end 0))
-	      (re-search-forward "^[\t ]*;+[\t ]*End:" nil t))
-	    (progn
-	      (setq end (match-beginning 0))
-	      (goto-char start)
-	      (re-search-forward
-	       "^[\t ]*;+[\t ]*coding:[\t ]*\\([^\t\n\r ]+\\)"
-	       end t))
-	    (find-coding-system (setq codesys
-				      (intern (match-string 1))))
-	    codesys)
-       (and (progn
-	      (goto-char (point-min))
-	      (setq case-fold-search nil)
-	      (re-search-forward "^;;;coding system: "
-;;;				 (+ (point-min) 3000) t))
-				 nil t))
-	    (looking-at "[^\t\n\r ]+")
-	    (find-coding-system
-	     (setq codesys (intern (match-string 0))))
-	    codesys)
-       (and filename
-	    (setq codesys
-		  (find-file-coding-system-for-read-from-filename
-		   filename))
-	    (coding-system-name (coding-system-base codesys))))))))
+  (if filename
+      (or (funcall (symbol-value 'set-auto-coding-function)
+		   filename (- (point-max) (point-min)))
+	  (car (find-operation-coding-system 'insert-file-contents
+					     filename)))
+    (let (auto-coding-alist)
+      (condition-case nil
+	  (funcall (symbol-value 'set-auto-coding-function)
+		   nil (- (point-max) (point-min)))
+	(error nil)))))
 
 (defun elmo-object-load (filename &optional mime-charset no-err)
   "Load OBJECT from the file specified by FILENAME.
@@ -255,11 +185,7 @@ File content is encoded with MIME-CHARSET."
 			 mime-charset))))
 	(goto-char (point-min))
 	(insert ";;; -*- mode: emacs-lisp; coding: "
-		;; coding system object is not a symbol on XEmacs.
-		(symbol-name (if (and (featurep 'xemacs)
-				      (coding-system-p coding))
-				 (coding-system-name coding)
-			       coding))
+		(symbol-name coding)
 		" -*-\n")
 	(encode-coding-region (point-min) (point-max) coding)))
     (elmo-save-buffer filename)))
@@ -616,9 +542,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
       list)))
 
 (eval-and-compile
-  (if (fboundp 'clear-string)
-      (defalias 'elmo-clear-string 'clear-string)
-    (defun elmo-clear-string (s) (fillarray s 0))))
+  (defalias 'elmo-clear-string 'clear-string))
 
 (defun elmo-plug-on-by-servers (alist &optional servers)
   (let ((server-list (or servers elmo-plug-on-servers)))
@@ -1042,25 +966,24 @@ If optional DELETE-FUNCTION is speficied, it is used as delete procedure."
 	(setq count (1+ count)))
       count)))
 
-(if (fboundp 'display-error)
-    (defalias 'elmo-display-error 'display-error)
-  (defun elmo-display-error (error-object stream)
-    "A tiny function to display ERROR-OBJECT to the STREAM."
-    (let ((first t)
-	  (errobj error-object)
-	  err-mes)
-      (while errobj
-	(setq err-mes (concat err-mes (format
-				       (if (stringp (car errobj))
-					   "%s"
-					 "%S")
-				       (car errobj))))
-	(setq errobj (cdr errobj))
-	(if errobj (setq err-mes (concat err-mes (if first ": " ", "))))
-	(setq first nil))
-      (princ err-mes stream))))
+(defun elmo-display-error (error-object stream)
+  "A tiny function to display ERROR-OBJECT to the STREAM."
+  (let ((first t)
+	(errobj error-object)
+	err-mes)
+    (while errobj
+      (setq err-mes (concat err-mes (format
+				     (if (stringp (car errobj))
+					 "%s"
+				       "%S")
+				     (car errobj))))
+      (setq errobj (cdr errobj))
+      (if errobj (setq err-mes (concat err-mes (if first ": " ", "))))
+      (setq first nil))
+    (princ err-mes stream)))
 
 (if (fboundp 'define-error)
+    ;; Emacs 24.4 and later
     (defalias 'elmo-define-error 'define-error)
   (defun elmo-define-error (error doc &optional parents)
     (or parents
@@ -1182,18 +1105,6 @@ MESSAGE is a doing part of progress message."
   ;; Emacs 25 and later
   (defun elmo-time-expire (before-time diff-time)
     (time-less-p (time-add before-time diff-time) nil)))
- ((null (and (fboundp 'time-subtract)
-	     (fboundp 'float-time)))
-  (defun elmo-time-expire (before-time diff-time)
-    (let* ((current (current-time))
-	   (rest (when (< (nth 1 current) (nth 1 before-time))
-		   (expt 2 16)))
-	   diff)
-      (setq diff
-	    (list (- (+ (car current) (if rest -1 0)) (car before-time))
-		  (- (+ (or rest 0) (nth 1 current)) (nth 1 before-time))))
-      (and (zerop (car diff))
-	   (< diff-time (nth 1 diff))))))
  (t
   (defun elmo-time-expire (before-time diff-time)
     (< diff-time (float-time (time-subtract (current-time) before-time))))))
@@ -1205,8 +1116,7 @@ MESSAGE is a doing part of progress message."
     (and value
 	 (std11-unfold-string value))))
 
-;; 2012-07-30
-(make-obsolete 'elmo-unfold-field-body 'elmo-unfold-fetch-field)
+(make-obsolete 'elmo-unfold-field-body 'elmo-unfold-fetch-field "30 Jul 2012")
 
 (defun elmo-decoded-fetch-field (field-name &optional mode)
   (let ((field-body (std11-fetch-field field-name)))
@@ -1216,8 +1126,8 @@ MESSAGE is a doing part of progress message."
 		(mime-decode-field-body field-body field-name mode)))
 	     field-body))))
 
-;; 2012-07-30
-(make-obsolete 'elmo-decoded-field-body 'elmo-decoded-fetch-field)
+(make-obsolete
+ 'elmo-decoded-field-body 'elmo-decoded-fetch-field "30 Jul 2012")
 
 (defun elmo-address-quote-specials (word)
   "Make quoted string of WORD if needed."
@@ -1227,16 +1137,7 @@ MESSAGE is a doing part of progress message."
 	(prin1-to-string word)
       word)))
 
-(static-cond
- ((fboundp 'substring-no-properties)
-  (defalias 'elmo-string 'substring-no-properties))
- (t
-  (defmacro elmo-string (string &optional from to)
-    "Return a substring of STRING, without text properties.
-It starts at zero-indexed index FROM and ends before TO."
-    `(let ((obj (substring ,string (or ,from 0) ,to)))
-       (set-text-properties 0 (length obj) nil obj)
-       obj))))
+(defalias 'elmo-string 'substring-no-properties)
 
 (defun elmo-flatten (list-of-list)
   "Flatten LIST-OF-LIST."
@@ -1264,24 +1165,7 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
 	     (when (string= string (symbol-value element))
 	       (throw 'found t)))))))
 
-(static-cond ((fboundp 'member-ignore-case)
-       (defalias 'elmo-string-member-ignore-case 'member-ignore-case))
-      ((fboundp 'compare-strings)
-       (defun elmo-string-member-ignore-case (elt list)
-	 "Like `member', but ignores differences in case and text representation.
-ELT must be a string.  Upper-case and lower-case letters are treated as equal.
-Unibyte strings are converted to multibyte for comparison."
-	 (while (and list (not (eq t (compare-strings elt 0 nil (car list) 0 nil t))))
-	   (setq list (cdr list)))
-	 list))
-      (t
-       (defun elmo-string-member-ignore-case (elt list)
-	 "Like `member', but ignores differences in case and text representation.
-ELT must be a string.  Upper-case and lower-case letters are treated as equal."
-	 (let ((str (downcase elt)))
-	   (while (and list (not (string= str (downcase (car list)))))
-	     (setq list (cdr list)))
-	   list))))
+(defalias 'elmo-string-member-ignore-case 'member-ignore-case)
 
 (defun elmo-string-match-member (str list &optional case-ignore)
   (let ((case-fold-search case-ignore))
@@ -1938,7 +1822,7 @@ KBYTES is a number specifying size in kilo bytes."
   (interactive)
   (let ((size
 	 (float (or kbytes
-		    (and (interactive-p)
+		    (and (called-interactively-p 'interactive)
 			 (elmo-read-number "Enter cache disk size (Kbytes): "
 					   elmo-cache-expire-default-size))
 		    elmo-cache-expire-default-size)))
@@ -2017,7 +1901,7 @@ KBYTES is a number specifying size in kilo bytes."
 Optional argument DAYS specifies the days to expire caches."
   (interactive)
   (let ((age (or (and (numberp days) days)
-		 (and (interactive-p)
+		 (and (called-interactively-p 'interactive)
 		      (elmo-read-number "Enter days: "
 					elmo-cache-expire-default-age))
 		 elmo-cache-expire-default-age))
@@ -2054,9 +1938,7 @@ Optional argument DAYS specifies the days to expire caches."
 		     (> (length (setq result
 				      (elmo-replace-string-as-filename msgid)))
 			elmo-msgid-to-cache-max-length)))
-	    (if (fboundp 'secure-hash)
-		(secure-hash elmo-msgid-to-cache-algorithm msgid)
-	      (funcall elmo-msgid-to-cache-algorithm msgid))
+	    (secure-hash elmo-msgid-to-cache-algorithm msgid)
 	  (or result
 	      (elmo-replace-string-as-filename msgid)))))))
 
@@ -2072,18 +1954,9 @@ Optional argument DAYS specifies the days to expire caches."
 ;;;
 ;; Warnings.
 
-(static-if (fboundp 'display-warning)
-    (defmacro elmo-warning (&rest args)
-      "Display a warning with `elmo' group."
-      `(display-warning 'elmo (format ,@args)))
-  (defconst elmo-warning-buffer-name "*elmo warning*")
-  (defun elmo-warning (&rest args)
-    "Display a warning. ARGS are passed to `format'."
-    (with-current-buffer (get-buffer-create elmo-warning-buffer-name)
-      (goto-char (point-max))
-      (funcall #'insert (apply #'format (append args '("\n"))))
-      (ignore-errors (recenter 1))
-      (display-buffer elmo-warning-buffer-name))))
+(defmacro elmo-warning (&rest args)
+  "Display a warning with `elmo' group."
+  `(display-warning 'elmo (format ,@args)))
 
 (defvar elmo-obsolete-variable-alist nil)
 
@@ -2108,10 +1981,7 @@ Definition is stored in `elmo-obsolete-variable-alist'."
   "Resque obsolete variable OBSOLETE as VAR.
 If `elmo-obsolete-variable-show-warnings' is non-nil, show warning message."
   (when (boundp obsolete)
-    (static-if (and (fboundp 'defvaralias)
-		    (subrp (symbol-function 'defvaralias)))
-	(defvaralias var obsolete)
-      (set var (symbol-value obsolete)))
+    (defvaralias var obsolete)
     (if elmo-obsolete-variable-show-warnings
 	(elmo-warning "%s is obsolete. Use %s instead."
 		      (symbol-name obsolete)
@@ -2288,17 +2158,7 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
 		     elmo-msgdb-directory)
    elmo-dop-queue))
 
-(if (and (fboundp 'regexp-opt)
-	 (not (featurep 'xemacs)))
-    (defalias 'elmo-regexp-opt 'regexp-opt)
-  (defun elmo-regexp-opt (strings &optional paren)
-    "Return a regexp to match a string in STRINGS.
-Each string should be unique in STRINGS and should not contain any regexps,
-quoted or not.  If optional PAREN is non-nil, ensure that the returned regexp
-is enclosed by at least one regexp grouping construct."
-    (let ((open-paren (if paren "\\(" "")) (close-paren (if paren "\\)" "")))
-      (concat open-paren (mapconcat 'regexp-quote strings "\\|")
-	      close-paren))))
+(defalias 'elmo-regexp-opt 'regexp-opt)
 
 (require 'product)
 (product-provide (provide 'elmo-util) (require 'elmo-version))

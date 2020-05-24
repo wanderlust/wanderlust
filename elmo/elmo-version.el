@@ -54,11 +54,12 @@
 (defconst elmo-appname (product-name (product-find 'elmo-version)))
 (make-obsolete-variable
  'elmo-appname
- "use (product-name (product-find 'elmo-version)) instead.")
+ "use (product-name (product-find 'elmo-version)) instead." "10 Oct 2000")
 
 (defconst elmo-version (product-version-string (product-find 'elmo-version)))
 (make-obsolete-variable
  'elmo-version
- "use (product-version-string (product-find 'elmo-version)) instead.")
+ "use (product-version-string (product-find 'elmo-version)) instead."
+ "10 Oct 2000")
 
 ;;; elmo-version.el ends here

@@ -42,9 +42,8 @@
   "Wanderlust, a news and mail reading software."
   :tag "Wanderlust"
   :link `(custom-manual
-	  ,(if (and (boundp 'current-language-environment)
-		    (string-equal "Japanese"
-				  (symbol-value 'current-language-environment)))
+	  ,(if (string-equal "Japanese"
+			     (symbol-value 'current-language-environment))
 	       "(wl-ja)Top"
 	     "(wl)Top"))
   :group 'news
@@ -96,16 +95,13 @@
   :group 'wl)
 
 ;;; Emacsen
-(defconst wl-on-xemacs (featurep 'xemacs))
+(defconst wl-on-xemacs nil)
 
-(defconst wl-on-emacs21 (and (not wl-on-xemacs)
-			     (>= emacs-major-version 21)))
+(defconst wl-on-emacs21 t)
 
-(defconst wl-on-mule (featurep 'mule))
+(defconst wl-on-mule t)
 
-(defconst wl-on-mule3
-  (and wl-on-mule (or wl-on-xemacs
-		      (> emacs-major-version 19))))
+(defconst wl-on-mule3 t)
 
 (defconst wl-on-nemacs nil) ; backward compatibility.
 
@@ -170,19 +166,17 @@ Supersede `wl-user-mail-address-list'."
   :type 'directory
   :group 'wl)
 
-(defcustom wl-icon-directory (or
-                              (and (fboundp 'locate-data-directory)
-                                   (locate-data-directory "wl"))
-                              (let ((icons (expand-file-name "wl/icons/"
-							      data-directory)))
-                                (if (file-directory-p icons)
-                                    icons))
-                              (if load-file-name
-                                  (let ((icons (expand-file-name
-                                                "icons"
-                                                (file-name-directory load-file-name))))
-                                    (if (file-directory-p icons)
-                                        icons))))
+(defcustom wl-icon-directory
+  (or (let ((icons (expand-file-name "wl/icons/"
+				     data-directory)))
+	(if (file-directory-p icons)
+            icons))
+      (if load-file-name
+	  (let ((icons (expand-file-name
+			"icons"
+			(file-name-directory load-file-name))))
+            (if (file-directory-p icons)
+		icons))))
   "*Directory to load the icon files from, or nil if none."
   :type '(choice (const :tag "none" nil)
 		 string)
@@ -580,8 +574,7 @@ The value is used as is when original message's From: field is not found."
   :group 'wl-draft)
 
 (defcustom wl-default-draft-cite-time-locale "C"
-  "*Override `system-time-locale' while making time string of citaion header.
-XEmacs is not affected."
+  "*Override `system-time-locale' while making time string of citaion header."
   :type '(choice (string :tag "Specify locale")
 		 (const :tag "Do not override" nil))
   :group 'wl-draft)
@@ -961,8 +954,7 @@ and 'wl-draft-send-mail-with-pop-before-smtp."
 		(function :tag "Other"))
   :group 'wl-draft)
 
-(defcustom wl-draft-send-confirm-type
-  (if wl-on-xemacs 'y-or-n-p 'scroll-by-SPC/BS)
+(defcustom wl-draft-send-confirm-type 'scroll-by-SPC/BS
   "*Confirmation type or function to use when send a message."
   :type '(choice
 	  (const :tag "y or n with scroll (j/k)" scroll-by-j/k)
@@ -1627,7 +1619,7 @@ ex.
   :group 'wl-summary
   :group 'wl-highlight)
 
-(defcustom wl-summary-lazy-highlight (boundp 'window-scroll-functions)
+(defcustom wl-summary-lazy-highlight t
   "Non-nil forces lazy summary highlighting using `window-scroll-functions'."
   :type 'boolean
   :group 'wl-summary
@@ -1648,7 +1640,7 @@ Available if only `wl-summary-lazy-highlight' is nil."
   :group 'wl-summary
   :group 'wl-highlight)
 
-(defcustom wl-summary-lazy-update-mark (boundp 'window-scroll-functions)
+(defcustom wl-summary-lazy-update-mark t
   "Non-nil forces lazy update mark using `window-scroll-functions'."
   :type 'boolean
   :group 'wl-summary)
@@ -1720,9 +1712,8 @@ Allowed situations are:
   :group 'wl-folder)
 
 (defcustom wl-summary-weekday-name-lang
-  (if (and (boundp 'current-language-environment)
-	   (string-equal "Japanese"
-			 (symbol-value 'current-language-environment)))
+  (if (string-equal "Japanese"
+		    (symbol-value 'current-language-environment))
       "ja" "en")
   "*Language to display week day."
   :type '(choice (const "ja")
@@ -2055,7 +2046,7 @@ with wl-highlight-folder-many-face."
 		(string :tag "Other"))
   :group 'wl-summary)
 
-(defcustom wl-mime-charset (if wl-on-mule 'x-ctext 'iso-8859-1)
+(defcustom wl-mime-charset 'x-ctext
   "*MIME Charset for summary and message."
   :type 'symbol
   :group 'wl-summary
@@ -2066,9 +2057,7 @@ with wl-highlight-folder-many-face."
   :type 'function
   :group 'wl-draft)
 
-(defcustom wl-highlight-background-mode  (if (boundp 'hilit-background-mode)
-					     (or hilit-background-mode 'dark)
-					   'dark)
+(defcustom wl-highlight-background-mode 'dark
   "*Background mode of highlight (for Old Emacsen).  'dark or 'light."
   :type '(radio (const dark)
 		(const light))
@@ -2286,7 +2275,7 @@ every intervals specified by `wl-biff-check-interval'."
 
 (defcustom wl-biff-check-delay 0
   "After interval specified by `wl-biff-check-interval', automatically checking new mail will start when Emacs keeps idle longer than specified seconds by this varaible.
-It has no effect on XEmacs or for the case which `wl-biff-use-idle-timer' is non-nil."
+It has no effect on the case which `wl-biff-use-idle-timer' is non-nil."
   :type 'number
   :group 'wl-setting)
 
@@ -2295,24 +2284,14 @@ It has no effect on XEmacs or for the case which `wl-biff-use-idle-timer' is non
   :type 'boolean
   :group 'wl-setting)
 
-(defcustom wl-biff-state-indicator-on (if (and wl-on-xemacs
-					       (not wl-on-mule))
-					  "[Mail]"
-					(decode-coding-string
-					 ;; Youbin mark
-					 (read "\"[\e$B\\\")\e(B]\"")
-					 (if (boundp 'MULE)
-					     '*iso-2022-jp*
-					   'iso-2022-jp)))
+(defcustom wl-biff-state-indicator-on
+  ;; Youbin mark
+  (decode-coding-string (read "\"[\e$B\\\")\e(B]\"") 'iso-2022-jp)
   "String used to show biff status ON."
   :type 'string
   :group 'wl-setting)
 
-(defcustom wl-biff-state-indicator-off (if (and wl-on-xemacs
-						(not wl-on-mule))
-					   "[--]"
-					  ;; Japanese short hyphen
-					 "[‐]")
+(defcustom wl-biff-state-indicator-off "[‐]" ;; Japanese short hyphen
   "String used to show biff status OFF."
   :type 'string
   :group 'wl-setting)
@@ -2990,8 +2969,7 @@ This variable can also be a regex."
   :group 'wl-highlight)
 
 ;; highilght about mouse
-(defcustom wl-use-highlight-mouse-line (and window-system
-					    (>= emacs-major-version 19))
+(defcustom wl-use-highlight-mouse-line window-system
   "*Highlight mouse line, if non-nil."
   :type 'boolean
   :group 'wl-highlight)
@@ -3006,10 +2984,7 @@ Handler take two arguments elmo-folder and message number and return string."
   :group 'wl-highlight)
 
 ;; highilght about folder
-(defcustom wl-highlight-folder-with-icon
-  (or (and wl-on-xemacs
-	   (featurep 'xpm))
-      wl-on-emacs21)
+(defcustom wl-highlight-folder-with-icon t
   "*Highlight folder with icon(XEmacs or Emacs 21)."
   :type 'boolean
   :group 'wl-highlight)
@@ -3027,8 +3002,7 @@ If it is a number, only numbers will be highlighted."
   :type 'function
   :group 'wl-highlight)
 
-(defcustom wl-use-dnd (and wl-on-xemacs
-			   (featurep 'dragdrop))
+(defcustom wl-use-dnd nil
   "If Non-nil, support dragdrop feature in XEmacs."
   :type 'boolean
   :group 'wl-pref)
@@ -3038,8 +3012,7 @@ If it is a number, only numbers will be highlighted."
   :type 'boolean
   :group 'wl-pref)
 
-(defcustom wl-demo-display-logo (if (or wl-on-xemacs
-					(module-installed-p 'image)
+(defcustom wl-demo-display-logo (if (or (module-installed-p 'image)
 					(module-installed-p 'bitmap))
 				    t)
   "If it is T, show graphic logo in the startup screen.  You can set it to
@@ -3273,10 +3246,9 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 (elmo-define-obsolete-variable 'wl-summary-temp-above
 			       'wl-summary-target-above)
 
-;; 1999-11-07: Unified with `wl-draft-config-alist'.
 (defvar wl-draft-prepared-config-alist nil)
 (make-obsolete-variable 'wl-draft-prepared-config-alist
-			'wl-draft-config-alist)
+			'wl-draft-config-alist "07 Nov 1999")
 
 ;; 1999-10-10
 (elmo-define-obsolete-variable 'wl-address-filename

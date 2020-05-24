@@ -43,10 +43,7 @@
   (defalias-maybe 'event-window 'ignore)
   (defalias-maybe 'posn-window 'ignore)
   (defalias-maybe 'event-start 'ignore)
-  (defalias-maybe 'mime-open-entity 'ignore)
-  (defalias-maybe 'itimer-function 'ignore)
-  (defalias-maybe 'delete-itimer 'ignore)
-  (defvar-maybe itimer-list))
+  (defalias-maybe 'mime-open-entity 'ignore))
 
 (defvar wl-message-buffer-prefetch-get-next-function
   'wl-summary-default-get-next-msg)
@@ -313,11 +310,7 @@ Returns non-nil if bottom of message."
 	    (wl-message-narrow-to-page 1)
 	    (setq bottom nil))
 	(condition-case ()
-	    (static-if (boundp 'window-pixel-scroll-increment)
-		;; XEmacs 21.2.20 and later.
-		(let (window-pixel-scroll-increment)
-		  (scroll-up (or lines wl-message-scroll-amount)))
-	      (scroll-up (or lines wl-message-scroll-amount)))
+	    (scroll-up (or lines wl-message-scroll-amount))
 	  (end-of-buffer
 	   (goto-char (point-max))))
 	(setq bottom nil))
@@ -658,30 +651,15 @@ Returns non-nil if bottom of message."
 	    (t wl-message-buffer-prefetch-folder-list)))))
 
 (defsubst wl-message-buffer-prefetch-clear-timer ()
-;;; cannot use for the bug of fsf-compat package (1.09).
-;;;  (cancel-function-timers 'wl-message-buffer-prefetch-subr)
-  (if (fboundp 'run-with-idle-timer)
-      (if wl-on-xemacs
-	  (let ((p itimer-list))
-	    (while (car p)
-	      (if (eq 'wl-message-buffer-prefetch-subr
-		      (itimer-function (car p)))
-		  (delete-itimer (car p)))
-	      (setq p (cdr p))))
-	;; FSF Emacs is correct
-	(cancel-function-timers 'wl-message-buffer-prefetch-subr))))
+  (cancel-function-timers 'wl-message-buffer-prefetch-subr))
 
 (defsubst wl-message-buffer-prefetch-set-timer (folder number count
 						       summary charset)
-  (if (not (fboundp 'run-with-idle-timer))
-      (when (sit-for wl-message-buffer-prefetch-idle-time)
-	(wl-message-buffer-prefetch-subr
-	 folder number count summary charset))
-    (run-with-idle-timer
-     wl-message-buffer-prefetch-idle-time
-     nil
-     'wl-message-buffer-prefetch-subr
-     folder number count summary charset)))
+  (run-with-idle-timer
+   wl-message-buffer-prefetch-idle-time
+   nil
+   'wl-message-buffer-prefetch-subr
+   folder number count summary charset))
 
 (defvar wl-message-buffer-prefetch-move-spec-alist nil)
 
@@ -936,8 +914,7 @@ Returns non-nil if bottom of message."
       (set-window-start win wpos))))
 
 (defun wl-message-header-narrowing-setup ()
-  (when (boundp 'line-move-ignore-invisible)
-    (set (make-local-variable 'line-move-ignore-invisible) t))
+  (set (make-local-variable 'line-move-ignore-invisible) t)
   (set-text-properties 0 (length wl-message-header-narrowing-string)
 		       `(face
 			 wl-message-header-narrowing-face
@@ -969,7 +946,7 @@ Returns non-nil if bottom of message."
 ;; Prune functions provided temporarily to avoid compile warnings.
 (eval-when-compile
   (dolist (fn '(event-window posn-window event-start
-		mime-open-entity itimer-function delete-itimer))
+		mime-open-entity))
     (when (and (get fn 'defalias-maybe)
 	       (eq (symbol-function fn) 'ignore))
       (put fn 'defalias-maybe nil)

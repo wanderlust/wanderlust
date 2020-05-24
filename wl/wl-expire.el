@@ -593,9 +593,9 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 	 (folder-name (elmo-folder-name-internal folder))
 	 (rule (wl-expire-folder-p folder-name)))
     (if (not rule)
-	(and (interactive-p)
+	(and (called-interactively-p 'interactive)
 	     (error "No match %s in `wl-expire-alist'" folder-name))
-      (when (or (not (interactive-p))
+      (when (or (not (called-interactively-p 'interactive))
 		(y-or-n-p (format "Expire %s? " folder-name)))
 	(save-excursion
 	  (run-hooks 'wl-summary-expire-pre-hook)
@@ -611,7 +611,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 	    (run-hooks 'wl-summary-expire-hook)
 	    (if expired
 		(message "Expiring %s is done" folder-name)
-	      (and (interactive-p)
+	      (and (called-interactively-p 'interactive)
 		   (message "No expire")))
 	    expired))))))
 
@@ -714,7 +714,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 		  'group
 		'folder)))
     (when (and entity-name
-	       (or (not (interactive-p))
+	       (or (not (called-interactively-p 'interactive))
 		   (y-or-n-p (format "Expire %s? " entity-name))))
       (wl-folder-expire-entity
        (wl-folder-search-entity-by-name entity-name
@@ -731,7 +731,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 		  'group
 		'folder)))
     (when (and entity-name
-	       (or (not (interactive-p))
+	       (or (not (called-interactively-p 'interactive))
 		   (y-or-n-p (format "Archive %s? " entity-name))))
       (wl-folder-archive-entity
        (wl-folder-search-entity-by-name entity-name
@@ -787,11 +787,11 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 	(wl-archive-folder folder msgs dst-folder)
       (when (and (or (setq archives (wl-archive-folder-p
 				     (elmo-folder-name-internal folder)))
-		     (progn (and (interactive-p)
+		     (progn (and (called-interactively-p 'interactive)
 				 (message "No match %s in wl-archive-alist"
 					  (elmo-folder-name-internal folder)))
 			    nil))
-		 (or (not (interactive-p))
+		 (or (not (called-interactively-p 'interactive))
 		     (y-or-n-p (format "Archive %s? "
 				       (elmo-folder-name-internal folder)))))
 	(setq func (car archives)
@@ -801,7 +801,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 	(run-hooks 'wl-summary-archive-hook)
 	(if archive-list
 	    (message "Archiving %s is done" (elmo-folder-name-internal folder))
-	  (and (interactive-p)
+	  (and (called-interactively-p 'interactive)
 	       (message "No archive")))))))
 
 (defun wl-folder-archive-entity (entity)

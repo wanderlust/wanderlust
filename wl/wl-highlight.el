@@ -31,19 +31,11 @@
 ;;
 
 (require 'invisible)
-(if (and (featurep 'xemacs)
-	 (featurep 'dragdrop))
-    (require 'wl-dnd))
 (require 'wl-vars)
 (provide 'wl-highlight)			; circular dependency
 
 (eval-when-compile
-  (cond (wl-on-xemacs
-	 (require 'wl-xmas))
-	(wl-on-emacs21
-	 (require 'wl-e21))
-	(t
-	 (require 'wl-mule)))
+  (require 'wl-e21)
   (defun-maybe wl-dnd-set-drop-target (a b))
   (defun-maybe wl-dnd-set-drag-starter (a b)))
 

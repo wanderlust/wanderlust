@@ -701,7 +701,7 @@ until the login delay period has expired"))
     (let ((new-msgdb (elmo-make-msgdb))
 	  beg entity number message-id flags)
       (set-buffer buffer)
-      (set-buffer-multibyte default-enable-multibyte-characters)
+      (set-buffer-multibyte t)
       (goto-char (point-min))
       (elmo-with-progress-display (elmo-folder-msgdb-create num)
 	  "Creating msgdb"

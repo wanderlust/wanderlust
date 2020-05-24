@@ -450,7 +450,7 @@ If each field is t, function is set as default converter."
 	extra field-body charset size file-attrib)
     (save-excursion
       (setq entity (modb-legacy-make-message-entity args))
-      (set-buffer-multibyte default-enable-multibyte-characters)
+      (set-buffer-multibyte t)
       (setq message-id (elmo-msgdb-get-message-id-from-header))
       (and (setq charset (cdr (assoc "charset" (mime-read-Content-Type))))
 	   (setq charset (intern-soft charset))
@@ -775,7 +775,7 @@ If each field is t, function is set as default converter."
 	(regexp (concat "\\(" std11-field-head-regexp "\\)[ \t]*"))
 	value values field)
     (save-excursion
-      (set-buffer-multibyte default-enable-multibyte-characters)
+      (set-buffer-multibyte t)
       (goto-char (point-min))
       (while (re-search-forward regexp nil t)
 	(setq field (downcase (buffer-substring-no-properties

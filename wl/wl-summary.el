@@ -245,10 +245,8 @@ See also variable `wl-use-petname'."
 (defvar wl-summary-mode-menu-spec
   `("Summary"
     ["Read" wl-summary-read t]
-    ;; :visible keyword is not accepted on XEmacs.
-    ,@(if wl-on-xemacs
-	  '(["Edit draft message" wl-summary-reedit t])
-	'(["Edit draft message" wl-summary-reedit :visible (string= (wl-summary-buffer-folder-name) wl-draft-folder)]))
+    ["Edit draft message" wl-summary-reedit
+     :visible (string= (wl-summary-buffer-folder-name) wl-draft-folder)]
     ["Prev page" wl-summary-prev-page t]
     ["Next page" wl-summary-next-page t]
     ["Top"       wl-summary-display-top t]
@@ -363,26 +361,12 @@ See also variable `wl-use-petname'."
     "----"
     ["Exit Current Folder" wl-summary-exit t]))
 
-(if wl-on-xemacs
-    (defun wl-summary-setup-mouse ()
-      (define-key wl-summary-mode-map 'button4 'wl-summary-prev)
-      (define-key wl-summary-mode-map 'button5 'wl-summary-next)
-      (define-key wl-summary-mode-map [(shift button4)]
-	'wl-summary-up)
-      (define-key wl-summary-mode-map [(shift button5)]
-	'wl-summary-down)
-      (define-key wl-summary-mode-map 'button2 'wl-summary-click))
-  (defun wl-summary-setup-mouse ()
-    (define-key wl-summary-mode-map [mouse-4] 'wl-summary-prev)
-    (define-key wl-summary-mode-map [mouse-5] 'wl-summary-next)
-    (define-key wl-summary-mode-map [S-mouse-4] 'wl-summary-up)
-    (define-key wl-summary-mode-map [S-mouse-5] 'wl-summary-down)
-    ;; For Meadow2
-    (define-key wl-summary-mode-map [mouse-wheel1]
-      'wl-summary-wheel-dispatcher)
-    (define-key wl-summary-mode-map [S-mouse-wheel1]
-      'wl-summary-wheel-dispatcher)
-    (define-key wl-summary-mode-map [mouse-2] 'wl-summary-click)))
+(defun wl-summary-setup-mouse ()
+  (define-key wl-summary-mode-map [mouse-4] 'wl-summary-prev)
+  (define-key wl-summary-mode-map [mouse-5] 'wl-summary-next)
+  (define-key wl-summary-mode-map [S-mouse-4] 'wl-summary-up)
+  (define-key wl-summary-mode-map [S-mouse-5] 'wl-summary-down)
+  (define-key wl-summary-mode-map [mouse-2] 'wl-summary-click))
 
 (if wl-summary-mode-map
     ()
@@ -941,37 +925,31 @@ Special commands:
 
 Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (interactive)
-  (unless (interactive-p) (kill-all-local-variables))
+  (unless (called-interactively-p 'interactive) (kill-all-local-variables))
   (setq major-mode 'wl-summary-mode)
   (setq mode-name "Summary")
   (use-local-map wl-summary-mode-map)
 ;;;  (setq default-directory (or wl-tmp-dir (expand-file-name "~/")))
   (setq buffer-read-only t)
   (setq truncate-lines t)
-  (when (boundp 'show-trailing-whitespace)
-    (setq show-trailing-whitespace nil))
+  (setq show-trailing-whitespace nil)
 ;;;  (make-local-variable 'tab-width)
 ;;;  (setq tab-width 1)
   (buffer-disable-undo (current-buffer))
   (setq selective-display t
 	selective-display-ellipses nil)
-  (when (boundp 'bidi-paragraph-direction)
-    (set 'bidi-paragraph-direction 'left-to-right))
+  (set 'bidi-paragraph-direction 'left-to-right)
   (wl-mode-line-buffer-identification '(wl-summary-buffer-mode-line))
   (easy-menu-add wl-summary-mode-menu)
   (setq wl-summary-buffer-window-scroll-functions
 	(wl-summary-window-scroll-functions))
   (when wl-summary-buffer-window-scroll-functions
-    (let ((hook (if wl-on-xemacs 'pre-idle-hook 'window-scroll-functions)))
-      (if (fboundp 'make-local-hook)
-	  (make-local-hook hook))
+    (let ((hook 'window-scroll-functions))
       (dolist (function wl-summary-buffer-window-scroll-functions)
 	(add-hook hook function nil t)))
     (add-hook 'window-size-change-functions
 	      #'wl-summary-after-resize-function))
   (dolist (hook '(change-major-mode-hook kill-buffer-hook))
-    (if (fboundp 'make-local-hook)
-	(make-local-hook hook))
     (add-hook hook #'wl-summary-buffer-detach nil t))
   ;; This hook may contain the function `wl-setup-summary' for reasons
   ;; of system internal to accord facilities for the Emacs variants.
@@ -1087,7 +1065,6 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
   "Rescan current folder without updating."
   (interactive)
   (let ((elmo-mime-charset wl-summary-buffer-mime-charset)
-	gc-message			; for XEmacs
 	(inhibit-read-only t)
 	(buffer-read-only nil)
 	(numbers (elmo-folder-list-messages wl-summary-buffer-elmo-folder
@@ -1286,12 +1263,12 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
 (defun wl-summary-save-status ()
   "Save summary view and msgdb."
   (interactive)
-  (if (interactive-p) (message "Saving summary status..."))
+  (if (called-interactively-p 'interactive) (message "Saving summary status..."))
   (wl-summary-save-view)
   (elmo-folder-commit wl-summary-buffer-elmo-folder)
   (elmo-folder-check wl-summary-buffer-elmo-folder)
   (if wl-use-scoring (wl-score-save))
-  (if (interactive-p) (message "Saving summary status...done")))
+  (if (called-interactively-p 'interactive) (message "Saving summary status...done")))
 
 (defun wl-summary-force-exit ()
   "Exit current summary.  Buffer is deleted even the buffer is sticky."
@@ -1772,7 +1749,7 @@ If ARG is non-nil, checking is omitted."
 	(message "No message.")
       (wl-summary-set-persistent-mark-internal remove 'answered
 					       number-list
-					       nil nil (interactive-p))
+					       nil nil (called-interactively-p 'interactive))
       (wl-summary-count-unread)
       (wl-summary-update-modeline))))
 
@@ -1788,7 +1765,7 @@ If ARG is non-nil, checking is omitted."
     (if (null number-list)
 	(message "No message.")
       (wl-summary-set-persistent-mark-internal remove 'important number-list
-					       nil nil (interactive-p))
+					       nil nil (called-interactively-p 'interactive))
       (wl-summary-count-unread)
       (wl-summary-update-modeline))))
 
@@ -1803,7 +1780,7 @@ If ARG is non-nil, checking is omitted."
 
 (defun wl-summary-mark-as-read-all ()
   (interactive)
-  (if (or (not (interactive-p))
+  (if (or (not (called-interactively-p 'interactive))
 	  (y-or-n-p "Mark all messages as read? "))
       (let ((folder wl-summary-buffer-elmo-folder)
 	    (cur-buf (current-buffer)))
@@ -1968,7 +1945,7 @@ This function is defined for `window-scroll-functions'"
 	    mes (concat mes (format "/+%d %s " (length diffs) flag)))
       (when diffs
 	(wl-summary-set-persistent-mark flag diffs 'no-modeline 'no-server)))
-    (if (interactive-p) (message "%s" mes))))
+    (if (called-interactively-p 'interactive) (message "%s" mes))))
 
 (defun wl-summary-sync-update (&optional unset-cursor
 					 disable-killed
@@ -1980,7 +1957,6 @@ This function is defined for `window-scroll-functions'"
 	 (elmo-mime-charset wl-summary-buffer-mime-charset)
 	 (inhibit-read-only t)
 	 (buffer-read-only nil)
-	 gc-message			; for XEmacs
 	 crossed expunged mes)
     (unwind-protect
 	(progn
@@ -2442,8 +2418,7 @@ If ARG, without confirm."
 		       (view (expand-file-name wl-summary-view-file dir)))
 		  (when (file-exists-p cache)
 		    (insert-file-contents-as-binary cache)
-		    (set-buffer-multibyte
-		     default-enable-multibyte-characters)
+		    (set-buffer-multibyte t)
 		    (decode-mime-charset-region
 		     (point-min)(point-max)
 		     wl-summary-buffer-mime-charset 'LF))
@@ -2563,9 +2538,6 @@ If ARG, without confirm."
       ;; entity-id is unknown.
       (wl-folder-set-current-entity-id
        (wl-folder-get-entity-id entity)))
-    (when (and wl-summary-buffer-window-scroll-functions
-	       wl-on-xemacs)
-      (sit-for 0))
     (when (or (eq t wl-summary-force-prefetch-folder-list)
 	      (wl-string-match-member
 	       (elmo-folder-name-internal wl-summary-buffer-elmo-folder)
@@ -2665,7 +2637,7 @@ If ARG, without confirm."
     (make-local-variable 'wl-summary-alike-hashtb)
     (setq wl-summary-alike-hashtb (elmo-make-hash (* (length numbers) 2)))
     (when mime-decode
-      (set-buffer-multibyte default-enable-multibyte-characters))
+      (set-buffer-multibyte t))
     (mapc (lambda (number)
 	    (when (setq ov (elmo-message-entity folder number))
 	      (setq this (funcall func ov))
@@ -3286,7 +3258,7 @@ Return non-nil if the mark is updated"
 						   no-server)
   "Unset persistent mark."
   (interactive)
-  (when (interactive-p)
+  (when (called-interactively-p 'interactive)
     (let ((completion-ignore-case t))
       (setq flag (intern (downcase
 			  (completing-read
@@ -3301,7 +3273,7 @@ Return non-nil if the mark is updated"
 					   number-or-numbers
 					   no-modeline-update
 					   no-server
-					   (interactive-p)))
+					   (called-interactively-p 'interactive)))
 
 (defun wl-summary-set-persistent-mark (&optional flag
 						 number-or-numbers
@@ -3309,7 +3281,7 @@ Return non-nil if the mark is updated"
 						 no-server)
   "Set persistent mark."
   (interactive)
-  (when (interactive-p)
+  (when (called-interactively-p 'interactive)
     (let ((completion-ignore-case t))
       (setq flag (intern (downcase
 			  (completing-read
@@ -3324,7 +3296,7 @@ Return non-nil if the mark is updated"
 					   number-or-numbers
 					   no-modeline-update
 					   no-server
-					   (interactive-p)))
+					   (called-interactively-p 'interactive)))
 
 (defun wl-summary-toggle-persistent-mark (&optional force)
   "Toggle persistent mark."
@@ -3350,7 +3322,7 @@ Return non-nil if the mark is updated"
 					      no-modeline-update)
   (interactive)
   (wl-summary-set-persistent-mark-internal
-   (and (interactive-p)
+   (and (called-interactively-p 'interactive)
 	(elmo-message-flagged-p wl-summary-buffer-elmo-folder
 				(wl-summary-message-number)
 				'answered))
@@ -3358,7 +3330,7 @@ Return non-nil if the mark is updated"
    number-or-numbers
    no-modeline-update
    nil
-   (interactive-p)))
+   (called-interactively-p 'interactive)))
 
 (defun wl-summary-mark-as-unanswered (&optional number-or-numbers
 						no-modeline-update)
@@ -3437,12 +3409,12 @@ Return non-nil if the mark is updated"
   (if prompt
       (wl-summary-set-flags-internal)
     (wl-summary-set-persistent-mark-internal
-     (and (interactive-p)
+     (and (called-interactively-p 'interactive)
 	  (elmo-message-flagged-p wl-summary-buffer-elmo-folder
 				  (wl-summary-message-number)
 				  'important))
      'important
-     nil nil nil (interactive-p))))
+     nil nil nil (called-interactively-p 'interactive))))
 
 (defun wl-summary-recover-message (number)
   "Recover current message if it is killed."
@@ -4055,41 +4027,29 @@ Return t if message exists."
 	(progn
 	  (wl-thread-jump-to-msg msg)
 	  t)
-      ;; for XEmacs!
-      (if (and elmo-use-database
-	       (setq errmsg
-		     (format
-		      "No message with id \"%s\" in the database." msgid))
-	       (setq otherfld (elmo-database-msgid-get msgid)))
-	  (if (cdr (wl-summary-jump-to-msg-internal
-		    (car otherfld) (nth 1 otherfld) 'no-sync))
-	      t ; succeed.
-	    ;; Back to original.
-	    (wl-summary-jump-to-msg-internal
-	     (wl-summary-buffer-folder-name) original 'no-sync))
-	(cond ((eq wl-summary-search-via-nntp 'confirm)
-	       (require 'elmo-nntp)
-	       (message "Search message in nntp server \"%s\" <y/n/s(elect)>? "
-			elmo-nntp-default-server)
-	       (setq schar (let ((cursor-in-echo-area t)) (read-char)))
-	       (cond ((eq schar ?y)
-		      (wl-summary-jump-to-msg-by-message-id-via-nntp msgid))
-		     ((eq schar ?s)
-		      (wl-summary-jump-to-msg-by-message-id-via-nntp
-		       msgid
-		       (read-from-minibuffer "NNTP Server: ")))
-		     (t
-		      (message "%s" errmsg)
-		      nil)))
-	      ((or (eq wl-summary-search-via-nntp 'force)
-		   (and
-		    (eq (elmo-folder-type-internal wl-summary-buffer-elmo-folder)
-			'nntp)
-		    wl-summary-search-via-nntp))
-	       (wl-summary-jump-to-msg-by-message-id-via-nntp msgid))
-	      (t
-	       (message "%s" errmsg)
-	       nil))))))
+      (cond ((eq wl-summary-search-via-nntp 'confirm)
+	     (require 'elmo-nntp)
+	     (message "Search message in nntp server \"%s\" <y/n/s(elect)>? "
+		      elmo-nntp-default-server)
+	     (setq schar (let ((cursor-in-echo-area t)) (read-char)))
+	     (cond ((eq schar ?y)
+		    (wl-summary-jump-to-msg-by-message-id-via-nntp msgid))
+		   ((eq schar ?s)
+		    (wl-summary-jump-to-msg-by-message-id-via-nntp
+		     msgid
+		     (read-from-minibuffer "NNTP Server: ")))
+		   (t
+		    (message "%s" errmsg)
+		    nil)))
+	    ((or (eq wl-summary-search-via-nntp 'force)
+		 (and
+		  (eq (elmo-folder-type-internal wl-summary-buffer-elmo-folder)
+		      'nntp)
+		  wl-summary-search-via-nntp))
+	     (wl-summary-jump-to-msg-by-message-id-via-nntp msgid))
+	    (t
+	     (message "%s" errmsg)
+	     nil)))))
 
 (defun wl-summary-jump-to-msg-by-message-id-via-nntp (&optional id server-spec)
   (interactive)
@@ -4389,11 +4349,11 @@ Use function list is `wl-summary-write-current-folder-functions'."
 
 (defun wl-summary-prev (&optional interactive)
   (interactive)
-  (wl-summary-cursor-move-surface nil (or interactive (interactive-p))))
+  (wl-summary-cursor-move-surface nil (or interactive (called-interactively-p 'interactive))))
 
 (defun wl-summary-next (&optional interactive)
   (interactive)
-  (wl-summary-cursor-move-surface t (or interactive (interactive-p))))
+  (wl-summary-cursor-move-surface t (or interactive (called-interactively-p 'interactive))))
 
 (defun wl-summary-up (&optional interactive skip-no-unread)
   ""
@@ -4404,7 +4364,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
       (if wl-summary-buffer-disp-msg
 	  (wl-summary-redisplay))
     (if (or interactive
-	    (interactive-p))
+	    (called-interactively-p 'interactive))
 	(if wl-summary-buffer-prev-folder-function
 	    (funcall wl-summary-buffer-prev-folder-function)
 	  (let (next-entity finfo)
@@ -4460,7 +4420,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
       (if wl-summary-buffer-disp-msg
 	  (wl-summary-redisplay))
     (if (or interactive
-	    (interactive-p))
+	    (called-interactively-p 'interactive))
 	(if wl-summary-buffer-next-folder-function
 	    (funcall wl-summary-buffer-next-folder-function)
 	  (let (next-entity finfo)
@@ -4766,10 +4726,10 @@ If ARG is numeric number, decode message as following:
 	      (raw-buffer (get-buffer-create "*wl:raw message*"))
 	      (raw-mode-map (make-sparse-keymap)))
 	  (with-current-buffer raw-buffer
-	    (toggle-read-only -1)
+	    (read-only-mode -1)
 	    (erase-buffer)
 	    (princ raw raw-buffer)
-	    (toggle-read-only t)
+	    (read-only-mode 1)
 	    (goto-char (point-min))
 	    (switch-to-buffer-other-window raw-buffer)
 	    (define-key raw-mode-map "l" 'toggle-truncate-lines)
@@ -4871,7 +4831,7 @@ If ARG is numeric number, decode message as following:
       (message "No message.")
     (save-excursion
       (wl-summary-set-message-buffer-or-redisplay)
-      (if (or (not (interactive-p))
+      (if (or (not (called-interactively-p 'interactive))
 	      (y-or-n-p "Print ok? "))
 	  (progn
 	    (let ((buffer (generate-new-buffer " *print*")))
@@ -4887,7 +4847,7 @@ If ARG is numeric number, decode message as following:
   (if (null (wl-summary-message-number))
       (message "No message.")
     (setq filename (ps-print-preprint current-prefix-arg))
-    (if (or (not (interactive-p))
+    (if (or (not (called-interactively-p 'interactive))
 	    (y-or-n-p "Print ok? "))
 	(let ((summary-buffer (current-buffer))
 	      wl-break-pages)
@@ -4993,7 +4953,11 @@ If ARG is numeric number, decode message as following:
       (unwind-protect
 	  (let ((decode-dir wl-temporary-file-directory))
 	    (if (not wl-prog-uudecode-no-stdout-option)
-		(setq filename (expand-file-name (read-file-name "Save to file: " wl-temporary-file-directory nil nil (elmo-safe-filename))))
+		(setq filename
+		      (expand-file-name
+		       (read-file-name
+			"Save to file: " wl-temporary-file-directory
+			nil nil (elmo-safe-filename filename))))
 	      (setq decode-dir
 		    (wl-read-directory-name "Save to directory: "
 					    wl-temporary-file-directory))
@@ -5029,7 +4993,7 @@ If ARG is numeric number, decode message as following:
 ;;;  (interactive)
 ;;;  (if (elmo-folder-pipe-p (wl-summary-buffer-folder-name))
 ;;;      (error "You cannot drop unsync messages in this folder"))
-;;;  (if (or (not (interactive-p))
+;;;  (if (or (not (called-interactively-p 'interactive))
 ;;;	  (y-or-n-p "Drop all unsync messages? "))
 ;;;      (let* ((folder-list (elmo-folder-get-primitive-folder-list
 ;;;			   (wl-summary-buffer-folder-name)))
