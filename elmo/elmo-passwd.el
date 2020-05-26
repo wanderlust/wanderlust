@@ -172,7 +172,7 @@ It is used to remove executed timer function.")
   (let ((alist (elmo-passwd-alist-alist-internal passwd)))
     (dolist (pair alist)
       (when (stringp (cdr-safe pair))
-	(elmo-clear-string (cdr pair)))))
+	(clear-string (cdr pair)))))
   (elmo-passwd-alist-set-alist-internal passwd nil)
   (elmo-passwd-alist-set-modified-internal passwd nil))
 
@@ -218,7 +218,7 @@ It is used to remove executed timer function.")
 	pass-cons)
     (while (setq pass-cons (assoc key alist))
       (unwind-protect
-	  (elmo-clear-string (cdr pass-cons))
+	  (clear-string (cdr pass-cons))
 	(elmo-passwd-alist-set-alist-internal
 	 passwd (setq alist (delete pass-cons alist)))
 	(elmo-passwd-alist-set-modified-internal passwd t)))))

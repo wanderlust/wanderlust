@@ -160,7 +160,7 @@ VALUE is the field value."
    msgdb
    (lambda (x y app-data)
      (condition-case nil
-	 (elmo-time<
+	 (time-less-p
 	  (elmo-message-entity-field x 'date)
 	  (elmo-message-entity-field y 'date))
        (error)))))

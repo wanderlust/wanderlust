@@ -97,6 +97,18 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 
 (defalias 'wl-parse-addresses 'elmo-parse-addresses)
 
+(make-obsolete 'wl-string-member 'elmo-string-member "21 Sep 2000 at latest")
+(make-obsolete
+ 'wl-string-match-member 'elmo-string-match-member "21 Sep 2000 at latest")
+(make-obsolete
+ 'wl-string-delete-match 'elmo-string-delete-match "21 Sep 2000 at latest")
+(make-obsolete
+ 'wl-string-match-assoc 'elmo-string-match-assoc "21 Sep 2000 at latest")
+(make-obsolete 'wl-string-assoc 'elmo-string-assoc "21 Sep 2000 at latest")
+(make-obsolete 'wl-string-rassoc 'elmo-string-rassoc "21 Sep 2000 at latest")
+
+(make-obsolete 'wl-parse-addresses 'elmo-parse-addresses "20 Mar 2005")
+
 (defun wl-append-element (list element)
   (if element
       (append list (list element))
@@ -422,6 +434,7 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
 
 ;; local variable check.
 (defalias 'wl-local-variable-p 'local-variable-p)
+(make-obsolete 'wl-local-variable-p 'local-variable-p "24 May 2020")
 
 (defun wl-number-base36 (num len)
   (if (if (< len 0)
@@ -969,8 +982,8 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
     (t
      (when (and wl-display-progress-function
 		(or (null wl-progress-next-update-time)
-		    (elmo-time-less-p wl-progress-next-update-time
-				      (current-time))))
+		    (time-less-p wl-progress-next-update-time
+				 (current-time))))
        (wl-progress-set-next-update-time)
        (funcall wl-display-progress-function label action current total)))))
 
@@ -1002,6 +1015,8 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
       ret)))
 
 (defalias 'wl-completing-read-multiple 'completing-read-multiple)
+(make-obsolete
+ 'wl-completing-read-multiple 'completing-read-multiple "24 May 2020")
 
 
 (cond

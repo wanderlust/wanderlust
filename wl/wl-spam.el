@@ -85,7 +85,7 @@ If an element is symbol, use symbol-value instead."
 		 (repeat (string :tag "Mark")))
   :group 'wl-spam)
 
-(wl-defface wl-highlight-summary-spam-face
+(defface wl-highlight-summary-spam-face
   '((((type tty)
       (background dark))
      (:foreground "blue"))
@@ -118,8 +118,8 @@ See `wl-summary-mark-action-list' for the detail of element."
   :group 'wl-spam)
 
 (defsubst wl-spam-string-member-p (string list regexp-list)
-  (or (wl-string-member string list)
-      (wl-string-match-member string regexp-list)))
+  (or (elmo-string-member string list)
+      (elmo-string-match-member string regexp-list)))
 
 (defun wl-spam-domain (folder-name)
   (cond ((string= folder-name wl-spam-folder)

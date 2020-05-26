@@ -721,7 +721,8 @@ BUFFER must be a single-byte buffer."
         (mapcar
          (lambda (entry)
            (if (and (eq 'list (car entry))
-                    (not (elmo-string-member-ignore-case "\\Noselect" (nth 1 (nth 1 entry)))))
+                    (not (member-ignore-case "\\Noselect"
+					     (nth 1 (nth 1 entry)))))
                (car (nth 1 entry))))
          response)))
 
@@ -895,22 +896,22 @@ EXPUNGE for deleted messages."
 
 (defun elmo-imap4-session-flag-available-p (session flag)
   (case flag
-    ((read unread) (elmo-string-member-ignore-case
+    ((read unread) (member-ignore-case
                     "\\seen" (elmo-imap4-session-flags-internal session)))
     (important
-     (elmo-string-member-ignore-case
+     (member-ignore-case
       "\\flagged" (elmo-imap4-session-flags-internal session)))
     (digest
-     (or (elmo-string-member-ignore-case
+     (or (member-ignore-case
           "\\seen" (elmo-imap4-session-flags-internal session))
-         (elmo-string-member-ignore-case
+         (member-ignore-case
           "\\flagged" (elmo-imap4-session-flags-internal session))))
     (answered
-     (elmo-string-member-ignore-case
+     (member-ignore-case
       (concat "\\" (symbol-name flag))
       (elmo-imap4-session-flags-internal session)))
     (t
-     (elmo-string-member-ignore-case
+     (member-ignore-case
       (if elmo-imap4-strict-flag-availability-check
           (symbol-name flag)
         "\\*")
@@ -1026,13 +1027,13 @@ If CHOP-LENGTH is not specified, message set is not chopped."
           (if use-flag
               (append
                (and (memq 'new saved-flags)
-                    (not (elmo-string-member-ignore-case "\\Seen" flags))
+                    (not (member-ignore-case "\\Seen" flags))
                     '(new))
-               (and (elmo-string-member-ignore-case "\\Flagged" flags)
+               (and (member-ignore-case "\\Flagged" flags)
                     '(important))
-               (and (not (elmo-string-member-ignore-case "\\Seen" flags))
+               (and (not (member-ignore-case "\\Seen" flags))
                     '(unread))
-               (and (elmo-string-member-ignore-case "\\Answered" flags)
+               (and (member-ignore-case "\\Answered" flags)
                     '(answered))
                (and (elmo-file-cache-exists-p msg-id)
                     '(cached)))
@@ -2312,7 +2313,7 @@ If optional argument REMOVE is non-nil, remove FLAG."
     (elmo-imap4-session-select-mailbox session
                                        (elmo-imap4-folder-mailbox-internal
                                         folder))
-    (when (or (elmo-string-member-ignore-case
+    (when (or (member-ignore-case
                flag
                (elmo-imap4-session-flags-internal session))
               (member "\\*" (elmo-imap4-session-flags-internal session))

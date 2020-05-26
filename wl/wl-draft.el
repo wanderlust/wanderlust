@@ -222,7 +222,7 @@ e.g.
 		cl))
     (setq wl-draft-field-completion-list cl)
     (setq wl-address-complete-header-regexp
-	  (elmo-regexp-opt
+	  (regexp-opt
 	   (append wl-address-complete-header-list
 		   (list (concat wl-draft-mime-bcc-field-name  ":")))))))
 
@@ -376,8 +376,8 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 			  (std11-field-bodies r-ng-list))
 			",")))
     (setq subject (std11-field-body "Subject"))
-    (setq to (wl-parse-addresses to)
-	  cc (wl-parse-addresses cc))
+    (setq to (elmo-parse-addresses to)
+	  cc (elmo-parse-addresses cc))
     (with-temp-buffer			; to keep raw buffer unibyte.
       (set-buffer-multibyte t)
       (setq decoder (mime-find-field-decoder 'Subject 'plain))
@@ -538,8 +538,6 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
     (goto-char (point-min)))
   (let ((beg (point)))
     (cond (mail-citation-hook (run-hooks 'mail-citation-hook))
-	  ((and (boundp 'mail-yank-hooks) mail-yank-hooks)
-	   (run-hooks 'mail-yank-hooks))
 	  (wl-draft-cite-function (funcall wl-draft-cite-function))) ; default cite
     (run-hooks 'wl-draft-cited-hook)
     (when (if wl-draft-add-references
@@ -641,7 +639,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
   (interactive)
   (let (original-buffer
 	mail-reply-buffer
-	mail-citation-hook mail-yank-hooks
+	mail-citation-hook
 	wl-draft-add-references wl-draft-add-in-reply-to
 	wl-draft-cite-function)
     (if (and wl-draft-buffer-cur-summary-buffer
@@ -673,8 +671,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 			     (interactive "nNumber: ")
 			     num))))
 	(mail-reply-buffer (get-buffer-create "*wl-draft-insert-get-message*"))
-	mail-citation-hook mail-yank-hooks
-	wl-draft-cite-function)
+	mail-citation-hook wl-draft-cite-function)
     (unwind-protect
 	(progn
 	  (with-current-buffer mail-reply-buffer
@@ -1059,7 +1056,6 @@ non-nil."
 		     (generate-new-buffer " smtp errors")
 		   0))
 	 (case-fold-search t)
-	 (default-case-fold-search t)
 	 (sender (or wl-envelope-from
 		     (wl-address-header-extract-address wl-from)))
 	 (delimline (save-excursion
@@ -1419,7 +1415,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	(orig-subj (mime-decode-field-body (or (std11-field-body "subject")
 					       "")
 					   'Subject))
-	(recipients (wl-parse-addresses field-body))
+	(recipients (elmo-parse-addresses field-body))
 	(draft-buffer (current-buffer))
 	wl-draft-use-frame)
     (save-window-excursion
@@ -1940,8 +1936,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 			(elmo-list-member
 			 (mapcar 'wl-address-header-extract-address
 				 (append
-				  (wl-parse-addresses (std11-field-body "To"))
-				  (wl-parse-addresses (std11-field-body "Cc"))))
+				  (elmo-parse-addresses (std11-field-body "To"))
+				  (elmo-parse-addresses (std11-field-body "Cc"))))
 			 (mapcar 'downcase wl-subscribed-mailing-list)))))
 	field
       nil)))
@@ -2668,7 +2664,7 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 	(wl-draft-buffer-style switch-function)
 	tem)
     (if to
-	(if (setq tem (wl-string-match-assoc
+	(if (setq tem (elmo-string-match-assoc
 		       "\\`to\\'"
 		       wl-user-agent-headers-and-body-alist
 		       'ignore-case))
@@ -2677,7 +2673,7 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 		(cons (cons "to" to)
 		      wl-user-agent-headers-and-body-alist))))
     (if subject
-	(if (setq tem (wl-string-match-assoc
+	(if (setq tem (elmo-string-match-assoc
 		       "\\`subject\\'"
 		       wl-user-agent-headers-and-body-alist
 		       'ignore-case))
@@ -2714,9 +2710,9 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
         (unless (eq wl-draft-real-time-highlight 'jit)
           (wl-highlight-headers 'for-draft))
 	;; insert body
-	(let ((body (wl-string-match-assoc "\\`body\\'"
-					   wl-user-agent-headers-and-body-alist
-					   'ignore-case)))
+	(let ((body (elmo-string-match-assoc
+		     "\\`body\\'"
+		     wl-user-agent-headers-and-body-alist 'ignore-case)))
 	  (if body
 	      (wl-user-agent-insert-body (cdr body)))))
     t))

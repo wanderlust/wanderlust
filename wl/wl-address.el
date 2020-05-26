@@ -289,6 +289,8 @@ Matched address lists are append to CL."
       (all-completions string wl-address-list))))
 
 (defalias 'wl-address-quote-specials 'elmo-address-quote-specials)
+(make-obsolete 'wl-address-quote-specials 'elmo-address-quote-specials
+	       "20 Sep 2001")
 
 (defun wl-address-make-completion-list (address-list)
   (let (addr-tuple cl)
@@ -320,7 +322,7 @@ Matched address lists are append to CL."
 		(string-match ".*:.*;$" (nth 0 addr-tuple)))
 	    (nth 0 addr-tuple)
 	  (concat
-	   (wl-address-quote-specials
+	   (elmo-address-quote-specials
 	    (nth 2 addr-tuple)) " <"(nth 0 addr-tuple)">"))))
 
 (defun wl-complete-field-body-or-tab ()
@@ -507,11 +509,11 @@ Refresh `wl-address-list', `wl-address-completion-list', and
 	(setq new-expn-str nil)
 	(while (string-match "^[ \t]*\\([^,]+\\)" expn-str)
 	  (setq expn (match-string 1 expn-str))
-	  (setq expn-str (wl-string-delete-match expn-str 0))
+	  (setq expn-str (elmo-string-delete-match expn-str 0))
 	  (if (string-match "^[ \t,]+" expn-str)
-	      (setq expn-str (wl-string-delete-match expn-str 0)))
+	      (setq expn-str (elmo-string-delete-match expn-str 0)))
 	  (if (string-match "[ \t,]+$" expn)
-	      (setq expn (wl-string-delete-match expn 0)))
+	      (setq expn (elmo-string-delete-match expn 0)))
 	  (setq new-expn (cdr (assoc expn alist)))
 	  (if new-expn
 	      (setq expanded t))
@@ -534,8 +536,8 @@ Refresh `wl-address-list', `wl-address-completion-list', and
 	(delete-char -1))
       (goto-char (point-min))
       (while (re-search-forward "^\\([^#;\n][^:]+\\):[ \t]*\\(.*\\)$" nil t)
-	(setq alias (elmo-match-buffer 1)
-	      expn (elmo-match-buffer 2))
+	(setq alias (match-string-no-properties 1)
+	      expn (match-string-no-properties 2))
 	(setq alist (cons (cons alias expn) alist)))
       (wl-address-expand-aliases alist 0)
       (nreverse alist) ; return value
@@ -553,9 +555,9 @@ Refresh `wl-address-list', `wl-address-completion-list', and
 ^\\([^#\n][^ \t\n]+\\)[ \t]+\\(\".*\"\\)[ \t]+\\(\".*\"\\)[ \t]*.*$")
 	      (setq ret
 		    (cons
-		     (list (elmo-match-buffer 1)
-			   (read (elmo-match-buffer 2))
-			   (read (elmo-match-buffer 3)))
+		     (list (match-string-no-properties 1)
+			   (read (match-string-no-properties 2))
+			   (read (match-string-no-properties 3)))
 		     ret)))
 	  (forward-line))
 	(nreverse ret)))))

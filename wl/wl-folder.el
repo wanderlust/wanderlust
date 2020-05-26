@@ -282,7 +282,7 @@
 (defmacro wl-folder-set-entity-info (entity value &optional hashtb)
   `(let* ((hashtb (or ,hashtb wl-folder-entity-hashtb))
 	  (info (wl-folder-get-entity-info ,entity hashtb)))
-     (elmo-set-hash-val (elmo-string ,entity)
+     (elmo-set-hash-val (substring-no-properties ,entity)
 			(if (< (length ,value) 4)
 			    (append ,value (list (nth 3 info)))
 			  ,value)
@@ -339,7 +339,7 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
 
 (defsubst wl-folder-get-elmo-folder (entity &optional no-cache)
   "Get elmo folder structure from ENTITY."
-  (let ((name (elmo-string entity)))
+  (let ((name (substring-no-properties entity)))
     (if no-cache
 	(wl-folder-make-elmo-folder name)
       (if (string= name wl-draft-folder)
@@ -617,7 +617,7 @@ Optional argument ARG is repeart count."
 (defsubst wl-folder-force-fetch-p (entity)
   (cond
    ((consp wl-force-fetch-folders)
-    (wl-string-match-member entity wl-force-fetch-folders))
+    (elmo-string-match-member entity wl-force-fetch-folders))
    (t
     wl-force-fetch-folders)))
 
@@ -637,8 +637,8 @@ Optional argument ARG is repeart count."
 	     (looking-at wl-folder-group-regexp))
 	;; folder group
 	(save-excursion
-	  (setq indent (elmo-match-buffer 1))
-	  (setq opened (elmo-match-buffer 2))
+	  (setq indent (match-string-no-properties 1))
+	  (setq opened (match-string-no-properties 2))
 	  (if (string= opened "+")
 	      (progn
 		(setq entity (wl-folder-search-group-entity-by-name
@@ -731,7 +731,7 @@ Optional argument ARG is repeart count."
   (when (and (wl-folder-buffer-group-p)
 	     (looking-at wl-folder-group-regexp))
     (cond
-     ((string= (elmo-match-buffer 2) "+")
+     ((string= (match-string-no-properties 2) "+")
       (save-excursion
 	(if entity ()
 	  (setq entity
@@ -750,7 +750,7 @@ Optional argument ARG is repeart count."
 	      (unless (wl-folder-buffer-search-group
 		       (wl-folder-get-petname (car entity)))
 		(error "%s: not found group" (car entity)))
-	      (setq indent (elmo-match-buffer 1))
+	      (setq indent (match-string-no-properties 1))
 	      (if (eq 'access (cadr entity))
 		  (wl-folder-maybe-load-folder-list entity))
 	      (beginning-of-line)
@@ -850,7 +850,8 @@ Optional argument ARG is repeart count."
 	 (nums (condition-case err
 		   (progn
 		     (if biff (elmo-folder-set-biff-internal folder t))
-		     (if (wl-string-match-member entity wl-strict-diff-folders)
+		     (if (elmo-string-match-member
+			  entity wl-strict-diff-folders)
 			 (elmo-strict-folder-diff folder)
 		       (elmo-folder-diff folder)))
 		 (elmo-open-error
@@ -1236,7 +1237,7 @@ If current line is group folder, all subfolders are marked."
     'ignore)
    ((looking-at "^[\t ]*\\(.+\\)[\t ]*{[\t ]*$") ; group definition
     (let (name entity flist)
-      (setq name (elmo-match-buffer 1))
+      (setq name (match-string-no-properties 1))
       (goto-char (+ 1 (match-end 0)))
       (while (setq entity (wl-create-folder-entity-from-buffer))
 	(unless (eq entity 'ignore)
@@ -1244,13 +1245,13 @@ If current line is group folder, all subfolders are marked."
       (if (looking-at "^[\t ]*}[\t ]*$") ; end of group
 	  (progn
 	    (goto-char (+ 1 (match-end 0)))
-	    (if (wl-string-assoc name wl-folder-petname-alist)
+	    (if (elmo-string-assoc name wl-folder-petname-alist)
 		(error "%s already defined as petname" name))
 	    (list name 'group flist))
 	(error "Syntax error in folder definition"))))
    ((looking-at "^[\t ]*\\([^\t \n]+\\)[\t ]*/$") ; access it!
     (let (name)
-      (setq name (elmo-match-buffer 1))
+      (setq name (match-string-no-properties 1))
       (goto-char (+ 1 (match-end 0)))
 ;;;      (condition-case ()
 ;;;	  (unwind-protect
@@ -1264,7 +1265,7 @@ If current line is group folder, all subfolders are marked."
 ;;;   ((looking-at "^[\t ]*\\([^\t \n}]+\\)[\t ]*\\(\"[^\"]*\"\\)?[\t ]*$") ; normal folder entity
    ((looking-at "^[\t ]*=[ \t]+\\([^\n]+\\)$"); petname definition
     (goto-char (+ 1 (match-end 0)))
-    (let ((rest (elmo-match-buffer 1))
+    (let ((rest (match-string-no-properties 1))
 	  petname)
       (when (string-match "\\(\"[^\"]*\"\\)[\t ]*$" rest)
 	(setq petname (elmo-delete-char ?\" (match-string 1 rest)))
@@ -1276,7 +1277,7 @@ If current line is group folder, all subfolders are marked."
     nil)
    ((looking-at "^.*$") ; normal folder entity
     (goto-char (+ 1 (match-end 0)))
-    (let ((rest (elmo-match-buffer 0))
+    (let ((rest (match-string-no-properties 0))
 	  realname petname)
       (if (string-match "\\(\"[^\"]*\"\\)[\t ]*$" rest)
 	  (progn
@@ -1498,7 +1499,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
   (run-hooks 'wl-folder-mode-hook))
 
 (defun wl-folder-append-petname (realname petname)
-  (let ((pentry (wl-string-assoc realname wl-folder-petname-alist)))
+  (let ((pentry (elmo-string-assoc realname wl-folder-petname-alist)))
     (when pentry
       (setq wl-folder-petname-alist
 	    (delete pentry wl-folder-petname-alist))))
@@ -1614,9 +1615,9 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
   (mapcar (lambda (x)
 	    (cond
 	     ((consp x)
-	      (list (elmo-string (car x)) 'access))
+	      (list (substring-no-properties (car x)) 'access))
 	     (t
-	      (elmo-string x))))
+	      (substring-no-properties x))))
 	  list))
 
 (defun wl-folder-update-newest (indent entity)
@@ -1639,7 +1640,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 		(when (setq new-flist
 			    (elmo-folder-list-subfolders
 			     (wl-folder-get-elmo-folder (car entity))
-			     (wl-string-match-member
+			     (elmo-string-match-member
 			      (car entity)
 			      wl-folder-hierarchy-access-folders)))
 		  (setq update-flist
@@ -1960,7 +1961,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 			 'nntp)
 		     (setq newsgroup (elmo-nntp-folder-group-internal
 				      (car folder-list))))
-	    (wl-append newsgroups (list (elmo-string newsgroup))))
+	    (wl-append newsgroups (list (substring-no-properties newsgroup))))
 	  (setq folder-list (cdr folder-list)))))
       (unless entities
 	(setq entities (wl-pop entity-stack))))
@@ -2073,14 +2074,14 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 
 (defun wl-folder-get-realname (petname)
   (or (car
-       (wl-string-rassoc
+       (elmo-string-rassoc
 	petname
 	wl-folder-petname-alist))
       petname))
 
 (defun wl-folder-get-petname (name)
   (or (cdr
-       (wl-string-assoc
+       (elmo-string-assoc
 	name
 	wl-folder-petname-alist))
       name))
@@ -2187,11 +2188,11 @@ Use `wl-subscribed-mailing-list'."
       (when (looking-at "^[ ]*\\(.*\\):\\([0-9\\*-]*\\)/\\([0-9\\*-]*\\)/\\([0-9\\*]*\\)")
 	;;(looking-at "^[ ]*\\([^\\[].+\\):\\([0-9\\*-]*/[0-9\\*-]*/[0-9\\*]*\\)")
 	(setq cur-new (string-to-number
-		       (elmo-match-buffer 2)))
+		       (match-string-no-properties 2)))
 	(setq cur-unread (string-to-number
-			  (elmo-match-buffer 3)))
+			  (match-string-no-properties 3)))
 	(setq cur-all (string-to-number
-		       (elmo-match-buffer 4)))
+		       (match-string-no-properties 4)))
 	(delete-region (match-beginning 2)
 		       (match-end 4))
 	(goto-char (match-beginning 2))
@@ -2316,12 +2317,13 @@ Use `wl-subscribed-mailing-list'."
 				 (wl-folder-get-elmo-folder entity)))
 		     (not (equal info '(nil))))
 	    (if (listp info)
-		(wl-append info-alist (list (list (elmo-string entity)
-						  (list (nth 3 info)  ;; max
-							(nth 2 info)  ;; length
-							(nth 0 info)  ;; new
-							(nth 1 info)) ;; unread
-						  )))))))
+		(wl-append info-alist
+			   (list (list (substring-no-properties entity)
+				       (list (nth 3 info)  ;; max
+					     (nth 2 info)  ;; length
+					     (nth 0 info)  ;; new
+					     (nth 1 info)) ;; unread
+				       )))))))
 	(unless entities
 	  (setq entities (wl-pop entity-stack))))
       (elmo-msgdb-finfo-save info-alist)
@@ -2475,9 +2477,9 @@ Use `wl-subscribed-mailing-list'."
 	(setq path (cdr path))
 	(if (and (wl-folder-buffer-group-p)
 		  (looking-at wl-folder-group-regexp)
-		 (string= "+" (elmo-match-buffer 2)));; closed group
+		 (string= "+" (match-string-no-properties 2)));; closed group
 	    (save-excursion
-	      (setq indent (elmo-match-buffer 1))
+	      (setq indent (match-string-no-properties 1))
 	      (setq name (wl-folder-get-entity-from-buffer))
 	      (setq entity (wl-folder-search-group-entity-by-name
 			    name
@@ -2538,7 +2540,7 @@ Use `wl-subscribed-mailing-list'."
 	  (while (re-search-forward
 		  "^\\([ ]*\\)\\[\\([+]\\)\\]\\(.+\\):[-0-9-]+/[0-9-]+/[0-9-]+$"
 		  nil t)
-	    (setq indent (elmo-match-buffer 1))
+	    (setq indent (match-string-no-properties 1))
 	    (setq name (wl-folder-get-entity-from-buffer))
 	    (setq entity (wl-folder-search-group-entity-by-name
 			  name
@@ -2587,7 +2589,7 @@ Use `wl-subscribed-mailing-list'."
     (let (indent)
       (setq indent (save-excursion
 		     (re-search-forward "\\([ ]*\\)." nil t)
-		     (elmo-match-buffer 1)))
+		     (match-string-no-properties 1)))
       (while (looking-at indent)
 	(forward-line -1)))
     (wl-folder-jump-to-current-entity)))
@@ -2617,7 +2619,7 @@ Use `wl-subscribed-mailing-list'."
       (while flist
 	(cond
 	 ((listp (car flist))	;; group
-	  (setq group (elmo-string (caar flist)))
+	  (setq group (substring-no-properties (caar flist)))
 	  (cond
 	   ((assoc group new-flist)	;; found in new-flist
 	    (setq new-flist (delete (assoc group new-flist)
@@ -2628,11 +2630,11 @@ Use `wl-subscribed-mailing-list'."
 	      (setq diff t)))
 	   (t
 	    (setq wl-folder-group-alist
-		  (delete (wl-string-assoc group wl-folder-group-alist)
+		  (delete (elmo-string-assoc group wl-folder-group-alist)
 			  wl-folder-group-alist))
 	    (wl-append removes (list (list group))))))
 	 (t			;; folder
-	  (setq folder (elmo-string (car flist)))
+	  (setq folder (substring-no-properties (car flist)))
 	  (cond
 	   ((member folder new-flist)	;; found in new-flist
 	    (setq new-flist (delete folder new-flist))
@@ -2680,7 +2682,7 @@ Use `wl-subscribed-mailing-list'."
 	    (cond
 	     ((listp (car new-list))
 	      ;; check group exists
-	      (if (wl-string-assoc (caar new-list) wl-folder-group-alist)
+	      (if (elmo-string-assoc (caar new-list) wl-folder-group-alist)
 		  (progn
 		    (message "%s: group already exists." (caar new-list))
 		    (sit-for 1)

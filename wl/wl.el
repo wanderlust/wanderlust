@@ -486,7 +486,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (beginning-of-line)
     (when (looking-at (format "^%s\\[[^]]+\\]\\(.*\\)"
 			      (wl-plugged-server-indent)))
-      (elmo-match-buffer 1))))
+      (match-string-no-properties 1))))
 
 (defun wl-plugged-toggle ()
   (interactive)
@@ -504,8 +504,9 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 		(forward-char)
 	      (re-search-backward "^[^ ]+" nil t)))
 	  (when (looking-at "\\([^ :[]+\\):?\\[\\([^]]+\\)\\]")
-	    (setq name (elmo-match-buffer 1))
-	    (setq switch (not (string= (elmo-match-buffer 2) wl-plugged-plug-on)))
+	    (setq name (match-string-no-properties 1))
+	    (setq switch (not (string= (match-string-no-properties 2)
+				       wl-plugged-plug-on)))
 	    (when (setq variable (cdr (assoc name wl-plugged-switch-variables)))
 	      (set variable switch))
 	    (goto-char (match-beginning 2))
@@ -515,9 +516,9 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	      (set-buffer-modified-p nil)))))
        ;; switch plug
        ((looking-at "^\\( *\\)\\[\\([^]]+\\)\\]\\([^ \n]*\\)")
-	(let* ((indent (length (elmo-match-buffer 1)))
-	       (switch (elmo-match-buffer 2))
-	       (name (elmo-match-buffer 3))
+	(let* ((indent (length (match-string-no-properties 1)))
+	       (switch (match-string-no-properties 2))
+	       (name (match-string-no-properties 3))
 	       (plugged (not (string= switch wl-plugged-plug-on)))
 	       (alist wl-plugged-alist)
 	       server port stream-type name-1)
@@ -995,6 +996,8 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
 
 ;; for backward compatibility
 (defalias 'wl-summary-from-func-petname 'wl-summary-default-from)
+(make-obsolete 'wl-summary-from-func-petname
+	       'wl-summary-default-from "03 Apr 2000 at latest")
 
 (require 'product)
 (product-provide (provide 'wl) (require 'wl-version))

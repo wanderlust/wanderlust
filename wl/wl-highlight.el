@@ -39,8 +39,6 @@
   (defun-maybe wl-dnd-set-drop-target (a b))
   (defun-maybe wl-dnd-set-drag-starter (a b)))
 
-(put 'wl-defface 'lisp-indent-function 'defun)
-
 (defgroup wl-faces nil
   "Wanderlust, Faces."
   :prefix "wl-highlight-"
@@ -66,7 +64,7 @@
 
 ;; for message header and signature
 
-(wl-defface wl-highlight-message-headers
+(defface wl-highlight-message-headers
   '(
     (((type tty)
       (background dark))
@@ -81,7 +79,7 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-message-header-contents
+(defface wl-highlight-message-header-contents
   '(
     (((type tty)
       (background dark))
@@ -96,7 +94,7 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-message-important-header-contents
+(defface wl-highlight-message-important-header-contents
   '(
     (((type tty)
       (background dark))
@@ -111,7 +109,7 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-message-important-header-contents2
+(defface wl-highlight-message-important-header-contents2
   '(
     (((type tty)
       (background dark))
@@ -126,7 +124,7 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-message-citation-header
+(defface wl-highlight-message-citation-header
   '(
     (((type tty)
       (background dark))
@@ -141,7 +139,7 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-message-unimportant-header-contents
+(defface wl-highlight-message-unimportant-header-contents
   '(
     (((type tty)
       (background dark))
@@ -156,7 +154,7 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-message-signature
+(defface wl-highlight-message-signature
   '((((class color)
       (background dark))
      (:foreground "khaki"))
@@ -169,7 +167,7 @@
 
 ;; for draft
 
-(wl-defface wl-highlight-header-separator-face
+(defface wl-highlight-header-separator-face
   '(
     (((type tty)
       (background dark))
@@ -182,7 +180,7 @@
 
 ;; important messages
 
-(wl-defface wl-highlight-summary-flagged-face
+(defface wl-highlight-summary-flagged-face
   '((((type tty)
       (background dark))
      (:foreground "magenta"))
@@ -196,7 +194,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-new-face
+(defface wl-highlight-summary-new-face
   '(
     (((type tty)
       (background dark))
@@ -211,7 +209,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-killed-face
+(defface wl-highlight-summary-killed-face
   '((((type tty)
       (background dark))
      (:foreground "blue"))
@@ -224,14 +222,14 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-displaying-face
+(defface wl-highlight-summary-displaying-face
   '((t
      (:underline t :bold t)))
   "Face used for displaying message."
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-thread-indent-face
+(defface wl-highlight-thread-indent-face
   '((t
      (:foreground "gray40")))
   "Face used for displaying indented thread."
@@ -240,7 +238,7 @@
 
 ;; unimportant messages
 
-(wl-defface wl-highlight-summary-unread-face
+(defface wl-highlight-summary-unread-face
   '(
     (((type tty)
       (background dark))
@@ -255,7 +253,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-disposed-face
+(defface wl-highlight-summary-disposed-face
   '(
     (((type tty)
       (background dark))
@@ -270,7 +268,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-deleted-face
+(defface wl-highlight-summary-deleted-face
   '(
     (((type tty)
       (background dark))
@@ -285,7 +283,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-prefetch-face
+(defface wl-highlight-summary-prefetch-face
   '(
     (((type tty)
       (background dark))
@@ -300,7 +298,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-resend-face
+(defface wl-highlight-summary-resend-face
   '(
     (((type tty)
       (background dark))
@@ -315,7 +313,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-refiled-face
+(defface wl-highlight-summary-refiled-face
   '(
     (((type tty)
       (background dark))
@@ -330,7 +328,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-copied-face
+(defface wl-highlight-summary-copied-face
   '(
     (((type tty)
       (background dark))
@@ -346,7 +344,7 @@
   :group 'wl-faces)
 
 ;; answered
-(wl-defface wl-highlight-summary-answered-face
+(defface wl-highlight-summary-answered-face
   '((((type tty)
       (background dark))
      (:foreground "yellow"))
@@ -361,7 +359,7 @@
   :group 'wl-faces)
 
 ;; forwarded
-(wl-defface wl-highlight-summary-forwarded-face
+(defface wl-highlight-summary-forwarded-face
   '((((type tty)
       (background dark))
      (:foreground "yellow"))
@@ -375,7 +373,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-summary-persistent-mark-face
+(defface wl-summary-persistent-mark-face
   '((((type tty))
      (:foreground "blue"))
     (((class color)
@@ -389,7 +387,7 @@
   :group 'wl-faces)
 
 ;; obsolete.
-(wl-defface wl-highlight-summary-temp-face
+(defface wl-highlight-summary-temp-face
   '(
     (((type tty)
       (background dark))
@@ -400,7 +398,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-target-face
+(defface wl-highlight-summary-target-face
   '(
     (((type tty)
       (background dark))
@@ -411,7 +409,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-low-read-face
+(defface wl-highlight-summary-low-read-face
   '(
     (((type tty)
       (background dark))
@@ -426,7 +424,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-high-read-face
+(defface wl-highlight-summary-high-read-face
   '(
     (((type tty))
      (:bold t))
@@ -440,7 +438,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-low-unread-face
+(defface wl-highlight-summary-low-unread-face
   '(
     (((type tty)
       (background dark))
@@ -455,7 +453,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-high-unread-face
+(defface wl-highlight-summary-high-unread-face
   '(
     (((type tty))
      (:foreground "red" :bold t))
@@ -471,7 +469,7 @@
 
 ;; ordinary messages
 
-(wl-defface wl-highlight-summary-thread-top-face
+(defface wl-highlight-summary-thread-top-face
   '(
     (((type tty)
       (background dark))
@@ -486,7 +484,7 @@
   :group 'wl-summary-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-summary-normal-face
+(defface wl-highlight-summary-normal-face
   '(
     (((type tty)
       (background dark))
@@ -503,7 +501,7 @@
 
 ;; folder
 
-(wl-defface wl-highlight-folder-unknown-face
+(defface wl-highlight-folder-unknown-face
   '(
     (((type tty)
       (background dark))
@@ -518,7 +516,7 @@
   :group 'wl-folder-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-folder-killed-face
+(defface wl-highlight-folder-killed-face
   '(
     (((type tty)
       (background dark))
@@ -529,7 +527,7 @@
   :group 'wl-folder-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-folder-zero-face
+(defface wl-highlight-folder-zero-face
   '(
     (((type tty)
       (background dark))
@@ -544,7 +542,7 @@
   :group 'wl-folder-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-folder-few-face
+(defface wl-highlight-folder-few-face
   '(
     (((type tty)
       (background dark))
@@ -559,7 +557,7 @@
   :group 'wl-folder-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-folder-many-face
+(defface wl-highlight-folder-many-face
   '(
     (((type tty)
       (background dark))
@@ -574,7 +572,7 @@
   :group 'wl-folder-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-folder-unread-face
+(defface wl-highlight-folder-unread-face
   '(
     (((type tty)
       (background dark))
@@ -589,7 +587,7 @@
   :group 'wl-folder-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-folder-opened-face
+(defface wl-highlight-folder-opened-face
   '(
     (((type tty)
       (background dark))
@@ -604,7 +602,7 @@
   :group 'wl-folder-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-folder-closed-face
+(defface wl-highlight-folder-closed-face
   '(
     (((type tty)
       (background dark))
@@ -619,14 +617,14 @@
   :group 'wl-folder-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-folder-path-face
+(defface wl-highlight-folder-path-face
   '((t
      (:bold t :underline t)))
   "Face used for displaying path."
   :group 'wl-folder-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-demo-face
+(defface wl-highlight-demo-face
   '((((type tty))
      (:foreground "green"))
     (((class color)
@@ -638,7 +636,7 @@
   "Face used for displaying demo."
   :group 'wl-faces)
 
-(wl-defface wl-highlight-logo-face
+(defface wl-highlight-logo-face
   '((((type tty)
       (background dark))
      (:foreground "cyan"))
@@ -651,7 +649,7 @@
   "Face used for displaying demo."
   :group 'wl-faces)
 
-(wl-defface wl-highlight-action-argument-face
+(defface wl-highlight-action-argument-face
   '((((class color)
       (background dark))
      (:foreground "pink"))
@@ -664,7 +662,7 @@
 
 ;; cited face
 
-(wl-defface wl-highlight-message-cited-text-1
+(defface wl-highlight-message-cited-text-1
   '(
     (((type tty)
       (background dark))
@@ -679,7 +677,7 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-message-cited-text-2
+(defface wl-highlight-message-cited-text-2
   '(
     (((type tty)
       (background dark))
@@ -690,7 +688,7 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-message-cited-text-3
+(defface wl-highlight-message-cited-text-3
   '(
     (((type tty)
       (background dark))
@@ -701,7 +699,7 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-message-cited-text-4
+(defface wl-highlight-message-cited-text-4
   '(
     (((type tty)
       (background dark))
@@ -712,7 +710,7 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-message-cited-text-5
+(defface wl-highlight-message-cited-text-5
   '(
     (((type tty)
       (background dark))
@@ -723,7 +721,7 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-message-cited-text-6
+(defface wl-highlight-message-cited-text-6
   '(
     (((type tty)
       (background dark))
@@ -734,7 +732,7 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-message-cited-text-7
+(defface wl-highlight-message-cited-text-7
   '(
     (((type tty)
       (background dark))
@@ -745,7 +743,7 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-message-cited-text-8
+(defface wl-highlight-message-cited-text-8
   '(
     (((type tty)
       (background dark))
@@ -756,7 +754,7 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-message-cited-text-9
+(defface wl-highlight-message-cited-text-9
   '(
     (((type tty)
       (background dark))
@@ -767,7 +765,7 @@
   :group 'wl-message-faces
   :group 'wl-faces)
 
-(wl-defface wl-highlight-message-cited-text-10
+(defface wl-highlight-message-cited-text-10
   '(
     (((type tty)
       (background dark))

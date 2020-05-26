@@ -84,7 +84,7 @@
 
 (defun wl-refile-learn (entity dst)
   (let (tocc-list from key hit ml)
-    (setq dst (elmo-string dst))
+    (setq dst (substring-no-properties dst))
     (setq tocc-list
 	  (mapcar (lambda (entity)
 		    (downcase (wl-address-header-extract-address entity)))
@@ -92,7 +92,7 @@
 		   (elmo-message-entity-field entity 'to)
 		   (elmo-message-entity-field entity 'cc))))
     (while tocc-list
-      (if (wl-string-member
+      (if (elmo-string-member
 	   (car tocc-list)
 	   (mapcar (function downcase) wl-subscribed-mailing-list))
 	  (setq ml (car tocc-list)
@@ -123,7 +123,7 @@
 (defun wl-refile-msgid-learn (entity dst)
   (let ((key (elmo-message-entity-field entity 'message-id))
 	hit)
-    (setq dst (elmo-string dst))
+    (setq dst (substring-no-properties dst))
     (if key
 	(if (setq hit (assoc key wl-refile-msgid-alist))
 	    (setcdr hit dst)
@@ -134,7 +134,7 @@
   (let ((subject (funcall wl-summary-subject-filter-function
 			  (elmo-message-entity-field entity 'subject)))
 	hit)
-    (setq dst (elmo-string dst))
+    (setq dst (substring-no-properties dst))
     (if (and subject (not (string= subject "")))
 	(if (setq hit (assoc subject wl-refile-subject-alist))
 	    (setcdr hit dst)

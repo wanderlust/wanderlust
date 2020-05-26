@@ -116,6 +116,7 @@ Buffer's multibyteness is ignored."
   (form &rest form))
 
 (defalias 'elmo-safe-plist-get 'plist-get)
+(make-obsolete 'elmo-safe-plist-get 'plist-get "24 May 2020")
 
 (defun elmo-set-auto-coding (&optional filename)
   "Find coding system used to decode the contents of the current buffer.
@@ -247,7 +248,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
     (goto-char (match-end 0))
     (let ((search-key (vector
 		       (if (match-beginning 1) 'unmatch 'match)
-		       (downcase (elmo-match-buffer 2))
+		       (downcase (match-string-no-properties 2))
 		       (elmo-condition-parse-search-value))))
       ;; syntax sugar.
       (if (string= (aref search-key 1) "tocc")
@@ -285,7 +286,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	(looking-at "[0-9]+-[A-Za-z]+-[0-9]+")
 	(looking-at "[0-9]+-[0-9]+-[0-9]+")
 	(looking-at "[0-9]+"))
-    (prog1 (elmo-match-buffer 0)
+    (prog1 (match-string-no-properties 0)
       (goto-char (match-end 0))))
    (t (error "Syntax error '%s'" (buffer-string)))))
 
@@ -541,8 +542,8 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	(symbol-name list)
       list)))
 
-(eval-and-compile
-  (defalias 'elmo-clear-string 'clear-string))
+(defalias 'elmo-clear-string 'clear-string)
+(make-obsolete 'elmo-clear-string 'clear-string "24 May 2020")
 
 (defun elmo-plug-on-by-servers (alist &optional servers)
   (let ((server-list (or servers elmo-plug-on-servers)))
@@ -1061,14 +1062,14 @@ If optional DELETE-FUNCTION is speficied, it is used as delete procedure."
       (if (or (elmo-progress-counter-total counter)
 	      (and (elmo-progress-counter-set-total
 		    counter
-		    (elmo-safe-plist-get params :total))
+		    (plist-get params :total))
 		   (elmo-progress-call-callback counter 'query)))
 	  (progn
 	    (elmo-progress-counter-set-value
 	     counter
-	     (or (elmo-safe-plist-get params :set)
+	     (or (plist-get params :set)
 		 (+ (elmo-progress-counter-value counter)
-		    (or (elmo-safe-plist-get params :inc)
+		    (or (plist-get params :inc)
 			(car params)
 			1))))
 	    (elmo-progress-call-callback counter))
@@ -1138,6 +1139,7 @@ MESSAGE is a doing part of progress message."
       word)))
 
 (defalias 'elmo-string 'substring-no-properties)
+(make-obsolete 'elmo-string 'substring-no-properties "24 May 2020")
 
 (defun elmo-flatten (list-of-list)
   "Flatten LIST-OF-LIST."
@@ -1166,6 +1168,8 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
 	       (throw 'found t)))))))
 
 (defalias 'elmo-string-member-ignore-case 'member-ignore-case)
+(make-obsolete
+ 'elmo-string-member-ignore-case 'member-ignore-case "24 May 2020")
 
 (defun elmo-string-match-member (str list &optional case-ignore)
   (let ((case-fold-search case-ignore))
@@ -2159,6 +2163,9 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
    elmo-dop-queue))
 
 (defalias 'elmo-regexp-opt 'regexp-opt)
+(make-obsolete 'elmo-regexp-opt 'regexp-opt "24 May 2020")
+
+
 
 (require 'product)
 (product-provide (provide 'elmo-util) (require 'elmo-version))

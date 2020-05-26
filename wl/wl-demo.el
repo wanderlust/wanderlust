@@ -324,7 +324,7 @@ argument."
 	(setq image-type (when wl-demo-display-logo
 			   (cdr (car selection)))))))
   (let ((buffer (let ((default-mc-flag t)
-		      (default-line-spacing 0))
+		      (line-spacing 0))
 		  (get-buffer-create "*WL Demo*"))))
     (switch-to-buffer buffer)
     (setq buffer-read-only nil)

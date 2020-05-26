@@ -1184,7 +1184,8 @@ Set `wl-score-cache' nil."
 		score (cdar alist))
 	  (when wl-score-debug
 	    (message "Scored %d with %d" score num)
-	    (wl-push (list (elmo-string (wl-summary-buffer-folder-name)) num score)
+	    (wl-push (list (substring-no-properties
+			    (wl-summary-buffer-folder-name)) num score)
 		     wl-score-trace))
 	  (setq score-mark (wl-summary-get-score-mark num))
 	  (and (setq visible (wl-summary-jump-to-msg num))

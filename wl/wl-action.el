@@ -706,7 +706,7 @@ Return number if put mark succeed"
 	      'wl-read-folder-history default)))
     (when (string= fld wl-default-spec)
       (setq fld default))
-    (setq fld (elmo-string (wl-folder-get-realname fld)))
+    (setq fld (substring-no-properties (wl-folder-get-realname fld)))
     (if (string-match "\n" fld)
 	(error "Not supported folder name: %s" fld))
     (unless no-create

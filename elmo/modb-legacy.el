@@ -451,19 +451,19 @@ Return a list of message numbers which have duplicated message-ids."
       (new
        (setq mark-regexp (regexp-quote modb-legacy-new-mark)))
       (unread
-       (setq mark-regexp (elmo-regexp-opt (modb-legacy-unread-marks))))
+       (setq mark-regexp (regexp-opt (modb-legacy-unread-marks))))
       (answered
-       (setq mark-regexp (elmo-regexp-opt (modb-legacy-answered-marks))))
+       (setq mark-regexp (regexp-opt (modb-legacy-answered-marks))))
       (important
        (setq mark-regexp (regexp-quote modb-legacy-important-mark)))
       (read
-       (setq mark-regexp (elmo-regexp-opt (modb-legacy-unread-marks))))
+       (setq mark-regexp (regexp-opt (modb-legacy-unread-marks))))
       (digest
-       (setq mark-regexp (elmo-regexp-opt
+       (setq mark-regexp (regexp-opt
 			  (append (modb-legacy-unread-marks)
 				  (list modb-legacy-important-mark)))))
       (any
-       (setq mark-regexp (elmo-regexp-opt
+       (setq mark-regexp (regexp-opt
 			  (append
 			   (modb-legacy-unread-marks)
 			   (modb-legacy-answered-marks)

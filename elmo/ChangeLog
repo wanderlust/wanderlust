@@ -1,3 +1,28 @@
+2020-05-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Obsolete aliased functions.  Use bundled function with Emacs or
+	alies target preferably.
+
+	* elmo-date.el: Likewise.
+
+	* elmo-imap4.el: Likewise.
+
+	* elmo-msgdb.el: Likewise.
+
+	* elmo-nntp.el: Likewise.
+
+	* elmo-passwd.el: Likewise.
+
+	* elmo-pop3.el: Likewise.
+
+	* elmo-util.el: Likewise.
+
+	* elmo-vars.el: Likewise.
+
+	* elmo.el: Likewise.
+
+	* modb-entity.el: Likewise.
+
 2020-05-24  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Drop old platforms support.  Now supported Emacsen are version 24

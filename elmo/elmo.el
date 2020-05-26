@@ -171,10 +171,10 @@ If optional argument MIME-CHARSET is specified, it is used for
 encode and decode a multibyte string."
   (let ((type (elmo-folder-type name))
 	prefix split class folder original)
-    (setq original (elmo-string name))
+    (setq original (substring-no-properties name))
     (if type
-	(setq prefix (elmo-string name 0 1)
-	      name (elmo-string name 1))
+	(setq prefix (substring-no-properties name 0 1)
+	      name (substring-no-properties name 1))
       (setq type (intern (car (setq split (split-string name ":")))))
       (if (>= (length split) 2)
 	  (setq name (substring name (+ 1 (length (car split)))))

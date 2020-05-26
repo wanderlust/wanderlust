@@ -171,7 +171,7 @@ See info under Wanderlust for full documentation.
   (mapcar
    (lambda (addr)
      (nth 1 (std11-extract-address-components addr)))
-   (wl-parse-addresses
+   (elmo-parse-addresses
     (mapconcat
      'identity
      (elmo-multiple-fields-body-list (list field) mail-header-separator)
@@ -187,7 +187,7 @@ See info under Wanderlust for full documentation.
 	   (list (cadr structure)
 		 (or (car structure) "")
 		 (or (car structure) ""))))
-       (wl-parse-addresses
+       (elmo-parse-addresses
 	(mapconcat
 	 'identity
 	 (elmo-multiple-fields-body-list '("to" "cc" "bcc")
@@ -500,12 +500,12 @@ Return nil if no ADDRESS exists."
 	(wl-addrmgr-reload)
       (setq wl-addrmgr-list (cons entry wl-addrmgr-list))
       (wl-addrmgr-redraw))
-    (message "Added `%s'." (elmo-string (car entry)))))
+    (message "Added `%s'." (substring-no-properties (car entry)))))
 
 (defun wl-addrmgr-delete ()
   "Delete address entry."
   (interactive)
-  (let ((addr (elmo-string (car (wl-addrmgr-address-entry))))
+  (let ((addr (substring-no-properties (car (wl-addrmgr-address-entry))))
 	lines)
     (when (and addr
 	       (y-or-n-p (format "Delete '%s'? " addr)))
@@ -522,7 +522,7 @@ Return nil if no ADDRESS exists."
   (interactive)
   (let ((orig (wl-addrmgr-address-entry))
 	entry lines)
-    (setq entry (wl-addrmgr-method-call 'edit (elmo-string (car orig))))
+    (setq entry (wl-addrmgr-method-call 'edit (substring-no-properties (car orig))))
     (setq lines (count-lines (point-min) (point)))
     (if (eq wl-addrmgr-sort-key 'none)
 	(wl-addrmgr-reload)
@@ -531,7 +531,7 @@ Return nil if no ADDRESS exists."
 	    wl-addrmgr-list (cons entry wl-addrmgr-list))
       (wl-addrmgr-redraw))
     (forward-line (- lines 1))
-    (message "Modified `%s'." (elmo-string (car entry)))))
+    (message "Modified `%s'." (substring-no-properties (car entry)))))
 
 ;;; local address book implementation.
 (defun wl-addrmgr-local-list (reload)
@@ -607,7 +607,7 @@ Return nil if no ADDRESS exists."
 				  (not (or (string= realname "")
 					   (string-match ".*:.*;$" addr))))
 			     (concat
-			      (wl-address-quote-specials realname)
+			      (elmo-address-quote-specials realname)
 			      " <" addr">")
 			   addr)
 			 to-list)))
@@ -617,7 +617,7 @@ Return nil if no ADDRESS exists."
 				  (not (or (string= realname "")
 					   (string-match ".*:.*;$" addr))))
 			     (concat
-			      (wl-address-quote-specials realname)
+			      (elmo-address-quote-specials realname)
 			      " <" addr">")
 			   addr)
 			 cc-list)))
@@ -627,7 +627,7 @@ Return nil if no ADDRESS exists."
 				   (not (or (string= realname "")
 					    (string-match ".*:.*;$" addr))))
 			      (concat
-			       (wl-address-quote-specials realname)
+			       (elmo-address-quote-specials realname)
 			       " <" addr">")
 			    addr)
 			  bcc-list)))))

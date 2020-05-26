@@ -31,11 +31,6 @@
 (require 'poe)
 (require 'path-util)
 
-;; silence byte compiler
-(eval-when-compile
-  (defalias-maybe 'dynamic-link 'ignore)
-  (defalias-maybe 'dynamic-call 'ignore))
-
 ;; bind colon keywords for old Emacsen.
 (dont-compile
   (condition-case nil
@@ -505,14 +500,6 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 				 (cons regexp
 				       (integer :tag "Match Index")))))))
   :group 'elmo)
-
-;; Prune functions provided temporarily to avoid compile warnings.
-(eval-when-compile
-  (dolist (fn '(dynamic-link dynamic-call))
-    (when (and (get fn 'defalias-maybe)
-	       (eq (symbol-function fn) 'ignore))
-      (put fn 'defalias-maybe nil)
-      (fmakunbound fn))))
 
 (require 'product)
 (product-provide (provide 'elmo-vars) (require 'elmo-version))

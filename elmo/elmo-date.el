@@ -37,7 +37,9 @@
 
 (make-obsolete 'elmo-match-string 'match-string "26 Aug 2012")
 
-(defalias 'elmo-match-buffer'match-string-no-properties)
+(defalias 'elmo-match-buffer 'match-string-no-properties)
+(make-obsolete 'elmo-match-buffer 'match-string-no-properties "24 May 2020")
+
 
 (eval-and-compile
   (defun elmo-replace-in-string (str regexp newtext &optional literal)
@@ -187,7 +189,9 @@ Otherwise treat \\ in NEWTEXT string as special:
     (format-time-string "%d-%b-%Y %T %z")))
 
 (defalias 'elmo-time-less-p 'time-less-p)
+(make-obsolete 'elmo-time-less-p 'time-less-p "24 May 2020")
 (defalias 'elmo-time< 'time-less-p)
+(make-obsolete 'elmo-time< 'time-less-p "24 May 2020")
 
 (defun elmo-time-to-days (time)
   (let ((date (decode-time time)))

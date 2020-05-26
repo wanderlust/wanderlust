@@ -1,3 +1,40 @@
+2020-05-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Obsolete aliased functions.  Use bundled function with Emacs or
+	alies target preferably.
+
+	* wl-action.el: Likewise.
+
+	* wl-address.el: Likewise.
+
+	* wl-addrmgr.el: Likewise.
+
+	* wl-demo.el: Likewise.
+
+	* wl-draft.el: Likewise.
+
+	* wl-e21.el: Likewise.
+
+	* wl-expire.el: Likewise.
+
+	* wl-fldmgr.el: Likewise.
+
+	* wl-folder.el: Likewise.
+
+	* wl-highlight.el: Likewise.
+
+	* wl-message.el: Likewise.
+
+	* wl-refile.el: Likewise.
+
+	* wl-score.el: Likewise.
+
+	* wl-spam.el: Likewise.
+
+	* wl-summary.el: Likewise.
+
+	* wl.el: Likewise.
+
 2020-05-24  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Drop old platforms support.  Now supported Emacsen are version 24

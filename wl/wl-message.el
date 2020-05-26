@@ -646,8 +646,8 @@ Returns non-nil if bottom of message."
 		       (throw 'done t)))))))
 	   (cond
 	    ((consp wl-message-buffer-prefetch-folder-list)
-	     (wl-string-match-member (elmo-folder-name-internal folder)
-				     wl-message-buffer-prefetch-folder-list))
+	     (elmo-string-match-member (elmo-folder-name-internal folder)
+				       wl-message-buffer-prefetch-folder-list))
 	    (t wl-message-buffer-prefetch-folder-list)))))
 
 (defsubst wl-message-buffer-prefetch-clear-timer ()

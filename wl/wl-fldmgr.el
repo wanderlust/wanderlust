@@ -129,7 +129,7 @@
 (defsubst wl-fldmgr-read-string (str)
   (if (string-match "\n" str)
       (error "Not supported name: %s" str)
-    (elmo-string str)))
+    (substring-no-properties str)))
 
 (defsubst wl-fldmgr-add-modified-access-list (group)
   (if (not (member group wl-fldmgr-modified-access-list))
@@ -341,8 +341,10 @@ return value is diffs '(-new -unread -all)."
 	    (when (and access (not clear))
 	      (if is-group
 		  (wl-append unsubscribes
-			     (list (list (elmo-string key) 'access nil)))
-		(wl-append unsubscribes (list (elmo-string key)))))
+			     (list (list (substring-no-properties key)
+					 'access nil)))
+		(wl-append unsubscribes
+			   (list (substring-no-properties key)))))
 	    (setq delete-list (cdr delete-list))))
 	(when update
 	  (setcdr (cdr entity) (list flist unsubscribes))
@@ -398,7 +400,7 @@ return value is diffs '(-new -unread -all)."
 		(throw 'success nil))))
 	     (t			   ;; group
 	      (when (and access
-			 (not (wl-string-assoc (caar new2) unsubscribes)))
+			 (not (elmo-string-assoc (caar new2) unsubscribes)))
 		(and errmes (message "%s: can't insert access group"
 				     (caar new2)))
 		(throw 'success nil))))
@@ -410,10 +412,11 @@ return value is diffs '(-new -unread -all)."
 	    (while new2
 	      (if (consp (car new2))
 		  (setq unsubscribes
-			(delq (wl-string-assoc (car (car new2)) unsubscribes)
+			(delq (elmo-string-assoc (car (car new2)) unsubscribes)
 			      unsubscribes))
-		(setq unsubscribes (delete (elmo-string (car new2))
-					   unsubscribes)))
+		(setq unsubscribes
+		      (delete (substring-no-properties (car new2))
+			      unsubscribes)))
 	      (setq new2 (cdr new2)))
 	    (setcdr (cddr entity) (list unsubscribes))
 	    (wl-fldmgr-add-modified-access-list group))
@@ -465,7 +468,7 @@ return value is diffs '(-new -unread -all)."
       (if (and prev
 	       (wl-folder-buffer-group-p)
 	       (looking-at wl-folder-group-regexp)
-	       (string= (elmo-match-buffer 2) "-"))
+	       (string= (match-string-no-properties 2) "-"))
 	  (setq group-target nil)
 	(if (and prev (bobp))
 	    (error "Out of desktop group")))
@@ -535,10 +538,10 @@ return value is diffs '(-new -unread -all)."
       (save-excursion
 	(goto-char from)
 	(and (looking-at "^\\([ ]*\\)")
-	     (setq pre-indent (elmo-match-buffer 1)))
+	     (setq pre-indent (match-string-no-properties 1)))
 	(while (< (point) to)
 	  (and (looking-at "^\\([ ]*\\)")
-	       (setq indent (elmo-match-buffer 1)))
+	       (setq indent (match-string-no-properties 1)))
 	  (cond ((= (length pre-indent) (length indent))
 		 (setq pre-indent indent)
 		 (setq count (1+ count))
@@ -603,8 +606,8 @@ return value is diffs '(-new -unread -all)."
 		   (looking-at wl-folder-group-regexp))
 	      ;; group
 	      (let (beg end indent opened)
-		(setq indent (elmo-match-buffer 1))
-		(setq opened (elmo-match-buffer 2))
+		(setq indent (match-string-no-properties 1))
+		(setq opened (match-string-no-properties 2))
 		(if (string= opened "+")
 		    (wl-fldmgr-delete-line)
 		  (setq beg (point))
@@ -650,10 +653,10 @@ return value is diffs '(-new -unread -all)."
 	  (setq errmes "can't copy desktop group")
 	  (throw 'err t))
 	(and (looking-at "^\\([ ]*\\)")
-	     (setq pre-indent (elmo-match-buffer 1)))
+	     (setq pre-indent (match-string-no-properties 1)))
 	(while (< (point) to)
 	  (and (looking-at "^\\([ ]*\\)")
-	       (setq indent (elmo-match-buffer 1)))
+	       (setq indent (match-string-no-properties 1)))
 	  (if (wl-folder-buffer-group-p)
 	      (progn
 		(setq errmes "can't copy group folder")
@@ -695,7 +698,7 @@ return value is diffs '(-new -unread -all)."
 	       (wl-folder-buffer-group-p))
 	  (message "Can't copy group folder")
 	(let* ((name (or ename (wl-folder-get-entity-from-buffer)))
-	       (entity (elmo-string name)))
+	       (entity (substring-no-properties name)))
 	  (when name
 	    (if (member entity wl-fldmgr-cut-entity-list)
 		(setq wl-fldmgr-cut-entity-list
@@ -736,7 +739,7 @@ return value is diffs '(-new -unread -all)."
 		       (access
 			(message "Can't insert group in access")
 			(throw 'err t))
-		       ((wl-string-assoc (car new) wl-folder-group-alist)
+		       ((elmo-string-assoc (car new) wl-folder-group-alist)
 			(message "%s: group already exists" (car new))
 			(throw 'err t))))
 		    (setq cut-list (cdr cut-list))
@@ -850,7 +853,7 @@ return value is diffs '(-new -unread -all)."
 	(error "Can't delete group folder"))
     (let* ((inhibit-read-only t)
 	   (tmp (wl-fldmgr-get-path-from-buffer))
-	   (entity (elmo-string (nth 4 tmp)))
+	   (entity (substring-no-properties (nth 4 tmp)))
 	   (folder (wl-folder-get-elmo-folder entity)))
       (when (elmo-folder-delete folder)
 	(wl-folder-clear-entity-info entity)
@@ -866,7 +869,7 @@ return value is diffs '(-new -unread -all)."
       (cond
        ((and (wl-folder-buffer-group-p)
 	     (looking-at wl-folder-group-regexp)) ;; group
-	(let* ((indent (elmo-match-buffer 1))
+	(let* ((indent (match-string-no-properties 1))
 	       (old-group (wl-folder-get-entity-from-buffer))
 	       (group-entity (wl-folder-search-group-entity-by-name
 			      old-group wl-folder-entity))
@@ -882,14 +885,14 @@ return value is diffs '(-new -unread -all)."
 		    (string= old-group group))
 		nil)
 	       (t
-		(if (wl-string-assoc group wl-folder-group-alist)
+		(if (elmo-string-assoc group wl-folder-group-alist)
 		    (message "%s: group already exists" group)
 		  (let ((inhibit-read-only t)
 			(id (wl-fldmgr-get-entity-id
 			     (car group-entity))))
 		    (wl-fldmgr-assign-id group id)
 		    (setcar group-entity group)
-		    (setcar (wl-string-assoc old-group wl-folder-group-alist)
+		    (setcar (elmo-string-assoc old-group wl-folder-group-alist)
 			    group)
 ;;;		    (setcdr (assq id wl-folder-entity-id-name-alist) group)
 		    (wl-folder-set-id-name id group)
@@ -968,7 +971,7 @@ return value is diffs '(-new -unread -all)."
 	    (setq flist (wl-create-access-folder-entity group)))
 	  (if (string= group "")
 	      nil
-	    (if (wl-string-assoc group wl-folder-group-alist)
+	    (if (elmo-string-assoc group wl-folder-group-alist)
 		(message "%s: group already exists" group)
 	      (setq new (append (list group type) flist))
 	      (when (setq diffs (wl-add-entity path
@@ -1052,8 +1055,8 @@ return value is diffs '(-new -unread -all)."
 		     (y-or-n-p (format "Sort subfolders of %s? "
 				       (wl-folder-get-entity-from-buffer)))
 		   (message nil)))
-	(setq indent (elmo-match-buffer 1))
-	(setq opened (elmo-match-buffer 2))
+	(setq indent (match-string-no-properties 1))
+	(setq opened (match-string-no-properties 2))
 	(setq entity (wl-folder-search-group-entity-by-name
 		      (wl-folder-get-entity-from-buffer)
 		      wl-folder-entity))
@@ -1135,8 +1138,8 @@ return value is diffs '(-new -unread -all)."
 	 ((looking-at (format "^[ ]*%s\\[[+-]\\]\\(.*\\)" wl-folder-unsubscribe-mark))
 	  (if (and type (> type 0))
 	      nil
-	    (setq folder (list (elmo-match-buffer 1) 'access nil))
-	    (if (wl-string-assoc (car folder) wl-folder-group-alist)
+	    (setq folder (list (match-string-no-properties 1) 'access nil))
+	    (if (elmo-string-assoc (car folder) wl-folder-group-alist)
 		(message "%s: group already exists" (car folder))
 	      (wl-fldmgr-delete-line)
 	      (when (wl-fldmgr-add folder)
@@ -1147,7 +1150,7 @@ return value is diffs '(-new -unread -all)."
 	 ((looking-at (format "^[ ]*%s\\(.*\\)" wl-folder-unsubscribe-mark))
 	  (if (and type (> type 0))
 	      nil
-	    (setq folder (elmo-match-buffer 1))
+	    (setq folder (match-string-no-properties 1))
 	    (wl-fldmgr-delete-line)
 	    (when (wl-fldmgr-add folder)
 	      (setq execed t))))
@@ -1197,8 +1200,8 @@ return value is diffs '(-new -unread -all)."
 		  (looking-at wl-folder-group-regexp)))
 	(wl-folder-goto-top-of-current-folder)
 	(looking-at wl-folder-group-regexp))
-      (setq indent (elmo-match-buffer 1))
-      (setq opened (elmo-match-buffer 2))
+      (setq indent (match-string-no-properties 1))
+      (setq opened (match-string-no-properties 2))
       (setq entity (wl-folder-search-group-entity-by-name
 		    (wl-folder-get-entity-from-buffer)
 		    wl-folder-entity))
@@ -1242,7 +1245,7 @@ return value is diffs '(-new -unread -all)."
       (let* ((is-group (wl-folder-buffer-group-p))
 	     (name (wl-folder-get-entity-from-buffer))
 	     (searchname (wl-folder-get-petname name))
-	     (pentry (wl-string-assoc name wl-folder-petname-alist))
+	     (pentry (elmo-string-assoc name wl-folder-petname-alist))
 	     (old-petname (or (cdr pentry) ""))
 	     (change)
 	     petname)
@@ -1265,7 +1268,7 @@ return value is diffs '(-new -unread -all)."
 	      nil
 	    (if (or (rassoc petname wl-folder-petname-alist)
 		    (and is-group
-			 (wl-string-assoc petname wl-folder-group-alist)))
+			 (elmo-string-assoc petname wl-folder-group-alist)))
 		(message "%s: already exists" petname)
 	      (wl-folder-append-petname name petname)
 	      (setq change t)))))
@@ -1280,7 +1283,7 @@ return value is diffs '(-new -unread -all)."
 		  (while (wl-folder-buffer-search-group old-petname)
 		    (beginning-of-line)
 		    (and (looking-at "^\\([ ]*\\)")
-			 (setq indent (elmo-match-buffer 1)))
+			 (setq indent (match-string-no-properties 1)))
 		    (wl-fldmgr-delete-line)
 		    (wl-folder-insert-entity
 		     indent
@@ -1291,7 +1294,7 @@ return value is diffs '(-new -unread -all)."
 		(save-excursion
 		  (beginning-of-line)
 		  (and (looking-at "^\\([ ]*\\)")
-		       (setq indent (elmo-match-buffer 1)))
+		       (setq indent (match-string-no-properties 1)))
 		  (wl-fldmgr-delete-line))
 		(wl-folder-insert-entity indent name)))
 	    (setq wl-fldmgr-modified t)
@@ -1306,7 +1309,8 @@ return value is diffs '(-new -unread -all)."
     (while flist
       (setq name (car flist))
       (cond ((stringp name)
-	     (if (setq petname (cdr (wl-string-assoc name wl-folder-petname-alist)))
+	     (if (setq petname
+		       (cdr (elmo-string-assoc name wl-folder-petname-alist)))
 		 (wl-append pet-entities (list name)))
 	     (insert indent name
 		     (if petname
@@ -1331,7 +1335,7 @@ return value is diffs '(-new -unread -all)."
 (defun wl-fldmgr-insert-petname-buffer (pet-entities)
   (let ((alist wl-folder-petname-alist))
     (while alist
-      (if (wl-string-member (caar alist) pet-entities)
+      (if (elmo-string-member (caar alist) pet-entities)
 	  nil
 	(insert "=\t" (caar alist) "\t\"" (cdar alist) "\"\n"))
       (setq alist (cdr alist)))))

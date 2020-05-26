@@ -963,7 +963,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-overview-entity-compare-by-date (x y)
   "Compare entity X and Y by date."
   (condition-case nil
-      (elmo-time<
+      (time-less-p
        (elmo-message-entity-field x 'date)
        (elmo-message-entity-field y 'date))
     (error))) ;; ignore error.
@@ -1418,7 +1418,7 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
       (setq body
 	    (mapconcat 'identity (elmo-multiple-field-body (car fields))
 		       ","))
-      (setq body (wl-parse-addresses body))
+      (setq body (elmo-parse-addresses body))
       (if body (setq candidates (append candidates body)))
       (setq fields (cdr fields)))
     (setq candidates (elmo-uniq-list candidates))
@@ -1904,7 +1904,7 @@ This function is defined for `window-scroll-functions'"
   (interactive "P")
   (let ((default-value (symbol-name wl-summary-default-sort-spec)))
     (wl-summary-rescan
-     (wl-completing-read-multiple
+     (completing-read-multiple
       (format "%s by (%s): " (if reverse "Reverse sort" "Sort") default-value)
       (nconc
        (mapcar (lambda (spec) (list (symbol-name spec)))
@@ -2150,7 +2150,7 @@ This function is defined for `window-scroll-functions'"
     (beginning-of-line)
     (if (or (re-search-forward "\r\\(-?[0-9]+\\)" (point-at-eol) t)
 	    (re-search-forward "^ *\\(-?[0-9]+\\)" (point-at-eol) t))
-	(string-to-number (elmo-match-buffer 1))
+	(string-to-number (match-string-no-properties 1))
       nil)))
 
 (defun wl-summary-delete-all-msgs ()
@@ -2238,7 +2238,7 @@ If ARG, without confirm."
 
 (defun wl-summary-always-sticky-folder-p (folder)
   (or (eq t wl-summary-always-sticky-folder-list)
-      (wl-string-match-member
+      (elmo-string-match-member
        (elmo-folder-name-internal folder)
        wl-summary-always-sticky-folder-list)))
 
@@ -2539,7 +2539,7 @@ If ARG, without confirm."
       (wl-folder-set-current-entity-id
        (wl-folder-get-entity-id entity)))
     (when (or (eq t wl-summary-force-prefetch-folder-list)
-	      (wl-string-match-member
+	      (elmo-string-match-member
 	       (elmo-folder-name-internal wl-summary-buffer-elmo-folder)
 	       wl-summary-force-prefetch-folder-list))
       (wl-summary-force-prefetch))
@@ -3351,7 +3351,7 @@ Return non-nil if the mark is updated"
 		 (lambda (flag)
 		   (and (> (length flag) 0)
 			(intern (downcase flag))))
-		 (wl-completing-read-multiple
+		 (completing-read-multiple
 		  "Flags: "
 		  (mapcar (lambda (flag)
 			    (list (capitalize (symbol-name flag))))
@@ -3924,7 +3924,7 @@ Otherwise it shows previous line of the message."
       (wl-message-prev-page))))
 
 (defsubst wl-summary-no-mime-p (folder)
-  (wl-string-match-member (elmo-folder-name-internal folder)
+  (elmo-string-match-member (elmo-folder-name-internal folder)
 			  wl-summary-no-mime-folder-list))
 
 (defun wl-summary-set-message-buffer-or-redisplay (&rest args)
@@ -4019,7 +4019,7 @@ Return t if message exists."
 (defun wl-summary-jump-to-msg-by-message-id (&optional id)
   (interactive)
   (let* ((original (wl-summary-message-number))
-	 (msgid (elmo-string (or id (read-from-minibuffer "Message-ID: "))))
+	 (msgid (substring-no-properties (or id (read-from-minibuffer "Message-ID: "))))
 	 (entity (elmo-message-entity wl-summary-buffer-elmo-folder msgid))
 	 msg otherfld schar
 	 (errmsg (format "No message with id \"%s\" in the folder." msgid)))
@@ -4053,7 +4053,7 @@ Return t if message exists."
 
 (defun wl-summary-jump-to-msg-by-message-id-via-nntp (&optional id server-spec)
   (interactive)
-  (let* ((msgid (elmo-string (or id (read-from-minibuffer "Message-ID: "))))
+  (let* ((msgid (substring-no-properties (or id (read-from-minibuffer "Message-ID: "))))
 	 newsgroups folder ret
 	 user server port type spec)
     (if server-spec
@@ -4302,7 +4302,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
       (setq wl-summary-move-direction-downward downward))
   (let ((start (point))
 	(skip-tmark-regexp (and wl-summary-skip-mark-list
-				(elmo-regexp-opt wl-summary-skip-mark-list)))
+				(regexp-opt wl-summary-skip-mark-list)))
 	(skip t)
 	(column (current-column))
 	goto-next next-entity finfo)
@@ -4658,7 +4658,7 @@ If ARG is numeric number, decode message as following:
 	    ;; Make sure that this article was written by the user.
 	    (unless (wl-address-user-mail-address-p
 		     (wl-address-header-extract-address
-		      (car (wl-parse-addresses from))))
+		      (car (elmo-parse-addresses from))))
 	      (error "This article is not yours"))
 	    ;; Make control message.
 	    (setq buf (set-buffer (get-buffer-create " *message cancel*")))
@@ -4702,7 +4702,7 @@ If ARG is numeric number, decode message as following:
       ;; Make sure that this article was written by the user.
       (unless (wl-address-user-mail-address-p
 	       (wl-address-header-extract-address
-		(car (wl-parse-addresses from))))
+		(car (elmo-parse-addresses from))))
 	(error "This article is not yours"))
       (let* ((message-id (elmo-get-message-id-from-buffer))
 	     (followup-to (std11-field-body "followup-to"))
@@ -4899,7 +4899,7 @@ If ARG is numeric number, decode message as following:
 
 (defun wl-summary-folder-info-update ()
   (wl-folder-set-folder-updated
-   (elmo-string (wl-summary-buffer-folder-name))
+   (substring-no-properties (wl-summary-buffer-folder-name))
    (list 0
 	 wl-summary-buffer-unread-count
 	 (elmo-folder-length

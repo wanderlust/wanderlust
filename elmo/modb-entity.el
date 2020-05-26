@@ -556,8 +556,8 @@ If each field is t, function is set as default converter."
 	      (elmo-date-get-datevec
 	       (elmo-filter-value condition)))))
 	(if (string= key "since")
-	    (not (elmo-time< field-date specified-date))
-	  (elmo-time< field-date specified-date))))
+	    (not (time-less-p field-date specified-date))
+	  (time-less-p field-date specified-date))))
      ((or (string= key "larger")
 	  (string= key "smaller"))
       (let ((bytes (elmo-msgdb-message-entity-field handler entity 'size))

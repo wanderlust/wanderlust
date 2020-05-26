@@ -682,6 +682,7 @@ Special commands:
   (wl-draft-overload-menubar))
 
 (defalias 'wl-defface 'defface)
+(make-obsolete 'wl-defface 'defface "26 May 2020")
 
 (defun wl-read-event-char (&optional prompt)
   "Get the next event."

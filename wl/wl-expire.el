@@ -643,7 +643,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 					   (current-time-zone) nil)
 			value t))))
 	(elmo-folder-do-each-message-entity (entity folder)
-	  (when (elmo-time<
+	  (when (time-less-p
 		 (elmo-message-entity-field entity 'date)
 		 key-date)
 	    (wl-append targets
@@ -687,7 +687,7 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 	    (summary (wl-summary-get-buffer entity))
 	    (update-msgdb (cond
 			   ((consp wl-expire-folder-update-msgdb)
-			    (wl-string-match-member
+			    (elmo-string-match-member
 			     entity
 			     wl-expire-folder-update-msgdb))
 			   (t
