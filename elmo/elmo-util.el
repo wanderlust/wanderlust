@@ -1578,7 +1578,6 @@ NUMBER-SET is altered."
 
 (defun elmo-list-subdirectories-1 (basedir curdir one-level)
   (let ((root (zerop (length curdir)))
-	(w32-get-true-file-link-count t) ; for Meadow
 	attr dirs dir)
     (catch 'done
       (dolist (file (directory-files (setq dir (expand-file-name curdir basedir))))

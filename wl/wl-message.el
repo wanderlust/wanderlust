@@ -987,30 +987,10 @@ Returns non-nil if bottom of message."
     (define-key keymap [mouse-5] 'wl-message-wheel-up)
     (define-key keymap [S-mouse-4] 'wl-message-wheel-down)
     (define-key keymap [S-mouse-5] 'wl-message-wheel-up)
-    ;; Meadow2
-    (define-key keymap [mouse-wheel1] 'wl-message-wheel-dispatcher)
-    (define-key keymap [S-mouse-wheel1] 'wl-message-wheel-dispatcher)
     (set-keymap-parent wl-message-button-map keymap)
     (define-key wl-message-button-map
       [mouse-2] 'wl-message-button-dispatcher)
     keymap))
-
-;; Wheel handling for Meadow2
-(defun wl-message-wheel-dispatcher (event)
-  (interactive "e")
-  (if (< (nth 4 (nth 1 event)) 0)
-      (wl-message-wheel-up event)
-    (wl-message-wheel-down event)))
-
-(defun wl-summary-wheel-dispatcher (event)
-  (interactive "e")
-  (if (< (nth 4 (nth 1 event)) 0)
-      (if (memq 'shift (event-modifiers event))
-	  (wl-summary-down)
-	(wl-summary-next))
-    (if (memq 'shift (event-modifiers event))
-	(wl-summary-up)
-      (wl-summary-prev))))
 
 (defun wl-message-wheel-up (event)
   (interactive "e")

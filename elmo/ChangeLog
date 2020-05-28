@@ -1,5 +1,13 @@
 2020-05-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	Remove Meadow support.
+
+	* elmo-util.el (elmo-list-subdirectories-1): Likewise..
+
+	* elmo-vars.el (elmo-have-link-count): Likewise.
+
+2020-05-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	Adjust dependencies.
 
 	* elmo-archive.el: Likewise.
