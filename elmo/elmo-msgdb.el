@@ -76,33 +76,6 @@
 ;; elmo-folder-get-info-length
 ;; elmo-folder-get-info-unread
 
-;;; message entity wrappers
-;;
-(defsubst elmo-message-entity-number (entity)
-  (elmo-msgdb-message-entity-number (elmo-message-entity-handler entity)
-				    entity))
-
-(defsubst elmo-message-entity-set-number (entity number)
-  (elmo-msgdb-message-entity-set-number (elmo-message-entity-handler entity)
-					entity
-					number))
-
-(defsubst elmo-message-entity-field (entity field &optional type)
-  "Get message entity field value.
-ENTITY is the message entity structure obtained by `elmo-message-entity'.
-FIELD is the symbol of the field name.
-If optional argument TYPE is specified, return converted value."
-  (elmo-msgdb-message-entity-field (elmo-message-entity-handler entity)
-				   entity field type))
-
-(defsubst elmo-message-entity-set-field (entity field value)
-  "Set message entity field value.
-ENTITY is the message entity structure.
-FIELD is the symbol of the field name.
-VALUE is the field value."
-  (elmo-msgdb-message-entity-set-field (elmo-message-entity-handler entity)
-				       entity field value))
-
 (defconst elmo-msgdb-load-priorities '(legacy standard)
   "Priority list of modb type for load.")
 

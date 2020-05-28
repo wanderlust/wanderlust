@@ -57,8 +57,8 @@
 (require 'wl-address)
 (require 'wl-news nil t)
 
-(wl-draft-mode-setup)
 (require 'wl-draft)
+(wl-draft-mode-setup)
 (wl-draft-key-setup)
 
 (require 'wl-demo)
@@ -69,8 +69,7 @@
   (require 'smtp)
   (require 'wl-score)
   (require 'wl-fldmgr)
-  (require 'wl-mime)
-  (require 'wl-spam))
+  (require 'wl-mime))
 
 (defun wl-plugged-init (&optional make-alist)
   (setq elmo-plugged wl-plugged)
@@ -992,7 +991,9 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
       wl-summary-increase-score wl-summary-lower-score )
      ("wl-draft" wl-draft-rename-saved-config)
      ("wl-qs" :interactive t
-      wl-quicksearch-goto-search-folder-wrapper))))
+      wl-quicksearch-goto-search-folder-wrapper)
+     ("wl-spam" wl-spam-save-status)
+     )))
 
 ;; for backward compatibility
 (defalias 'wl-summary-from-func-petname 'wl-summary-default-from)

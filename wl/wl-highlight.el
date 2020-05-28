@@ -32,12 +32,8 @@
 
 (require 'invisible)
 (require 'wl-vars)
-(provide 'wl-highlight)			; circular dependency
 
-(eval-when-compile
-  (require 'wl-e21)
-  (defun-maybe wl-dnd-set-drop-target (a b))
-  (defun-maybe wl-dnd-set-drag-starter (a b)))
+(provide 'wl-highlight)
 
 (defgroup wl-faces nil
   "Wanderlust, Faces."
@@ -925,6 +921,7 @@
 			    (cdr pair))))
 	     referer ","))))
 
+(require 'wl-summary)
 (defun wl-highlight-summary-line-help-echo (number beg end &optional string)
   (let ((type (elmo-folder-type-internal wl-summary-buffer-elmo-folder))
 	message handler)
@@ -979,9 +976,7 @@
 	(when wl-use-highlight-mouse-line
 	  (put-text-property bol eol 'mouse-face 'highlight))
 	(when wl-highlight-summary-line-help-echo-alist
-	  (wl-highlight-summary-line-help-echo number bol eol))
-	(when wl-use-dnd
-	  (wl-dnd-set-drag-starter bol eol))))))
+	  (wl-highlight-summary-line-help-echo number bol eol))))))
 
 (defun wl-highlight-folder (start end)
   "Highlight folder between start and end.
@@ -1013,6 +1008,7 @@ Variables used:
 	    (wl-highlight-folder-current-line)
 	    (forward-line)))))))
 
+(require 'wl-folder)
 (defun wl-highlight-folder-path (folder-path)
   "Highlight current folder path...overlay"
   (save-excursion

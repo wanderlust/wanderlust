@@ -41,10 +41,6 @@
 (eval-when-compile (require 'cl))
 (require 'elmo)
 
-(eval-when-compile
-  ;; Avoid compile warnings
-  (require 'elmo-spam))
-
 (defcustom elmo-split-rule nil
   "Split rule for the command `elmo-split'.
 The format of this variable is a list of RULEs which has form like:
@@ -239,8 +235,10 @@ It can be some ACTION as in `elmo-split-rule'."
 			   (equal field-value value)))))
       result)))
 
+(autoload 'elmo-spam-buffer-spam-p "elmo-spam")
+(autoload 'elmo-spam-processor "elmo-spam")
+
 (defun elmo-split-spam-p (buffer &rest plist)
-  (require 'elmo-spam)
   (elmo-spam-buffer-spam-p (elmo-spam-processor)
 			   buffer
 			   (plist-get plist :register)))

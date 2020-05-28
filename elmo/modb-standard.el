@@ -32,6 +32,7 @@
 (eval-when-compile (require 'cl))
 
 (require 'elmo-util)
+(require 'elmo-flag)
 (require 'modb)
 
 (defcustom modb-standard-divide-number 500

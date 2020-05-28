@@ -34,6 +34,7 @@
 (require 'elmo-util)
 (require 'elmo)
 (require 'elmo-map)
+(require 'elmo-flag)
 
 (defcustom elmo-maildir-folder-path "~/Maildir"
   "*Maildir folder path."

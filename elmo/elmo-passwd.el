@@ -227,8 +227,6 @@ It is used to remove executed timer function.")
   (elmo-passwd-alist-modified-internal passwd))
 
 ;; auth-source
-(eval-when-compile
-  (require 'auth-source nil t))
 
 (eval-and-compile
   (luna-define-class elmo-passwd-auth-source (elmo-passwd) (savers))
@@ -250,6 +248,8 @@ It is used to remove executed timer function.")
 	  (funcall (cdr elt)))))
   (elmo-passwd-auth-source-set-savers-internal passwd nil))
 
+(autoload 'auth-source-search "auth-source")
+
 (luna-define-method elmo-passwd-get ((passwd elmo-passwd-auth-source)
 				     key)
   (let* ((auth-source-creation-prompts
@@ -270,6 +270,8 @@ It is used to remove executed timer function.")
     (if (functionp secret)
 	(funcall secret)
       secret)))
+
+(autoload 'auth-source-forget+ "auth-source")
 
 (luna-define-method elmo-passwd-remove ((passwd elmo-passwd-auth-source)
 					key)

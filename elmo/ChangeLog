@@ -1,3 +1,43 @@
+2020-05-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Adjust dependencies.
+
+	* elmo-archive.el: Likewise.
+
+	* elmo-cache.el: Likewise.
+
+	* elmo-flag.el: Likewise.
+
+	* elmo-maildir.el: Likewise.
+
+	* elmo-mime.el: Likewise.
+
+	* elmo-msgdb.el: Likewise.
+	(elmo-message-entity-set-field)
+	(elmo-message-entity-field, elmo-message-entity-set-number)
+	(elmo-message-entity-number): Moved to modb.el.
+
+	* elmo-null.el: Likewise.
+
+	* elmo-passwd.el: Likewise.
+
+	* elmo-sendlog.el: Likewise.
+
+	* elmo-split.el: Likewise.
+
+	* elmo-util.el: Likewise.
+
+	* elmo-vars.el: Remove code for old platforms.
+
+	* modb-entity.el: Likewise.
+
+	* modb-standard.el: Likewise.
+
+	* modb.el: Adjust dependencies.
+	(elmo-message-entity-set-field)
+	(elmo-message-entity-field, elmo-message-entity-set-number)
+	(elmo-message-entity-number): Moved from elmo-msgdb.el.
+
 2020-05-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Obsolete aliased functions.  Use bundled function with Emacs or

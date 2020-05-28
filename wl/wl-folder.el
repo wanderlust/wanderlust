@@ -34,15 +34,15 @@
 (require 'elmo-vars)
 (require 'elmo-util)
 (require 'elmo)
+(require 'elmo-nntp)
 (require 'wl-vars)
 (require 'easymenu nil t) ; needed here.
 (require 'wl-util)
+(require 'wl-e21)
+(require 'wl-summary)
+(eval-when-compile (require 'cl))
 
-(eval-when-compile
-  (require 'cl)
-  (provide 'wl-folder)
-  (require 'wl)
-  (require 'elmo-nntp))
+(provide 'wl-folder)
 
 (defcustom wl-folder-init-hook nil
   "A hook called after folder initialization is finished."
@@ -61,6 +61,7 @@
 (defvar wl-folder-info-alist-modified nil)
 
 (defvar wl-folder-mode-map nil)
+(defvar wl-folder-mode-menu nil)
 
 (defvar wl-folder-buffer-disp-summary nil)
 (defvar wl-folder-buffer-cur-entity-id nil)
@@ -318,6 +319,7 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
   `(elmo-set-hash-val ,name ,folder
 		      (or ,hashtb wl-folder-elmo-folder-hashtb)))
 
+(require 'wl-draft)
 (defun wl-draft-get-folder ()
   "A function to obtain `opened' draft elmo folder structure."
   (if (and wl-draft-folder-internal
@@ -600,6 +602,7 @@ Optional argument ARG is repeart count."
 	    (throw 'done t))
 	  (setq path (cdr path)))))))
 
+(require 'wl-fldmgr)
 (defun wl-folder-maybe-load-folder-list (entity)
   (when (null (caddr entity))
     (setcdr (cdr entity)
@@ -2028,8 +2031,9 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	wl-fldmgr-cut-entity-list nil
 	wl-fldmgr-modified nil
 	wl-fldmgr-modified-access-list nil
-	wl-score-cache nil
-	))
+	)
+  (when (boundp 'wl-score-cache)
+    (setq wl-score-cache nil)))
 
 (defun wl-make-plugged-alist ()
   (let ((entity-list (wl-folder-get-entity-list wl-folder-entity))
@@ -2057,6 +2061,8 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
     (run-hooks 'wl-make-plugged-hook)))
 
 (defvar wl-folder-init-function 'wl-local-folder-init)
+
+(autoload 'wl-acap-init "wl-acap")
 
 (defun wl-folder-init ()
   "Return top-level folder entity."
@@ -2835,6 +2841,7 @@ Call `wl-summary-write-current-folder' with current folder name."
     (wl-summary-write-current-folder
      (wl-folder-get-entity-from-buffer))))
 
+(require 'wl)
 (defun wl-folder-mimic-kill-buffer ()
   "Kill the current (Folder) buffer with query."
   (interactive)
@@ -3000,6 +3007,222 @@ Call `wl-summary-write-current-folder' with current folder name."
       (if (not flag)
 	  (try-completion string candidate)
 	(all-completions string candidate))))))
+
+;; wl-e21.el
+(defvar wl-folder-internal-icon-list
+  ;; alist of (image . icon-file)
+  '((wl-folder-nntp-image	  . wl-nntp-folder-icon)
+    (wl-folder-imap4-image	  . wl-imap-folder-icon)
+    (wl-folder-pop3-image	  . wl-pop-folder-icon)
+    (wl-folder-localdir-image     . wl-localdir-folder-icon)
+    (wl-folder-localnews-image    . wl-localnews-folder-icon)
+    (wl-folder-internal-image     . wl-internal-folder-icon)
+    (wl-folder-multi-image	  . wl-multi-folder-icon)
+    (wl-folder-filter-image       . wl-filter-folder-icon)
+    (wl-folder-archive-image      . wl-archive-folder-icon)
+    (wl-folder-pipe-image	  . wl-pipe-folder-icon)
+    (wl-folder-maildir-image      . wl-maildir-folder-icon)
+    (wl-folder-search-image	  . wl-search-folder-icon)
+    (wl-folder-shimbun-image      . wl-shimbun-folder-icon)
+    (wl-folder-file-image	  . wl-file-folder-icon)
+    (wl-folder-access-image	  . wl-access-folder-icon)
+    (wl-folder-trash-empty-image  . wl-empty-trash-folder-icon)
+    (wl-folder-draft-image	  . wl-draft-folder-icon)
+    (wl-folder-queue-image	  . wl-queue-folder-icon)
+    (wl-folder-trash-image	  . wl-trash-folder-icon)))
+
+(defvar wl-folder-toolbar
+  '([wl-folder-jump-to-current-entity
+     wl-folder-jump-to-current-entity t "Enter Current Folder"]
+    [wl-folder-next-entity
+     wl-folder-next-entity t "Next Folder"]
+    [wl-folder-prev-entity
+     wl-folder-prev-entity t "Previous Folder"]
+    [wl-folder-check-current-entity
+     wl-folder-check-current-entity t "Check Current Folder"]
+    [wl-folder-sync-current-entity
+     wl-folder-sync-current-entity t "Sync Current Folder"]
+    [wl-draft
+     wl-draft t "Write a New Message"]
+    [wl-folder-goto-draft-folder
+     wl-folder-goto-draft-folder t "Go to Draft Folder"]
+    [wl-folder-empty-trash
+     wl-folder-empty-trash t "Empty Trash"]
+    [wl-exit
+     wl-exit t "Quit Wanderlust"]
+    )
+  "The Folder buffer toolbar.")
+
+(defun wl-e21-setup-folder-toolbar ()
+  (when (wl-e21-setup-toolbar wl-folder-toolbar)
+    (wl-e21-make-toolbar-buttons wl-folder-mode-map wl-folder-toolbar)))
+
+(defvar wl-folder-toggle-icon-list
+  '((wl-folder-opened-image       . wl-opened-group-folder-icon)
+    (wl-folder-closed-image       . wl-closed-group-folder-icon)))
+
+(eval-when-compile
+  (defsubst wl-e21-highlight-folder-group-line (start end icon numbers)
+    (let (image)
+      (when (wl-e21-display-image-p)
+	(let (overlay)
+	  (let ((overlays (overlays-in start end)))
+	    (while (and (setq overlay (pop overlays))
+			(not (overlay-get overlay 'wl-e21-icon)))))
+	  (unless overlay
+	    (setq overlay (make-overlay start end))
+	    (overlay-put overlay 'wl-e21-icon t)
+	    (overlay-put overlay 'evaporate t))
+	  (setq image (get icon 'image))
+	  (unless image
+	    (let ((name (symbol-value
+			 (cdr (assq icon wl-folder-toggle-icon-list)))))
+	      (setq image (wl-e21-find-image
+			   `((:type xpm :file ,name :ascent center))))))
+	  (overlay-put overlay 'display image)))
+      (when (and wl-use-highlight-mouse-line (display-mouse-p))
+	(let ((inhibit-read-only t))
+	  (put-text-property (if image
+				 (max (1- start) (line-beginning-position))
+			       start)
+			     (line-end-position)
+			     'mouse-face 'highlight)))))
+
+  (defsubst wl-e21-highlight-folder-by-numbers (start end text-face numbers)
+    (when (display-color-p)
+      (let ((inhibit-read-only t))
+	(if (and wl-highlight-folder-by-numbers
+		 numbers (nth 0 numbers) (nth 1 numbers)
+		 (re-search-forward "[-[:digit:]]+/[-[:digit:]]+/[-[:digit:]]+"
+				    (line-end-position) t))
+	    (let* ((unsync (nth 0 numbers))
+		   (unread (nth 1 numbers))
+		   (face (cond ((and unsync (zerop unsync))
+				(if (and unread (zerop unread))
+				    'wl-highlight-folder-zero-face
+				  'wl-highlight-folder-unread-face))
+			       ((and unsync
+				     (>= unsync
+					 wl-folder-many-unsync-threshold))
+				'wl-highlight-folder-many-face)
+			       (t
+				'wl-highlight-folder-few-face))))
+	      (if (numberp wl-highlight-folder-by-numbers)
+		  (progn
+		    (put-text-property start (match-beginning 0)
+				       'face text-face)
+		    (put-text-property (match-beginning 0) (match-end 0)
+				       'face face))
+		(put-text-property start (match-end 0) 'face face)))
+	  (put-text-property start (line-end-position) 'face text-face))))))
+
+(defun wl-highlight-folder-current-line (&optional numbers)
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (let (fld-name start end)
+      (cond
+       ;; opened folder group
+       ((and (wl-folder-buffer-group-p)
+	     (looking-at wl-highlight-folder-opened-regexp))
+	(setq start (match-beginning 1)
+	      end (match-end 1))
+	(wl-e21-highlight-folder-group-line start end
+					    'wl-folder-opened-image
+					    numbers)
+	(wl-e21-highlight-folder-by-numbers start end
+					    'wl-highlight-folder-opened-face
+					    numbers))
+       ;; closed folder group
+       ((and (wl-folder-buffer-group-p)
+	     (looking-at wl-highlight-folder-closed-regexp))
+	(setq start (match-beginning 1)
+	      end (match-end 1))
+	(wl-e21-highlight-folder-group-line start end
+					    'wl-folder-closed-image
+					    numbers)
+	(wl-e21-highlight-folder-by-numbers start end
+					    'wl-highlight-folder-closed-face
+					    numbers))
+       ;; basic folder
+       ((and (setq fld-name (wl-folder-get-folder-name-by-id
+			     (get-text-property (point) 'wl-folder-entity-id)))
+	     (looking-at "[[:blank:]]+\\([^[:blank:]\n]+\\)"))
+	(setq start (match-beginning 1)
+	      end (match-end 1))
+	(let (image)
+	  (when (wl-e21-display-image-p)
+	    (let (overlay)
+	      (let ((overlays (overlays-in start end)))
+		(while (and (setq overlay (pop overlays))
+			    (not (overlay-get overlay 'wl-e21-icon)))))
+	      (unless overlay
+		(setq overlay (make-overlay start end))
+		(overlay-put overlay 'wl-e21-icon t)
+		(overlay-put overlay 'evaporate t))
+	      (let (type)
+		(unless (get (caar wl-folder-internal-icon-list) 'image)
+		  (wl-folder-init-icons))
+		(setq image
+		      (cond
+		       ;; trash folder
+		       ((string= fld-name wl-trash-folder)
+			(let ((num (nth 2 numbers))) ; number of messages
+			  (get (if (or (not num) (zerop num))
+				   'wl-folder-trash-empty-image
+				 'wl-folder-trash-image)
+			       'image)))
+		       ;; draft folder
+		       ((string= fld-name wl-draft-folder)
+			(get 'wl-folder-draft-image 'image))
+		       ;; queue folder
+		       ((string= fld-name wl-queue-folder)
+			(get 'wl-folder-queue-image 'image))
+		       ;; and one of many other folders
+		       ((setq type (or (elmo-folder-type fld-name)
+				       (elmo-folder-type-internal
+					(elmo-make-folder fld-name))))
+			(get (intern (format "wl-folder-%s-image" type))
+			     'image)))))
+	      (overlay-put overlay 'before-string
+			   (propertize " " 'display image
+				       'invisible t))))
+	  (when (and wl-use-highlight-mouse-line (display-mouse-p))
+	    (let ((inhibit-read-only t))
+	      (put-text-property (if image
+				     (max (1- start)
+					  (line-beginning-position))
+				   start)
+				 (line-end-position)
+				 'mouse-face 'highlight))))
+	(when (display-color-p)
+	  (wl-e21-highlight-folder-by-numbers
+	   start end
+	   (if (looking-at (format "^[[:blank:]]*\\(?:%s\\|%s\\)"
+				   wl-folder-unsubscribe-mark
+				   wl-folder-removed-mark))
+	       'wl-highlight-folder-killed-face
+	     'wl-highlight-folder-unknown-face)
+	   numbers)))))))
+
+(defun wl-folder-init-icons ()
+  (when (wl-e21-display-image-p)
+    (let ((icons wl-folder-internal-icon-list)
+	  icon name image)
+      (while (setq icon (pop icons))
+	(unless (get (car icon) 'image)
+	  (setq name (symbol-value (cdr icon))
+		image (wl-e21-find-image
+		       `((:type xpm :file ,name :ascent center))))
+	  (when image
+	    (put (car icon) 'image image)))))))
+
+(defalias 'wl-setup-folder 'wl-e21-setup-folder-toolbar)
+
+(add-hook 'wl-folder-mode-hook 'wl-setup-folder)
+(add-hook 'wl-folder-mode-hook 'wl-folder-init-icons)
+
+;; End of wl-e21.el
 
 (require 'product)
 (product-provide (provide 'wl-folder) (require 'wl-version))

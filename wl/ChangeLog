@@ -1,3 +1,64 @@
+2020-05-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Adjust dependencies.
+
+	* wl-action.el (wl-summary): Adjust dependencies.
+
+	* wl-draft.el: Adjust dependencies.
+	(wl-draft-mode-map): Declare explicitly.
+	(wl-draft-insert-signature, wl-draft-toolbar)
+	(wl-e21-setup-draft-toolbar, wl-draft-overload-menubar)
+	(wl-draft-mode-setup, wl-draft-key-setup)
+	(wl-draft-overload-functions): Moved from wl-e21.el.
+	(wl-draft-real-time-highlight)
+	(wl-draft-jit-highlight-function)
+	(wl-draft-idle-highlight-idle-time)
+	(wl-draft-idle-highlight-function): Moved ro wl-vars.el.
+
+	* wl-e21.el: Adjust dependencies.  Most function and variables are
+	moved to related modules.
+
+	* wl-folder.el (wl-folder-internal-icon-list, wl-folder-toolbar)
+	(wl-e21-setup-folder-toolbar, wl-folder-toggle-icon-list)
+	(wl-e21-highlight-folder-group-line)
+	(wl-e21-highlight-folder-by-numbers)
+	(wl-highlight-folder-current-line, wl-folder-init-icons)
+	(wl-setup-folder): Moved from wl-e21.el
+
+	* wl-folder.elo: Adjust dependencies.
+
+	* wl-highlight.el: Adjust dependencies.
+	(wl-highlight-summary-current-line): Remove code for XEmacs.
+
+	* wl-message.el: Adjust dependencies.
+	(wl-message-toolbar, wl-e21-setup-message-toolbar)
+	(wl-setup-message, wl-message-define-keymap)
+	(wl-message-wheel-dispatcher, wl-summary-wheel-dispatcher)
+	(wl-message-wheel-up, wl-message-wheel-down): Moved from
+	wl-e21.el.
+
+	* wl-mime.el: Adjust dependencies.
+
+	* wl-refile.el: Adjust dependencies.
+
+	* wl-score.el (wl-current-score-file): Adjust dependencies.
+
+	* wl-summary.el: Adjust dependencies.
+	(wl-summary-toolbar, wl-e21-setup-summary-toolbar)
+	(wl-setup-summary): Moved from wl-e21.el.
+
+	* wl-template.el: Adjust dependencies.
+
+	* wl-util.el: Adjust dependencies.
+	(wl-read-event-char): Moved from wl-e21.el.
+
+	* wl-vars.el (wl-draft-real-time-highlight)
+	(wl-draft-jit-highlight-function)
+	(wl-draft-idle-highlight-idle-time)
+	(wl-draft-idle-highlight-function): Moved from wl-draft.el
+
+	* wl.el: Adjust dependencies.
+
 2020-05-26  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Obsolete aliased functions.  Use bundled function with Emacs or

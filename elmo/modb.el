@@ -35,6 +35,8 @@
 (require 'luna)
 (require 'modb-entity)
 
+(provide 'modb)
+
 (eval-and-compile
   (luna-define-class modb-generic () (location	       ; location for save.
 				      message-modified ; message is modified.
@@ -152,11 +154,6 @@ Should return non-nil if the first entity is \"less\" than the second.")
 (luna-define-generic elmo-msgdb-message-number (msgdb message-id)
   "Get message number from MSGDB which corresponds to MESSAGE-ID.")
 
-(luna-define-method elmo-msgdb-message-number ((msgdb modb-generic)
-					       message-id)
-  (elmo-message-entity-number
-   (elmo-msgdb-message-entity msgdb message-id)))
-
 (luna-define-generic elmo-msgdb-message-entity (msgdb key)
   "Return the message-entity structure which matches to the KEY.
 KEY is a number or a string.
@@ -170,16 +167,47 @@ NUMBER is a number of the message.
 FIELD is a symbol of the field.
 If optional argument TYPE is specified, return converted value.")
 
-(luna-define-method elmo-msgdb-message-field ((msgdb modb-generic)
-					      number field &optional type)
-  (elmo-message-entity-field (elmo-msgdb-message-entity msgdb number)
-			     field type))
-
 (luna-define-generic elmo-msgdb-message-entity-handler (msgdb)
   "Get modb entity handler instance which corresponds to the MSGDB.")
 
+;;; message entity wrappers
+;;
+(defsubst elmo-message-entity-number (entity)
+  (elmo-msgdb-message-entity-number (elmo-message-entity-handler entity)
+				    entity))
+
+(defsubst elmo-message-entity-set-number (entity number)
+  (elmo-msgdb-message-entity-set-number (elmo-message-entity-handler entity)
+					entity
+					number))
+
+(defsubst elmo-message-entity-field (entity field &optional type)
+  "Get message entity field value.
+ENTITY is the message entity structure obtained by `elmo-message-entity'.
+FIELD is the symbol of the field name.
+If optional argument TYPE is specified, return converted value."
+  (elmo-msgdb-message-entity-field (elmo-message-entity-handler entity)
+				   entity field type))
+
+(defsubst elmo-message-entity-set-field (entity field value)
+  "Set message entity field value.
+ENTITY is the message entity structure.
+FIELD is the symbol of the field name.
+VALUE is the field value."
+  (elmo-msgdb-message-entity-set-field (elmo-message-entity-handler entity)
+				       entity field value))
+
 ;;; generic implement
 ;;
+(luna-define-method elmo-msgdb-message-number ((msgdb modb-generic)
+					       message-id)
+  (elmo-message-entity-number (elmo-msgdb-message-entity msgdb message-id)))
+
+(luna-define-method elmo-msgdb-message-field ((msgdb modb-generic)
+					      number field &optional type)
+  (elmo-msgdb-message-entity-field
+   (elmo-msgdb-message-entity msgdb number) field type))
+
 (luna-define-method elmo-msgdb-load ((msgdb modb-generic))
   t)
 
@@ -225,6 +253,8 @@ If optional argument TYPE is specified, return converted value.")
 	 (list msgdb number entity
 	       (or numbers (elmo-msgdb-list-messages msgdb))))
       condition)))
+
+(require 'elmo-flag)
 
 (defun elmo-msgdb-match-condition-primitive (condition msgdb number entity
 						       population)

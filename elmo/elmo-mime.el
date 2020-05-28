@@ -28,14 +28,14 @@
 
 ;;; Code:
 ;;
-(require 'elmo-vars)
+(require 'luna)
 (require 'mmbuffer)
 (require 'mmimap)
 (require 'mime-view)
+(require 'elmo)	      ; elmo-folder-do-each-message-entity
+(require 'elmo-vars)
 
 (eval-when-compile
-  (require 'luna)
-  (require 'elmo)	      ; elmo-folder-do-each-message-entity
   (require 'cl))
 
 ;; MIME-Entity

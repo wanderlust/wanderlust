@@ -30,6 +30,9 @@
 ;;
 (require 'elmo-util)
 (require 'wl-vars)
+(require 'wl-highlight)
+
+(provide 'wl-template)
 
 ;; Variables
 
@@ -57,26 +60,6 @@
 (defun wl-template-preview-p ()
   "Return non-nil when preview template."
   wl-template-preview)
-
-(defun wl-template-apply (name)
-  "Apply NAME template to draft."
-  (let (template wl-draft-real-time-highlight)
-    (when name
-      (if (string= name "")
-	  (setq name wl-template-default-name))
-      (when (setq template (cdr (assoc name wl-template-alist)))
-	(save-excursion
-	  (setq wl-draft-config-variables
-		(elmo-uniq-list
-		 (nconc wl-draft-config-variables
-			(save-excursion
-			  (wl-draft-config-exec-sub template)))))
-	  ;; rehighlight
-	  (if wl-highlight-body-too
-	      (let ((beg (point-min))
-		    (end (point-max)))
-		(put-text-property beg end 'face nil)
-		(wl-highlight-message beg end t))))))))
 
 (defun wl-template-mode ()
   "Major mode for Wanderlust template.
@@ -167,6 +150,39 @@ ARG is ignored."			; ARG ignored this version (?)
 			      (1- wl-template-cur-num)))
   (wl-template-show))
 
+(defun wl-template-insert (name &optional mail-header)
+  "Insert NAME template.
+Set header-separator is MAIL-HEADER."
+  (let ((template (cdr (assoc name wl-template-alist)))
+	(mail-header-separator (or mail-header
+				   mail-header-separator)))
+    (when template
+      (if mail-header
+	  (insert mail-header-separator "\n"))
+      (wl-draft-config-exec-sub template))))
+
+(require 'wl-draft)
+
+(defun wl-template-apply (name)
+  "Apply NAME template to draft."
+  (let (template wl-draft-real-time-highlight)
+    (when name
+      (if (string= name "")
+	  (setq name wl-template-default-name))
+      (when (setq template (cdr (assoc name wl-template-alist)))
+	(save-excursion
+	  (setq wl-draft-config-variables
+		(elmo-uniq-list
+		 (nconc wl-draft-config-variables
+			(save-excursion
+			  (wl-draft-config-exec-sub template)))))
+	  ;; rehighlight
+	  (if wl-highlight-body-too
+	      (let ((beg (point-min))
+		    (end (point-max)))
+		(put-text-property beg end 'face nil)
+		(wl-highlight-message beg end t))))))))
+
 (defun wl-template-abort ()
   "Exit from electric reference mode without inserting reference."
   (interactive)
@@ -191,17 +207,6 @@ ARG is ignored."			; ARG ignored this version (?)
       (wl-template-apply wl-template)
       (let ((win (get-buffer-window wl-template-draft-buffer)))
 	(if win (select-window win))))))
-
-(defun wl-template-insert (name &optional mail-header)
-  "Insert NAME template.
-Set header-separator is MAIL-HEADER."
-  (let ((template (cdr (assoc name wl-template-alist)))
-	(mail-header-separator (or mail-header
-				   mail-header-separator)))
-    (when template
-      (if mail-header
-	  (insert mail-header-separator "\n"))
-      (wl-draft-config-exec-sub template))))
 
 (require 'product)
 (product-provide (provide 'wl-template) (require 'wl-version))

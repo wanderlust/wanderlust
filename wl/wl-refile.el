@@ -31,6 +31,7 @@
 
 (require 'wl-vars)
 (require 'wl-util)
+(require 'wl-address)
 
 (defvar wl-refile-alist nil)
 (defvar wl-refile-alist-file-name "refile-alist")
@@ -43,6 +44,17 @@
 (defvar wl-refile-default-from-folder-path-separator "/")
 
 (defvar wl-refile-alist-max-length 1000)
+
+;;
+;; refile guess
+;;
+(defvar wl-refile-guess-functions
+  '(wl-refile-guess-by-rule
+    wl-refile-guess-by-msgid
+    wl-refile-guess-by-subject
+    wl-refile-guess-by-history
+    wl-refile-guess-by-from)
+  "*Functions in this list are used for guessing refile destination folder.")
 
 (defun wl-refile-alist-setup ()
   (let ((flist wl-refile-guess-functions))
@@ -140,17 +152,6 @@
 	    (setcdr hit dst)
 	  (setq wl-refile-subject-alist (cons (cons subject dst)
 					    wl-refile-subject-alist))))))
-
-;;
-;; refile guess
-;;
-(defvar wl-refile-guess-functions
-  '(wl-refile-guess-by-rule
-    wl-refile-guess-by-msgid
-    wl-refile-guess-by-subject
-    wl-refile-guess-by-history
-    wl-refile-guess-by-from)
-  "*Functions in this list are used for guessing refile destination folder.")
 
 ;; 2000-11-05: *-func-list -> *-functions
 (elmo-define-obsolete-variable 'wl-refile-guess-func-list

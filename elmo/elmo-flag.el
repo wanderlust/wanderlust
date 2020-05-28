@@ -29,7 +29,6 @@
 ;;; Code:
 (require 'elmo-util)
 (require 'elmo-localdir)
-(eval-when-compile (require 'cl))
 
 (defcustom elmo-global-flags '(important)
   "A list of flag symbol which is managed globally by the flag folder."

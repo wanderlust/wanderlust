@@ -109,6 +109,21 @@
 (make-variable-buffer-local 'wl-current-score-file)
 (make-variable-buffer-local 'wl-score-alist)
 
+(defvar wl-score-edit-summary-buffer nil)
+
+(defvar wl-score-mode-syntax-table
+  (let ((table (copy-syntax-table lisp-mode-syntax-table)))
+    (modify-syntax-entry ?| "w" table)
+    table)
+  "Syntax table used in score-mode buffers.")
+
+(defvar wl-score-mode-map nil)
+(defvar wl-score-mode-menu-spec
+  '("Score"
+    ["Exit" wl-score-edit-exit t]
+    ["Insert date" wl-score-edit-insert-date t]
+    ["Format" wl-score-pretty-print t]))
+
 ;; Utility functions
 
 (defun wl-score-simplify-buffer-fuzzy ()
@@ -1271,21 +1286,6 @@ Set `wl-score-cache' nil."
     "\\<wl-score-mode-map>\\[wl-score-edit-exit] to save edits")))
 
 ;; score-mode
-
-(defvar wl-score-edit-summary-buffer nil)
-
-(defvar wl-score-mode-syntax-table
-  (let ((table (copy-syntax-table lisp-mode-syntax-table)))
-    (modify-syntax-entry ?| "w" table)
-    table)
-  "Syntax table used in score-mode buffers.")
-
-(defvar wl-score-mode-map nil)
-(defvar wl-score-mode-menu-spec
-  '("Score"
-    ["Exit" wl-score-edit-exit t]
-    ["Insert date" wl-score-edit-insert-date t]
-    ["Format" wl-score-pretty-print t]))
 
 (unless wl-score-mode-map
   (setq wl-score-mode-map (copy-keymap emacs-lisp-mode-map))

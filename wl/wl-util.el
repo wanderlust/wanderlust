@@ -36,9 +36,7 @@
 (require 'elmo-util)
 (require 'elmo-flag)
 (require 'wl-vars)
-(eval-when-compile (require 'elmo-pop3))
 (eval-when-compile (require 'cl))
-(eval-when-compile (require 'static))
 
 (require 'pp nil t)
 
@@ -52,6 +50,8 @@
   (defalias-maybe 'set-process-coding-system 'ignore)
   (defalias-maybe 'dispatch-event 'ignore))
 
+(provide 'wl-util)
+ 
 (defalias 'wl-set-work-buf 'elmo-set-work-buf)
 (make-obsolete 'wl-set-work-buf 'elmo-set-work-buf "03 Apr 2000 at latest")
 
@@ -62,6 +62,8 @@
 
 (defalias 'wl-parse 'elmo-parse)
 (make-obsolete 'wl-parse 'elmo-parse "20 Feb 2001")
+
+(require 'wl-address)
 
 (defun wl-delete-duplicates (list &optional all hack-addresses)
   "Delete duplicate equivalent strings from the LIST.
@@ -121,6 +123,11 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 (defmacro wl-pop (l)
   "Remove the head of the list stored in L."
   (list 'car (list 'prog1 l (list 'setq l (list 'cdr l)))))
+
+(defun wl-read-event-char (&optional prompt)
+  "Get the next event."
+  (let ((event (read-event prompt)))
+    (cons (and (numberp event) event) event)))
 
 (defun wl-ask-folder (func mes-string)
   (let* (key keve
@@ -364,6 +371,9 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
 (defmacro wl-concat-list (list separator)
   `(mapconcat 'identity (delete "" (delq nil ,list)) ,separator))
 
+(require 'wl-message)
+(require 'wl-summary)
+
 (defun wl-current-message-buffer ()
   (when (buffer-live-p wl-current-summary-buffer)
     (with-current-buffer wl-current-summary-buffer
@@ -588,6 +598,10 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
 	     (if wl-disable-auto-save "disabled" "enabled"))))
 
 ;; Biff
+
+;; Internal variable.
+(defvar wl-biff-check-folders-running nil)
+
 (defun wl-biff-stop ()
   (mapc (lambda (elt)
 	  (when (timerp elt) (cancel-timer elt)))
@@ -657,9 +671,6 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
 	  ((= 1 new-mails) (message "You have a new mail."))
 	  (t (message "You have %d new mails." new-mails)))))
 
-;; Internal variable.
-(defvar wl-biff-check-folders-running nil)
-
 (defun wl-biff-check-folders ()
   (interactive)
   (if wl-biff-check-folders-running
@@ -687,6 +698,8 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
 	  (setq wl-biff-check-folders-running nil)
 	  (wl-biff-notify new-mails (called-interactively-p 'interactive)))))))
 
+(autoload 'elmo-pop3-get-session "elmo-pop3")
+
 (defun wl-biff-check-folder (folder)
   (if (eq (elmo-folder-type-internal folder) 'pop3)
       (if (elmo-pop3-get-session folder 'any-exists)
@@ -696,6 +709,7 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
     (wl-folder-check-one-entity (elmo-folder-name-internal folder)
 				'biff)))
 
+(require 'wl-folder)
 (defun wl-biff-check-folder-async-callback (diff data)
   (if (nth 1 data)
       (with-current-buffer (nth 1 data)

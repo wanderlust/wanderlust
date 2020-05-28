@@ -28,11 +28,17 @@
 
 ;;; Code:
 ;;
+(require 'alist)
+(require 'mcharset)
+(require 'std11)
+(require 'mime)
+(require 'eword-decode)
+(eval-when-compile (require 'smtp))
+(eval-when-compile (require 'mmbuffer))
 (require 'mime-view)
 (require 'mime-edit)
 (require 'mime-play)
 (require 'mime-parse)
-(eval-when-compile (require 'mmbuffer))
 (require 'elmo)
 (require 'elmo-mime)
 (require 'wl-vars)
@@ -1018,6 +1024,8 @@ With ARG, ask destination folder."
     (elmo-mime-insert-header entity situation)
     (wl-highlight-headers)))
 
+
+(autoload 'mime-decrypt-application/pgp-encrypted "mime-pgp")
 (defun wl-mime-decrypt-application/pgp-encrypted (entity situation)
   (let ((summary-buffer wl-message-buffer-cur-summary-buffer)
 	(original-buffer wl-message-buffer-original-buffer))

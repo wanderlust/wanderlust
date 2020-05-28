@@ -3002,6 +3002,33 @@ If it is a number, only numbers will be highlighted."
   :type 'function
   :group 'wl-highlight)
 
+;; Real-time draft highlighting
+(defcustom wl-draft-real-time-highlight (if (featurep 'jit-lock) 'jit 'idle)
+  "Incdicate real-time draft highlighting method.
+Possible values are `jit', `idle' or nil.
+`jit' means using jit-lock-mode.
+`idle' means using idle-timer.
+nil means real-time highlighting is disabled."
+  :type '(choice (const :tag "Use jit-lock-mode" jit)
+		 (const :tag "Use idle timer" idle)
+		 (const :tag "Don't highlight automatically" nil))
+  :group 'wl-draft)
+
+(defcustom wl-draft-jit-highlight-function 'wl-draft-default-jit-highlight
+  "The function used for real-time highlighting using jit-lock-mode."
+  :type 'function
+  :group 'wl-draft)
+
+(defcustom wl-draft-idle-highlight-idle-time 0.5
+  "Do real-time highlighting after indicated idle time (second)."
+  :type 'number
+  :group 'wl-draft)
+
+(defcustom wl-draft-idle-highlight-function 'wl-draft-default-idle-highlight
+  "The function for real-time highlighting using a timer."
+  :type 'function
+  :group 'wl-draft)
+
 (defcustom wl-use-dnd nil
   "If Non-nil, support dragdrop feature in XEmacs."
   :type 'boolean

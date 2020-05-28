@@ -29,17 +29,18 @@
 ;;; Code:
 ;;
 
+(require 'poem)
+(require 'emu)
+(require 'mcharset)
+(require 'pces)
+(require 'luna)
+(require 'std11)
+(require 'eword-decode)
+(require 'elmo-vars)
+(require 'elmo-date)
 (eval-when-compile
   (require 'cl)
   (require 'static))
-(require 'elmo-vars)
-(require 'elmo-date)
-(require 'mcharset)
-(require 'pces)
-(require 'std11)
-(require 'eword-decode)
-(require 'poem)
-(require 'emu)
 
 (eval-and-compile
   (autoload 'md5 "md5"))

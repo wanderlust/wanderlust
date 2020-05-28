@@ -32,6 +32,7 @@
 (require 'elmo-util)
 (require 'elmo)
 (require 'elmo-map)
+(require 'elmo-flag)
 
 (defvar elmo-sendlog-filename "sendlog")
 

@@ -33,6 +33,7 @@
 (eval-when-compile (require 'cl))
 
 (require 'luna)
+(require 'mime-parse)
 (require 'elmo-vars)
 (require 'elmo-util)
 

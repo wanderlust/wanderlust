@@ -29,6 +29,7 @@
 ;;; Code:
 ;;
 (require 'elmo)
+(require 'elmo-nntp)
 
 (eval-and-compile
   (luna-define-class elmo-null-folder (elmo-folder)))

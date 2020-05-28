@@ -37,6 +37,7 @@
 
 (require 'elmo)
 (require 'elmo-msgdb)
+(require 'elmo-flag)
 
 ;;; User vars.
 (defvar elmo-archive-lha-dos-compatible

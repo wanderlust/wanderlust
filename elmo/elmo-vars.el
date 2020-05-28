@@ -28,18 +28,7 @@
 
 ;;; Code:
 ;;
-(require 'poe)
 (require 'path-util)
-
-;; bind colon keywords for old Emacsen.
-(dont-compile
-  (condition-case nil
-      :symbol-for-testing-whether-colon-keyword-is-available-or-not
-    (void-variable
-     (let ((kwds '(:cc :date :extra :message-id :number :references :subject)))
-       (while kwds
-	 (set (car kwds) (car kwds))
-	 (setq kwds (cdr kwds)))))))
 
 (defgroup elmo nil
   "ELMO, Elisp Library for Message Orchestration."

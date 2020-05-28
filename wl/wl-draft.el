@@ -30,16 +30,24 @@
 
 ;;; Code:
 ;;
-(require 'elmo)
-(require 'elmo-net)
-(require 'sendmail)
-(require 'wl-template)
 (require 'emu)
 (require 'timezone nil t)
 (require 'std11)
 (require 'eword-encode)
+(require 'mime-edit)
+(require 'mime-view)
+(require 'elmo)
+(require 'elmo-net)
+
 (require 'wl-util)
 (require 'wl-vars)
+(require 'wl-address)
+(require 'wl-folder)
+(require 'wl-summary)
+(require 'wl-highlight)
+(require 'wl-mime)
+
+(provide 'wl-draft)
 
 (defvar x-face-add-x-face-version-header)
 (defvar mail-reply-buffer)
@@ -48,7 +56,6 @@
 (eval-when-compile
   (require 'cl)
   (require 'static)
-  (require 'elmo-pop3)
   (defalias-maybe 'x-face-insert 'ignore)
   (defalias-maybe 'x-face-insert-version-header 'ignore)
   (defalias-maybe 'wl-init 'ignore)
@@ -129,6 +136,105 @@ e.g.
 
 (defvar wl-draft-folder-internal nil
   "Internal variable for caching `opened' draft folder.")
+
+(defvar wl-draft-mode-map)
+;; wl-e21.el
+
+;; for draft toolbar.
+(defalias 'wl-draft-insert-signature
+  (if (and (boundp 'mime-setup-use-signature) mime-setup-use-signature)
+      'insert-signature
+    'mime-edit-insert-signature))
+
+(defvar wl-draft-toolbar
+  '([wl-draft-send-from-toolbar
+     wl-draft-send-from-toolbar t "Send Current Draft"]
+    [wl-draft-yank-original
+     wl-draft-yank-original t "Yank Displaying Message"]
+    [wl-draft-insert-signature
+     wl-draft-insert-signature t "Insert Signature"]
+    [wl-draft-kill
+     wl-draft-kill t "Kill Current Draft"]
+    [wl-draft-save-and-exit
+     wl-draft-save-and-exit t "Save Draft and Exit"]
+    )
+  "The Draft buffer toolbar.")
+
+(eval-when-compile
+  (defsubst wl-e21-setup-draft-toolbar ()
+    (when (wl-e21-setup-toolbar wl-draft-toolbar)
+      (wl-e21-make-toolbar-buttons wl-draft-mode-map wl-draft-toolbar))))
+
+(defun wl-draft-overload-menubar ()
+  (let ((keymap (current-local-map)))
+    (define-key keymap [menu-bar mail send]
+      '("Send Message" . wl-draft-send-and-exit))
+    (define-key keymap [menu-bar mail send-stay]
+      '("Send, Keep Editing" . wl-draft-send))
+    (define-key-after (lookup-key keymap [menu-bar mail])
+      [mail-sep-send] '("--")
+      'send-stay)
+    (define-key keymap [menu-bar mail cancel]
+      '("Kill Current Draft" . wl-draft-kill))
+    (define-key-after (lookup-key keymap [menu-bar mail])
+      [save] '("Save Draft and Exit" . wl-draft-save-and-exit)
+      'cancel)
+    (define-key-after (lookup-key keymap [menu-bar mail])
+      [mail-sep-exit] '("--")
+      'save)
+    (define-key-after (lookup-key keymap [menu-bar mail])
+      [preview] '("Preview Message" . wl-draft-preview-message)
+      'mail-sep-exit)
+    (define-key keymap [menu-bar mail yank]
+      '("Cite Message" . wl-draft-yank-original))
+    (define-key keymap [menu-bar mail signature]
+      '("Insert Signature" . wl-draft-insert-signature))
+    (define-key keymap [menu-bar headers fcc]
+      '("Fcc" . wl-draft-fcc))))
+
+(defun wl-draft-mode-setup ()
+  (require 'derived)
+  (define-derived-mode wl-draft-mode mail-mode "Draft"
+    "draft mode for Wanderlust derived from mail mode.
+See info under Wanderlust for full documentation.
+
+Special commands:
+\\{wl-draft-mode-map}"
+    (setq font-lock-defaults nil)
+    (when (featurep 'jit-lock)
+      (jit-lock-register 'wl-draft-jit-highlight))
+    (add-hook 'after-change-functions
+	      'wl-draft-idle-highlight-set-timer nil t)))
+
+(defun wl-draft-key-setup ()
+  (define-key wl-draft-mode-map "\C-c\C-y" 'wl-draft-yank-original)
+  (define-key wl-draft-mode-map "\C-c\C-s" 'wl-draft-send)
+  (define-key wl-draft-mode-map "\C-c\C-c" 'wl-draft-send-and-exit)
+  (define-key wl-draft-mode-map "\C-c\C-z" 'wl-draft-save-and-exit)
+  (define-key wl-draft-mode-map "\C-c\C-k" 'wl-draft-kill)
+  (define-key wl-draft-mode-map "\C-l" 'wl-draft-highlight-and-recenter)
+  (define-key wl-draft-mode-map "\C-i" 'wl-complete-field-body-or-tab)
+  (define-key wl-draft-mode-map "\C-c\C-r" 'wl-draft-caesar-region)
+  (define-key wl-draft-mode-map "\M-t" 'wl-toggle-plugged)
+  (define-key wl-draft-mode-map "\C-c\C-o" 'wl-jump-to-draft-buffer)
+  (define-key wl-draft-mode-map "\C-c\C-e" 'wl-draft-config-exec)
+  (define-key wl-draft-mode-map "\C-c\C-j" 'wl-template-select)
+  (define-key wl-draft-mode-map "\C-c\C-p" 'wl-draft-preview-message)
+  (define-key wl-draft-mode-map "\C-c\C-a" 'wl-addrmgr)
+;;;  (define-key wl-draft-mode-map "\C-x\C-s" 'wl-draft-save)
+  (define-key wl-draft-mode-map "\C-xk"    'wl-draft-mimic-kill-buffer)
+  (define-key wl-draft-mode-map "\C-c\C-d" 'wl-draft-elide-region)
+  (define-key wl-draft-mode-map "\C-a" 'wl-draft-beginning-of-line)
+  (define-key wl-draft-mode-map "\M-p" 'wl-draft-previous-history-element)
+  (define-key wl-draft-mode-map "\M-n" 'wl-draft-next-history-element))
+
+(defun wl-draft-overload-functions ()
+  (wl-mode-line-buffer-identification)
+;;;  (local-set-key "\C-c\C-s" 'wl-draft-send) ; override
+  (wl-e21-setup-draft-toolbar)
+  (wl-draft-overload-menubar))
+
+;; End of wl-e21.el
 
 (defsubst wl-smtp-password-key (user mechanism server service)
   (list "SMTP" user mechanism server (if (integerp service) service 25)))
@@ -1118,6 +1224,8 @@ non-nil."
 	(if (bufferp errbuf)
 	    (kill-buffer errbuf))))))
 
+(autoload 'elmo-pop3-get-session "elmo-pop3")
+
 (defun wl-draft-send-mail-with-pop-before-smtp ()
   "Send the prepared message buffer with POP-before-SMTP."
   (require 'elmo-pop3)
@@ -1149,10 +1257,10 @@ non-nil."
   "Send the prepared message buffer with `sendmail-send-it'.
 The function `sendmail-send-it' uses the external program
 `sendmail-program'."
+  (require 'sendmail)
   (let ((id (elmo-get-message-id-from-buffer))
 	(to (std11-field-body "to")))
     (run-hooks 'wl-mail-send-pre-hook)
-    (require 'sendmail)
     (condition-case err
 	;; Prevent select-message-coding-system checks from checking for
 	;; a MIME charset -- message is already encoded.
@@ -1648,6 +1756,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 
 ;;;;;;;;;;;;;;;;
 ;;;###autoload
+(require 'wl)
+
 (defun wl-draft (&optional header-alist
 			   content-type content-transfer-encoding
 			   body edit-again
@@ -2170,6 +2280,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   (wl-draft-config-body-goto-header)
   (wl-draft-config-sub-file content))
 
+(require 'wl-template)
 (defun wl-draft-config-sub-template (content)
   (setq wl-draft-config-variables
 	(wl-template-insert (eval content))))
@@ -2739,33 +2850,6 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 	 (new-name (wl-draft-config-info-filename new-number msgdb-dir)))
     (when (file-exists-p old-name)
       (rename-file old-name new-name 'ok-if-already-exists))))
-
-;; Real-time draft highlighting
-(defcustom wl-draft-real-time-highlight (if (featurep 'jit-lock) 'jit 'idle)
-  "Incdicate real-time draft highlighting method.
-Possible values are `jit', `idle' or nil.
-`jit' means using jit-lock-mode.
-`idle' means using idle-timer.
-nil means real-time highlighting is disabled."
-  :type '(choice (const :tag "Use jit-lock-mode" jit)
-		 (const :tag "Use idle timer" idle)
-		 (const :tag "Don't highlight automatically" nil))
-  :group 'wl-draft)
-
-(defcustom wl-draft-jit-highlight-function 'wl-draft-default-jit-highlight
-  "The function used for real-time highlighting using jit-lock-mode."
-  :type 'function
-  :group 'wl-draft)
-
-(defcustom wl-draft-idle-highlight-idle-time 0.5
-  "Do real-time highlighting after indicated idle time (second)."
-  :type 'number
-  :group 'wl-draft)
-
-(defcustom wl-draft-idle-highlight-function 'wl-draft-default-idle-highlight
-  "The function for real-time highlighting using a timer."
-  :type 'function
-  :group 'wl-draft)
 
 (defun wl-draft-default-jit-highlight (start end)
   (goto-char start)

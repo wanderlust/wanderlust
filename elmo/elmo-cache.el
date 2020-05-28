@@ -34,6 +34,7 @@
 (require 'elmo-util)
 (require 'elmo)
 (require 'elmo-map)
+(require 'elmo-flag)
 
 (eval-and-compile
   (luna-define-class elmo-cache-folder (elmo-map-folder elmo-file-tag)

@@ -29,21 +29,24 @@
 ;;; Code:
 ;;
 (eval-when-compile (require 'cl))
-(eval-when-compile (require 'static))
 
-(require 'wl-vars)
-(require 'wl-highlight)
+(require 'timer)
+(require 'mime-view)
 (require 'elmo)
 (require 'elmo-mime)
-(require 'timer)
+(require 'wl-vars)
+(require 'wl-util)
+(require 'wl-highlight)
+(require 'wl-e21)
+(require 'wl-mime)
 
 (eval-when-compile
-  (require 'wl-mime)
-  (require 'mime-view)
   (defalias-maybe 'event-window 'ignore)
   (defalias-maybe 'posn-window 'ignore)
   (defalias-maybe 'event-start 'ignore)
   (defalias-maybe 'mime-open-entity 'ignore))
+
+(provide 'wl-message)
 
 (defvar wl-message-buffer-prefetch-get-next-function
   'wl-summary-default-get-next-msg)
@@ -185,6 +188,8 @@ Return its cache buffer."
 
 ;;; Message buffer handling from summary buffer.
 
+(require 'wl-summary)
+
 (defun wl-message-buffer-window ()
   "Get message buffer window if any."
   (let* ((start-win (selected-window))
@@ -320,6 +325,8 @@ Returns non-nil if bottom of message."
 	    (if f (funcall (cdr f))))))
     bottom))
 
+
+(require 'wl-draft)
 
 (defun wl-message-follow-current-entity (buffer)
   "Follow to current message."
@@ -942,6 +949,102 @@ Returns non-nil if bottom of message."
 	      (delete-overlay (car hn-ovs))
 	      (setq hn-ovs (cdr hn-ovs)))
 	  (wl-message-header-narrowing))))))
+
+;; wl-e21.el
+
+(add-hook 'wl-message-display-internal-hook 'wl-setup-message)
+
+(defvar wl-message-toolbar
+  '([wl-message-read
+     wl-message-read t "Read Contents"]
+    [wl-message-next-content
+     wl-message-next-content t "Next Content"]
+    [wl-message-prev-content
+     wl-message-prev-content t "Previous Content"]
+    [wl-message-quit
+     wl-message-quit t "Back to Summary"]
+    [wl-message-play-content
+     wl-message-play-content t "Play Content"]
+    [wl-message-extract-content
+     wl-message-extract-content t "Extract Content"]
+    )
+  "The Message buffer toolbar.")
+
+(defun wl-e21-setup-message-toolbar ()
+  (when (wl-e21-setup-toolbar wl-message-toolbar)
+    (wl-e21-make-toolbar-buttons (current-local-map) wl-message-toolbar)))
+
+(defalias 'wl-setup-message 'wl-e21-setup-message-toolbar)
+
+(defun wl-message-define-keymap ()
+  (let ((keymap (make-sparse-keymap)))
+    (define-key keymap "D" 'wl-message-delete-current-part)
+    (define-key keymap "l" 'wl-message-toggle-disp-summary)
+    (define-key keymap "\C-c:d" 'wl-message-decrypt-pgp-nonmime)
+    (define-key keymap "\C-c:v" 'wl-message-verify-pgp-nonmime)
+    (define-key keymap "w" 'wl-draft)
+    (define-key keymap [mouse-4] 'wl-message-wheel-down)
+    (define-key keymap [mouse-5] 'wl-message-wheel-up)
+    (define-key keymap [S-mouse-4] 'wl-message-wheel-down)
+    (define-key keymap [S-mouse-5] 'wl-message-wheel-up)
+    ;; Meadow2
+    (define-key keymap [mouse-wheel1] 'wl-message-wheel-dispatcher)
+    (define-key keymap [S-mouse-wheel1] 'wl-message-wheel-dispatcher)
+    (set-keymap-parent wl-message-button-map keymap)
+    (define-key wl-message-button-map
+      [mouse-2] 'wl-message-button-dispatcher)
+    keymap))
+
+;; Wheel handling for Meadow2
+(defun wl-message-wheel-dispatcher (event)
+  (interactive "e")
+  (if (< (nth 4 (nth 1 event)) 0)
+      (wl-message-wheel-up event)
+    (wl-message-wheel-down event)))
+
+(defun wl-summary-wheel-dispatcher (event)
+  (interactive "e")
+  (if (< (nth 4 (nth 1 event)) 0)
+      (if (memq 'shift (event-modifiers event))
+	  (wl-summary-down)
+	(wl-summary-next))
+    (if (memq 'shift (event-modifiers event))
+	(wl-summary-up)
+      (wl-summary-prev))))
+
+(defun wl-message-wheel-up (event)
+  (interactive "e")
+  (if (string-match (regexp-quote wl-message-buffer-name)
+		    (regexp-quote (buffer-name)))
+      (wl-message-next-page)
+    (let ((cur-buf (current-buffer))
+	  proceed)
+      (save-selected-window
+	(select-window (posn-window (event-start event)))
+	(set-buffer cur-buf)
+	(setq proceed (wl-message-next-page)))
+      (if proceed
+	  (if (memq 'shift (event-modifiers event))
+	      (wl-summary-down t)
+	    (wl-summary-next t))))))
+
+(defun wl-message-wheel-down (event)
+  (interactive "e")
+  (if (string-match (regexp-quote wl-message-buffer-name)
+		    (regexp-quote (buffer-name)))
+      (wl-message-prev-page)
+    (let ((cur-buf (current-buffer))
+	  proceed)
+      (save-selected-window
+	(select-window (posn-window (event-start event)))
+	(set-buffer cur-buf)
+	(setq proceed (wl-message-prev-page)))
+      (if proceed
+	  (if (memq 'shift (event-modifiers event))
+	      (wl-summary-up t)
+	    (wl-summary-prev t))))))
+
+;; End of wl-e21.el
 
 ;; Prune functions provided temporarily to avoid compile warnings.
 (eval-when-compile

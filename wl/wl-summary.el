@@ -35,18 +35,57 @@
 ;;; Code:
 ;;
 
+(require 'timezone nil t)
 (require 'elmo)
-(require 'elmo-multi)
-(eval-when-compile (require 'elmo-filter))
+(require 'elmo-date)
 (require 'wl-message)
 (require 'wl-vars)
 (require 'wl-highlight)
 (require 'wl-refile)
 (require 'wl-util)
-(require 'timezone nil t)
 (require 'easymenu nil t)
-(require 'elmo-date)
 (require 'ps-print nil t)
+
+(provide 'wl-summary)
+
+;; wl-e21.el
+(add-hook 'wl-summary-mode-hook 'wl-setup-summary)
+
+(defvar wl-summary-toolbar
+  '([wl-summary-read
+     wl-summary-read t "Read Messages"]
+    [wl-summary-next
+     wl-summary-next t "Next Message"]
+    [wl-summary-prev
+     wl-summary-prev t "Previous Message"]
+    [wl-summary-jump-to-current-message
+     wl-summary-jump-to-current-message t "Jump to Current Message"]
+    [wl-summary-sync-force-update
+     wl-summary-sync-force-update t "Sync Current Folder"]
+    [wl-summary-dispose
+     wl-summary-dispose t "Dispose Current Message"]
+    [wl-summary-set-flags
+     wl-summary-set-flags t "Set Flags"]
+    [wl-draft
+     wl-summary-write-current-folder t "Write for Current Folder"]
+    [wl-summary-reply
+     wl-summary-reply t "Reply to Current Message" ]
+    [wl-summary-reply-with-citation
+     wl-summary-reply-with-citation t "Reply to Current Message with Citation"]
+    [wl-summary-forward
+     wl-summary-forward t "Forward Current Message"]
+    [wl-summary-exit
+     wl-summary-exit t "Exit Current Summary"]
+    )
+  "The Summary buffer toolbar.")
+
+(defun wl-e21-setup-summary-toolbar ()
+  (when (wl-e21-setup-toolbar wl-summary-toolbar)
+    (wl-e21-make-toolbar-buttons wl-summary-mode-map wl-summary-toolbar)))
+
+(defalias 'wl-setup-summary 'wl-e21-setup-summary-toolbar)
+
+;; End of wl-e21.el
 
 (eval-when-compile
   (require 'cl)
@@ -2850,6 +2889,8 @@ If ARG, without confirm."
 	    (message "%d(%d) message(s) are picked." num
 		     (- (length result) num)))
 	(message "No message was picked.")))))
+
+(require 'elmo-filter)
 
 (defun wl-summary-unvirtual ()
   "Exit from current virtual folder."

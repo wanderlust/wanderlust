@@ -32,6 +32,7 @@
 (require 'wl-summary)
 
 (eval-when-compile
+  (require 'cl)
   (defalias-maybe 'wl-summary-target-mark 'ignore)
   (defalias-maybe 'wl-summary-target-mark-region 'ignore))
 
