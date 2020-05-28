@@ -36,7 +36,7 @@
 (require 'elmo-util)
 (require 'elmo-flag)
 (require 'wl-vars)
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 (require 'pp nil t)
 
@@ -979,7 +979,7 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
 					     (% usec 1000000)))))
 
 (defun wl-progress-callback-function (label action current total)
-  (case current
+  (cl-case current
     (query
      (let ((threshold (if (consp wl-display-progress-threshold)
 			  (cdr (or (assq label wl-display-progress-threshold)

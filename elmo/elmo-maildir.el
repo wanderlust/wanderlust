@@ -29,7 +29,7 @@
 ;;; Code:
 ;;
 
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 (require 'elmo-util)
 (require 'elmo)
@@ -165,7 +165,7 @@ LOCATION."
 
 (luna-define-method elmo-map-folder-list-flagged ((folder elmo-maildir-folder)
 						  flag)
-  (case flag
+  (cl-case flag
     (unread
      (elmo-maildir-folder-unread-locations-internal folder))
     (important
@@ -393,7 +393,7 @@ file name for maildir directories."
 	    (+ (* (car cur-time)
 		  (float 65536)) (cadr cur-time))
 	    (emacs-pid)
-	    (incf elmo-maildir-sequence-number-internal)
+	    (cl-incf elmo-maildir-sequence-number-internal)
 	    (system-name))))
 
 (defun elmo-maildir-temporal-filename (basedir)
@@ -480,7 +480,7 @@ file name for maildir directories."
        (expand-file-name
 	(number-to-string (if start-number cur-number number))
 	temp-dir))
-      (incf cur-number))
+      (cl-incf cur-number))
     temp-dir))
 
 (defun elmo-folder-append-messages-*-maildir (folder

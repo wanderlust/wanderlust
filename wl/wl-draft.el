@@ -54,7 +54,6 @@
 (defvar mail-from-style)
 
 (eval-when-compile
-  (require 'cl)
   (require 'static)
   (defalias-maybe 'x-face-insert 'ignore)
   (defalias-maybe 'x-face-insert-version-header 'ignore)
@@ -1028,7 +1027,7 @@ to find out how to use this."
     (run-hooks 'wl-mail-send-pre-hook) ;; X-PGP-Sig, Cancel-Lock
     (let ((id (elmo-get-message-id-from-buffer))
 	  (to (std11-field-body "To")))
-      (case
+      (cl-case
 	  (as-binary-process
 	   (apply
 	    'call-process-region 1 (point-max) wl-qmail-inject-program

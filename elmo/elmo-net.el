@@ -28,7 +28,6 @@
 
 ;;; Code:
 ;;
-(eval-when-compile (require 'cl))
 
 (require 'elmo-util)
 (require 'elmo-dop)

@@ -37,7 +37,7 @@
 (require 'elmo-msgdb)
 (require 'elmo-signal)
 
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 (if (or (featurep 'dbm)
 	(featurep 'gnudbm)
@@ -527,7 +527,7 @@ If optional argument MESSAGES-ID is not specified, get it from current buffer."
 FOLDER is a ELMO folder structure.
 NUMBER is a message number to test."
   (let ((cur-flags (elmo-message-flags folder number)))
-    (case flag
+    (cl-case flag
       (read
        (not (memq 'unread cur-flags)))
       (t
@@ -1095,17 +1095,18 @@ If optional argument IF-EXISTS is nil, load on demand.
 (defun elmo-folder-type-p (folder type)
   (or (null type)
       (eq (elmo-folder-type-internal folder) type)
-      (labels ((member-if (predicate list)
-			  (and list
-			       (or (funcall predicate (car list))
-				   (member-if predicate (cdr list)))))
-	       (subtypep (name type)
-			 (or (eq name type)
-			     (let ((class (luna-find-class name)))
-			       (and class
-				    (member-if (lambda (name)
-						 (subtypep name type))
-					       (luna-class-parents class)))))))
+      (cl-labels ((member-if (predicate list)
+			     (and list
+				  (or (funcall predicate (car list))
+				      (member-if predicate (cdr list)))))
+		  (subtypep
+		   (name type)
+		   (or (eq name type)
+		       (let ((class (luna-find-class name)))
+			 (and class
+			      (member-if (lambda (name)
+					   (subtypep name type))
+					 (luna-class-parents class)))))))
 	(subtypep (luna-class-name folder)
 		  (or (intern-soft (format "elmo-%s-folder" type))
 		      type)))))
@@ -1551,7 +1552,7 @@ If Optional LOCAL is non-nil, don't update server flag."
     (while (and method-priorities
 		(not result))
       (setq result
-	    (case (car method-priorities)
+	    (cl-case (car method-priorities)
 	      (cache
 	       (elmo-file-cache-load cache-path section))
 	      (entity

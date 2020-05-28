@@ -30,8 +30,6 @@
 ;;; Code:
 ;;
 
-(eval-when-compile (require 'cl))
-
 (require 'luna)
 (require 'elmo-util)
 (require 'elmo)

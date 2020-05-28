@@ -60,7 +60,7 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 (require 'pces)
 (require 'sasl)
 
@@ -799,8 +799,8 @@ ENTRIES is a store-entry list."
 	(cons 'cont (acap-parse-string)))
        ((eq token '*)
 	;; untagged response.
-	(case (prog1 (setq token (read (current-buffer)))
-		(acap-forward))
+	(cl-case (prog1 (setq token (read (current-buffer)))
+		   (acap-forward))
 	  (ADDTO (cons 'addto
 		       (list (acap-parse-quoted)
 			     (progn
@@ -842,8 +842,8 @@ ENTRIES is a store-entry list."
        ((integerp token)
 	;; tagged response.
 	(setq tag token)
-	(case (prog1 (setq token (read (current-buffer)))
-		(acap-forward))
+	(cl-case (prog1 (setq token (read (current-buffer)))
+		   (acap-forward))
 	  (DELETED   (cons 'deleted (acap-parse-quoted)))
 	  ;; response-done
 	  ((OK Ok ok) (prog1 (cons 'done-ok (acap-parse-resp-body))

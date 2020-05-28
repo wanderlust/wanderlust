@@ -29,7 +29,7 @@
 
 ;;; Code:
 ;;
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 (require 'elmo)
 (require 'elmo-map)
@@ -177,7 +177,7 @@ Returns non-nil if fetching was succeed.")
        (expand-file-name
 	(number-to-string (if start-number cur-number number))
 	temp-dir))
-      (incf cur-number))
+      (cl-incf cur-number))
     temp-dir))
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-search-folder)

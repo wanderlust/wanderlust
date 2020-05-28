@@ -36,8 +36,6 @@
 ;;; Code:
 ;;
 
-(eval-when-compile (require 'cl))
-
 ;; You don't have built-in ldap feature.
 ;; Use external program.
 
@@ -938,7 +936,7 @@ PASSWD is the corresponding password"
 	ldap
 	(i 1))
     (if (or binddn passwd)
-	(setq host-plist (copy-seq host-plist)))
+	(setq host-plist (copy-sequence host-plist)))
     (if binddn
 	(setq host-plist (plist-put host-plist 'binddn binddn)))
     (if passwd
@@ -986,7 +984,7 @@ PASSWD is the corresponding password"
 	ldap
 	(i 1))
     (if (or binddn passwd)
-	(setq host-plist (copy-seq host-plist)))
+	(setq host-plist (copy-sequence host-plist)))
     (if binddn
 	(setq host-plist (plist-put host-plist 'binddn binddn)))
     (if passwd
@@ -1027,7 +1025,7 @@ PASSWD is the corresponding password."
   (let ((host-plist (cdr (assoc host ldap-host-parameters-alist)))
 	ldap)
     (if (or binddn passwd)
-	(setq host-plist (copy-seq host-plist)))
+	(setq host-plist (copy-sequence host-plist)))
     (if binddn
 	(setq host-plist (plist-put host-plist 'binddn binddn)))
     (if passwd

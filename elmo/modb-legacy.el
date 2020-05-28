@@ -30,7 +30,7 @@
 ;;; Code:
 ;;
 
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 (require 'elmo-util)
 (require 'modb)
@@ -375,7 +375,7 @@ Return a list of message numbers which have duplicated message-ids."
   (unless (modb-legacy-supported-flag-p flag)
     (error "Flag `%s' is not supported by this msgdb type"
 	   (capitalize (symbol-name flag))))
-  (case flag
+  (cl-case flag
     (read
      (elmo-msgdb-unset-flag msgdb number 'unread))
     (uncached
@@ -401,7 +401,7 @@ Return a list of message numbers which have duplicated message-ids."
 	      (eq flag 'all))
     (error "Flag `%s' is not supported by this msgdb type"
 	   (capitalize (symbol-name flag))))
-  (case flag
+  (cl-case flag
     (read
      (elmo-msgdb-set-flag msgdb number 'unread))
     (uncached
@@ -430,12 +430,12 @@ Return a list of message numbers which have duplicated message-ids."
     (dolist (elem (elmo-msgdb-get-mark-alist msgdb))
       (cond
        ((string= (cadr elem) modb-legacy-new-mark)
-	(incf new)
-	(incf unread))
+	(cl-incf new)
+	(cl-incf unread))
        ((member (cadr elem) (modb-legacy-unread-marks))
-	(incf unread))
+	(cl-incf unread))
        ((member (cadr elem) (modb-legacy-answered-marks))
-	(incf answered))))
+	(cl-incf answered))))
     (list (cons 'new new)
 	  (cons 'unread unread)
 	  (cons 'answered answered))))
@@ -447,7 +447,7 @@ Return a list of message numbers which have duplicated message-ids."
 (luna-define-method elmo-msgdb-list-flagged ((msgdb modb-legacy) flag)
   (let ((case-fold-search nil)
 	mark-regexp matched)
-    (case flag
+    (cl-case flag
       (new
        (setq mark-regexp (regexp-quote modb-legacy-new-mark)))
       (unread

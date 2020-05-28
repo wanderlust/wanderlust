@@ -30,8 +30,7 @@
 ;;; Code:
 ;;
 
-(eval-when-compile (require 'cl))
-
+(require 'cl-lib)
 (require 'luna)
 (require 'modb-entity)
 

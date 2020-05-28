@@ -34,9 +34,9 @@
 (require 'elmo-msgdb)
 (require 'elmo-net)
 (require 'elmo-map)
+(require 'cl-lib)
 
 (eval-when-compile
-  (require 'cl)
   (require 'elmo-util))
 
 (eval-and-compile
@@ -271,7 +271,7 @@ CODE is one of the following:
 			       (elmo-network-session-password-key session)))
 			     nil 'no-log)
     (setq response (elmo-pop3-read-response process t))
-    (case (car response)
+    (cl-case (car response)
       (ok)
       (in-use
        (error "Maildrop is currently in use"))
@@ -300,7 +300,7 @@ CODE is one of the following:
   (let ((response (elmo-pop3-read-response
 		   (elmo-network-session-process-internal session)
 		   t)))
-    (case (car response)
+    (cl-case (car response)
       (ok)
       (in-use
        (error "Maildrop is currently in use"))
@@ -390,7 +390,7 @@ CODE is one of the following:
 	    (catch 'done
 	      (while t
 		(setq response (elmo-pop3-read-response process t))
-		(case (car response)
+		(cl-case (car response)
 		  (ok)
 		  (in-use
 		   (error "Maildrop is currently in use"))

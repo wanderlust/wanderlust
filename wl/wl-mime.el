@@ -32,6 +32,7 @@
 (require 'mcharset)
 (require 'std11)
 (require 'mime)
+(require 'mime-parse)
 (require 'eword-decode)
 (eval-when-compile (require 'smtp))
 (eval-when-compile (require 'mmbuffer))
@@ -43,7 +44,7 @@
 (require 'elmo-mime)
 (require 'wl-vars)
 (require 'wl-util)
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 ;;; Draft
 
@@ -717,7 +718,7 @@ It calls following-method selected from variable
        pgg-errors-buffer))))
 
 (defsubst wl-mime-pgp-decrypt-region (beg end &optional no-decode)
-  (case wl-use-pgp-module
+  (cl-case wl-use-pgp-module
     (epg
      (wl-mime-pgp-decrypt-region-with-epg beg end no-decode))
     (pgg
@@ -726,7 +727,7 @@ It calls following-method selected from variable
      (error "No support for PGP decryption"))))
 
 (defsubst wl-mime-pgp-verify-region (beg end &optional coding-system)
-  (case wl-use-pgp-module
+  (cl-case wl-use-pgp-module
     (epg
      (wl-mime-pgp-verify-region-with-epg beg end coding-system))
     (pgg

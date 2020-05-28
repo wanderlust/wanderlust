@@ -1,3 +1,31 @@
+2020-05-29  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Remove cl dependencies except where lexical-let is used.
+
+	* wl-address.el: Likewise.
+
+	* wl-demo.el: Likewise.
+
+	* wl-draft.el: Likewise.
+
+	* wl-folder.el: Likewise.
+
+	* wl-message.el: Likewise.
+
+	* wl-mime.el: Likewise.
+
+	* wl-score.el: Likewise.
+
+	* wl-spam.el: Likewise.
+
+	* wl-summary.el: Likewise.
+
+	* wl-thread.el: Likewise.
+
+	* wl-util.el: Likewise.
+
+	* wl.el: Likewise.
+
 2020-05-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Remove Meadow support.

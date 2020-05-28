@@ -33,8 +33,6 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl))
-
 (defvar elmo-signal-slot-obarray
   (make-vector 31 0))
 

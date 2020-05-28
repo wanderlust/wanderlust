@@ -32,7 +32,7 @@
 ;; 28 Aug 2001 Created.
 
 ;;; Code:
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 (defgroup slp nil
   "Interface for `Service Location Protocol'."
@@ -57,7 +57,7 @@ TYPE is a symbol (one of `srvs', `attrs', `srvtypes', `as-is', `ignore')."
       (unless (zerop result)
 	(error "SLP error: %s" (buffer-string)))
       (goto-char (point-min))
-      (case type
+      (cl-case type
 	(srvs (slp-parse-srvs))
 	(attrs (slp-parse-attrs))
 	(srvtypes (slp-parse-srvtypes))

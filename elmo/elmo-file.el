@@ -28,7 +28,7 @@
 
 ;;; Code:
 ;;
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 (require 'elmo)
 (require 'elmo-map)
@@ -174,7 +174,7 @@
        (expand-file-name
 	(number-to-string (if start-number cur-number number))
 	temp-dir))
-      (incf cur-number))
+      (cl-incf cur-number))
     temp-dir))
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-file-folder)

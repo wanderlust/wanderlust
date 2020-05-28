@@ -30,7 +30,7 @@
 ;;; Code:
 ;;
 
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 (require 'elmo-spam)
 (require 'wl-summary)
@@ -400,7 +400,7 @@ Remove spam mark."
   (let ((folder wl-summary-buffer-elmo-folder)
 	spam-list good-list)
     (dolist (info mark-list)
-      (case (wl-spam-domain (nth 2 info))
+      (cl-case (wl-spam-domain (nth 2 info))
 	(spam
 	 (setq spam-list (cons (car info) spam-list)))
 	(good

@@ -28,7 +28,7 @@
 
 ;;; Code:
 ;;
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 (require 'elmo)
 (require 'elmo-vars)
@@ -286,7 +286,7 @@ FOLDER is the folder structure."
 
 (defsubst elmo-folder-set-flag-dop (folder numbers flag)
   (when (setq numbers (elmo-dop-filter-pending-messages numbers))
-    (let ((method (case flag
+    (let ((method (cl-case flag
 		    (unread
 		     'elmo-folder-unset-read-delayed)
 		    (read
@@ -302,7 +302,7 @@ FOLDER is the folder structure."
 
 (defsubst elmo-folder-unset-flag-dop (folder numbers flag)
   (when (setq numbers (elmo-dop-filter-pending-messages numbers))
-    (let ((method (case flag
+    (let ((method (cl-case flag
 		    (unread
 		     'elmo-folder-set-read-delayed)
 		    (read

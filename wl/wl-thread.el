@@ -34,7 +34,7 @@
 (require 'wl-action)
 (require 'wl-summary)
 (require 'wl-highlight)
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 ;; buffer local variables.
 ;;(defvar wl-thread-top-entity '(nil t nil nil)) ; top entity
@@ -75,15 +75,15 @@
        (elmo-get-hash-val (format "#%d" num) wl-thread-entity-hashtb)))
 
 (defsubst wl-thread-entity-set-parent (entity parent)
-  (setcar (cdddr entity) parent)
+  (setcar (cl-cdddr entity) parent)
   entity)
 
 (defsubst wl-thread-entity-set-children (entity children)
   (setcar (cddr entity) children))
 
 (defsubst wl-thread-entity-set-linked (entity linked)
-  (if (cddddr entity)
-      (setcar (cddddr entity) linked)
+  (if (cl-cddddr entity)
+      (setcar (cl-cddddr entity) linked)
     (nconc entity (list linked)))
   entity)
 
@@ -351,7 +351,7 @@ ENTITY is returned."
 	(depth 0)
 	number)
     (while (setq number (wl-thread-entity-get-parent entity))
-      (incf depth)
+      (cl-incf depth)
       (setq entity (wl-thread-get-entity number)))
     depth))
 
@@ -703,7 +703,7 @@ Message is inserted to the summary buffer."
       (let ((cur parent)
 	    (depth 0))
 	(while cur
-	  (incf depth)
+	  (cl-incf depth)
 	  (setq cur (wl-thread-entity-get-parent-entity cur)))
 	(when (> depth wl-summary-max-thread-depth)
 	  (setq parent nil

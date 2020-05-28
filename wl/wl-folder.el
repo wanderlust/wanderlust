@@ -40,7 +40,7 @@
 (require 'wl-util)
 (require 'wl-e21)
 (require 'wl-summary)
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 (provide 'wl-folder)
 
@@ -604,7 +604,7 @@ Optional argument ARG is repeart count."
 
 (require 'wl-fldmgr)
 (defun wl-folder-maybe-load-folder-list (entity)
-  (when (null (caddr entity))
+  (when (null (cl-caddr entity))
     (setcdr (cdr entity)
 	    (elmo-msgdb-flist-load (car entity)))
     (when (cddr entity)
@@ -659,7 +659,7 @@ Optional argument ARG is repeart count."
 		    (if (or (wl-folder-force-fetch-p (car entity))
 			    (and
 			     (eq 'access (cadr entity))
-			     (null (caddr entity))))
+			     (null (cl-caddr entity))))
 			(wl-folder-update-newest indent entity)
 		      (wl-folder-insert-entity indent entity))
 		    (wl-highlight-folder-path wl-folder-buffer-cur-path))
@@ -2766,7 +2766,7 @@ Use `wl-subscribed-mailing-list'."
     (dolist (number (elmo-folder-list-flagged folder 'any))
       (when (member (wl-summary-message-mark folder number)
 		    wl-summary-incorporate-marks)
-	(incf sum)))
+	(cl-incf sum)))
     sum))
 
 (defun wl-folder-prefetch-current-entity (&optional no-check)

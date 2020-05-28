@@ -1,3 +1,63 @@
+2020-05-29  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Remove cl dependencies except where lexical-let is used.
+
+	* acap.el: Likewise.
+
+	* elmo-archive.el: Likewise.
+
+	* elmo-date.el: Likewise.
+
+	* elmo-dop.el: Likewise.
+
+	* elmo-file.el: Likewise.
+
+	* elmo-imap4.el: Likewise.
+
+	* elmo-localdir.el: Likewise.
+
+	* elmo-maildir.el: Likewise.
+
+	* elmo-map.el: Likewise.
+
+	* elmo-mime.el: Likewise.
+
+	* elmo-msgdb.el: Likewise.
+
+	* elmo-multi.el: Likewise.
+
+	* elmo-net.el: Likewise.
+
+	* elmo-nntp.el: Likewise.
+
+	* elmo-pop3.el: Likewise.
+
+	* elmo-search.el: Likewise.
+
+	* elmo-shimbun.el: Likewise.
+
+	* elmo-signal.el: Likewise.
+
+	* elmo-spam.el: Likewise.
+
+	* elmo-split.el: Likewise.
+
+	* elmo-util.el: Likewise.
+
+	* elmo.el: Likewise.
+
+	* modb-entity.el: Likewise.
+
+	* modb-legacy.el: Likewise.
+
+	* modb-standard.el: Likewise.
+
+	* modb.el: Likewise.
+
+	* pldap.el: Likewise.
+
+	* slp.el: Likewise.
+
 2020-05-28  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Remove Meadow support.

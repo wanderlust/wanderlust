@@ -32,7 +32,7 @@
 
 ;;; Code:
 ;;
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 (require 'elmo-vars)
 (require 'elmo-util)
@@ -809,7 +809,7 @@ Don't cache if nil.")
 		  killed)
 	      (while (<= i max-number)
 		(setq killed (cons i killed))
-		(incf i))
+		(cl-incf i))
 	      (elmo-folder-kill-messages folder (nreverse killed)))))))))
 
 (defun elmo-nntp-msgdb-create-by-header (session numbers flag-table)
@@ -1410,7 +1410,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
   (let ((msgs (luna-call-next-method)))
     (if in-msgdb
 	msgs
-      (case flag
+      (cl-case flag
 	(unread
 	 (elmo-living-messages msgs (elmo-nntp-folder-reads-internal folder)))
 	;; Should consider read, digest and any flag?

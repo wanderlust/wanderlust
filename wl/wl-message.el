@@ -28,7 +28,7 @@
 
 ;;; Code:
 ;;
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 (require 'timer)
 (require 'mime-view)
@@ -443,7 +443,7 @@ Returns non-nil if bottom of message."
 
 (defun wl-message-mime-analysis-p (display-type &optional header-or-body)
   (let ((mode (wl-message-display-type-property display-type :mime)))
-    (case header-or-body
+    (cl-case header-or-body
       (header
        (memq mode '(mime header-only)))
       (t

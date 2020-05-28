@@ -35,6 +35,7 @@
 ;;; Code:
 ;;
 
+(require 'cl-lib)
 (require 'timezone nil t)
 (require 'elmo)
 (require 'elmo-date)
@@ -45,6 +46,8 @@
 (require 'wl-util)
 (require 'easymenu nil t)
 (require 'ps-print nil t)
+
+(eval-when-compile (require 'cl))
 
 (provide 'wl-summary)
 
@@ -88,7 +91,6 @@
 ;; End of wl-e21.el
 
 (eval-when-compile
-  (require 'cl)
   (require 'timer nil t)
   (defalias-maybe 'ps-print-buffer-with-faces 'ignore)
   (defalias-maybe 'elmo-database-msgid-put 'ignore)
@@ -1594,7 +1596,7 @@ If ARG is non-nil, checking is omitted."
 			(wl-summary-prefetch-msg
 			 (wl-summary-message-number)))
 		    (wl-summary-prefetch-msg target))
-	      (incf count))
+	      (cl-incf count))
 	    (elmo-progress-notify 'wl-summary-prefetch-message)))
 	(message "Retrieved %d/%d message(s)" count length)))))
 
@@ -1640,9 +1642,9 @@ If ARG is non-nil, checking is omitted."
 			      'from)
 			     "??")))))
 		       " ]")
-		      (do ((size (/ size 1024.0) (/ size 1024.0))
-			   ;; kilo, mega, giga, tera, peta, exa
-			   (post-fixes (list "k" "M" "G" "T" "P" "E") (cdr post-fixes)))
+		      (cl-do ((size (/ size 1024.0) (/ size 1024.0))
+			      ;; kilo, mega, giga, tera, peta, exa
+			      (post-fixes (list "k" "M" "G" "T" "P" "E") (cdr post-fixes)))
 			  ((< size 1024) (format "%.0f%s" size (car post-fixes))))))))
 	    (message "")))		; flush.
 	(if force-read
@@ -4547,7 +4549,7 @@ If ARG is numeric number, decode message as following:
 	  (wl-summary-update-modeline))
       (cond
        ((numberp arg)
-	(setq mime-mode (case arg
+	(setq mime-mode (cl-case arg
 			  (1 'mime)
 			  (2 'header-only)
 			  (3 'as-is)

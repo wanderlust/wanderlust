@@ -33,8 +33,8 @@
 
 (require 'wl-vars)
 (require 'wl-util)
+(require 'cl-lib)				; cadaar, cddaar
 (eval-when-compile
-  (require 'cl)				; cadaar, cddaar
   (require 'static)
   (require 'elmo-msgdb))		; for inline functions
 
@@ -691,7 +691,7 @@ Set `wl-score-cache' nil."
     (when fuzzies
       ;; Simplify the entire buffer for easy matching.
       (wl-score-simplify-buffer-fuzzy)
-      (while (setq kill (cadaar fuzzies))
+      (while (setq kill (cl-cadaar fuzzies))
 	(let* ((match (nth 0 kill))
 	       (type (nth 3 kill))
 	       (score (or (nth 1 kill) wl-score-interactive-default-score))
@@ -720,7 +720,7 @@ Set `wl-score-cache' nil."
 	   ;; Old entry, remove.
 	   ((and expire (< date expire))
 	    (wl-score-set 'touched '(t) (cdar fuzzies))
-	    (setcdr (caar fuzzies) (cddaar fuzzies))))
+	    (setcdr (caar fuzzies) (cl-cddaar fuzzies))))
 	  (setq fuzzies (cdr fuzzies)))))
     nil))
 
@@ -1150,7 +1150,7 @@ Set `wl-score-cache' nil."
 	   (unless now
 	     (wl-score-update-score-entries header
 					    ;; remove parent
-					    (cdr (cdaar scores)))))
+					    (cdr (cl-cdaar scores)))))
 	  (t
 	   (wl-score-headers scores
 			     (list (wl-summary-message-number)))))

@@ -34,7 +34,7 @@
 
 (require 'wl-address)
 (require 'wl-draft)
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 ;; Variables
 (defgroup wl-addrmgr nil
@@ -268,7 +268,7 @@ See info under Wanderlust for full documentation.
   (wl-addrmgr-goto-top))
 
 (defun wl-addrmgr-sort-list (key list order)
-  (let ((pos (case key
+  (let ((pos (cl-case key
 	       (address 0)
 	       (petname 1)
 	       (realname 2)))
@@ -565,7 +565,7 @@ Return nil if no ADDRESS exists."
       (let ((buffer-read-only nil) beg end)
 	(beginning-of-line)
 	(delete-char 4)
-	(insert (case mark
+	(insert (cl-case mark
 		  (to "To: ")
 		  (cc "Cc: ")
 		  (bcc "Bcc:")

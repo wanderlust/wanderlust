@@ -32,8 +32,6 @@
 (require 'elmo)
 (require 'elmo-msgdb)
 
-(eval-when-compile (require 'cl))
-
 (eval-and-compile
   (luna-define-class elmo-location-map ()
 		     (location-alist location-hash max-number)))

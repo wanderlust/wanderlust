@@ -34,8 +34,6 @@
   "Copyright (C) 1998-2012 Yuuichi Teranishi <teranisi@gohome.org>"
   "A declaration of the copyright on Wanderlust.")
 
-(eval-when-compile
-  (require 'cl))
 (require 'path-util)
 (require 'wl-vars)
 (require 'wl-version)

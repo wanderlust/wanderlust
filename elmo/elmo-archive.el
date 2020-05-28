@@ -33,7 +33,7 @@
 
 ;;; Code:
 ;;
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 (require 'elmo)
 (require 'elmo-msgdb)
@@ -737,7 +737,7 @@ TYPE specifies the archiver's symbol."
 			(number-to-string number)
 		      (file-name-nondirectory tmp-file))
 		    tmp-dir-dst))
-      (if start-number (incf number)))
+      (if start-number (cl-incf number)))
     ;; Remove tmp-dir-src.
     (elmo-delete-directory tmp-dir-src)
     ;; tmp-dir-dst is the return directory.

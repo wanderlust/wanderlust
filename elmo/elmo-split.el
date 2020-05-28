@@ -38,7 +38,7 @@
 ;;
 
 ;;; Code:
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 (require 'elmo)
 
 (defcustom elmo-split-rule nil
@@ -372,12 +372,12 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 						flags)))
 				(elmo-folder-close-internal target-folder))
 			    (error (setq failure t)
-				   (incf fcount)))
+				   (cl-incf fcount)))
 			  (setq record-log t
 				delete-substance
 				(not (or failure
 					 (eq (nth 2 rule) 'continue))))
-			  (incf count))
+			  (cl-incf count))
 			 ((eq action 'delete)
 			  (setq record-log t
 				delete-substance t))

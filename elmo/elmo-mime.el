@@ -35,9 +35,6 @@
 (require 'elmo)	      ; elmo-folder-do-each-message-entity
 (require 'elmo-vars)
 
-(eval-when-compile
-  (require 'cl))
-
 ;; MIME-Entity
 (eval-and-compile
   (luna-define-class elmo-mime-entity))

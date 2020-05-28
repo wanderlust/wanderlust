@@ -29,7 +29,7 @@
 
 ;;; Code:
 ;;
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 (require 'elmo-util)
 (require 'elmo-flag)
@@ -361,7 +361,7 @@
 
 (luna-define-method elmo-msgdb-set-flag ((msgdb modb-standard)
 					 number flag)
-  (case flag
+  (cl-case flag
     (read
      (elmo-msgdb-unset-flag msgdb number 'unread))
     (uncached
@@ -381,7 +381,7 @@
 
 (luna-define-method elmo-msgdb-unset-flag ((msgdb modb-standard)
 					   number flag)
-  (case flag
+  (cl-case flag
     (read
      (elmo-msgdb-set-flag msgdb number 'unread))
     (uncached
@@ -417,7 +417,7 @@
 
 (luna-define-method elmo-msgdb-list-flagged ((msgdb modb-standard) flag)
   (let (entry matched)
-    (case flag
+    (cl-case flag
       (read
        (dolist (number (modb-standard-number-list-internal msgdb))
 	 (unless (memq 'unread (modb-standard-message-flags msgdb number))

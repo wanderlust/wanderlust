@@ -38,6 +38,7 @@
 (require 'eword-decode)
 (require 'elmo-vars)
 (require 'elmo-date)
+(require 'cl-lib)
 (eval-when-compile
   (require 'cl)
   (require 'static))
@@ -2078,7 +2079,7 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
 	      (/= elmo-msgdb-file-header-chop-length
 		  (nth 1 (insert-file-contents-as-binary
 			  file nil beg
-			  (incf beg elmo-msgdb-file-header-chop-length)))))
+			  (cl-incf beg elmo-msgdb-file-header-chop-length)))))
 	(if first
 	    (setq first nil)
 	  (backward-char))

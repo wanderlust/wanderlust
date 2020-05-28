@@ -32,7 +32,7 @@
 
 ;;; Code:
 ;;
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 (require 'elmo-msgdb)
 (require 'elmo)
@@ -139,7 +139,7 @@
        (expand-file-name
 	(number-to-string (if start-number cur-number number))
 	temp-dir))
-      (incf cur-number))
+      (cl-incf cur-number))
     temp-dir))
 
 (defun elmo-localdir-msgdb-create-entity (msgdb dir number)

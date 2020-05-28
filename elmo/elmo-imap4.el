@@ -51,7 +51,7 @@
 (require 'elmo-mime)
 (require 'time-stamp)
 
-(eval-when-compile (require 'cl))
+(require 'cl-lib)
 
 (defvar elmo-imap4-disuse-server-flag-mailbox-regexp "^#mh" ; UW imapd
   "Regexp to match IMAP4 mailbox names whose message flags on server should be ignored (For STATUS command).")
@@ -343,7 +343,8 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
 (defun elmo-imap4-command-tag (session)
   "Return new command tag for SESSION."
   (with-elmo-imap4-session-process-buffer session
-    (concat elmo-imap4-seq-prefix (number-to-string (incf elmo-imap4-seqno)))))
+    (concat elmo-imap4-seq-prefix
+	    (number-to-string (cl-incf elmo-imap4-seqno)))))
 
 ;;;(defun elmo-imap4-send-command-wait (session command)
 ;;;  "Send COMMAND to the SESSION and wait for response.
@@ -377,7 +378,7 @@ If response is not `OK', causes error with IMAP response text."
      ((stringp token)
       (unless (string= token "") (insert token " ")))
      ((listp token)
-      (case (car token)
+      (cl-case (car token)
         (atom (unless (string= (nth 1 token) "") (insert (nth 1 token) " ")))
         (quoted (insert (elmo-imap4-format-quoted (nth 1 token)) " "))
         (group (progn
@@ -895,7 +896,7 @@ EXPUNGE for deleted messages."
        'search))))
 
 (defun elmo-imap4-session-flag-available-p (session flag)
-  (case flag
+  (cl-case flag
     ((read unread) (member-ignore-case
                     "\\seen" (elmo-imap4-session-flags-internal session)))
     (important
@@ -918,7 +919,7 @@ EXPUNGE for deleted messages."
       (elmo-imap4-session-flags-internal session)))))
 
 (defun elmo-imap4-flag-to-imap-search-key (flag)
-  (case flag
+  (cl-case flag
     (read "seen")
     (unread "unseen")
     (important "flagged")
@@ -930,14 +931,14 @@ EXPUNGE for deleted messages."
             (symbol-name flag))))))
 
 (defun elmo-imap4-flag-to-imap-criteria (flag)
-  (case flag
+  (cl-case flag
     ((any digest)
      (let ((criteria "flagged")
            (global-flags (delq 'important (elmo-get-global-flags t t))))
        (dolist (flag (delete 'new
                              (delete 'cached
                                      (copy-sequence
-                                      (case flag
+                                      (cl-case flag
                                         (any
                                          elmo-preserved-flags)
                                         (digest
@@ -994,7 +995,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
         (setq cont-list
               (elmo-number-set-append
                cont-list (car msg-list)))
-        (incf count)
+        (cl-incf count)
         (setq msg-list (cdr msg-list)))
       (setq set-list
             (cons
@@ -1382,7 +1383,7 @@ Return nil if no complete line has arrived."
           (delete-char (- (length elmo-imap4-server-eol)))
           (goto-char (point-min))
           (unwind-protect
-              (case elmo-imap4-status
+              (cl-case elmo-imap4-status
                 (initial
                  (setq elmo-imap4-current-response
                        (list
@@ -1485,7 +1486,7 @@ Return nil if no complete line has arrived."
         (when (eq (following-char) ?\))
           (elmo-imap4-forward)
           (nreverse addresses)))
-    (assert (elmo-imap4-parse-nil))))
+    (cl-assert (elmo-imap4-parse-nil))))
 
 (defsubst elmo-imap4-parse-mailbox ()
   (let ((mailbox (elmo-imap4-parse-astring)))
@@ -1507,11 +1508,11 @@ Return nil if no complete line has arrived."
   "Parse a IMAP command response."
   (elmo-imap4-debug "[%s] -> %s" (format-time-string "%T") (buffer-substring (point) (point-max)))
   (let ((token (read (current-buffer))))
-    (case token
+    (cl-case token
       (+ (progn
            (skip-chars-forward " ")
            (list 'continue-req (buffer-substring (point) (point-max)))))
-      (* (case (setq token (elmo-imap4-read-token))
+      (* (cl-case (setq token (elmo-imap4-read-token))
            (OK         (elmo-imap4-parse-resp-text-code))
            (NO         (elmo-imap4-parse-resp-text-code))
            (BAD        (elmo-imap4-parse-resp-text-code))
@@ -1537,7 +1538,7 @@ Return nil if no complete line has arrived."
                                                      (point) (point-max)))
                                       ")"))))
            (ACL (elmo-imap4-parse-acl))
-           (t       (case (elmo-imap4-read-token)
+           (t       (cl-case (elmo-imap4-read-token)
                       (EXISTS  (list 'exists token))
                       (RECENT  (list 'recent token))
                       (EXPUNGE (list 'expunge token))
@@ -1545,7 +1546,7 @@ Return nil if no complete line has arrived."
                       (t       (list 'garbage (buffer-string)))))))
       (t (if (not (string-match elmo-imap4-seq-prefix (symbol-name token)))
              (list 'garbage (buffer-string))
-           (case (elmo-imap4-read-token)
+           (cl-case (elmo-imap4-read-token)
              (OK  (progn
                     (setq elmo-imap4-parsing nil)
                     (setq token (symbol-name token))
@@ -1721,7 +1722,7 @@ Return nil if no complete line has arrived."
         (setq status
               (cons
                (let ((token (read (current-buffer))))
-                 (case (intern (upcase (symbol-name token)))
+                 (cl-case (intern (upcase (symbol-name token)))
                    (MESSAGES
                     (list 'messages (read (current-buffer))))
                    (RECENT
@@ -1859,7 +1860,7 @@ Return nil if no complete line has arrived."
         (while (eq (following-char) (string-to-char " "))
           (elmo-imap4-forward)
           (push (elmo-imap4-parse-body-extension) b-e))
-        (assert (eq (following-char) ?\)))
+        (cl-assert (eq (following-char) ?\)))
         (elmo-imap4-forward)
         (nreverse b-e))
     (or (elmo-imap4-parse-number)
@@ -1877,7 +1878,7 @@ Return nil if no complete line has arrived."
               (elmo-imap4-forward)
               (push (elmo-imap4-parse-string-list) dsp)
               (elmo-imap4-forward))
-          (assert (elmo-imap4-parse-nil)))
+          (cl-assert (elmo-imap4-parse-nil)))
         (push (nreverse dsp) ext))
       (when (eq (following-char) (string-to-char " ")) ; body-fld-lang
         (elmo-imap4-forward)
@@ -1907,7 +1908,7 @@ Return nil if no complete line has arrived."
                 (push (and (elmo-imap4-parse-nil) nil) body))
               (setq body
                     (append (elmo-imap4-parse-body-ext) body)));; body-ext-...
-            (assert (eq (following-char) ?\)))
+            (cl-assert (eq (following-char) ?\)))
             (elmo-imap4-forward)
             (nreverse body))
 
@@ -1962,7 +1963,7 @@ Return nil if no complete line has arrived."
           (setq body
                 (append (elmo-imap4-parse-body-ext) body)));; body-ext-1part..
 
-        (assert (eq (following-char) ?\)))
+        (cl-assert (eq (following-char) ?\)))
         (elmo-imap4-forward)
         (nreverse body)))))
 
@@ -2096,7 +2097,7 @@ Return nil if no complete line has arrived."
   (elmo-imap4-folder-list-flagged folder flag))
 
 (luna-define-method elmo-folder-merge-flagged ((folder elmo-imap4-folder) local remote)
-  (case elmo-imap4-flags-sync-method
+  (cl-case elmo-imap4-flags-sync-method
     (union (elmo-sort-uniq-number-list (nconc local remote)))
     (server->client remote)
     (otherwise (error "Unknown method for syncing flags: %s" elmo-imap4-flags-sync-method))))
@@ -2850,7 +2851,7 @@ time."
           (elmo-folder-preserve-flags
            folder (elmo-msgdb-get-message-id-from-buffer) flags)
           (when return-number
-            (unless (setq result (cadadr (assq 'appenduid (cdar result))))
+            (unless (setq result (cl-cadadr (assq 'appenduid (cdar result))))
               (let ((candidates
                      (elmo-imap4-response-value
                       (elmo-imap4-send-command-wait
@@ -2872,10 +2873,10 @@ time."
                            "(internaldate)")) 'fetch))
 		  (setq internaldate (elmo-date-get-datevec internaldate))
                   (while candidates
-                    (if (equal (elmo-date-get-datevec (cadar candidates))
+                    (if (equal (elmo-date-get-datevec (cl-cadar candidates))
 			       internaldate)
                         (setq result (cons
-                                      (cadadr candidates)
+                                      (cl-cadadr candidates)
                                       result)))
                     (setq candidates (cddr candidates)))
                   (setq result (or (null result)

@@ -30,9 +30,9 @@
 ;;
 
 (require 'wl-summary)
+(require 'cl-lib)
 
 (eval-when-compile
-  (require 'cl)
   (defalias-maybe 'wl-summary-target-mark 'ignore)
   (defalias-maybe 'wl-summary-target-mark-region 'ignore))
 
@@ -530,7 +530,7 @@ Return number if put mark succeed"
 	    (progn
 	      (wl-summary-unset-mark (car mark-info))
 	      (sit-for 0))
-	  (incf failures)))
+	  (cl-incf failures)))
       (message "Prefetching...done")
       0)))
 
@@ -549,7 +549,7 @@ Return number if put mark succeed"
 		t)
 	    (error))
 	  (wl-summary-unmark (car mark-info))
-	(incf failure)))
+	(cl-incf failure)))
     failure))
 
 (defun wl-summary-exec-action-resend-subr (number address)
@@ -871,7 +871,7 @@ Return number if put mark succeed"
 			 (setq checked-dsts (cons (cons dst ret) checked-dsts))
 			 ret)))
 	    (if (funcall (symbol-function 'wl-summary-refile) number dst)
-		(incf count))
+		(cl-incf count))
 	    (message "Marking...%d message(s)." count)))
 	(forward-line))
       (if (zerop count)

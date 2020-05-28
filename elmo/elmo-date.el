@@ -33,7 +33,6 @@
 (require 'path-util)
 (require 'timezone)
 (require 'elmo-vars)
-(eval-when-compile (require 'cl))
 
 (make-obsolete 'elmo-match-string 'match-string "26 Aug 2012")
 

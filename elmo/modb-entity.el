@@ -30,10 +30,10 @@
 
 ;;; Code:
 
-(eval-when-compile (require 'cl))
-
 (require 'luna)
+(require 'mime)
 (require 'mime-parse)
+(require 'eword-encode)
 (require 'elmo-vars)
 (require 'elmo-util)
 

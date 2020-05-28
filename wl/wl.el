@@ -63,9 +63,9 @@
 
 (require 'wl-demo)
 (require 'wl-highlight)
+(require 'cl-lib)
 
 (eval-when-compile
-  (require 'cl)
   (require 'smtp)
   (require 'wl-score)
   (require 'wl-fldmgr)
@@ -427,8 +427,8 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (goto-char (point-min))
     (wl-plugged-redrawing-switch 0 (elmo-plugged-p))
     (while alist
-      (setq server (caaar alist)
-	    port (cdaar alist)
+      (setq server (cl-caaar alist)
+	    port (cl-cdaar alist)
 	    plugged (nth 2 (car alist))
 	    time (nth 3 (car alist)))
       (unless (string= last server)
@@ -960,7 +960,7 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
 	      (setq function (car function)))
 	    (autoload function (car package) nil interactive keymap)))
 	(if (eq (nth 1 package) ':interactive)
-	    (cdddr package)
+	    (cl-cdddr package)
 	  (cdr package)))))
    '(("wl-fldmgr" :interactive t
       wl-fldmgr-access-display-all wl-fldmgr-access-display-normal
