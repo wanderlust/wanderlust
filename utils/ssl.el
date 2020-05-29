@@ -26,20 +26,7 @@
 ;;; Boston, MA 02111-1307, USA.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(eval-when-compile (require 'cl))
-(require 'base64)
-
-(eval-and-compile
-  (condition-case ()
-      (require 'custom)
-    (error nil))
-  (if (and (featurep 'custom) (fboundp 'custom-declare-variable))
-      nil ;; We've got what we needed
-    ;; We have the old custom-library, hack around it!
-    (defmacro defgroup (&rest args)
-      nil)
-    (defmacro defcustom (var value doc &rest args)
-      `(devar ,var ,value ,doc))))
+(require 'cl-lib)
 
 (defgroup ssl nil
   "Support for `Secure Sockets Layer' encryption."
@@ -111,8 +98,7 @@ to."
 			     (base64-encode-string der)
 			     "\n-----END CERTIFICATE-----\n"))
 	(exit-code 0))
-    (save-excursion
-      (set-buffer (get-buffer-create " *openssl*"))
+    (with-current-buffer (get-buffer-create " *openssl*")
       (erase-buffer)
       (insert certificate)
       (setq exit-code (condition-case ()
@@ -159,7 +145,7 @@ be in DER encoding"
 	nil
       (if (not (file-directory-p ssl-certificate-directory))
 	  (make-directory ssl-certificate-directory))
-      (case ssl-certificate-directory-style
+      (cl-case ssl-certificate-directory-style
 	(ssleay
 	 (base64-encode-region (point-min) (point-max))
 	 (goto-char (point-min))
@@ -188,15 +174,13 @@ BUFFER is the buffer (or buffer-name) to associate with the process.
 Third arg is name of the host to connect to, or its IP address.
 Fourth arg SERVICE is name of the service desired, or an integer
 specifying a port number to connect to."
-  (if (integerp service) (setq service (int-to-string service)))
+  (if (integerp service) (setq service (number-to-string service)))
   (let* ((process-connection-type nil)
 	 (port service)
 	 (proc (eval
 		`(start-process name buffer ssl-program-name
 				,@ssl-program-arguments))))
-    (if (fboundp 'set-process-query-on-exit-flag)
-	(set-process-query-on-exit-flag proc nil)
-      (process-kill-without-query proc))
+    (set-process-query-on-exit-flag proc nil)
     proc))
 
 (provide 'ssl)
