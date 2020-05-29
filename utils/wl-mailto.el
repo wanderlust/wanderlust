@@ -110,8 +110,8 @@ provided by `browse-url-mail' (w3) -- DUMMY does not do anything."
   (interactive "sURL: ")
   (if (string-match rfc2368-mailto-regexp url)
       (let* ((other-headers (rfc2368-parse-mailto-url url))
-	     (to (cdr (assoc-ignore-case "to" other-headers)))
-	     (subject (cdr (assoc-ignore-case "subject" other-headers))))
+	     (to (cdr (elmo-assoc-ignore-case "to" other-headers)))
+	     (subject (cdr (elmo-assoc-ignore-case "subject" other-headers))))
 
 	(wl-user-agent-compose to subject other-headers))
     (message "Not a mailto: url.")))

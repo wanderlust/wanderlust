@@ -1,5 +1,9 @@
 2020-05-29  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo-util.el (elmo-assoc-ignore-case): New function.
+
+2020-05-29  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	Remove cl dependencies except where lexical-let is used.
 
 	* acap.el: Likewise.

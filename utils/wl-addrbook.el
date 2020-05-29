@@ -96,7 +96,7 @@ If nil,  the old 'user' entry remains.")
     (setq addr (substring addr 0 (string-match "/" addr)))))
 
 (defun wl-address-parse-address-list (addrs)
-  (mapcar 'wl-address-header-extract-address (wl-parse-addresses addrs)))
+  (mapcar 'wl-address-header-extract-address (elmo-parse-addresses addrs)))
 
 ;; hash table for wl-addrbook-alist
 (defmacro wl-addrbook-hashtb ()
@@ -290,7 +290,7 @@ If addresses is a string, expands it recursively."
 	(setq path (file-name-directory par))
 	;; include children files
 	(while (re-search-forward "^\<[ \t]*\\([^ \t\n]+\\).*$" nil t)
-	  (setq chr (expand-file-name (elmo-match-buffer 1) path))
+	  (setq chr (expand-file-name (match-string-no-properties 1) path))
 	  (delete-region (match-beginning 0) (match-end 0))
 	  (if (and (file-readable-p chr) (not (member chr files)))
 	      (progn
@@ -343,35 +343,35 @@ If addresses is a string, expands it recursively."
 
 (defun wl-addrbook-make-alist ()
   (let (alias colon addrs nick name alist)
-    (wl-set-work-buf
-     (wl-addrbook-insert-file
-      wl-addrbook-file wl-addrbook-comment-regexp 'unquote)
-     (goto-char (point-min))
-     (while (re-search-forward "^ ?\\([^ \n:]+\\) ?\\(:?\\) ?\\([^ \n]+\\)" nil t)
-       (setq alias (wl-addrbook-strsafe (elmo-match-buffer 1)))
-       (setq colon (elmo-match-buffer 2))
-       (setq addrs (wl-addrbook-strsafe (elmo-match-buffer 3)))
-       (if (equal colon ":")
-	   (setq alist (cons (list alias addrs) alist))
-	 (and addrs (setq addrs (elmo-parse addrs "\\([^, \t\r\n]+\\)")))
-	 (if (looking-at " ?\\([^ \n]*\\) ?\\([^ \n]*\\)")
-	     (progn
-	       (setq nick (wl-addrbook-strsafe (elmo-match-buffer 1)))
-	       (setq name (wl-addrbook-strsafe (elmo-match-buffer 2))))
-	   (setq nick nil)
-	   (setq name nil))
-	 (setq alist (cons (list alias addrs nick name) alist))))
-     (nreverse alist))))
+    (elmo-set-work-buf
+      (wl-addrbook-insert-file
+       wl-addrbook-file wl-addrbook-comment-regexp 'unquote)
+      (goto-char (point-min))
+      (while (re-search-forward "^ ?\\([^ \n:]+\\) ?\\(:?\\) ?\\([^ \n]+\\)" nil t)
+	(setq alias (wl-addrbook-strsafe (match-string-no-properties 1)))
+	(setq colon (match-string-no-properties 2))
+	(setq addrs (wl-addrbook-strsafe (match-string-no-properties 3)))
+	(if (equal colon ":")
+	    (setq alist (cons (list alias addrs) alist))
+	  (and addrs (setq addrs (elmo-parse addrs "\\([^, \t\r\n]+\\)")))
+	  (if (looking-at " ?\\([^ \n]*\\) ?\\([^ \n]*\\)")
+	      (progn
+		(setq nick (wl-addrbook-strsafe (match-string-no-properties 1)))
+		(setq name (wl-addrbook-strsafe (match-string-no-properties 2))))
+	    (setq nick nil)
+	    (setq name nil))
+	  (setq alist (cons (list alias addrs nick name) alist))))
+      (nreverse alist))))
 
 (defun wl-draft-learn-alias ()
   (interactive)
   (let ((recipients (mapconcat 'identity
 			       (delq nil (std11-field-bodies '("To" "Cc")))
 			       ",")))
-    (mapcar '(lambda (addr)
-	       (wl-addrbook-alias-add
-		(wl-address-header-extract-address addr)))
-	    (wl-parse-addresses recipients))))
+    (mapcar (lambda (addr)
+	      (wl-addrbook-alias-add
+	       (wl-address-header-extract-address addr)))
+	    (elmo-parse-addresses recipients))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

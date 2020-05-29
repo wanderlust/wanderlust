@@ -1196,6 +1196,18 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
 		     (match-end pos)
 		     (length string))))
 
+(defun elmo-assoc-ignore-case (key alist)
+  "Return non-nil if KEY is `equal' to the car of an element of ALIST.
+The value is actually the first element of ALIST whose car equals KEY, which must be string and be compared case insensitively."
+  (setq key (downcase key))
+  (let (result)
+    (while alist
+      (if (equal key (downcase (caar alist)))
+	  (setq result (car alist)
+		alist nil)
+	(setq alist (cdr alist))))
+    result))
+
 (defun elmo-string-match-assoc (key alist &optional case-ignore)
   (let ((case-fold-search case-ignore)
 	a)

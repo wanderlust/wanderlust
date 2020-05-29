@@ -1,3 +1,20 @@
+2020-05-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Adapt to recent changes.
+
+	* wl-addrbook.el: Use elmo-set-work-buf instead of
+	wl-set-work-buf.  Use match-string-no-properties instead of
+	elmo-match-buffer.  Use elmo-parse-addresses instead of
+	wl--parse-addresses.
+	(wl-draft-learn-alias): Remove "'" from lambda expression.
+
+	* wl-complete.el (wl-draft-on-value-p): Use
+	match-string-no-properties instead of elmo-match-buffer.
+
+	* wl-mailto.el (wl-mailto-compose-message-from-mailto-url): Use
+	elmo-assoc-ignore-case instead of assoc-ignore-case.  Emacs does
+	not have assoc-ignore-case.
+
 2020-05-29  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* bbdb-wl.el: Removed.
