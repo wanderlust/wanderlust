@@ -1,5 +1,10 @@
 2020-05-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo-util.el (elmo-parse): Do not pass nil to store-match-data
+	function.  It is undocumented.
+
+2020-05-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	* elmo-util.el: Adjust dependencies.
 	(elmo-msgdb-insert-file-header)
 	(elmo-file-cache-load, elmo-object-load): Use

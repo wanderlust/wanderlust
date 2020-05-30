@@ -1659,11 +1659,12 @@ NUMBER-SET is altered."
 
 (defun elmo-parse (string regexp &optional matchn)
   (or matchn (setq matchn 1))
-  (let (list)
-    (store-match-data nil)
-    (while (string-match regexp string (match-end 0))
+  (let ((index 0)
+	list)
+    (while (string-match regexp string index)
       (setq list (cons (substring string (match-beginning matchn)
-				  (match-end matchn)) list)))
+				  (match-end matchn)) list)
+	    index (match-end 0)))
     (nreverse list)))
 
 (defun elmo-find-list-match-value (specs getter)
