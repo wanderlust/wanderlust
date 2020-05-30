@@ -41,9 +41,8 @@
 (defvar wl-news-default-previous-version '(2 0 0))
 
 (defvar wl-news-lang
-  (if (and (boundp 'current-language-environment)
-	   (string-equal "Japanese"
-			 (symbol-value 'current-language-environment)))
+  (if (string-equal "Japanese"
+		    (symbol-value 'current-language-environment))
       '("ja" "en") '("en" "ja"))
 	"The list of languages to show NEWS. (order sensitive)")
 

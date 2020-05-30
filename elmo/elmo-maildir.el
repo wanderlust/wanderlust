@@ -136,7 +136,7 @@ LOCATION."
 	       (if (string-match regexp name)
 		   (progn
 		     (setq sym (match-string 1 name)
-			   flag-list (string-to-char-list
+			   flag-list (string-to-list
 				      (match-string 2 name)))
 		     (when (memq ?F flag-list)
 		       (setq flagged-locations
@@ -298,12 +298,12 @@ LOCATION."
   (if (string-match
        (elmo-maildir-adjust-separator "^\\(.+:[12],\\)\\(.*\\)$")
        filename)
-      (let ((flaglist (string-to-char-list (match-string 2 filename))))
+      (let ((flaglist (string-to-list (match-string 2 filename))))
 	(unless (memq mark flaglist)
 	  (setq flaglist (sort (cons mark flaglist) '<))
 	  (rename-file filename
 		       (concat (match-string 1 filename)
-			       (char-list-to-string flaglist)))))
+			       (apply 'string flaglist)))))
     ;; Rescue no info file in maildir.
     (rename-file filename
 		 (concat filename
@@ -315,13 +315,13 @@ LOCATION."
   "Mark the FILENAME file in the maildir.  MARK is a character."
   (if (string-match (elmo-maildir-adjust-separator "^\\(.+:2,\\)\\(.*\\)$")
 		    filename)
-      (let ((flaglist (string-to-char-list (match-string 2 filename))))
+      (let ((flaglist (string-to-list (match-string 2 filename))))
 	(when (memq mark flaglist)
 	  (setq flaglist (delq mark flaglist))
 	  (rename-file filename
 		       (concat (match-string 1 filename)
 			       (if flaglist
-				   (char-list-to-string flaglist))))))))
+				   (apply 'string flaglist))))))))
 
 (defsubst elmo-maildir-set-mark-msgs (folder locs mark)
   (dolist (loc locs)

@@ -36,7 +36,6 @@
 ;;       (not (featurep 'utf-2000))
 ;;       (module-installed-p 'xemacs-ucs))
 ;;  (require 'xemacs-ucs)))
-(require 'custom)
 (require 'cus-edit)
 (require 'wl-vars)
 (require 'wl)

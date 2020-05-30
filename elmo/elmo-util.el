@@ -29,8 +29,6 @@
 ;;; Code:
 ;;
 
-(require 'poem)
-(require 'emu)
 (require 'mcharset)
 (require 'pces)
 (require 'luna)
@@ -142,7 +140,7 @@ File content is decoded with MIME-CHARSET."
   (if (not (file-readable-p filename))
       nil
     (with-temp-buffer
-      (insert-file-contents-as-binary filename)
+      (insert-file-contents-literally filename)
       (let ((coding-system (or (elmo-set-auto-coding)
 			       (mime-charset-to-coding-system
 				mime-charset))))
@@ -1326,7 +1324,7 @@ The value is actually the first element of ALIST whose car equals KEY, which mus
   "Parse atom from STRING using SEPS as a string of separator char list.
 When optional argument ASIS is non-nil, keep '\\' and '\"' from result."
   (let ((len (length string))
-	(seps (and seps (string-to-char-list seps)))
+	(seps (and seps (string-to-list seps)))
 	(i 0)
 	(sep nil)
 	content c in)
@@ -1355,7 +1353,7 @@ When optional argument ASIS is non-nil, keep '\\' and '\"' from result."
       (if in (error "Parse error in quoted"))
       (let ((atom (if (null content)
 		      ""
-		    (char-list-to-string (nreverse content)))))
+		    (apply 'string (nreverse content)))))
 	(if (elmo-token-valid-p atom requirement)
 	    (cons atom (substring string i))
 	  (cons "" string))))))
@@ -1373,7 +1371,7 @@ When optional argument ASIS is non-nil, keep '\\' and '\"' from result."
   (when (listp spec)
     (let ((result (elmo-collect-separators-internal spec)))
       (and result
-	   (char-list-to-string (elmo-uniq-list result #'delq))))))
+	   (apply 'string (elmo-uniq-list result #'delq))))))
 
 (defun elmo-collect-separators-internal (specs &optional separators)
   (while specs
@@ -1788,7 +1786,7 @@ Return t if cache is loaded successfully."
 				     cache-path
 				     section))
 		   (file-exists-p cache-file))
-	  (insert-file-contents-as-binary cache-file)
+	  (insert-file-contents-literally cache-file)
 	  t))
     ;; igore error
     (error)))
@@ -2089,7 +2087,7 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
       (while (null done)
 	(setq done
 	      (/= elmo-msgdb-file-header-chop-length
-		  (nth 1 (insert-file-contents-as-binary
+		  (nth 1 (insert-file-contents-literally
 			  file nil beg
 			  (cl-incf beg elmo-msgdb-file-header-chop-length)))))
 	(if first

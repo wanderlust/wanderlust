@@ -30,7 +30,6 @@
 ;;; Code:
 ;;
 
-(require 'invisible)
 (require 'wl-vars)
 
 (provide 'wl-highlight)
@@ -856,7 +855,7 @@
 
 (defsubst wl-highlight-get-face-by-name (format &rest args)
   (let ((face (intern (apply #'format format args))))
-    (and (find-face face)
+    (and (facep face)
 	 face)))
 
 (defsubst wl-highlight-summary-line-face-spec (status temp-mark indent)

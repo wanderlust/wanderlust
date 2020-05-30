@@ -955,7 +955,7 @@ If MARK is non-nil, remove only the specified MARK from the summary line."
 (defun wl-summary-unmark-all ()
   "Unmark all according to what you input."
   (interactive)
-  (let ((unmarks (string-to-char-list (read-from-minibuffer "Unmark: ")))
+  (let ((unmarks (string-to-list (read-from-minibuffer "Unmark: ")))
 	cur-mark)
     (save-excursion
       (while unmarks

@@ -39,12 +39,6 @@
 
 (require 'cl-lib)
 
-(if (or (featurep 'dbm)
-	(featurep 'gnudbm)
-	(featurep 'berkdb)
-	(featurep 'berkeley-db))
-    (require 'elmo-database))
-
 (defcustom elmo-message-fetch-threshold 30000
   "Fetch threshold."
   :type '(choice (integer :tag "Threshold (bytes)")

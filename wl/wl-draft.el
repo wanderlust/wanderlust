@@ -30,7 +30,6 @@
 
 ;;; Code:
 ;;
-(require 'emu)
 (require 'timezone nil t)
 (require 'std11)
 (require 'eword-encode)

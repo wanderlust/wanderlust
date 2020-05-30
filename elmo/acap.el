@@ -61,7 +61,6 @@
 ;;; Code:
 
 (require 'cl-lib)
-(require 'pces)
 (require 'sasl)
 
 ;; User variables.

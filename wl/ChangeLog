@@ -1,3 +1,28 @@
+2020-05-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-acap.el: Adjust dependency.
+
+	* wl-action.el (wl-summary-unmark-all): Use string-to-list
+	directly.
+
+	* wl-draft.el: Adjust dependency.
+
+	* wl-highlight.el: Adjust dependency.
+	(wl-highlight-get-face-by-name): Do not use find-face.
+
+	* wl-news.el.in (wl-news-default-previous-version): Assume Emacs
+	24 or later.
+
+	* wl-summary.el (wl-summary-goto-folder-subr): Use
+	insert-file-contents-literally directly.
+	(wl-summary-sync-update): Drop XEmacs related codes.
+
+	* wl-vars.el: Adjust dependency.
+	(wl-draft-truncate-lines, wl-message-truncate-lines): Use
+	truncate-lines always.
+
+	* wl.el: Assume Emacs 24 or later.
+
 2020-05-29  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Remove cl dependencies except where lexical-let is used.

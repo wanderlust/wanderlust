@@ -121,7 +121,7 @@
 					    &optional section unseen)
   (let ((filename (elmo-file-cache-get-path location)))
     (if (file-exists-p filename)
-	(insert-file-contents-as-binary filename)
+	(insert-file-contents-literally filename)
       (error "Now this message is not cached. Please s all"))))
 
 (luna-define-method elmo-folder-exists-p ((folder elmo-sendlog-folder))

@@ -35,15 +35,6 @@
 (require 'elmo)
 (require 'wl-version)			; reduce recursive-load-depth
 
-;; from x-face.el
-(unless (and (fboundp 'defgroup)
-	     (fboundp 'defcustom))
-  (require 'backquote)
-  (defmacro defgroup (&rest args))
-  (defmacro defcustom (symbol value &optional doc &rest args)
-    (let ((doc (concat "*" (or doc ""))))
-      `(defvar ,symbol ,value ,doc))))
-
 (require 'wl-vars)
 (require 'wl-util)
 
@@ -468,11 +459,10 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
       (condition-case nil
 	  (progn
 	    (enlarge-window (- window-lines (window-height)))
-	    (when (fboundp 'pos-visible-in-window-p)
-	      (goto-char (point-min))
-	      (while (and (< (window-height) max-lines)
-			  (not (pos-visible-in-window-p (1- (point-max)))))
-		(enlarge-window 2))))
+	    (goto-char (point-min))
+	    (while (and (< (window-height) max-lines)
+			(not (pos-visible-in-window-p (1- (point-max)))))
+	      (enlarge-window 2)))
 	(error))
       (goto-char (point-min))
       (forward-line)
@@ -918,10 +908,7 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
   (interactive)
   (if wl-folder-use-frame
       (wl arg)
-    (let ((focusing-functions (append '(raise-frame select-frame)
-				      (if (fboundp 'x-focus-frame)
-					  '(x-focus-frame)
-					'(focus-frame))))
+    (let ((focusing-functions '(raise-frame select-frame x-focus-frame))
 	  (folder (get-buffer wl-folder-buffer-name))
 	  window frame wl-folder-use-frame)
       (if (and folder

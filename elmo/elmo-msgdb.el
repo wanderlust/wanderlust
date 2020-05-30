@@ -33,7 +33,6 @@
 
 (require 'elmo-vars)
 (require 'elmo-util)
-(require 'emu)
 (require 'std11)
 (require 'mime)
 (require 'modb)

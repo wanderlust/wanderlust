@@ -302,7 +302,7 @@ Returns non-nil if fetching was succeed.")
   (let ((filename (elmo-search-location-to-filename location)))
     (when (and filename (file-exists-p filename))
       (prog1
-	  (insert-file-contents-as-binary filename)
+	  (insert-file-contents-literally filename)
 	(unless (or (std11-field-body "To")
 		    (std11-field-body "Cc")
 		    (std11-field-body "Subject"))

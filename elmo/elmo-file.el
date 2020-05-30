@@ -186,7 +186,7 @@
     (when (file-exists-p file)
       (set-buffer-multibyte nil)
       (prog1
-	  (insert-file-contents-as-binary file nil 0 elmo-file-fetch-max-size)
+	  (insert-file-contents-literally file nil 0 elmo-file-fetch-max-size)
 	(unless (or (std11-field-body "To")
 		    (std11-field-body "Cc")
 		    (std11-field-body "Subject"))

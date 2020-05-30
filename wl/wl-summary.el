@@ -45,7 +45,6 @@
 (require 'wl-refile)
 (require 'wl-util)
 (require 'easymenu nil t)
-(require 'ps-print nil t)
 
 (eval-when-compile (require 'cl))
 
@@ -89,15 +88,6 @@
 (defalias 'wl-setup-summary 'wl-e21-setup-summary-toolbar)
 
 ;; End of wl-e21.el
-
-(eval-when-compile
-  (require 'timer nil t)
-  (defalias-maybe 'ps-print-buffer-with-faces 'ignore)
-  (defalias-maybe 'elmo-database-msgid-put 'ignore)
-  (defalias-maybe 'elmo-database-close 'ignore)
-  (defalias-maybe 'elmo-database-msgid-get 'ignore)
-  (defalias-maybe 'run-with-idle-timer 'ignore)
-  (defalias-maybe 'ps-print-preprint 'ignore))
 
 (defvar dragdrop-drop-functions)
 (defvar scrollbar-height)
@@ -2053,12 +2043,7 @@ This function is defined for `window-scroll-functions'"
 				(wl-summary-insert-message
 				 entity folder
 				 (not sync-all)))
-		      (wl-append update-top-list update-thread))
-		    (if elmo-use-database
-			(elmo-database-msgid-put
-			 (elmo-message-entity-field entity 'message-id)
-			 (elmo-folder-name-internal folder)
-			 (elmo-message-entity-number entity))))
+		      (wl-append update-top-list update-thread)))
 		  (while wl-summary-delayed-update
 		    (message "Parent (%d) of message %d is no entity"
 			     (caar wl-summary-delayed-update)
@@ -2081,8 +2066,6 @@ This function is defined for `window-scroll-functions'"
 		(when (and sync-all (eq wl-summary-buffer-view 'thread))
 		  (elmo-kill-buffer wl-summary-search-buf-name)
 		  (wl-thread-insert-top))
-		(if elmo-use-database
-		    (elmo-database-close))
 		(run-hooks 'wl-summary-sync-updated-hook)
 		(setq mes
 		      (if (and (null delete-list)
@@ -2458,7 +2441,7 @@ If ARG, without confirm."
 		       (cache (expand-file-name wl-summary-cache-file dir))
 		       (view (expand-file-name wl-summary-view-file dir)))
 		  (when (file-exists-p cache)
-		    (insert-file-contents-as-binary cache)
+		    (insert-file-contents-literally cache)
 		    (set-buffer-multibyte t)
 		    (decode-mime-charset-region
 		     (point-min)(point-max)
@@ -4884,6 +4867,8 @@ If ARG is numeric number, decode message as following:
 	      (kill-buffer buffer)))
 	(message "")))))
 
+(autoload 'ps-print-preprint "ps-print")
+
 (defun wl-summary-print-message-with-ps-print (&optional filename)
   "Print message via ps-print."
   (interactive)
@@ -5128,15 +5113,6 @@ If ARG is numeric number, decode message as following:
   (customize-set-value 'mime-view-buttons-visible (not mime-view-buttons-visible))
   (wl-message-buffer-cache-clean-up)
   (wl-summary-redisplay))
-
-;; Prune functions provided temporarily to avoid compile warnings.
-(eval-when-compile
-  (dolist (fn '(ps-print-buffer-with-faces run-with-idle-timer
-		ps-print-preprint))
-    (when (and (get fn 'defalias-maybe)
-	       (eq (symbol-function fn) 'ignore))
-      (put fn 'defalias-maybe nil)
-      (fmakunbound fn))))
 
 (require 'product)
 (product-provide (provide 'wl-summary) (require 'wl-version))

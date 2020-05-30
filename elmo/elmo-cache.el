@@ -152,7 +152,7 @@
 	       location
 	       (elmo-cache-folder-directory-internal folder))))
     (when (file-exists-p file)
-      (insert-file-contents-as-binary file))))
+      (insert-file-contents-literally file))))
 
 (luna-define-method elmo-folder-writable-p ((folder elmo-cache-folder))
   t)

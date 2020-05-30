@@ -1,3 +1,15 @@
+2020-05-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el: Adjust dependencies.
+	(elmo-msgdb-insert-file-header)
+	(elmo-file-cache-load, elmo-object-load): Use
+	insert-file-contents-literally directly.
+	(elmo-parse-token): Use string-to-list directly.
+	(elmo-parse-token, elmo-collect-separators): Do not use
+	char-list-to-string.
+
+	* elmo.el: Remove XEmacs related codes.
+
 2020-05-29  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-util.el (elmo-assoc-ignore-case): New function.
