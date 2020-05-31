@@ -1987,6 +1987,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 			      "\\1"))
 		auto-save-file-name-transforms)))
   (when wl-draft-write-file-function
+    (make-local-variable 'write-file-functions)
     (add-hook 'write-file-functions wl-draft-write-file-function))
   (wl-draft-overload-functions)
   (unless (eq wl-draft-real-time-highlight 'jit)
@@ -2195,6 +2196,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (unless wl-draft-parent-folder
       (setq wl-draft-parent-folder ""))
     (when wl-draft-write-file-function
+      (make-local-variable 'write-file-functions)
       (add-hook 'write-file-functions wl-draft-write-file-function))
     (unless (eq wl-draft-real-time-highlight 'jit)
       (wl-highlight-headers 'for-draft))
