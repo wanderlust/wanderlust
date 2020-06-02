@@ -1,4 +1,4 @@
-;;; ssl.el,v --- ssl functions for emacsen without them builtin
+;;; ssl.el,v --- ssl functions for emacsen without them builtin  -*- lexical-binding: t -*-
 ;; Author: wmperry
 ;; Created: 1999/10/14 12:44:18
 ;; Version: 1.2
@@ -176,10 +176,12 @@ Fourth arg SERVICE is name of the service desired, or an integer
 specifying a port number to connect to."
   (if (integerp service) (setq service (number-to-string service)))
   (let* ((process-connection-type nil)
-	 (port service)
-	 (proc (eval
-		`(start-process name buffer ssl-program-name
-				,@ssl-program-arguments))))
+	 (proc (apply 'start-process name buffer ssl-program-name
+		      (mapcar (lambda (elt)
+				(eval `(let ((host ,host)
+					     (service ,service))
+					 ,elt)))
+			      ssl-program-arguments))))
     (set-process-query-on-exit-flag proc nil)
     proc))
 

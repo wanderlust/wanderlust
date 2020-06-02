@@ -1,4 +1,4 @@
-;;; wl-mailto.el -- some mailto support for wanderlust
+;;; wl-mailto.el -- some mailto support for wanderlust  -*- lexical-binding: t -*-
 
 ;;; Copyright (C) 1999 Sen Nagata
 
@@ -103,7 +103,7 @@
 	  (lambda ()
 	    (thing-at-point 'url)))))
 
-(defun wl-mailto-compose-message-from-mailto-url (url &optional dummy)
+(defun wl-mailto-compose-message-from-mailto-url (url &optional _dummy)
   "Compose a message from URL (RFC 2368).
 The optional second argument, DUMMY, exists to match the interface
 provided by `browse-url-mail' (w3) -- DUMMY does not do anything."

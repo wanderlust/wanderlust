@@ -1,4 +1,4 @@
-;; wl-addrbook.el --- Aliases and personal information
+;; wl-addrbook.el --- Aliases and personal information  -*- lexical-binding: t -*-
 
 ;; Author:  Masahiro MURATA <muse@ba2.so-net.ne.jp>
 ;;	Kazu Yamamoto <Kazu@Mew.org>
@@ -103,10 +103,10 @@ If nil,  the old 'user' entry remains.")
   '(or wl-addrbook-hashtb
        (setq wl-addrbook-hashtb (elmo-make-hash 1021))))
 
-(defsubst wl-addrbook-get-record-by-addr (addr &optional alist)
+(defsubst wl-addrbook-get-record-by-addr (addr &optional _alist)
   (elmo-get-hash-val (downcase addr) (wl-addrbook-hashtb)))
 
-(defsubst wl-addrbook-get-record-by-alias (alias &optional alist)
+(defsubst wl-addrbook-get-record-by-alias (alias &optional _alist)
   (elmo-get-hash-val (format "#%s" (downcase alias)) (wl-addrbook-hashtb)))
 
 (defun wl-addrbook-make-hashtb ()
@@ -399,7 +399,7 @@ it will add an alias."
   (interactive "P")
   (wl-summary-redisplay)
   (let ((buf wl-message-buffer)
-	from shortname address addrs name)
+	shortname address addrs name)
     (with-current-buffer buf
       (setq address (std11-field-body "From"))
       (if (wl-address-user-mail-address-p address)

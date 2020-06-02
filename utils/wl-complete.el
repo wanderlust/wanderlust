@@ -1,4 +1,4 @@
-;;; wl-complete.el --- Completion magic for Wanderlust
+;;; wl-complete.el --- Completion magic for Wanderlust  -*- lexical-binding: t -*-
 
 ;; Author:  Masahiro MURATA <muse@ba2.so-net.ne.jp>
 ;;	Kazu Yamamoto <Kazu@Mew.org>
@@ -97,7 +97,7 @@
 ;;; Completion function: C-i
 ;;;
 
-(defun wl-draft-addrbook-header-comp-or-tab (force)
+(defun wl-draft-addrbook-header-comp-or-tab (_force)
   (interactive "P")
   (let ((case-fold-search t)
 	func)
