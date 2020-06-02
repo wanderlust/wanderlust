@@ -1,4 +1,4 @@
-;;; wl-util.el --- Utility modules for Wanderlust.
+;;; wl-util.el --- Utility modules for Wanderlust.    -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 2000 A. SAGATA <sagata@nttvdt.hil.ntt.co.jp>
@@ -339,14 +339,14 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
       (wl-get-date-iso8601 date)
     (error "")))
 
-(defun wl-url-news (url &rest args)
+(defun wl-url-news (url &rest _args)
   (interactive "sURL: ")
   (if (string-match "^news:\\(.*\\)$" url)
       (wl-summary-goto-folder-subr
        (concat "-" (match-string 1 url)) nil nil nil t)
     (message "Not a news: url.")))
 
-(defun wl-url-nntp (url &rest args)
+(defun wl-url-nntp (url &rest _args)
   (interactive "sURL: ")
   (let (folder fld-name server port msg)
     (if (string-match
@@ -946,7 +946,7 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
 	(if beg
 	    (cons beg end)))))
 
-(defun wl-simple-display-progress (label action current total)
+(defun wl-simple-display-progress (_label action current total)
   (when (> total 0)
     (let ((progress (* (/ current (float total)) 100)))
       (if (< total 10000)
@@ -1005,7 +1005,7 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
 (defun wl-completing-read-multiple-1 (prompt
 				      table
 				      &optional predicate
-				      require-match initial-input
+				      _require-match initial-input
 				      hist def inherit-input-method)
     "Read multiple strings in the minibuffer"
     (split-string

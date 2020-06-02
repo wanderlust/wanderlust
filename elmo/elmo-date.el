@@ -1,4 +1,4 @@
-;;; elmo-date.el --- Date processing module for ELMO.
+;;; elmo-date.el --- Date processing module for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -185,7 +185,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 
 (defun elmo-time-make-imap-date-string (time)
   (let ((system-time-locale "C"))
-    (format-time-string "%d-%b-%Y %T %z")))
+    (format-time-string "%d-%b-%Y %T %z" time)))
 
 (defalias 'elmo-time-less-p 'time-less-p)
 (make-obsolete 'elmo-time-less-p 'time-less-p "24 May 2020")

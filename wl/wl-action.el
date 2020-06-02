@@ -1,4 +1,4 @@
-;;; wl-action.el --- Mark and actions in the Summary mode for Wanderlust.
+;;; wl-action.el --- Mark and actions in the Summary mode for Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2003 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -68,7 +68,7 @@ Return number if put mark succeed"
 		       (completing-read "Mark: " wl-summary-mark-action-list)))
 	 (current (wl-summary-message-number))
 	 (action (assoc set-mark wl-summary-mark-action-list))
-	 visible mark cur-mark)
+	 visible cur-mark)
     (when (zerop (elmo-folder-length wl-summary-buffer-elmo-folder))
       (error "Set mark failed"))
     (prog1
@@ -118,7 +118,7 @@ Return number if put mark succeed"
 	      (wl-summary-prev)
 	    (wl-summary-next))))))
 
-(defun wl-summary-register-target-mark (number mark data)
+(defun wl-summary-register-target-mark (number _mark _data)
   (or (memq number wl-summary-buffer-target-mark-list)
       (setq wl-summary-buffer-target-mark-list
 	    (cons number wl-summary-buffer-target-mark-list))))
@@ -222,7 +222,7 @@ Return number if put mark succeed"
       mark-list)))
 
 ;; Unset mark
-(defun wl-summary-unset-mark (&optional number interactive force)
+(defun wl-summary-unset-mark (&optional number _interactive force)
   "Unset temporary mark of the message with NUMBER.
 NUMBER is the message number to unset the mark.
 If not specified, the message on the cursor position is treated.
@@ -283,8 +283,6 @@ Return number if put mark succeed"
     (save-excursion
       (let ((start (point))
 	    (refiles (mapcar 'car mark-list))
-	    (refile-failures 0)
-	    dst-msgs			; loop counter
 	    result)
 	;; begin refile...
 	(goto-char start)		; avoid moving cursor to
@@ -322,7 +320,7 @@ Return number if put mark succeed"
 	 (entity (and number
 		      (elmo-message-entity wl-summary-buffer-elmo-folder
 					   number)))
-	 folder cur-mark tmp-folder)
+	 folder tmp-folder)
     (catch 'done
       (when (null entity)
 	(message "Cannot decide destination.")
@@ -521,7 +519,6 @@ Return number if put mark succeed"
     (let* ((count 0)
 	   (length (length mark-list))
 	   (mark-list-copy (copy-sequence mark-list))
-	   (pos (point))
 	   (failures 0))
       (dolist (mark-info mark-list-copy)
 	(message "Prefetching...(%d/%d)"
@@ -535,7 +532,7 @@ Return number if put mark succeed"
       0)))
 
 ;; Resend.
-(defun wl-summary-get-resend-address (action number)
+(defun wl-summary-get-resend-address (_action _number)
   "Decide resend address."
   (wl-address-read-from-minibuffer "Resend message to: "))
 
@@ -640,17 +637,17 @@ Return number if put mark succeed"
 	(if (eq wl-summary-buffer-view 'thread)
 	    (let (number entity)
 	      (while (not (eobp))
-		(setq numbers (cons (wl-summary-message-number) numbers)
+		(setq numbers (cons (setq number (wl-summary-message-number))
+				    numbers)
 		      entity (wl-thread-get-entity number))
 		;; When thread is closed...children should also be checked.
 		(unless (wl-thread-entity-get-opened entity)
 		  (dolist (msg (wl-thread-get-children-msgs number))
 		    (setq numbers (cons msg numbers))))
 		(forward-line)))
-	  (let (number)
-	    (while (not (eobp))
-	      (setq numbers (cons (wl-summary-message-number) numbers))
-	      (forward-line))))
+	  (while (not (eobp))
+	    (setq numbers (cons (wl-summary-message-number) numbers))
+	    (forward-line)))
 	(nreverse (delq nil numbers))))))
 
 (defun wl-summary-exec (&optional numbers)
@@ -721,7 +718,7 @@ Return number if put mark succeed"
 				      fld))))
     fld))
 
-(defun wl-summary-print-argument (msg-num data)
+(defun wl-summary-print-argument (_msg-num data)
   "Print action argument on line."
   (when data
     (wl-summary-remove-argument)
@@ -729,7 +726,7 @@ Return number if put mark succeed"
       (let ((inhibit-read-only t)
 	    (data (copy-sequence data))
 	    (buffer-read-only nil)
-	    len rs re c)
+	    len rs re)
 	(setq len (string-width data))
 	(if (< len 1) ()
 	  ;;(end-of-line)
@@ -810,7 +807,7 @@ Return number if put mark succeed"
      (list
       (car action)
       'refile-prev-destination
-      (lambda (&rest args) wl-summary-buffer-prev-refile-destination)
+      (lambda (&rest _args) wl-summary-buffer-prev-refile-destination)
       (nth 2 action)
       (nth 3 action)
       (nth 4 action)

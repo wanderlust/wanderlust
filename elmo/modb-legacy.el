@@ -1,4 +1,4 @@
-;;; modb-legacy.el --- Legacy Implement of MODB.
+;;; modb-legacy.el --- Legacy Implement of MODB.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2003 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -364,7 +364,7 @@ Return a list of message numbers which have duplicated message-ids."
 (luna-define-method elmo-msgdb-length ((msgdb modb-legacy))
   (length (modb-legacy-overview-internal msgdb)))
 
-(luna-define-method elmo-msgdb-flag-available-p ((msgdb modb-legacy) flag)
+(luna-define-method elmo-msgdb-flag-available-p ((_msgdb modb-legacy) flag)
   (modb-legacy-supported-flag-p flag))
 
 (luna-define-method elmo-msgdb-flags ((msgdb modb-legacy) number)

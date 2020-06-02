@@ -1,4 +1,4 @@
-;;; pldap.el --- A portable LDAP support for Emacs.
+;;; pldap.el --- A portable LDAP support for Emacs.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998 Free Software Foundation, Inc.
 ;; Copyright (C) 2000 Yuuichi Teranishi <teranisi@gohome.org>
@@ -466,7 +466,7 @@ the LDAP library: `simple', `krbv41' and `krbv42'.
   "Return the server host of the connection LDAP, as a string."
   (nth 1 ldap))
 
-(defun ldap-close (ldap)
+(defun ldap-close (_ldap)
   "Close an LDAP connection."
   t)
 

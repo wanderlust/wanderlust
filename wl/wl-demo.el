@@ -1,4 +1,4 @@
-;;; wl-demo.el --- Opening demo on Wanderlust
+;;; wl-demo.el --- Opening demo on Wanderlust  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000,2001,2002,2003,2004
 ;;      Yuuichi Teranishi <teranisi@gohome.org>
@@ -133,15 +133,15 @@ TYPE is the filter function."
 	(funcall filter))
       (buffer-string))))
 
-(defun wl-demo-insert-image (image-type)
+(defun wl-demo-insert-image (itype)
   "Insert a logo image at the point and position it to be centered.
-IMAGE-TYPE specifies what a type of image should be displayed.
+ITYPE specifies what a type of image should be displayed.
 Return a number of lines that an image occupies in the buffer."
-  (let ((file (cond ((eq 'xpm image-type)
+  (let ((file (cond ((eq 'xpm itype)
 		     (concat (wl-demo-icon-name) ".xpm"))
-		    ((eq 'bitmap image-type)
+		    ((eq 'bitmap itype)
 		     (concat (wl-demo-icon-name) ".img"))
-		    ((eq 'xbm image-type)
+		    ((eq 'xbm itype)
 		     (concat (wl-demo-icon-name) ".xbm"))))
 	image width height)
 
@@ -159,17 +159,17 @@ Return a number of lines that an image occupies in the buffer."
 	       (message "File not found: %s" file)
 	       nil))
 	(progn
-	  (cond ((or (eq 'xpm image-type)
-		     (and (eq 'xbm image-type)
+	  (cond ((or (eq 'xpm itype)
+		     (and (eq 'xbm itype)
 			  (image-type-available-p 'xbm)))
 		 ;; Use the new redisplay engine on Emacs 21.
 		 (setq image (create-image (wl-demo-image-filter file
-								 image-type)
-					   image-type t)
+								 itype)
+					   itype t)
 		       width (image-size image)
 		       height (cdr width)
 		       width (car width))
-		 (when (eq 'xbm image-type)
+		 (when (eq 'xbm itype)
 		   (let ((bg (face-background 'wl-highlight-demo-face))
 			 (fg (face-foreground 'wl-highlight-logo-face)))
 		     (when (stringp bg)
@@ -184,11 +184,10 @@ Return a number of lines that an image occupies in the buffer."
 		 (insert-image image)
 		 (insert "\n")
 		 (round height))
-		((eq 'bitmap image-type)
+		((eq 'bitmap itype)
 		 ;; Use ready-composed bitmap image.
 		 (require 'bitmap)
-		 (let ((coding-system-for-read 'iso-2022-7bit)
-		       (input-coding-system '*iso-2022-jp*))
+		 (let ((coding-system-for-read 'iso-2022-7bit))
 		   (insert-file-contents file))
 		 (goto-char (point-max))
 		 (unless (bolp)
@@ -229,7 +228,7 @@ Return a number of lines that an image occupies in the buffer."
 				 (max 0 (/ (1+ (- (window-width) width)) 2)))
 		 (put-text-property (point-min) (point-max) 'fixed-width t)
 		 (count-lines (point-min) (goto-char (point-max))))
-		((eq 'xbm image-type)
+		((eq 'xbm itype)
 		 (message "Composing a bitmap image...")
 		 (require 'bitmap)
 		 (bitmap-insert-xbm-file file)
@@ -259,8 +258,8 @@ Return a number of lines that an image occupies in the buffer."
   ;; I think there should be a better way to set face background
   ;; for the buffer only. But I don't know how to do it on Emacs21.
   (goto-char (point-max))
-  (dotimes (i (- (window-height)
-		 (count-lines (point-min) (point))))
+  (dotimes (_i (- (window-height)
+		  (count-lines (point-min) (point))))
     (insert ?\n))
   (let* ((fg (face-foreground 'wl-highlight-demo-face))
 	 (bg (face-background 'wl-highlight-demo-face))
@@ -305,24 +304,23 @@ should be a number of lines that an image occupies in the buffer."
     (let ((fill-column (window-width)))
       (center-region start (point)))))
 
-(defun wl-demo (&optional image-type)
-  "Demo on the startup screen.  IMAGE-TYPE should be a symbol which
+(defun wl-demo (&optional itype)
+  "Demo on the startup screen.  ITYPE should be a symbol which
 overrides the variable `wl-demo-display-logo'.  It will prompt user
 for the type of image when it is called interactively with a prefix
 argument."
   (interactive "P")
   (let ((selection (wl-demo-image-type-alist))
 	type)
-    (if (and image-type (called-interactively-p 'interactive))
+    (if (and itype (called-interactively-p 'interactive))
 	(setq type (completing-read "Image type: " selection nil t)
-	      image-type (cdr (assoc type selection)))
-      (if (setq type (assoc (format "%s" (or image-type wl-demo-display-logo))
+	      itype (cdr (assoc type selection)))
+      (if (setq type (assoc (format "%s" (or itype wl-demo-display-logo))
 			    selection))
-	  (setq image-type (cdr type))
-	(setq image-type (when wl-demo-display-logo
+	  (setq itype (cdr type))
+	(setq itype (when wl-demo-display-logo
 			   (cdr (car selection)))))))
-  (let ((buffer (let ((default-mc-flag t)
-		      (line-spacing 0))
+  (let ((buffer (let ((line-spacing 0))
 		  (get-buffer-create "*WL Demo*"))))
     (switch-to-buffer buffer)
     (setq buffer-read-only nil)
@@ -332,7 +330,7 @@ argument."
 	  tab-width 8)
     (set (make-local-variable 'tab-stop-list)
 	 '(8 16 24 32 40 48 56 64 72 80 88 96 104 112 120))
-    (wl-demo-insert-text (wl-demo-insert-image image-type))
+    (wl-demo-insert-text (wl-demo-insert-image itype))
     (wl-demo-setup-properties)
     (set-buffer-modified-p nil)
     (goto-char (point-min))

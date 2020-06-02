@@ -1,4 +1,4 @@
-;;; wl-spam.el --- Spam filtering interface for Wanderlust.
+;;; wl-spam.el --- Spam filtering interface for Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2003 Hiroya Murata <lapis-lazuli@pop06.odn.ne.jp>
 ;; Copyright (C) 2003 Yuuichi Teranishi <teranisi@gohome.org>

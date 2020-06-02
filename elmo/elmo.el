@@ -1,4 +1,4 @@
-;;; elmo.el --- Elisp Library for Message Orchestration.
+;;; elmo.el --- Elisp Library for Message Orchestration.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -305,8 +305,8 @@ If optional IN-MSGDB is non-nil, retrieve flag information from msgdb.")
   "Return a list of message in the FOLDER with FLAG.
 Return t if the message list is not available.")
 
-(luna-define-method elmo-folder-list-flagged-internal ((folder elmo-folder)
-						       flag)
+(luna-define-method elmo-folder-list-flagged-internal ((_folder elmo-folder)
+						       _flag)
   t)
 
 (luna-define-generic elmo-folder-merge-flagged (folder local remote)
@@ -314,7 +314,7 @@ Return t if the message list is not available.")
 LOCAL is the list of messages from flag folder.
 REMOTE is the list of messages from remote folder.")
 
-(luna-define-method elmo-folder-merge-flagged ((folder elmo-folder) local remote)
+(luna-define-method elmo-folder-merge-flagged ((_folder elmo-folder) local remote)
   (elmo-sort-uniq-number-list (nconc local remote)))
 
 (luna-define-generic elmo-folder-list-subfolders (folder &optional one-level)
@@ -509,7 +509,7 @@ If optional argument MESSAGES-ID is not specified, get it from current buffer."
 	     ;; message exists, but no flag.
 	     '(read)))))
 
-(luna-define-method elmo-message-flag-available-p ((folder elmo-folder) number
+(luna-define-method elmo-message-flag-available-p ((folder elmo-folder) _number
 						   flag)
   (elmo-msgdb-flag-available-p (elmo-folder-msgdb folder) flag))
 
@@ -612,7 +612,7 @@ CACHE-PATH is the cache path to be used as a message cache file."
 	     (elmo-file-cache-path cache-file))))))))
 
 (luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-folder) &optional visible-only)
+  ((_folder elmo-folder) &optional _visible-only)
   t)
 
 (luna-define-generic elmo-message-encache (folder number &optional read)
@@ -695,7 +695,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 							 condition)
   (elmo-folder-search-requires-msgdb-p-internal folder condition))
 
-(luna-define-method elmo-folder-newsgroups ((folder elmo-folder))
+(luna-define-method elmo-folder-newsgroups ((_folder elmo-folder))
   nil)
 
 (luna-define-method elmo-folder-open ((folder elmo-folder)
@@ -710,11 +710,11 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
      (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder))))
   (elmo-folder-open-internal folder))
 
-(luna-define-method elmo-folder-open-internal ((folder elmo-folder))
+(luna-define-method elmo-folder-open-internal ((_folder elmo-folder))
   nil ; default is do nothing.
   )
 
-(luna-define-method elmo-folder-check ((folder elmo-folder))
+(luna-define-method elmo-folder-check ((_folder elmo-folder))
   nil) ; default is noop.
 
 (luna-define-method elmo-folder-commit ((folder elmo-folder))
@@ -733,7 +733,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
      (elmo-folder-msgdb-path folder)
      (elmo-folder-killed-list-internal folder))))
 
-(luna-define-method elmo-folder-close-internal ((folder elmo-folder))
+(luna-define-method elmo-folder-close-internal ((_folder elmo-folder))
   ;; do nothing.
   )
 
@@ -746,23 +746,23 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
   (elmo-folder-set-msgdb-internal folder nil)
   (elmo-folder-set-killed-list-internal folder nil))
 
-(luna-define-method elmo-folder-plugged-p ((folder elmo-folder))
+(luna-define-method elmo-folder-plugged-p ((_folder elmo-folder))
   t) ; default is plugged.
 
-(luna-define-method elmo-folder-set-plugged ((folder elmo-folder) plugged
-					     &optional add)
+(luna-define-method elmo-folder-set-plugged ((_folder elmo-folder) _plugged
+					     &optional _add)
   nil) ; default is do nothing.
 
-(luna-define-method elmo-folder-use-flag-p ((folder elmo-folder))
+(luna-define-method elmo-folder-use-flag-p ((_folder elmo-folder))
   nil) ; default is no flag.
 
 (luna-define-method elmo-folder-persistent-p ((folder elmo-folder))
   (elmo-folder-persistent-internal folder))
 
-(luna-define-method elmo-folder-creatable-p ((folder elmo-folder))
+(luna-define-method elmo-folder-creatable-p ((_folder elmo-folder))
   nil) ; default is not creatable.
 
-(luna-define-method elmo-folder-writable-p ((folder elmo-folder))
+(luna-define-method elmo-folder-writable-p ((_folder elmo-folder))
   nil) ; default is not writable.
 
 (luna-define-method elmo-folder-delete ((folder elmo-folder))
@@ -852,7 +852,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 
 (luna-define-method elmo-message-match-condition ((folder elmo-folder)
 						  number condition
-						  numbers)
+						  _numbers)
   (let* (cache cache-path
 	 (filename (cond
 		    ((elmo-message-file-name folder number))
@@ -877,29 +877,29 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 	(set-buffer-multibyte t)
 	(elmo-message-buffer-match-condition condition number)))))
 
-(luna-define-method elmo-folder-pack-numbers ((folder elmo-folder))
+(luna-define-method elmo-folder-pack-numbers ((_folder elmo-folder))
   nil) ; default is noop.
 
-(luna-define-method elmo-folder-update-number ((folder elmo-folder))
+(luna-define-method elmo-folder-update-number ((_folder elmo-folder))
   nil) ; default is noop.
 
-(luna-define-method elmo-folder-message-file-p ((folder elmo-folder))
+(luna-define-method elmo-folder-message-file-p ((_folder elmo-folder))
   nil) ; default is not file.
 
-(luna-define-method elmo-folder-message-file-number-p ((folder elmo-folder))
+(luna-define-method elmo-folder-message-file-number-p ((_folder elmo-folder))
   nil) ; default is not number.
 
-(luna-define-method elmo-folder-message-make-temp-file-p ((folder elmo-folder))
+(luna-define-method elmo-folder-message-make-temp-file-p ((_folder elmo-folder))
   nil) ; default is not make temp file.
 
-(luna-define-method elmo-message-file-name ((folder elmo-folder)
-						   number)
+(luna-define-method elmo-message-file-name ((_folder elmo-folder)
+						   _number)
   nil) ; default is no name.
 
-(luna-define-method elmo-folder-local-p ((folder elmo-folder))
+(luna-define-method elmo-folder-local-p ((_folder elmo-folder))
   t)   ; default is local.
 
-(luna-define-method elmo-folder-have-subfolder-p ((folder elmo-folder))
+(luna-define-method elmo-folder-have-subfolder-p ((_folder elmo-folder))
   t)
 
 ;; Flag table
@@ -1134,7 +1134,6 @@ Returns a list of message numbers successfully appended."
 (defun elmo-generic-folder-append-messages (folder src-folder numbers
 						   same-number)
   (let ((src-msgdb-exists (not (zerop (elmo-folder-length src-folder))))
-	unseen
 	succeed-numbers failure cache id)
     (elmo-folder-flag-table folder) ; load
     (with-temp-buffer
@@ -1186,7 +1185,7 @@ Returns a list of message numbers successfully appended."
   (save-excursion
     (let* ((messages msgs)
 	   (len (length msgs))
-	   succeeds i result)
+	   succeeds result)
       (if (eq dst-folder 'null)
 	  (setq succeeds messages)
 	(unless (elmo-folder-writable-p dst-folder)
@@ -1384,16 +1383,16 @@ VALUE is a value to set.")
   (elmo-message-entity-set-field (elmo-message-entity folder number)
 				 field value))
 
-(luna-define-method elmo-message-use-cache-p ((folder elmo-folder) number)
+(luna-define-method elmo-message-use-cache-p ((_folder elmo-folder) _number)
   nil) ; default is not use cache.
 
-(luna-define-method elmo-message-folder ((folder elmo-folder) number)
+(luna-define-method elmo-message-folder ((folder elmo-folder) _number)
   folder) ; default is folder
 
 (luna-define-method elmo-folder-set-flag ((folder elmo-folder)
 					  numbers
 					  flag
-					  &optional is-local)
+					  &optional _is-local)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
       (let ((old-flags (elmo-message-flags folder number)))
@@ -1437,7 +1436,7 @@ If Optional LOCAL is non-nil, don't update server flag."
 (luna-define-method elmo-folder-unset-flag ((folder elmo-folder)
 					    numbers
 					    flag
-					    &optional is-local)
+					    &optional _is-local)
   (when (elmo-folder-msgdb-internal folder)
     (dolist (number numbers)
       (let ((old-flags (elmo-message-flags folder number)))
@@ -1451,7 +1450,7 @@ If Optional LOCAL is non-nil, don't update server flag."
 			  (elmo-message-flags folder number))))
     (elmo-emit-signal 'flag-changed folder numbers)))
 
-(luna-define-method elmo-folder-process-crosspost ((folder elmo-folder))
+(luna-define-method elmo-folder-process-crosspost ((_folder elmo-folder))
   ;; Do nothing.
   )
 
@@ -1515,8 +1514,8 @@ If Optional LOCAL is non-nil, don't update server flag."
        0))
    appends))
 
-(luna-define-method elmo-message-fetch-bodystructure ((folder elmo-folder)
-						      number strategy)
+(luna-define-method elmo-message-fetch-bodystructure ((_folder elmo-folder)
+						      _number _strategy)
   nil)
 
 (defun elmo-message-fetch-string (folder number strategy
@@ -1658,10 +1657,17 @@ If update process is interrupted, return nil.")
                     (car (elmo-list-diff
                           mask
                           (elmo-folder-list-messages folder nil 'in-msgdb))))
-            (elmo-set-list
-             '(diff-new diff-del)
-             (elmo-list-diff (elmo-folder-list-messages folder)
-                             (elmo-folder-list-messages folder nil 'in-msgdb))))
+	    (setq diff-new (elmo-list-diff
+			    (elmo-folder-list-messages folder)
+			    (elmo-folder-list-messages folder nil 'in-msgdb))
+		  diff-del (cadr diff-new)
+		  diff-new (car diff-new))
+	    ;; (let ((list (elmo-list-diff
+	    ;; 		 (elmo-folder-list-messages folder)
+	    ;; 		 (elmo-folder-list-messages folder nil 'in-msgdb))))
+	    ;;   (setq diff-new (car list)
+	    ;; 	    diff-del (cadr list)))
+	    )
 	  (if diff-new
 	    (unless disable-killed
 	      (setq diff-new (elmo-living-messages diff-new killed-list))))
@@ -1866,7 +1872,7 @@ A value in this structure is cached at first access."
       (setq types (cdr types)))))
 
 (luna-define-method elmo-folder-rename-internal ((folder elmo-folder)
-						 new-folder)
+						 _new-folder)
   (error "Cannot rename %s folder"
 	 (symbol-name (elmo-folder-type-internal folder))))
 

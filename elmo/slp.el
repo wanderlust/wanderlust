@@ -1,4 +1,4 @@
-;;; slp.el --- An SLP interface.
+;;; slp.el --- An SLP interface.  -*- lexical-binding: t -*-
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: SLP

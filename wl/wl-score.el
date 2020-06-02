@@ -1,4 +1,4 @@
-;;; wl-score.el --- Scoring in Wanderlust.
+;;; wl-score.el --- Scoring in Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
@@ -206,7 +206,7 @@ Remove Re, Was, Fwd etc."
   (string-lessp (wl-score-ov-entity-get (car a1) wl-score-index)
 		(wl-score-ov-entity-get (car a2) wl-score-index)))
 
-(defun wl-score-string-sort (messages index)
+(defun wl-score-string-sort (messages _index)
   (sort messages 'wl-score-string<))
 
 (defsubst wl-score-get (symbol &optional alist)
@@ -395,7 +395,7 @@ Set `wl-score-cache' nil."
 		      (- now wl-score-expiry-days)))
 	 (wl-score-stop-add-entry not-add)
 	 entries
-	 news new num entry ov header)
+	 news new entry header)
     (setq wl-scores-messages nil)
     (message "Scoring...")
 
@@ -936,8 +936,7 @@ Set `wl-score-cache' nil."
       msgs)))
 
 (defun wl-score-get-header (header &optional extra)
-  (let ((index (nth 2 (assoc header wl-score-header-index)))
-	(decode (nth 3 (assoc header wl-score-header-index))))
+  (let ((index (nth 2 (assoc header wl-score-header-index))))
     (if index
 	(wl-score-ov-entity-get
 	 (elmo-message-entity wl-summary-buffer-elmo-folder
@@ -1166,18 +1165,17 @@ Set `wl-score-cache' nil."
 (defun wl-summary-rescore (&optional arg)
   "Redo the entire scoring process in the current summary."
   (interactive "P")
-  (let (number-alist expunged)
-    (wl-score-save)
-    (setq wl-score-cache nil)
-    (setq wl-summary-scored nil)
-    (wl-summary-score-headers (unless arg
-				(wl-summary-rescore-msgs
-				 (elmo-folder-list-messages
-				  wl-summary-buffer-elmo-folder t t))))
-    (setq expunged (wl-summary-score-update-all-lines t))
+  (wl-score-save)
+  (setq wl-score-cache nil)
+  (setq wl-summary-scored nil)
+  (wl-summary-score-headers (unless arg
+			      (wl-summary-rescore-msgs
+			       (elmo-folder-list-messages
+				wl-summary-buffer-elmo-folder t t))))
+  (let ((expunged (wl-summary-score-update-all-lines t)))
     (if expunged
-	(message "%d message(s) are expunged by scoring." (length expunged)))
-    (set-buffer-modified-p nil)))
+	(message "%d message(s) are expunged by scoring." (length expunged))))
+  (set-buffer-modified-p nil))
 
 ;; optional argument force-msgs is added by teranisi.
 (defun wl-summary-score-headers (&optional force-msgs not-add)
@@ -1190,7 +1188,7 @@ Set `wl-score-cache' nil."
   (let ((alist wl-summary-scored)
 	(update-unread nil)
 	wl-summary-unread-message-hook
-	num score dels visible score-mark mark-alist)
+	num score dels visible score-mark)
     (save-excursion
       (elmo-with-progress-display (wl-update-score (length alist))
 	  "Updating score"

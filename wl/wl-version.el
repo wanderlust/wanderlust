@@ -1,4 +1,4 @@
-;;; wl-version.el --- Version information for Wanderlust.
+;;; wl-version.el --- Version information for Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2000-2001 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 2000-2001 TAKAHASHI Kaoru <kaoru@kaisei.org>
@@ -105,7 +105,7 @@ If VERBOSE return with SEMI, FLIM and APEL version."
     (product-string-1 'wl-version nil))))
 
 ;; from gnus
-(defun wl-extended-emacs-version (&optional with-codename)
+(defun wl-extended-emacs-version (&optional _with-codename)
   "Stringified Emacs version.
 WITH-CODENAME is ignored."
   (cond
@@ -120,7 +120,7 @@ WITH-CODENAME is ignored."
 	      (format "b%d" emacs-beta-version))))
    (t emacs-version)))
 
-(defun wl-extended-emacs-version2 (&optional delimiter with-codename)
+(defun wl-extended-emacs-version2 (&optional delimiter _with-codename)
   "Stringified Emacs version.
 Separate DELIMITER (default is \" \").
 WITH-CODENAME is ignored."
@@ -143,7 +143,7 @@ WITH-CODENAME is ignored."
 	      (format "b%d" emacs-beta-version))))
    (t emacs-version)))
 
-(defun wl-extended-emacs-version3 (&optional delimiter with-codename)
+(defun wl-extended-emacs-version3 (&optional delimiter _with-codename)
   "Stringified Emacs version.
 Separate DELIMITER (default is \" \").
 WITH-CODENAME is ignored."

@@ -1,4 +1,4 @@
-;;; elsp-bsfilter.el --- Bsfilter support for elmo-spam.
+;;; elsp-bsfilter.el --- Bsfilter support for elmo-spam.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2004 Hiroya Murata <lapis-lazuli@pop06.odn.ne.jp>
 ;; Copyright (C) 2004 Yuuichi Teranishi <teranisi@gohome.org>
@@ -115,7 +115,7 @@
 		     (list "--homedir" elmo-spam-bsfilter-database-directory))
 		 (elmo-flatten args))))
 
-(luna-define-method elmo-spam-buffer-spam-p ((processor elsp-bsfilter)
+(luna-define-method elmo-spam-buffer-spam-p ((_processor elsp-bsfilter)
 					     buffer &optional register)
   (with-current-buffer buffer
     (= 0 (elsp-bsfilter-call-bsfilter
@@ -168,7 +168,7 @@
   results)
 
 (luna-define-method elmo-spam-list-spam-messages :around
-  ((processor elsp-bsfilter) folder &optional numbers)
+  ((_processor elsp-bsfilter) folder &optional numbers)
   (if (or elmo-spam-bsfilter-use-remote
 	  (not (elmo-folder-message-file-p folder)))
       (luna-call-next-method)
@@ -206,11 +206,11 @@
      (if spam "--add-spam" "--add-clean")
      (if mbox "--mbox"))))
 
-(luna-define-method elmo-spam-register-spam-buffer ((processor elsp-bsfilter)
+(luna-define-method elmo-spam-register-spam-buffer ((_processor elsp-bsfilter)
 						    buffer &optional restore)
   (elsp-bsfilter-register-buffer buffer t restore))
 
-(luna-define-method elmo-spam-register-good-buffer ((processor elsp-bsfilter)
+(luna-define-method elmo-spam-register-good-buffer ((_processor elsp-bsfilter)
 						    buffer &optional restore)
   (elsp-bsfilter-register-buffer buffer nil restore))
 
@@ -229,11 +229,11 @@
       (luna-call-next-method))))
 
 (luna-define-method elmo-spam-register-spam-messages :around
-  ((processor elsp-bsfilter) folder &optional numbers restore)
+  ((_processor elsp-bsfilter) folder &optional numbers restore)
   (elmo-spam-bsfilter-register-messages folder numbers t restore))
 
 (luna-define-method elmo-spam-register-good-messages :around
-  ((processor elsp-bsfilter) folder &optional numbers restore)
+  ((_processor elsp-bsfilter) folder &optional numbers restore)
   (elmo-spam-bsfilter-register-messages folder numbers nil restore))
 
 (require 'product)

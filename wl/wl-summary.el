@@ -1,4 +1,4 @@
-;;; wl-summary.el --- Summary mode for Wanderlust.
+;;; wl-summary.el --- Summary mode for Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -45,8 +45,6 @@
 (require 'wl-refile)
 (require 'wl-util)
 (require 'easymenu nil t)
-
-(eval-when-compile (require 'cl))
 
 (provide 'wl-summary)
 
@@ -714,19 +712,19 @@ See also variable `wl-use-petname'."
      wl-summary-buffer-elmo-folder
      'flag-changed
      (current-buffer)
-     (elmo-define-signal-handler (buffer folder numbers)
+     (elmo-define-signal-handler (buffer _folder numbers)
        (wl-summary-update-persistent-mark-on-event buffer numbers)))
     (elmo-connect-signal
      wl-summary-buffer-elmo-folder
      'status-changed
      (current-buffer)
-     (elmo-define-signal-handler (buffer folder numbers)
+     (elmo-define-signal-handler (buffer _folder numbers)
        (wl-summary-update-persistent-mark-on-event buffer numbers)))
     (elmo-connect-signal
      wl-summary-buffer-elmo-folder
      'update-overview
      (current-buffer)
-     (elmo-define-signal-handler (buffer folder number)
+     (elmo-define-signal-handler (buffer _folder number)
        (with-current-buffer buffer
 	 (wl-summary-rescan-message number))))))
 
@@ -1021,16 +1019,16 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 (defun wl-summary-get-list-info (entity)
   "Returns (\"ML-name\" . ML-count) of ENTITY."
   (or (elmo-message-entity-field entity 'ml-info)
-      (lexical-let ((entity entity))
-	(let* ((getter (lambda (field)
-			 (elmo-message-entity-field entity field)))
-	       (name (elmo-find-list-match-value
-		      elmo-mailing-list-name-spec-list
-		      getter))
-	       (count (elmo-find-list-match-value
-		       elmo-mailing-list-count-spec-list
-		       getter)))
-	  (cons name (and count (string-to-number count)))))))
+      (let* ((getter (let ((entity entity))
+		       (lambda (field)
+			 (elmo-message-entity-field entity field))))
+	     (name (elmo-find-list-match-value
+		    elmo-mailing-list-name-spec-list
+		    getter))
+	     (count (elmo-find-list-match-value
+		     elmo-mailing-list-count-spec-list
+		     getter)))
+	(cons name (and count (string-to-number count))))))
 
 (defun wl-summary-overview-entity-compare-by-list-info (x y)
   "Compare entity X and Y by mailing-list info."
@@ -1312,7 +1310,6 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
   (let ((summary-buf (current-buffer))
 	(sticky (wl-summary-sticky-p))
 	summary-win
-	message-buf message-win
 	folder-buf folder-win)
     (run-hooks 'wl-summary-exit-pre-hook)
     (if wl-summary-buffer-exit-function
@@ -1403,7 +1400,6 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
   (let* ((folder wl-summary-buffer-elmo-folder)
 	 (inhibit-read-only t)
 	 (buffer-read-only nil)
-	 (msgdb-dir (elmo-folder-msgdb-path folder))
 	 (range (or force-range (wl-summary-input-range
 				 (elmo-folder-name-internal folder)))))
     (when (symbolp range)
@@ -1572,8 +1568,7 @@ If ARG is non-nil, checking is omitted."
 	   (count 0)
 	   wl-prefetch-confirm
 	   wl-prefetch-threshold
-	   (length (length targets))
-	   msg)
+	   (length (length targets)))
       (save-excursion
 	(elmo-with-progress-display (wl-summary-prefetch-message length)
 	    "Retrieving"
@@ -1603,8 +1598,7 @@ If ARG is non-nil, checking is omitted."
 			    (or file-cached
 				(and (null wl-prefetch-confirm) arg)
 				(null wl-prefetch-threshold)
-				(< size wl-prefetch-threshold))))
-	   mark new-mark)
+				(< size wl-prefetch-threshold)))))
       (ignore-errors
 	(when (and (or arg (not file-cached))
 		   size (not force-read) wl-prefetch-confirm)
@@ -1665,10 +1659,8 @@ If ARG is non-nil, checking is omitted."
   (let ((count 0)
 	targets
 	mark length
-	entity msg
-	start-pos pos)
+	entity msg)
     (save-excursion
-      (setq start-pos (point))
       (save-restriction
 	(wl-summary-narrow-to-region beg end)
 	;; collect prefetch targets.
@@ -1813,8 +1805,7 @@ If ARG is non-nil, checking is omitted."
   (interactive)
   (if (or (not (called-interactively-p 'interactive))
 	  (y-or-n-p "Mark all messages as read? "))
-      (let ((folder wl-summary-buffer-elmo-folder)
-	    (cur-buf (current-buffer)))
+      (let ((folder wl-summary-buffer-elmo-folder))
 	(message "Setting all msgs as read...")
 	(elmo-folder-unset-flag
 	 folder
@@ -1865,8 +1856,6 @@ If ARG is non-nil, checking is omitted."
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
 	  (msgs2 msgs)
-	  (len (length msgs))
-	  (i 0)
 	  update-list)
       (elmo-kill-buffer wl-summary-search-buf-name)
       (elmo-with-progress-display (wl-summary-delete-messages (length msgs))
@@ -1913,7 +1902,7 @@ If ARG is non-nil, checking is omitted."
 	(wl-summary-update-persistent-mark))
       (forward-line))))
 
-(defun wl-summary-update-mark-window (&optional win beg)
+(defun wl-summary-update-mark-window (&optional win _beg)
   "Update persistent mark in visible summary window.
 This function is defined for `window-scroll-functions'"
   (with-current-buffer (window-buffer win)
@@ -2226,15 +2215,12 @@ If ARG, without confirm."
 (defun wl-summary-load-file-object (filename)
   "Load lisp object from dir."
   (with-temp-buffer
-    (let (insert-file-contents-pre-hook	; To avoid autoconv-xmas...
-	  insert-file-contents-post-hook
-	  ret-val)
       (if (not (file-readable-p filename))
 	  ()
 	(as-binary-input-file (insert-file-contents filename))
 	(condition-case nil
 	    (read (current-buffer))
-	  (error (error "Reading failed")))))))
+	  (error (error "Reading failed"))))))
 
 (defun wl-summary-goto-folder (&optional arg)
   (interactive "P")
@@ -2387,7 +2373,7 @@ If ARG, without confirm."
 			    wl-summary-keep-cursor-command))
 	 (name (or name (wl-summary-read-folder wl-default-folder)))
 	 (cur-fld wl-summary-buffer-elmo-folder)
-	 folder buf mes hilit reuse-buf
+	 folder buf mes reuse-buf
 	 retval entity)
     (if (string= name "")
 	(setq name wl-default-folder))
@@ -2619,7 +2605,7 @@ If ARG, without confirm."
      (message "Error occured in running wl-summary-line-inserted-hook, %s"
 	      (cdr error)))))
 
-(defun wl-summary-insert-sequential (entity folder &rest args)
+(defun wl-summary-insert-sequential (entity folder &rest _args)
   (when entity
     (let ((inhibit-read-only t)
 	  (number (elmo-message-entity-number entity))
@@ -2735,13 +2721,11 @@ If ARG, without confirm."
 
 (defun wl-summary-insert-thread (entity folder update
 					&optional force-insert)
-  (let ((depth 0)
-	this-id	parent-entity parent-number
-	number cur-entity linked retval delayed-entity
+  (let (parent-entity parent-number
+	number linked retval delayed-entity
 	update-list entity-stack thread-entity)
     (while entity
-      (setq this-id (elmo-message-entity-field entity 'message-id)
-	    number (elmo-message-entity-number entity))
+      (setq number (elmo-message-entity-number entity))
       (if (and wl-thread-saved-entity-hashtb-internal
 	       (setq thread-entity
 		     (elmo-get-hash-val
@@ -2814,7 +2798,6 @@ If ARG, without confirm."
 				 thr-entity
 				 parent-entity)
   (let* ((this-id (elmo-message-entity-field entity 'message-id))
-	 (overview-entity entity)
 	 (parent-id (elmo-message-entity-field parent-entity 'message-id))
 	 (number (elmo-message-entity-number entity))
 	 (parent-number (elmo-message-entity-number parent-entity))
@@ -3566,53 +3549,58 @@ Return non-nil if the mark is updated"
 ;;;      " "
 ;;;    "u"))
 
-(defun wl-summary-create-line (wl-message-entity
-			       wl-parent-message-entity
-			       wl-temp-mark
+(defun wl-summary-create-line (message-entity
+			       parent-message-entity
+			       temp-mark
 			       wl-status
 			       &optional
-			       wl-thr-children-number
-			       wl-thr-indent-string
-			       wl-thr-linked)
+			       thr-children-number
+			       thr-indent-string
+			       thr-linked)
   "Create a summary line."
-  (let ((wl-mime-charset wl-summary-buffer-mime-charset)
-	(wl-persistent-mark (wl-summary-persistent-mark-string
-			     wl-summary-buffer-elmo-folder
-			     wl-status))
-	(elmo-mime-charset wl-summary-buffer-mime-charset)
-	(elmo-lang wl-summary-buffer-weekday-name-lang)
-	(wl-datevec (or (elmo-time-to-datevec
-			 (elmo-message-entity-field wl-message-entity 'date)
-			 wl-summary-fix-timezone)
-			(make-vector 7 0)))
-	(entity wl-message-entity) ; backward compatibility.
-	line mark)
-    (if (and wl-thr-indent-string
-	     wl-summary-indent-length-limit
-	     (< wl-summary-indent-length-limit
-		(string-width wl-thr-indent-string)))
-	(setq wl-thr-indent-string (wl-set-string-width
-				    wl-summary-indent-length-limit
-				    wl-thr-indent-string)))
-    (setq line (funcall wl-summary-buffer-line-formatter))
-    (if wl-summary-width (setq line
-			       (wl-set-string-width
-				(- wl-summary-width 1) line nil
-				'ignore-invalid)))
-    (setq line (concat line
-		       "\r"
-		       (number-to-string
-			(elmo-message-entity-number
-			 wl-message-entity))))
-    (wl-summary-validate-persistent-mark-string line)
-    (if wl-summary-highlight
-	(wl-highlight-summary-line-string
-	 (elmo-message-entity-number wl-message-entity)
-	 line
-	 wl-status
-	 wl-temp-mark
-	 wl-thr-indent-string))
-    line))
+  (let ((wl-message-entity message-entity)
+	(wl-parent-message-entity parent-message-entity)
+	(wl-temp-mark temp-mark)
+	(wl-thr-children-number thr-children-number)
+	(wl-thr-indent-string thr-indent-string)
+	(wl-thr-linked thr-linked))
+    (let ((wl-mime-charset wl-summary-buffer-mime-charset)
+	  (wl-persistent-mark (wl-summary-persistent-mark-string
+			       wl-summary-buffer-elmo-folder
+			       wl-status))
+	  (elmo-mime-charset wl-summary-buffer-mime-charset)
+	  (elmo-lang wl-summary-buffer-weekday-name-lang)
+	  (wl-datevec (or (elmo-time-to-datevec
+			   (elmo-message-entity-field wl-message-entity 'date)
+			   wl-summary-fix-timezone)
+			  (make-vector 7 0)))
+	  line)
+      (if (and wl-thr-indent-string
+	       wl-summary-indent-length-limit
+	       (< wl-summary-indent-length-limit
+		  (string-width wl-thr-indent-string)))
+	  (setq wl-thr-indent-string (wl-set-string-width
+				      wl-summary-indent-length-limit
+				      wl-thr-indent-string)))
+      (setq line (funcall wl-summary-buffer-line-formatter))
+      (if wl-summary-width (setq line
+				 (wl-set-string-width
+				  (- wl-summary-width 1) line nil
+				  'ignore-invalid)))
+      (setq line (concat line
+			 "\r"
+			 (number-to-string
+			  (elmo-message-entity-number
+			   wl-message-entity))))
+      (wl-summary-validate-persistent-mark-string line)
+      (if wl-summary-highlight
+	  (wl-highlight-summary-line-string
+	   (elmo-message-entity-number wl-message-entity)
+	   line
+	   wl-status
+	   wl-temp-mark
+	   wl-thr-indent-string))
+      line)))
 
 (defsubst wl-summary-proc-wday (wday-str year month mday)
   (save-match-data
@@ -3857,8 +3845,7 @@ Return non-nil if the mark is updated"
 (defun wl-summary-toggle-disp-msg (&optional arg)
   (interactive)
   (let ((cur-buf (current-buffer))
-	fld-buf fld-win
-	summary-win)
+	fld-buf fld-win)
     (cond
      ((eq arg 'on)
       (setq wl-summary-buffer-disp-msg t)
@@ -3953,13 +3940,13 @@ Otherwise it shows previous line of the message."
   (elmo-string-match-member (elmo-folder-name-internal folder)
 			  wl-summary-no-mime-folder-list))
 
-(defun wl-summary-set-message-buffer-or-redisplay (&rest args)
+(defun wl-summary-set-message-buffer-or-redisplay (&rest _args)
   "Set message buffer.
 If message is not displayed yet, display it.
 Return t if message exists."
   (let ((folder wl-summary-buffer-elmo-folder)
 	(number (wl-summary-message-number))
-	cur-folder cur-number message-last-pos)
+	cur-folder cur-number)
     (when (buffer-live-p wl-message-buffer)
       (save-window-excursion
 	(setq wl-current-summary-buffer (current-buffer))
@@ -3976,7 +3963,7 @@ Return t if message exists."
 	(set-buffer wl-message-buffer))
       nil)))
 
-(defun wl-summary-target-mark-forward (&optional arg)
+(defun wl-summary-target-mark-forward (&optional _arg)
   (interactive "P")
   (wl-summary-check-target-mark)
   (let ((mlist (nreverse (copy-sequence wl-summary-buffer-target-mark-list)))
@@ -4044,10 +4031,10 @@ Return t if message exists."
 
 (defun wl-summary-jump-to-msg-by-message-id (&optional id)
   (interactive)
-  (let* ((original (wl-summary-message-number))
-	 (msgid (substring-no-properties (or id (read-from-minibuffer "Message-ID: "))))
+  (let* ((msgid (substring-no-properties
+		 (or id (read-from-minibuffer "Message-ID: "))))
 	 (entity (elmo-message-entity wl-summary-buffer-elmo-folder msgid))
-	 msg otherfld schar
+	 msg schar
 	 (errmsg (format "No message with id \"%s\" in the folder." msgid)))
     (if (setq msg (elmo-message-entity-number entity))
 	(progn
@@ -4288,7 +4275,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	(number (wl-summary-message-number))
 	(summary-buf (current-buffer))
 	(wl-draft-forward t)
-	entity subject num)
+	subject)
     (if (null number)
 	(message "No message.")
       (if (and (elmo-message-use-cache-p folder number)
@@ -4675,7 +4662,7 @@ If ARG is numeric number, decode message as following:
 	      (wl-summary-supersedes-message))
 	  (error "This is not a news article; supersedes is impossible")))
       (when (yes-or-no-p "Do you really want to cancel this article? ")
-	(let (from newsgroups message-id distribution buf)
+	(let (from newsgroups message-id distribution)
 	  (save-excursion
 	    (setq from (std11-field-body "from")
 		  newsgroups (std11-field-body "newsgroups")
@@ -4687,9 +4674,9 @@ If ARG is numeric number, decode message as following:
 		      (car (elmo-parse-addresses from))))
 	      (error "This article is not yours"))
 	    ;; Make control message.
-	    (setq buf (set-buffer (get-buffer-create " *message cancel*")))
+	    (set-buffer (get-buffer-create " *message cancel*"))
 	    (setq wl-draft-buffer-cur-summary-buffer summary-buf)
-	    (buffer-disable-undo (current-buffer))
+	    (buffer-disable-undo)
 	    (erase-buffer)
 	    (insert "Newsgroups: " newsgroups "\n"
 		    "From: " (wl-address-header-extract-address
@@ -4740,7 +4727,7 @@ If ARG is numeric number, decode message as following:
 	(if message-buf (set-buffer message-buf))
 	(wl-draft-edit-string (buffer-substring (point-min) (point-max)))))))
 
-(defun wl-summary-display-raw (&optional arg)
+(defun wl-summary-display-raw (&optional _arg)
   "Display current message in raw format."
   (interactive)
   (let ((number (wl-summary-message-number))
@@ -4851,7 +4838,7 @@ If ARG is numeric number, decode message as following:
     (shell-command-on-region (point) (point-max) command nil)
     (setq wl-summary-shell-command-last command)))
 
-(defun wl-summary-print-message (&optional arg)
+(defun wl-summary-print-message (&optional _arg)
   (interactive "P")
   (if (null (wl-summary-message-number))
       (message "No message.")
@@ -4867,6 +4854,8 @@ If ARG is numeric number, decode message as following:
 	      (kill-buffer buffer)))
 	(message "")))))
 
+(eval-when-compile
+  (require 'ps-print))
 (autoload 'ps-print-preprint "ps-print")
 
 (defun wl-summary-print-message-with-ps-print (&optional filename)
@@ -4939,7 +4928,7 @@ If ARG is numeric number, decode message as following:
     (wl-summary-set-message-buffer-or-redisplay)
     (wl-message-get-original-buffer)))
 
-(defun wl-summary-pack-number (&optional arg)
+(defun wl-summary-pack-number (&optional _arg)
   (interactive "P")
   (if (elmo-folder-pack-numbers wl-summary-buffer-elmo-folder)
       (let (wl-use-scoring)

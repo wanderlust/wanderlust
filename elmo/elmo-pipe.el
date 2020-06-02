@@ -1,4 +1,4 @@
-;;; elmo-pipe.el --- PIPE Interface for ELMO.
+;;; elmo-pipe.el --- PIPE Interface for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -57,19 +57,19 @@
 (defun elmo-pipe-connect-signals (folder destination)
   (elmo-connect-signal
    destination 'flag-changing folder
-   (elmo-define-signal-handler (folder dst number old-flags new-flags)
+   (elmo-define-signal-handler (folder _dst number old-flags new-flags)
      (elmo-emit-signal 'flag-changing folder number old-flags new-flags)))
   (elmo-connect-signal
    destination 'flag-changed folder
-   (elmo-define-signal-handler (folder dst numbers)
+   (elmo-define-signal-handler (folder _dst numbers)
      (elmo-emit-signal 'flag-changed folder numbers)))
   (elmo-connect-signal
    destination 'status-changed folder
-   (elmo-define-signal-handler (folder dst numbers)
+   (elmo-define-signal-handler (folder _dst numbers)
      (elmo-emit-signal 'status-changed folder numbers)))
   (elmo-connect-signal
    destination 'update-overview folder
-   (elmo-define-signal-handler (folder dst number)
+   (elmo-define-signal-handler (folder _dst number)
      (elmo-emit-signal 'update-overview folder number))))
 
 (luna-define-method elmo-folder-get-primitive-list ((folder elmo-pipe-folder))

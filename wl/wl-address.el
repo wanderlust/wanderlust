@@ -1,4 +1,4 @@
-;;; wl-address.el --- Tiny address management for Wanderlust.
+;;; wl-address.el --- Tiny address management for Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Shun-ichi GOTO <gotoh@taiyo.co.jp>
@@ -667,19 +667,17 @@ Group list contents is not included."
 
 (defun wl-address-delete (the-email)
   "Delete address entry in the `wl-address-file'."
-  (let ((output-coding-system
-	 (mime-charset-to-coding-system wl-mime-charset)))
-    (with-temp-buffer
-      (message "Deleting Address...")
-      (insert-file-contents wl-address-file)
-      (delete-matching-lines (concat "^[ \t]*" the-email "[ \t]+\".*\"[ \t]+\".*\"$"))
-      (write-region (point-min) (point-max)
-		    wl-address-file nil 'no-msg)
-      ;; Delete entries.
-      (dolist (entry (elmo-string-assoc-all the-email wl-address-list))
-	(setq wl-address-list (delete entry wl-address-list)))
-      (elmo-set-hash-val the-email nil wl-address-petname-hash)
-      (message "Deleting Address...done"))))
+  (with-temp-buffer
+    (message "Deleting Address...")
+    (insert-file-contents wl-address-file)
+    (delete-matching-lines (concat "^[ \t]*" the-email "[ \t]+\".*\"[ \t]+\".*\"$"))
+    (write-region (point-min) (point-max)
+		  wl-address-file nil 'no-msg)
+    ;; Delete entries.
+    (dolist (entry (elmo-string-assoc-all the-email wl-address-list))
+      (setq wl-address-list (delete entry wl-address-list)))
+    (elmo-set-hash-val the-email nil wl-address-petname-hash)
+    (message "Deleting Address...done")))
 
 (defun wl-address-add-or-change (address
 				 &optional default-realname
@@ -687,7 +685,7 @@ Group list contents is not included."
   "Add address entry to `wl-address-file', if not registerd.
 If already registerd, change it."
   (let ((entry (assoc address wl-address-list))
-	the-realname the-petname new-addr addr-changed)
+	the-realname the-petname new-addr)
     (setq the-realname
 	  (read-from-minibuffer "Real Name: " (or default-realname
 						  (nth 2 entry))))
@@ -707,29 +705,27 @@ If already registerd, change it."
 	;; do nothing
 	)))
     ;; writing to ~/.address
-    (let ((output-coding-system
-	   (mime-charset-to-coding-system wl-mime-charset)))
-      (with-temp-buffer
-	(if (file-exists-p wl-address-file)
-	    (insert-file-contents wl-address-file))
-	(if (null entry)
-	    ;; add
-	    (progn
-	      (goto-char (point-max))
-	      (if (and (> (buffer-size) 0)
-		       (not (eq (char-after (1- (point-max))) ?\n)))
-		  (insert "\n")))
-	  ;; override
-	  (while (re-search-forward (concat "^[ \t]*" address) nil t)
-	    (delete-region (point-at-bol) (1+ (point-at-eol)))))
-	(insert (format "%s\t%s\t%s\n"
-			(or new-addr address)
-			(prin1-to-string the-petname)
-			(prin1-to-string the-realname)))
-	(write-region (point-min) (point-max)
-		      wl-address-file nil 'no-msg)
-	(wl-address-init)
-	(list (or new-addr address) the-petname the-realname)))))
+    (with-temp-buffer
+      (if (file-exists-p wl-address-file)
+	  (insert-file-contents wl-address-file))
+      (if (null entry)
+	  ;; add
+	  (progn
+	    (goto-char (point-max))
+	    (if (and (> (buffer-size) 0)
+		     (not (eq (char-after (1- (point-max))) ?\n)))
+		(insert "\n")))
+	;; override
+	(while (re-search-forward (concat "^[ \t]*" address) nil t)
+	  (delete-region (point-at-bol) (1+ (point-at-eol)))))
+      (insert (format "%s\t%s\t%s\n"
+		      (or new-addr address)
+		      (prin1-to-string the-petname)
+		      (prin1-to-string the-realname)))
+      (write-region (point-min) (point-max)
+		    wl-address-file nil 'no-msg)
+      (wl-address-init)
+      (list (or new-addr address) the-petname the-realname))))
 
 ;; Read addresses from minibuffer with completion.
 (defvar wl-address-minibuffer-history nil)

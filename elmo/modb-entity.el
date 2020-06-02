@@ -1,4 +1,4 @@
-;;; modb-entity.el --- Message Entity Interface.
+;;; modb-entity.el --- Message Entity Interface.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2003 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -139,13 +139,13 @@ Header region is supposed to be narrowed.")
 
 ;; Generic implementation.
 (luna-define-method initialize-instance :after ((handler modb-entity-handler)
-						&rest init-args)
+						&rest _init-args)
   (unless (modb-entity-handler-mime-charset-internal handler)
     (modb-entity-handler-set-mime-charset-internal handler elmo-mime-charset))
   handler)
 
 (luna-define-method modb-entity-handler-list-parameters
-  ((handler modb-entity-handler))
+  ((_handler modb-entity-handler))
   (list 'mime-charset))
 
 (luna-define-method elmo-msgdb-create-message-entity-from-file
@@ -169,13 +169,13 @@ Header region is supposed to be narrowed.")
 						    args)
   (cons handler args))
 
-(luna-define-method elmo-msgdb-message-entity-field ((handler
+(luna-define-method elmo-msgdb-message-entity-field ((_handler
 						     modb-entity-handler)
 						     entity field
-						     &optional type)
+						     &optional _type)
   (plist-get (cdr entity) (intern (concat ":" (symbol-name field)))))
 
-(luna-define-method elmo-msgdb-message-entity-number ((handler
+(luna-define-method elmo-msgdb-message-entity-number ((_handler
 						       modb-entity-handler)
 						      entity)
   (plist-get (cdr entity) :number))
@@ -270,18 +270,18 @@ If each field is t, function is set as default converter."
 	      (elmo-set-hash-val string decoded hashtb))))
     (elmo-mime-charset-decode-string string elmo-mime-charset)))
 
-(defun modb-entity-string-decoder (field value)
+(defun modb-entity-string-decoder (_field value)
   (elmo-msgdb-get-decoded-cache value))
 
-(defun modb-entity-string-encoder (field value)
+(defun modb-entity-string-encoder (_field value)
   (elmo-mime-charset-encode-string value elmo-mime-charset))
 
-(defun modb-entity-parse-date-string (field value)
+(defun modb-entity-parse-date-string (_field value)
   (if (stringp value)
       (elmo-time-parse-date-string value)
     value))
 
-(defun modb-entity-make-date-string (field value)
+(defun modb-entity-make-date-string (_field value)
   (if (stringp value)
       value
     (elmo-time-make-date-string value)))
@@ -318,7 +318,7 @@ If each field is t, function is set as default converter."
 	value
       (mapconcat 'identity value ", "))))
 
-(defun modb-entity-decode-string-recursive (field value)
+(defun modb-entity-decode-string-recursive (_field value)
   (elmo-map-recursive
    (lambda (element)
      (if (stringp element)
@@ -326,7 +326,7 @@ If each field is t, function is set as default converter."
        element))
    value))
 
-(defun modb-entity-encode-string-recursive (field value)
+(defun modb-entity-encode-string-recursive (_field value)
   (elmo-map-recursive
    (lambda (element)
      (if (stringp element)
@@ -440,7 +440,7 @@ If each field is t, function is set as default converter."
     entity))
 
 (luna-define-method elmo-msgdb-make-message-entity
-  ((handler modb-legacy-entity-handler) args)
+  ((_handler modb-legacy-entity-handler) args)
   (modb-legacy-make-message-entity args))
 
 (luna-define-method elmo-msgdb-create-message-entity-from-header
@@ -499,15 +499,15 @@ If each field is t, function is set as default converter."
       entity)))
 
 (luna-define-method elmo-msgdb-message-entity-number
-  ((handler modb-legacy-entity-handler) entity)
+  ((_handler modb-legacy-entity-handler) entity)
   (and entity (aref (cdr entity) 0)))
 
 (luna-define-method elmo-msgdb-message-entity-set-number
-  ((handler modb-legacy-entity-handler) entity number)
+  ((_handler modb-legacy-entity-handler) entity number)
   (and entity (aset (cdr entity) 0 number)))
 
 (luna-define-method elmo-msgdb-message-entity-field
-  ((handler modb-legacy-entity-handler) entity field &optional type)
+  ((_handler modb-legacy-entity-handler) entity field &optional type)
   (and entity
        (let (index)
 	 (modb-convert-field-value
@@ -524,7 +524,7 @@ If each field is t, function is set as default converter."
 	  type))))
 
 (luna-define-method elmo-msgdb-message-entity-set-field
-  ((handler modb-legacy-entity-handler) entity field value)
+  ((_handler modb-legacy-entity-handler) entity field value)
   (modb-legacy-entity-set-field entity field value))
 
 (luna-define-method elmo-msgdb-copy-message-entity
@@ -673,11 +673,11 @@ If each field is t, function is set as default converter."
   (modb-standard-make-message-entity handler args))
 
 (luna-define-method elmo-msgdb-message-entity-number
-  ((handler modb-standard-entity-handler) entity)
+  ((_handler modb-standard-entity-handler) entity)
   (and entity (aref (cdr (cdr entity)) 0)))
 
 (luna-define-method elmo-msgdb-message-entity-set-number
-  ((handler modb-standard-entity-handler) entity number)
+  ((_handler modb-standard-entity-handler) entity number)
   (and entity (aset (cdr (cdr entity)) 0 number)))
 
 (luna-define-method elmo-msgdb-message-entity-field
@@ -699,7 +699,7 @@ If each field is t, function is set as default converter."
 	  type))))
 
 (luna-define-method elmo-msgdb-message-entity-set-field
-  ((handler modb-standard-entity-handler) entity field value)
+  ((_handler modb-standard-entity-handler) entity field value)
   (modb-standard-entity-set-field entity field value))
 
 (luna-define-method elmo-msgdb-copy-message-entity
@@ -771,8 +771,7 @@ If each field is t, function is set as default converter."
 		       (concat irt "\n " refs)))))))))
 
 (defun modb-standard-collect-field-values-from-header ()
-  (let ((extras (nth 1 modb-standard-field-name-cache))
-	(all-field (nth 2 modb-standard-field-name-cache))
+  (let ((all-field (nth 2 modb-standard-field-name-cache))
 	(regexp (concat "\\(" std11-field-head-regexp "\\)[ \t]*"))
 	value values field)
     (save-excursion
@@ -867,7 +866,7 @@ If each field is t, function is set as default converter."
 
 
 ;; mailing list info handling
-(defun modb-entity-extract-mailing-list-info (field)
+(defun modb-entity-extract-mailing-list-info (_field)
   (let* ((getter (lambda (field)
 		   (elmo-decoded-fetch-field (symbol-name field) 'summary)))
 	 (name (elmo-find-list-match-value
@@ -879,14 +878,14 @@ If each field is t, function is set as default converter."
     (when (or name count)
       (cons name (and count (string-to-number count))))))
 
-(defun modb-entity-ml-info-real-fields (field)
+(defun modb-entity-ml-info-real-fields (_field)
   (elmo-uniq-list
    (mapcar (lambda (entry)
 	     (symbol-name (if (consp entry) (car entry) entry)))
 	   (append elmo-mailing-list-name-spec-list
 		   elmo-mailing-list-count-spec-list))))
 
-(defun modb-entity-make-mailing-list-info-string (field value)
+(defun modb-entity-make-mailing-list-info-string (_field value)
   (when (car value)
     (format (if (cdr value) "(%s %05.0f)" "(%s)")
 	    (elmo-msgdb-get-decoded-cache (car value))
@@ -909,11 +908,11 @@ If each field is t, function is set as default converter."
 			  (current-buffer)))))
 
 (luna-define-method elmo-msgdb-message-entity-number
-  ((handler modb-buffer-entity-handler) entity)
+  ((_handler modb-buffer-entity-handler) entity)
   (car (cdr entity)))
 
 (luna-define-method elmo-msgdb-message-entity-set-number
-  ((handler modb-buffer-entity-handler) entity number)
+  ((_handler modb-buffer-entity-handler) entity number)
   (and entity (setcar (cdr entity) number)))
 
 (luna-define-method elmo-msgdb-message-entity-field
@@ -940,9 +939,8 @@ If each field is t, function is set as default converter."
 	  type))))
 
 (luna-define-method elmo-msgdb-message-match-condition :around
-  ((handler modb-buffer-entity-handler) condition entity)
-  (let ((key (elmo-filter-key condition))
-	(case-fold-search t))
+  ((_handler modb-buffer-entity-handler) condition entity)
+  (let ((case-fold-search t))
     (cond
      ((string= (elmo-filter-key condition) "body")
       (modb-entity-match-entity-body

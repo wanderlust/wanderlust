@@ -1,4 +1,4 @@
-;;; elmo-util.el --- Utilities for ELMO.
+;;; elmo-util.el --- Utilities for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -38,7 +38,6 @@
 (require 'elmo-date)
 (require 'cl-lib)
 (eval-when-compile
-  (require 'cl)
   (require 'static))
 
 (eval-and-compile
@@ -79,8 +78,8 @@ Buffer's multibyteness is ignored."
       (encode-mime-charset-string string charset lbt))))
  )
 
-(defun elmo-base64-encode-string (string &optional no-line-break))
-(defun elmo-base64-decode-string (string))
+(defun elmo-base64-encode-string (_string &optional _no-line-break))
+(defun elmo-base64-decode-string (_string))
 
 ;; base64 encoding/decoding
 (require 'mel)
@@ -395,12 +394,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defun elmo-last (list)
   (and list (nth (1- (length list)) list)))
 
-(defun elmo-set-list (vars vals)
-  (while vars
-    (when (car vars)
-      (set (car vars) (car vals)))
-    (setq vars (cdr vars)
-	  vals (cdr vals))))
+(make-obsolete 'elmo-set-list "works only on dynamic bindings" "01 Jun 2020")
 
 (defun elmo-uniq-list (lst &optional delete-function)
   "Destructively uniquify elements of LST."
@@ -443,9 +437,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defun elmo-get-file-string (filename &optional remove-final-newline)
   (if (file-exists-p filename)
       (elmo-set-work-buf
-        (let (insert-file-contents-pre-hook	; To avoid autoconv-xmas...
-              insert-file-contents-post-hook)
-          (as-binary-input-file (insert-file-contents filename)))
+        (as-binary-input-file (insert-file-contents filename))
         (when (and remove-final-newline
                    (> (buffer-size) 0)
                    (= (char-before (point-max)) ?\n))
@@ -545,7 +537,7 @@ Return value is a cons cell of (STRUCTURE . REST)"
 (defalias 'elmo-clear-string 'clear-string)
 (make-obsolete 'elmo-clear-string 'clear-string "24 May 2020")
 
-(defun elmo-plug-on-by-servers (alist &optional servers)
+(defun elmo-plug-on-by-servers (_alist &optional servers)
   (let ((server-list (or servers elmo-plug-on-servers)))
     (catch 'plugged
       (while server-list
@@ -917,7 +909,7 @@ the directory becomes empty after deletion."
     (concat result filename)))
 
 (defsubst elmo-copy-file (src dst &optional ok-if-already-exists)
-  (condition-case err
+  (condition-case nil
       (elmo-add-name-to-file src dst ok-if-already-exists)
     (error (copy-file src dst ok-if-already-exists t))))
 
@@ -1668,14 +1660,14 @@ NUMBER-SET is altered."
     (nreverse list)))
 
 (defun elmo-find-list-match-value (specs getter)
-  (lexical-let ((getter getter))
-    (elmo-map-until-success
+  (elmo-map-until-success
+   (let ((getter getter))
      (lambda (spec)
        (cond
 	((symbolp spec)
 	 (funcall getter spec))
 	((consp spec)
-	 (lexical-let ((value (funcall getter (car spec))))
+	 (let ((value (funcall getter (car spec))))
 	   (when value
 	     (elmo-map-until-success
 	      (lambda (rule)
@@ -1684,8 +1676,8 @@ NUMBER-SET is altered."
 		  (elmo-string-match-substring rule value))
 		 ((consp rule)
 		  (elmo-string-match-substring (car rule) value (cdr rule)))))
-	      (cdr spec)))))))
-     specs)))
+	      (cdr spec))))))))
+   specs))
 
 ;;; File cache.
 (defmacro elmo-make-file-cache (path status)
@@ -2003,7 +1995,7 @@ If `elmo-obsolete-variable-show-warnings' is non-nil, show warning message."
 		      (symbol-name obsolete)
 		      (symbol-name var)))))
 
-(defun elmo-resque-obsolete-variables (&optional alist)
+(defun elmo-resque-obsolete-variables (&optional _alist)
   "Resque obsolete variables in ALIST.
 ALIST is a list of cons cell of
 \(OBSOLETE-VARIABLE-SYMBOL . NEW-VARIABLE-SYMBOL\).
@@ -2079,8 +2071,6 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
   "Insert the header of the article.  Buffer contents after point are deleted."
   (when (file-exists-p file)
     (let ((beg 0)
-	  insert-file-contents-pre-hook   ; To avoid autoconv-xmas...
-	  insert-file-contents-post-hook
 	  format-alist
 	  (first t)
 	  done)

@@ -1,4 +1,4 @@
-;;; elmo-spam.el --- Spam filtering interface to processor.
+;;; elmo-spam.el --- Spam filtering interface to processor.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2003 Hiroya Murata <lapis-lazuli@pop06.odn.ne.jp>
 ;; Copyright (C) 2003 Yuuichi Teranishi <teranisi@gohome.org>
@@ -236,15 +236,15 @@ If optional argument RESTORE is non-nil, unregister from spam list.")
 	(when (and field-body (string-match (cdr pair) field-body))
 	  (throw 'done t))))))
 
-(luna-define-method elmo-spam-buffer-spam-p ((processor elsp-header)
-					     buffer &optional register)
+(luna-define-method elmo-spam-buffer-spam-p ((_processor elsp-header)
+					     buffer &optional _register)
   (with-current-buffer buffer
     (save-restriction
       (std11-narrow-to-header)
       (elmo-spam-header-check-headers #'elmo-decoded-fetch-field))))
 
-(luna-define-method elmo-spam-message-spam-p ((processor elsp-header)
-					      folder number &optional register)
+(luna-define-method elmo-spam-message-spam-p ((_processor elsp-header)
+					      folder number &optional _register)
   (let ((entity (elmo-message-entity folder number))
 	buffer)
     (unwind-protect
@@ -265,16 +265,12 @@ If optional argument RESTORE is non-nil, unregister from spam list.")
 		   (elmo-decoded-fetch-field field-name))))))
       (and buffer (kill-buffer buffer)))))
 
-(luna-define-method elmo-spam-register-spam-messages ((processor elsp-header)
-						      folder
-						      &optional
-						      numbers restore)
+(luna-define-method elmo-spam-register-spam-messages
+  ((_processor elsp-header) _folder &optional numbers _restore)
   (elmo-progress-notify 'elmo-spam-register (length numbers)))
 
-(luna-define-method elmo-spam-register-good-messages ((processor elsp-header)
-						      folder
-						      &optional
-						      numbers restore)
+(luna-define-method elmo-spam-register-good-messages
+  ((_processor elsp-header) _folder &optional numbers _restore)
   (elmo-progress-notify 'elmo-spam-register (length numbers)))
 
 (provide 'elsp-header)

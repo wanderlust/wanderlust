@@ -1,4 +1,4 @@
-;;; wl-acap.el --- ACAP support for Wanderlust.
+;;; wl-acap.el --- ACAP support for Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2001 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -112,7 +112,7 @@ If nil, default acap port is used."
   (setq wl-acap-original-msgdb-directory nil)
   (condition-case err			; catch error and quit.
       (let ((service (wl-acap-find-acap-service))
-	    proc entries settings folder-top type caches msgdb-dir)
+	    proc entries settings type caches msgdb-dir)
 	(if (null (car service))
 	    (if (setq caches
 		      (delq

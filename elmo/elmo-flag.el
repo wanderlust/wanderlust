@@ -1,4 +1,4 @@
-;;; elmo-flag.el --- global flag handling.
+;;; elmo-flag.el --- global flag handling.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2003 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -132,7 +132,7 @@
        (elmo-flag-folder-max-number-internal folder))))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-flag-folder)
-						 &optional one-level)
+						 &optional _one-level)
   (mapcar (lambda (flag)
 	    (concat
 	     (elmo-folder-prefix-internal folder)
@@ -146,7 +146,7 @@
   (let* ((elem (elmo-get-hash-val (concat "#" (number-to-string number))
 				  (elmo-flag-folder-minfo-hash-internal
 				   folder)))
-	 target-folder key)
+	 target-folder)
     (dolist (pair (car elem))
       (when (and (car pair) (cdr pair))
 	(elmo-clear-hash-val (concat (number-to-string (cdr pair)) ":"
@@ -183,7 +183,7 @@
 ;; Same as localdir except that the flag is always the flag.
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-flag-folder)
 					      numbers
-					      flag-table)
+					      _flag-table)
   (when numbers
     (let ((dir (elmo-localdir-folder-directory-internal folder))
 	  (new-msgdb (elmo-make-msgdb))
@@ -201,7 +201,7 @@
 (defun elmo-folder-append-messages-*-flag (dst-folder
 					   src-folder
 					   numbers
-					   same-number)
+					   _same-number)
   (let ((flag (elmo-flag-folder-flag-internal dst-folder)))
     (dolist (number numbers)
       (elmo-global-flag-set flag src-folder number
@@ -210,15 +210,15 @@
     (elmo-folder-set-flag src-folder numbers flag))
   numbers)
 
-(luna-define-method elmo-folder-append-buffer ((folder elmo-flag-folder)
-					       &optional flag number
-					       return-number)
+(luna-define-method elmo-folder-append-buffer ((_folder elmo-flag-folder)
+					       &optional _flag _number
+					       _return-number)
   (error "Cannot append to the flag folder"))
 
 (luna-define-method elmo-folder-unset-flag :before ((folder elmo-flag-folder)
-						    numbers
+						    _numbers
 						    flag
-						    &optional is-local)
+						    &optional _is-local)
   (when (eq flag (elmo-flag-folder-flag-internal folder))
     (error "Cannot unset flag `%s' in this folder" flag)))
 
@@ -490,8 +490,8 @@ If optional IGNORE-PRESERVED is non-nil, preserved flags
 	     (elmo-object-load
 	      (expand-file-name
 	       elmo-global-mark-filename elmo-msgdb-directory)))
-	    (folder (elmo-flag-get-folder 'important))
 	    file-cache)
+	(elmo-flag-get-folder 'important)
 	(dolist (elem global-marks)
 	  (setq file-cache (elmo-file-cache-get (car elem)))
 	  (when (eq (elmo-file-cache-status file-cache) 'entire)

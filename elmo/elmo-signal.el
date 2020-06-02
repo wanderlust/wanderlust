@@ -1,4 +1,4 @@
-;;; elmo-signal.el --- "signal-slot" abstraction for routing events
+;;; elmo-signal.el --- "signal-slot" abstraction for routing events  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998-2003 Daiki Ueno <ueno@unixuser.org>
 
@@ -163,8 +163,7 @@ You can specify further filter function by FILTER."
 (defun elmo-emit-signal (signal-name source &rest args)
   "Emit signal with SIGNAL-NAME."
   (let ((symbol (intern-soft (symbol-name signal-name)
-			     elmo-signal-slot-obarray))
-	signal)
+			     elmo-signal-slot-obarray)))
     (when symbol
       (dolist (slot (symbol-value symbol))
 	(ignore-errors

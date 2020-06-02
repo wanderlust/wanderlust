@@ -1,4 +1,4 @@
-;;; elmo-localdir.el --- Localdir Interface for ELMO.
+;;; elmo-localdir.el --- Localdir Interface for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -57,10 +57,10 @@
 (luna-define-generic elmo-localdir-folder-name (folder name)
   "Return directory NAME for FOLDER.")
 
-(luna-define-method elmo-localdir-folder-path ((folder elmo-localdir-folder))
+(luna-define-method elmo-localdir-folder-path ((_folder elmo-localdir-folder))
   elmo-localdir-folder-path)
 
-(luna-define-method elmo-localdir-folder-name ((folder elmo-localdir-folder)
+(luna-define-method elmo-localdir-folder-name ((_folder elmo-localdir-folder)
 					       name)
   name)
 
@@ -112,7 +112,7 @@
   (expand-file-name (number-to-string number)
 		    (elmo-localdir-folder-directory-internal folder)))
 
-(luna-define-method elmo-folder-message-file-number-p ((folder
+(luna-define-method elmo-folder-message-file-number-p ((_folder
 							elmo-localdir-folder))
   t)
 
@@ -121,7 +121,7 @@
   (elmo-localdir-folder-directory-internal folder))
 
 (luna-define-method elmo-folder-message-make-temp-file-p
-  ((folder elmo-localdir-folder))
+  ((_folder elmo-localdir-folder))
   t)
 
 (luna-define-method elmo-folder-message-make-temp-files ((folder
@@ -259,23 +259,23 @@
       t)))
 
 (luna-define-method elmo-message-fetch-internal ((folder elmo-localdir-folder)
-						 number strategy
-						 &optional section unread)
+						 number _strategy
+						 &optional _section _unread)
   (let ((filename (elmo-message-file-name folder number)))
     (when (file-exists-p filename)
       (insert-file-contents-as-raw-text filename))))
 
 (luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-localdir-folder) &optional nohide)
+  ((folder elmo-localdir-folder) &optional _nohide)
   (elmo-localdir-list-subr folder))
 
 (luna-define-method elmo-folder-status ((folder elmo-localdir-folder))
   (elmo-localdir-list-subr folder t))
 
-(luna-define-method elmo-folder-creatable-p ((folder elmo-localdir-folder))
+(luna-define-method elmo-folder-creatable-p ((_folder elmo-localdir-folder))
   t)
 
-(luna-define-method elmo-folder-writable-p ((folder elmo-localdir-folder))
+(luna-define-method elmo-folder-writable-p ((_folder elmo-localdir-folder))
   t)
 
 (luna-define-method elmo-folder-create ((folder elmo-localdir-folder))
@@ -345,7 +345,7 @@
     (elmo-folder-set-msgdb-internal folder new-msgdb))
   t)
 
-(luna-define-method elmo-folder-message-file-p ((folder elmo-localdir-folder))
+(luna-define-method elmo-folder-message-file-p ((_folder elmo-localdir-folder))
   t)
 
 (defun elmo-localdir-locked-p ()

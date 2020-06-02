@@ -1,4 +1,4 @@
-;;; elmo-split.el --- Split messages according to the user defined rules.
+;;; elmo-split.el --- Split messages according to the user defined rules.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2002 Yuuichi Teranishi <teranisi@gohome.org>
 

@@ -1,4 +1,4 @@
-;;; wl-fldmgr.el --- Folder manager for Wanderlust.
+;;; wl-fldmgr.el --- Folder manager for Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
 ;;                          Yuuichi Teranishi <teranisi@gohome.org>
@@ -357,7 +357,7 @@ return value is diffs '(-new -unread -all)."
 ;; (wl-add-entity '(("Desktop") ("ML") "ml/wl") '("+ml/new") wl-folder-entity 12)
 ;; (wl-add-entity '(("Desktop") "ML") '("+ml/new")  wl-folder-entity 10)
 
-(defun wl-add-entity (key-path new entity prev-entity-id &optional errmes)
+(defun wl-add-entity (key-path new entity _prev-entity-id &optional errmes)
   (when (string= (caar key-path) (car entity))
     (let ((entities new))
       (while entities
@@ -1365,15 +1365,13 @@ return value is diffs '(-new -unread -all)."
     (if (and wl-fldmgr-make-backup
 	     (file-exists-p wl-folders-file))
 	(rename-file wl-folders-file (concat wl-folders-file ".bak") t))
-    (let ((output-coding-system (mime-charset-to-coding-system
-				 wl-mime-charset)))
-      (write-region
-       (point-min)
-       (point-max)
-       wl-folders-file
-       nil
-       'no-msg)
-      (set-file-modes wl-folders-file (+ (* 64 6) (* 8 0) 0))) ; chmod 0600
+    (write-region
+     (point-min)
+     (point-max)
+     wl-folders-file
+     nil
+     'no-msg)
+    (set-file-modes wl-folders-file (+ (* 64 6) (* 8 0) 0)) ; chmod 0600
     (kill-buffer tmp-buf)
     (wl-fldmgr-save-access-list)
     (setq wl-fldmgr-modified nil)

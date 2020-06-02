@@ -1,4 +1,4 @@
-;;; wl-refile.el --- Refile modules for Wanderlust.
+;;; wl-refile.el --- Refile modules for Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 

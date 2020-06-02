@@ -1,4 +1,4 @@
-;;; elmo-archive.el --- Archive folder of ELMO. -*- coding: euc-japan -*-
+;;; elmo-archive.el --- Archive folder of ELMO. -*- coding: euc-japan; lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
@@ -87,7 +87,7 @@
 (luna-define-generic elmo-archive-folder-path (folder)
   "Return local directory path of the FOLDER.")
 
-(luna-define-method elmo-archive-folder-path ((folder elmo-archive-folder))
+(luna-define-method elmo-archive-folder-path ((_folder elmo-archive-folder))
   elmo-archive-folder-path)
 
 (defun elmo-intern-soft (str)
@@ -292,7 +292,7 @@ TYPE specifies the archiver's symbol."
 	 (file-regexp (format (elmo-archive-get-regexp type)
 			      (elmo-concat-path (regexp-quote prefix) "")))
 	 (killed (elmo-folder-killed-list-internal folder))
-	 numbers buf file-list header-end)
+	 numbers file-list header-end)
     (if (file-exists-p file)
 	(with-temp-buffer
 	  (unless (elmo-archive-call-method method args t)
@@ -321,7 +321,7 @@ TYPE specifies the archiver's symbol."
 
 (luna-define-method elmo-folder-list-messages-internal ((folder
 							 elmo-archive-folder)
-							&optional nohide)
+							&optional _nohide)
   (elmo-archive-list-folder-subr folder))
 
 (luna-define-method elmo-folder-status ((folder elmo-archive-folder))
@@ -393,10 +393,10 @@ TYPE specifies the archiver's symbol."
 (luna-define-method elmo-folder-exists-p ((folder elmo-archive-folder))
   (file-exists-p (elmo-archive-get-archive-name folder)))
 
-(luna-define-method elmo-folder-creatable-p ((folder elmo-archive-folder))
+(luna-define-method elmo-folder-creatable-p ((_folder elmo-archive-folder))
   t)
 
-(luna-define-method elmo-folder-writable-p ((folder elmo-archive-folder))
+(luna-define-method elmo-folder-writable-p ((_folder elmo-archive-folder))
   t)
 
 (luna-define-method elmo-folder-create ((folder elmo-archive-folder))
@@ -572,8 +572,8 @@ TYPE specifies the archiver's symbol."
 	   t))))
 
 (luna-define-method elmo-message-fetch-internal ((folder elmo-archive-folder)
-						 number strategy
-						 &optional section unseen)
+						 number _strategy
+						 &optional _section _unseen)
   (elmo-archive-message-fetch-internal folder number))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-archive-folder)
@@ -746,10 +746,8 @@ TYPE specifies the archiver's symbol."
 (defun elmo-archive-append-files (folder dir &optional files)
   (let* ((dst-type (elmo-archive-folder-archive-type-internal folder))
 	 (arc (elmo-archive-get-archive-name folder))
-	 (prefix (elmo-archive-folder-archive-prefix-internal folder))
 	 (p-method (elmo-archive-get-method dst-type 'cp-pipe))
-	 (n-method (elmo-archive-get-method dst-type 'cp))
-	 src tmp newfile)
+	 (n-method (elmo-archive-get-method dst-type 'cp)))
     (unless (elmo-folder-exists-p folder) (elmo-folder-create folder))
     (unless files (setq files (directory-files dir nil "^[^\\.]")))
     (when (null (or p-method n-method))
@@ -896,13 +894,13 @@ TYPE specifies the archiver's symbol."
 	  (setq tmp-msgs (cdr tmp-msgs))))
     ret-val))
 
-(defun elmo-archive-tgz-cp-func (args &optional output)
+(defun elmo-archive-tgz-cp-func (args &optional _output)
   (elmo-archive-tgz-common-func args 'append t))
 
-(defun elmo-archive-tgz-mv-func (args &optional output)
+(defun elmo-archive-tgz-mv-func (args &optional _output)
   (elmo-archive-tgz-common-func args 'append))
 
-(defun elmo-archive-tgz-rm-func (args &optional output)
+(defun elmo-archive-tgz-rm-func (args &optional _output)
   (elmo-archive-tgz-common-func args 'delete))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -975,7 +973,6 @@ TYPE specifies the archiver's symbol."
 						   numlist
 						   flag-table)
   (let* ((delim1 elmo-mmdf-delimiter)		;; MMDF
-	 (delim2 elmo-unixmail-delimiter)	;; UNIX Mail
 	 (type (elmo-archive-folder-archive-type-internal folder))
 	 (prefix (elmo-archive-folder-archive-prefix-internal folder))
 	 (method (elmo-archive-get-method type 'cat-headers))
@@ -1006,10 +1003,6 @@ TYPE specifies the archiver's symbol."
 	  (elmo-msgdb-append
 	   new-msgdb
 	   (elmo-archive-parse-mmdf folder msgs flag-table)))
-;;; 	 ((looking-at delim2)		; UNIX MAIL
-;;; 	  (elmo-msgdb-append
-;;; 	   new-msgdb
-;;; 	   (elmo-archive-parse-unixmail msgs flag-table)))
 	 (t			;; unknown format
 	  (error "Unknown format!")))
 	(elmo-progress-notify 'elmo-folder-msgdb-create)))
@@ -1046,7 +1039,7 @@ TYPE specifies the archiver's symbol."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Search functions
 
-(defsubst elmo-archive-field-condition-match (folder number number-list
+(defsubst elmo-archive-field-condition-match (folder number _number-list
 						     condition prefix)
   (save-excursion
     (let* ((type (elmo-archive-folder-archive-type-internal folder))
@@ -1109,8 +1102,8 @@ TYPE specifies the archiver's symbol."
 	      (nconc elmo-archive-suffixes (list (cdr tmp))))
 	(setq slist (cdr slist)))))
 
-(luna-define-method elmo-message-use-cache-p ((folder elmo-archive-folder)
-					      number)
+(luna-define-method elmo-message-use-cache-p ((_folder elmo-archive-folder)
+					      _number)
   elmo-archive-use-cache)
 
 ;;; End

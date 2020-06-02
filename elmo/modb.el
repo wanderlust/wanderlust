@@ -1,4 +1,4 @@
-;;; modb.el --- Message Orchestration DataBase.
+;;; modb.el --- Message Orchestration DataBase.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2003 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -207,7 +207,7 @@ VALUE is the field value."
   (elmo-msgdb-message-entity-field
    (elmo-msgdb-message-entity msgdb number) field type))
 
-(luna-define-method elmo-msgdb-load ((msgdb modb-generic))
+(luna-define-method elmo-msgdb-load ((_msgdb modb-generic))
   t)
 
 (luna-define-method elmo-msgdb-location ((msgdb modb-generic))
@@ -233,11 +233,11 @@ VALUE is the field value."
   (modb-generic-set-message-modified-internal msgdb nil)
   (modb-generic-set-flag-modified-internal msgdb nil))
 
-(luna-define-method elmo-msgdb-length ((msgdb modb-generic))
+(luna-define-method elmo-msgdb-length ((_msgdb modb-generic))
   0)
 
-(luna-define-method elmo-msgdb-search ((msgdb modb-generic)
-				       condition &optional numbers)
+(luna-define-method elmo-msgdb-search ((_msgdb modb-generic)
+				       _condition &optional _numbers)
   t)
 
 (luna-define-method elmo-msgdb-match-condition ((msgdb modb-generic)
@@ -293,7 +293,7 @@ VALUE is the field value."
     (modb-generic-set-message-modified-internal msgdb t)
     t))
 
-(luna-define-method elmo-msgdb-message-entity-handler ((msgdb modb-generic))
+(luna-define-method elmo-msgdb-message-entity-handler ((_msgdb modb-generic))
   (or modb-entity-default-cache-internal
       (setq modb-entity-default-cache-internal
 	    (luna-make-entity modb-entity-default-handler))))

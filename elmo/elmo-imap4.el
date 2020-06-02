@@ -1,4 +1,4 @@
-;;; elmo-imap4.el --- IMAP4 Interface for ELMO.
+;;; elmo-imap4.el --- IMAP4 Interface for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1999,2000      Kenichi OKADA <okada@opaopa.org>
@@ -834,7 +834,7 @@ EXPUNGE for deleted messages."
   (elmo-imap4-session-set-current-mailbox-internal session nil)
   (elmo-imap4-session-set-current-mailbox-size-internal session nil))
 
-(defun elmo-imap4-check-validity (spec validity-file)
+(defun elmo-imap4-check-validity (_spec _validity-file)
 ;;; Not used.
 ;;;(elmo-imap4-send-command-wait
 ;;;(elmo-imap4-get-session spec)
@@ -844,7 +844,7 @@ EXPUNGE for deleted messages."
 ;;;      " (uidvalidity)")))
   )
 
-(defun elmo-imap4-sync-validity  (spec validity-file)
+(defun elmo-imap4-sync-validity  (_spec _validity-file)
   ;; Not used.
   )
 
@@ -1099,7 +1099,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
     (setq elmo-imap4-status 'auth)))
 
 (luna-define-method
-  elmo-network-initialize-session-buffer :after ((session
+  elmo-network-initialize-session-buffer :after ((_session
                                                   elmo-imap4-session) buffer)
   (with-current-buffer buffer
     (mapc 'make-variable-buffer-local elmo-imap4-local-variables)
@@ -1146,6 +1146,8 @@ If CHOP-LENGTH is not specified, message set is not chopped."
           (elmo-imap4-send-command-wait session "capability")
           'capability))))))
 
+(eval-when-compile (require 'sasl))
+
 (luna-define-method elmo-network-authenticate-session ((session
                                                         elmo-imap4-session))
   (with-current-buffer (process-buffer
@@ -1160,6 +1162,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
          ((eq 'login (car auth))
           (elmo-imap4-auth-login session))
          (t
+	  (require 'sasl)
           (let* ((elmo-imap4-debug-inhibit-logging t)
                  (sasl-mechanisms
                   (delq nil
@@ -1176,8 +1179,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
                                  (if (listp auth)
                                      auth
                                    (list auth)))))) ;)
-                 client name step response tag
-                 sasl-read-passphrase)
+                 client name step response sasl-read-passphrase)
             (unless mechanism
               (if (or elmo-imap4-force-login
                       (y-or-n-p
@@ -1198,7 +1200,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
 ;;;         (if elmo-imap4-auth-user-realm
 ;;;		(sasl-client-set-property client 'realm elmo-imap4-auth-user-realm))
             (setq sasl-read-passphrase
-                  (lambda (prompt)
+                  (lambda (_prompt)
                     (elmo-get-passwd
                      (elmo-network-session-password-key session))))
             (setq name (sasl-mechanism-name mechanism)
@@ -1206,16 +1208,15 @@ If CHOP-LENGTH is not specified, message set is not chopped."
             (elmo-network-session-set-auth-internal
              session
              (intern (downcase name)))
-            (setq tag
-                  (elmo-imap4-send-command
-                   session
-                   (concat "AUTHENTICATE " name
-                           (and (sasl-step-data step)
-                                (concat
-                                 " "
-                                 (elmo-base64-encode-string
-                                  (sasl-step-data step)
-                                  'no-lin-break))))))
+            (elmo-imap4-send-command
+             session
+             (concat "AUTHENTICATE " name
+                     (and (sasl-step-data step)
+                          (concat
+                           " "
+                           (elmo-base64-encode-string
+			    (sasl-step-data step)
+                            'no-lin-break)))))
             (catch 'done
               (while t
                 (setq response
@@ -1241,13 +1242,12 @@ If CHOP-LENGTH is not specified, message set is not chopped."
                  (elmo-base64-decode-string
                   (elmo-imap4-response-value response 'continue-req)))
                 (setq step (sasl-next-step client step))
-                (setq tag
-                      (elmo-imap4-send-string
-                       session
-                       (if (sasl-step-data step)
-                           (elmo-base64-encode-string (sasl-step-data step)
-                                                      'no-line-break)
-                         ""))))))))
+                (elmo-imap4-send-string
+                 session
+                 (if (sasl-step-data step)
+                     (elmo-base64-encode-string (sasl-step-data step)
+                                                'no-line-break)
+                   "")))))))
 ;; Some servers return reduced capabilities when client asks for them
 ;; before login. It might be a good idea to ask them again, otherwise
 ;; we can miss some useful feature.
@@ -1366,7 +1366,7 @@ Return nil if no complete line has arrived."
           (elmo-imap4-find-next-line))
       (point))))
 
-(defun elmo-imap4-sentinel (process string)
+(defun elmo-imap4-sentinel (process _string)
   (delete-process process))
 
 (defun elmo-imap4-arrival-filter (proc string)
@@ -1667,7 +1667,7 @@ Return nil if no complete line has arrived."
           (search-forward "]" nil t))
       section)))
 
-(defun elmo-imap4-parse-fetch (response)
+(defun elmo-imap4-parse-fetch (_response)
   (when (eq (following-char) ?\()
     (let (element list)
       (while (not (eq (following-char) ?\)))
@@ -2080,7 +2080,7 @@ Return nil if no complete line has arrived."
     " undeleted")))
 
 (luna-define-method elmo-folder-list-messages-plugged
-  ((folder elmo-imap4-folder) &optional enable-killed)
+  ((folder elmo-imap4-folder) &optional _enable-killed)
   (let* ((old (elmo-msgdb-list-messages (elmo-folder-msgdb folder)))
          (new (elmo-imap4-folder-list-range
                folder (1+ (or (elmo-folder-get-info-max folder) 0)) "*"))
@@ -2096,7 +2096,7 @@ Return nil if no complete line has arrived."
   ((folder elmo-imap4-folder) flag)
   (elmo-imap4-folder-list-flagged folder flag))
 
-(luna-define-method elmo-folder-merge-flagged ((folder elmo-imap4-folder) local remote)
+(luna-define-method elmo-folder-merge-flagged ((_folder elmo-imap4-folder) local remote)
   (cl-case elmo-imap4-flags-sync-method
     (union (elmo-sort-uniq-number-list (nconc local remote)))
     (server->client remote)
@@ -2225,10 +2225,10 @@ Return nil if no complete line has arrived."
        (elmo-imap4-folder-mailbox-internal folder)
        'force 'notify-bye))))
 
-(luna-define-method elmo-folder-creatable-p ((folder elmo-imap4-folder))
+(luna-define-method elmo-folder-creatable-p ((_folder elmo-imap4-folder))
   t)
 
-(luna-define-method elmo-folder-writable-p ((folder elmo-imap4-folder))
+(luna-define-method elmo-folder-writable-p ((_folder elmo-imap4-folder))
   t)
 
 (luna-define-method elmo-folder-delete ((folder elmo-imap4-folder))
@@ -2573,9 +2573,7 @@ time."
              '("Subject" "From" "To" "Cc" "Date"
                "Message-Id" "References" "In-Reply-To")
              (mapcar #'capitalize (elmo-msgdb-extra-fields 'non-virtual)))))
-          (total 0)
-          print-length print-depth
-          rfc2060 set-list)
+          print-length rfc2060 set-list)
       (setq rfc2060 (elmo-imap4-session-capable-p session 'imap4rev1))
       (elmo-with-progress-display (elmo-folder-msgdb-create (length numbers))
           "Creating msgdb"
@@ -2628,8 +2626,8 @@ time."
                                             (capitalize (symbol-name flag)))
                          (not (nth 1 spec)))))
 
-(luna-define-method elmo-message-use-cache-p ((folder elmo-imap4-folder)
-                                              number)
+(luna-define-method elmo-message-use-cache-p ((_folder elmo-imap4-folder)
+                                              _number)
   elmo-imap4-use-cache)
 
 (luna-define-method elmo-folder-message-appendable-p ((folder elmo-imap4-folder))
@@ -2701,8 +2699,8 @@ time."
 (luna-define-method elmo-folder-open :around ((folder elmo-imap4-folder)
                                               &optional load-msgdb)
   (if (elmo-folder-plugged-p folder)
-      (let (session mailbox msgdb result response tag)
-        (condition-case err
+      (let (session mailbox msgdb response tag)
+        (condition-case nil
             (progn
               (setq session (elmo-imap4-get-session folder)
                     mailbox (elmo-imap4-folder-mailbox-internal folder)
@@ -2717,9 +2715,8 @@ time."
               (elmo-folder-set-killed-list-internal
                folder
                (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder)))
-              (if (setq result (elmo-imap4-response-ok-p
-                                (setq response
-                                      (elmo-imap4-read-response session tag))))
+              (if (elmo-imap4-response-ok-p
+                   (setq response (elmo-imap4-read-response session tag)))
                   (progn
                     (let ((exists (assq 'exists response))) ; update message count,
                       (when exists                          ; so merge update can go
@@ -2903,7 +2900,7 @@ time."
   (let* ((session (elmo-imap4-get-session folder))
          (selected (elmo-imap4-mailbox-selected-p
                     (elmo-imap4-folder-mailbox-internal folder) session))
-         response uidnext)
+         response)
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-imap4-status-callback nil)
       (setq elmo-imap4-status-callback-data nil))
@@ -2943,7 +2940,7 @@ time."
                                  'elmo-folder-append-messages-imap4-imap4)))
 
 (luna-define-method elmo-message-deletable-p ((folder elmo-imap4-folder)
-                                              number)
+                                              _number)
   (if (elmo-folder-plugged-p folder)
       (not (elmo-imap4-session-read-only-internal
             (elmo-imap4-get-session folder)))
@@ -2956,7 +2953,7 @@ time."
 ;;;                                       (format "(%s)" section)
 ;;;					"")))
 
-(defsubst elmo-imap4-message-fetch (folder number strategy
+(defsubst elmo-imap4-message-fetch (folder number _strategy
                                            section outbuf unseen)
   (let ((session (elmo-imap4-get-session folder))
         response)
@@ -3021,9 +3018,8 @@ time."
       (goto-char (point-min))
       (std11-field-body (symbol-name field)))))
 
-(luna-define-method elmo-folder-search-requires-msgdb-p ((folder
-                                                          elmo-imap4-folder)
-                                                         condition)
+(luna-define-method elmo-folder-search-requires-msgdb-p
+  ((_folder elmo-imap4-folder) _condition)
   nil)
 
 (luna-define-method elmo-folder-close-internal ((folder elmo-imap4-folder))

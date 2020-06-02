@@ -1,4 +1,4 @@
-;;; elmo-rss --- RSS, Atom and OPML support for Wanderlust
+;;; elmo-rss --- RSS, Atom and OPML support for Wanderlust  -*- lexical-binding: t -*-
 
 ;;; Copyright (c) 2014, 2015 Juliusz Chroboczek <jch@pps.univ-paris-diderot.fr>
 
@@ -165,7 +165,7 @@ Setting this to true will annoy the pedants."
            '(nil "alternate" "enclosure"))))
 
 
-(defun elmo-rss-parse-atom-entry (body &optional url)
+(defun elmo-rss-parse-atom-entry (body &optional _url)
   "Parse one Atom entry."
   (let (id published updated author title in-reply-to links content summary
         urls)
@@ -258,7 +258,7 @@ Setting this to true will annoy the pedants."
     ;; feeds are in reverse chronological order, we've reversed them already
     (list entries (nconc (nreverse urls) extra-urls))))
 
-(defun elmo-rss-parse-rss-entry (body &optional url)
+(defun elmo-rss-parse-rss-entry (body &optional _url)
   "Parse one RSS entry."
   (let (guid pubdate dc-date author dc-creator title links
            content-encoded description urls)
@@ -388,11 +388,11 @@ Setting this to true will annoy the pedants."
     (elmo-rss-folder-set-children-internal folder nil)
   folder)
 
-(luna-define-method elmo-folder-local-p ((folder elmo-rss-folder))
+(luna-define-method elmo-folder-local-p ((_folder elmo-rss-folder))
   nil)
 
-(luna-define-method elmo-message-use-cache-p ((folder elmo-rss-folder)
-                                              number)
+(luna-define-method elmo-message-use-cache-p ((_folder elmo-rss-folder)
+                                              _number)
   t)
 
 (luna-define-method elmo-folder-close-internal :after ((folder elmo-rss-folder))
@@ -400,10 +400,10 @@ Setting this to true will annoy the pedants."
   (elmo-rss-folder-set-entries-internal folder nil)
   (elmo-rss-folder-set-children-internal folder nil))
 
-(luna-define-method elmo-folder-exists-p ((folder elmo-rss-folder))
+(luna-define-method elmo-folder-exists-p ((_folder elmo-rss-folder))
   t)
 
-(luna-define-method elmo-folder-plugged-p ((folder elmo-rss-folder))
+(luna-define-method elmo-folder-plugged-p ((_folder elmo-rss-folder))
   (elmo-plugged-p))
 
 (luna-define-method elmo-map-folder-list-message-locations

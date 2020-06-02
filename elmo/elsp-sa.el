@@ -1,4 +1,4 @@
-;;; elsp-sa.el --- SpamAssassin support for elmo-spam.
+;;; elsp-sa.el --- SpamAssassin support for elmo-spam.  -*- lexical-binding: t -*-
 ;; Copyright (C) 2004 Yuuichi Teranishi <teranisi@gohome.org>
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
@@ -94,14 +94,14 @@
 	(elmo-spam-register-good-buffer processor buffer)))
     result))
 
-(luna-define-method elmo-spam-register-spam-buffer ((processor elsp-sa)
-						    buffer &optional restore)
+(luna-define-method elmo-spam-register-spam-buffer ((_processor elsp-sa)
+						    buffer &optional _restore)
   (with-current-buffer buffer
     (eq 0 (apply 'elmo-spamassassin-call 'learn
 		 (list "--spam")))))
 
-(luna-define-method elmo-spam-register-good-buffer ((processor elsp-sa)
-						    buffer &optional restore)
+(luna-define-method elmo-spam-register-good-buffer ((_processor elsp-sa)
+						    buffer &optional _restore)
   (with-current-buffer buffer
     (eq 0 (apply 'elmo-spamassassin-call 'learn
 		 (list "--ham")))))
@@ -115,7 +115,7 @@
 non-positive value for `elmo-spam-spamassassin-max-messages-per-process'"))
   (elmo-spam-process-messages-as-mbox
    folder numbers elmo-spam-spamassassin-max-messages-per-process
-   (lambda (count spam restore)
+   (lambda (count spam _restore)
      (apply 'elmo-spamassassin-call 'learn
 	    (delq nil
 		  (list "--mbox"
@@ -124,14 +124,14 @@ non-positive value for `elmo-spam-spamassassin-max-messages-per-process'"))
    spam restore))
 
 (luna-define-method elmo-spam-register-spam-messages :around
-  ((processor elsp-sa) folder &optional numbers restore)
+  ((_processor elsp-sa) folder &optional numbers restore)
   (let ((numbers (or numbers (elmo-folder-list-messages folder t t))))
     (if (> (length numbers) 1)
 	(elmo-spam-spamassassin-register-messages folder numbers t restore)
       (luna-call-next-method))))
 
 (luna-define-method elmo-spam-register-good-messages :around
-  ((processor elsp-sa) folder &optional numbers restore)
+  ((_processor elsp-sa) folder &optional numbers restore)
   (let ((numbers (or numbers (elmo-folder-list-messages folder t t))))
     (if (> (length numbers) 1)
 	(elmo-spam-spamassassin-register-messages folder numbers nil restore)

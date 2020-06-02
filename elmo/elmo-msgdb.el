@@ -1,4 +1,4 @@
-;;; elmo-msgdb.el --- Message Database for ELMO.
+;;; elmo-msgdb.el --- Message Database for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 2000           Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -129,7 +129,7 @@
 (defun elmo-msgdb-sort-by-date (msgdb)
   (elmo-msgdb-sort-entities
    msgdb
-   (lambda (x y app-data)
+   (lambda (x y _app-data)
      (condition-case nil
 	 (time-less-p
 	  (elmo-message-entity-field x 'date)
@@ -440,11 +440,11 @@ header separator."
 (defsubst elmo-msgdb-overview-entity-set-size (entity size)
   (elmo-message-entity-set-field entity 'size size))
 
-(defsubst elmo-msgdb-overview-entity-get-extra (entity)
+(defsubst elmo-msgdb-overview-entity-get-extra (_entity)
   ;; Truely obsolete.
   )
 
-(defsubst elmo-msgdb-overview-entity-set-extra (entity extra)
+(defsubst elmo-msgdb-overview-entity-set-extra (_entity _extra)
   ;; Truely obsolete.
   )
 

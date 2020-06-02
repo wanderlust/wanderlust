@@ -1,4 +1,4 @@
-;;; elsp-spamfilter.el --- Spamfilter support for elmo-spam.
+;;; elsp-spamfilter.el --- Spamfilter support for elmo-spam.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2003 Hiroya Murata <lapis-lazuli@pop06.odn.ne.jp>
 ;; Copyright (C) 2003 Yuuichi Teranishi <teranisi@gohome.org>
@@ -51,7 +51,7 @@
   (luna-define-internal-accessors 'elsp-spamfilter))
 
 (luna-define-method initialize-instance :around ((processor elsp-spamfilter)
-						 &rest init-args)
+						 &rest _init-args)
   (luna-call-next-method)
   (let ((spamf-good-corpus (make-spamf-corpus
 			    :name "spamf-good-corpus"
@@ -103,13 +103,13 @@
       spam)))
 
 (luna-define-method elmo-spam-register-spam-buffer ((processor elsp-spamfilter)
-						    buffer &optional restore)
+						    buffer &optional _restore)
   (with-temp-buffer
     (elsp-spamfilter-decode-buffer buffer)
     (elsp-spamfilter-register-buffer-internal processor (current-buffer) t)))
 
 (luna-define-method elmo-spam-register-good-buffer ((processor elsp-spamfilter)
-						    buffer &optional restore)
+						    buffer &optional _restore)
   (with-temp-buffer
     (elsp-spamfilter-decode-buffer buffer)
     (elsp-spamfilter-register-buffer-internal processor (current-buffer) nil)))

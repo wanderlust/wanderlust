@@ -1,4 +1,4 @@
-;;; elmo-cache.el --- Cache modules for ELMO.
+;;; elmo-cache.el --- Cache modules for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 2000 Kenichi OKADA <okada@opaopa.org>
@@ -70,7 +70,7 @@
 			    t "^\\([^@]+@[^@]+\\|[0-9A-Za-z]+\\)$" t))))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-cache-folder)
-						 &optional one-level)
+						 &optional _one-level)
   (delq nil (mapcar
 	     (lambda (f) (if (file-directory-p f)
 			     (concat (elmo-folder-prefix-internal folder)
@@ -79,7 +79,7 @@
 	     (directory-files (elmo-cache-folder-directory-internal folder)
 			      t "^[01][0-9A-F]$"))))
 
-(luna-define-method elmo-folder-message-file-p ((folder elmo-cache-folder))
+(luna-define-method elmo-folder-message-file-p ((_folder elmo-cache-folder))
   t)
 
 (luna-define-method elmo-message-file-name ((folder elmo-cache-folder)
@@ -109,8 +109,8 @@
     new-msgdb))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-cache-folder)
-					       &optional flags number
-					       return-number)
+					       &optional flags _number
+					       _return-number)
   ;; dir-name is changed according to msgid.
   (unless (elmo-cache-folder-dir-name-internal folder)
     (let ((msgid (elmo-msgdb-get-message-id-from-buffer))
@@ -146,21 +146,21 @@
     t))
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-cache-folder)
-					    location strategy
-					    &optional section unseen)
+					    location _strategy
+					    &optional _section _unseen)
   (let ((file (expand-file-name
 	       location
 	       (elmo-cache-folder-directory-internal folder))))
     (when (file-exists-p file)
       (insert-file-contents-literally file))))
 
-(luna-define-method elmo-folder-writable-p ((folder elmo-cache-folder))
+(luna-define-method elmo-folder-writable-p ((_folder elmo-cache-folder))
   t)
 
-(luna-define-method elmo-folder-exists-p ((folder elmo-cache-folder))
+(luna-define-method elmo-folder-exists-p ((_folder elmo-cache-folder))
   t)
 
-(luna-define-method elmo-message-file-p ((folder elmo-cache-folder) number)
+(luna-define-method elmo-message-file-p ((_folder elmo-cache-folder) _number)
   t)
 
 (require 'product)

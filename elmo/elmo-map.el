@@ -1,4 +1,4 @@
-;;; elmo-map.el --- A ELMO folder class with message number mapping.
+;;; elmo-map.el --- A ELMO folder class with message number mapping.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -252,7 +252,7 @@ Return new location alist."
   (luna-call-next-method))
 
 (luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-map-folder) &optional nohide)
+  ((folder elmo-map-folder) &optional _nohide)
   (mapcar 'car (elmo-location-map-alist folder)))
 
 (luna-define-method elmo-folder-set-flag :before ((folder elmo-map-folder)
@@ -294,8 +294,8 @@ Return new location alist."
   "Return a list of message location in the FOLDER with FLAG.
 Return t if the message list is not available.")
 
-(luna-define-method elmo-map-folder-list-flagged ((folder elmo-map-folder)
-						  flag)
+(luna-define-method elmo-map-folder-list-flagged ((_folder elmo-map-folder)
+						  _flag)
   t)
 
 (luna-define-method elmo-folder-delete-messages-internal ((folder

@@ -1,4 +1,4 @@
-;;; elmo-shimbun.el --- Shimbun interface for ELMO.
+;;; elmo-shimbun.el --- Shimbun interface for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2001 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -174,11 +174,8 @@ If it is the symbol `all', update overview for all shimbun folders."
     (elmo-shimbun-folder-set-header-hash-internal folder hash)))
 
 (defun elmo-shimbun-get-headers (folder)
-  (let* ((shimbun (elmo-shimbun-folder-shimbun-internal folder))
-	 (key (concat (shimbun-server shimbun)
-		      "." (shimbun-current-group shimbun)))
-	 (elmo-hash-minimum-size 63)
-	 headers)
+  (let ((elmo-hash-minimum-size 63)
+	headers)
     ;; new headers.
     (setq headers
 	  (delq nil
@@ -240,14 +237,15 @@ If it is the symbol `all', update overview for all shimbun folders."
 	 folder
 	 (elmo-map-folder-list-message-locations folder))))))
 
-(luna-define-method elmo-folder-reserve-status-p ((folder elmo-shimbun-folder))
+(luna-define-method elmo-folder-reserve-status-p
+  ((_folder elmo-shimbun-folder))
   t)
 
-(luna-define-method elmo-folder-local-p ((folder elmo-shimbun-folder))
+(luna-define-method elmo-folder-local-p ((_folder elmo-shimbun-folder))
   nil)
 
-(luna-define-method elmo-message-use-cache-p ((folder elmo-shimbun-folder)
-					      number)
+(luna-define-method elmo-message-use-cache-p ((_folder elmo-shimbun-folder)
+					      _number)
   elmo-shimbun-use-cache)
 
 (luna-define-method elmo-folder-close-internal :after ((folder
@@ -298,7 +296,7 @@ If it is the symbol `all', update overview for all shimbun folders."
       (luna-call-next-method))))
 
 (luna-define-method elmo-folder-clear :around ((folder elmo-shimbun-folder)
-					       &optional keep-killed)
+					       &optional _keep-killed)
   (elmo-shimbun-folder-set-headers-internal folder nil)
   (elmo-shimbun-folder-set-header-hash-internal folder nil)
   (elmo-shimbun-folder-set-entity-hash-internal folder nil)
@@ -348,12 +346,11 @@ If it is the symbol `all', update overview for all shimbun folders."
 	(elmo-progress-notify 'elmo-folder-msgdb-create)))
     new-msgdb))
 
-(luna-define-method elmo-folder-message-file-p ((folder elmo-shimbun-folder))
+(luna-define-method elmo-folder-message-file-p ((_folder elmo-shimbun-folder))
   nil)
 
 (defsubst elmo-shimbun-update-overview (folder entity shimbun-id header)
-  (let ((message-id (shimbun-header-id header))
-	references)
+  (let ((message-id (shimbun-header-id header)))
     (when (elmo-msgdb-update-entity
 	   (elmo-folder-msgdb folder)
 	   entity
@@ -378,8 +375,8 @@ If it is the symbol `all', update overview for all shimbun folders."
 			(elmo-message-entity-number entity)))))
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-shimbun-folder)
-					    location strategy
-					    &optional section unseen)
+					    location _strategy
+					    &optional _section _unseen)
   (if (elmo-folder-plugged-p folder)
       (let ((header (elmo-shimbun-folder-shimbun-header
 		     folder
@@ -411,7 +408,7 @@ If it is the symbol `all', update overview for all shimbun folders."
       (error "Unplugged"))))
 
 (luna-define-method elmo-folder-list-messages-internal :around
-  ((folder elmo-shimbun-folder) &optional nohide)
+  ((folder elmo-shimbun-folder) &optional _nohide)
   (if (elmo-folder-plugged-p folder)
       (luna-call-next-method)
     t))

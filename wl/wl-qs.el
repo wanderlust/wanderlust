@@ -1,4 +1,4 @@
-;;; wl-qs.el --- Prompt for a query string and display search results.
+;;; wl-qs.el --- Prompt for a query string and display search results.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2014-2015 Erik Hetzner <egh@e6h.org>
 

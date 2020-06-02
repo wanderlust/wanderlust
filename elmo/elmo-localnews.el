@@ -1,4 +1,4 @@
-;;; elmo-localnews.el --- Local News Spool Interface for ELMO.
+;;; elmo-localnews.el --- Local News Spool Interface for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
@@ -48,10 +48,10 @@
 					    (elmo-replace-in-string
 					     name "/" "\\.")))
 
-(luna-define-method elmo-localdir-folder-path ((folder elmo-localnews-folder))
+(luna-define-method elmo-localdir-folder-path ((_folder elmo-localnews-folder))
   elmo-localnews-folder-path)
 
-(luna-define-method elmo-localdir-folder-name ((folder elmo-localnews-folder)
+(luna-define-method elmo-localdir-folder-name ((_folder elmo-localnews-folder)
 					       name)
   (elmo-replace-in-string name "\\." "/"))
 

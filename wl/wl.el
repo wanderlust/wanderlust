@@ -1,4 +1,4 @@
-;;; wl.el --- Wanderlust bootstrap.
+;;; wl.el --- Wanderlust bootstrap.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -253,8 +253,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 
 (defun wl-plugged-dop-queue-info ()
   ;; dop queue status
-  (let* ((count 0)
-	 (elmo-dop-queue (copy-sequence elmo-dop-queue))
+  (let* ((elmo-dop-queue (copy-sequence elmo-dop-queue))
 	 dop-queue last alist server-info
 	 ope operation)
 ;;;    (elmo-dop-queue-load)
@@ -327,7 +326,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	(alist plugged-alist)
 	(vars wl-plugged-switch-variables)
 	last server port stream-type label plugged time
-	line len qinfo column)
+	line qinfo column)
     (erase-buffer)
     (while vars
       (insert (format "%s:[%s]%s"
@@ -414,12 +413,11 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 (defun wl-plugged-redrawing (plugged-alist)
   (let ((buffer-read-only nil)
 	(alist plugged-alist)
-	last server port plugged time)
+	last server plugged time)
     (goto-char (point-min))
     (wl-plugged-redrawing-switch 0 (elmo-plugged-p))
     (while alist
       (setq server (cl-caaar alist)
-	    port (cl-cdaar alist)
 	    plugged (nth 2 (car alist))
 	    time (nth 3 (car alist)))
       (unless (string= last server)
@@ -719,12 +717,12 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
      nil
      'message-number-changed
      'wl-draft
-     (elmo-define-signal-handler (listener folder old-number new-number)
+     (elmo-define-signal-handler (_listener _folder old-number new-number)
        (dolist (buffer (wl-collect-draft))
 	 (with-current-buffer buffer
 	   (wl-draft-buffer-change-number old-number new-number)))
        (wl-draft-rename-saved-config old-number new-number))
-     (elmo-define-signal-filter (listener folder old-number new-number)
+     (elmo-define-signal-filter (_listener folder _old-number _new-number)
        (and folder
 	    (string= (elmo-folder-name-internal folder) wl-draft-folder))))
     (when (featurep 'wl-news)
@@ -766,8 +764,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
     (let ((message-id (funcall wl-message-id-function))
 	  (custom-msgid-function
 	   (null (eq wl-message-id-function
-		     'wl-draft-make-message-id-string)))
-	  domain)
+		     'wl-draft-make-message-id-string))))
       (unless (std11-parse-msg-id
 	       (std11-lexical-analyze message-id))
 	;; Invalid Message-ID

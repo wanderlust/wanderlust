@@ -1,4 +1,4 @@
-;;; elmo-multi.el --- Multiple Folder Interface for ELMO.
+;;; elmo-multi.el --- Multiple Folder Interface for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 

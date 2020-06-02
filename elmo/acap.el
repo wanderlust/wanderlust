@@ -1,4 +1,4 @@
-;;; acap.el --- An ACAP interface.
+;;; acap.el --- An ACAP interface.  -*- lexical-binding: t -*-
 
 ;; Author: Yuuichi Teranishi <teranisi@gohome.org>
 ;; Keywords: ACAP
@@ -215,7 +215,7 @@ Valid states are `closed', `initial', `auth'.")
 (defun acap-open (server &optional user auth port type)
   (let* ((user (or user acap-default-user))
 	 (buffer (get-buffer-create (concat " *acap on " user " at " server)))
-	 process passphrase mechanism tag)
+	 process tag)
     (with-current-buffer buffer
       (erase-buffer)
       (if acap-process
@@ -243,7 +243,7 @@ Valid states are `closed', `initial', `auth'.")
 			 (acap-rp-user user)
 			 (acap-rp-server server)
 			 (acap-rp-auth (sasl-mechanism-name mechanism))
-			 acap-passphrase step response cont-string)
+			 acap-passphrase step response)
 		    (unless (string= (sasl-mechanism-name mechanism)
 				     "ANONYMOUS")
 		      (setq acap-passphrase (acap-read-passphrase nil)))
@@ -561,7 +561,7 @@ ENTRIES is a store-entry list."
     acap-response))
 
 ;;; Sentinel, Filter.
-(defun acap-sentinel (process string)
+(defun acap-sentinel (process _string)
   (delete-process process))
 
 (defun acap-find-next-line ()
@@ -906,7 +906,8 @@ ENTRIES is a store-entry list."
    (t (list l))))
 
 (defun acap-encode-time (time)
-  (format-time-string "%Y%m%d%H%M%S" (current-time) t)) ; Universal time.
+  ;; Universal time.
+  (format-time-string "%Y%m%d%H%M%S" (or time (current-time)) t))
 
 (defun acap-decode-time (acap-time)
   (when (string-match "^\\([0-9][0-9][0-9][0-9]\\)\\([0-1][0-9]\\)\\([0-3][0-9]\\)\\([0-2][0-9]\\)\\([0-5][0-9]\\)\\([0-5][0-9]\\)" acap-time)

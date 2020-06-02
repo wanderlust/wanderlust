@@ -1,4 +1,4 @@
-;;; wl-addrmgr.el --- Address manager for Wanderlust.
+;;; wl-addrmgr.el --- Address manager for Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2001 Kitamoto Tsuyoshi <tsuyoshi.kitamoto@city.sapporo.jp>
 ;; Copyright (C) 2001 Yuuichi Teranishi <teranisi@gohome.org>
@@ -324,7 +324,7 @@ Return nil if no ADDRESS exists."
   "Show recipients mail addresses."
   (save-excursion
     (let ((buffer-read-only nil)
-	  list field addrs beg real pet addr)
+	  list field addrs)
       (erase-buffer)
       (goto-char (point-min))
       (insert

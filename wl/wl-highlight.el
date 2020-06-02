@@ -1,4 +1,4 @@
-;;; wl-highlight.el --- Hilight modules for Wanderlust.
+;;; wl-highlight.el --- Hilight modules for Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998, 1999, 2000, 2001, 2002, 2003, 2004
 ;;  Yuuichi Teranishi <teranisi@gohome.org>
@@ -873,7 +873,7 @@
 	  '(wl-highlight-summary-low-unread-face))
 	 ((let ((priorities wl-summary-persistent-mark-priority-list)
 		(fl wl-summary-flag-alist)
-		face result global-flags)
+		result global-flags)
 	    (while (and (null result) priorities)
 	      (cond
 	       ((eq (car priorities) 'killed)
@@ -994,18 +994,15 @@ Variables used:
   (interactive "r")
   (if (< end start)
       (let ((s start)) (setq start end end s)))
-  (let* ((lines (count-lines start end))
-	 (real-end end)
-	 gc-message)
-    (save-excursion
+  (save-excursion
+    (save-restriction
+      (widen)
+      (narrow-to-region start end)
       (save-restriction
-	(widen)
-	(narrow-to-region start end)
-	(save-restriction
-	  (goto-char start)
-	  (while (not (eobp))
-	    (wl-highlight-folder-current-line)
-	    (forward-line)))))))
+	(goto-char start)
+	(while (not (eobp))
+	  (wl-highlight-folder-current-line)
+	  (forward-line))))))
 
 (require 'wl-folder)
 (defun wl-highlight-folder-path (folder-path)
@@ -1053,24 +1050,18 @@ Faces used:
   wl-highlight-summary-*-flag-face      flagged messages"
   (if (< end start)
       (let ((s start)) (setq start end end s)))
-  (let (lines too-big gc-message e p hend i percent)
-    (save-excursion
-      (unless wl-summary-lazy-highlight
-	(setq lines (count-lines start end)
-	      too-big (and wl-highlight-max-summary-lines
-			   (> lines wl-highlight-max-summary-lines))))
-      (goto-char start)
-      (setq i 0)
-      (while (and (not (eobp))
-		  (< (point) end))
-	(when (or (not lazy)
-		  (null (get-text-property (point) 'face)))
-	  (wl-highlight-summary-current-line))
-	(forward-line))
-      (unless wl-summary-lazy-highlight
-	(message "Highlighting...done")))))
+  (save-excursion
+    (goto-char start)
+    (while (and (not (eobp))
+		(< (point) end))
+      (when (or (not lazy)
+		(null (get-text-property (point) 'face)))
+	(wl-highlight-summary-current-line))
+      (forward-line))
+    (unless wl-summary-lazy-highlight
+      (message "Highlighting...done"))))
 
-(defun wl-highlight-summary-window (&optional win beg)
+(defun wl-highlight-summary-window (&optional win _beg)
   "Highlight summary window.
 This function is defined for `window-scroll-functions'"
   (when wl-summary-highlight
@@ -1198,8 +1189,8 @@ interpreted as cited text.)"
   (let ((too-big (and wl-highlight-max-message-size
 		      (> (- end start) wl-highlight-max-message-size)))
 	(real-end end)
-	current beg
-	e p hend
+	current
+	p hend
 	wl-draft-real-time-highlight)
     (unless too-big
       (save-excursion

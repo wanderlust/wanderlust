@@ -1,4 +1,4 @@
-;;; elmo-nntp.el --- NNTP Interface for ELMO.
+;;; elmo-nntp.el --- NNTP Interface for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -77,12 +77,10 @@ Debug information is inserted in the buffer \"*NNTP DEBUG*\"")
 ;;; Debug
 (defsubst elmo-nntp-debug (message &rest args)
   (if elmo-nntp-debug
-      (let ((biff (string-match "BIFF-" (buffer-name)))
-	    pos)
+      (let ((biff (string-match "BIFF-" (buffer-name))))
 	(with-current-buffer (get-buffer-create (concat "*NNTP DEBUG*"
 							(if biff "BIFF")))
 	  (goto-char (point-max))
-	  (setq pos (point))
 	  (insert (apply 'format message args) "\n")))))
 
 ;;; ELMO NNTP folder
@@ -320,7 +318,7 @@ Don't cache if nil.")
       (or (elmo-nntp-read-response session)
 	  (signal 'elmo-authenticate-error '(authinfo))))))
 
-(luna-define-method elmo-network-setup-session ((session
+(luna-define-method elmo-network-setup-session ((_session
 						 elmo-nntp-session))
   (run-hooks 'elmo-nntp-opened-hook))
 
@@ -548,7 +546,7 @@ Don't cache if nil.")
 
 (luna-define-method elmo-folder-list-messages-plugged ((folder
 							elmo-nntp-folder)
-						       &optional nohide)
+						       &optional _nohide)
   (let ((session (elmo-nntp-get-session folder))
 	(group   (elmo-nntp-folder-group-internal folder))
 	response numbers use-listgroup)
@@ -707,7 +705,7 @@ Don't cache if nil.")
 	(session (elmo-nntp-get-session folder))
 	(new-msgdb (elmo-make-msgdb))
 	beg-num end-num cur length
-	ov-str use-xover dir)
+	ov-str use-xover)
     (elmo-nntp-select-group session (elmo-nntp-folder-group-internal
 				     folder))
     (when (setq use-xover (elmo-nntp-xover-p session))
@@ -862,7 +860,7 @@ Don't cache if nil.")
 	(std11-field-body "Newsgroups")))))
 
 (luna-define-method elmo-message-fetch :around
-  ((folder elmo-nntp-folder) number strategy &optional unread section)
+  ((folder elmo-nntp-folder) number _strategy &optional unread _section)
   (when (luna-call-next-method)
     (elmo-nntp-setup-crosspost-buffer folder number)
     (unless unread
@@ -876,9 +874,9 @@ Don't cache if nil.")
 						unread)
   (elmo-nntp-message-fetch folder number strategy section outbuf unread))
 
-(defun elmo-nntp-message-fetch (folder number strategy section outbuf unread)
-  (let ((session (elmo-nntp-get-session folder))
-	newsgroups)
+(defun elmo-nntp-message-fetch (folder number _strategy _section outbuf unread)
+  (let ((session (elmo-nntp-get-session folder)))
+
     (with-current-buffer (elmo-network-session-buffer session)
       (elmo-nntp-select-group session (elmo-nntp-folder-group-internal folder))
       (elmo-nntp-send-command session (format "article %s" number))
@@ -913,8 +911,7 @@ Don't cache if nil.")
       (goto-char (point-min))
       (if (search-forward mail-header-separator nil t)
 	  (delete-region (match-beginning 0)(match-end 0)))
-      (setq has-message-id (let ((elmo-prefer-std11-parser t)) 
-			     (elmo-get-message-id-from-buffer 'none)))
+      (setq has-message-id (elmo-get-message-id-from-buffer 'none))
       (elmo-nntp-send-command session "post")
       (if (string-match "^340" (setq response
 				     (elmo-nntp-read-raw-response session)))
@@ -952,14 +949,12 @@ Don't cache if nil.")
 
 (defun elmo-nntp-send-buffer (session databuf)
   "Send data content of DATABUF to SESSION."
-  (let ((data-continue t)
-	line bol)
-    (with-current-buffer databuf
-      (goto-char (point-min))
-      (while (null (eobp))
-	(elmo-nntp-send-data-line
-	 session (buffer-substring (point) (goto-char (line-end-position))))
-	(forward-line)))))
+  (with-current-buffer databuf
+    (goto-char (point-min))
+    (while (null (eobp))
+      (elmo-nntp-send-data-line
+       session (buffer-substring (point) (goto-char (line-end-position))))
+      (forward-line))))
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-nntp-folder)
 						 numbers)
@@ -1287,7 +1282,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	  (elmo-progress-notify 'elmo-folder-msgdb-create)))
       new-msgdb)))
 
-(luna-define-method elmo-message-use-cache-p ((folder elmo-nntp-folder) number)
+(luna-define-method elmo-message-use-cache-p ((_folder elmo-nntp-folder) _number)
   elmo-nntp-use-cache)
 
 (defun elmo-nntp-parse-newsgroups (string &optional subscribe-only)
@@ -1327,8 +1322,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 ;;         it is remembered in `temp-crosses' slot.
 ;;         temp-crosses slot is a list of cons cell:
 ;;         (NUMBER . (MESSAGE-ID (LIST-OF-NEWSGROUPS) 'ng))
-  (let ((elmo-prefer-std11-parser t)
-	newsgroups crosspost-newsgroups message-id)
+  (let (newsgroups crosspost-newsgroups message-id)
     (save-restriction
       (std11-narrow-to-header)
       (setq newsgroups (std11-fetch-field "newsgroups")
@@ -1368,14 +1362,14 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 (luna-define-method elmo-folder-set-flag :before ((folder elmo-nntp-folder)
 						  numbers
 						  flag
-						  &optional is-local)
+						  &optional _is-local)
   (when (eq flag 'read)
     (elmo-nntp-folder-update-crosspost-message-alist folder numbers)))
 
 (luna-define-method elmo-folder-unset-flag :before ((folder elmo-nntp-folder)
 						    numbers
 						    flag
-						    &optional is-local)
+						    &optional _is-local)
   (when (eq flag 'unread)
     (elmo-nntp-folder-update-crosspost-message-alist folder numbers)))
 

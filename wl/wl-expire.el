@@ -1,4 +1,4 @@
-;;; wl-expire.el --- Message expire modules for Wanderlust.
+;;; wl-expire.el --- Message expire modules for Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA <muse@ba2.so-net.ne.jp>
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
@@ -159,7 +159,7 @@
 
 (defun wl-expire-refile-with-copy-reserve-msg
   (folder refile-list dst-folder
-	  &optional no-reserve-marks preserve-number copy)
+	  &optional _no-reserve-marks preserve-number _copy)
   "Refile message for expire.
 If REFILE-LIST includes reserve mark message, so copy."
   (when (not (string= (elmo-folder-name-internal folder) dst-folder))
@@ -441,7 +441,7 @@ Refile to archive folder followed message date."
 	 (refile-func (if no-delete
 			  'wl-expire-refile
 			'wl-expire-refile-with-copy-reserve-msg))
-	 tmp dels dst-folder date time
+	 tmp dels dst-folder time
 	 msg arcmsg-alist arcmsg-list
 	 deleted-list ret-val)
     (setq tmp (wl-expire-archive-number-delete-old
@@ -527,12 +527,11 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 			  folder
 			  wl-expire-localdir-date-folder-name-fmt
 			  dst-folder-expand))
-	 (dst-folder-base (car dst-folder-fmt))
 	 (dst-folder-fmt (cdr dst-folder-fmt))
 	 (refile-func (if no-delete
 			  'wl-expire-refile
 			'wl-expire-refile-with-copy-reserve-msg))
-	 tmp dels dst-folder date time
+	 dst-folder time
 	 msg arcmsg-alist arcmsg-list
 	 deleted-list ret-val)
     (while (setq msg (wl-pop delete-list))
@@ -764,14 +763,13 @@ ex. +ml/wl/1999_11/, +ml/wl/1999_12/."
 	   (wl-append copied-list ret-val)))
     copied-list))
 
-(defun wl-summary-archive (&optional arg folder notsummary nolist)
+(defun wl-summary-archive (&optional arg folder _notsummary nolist)
   ""
   (interactive "P")
   (let* ((folder (or folder wl-summary-buffer-elmo-folder))
 	 (msgs (if (not nolist)
 		   (elmo-folder-list-messages folder)
 		 (elmo-folder-list-messages folder 'visible 'in-msgdb)))
-	 (alist wl-archive-alist)
 	 archives func args dst-folder archive-list)
     (if arg
 	(let ((wl-default-spec (char-to-string

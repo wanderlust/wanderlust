@@ -1,4 +1,4 @@
-;;; elmo-dop.el --- Modules for Disconnected Operations on ELMO.
+;;; elmo-dop.el --- Modules for Disconnected Operations on ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -104,8 +104,7 @@ Saved queue is old version(2.6).  Clear all pending operations? ")
   (elmo-dop-queue-merge)
   (let ((queue-all elmo-dop-queue)
 	queue
-	(count 0)
-	len)
+	(count 0))
     (while queue-all
       (if (elmo-folder-plugged-p
 	   (elmo-get-folder (elmo-dop-queue-fname (car queue-all))))
@@ -123,7 +122,7 @@ Saved queue is old version(2.6).  Clear all pending operations? ")
 		  (performed 0)
 		  (i 0)
 		  (num (length elmo-dop-queue))
-		  folder func failure)
+		  folder failure)
 	      (while queue
 		;; now perform pending processes.
 		(setq failure nil)

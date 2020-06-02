@@ -1,4 +1,4 @@
-;;; wl-vars.el --- Variable definitions for Wanderlust. -*-coding: iso-2022-jp-unix;-*-
+;;; wl-vars.el --- Variable definitions for Wanderlust. -*-coding: iso-2022-jp-unix;  lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000,2001 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000,2001 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -103,9 +103,6 @@
 (defconst wl-on-mule3 t)
 
 (defconst wl-on-nemacs nil) ; backward compatibility.
-
-(eval-when-compile
-  (defun-maybe locate-data-directory (a)))
 
 (defvar wl-cs-noconv
   (cond (wl-on-mule3 'binary)
@@ -3051,16 +3048,9 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
   :type 'string
   :group 'wl-pref)
 
-(defcustom wl-use-pgp-module
-  (condition-case nil
-      (progn
-	(require 'epg-config)
-	(epg-check-configuration (epg-configuration))
-	'epg)
-    (error 'pgg))
-  "*Which PGG library to be used."
+(defcustom wl-use-pgp-module 'epg
+  "*Whether use EasyPG."
   :type '(choice (const :tag "EasyPG Library" epg)
-		 (const :tag "PGG Library" pgg)
 		 (const :tag "Don't use PGP" nil))
   :group 'wl-pref)
 
@@ -3080,7 +3070,7 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 				       (integer :tag "Threshold")))))
   :group 'wl-pref)
 
-(defcustom wl-display-progress-function #'wl-simple-display-progress
+(defcustom wl-display-progress-function 'wl-simple-display-progress
   "*A function to display progress message"
   :type '(choice (const :tag "No display" nil)
 		 (function :tag "Function"))

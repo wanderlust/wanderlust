@@ -1,4 +1,4 @@
-;;; elmo-file.el --- File interface for ELMO.
+;;; elmo-file.el --- File interface for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -132,7 +132,7 @@
 			(system-name) ">")))))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-file-folder)
-					      numlist flag-table)
+					      numlist _flag-table)
   (let ((new-msgdb (elmo-make-msgdb))
 	entity)
     (elmo-with-progress-display (elmo-folder-msgdb-create (length numlist))
@@ -144,7 +144,7 @@
 	(elmo-progress-notify 'elmo-folder-msgdb-create)))
     new-msgdb))
 
-(luna-define-method elmo-folder-message-file-p ((folder elmo-file-folder))
+(luna-define-method elmo-folder-message-file-p ((_folder elmo-file-folder))
   t)
 
 (luna-define-method elmo-message-file-name ((folder elmo-file-folder)
@@ -155,10 +155,10 @@
 		    (elmo-file-folder-file-path-internal folder)))
 
 (luna-define-method elmo-folder-message-make-temp-file-p
-  ((folder elmo-file-folder))
+  ((_folder elmo-file-folder))
   t)
 
-(luna-define-method elmo-folder-diff ((folder elmo-file-folder))
+(luna-define-method elmo-folder-diff ((_folder elmo-file-folder))
   (cons nil nil))
 
 (luna-define-method elmo-folder-message-make-temp-files ((folder
@@ -178,8 +178,8 @@
     temp-dir))
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-file-folder)
-					    location strategy
-					    &optional section unseen)
+					    location _strategy
+					    &optional _section _unseen)
   (let ((file (expand-file-name (car (split-string location "/"))
 				(elmo-file-folder-file-path-internal folder)))
 	charset guess uid is-text tweak-charset)
@@ -246,7 +246,7 @@
   (file-directory-p (elmo-file-folder-file-path-internal folder)))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-file-folder)
-						 &optional one-level)
+						 &optional _one-level)
   (when (file-directory-p (elmo-file-folder-file-path-internal folder))
     (append
      (list (elmo-folder-name-internal folder))

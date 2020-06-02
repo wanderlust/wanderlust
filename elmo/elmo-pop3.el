@@ -1,4 +1,4 @@
-;;; elmo-pop3.el --- POP3 Interface for ELMO.
+;;; elmo-pop3.el --- POP3 Interface for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1999,2000      Kenichi OKADA <okada@opaopa.org>
@@ -80,12 +80,10 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 ;;; Debug
 (defsubst elmo-pop3-debug (message &rest args)
   (if elmo-pop3-debug
-      (let ((biff (string-match "BIFF-" (buffer-name)))
-	    pos)
+      (let ((biff (string-match "BIFF-" (buffer-name))))
 	(with-current-buffer (get-buffer-create (concat "*POP3 DEBUG*"
 							(if biff "BIFF")))
 	  (goto-char (point-max))
-	  (setq pos (point))
 	  (insert (apply 'format message args) "\n")))))
 
 ;;; ELMO POP3 folder
@@ -311,14 +309,13 @@ CODE is one of the following:
     (car response)))
 
 (luna-define-method elmo-network-initialize-session-buffer :after
-  ((session elmo-pop3-session) buffer)
+  ((_session elmo-pop3-session) buffer)
   (with-current-buffer buffer
     (mapcar 'make-variable-buffer-local elmo-pop3-local-variables)))
 
 (luna-define-method elmo-network-initialize-session ((session
 						      elmo-pop3-session))
-  (let ((process (elmo-network-session-process-internal session))
-	response mechanism)
+  (let ((process (elmo-network-session-process-internal session)))
     (with-current-buffer (process-buffer process)
       (set-process-filter process 'elmo-pop3-process-filter)
       (setq elmo-pop3-read-point (point-min))
@@ -354,10 +351,13 @@ CODE is one of the following:
 	       (elmo-pop3-auth-user session))
 	  (and (string= "APOP" (car auth))
 	       (elmo-pop3-auth-apop session))
+	  (require 'sasl)
+	  (defvar sasl-mechanisms)
+	  (defvar sasl-mechanism-alist)
+	  (defvar sasl-read-passphrase)
 	  (let (sasl-mechanisms
 		client name step response mechanism
 		sasl-read-passphrase)
-	    (require 'sasl)
 	    (setq sasl-mechanisms (mapcar 'car sasl-mechanism-alist))
 	    (setq mechanism (sasl-find-mechanism auth))
 	    (unless mechanism
@@ -374,7 +374,7 @@ CODE is one of the following:
 	    (elmo-network-session-set-auth-internal session
 						    (intern (downcase name)))
 	    (setq sasl-read-passphrase
-		  (lambda (prompt)
+		  (lambda (_prompt)
 		    (elmo-get-passwd
 		     (elmo-network-session-password-key session))))
 	    (setq step (sasl-next-step client nil))
@@ -487,8 +487,7 @@ until the login delay period has expired"))
 	    (elmo-folder-exists-p folder))))))
 
 (defun elmo-pop3-parse-uidl-response (string)
-  (let ((buffer (current-buffer))
-	list)
+  (let (list)
     (with-temp-buffer
       (insert string)
       (goto-char (point-min))
@@ -503,8 +502,7 @@ until the login delay period has expired"))
 			 elmo-pop3-number-uidl-hash))))
 
 (defun elmo-pop3-parse-list-response (string)
-  (let ((buffer (current-buffer))
-	count alist)
+  (let (count alist)
     (with-temp-buffer
       (insert string)
       (goto-char (point-min))
@@ -569,7 +567,7 @@ until the login delay period has expired"))
     (elmo-pop3-list-by-list folder)))
 
 (luna-define-method elmo-folder-list-messages-plugged
-  ((folder elmo-pop3-folder) &optional nohide)
+  ((folder elmo-pop3-folder) &optional _nohide)
   (elmo-pop3-folder-list-messages folder))
 
 (luna-define-method elmo-folder-status ((folder elmo-pop3-folder))
@@ -770,12 +768,12 @@ until the login delay period has expired"))
   (elmo-folder-check folder))
 
 (luna-define-method elmo-message-fetch-plugged ((folder elmo-pop3-folder)
-						number strategy
-						&optional section
-						outbuf unseen)
+						number _strategy
+						&optional _section
+						outbuf _unseen)
   (let ((process (elmo-network-session-process-internal
 		  (elmo-pop3-get-session folder)))
-	size  response errmsg msg)
+	size response)
     (with-current-buffer (process-buffer process)
       (when (elmo-pop3-folder-use-uidl folder)
 	(setq number (elmo-pop3-uidl-to-number
@@ -821,7 +819,8 @@ until the login delay period has expired"))
 	(elmo-pop3-delete-msg process number))
       t)))
 
-(luna-define-method elmo-message-use-cache-p ((folder elmo-pop3-folder) number)
+(luna-define-method elmo-message-use-cache-p
+  ((_folder elmo-pop3-folder) _number)
   elmo-pop3-use-cache)
 
 (luna-define-method elmo-folder-persistent-p ((folder elmo-pop3-folder))

@@ -1,4 +1,4 @@
-;;; elsp-bogofilter.el --- Bogofilter support for elmo-spam.
+;;; elsp-bogofilter.el --- Bogofilter support for elmo-spam.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2003 Hiroya Murata <lapis-lazuli@pop06.odn.ne.jp>
 ;; Copyright (C) 2003 Yuuichi Teranishi <teranisi@gohome.org>
@@ -99,27 +99,32 @@ Must be return a string or list of string."
 	 (append elmo-spam-bogofilter-args
 		 (delq nil args))))
 
-(defmacro elmo-spam-bogofilter-arguments (type)
-  `(elmo-flatten
-    (mapcar #'eval
-	    (cdr (assq ,type elmo-spam-bogofilter-arguments-alist)))))
+(defun elmo-spam-bogofilter-arguments (type register spam restore)
+  (elmo-flatten
+   (mapcar (lambda (sexp)
+	     (eval
+	      `(let ((register ,register)
+		     (spam ,spam)
+		     (restore ,restore))
+		 ,sexp)))
+	   (cdr (assq type elmo-spam-bogofilter-arguments-alist)))))
 
-(luna-define-method elmo-spam-buffer-spam-p ((processor elsp-bogofilter)
+(luna-define-method elmo-spam-buffer-spam-p ((_processor elsp-bogofilter)
 					     buffer &optional register)
   (with-current-buffer buffer
     (= 0 (elmo-spam-bogofilter-call
-	  (elmo-spam-bogofilter-arguments 'classify)))))
+	  (elmo-spam-bogofilter-arguments 'classify register nil nil)))))
 
 (defsubst elsp-bogofilter-register-buffer (buffer spam restore)
   (with-current-buffer buffer
     (elmo-spam-bogofilter-call
-     (elmo-spam-bogofilter-arguments 'register))))
+     (elmo-spam-bogofilter-arguments 'register nil spam restore))))
 
-(luna-define-method elmo-spam-register-spam-buffer ((processor elsp-bogofilter)
+(luna-define-method elmo-spam-register-spam-buffer ((_processor elsp-bogofilter)
 						    buffer &optional restore)
   (elsp-bogofilter-register-buffer buffer t restore))
 
-(luna-define-method elmo-spam-register-good-buffer ((processor elsp-bogofilter)
+(luna-define-method elmo-spam-register-good-buffer ((_processor elsp-bogofilter)
 						    buffer &optional restore)
   (elsp-bogofilter-register-buffer buffer nil restore))
 
@@ -135,14 +140,14 @@ non-positive value for `elmo-spam-bogofilter-max-messages-per-process'"))
    spam restore))
 
 (luna-define-method elmo-spam-register-spam-messages :around
-  ((processor elsp-bogofilter) folder &optional numbers restore)
+  ((_processor elsp-bogofilter) folder &optional numbers restore)
   (let ((numbers (or numbers (elmo-folder-list-messages folder t t))))
     (if (> (length numbers) 1)
 	(elmo-spam-bogofilter-register-messages folder numbers t restore)
       (luna-call-next-method))))
 
 (luna-define-method elmo-spam-register-good-messages :around
-  ((processor elsp-bogofilter) folder &optional numbers restore)
+  ((_processor elsp-bogofilter) folder &optional numbers restore)
   (let ((numbers (or numbers (elmo-folder-list-messages folder t t))))
     (if (> (length numbers) 1)
 	(elmo-spam-bogofilter-register-messages folder numbers nil restore)

@@ -1,4 +1,4 @@
-;;; wl-batch.el --- batch functions for Wanderlust.
+;;; wl-batch.el --- batch functions for Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2003 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 2003 Chihiro Kuroda <chee@iijmio-mail.jp>

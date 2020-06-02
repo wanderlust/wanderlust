@@ -1,4 +1,4 @@
-;;; elmo-sendlog.el --- Sendlog folder for ELMO.
+;;; elmo-sendlog.el --- Sendlog folder for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2001 Kenichi OKADA <okada@opaopa.org>
 
@@ -43,10 +43,10 @@
   (luna-define-internal-accessors 'elmo-sendlog-folder))
 
 (luna-define-method elmo-folder-initialize ((folder elmo-sendlog-folder)
-					    name)
+					    _name)
   folder)
 
-(luna-define-method elmo-folder-expand-msgdb-path ((folder elmo-sendlog-folder))
+(luna-define-method elmo-folder-expand-msgdb-path ((_folder elmo-sendlog-folder))
   (expand-file-name "sendlog"
 		    (expand-file-name "internal"
 				      elmo-msgdb-directory)))
@@ -55,7 +55,7 @@
   ((folder elmo-sendlog-folder))
   (elmo-sendlog-folder-list-message-locations folder))
 
-(defun elmo-sendlog-folder-list-message-locations (folder)
+(defun elmo-sendlog-folder-list-message-locations (_folder)
   (let ((filename (expand-file-name elmo-sendlog-filename
 				    elmo-msgdb-directory))
 	result)
@@ -74,7 +74,7 @@
 	      (beginning-of-line 2))))))
     result))
 
-(luna-define-method elmo-folder-message-file-p ((folder elmo-sendlog-folder))
+(luna-define-method elmo-folder-message-file-p ((_folder elmo-sendlog-folder))
   t)
 
 (luna-define-method elmo-message-file-name ((folder elmo-sendlog-folder)
@@ -116,15 +116,15 @@
       (elmo-message-unset-flag folder number 'unread))
     t))
 
-(luna-define-method elmo-map-message-fetch ((folder elmo-sendlog-folder)
-					    location strategy
-					    &optional section unseen)
+(luna-define-method elmo-map-message-fetch ((_folder elmo-sendlog-folder)
+					    location _strategy
+					    &optional _section _unseen)
   (let ((filename (elmo-file-cache-get-path location)))
     (if (file-exists-p filename)
 	(insert-file-contents-literally filename)
       (error "Now this message is not cached. Please s all"))))
 
-(luna-define-method elmo-folder-exists-p ((folder elmo-sendlog-folder))
+(luna-define-method elmo-folder-exists-p ((_folder elmo-sendlog-folder))
   t)
 
 (luna-define-method elmo-folder-delete-messages ((folder elmo-sendlog-folder)
@@ -132,10 +132,10 @@
   (elmo-folder-kill-messages folder numbers)
   t)
 
-(luna-define-method elmo-message-file-p ((folder elmo-sendlog-folder) number)
+(luna-define-method elmo-message-file-p ((_folder elmo-sendlog-folder) _number)
   t)
 
-(luna-define-method elmo-folder-have-subfolder-p ((folder elmo-sendlog-folder))
+(luna-define-method elmo-folder-have-subfolder-p ((_folder elmo-sendlog-folder))
   nil)
 
 (require 'product)

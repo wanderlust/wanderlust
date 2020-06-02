@@ -1,4 +1,4 @@
-;;; modb-standard.el --- Standartd Implement of MODB.
+;;; modb-standard.el --- Standartd Implement of MODB.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2003 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -92,7 +92,7 @@
 	   modb (cons section modified))))
     (modb-generic-set-message-modified-internal modb t)))
 
-(defsubst modb-standard-set-flag-modified (modb number)
+(defsubst modb-standard-set-flag-modified (modb _number)
   (modb-generic-set-flag-modified-internal modb t))
 
 (defsubst modb-standard-message-flags (modb number)
@@ -225,8 +225,7 @@
     (modb-standard-set-entity-map-internal modb table)))
 
 (defsubst modb-standard-save-entity-1 (modb path &optional section)
-  (let ((table (modb-standard-entity-map-internal modb))
-	(filename (expand-file-name
+  (let ((filename (expand-file-name
 		   (modb-standard-entity-filename (car section)) path))
 	(handler (elmo-msgdb-message-entity-handler modb))
 	entity entities)
@@ -353,7 +352,7 @@
 (luna-define-method elmo-msgdb-length ((msgdb modb-standard))
   (length (modb-standard-number-list-internal msgdb)))
 
-(luna-define-method elmo-msgdb-flag-available-p ((msgdb modb-standard) flag)
+(luna-define-method elmo-msgdb-flag-available-p ((_msgdb modb-standard) _flag)
   t)
 
 (luna-define-method elmo-msgdb-flags ((msgdb modb-standard) number)

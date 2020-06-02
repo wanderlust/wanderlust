@@ -1,4 +1,4 @@
-;;; wl-message.el --- Message displaying modules for Wanderlust.
+;;; wl-message.el --- Message displaying modules for Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -328,12 +328,11 @@ Returns non-nil if bottom of message."
 
 (require 'wl-draft)
 
-(defun wl-message-follow-current-entity (buffer)
+(defun wl-message-follow-current-entity (_buffer)
   "Follow to current message."
   (wl-draft-reply (wl-message-get-original-buffer)
 		  nil wl-message-buffer-cur-summary-buffer) ; reply to all
-  (let ((mail-reply-buffer buffer))
-    (wl-draft-yank-from-mail-reply-buffer nil)))
+  (wl-draft-yank-from-mail-reply-buffer nil))
 
 ;;
 
@@ -491,7 +490,7 @@ Returns non-nil if bottom of message."
   (let* ((default-mime-charset wl-mime-charset)
 	 (buffer-read-only nil)
 	 (summary-buf (current-buffer))
-	 message-buf entity summary-win flags)
+	 message-buf summary-win)
     (setq buffer-read-only nil)
     (setq wl-message-buffer (wl-message-buffer-display
 			     folder number display-type force-reload))

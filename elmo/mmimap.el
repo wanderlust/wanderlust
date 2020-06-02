@@ -1,4 +1,4 @@
-;;; mmimap.el --- MIME entity module for IMAP4rev1 (RFC2060).
+;;; mmimap.el --- MIME entity module for IMAP4rev1 (RFC2060).  -*- lexical-binding: t -*-
 ;;                **** This is EXPERIMENTAL *****
 
 ;; Copyright (C) 2000 Yuuichi Teranishi <teranisi@gohome.org>
@@ -88,7 +88,7 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
   (cond
    ((listp (car bodystructure)) ; multipart
     (let ((num 0)
-	  curp children content-type entity)
+	  curp children entity)
       (setq entity
 	    (luna-make-entity
 	     class
@@ -152,7 +152,7 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
       entity))))
 
 (luna-define-method initialize-instance :after ((entity mime-imap-entity)
-						&rest init-args)
+						&rest _init-args)
   ;; To prevent infinite loop...
   (if (mime-imap-entity-new-internal entity)
       entity

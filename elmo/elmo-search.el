@@ -1,4 +1,4 @@
-;;; elmo-search.el --- Search by external program interface for ELMO.
+;;; elmo-search.el --- Search by external program interface for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2005 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -125,7 +125,7 @@ Returns non-nil if fetching was succeed.")
    (expand-file-name "search" elmo-msgdb-directory)))
 
 (luna-define-method elmo-folder-msgdb-create ((folder elmo-search-folder)
-					      numbers flag-table)
+					      numbers _flag-table)
   (let ((new-msgdb (elmo-make-msgdb))
 	entity)
     (elmo-with-progress-display (elmo-folder-msgdb-create (length numbers))
@@ -140,7 +140,7 @@ Returns non-nil if fetching was succeed.")
 	(elmo-progress-notify 'elmo-folder-msgdb-create)))
     new-msgdb))
 
-(luna-define-method elmo-folder-message-file-p ((folder elmo-search-folder))
+(luna-define-method elmo-folder-message-file-p ((_folder elmo-search-folder))
   nil)
 
 (defun elmo-search-location-to-filename (location)
@@ -158,10 +158,10 @@ Returns non-nil if fetching was succeed.")
    (elmo-map-message-location folder number)))
 
 (luna-define-method elmo-folder-message-make-temp-file-p
-  ((folder elmo-search-folder))
+  ((_folder elmo-search-folder))
   nil)
 
-(luna-define-method elmo-folder-diff ((folder elmo-search-folder))
+(luna-define-method elmo-folder-diff ((_folder elmo-search-folder))
   (cons nil nil))
 
 (luna-define-method elmo-folder-message-make-temp-files ((folder
@@ -181,8 +181,8 @@ Returns non-nil if fetching was succeed.")
     temp-dir))
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-search-folder)
-					    location strategy
-					    &optional section unseen)
+					    location _strategy
+					    &optional _section _unseen)
   (elmo-search-engine-fetch-message
    (elmo-search-folder-engine-internal folder)
    location))
@@ -200,7 +200,7 @@ Returns non-nil if fetching was succeed.")
   (null (elmo-search-folder-pattern-internal folder)))
 
 (luna-define-method elmo-folder-list-subfolders ((folder elmo-search-folder)
-						 &optional one-level)
+						 &optional _one-level)
   (mapcar
    (lambda (name) (elmo-recover-string-from-filename name))
    (directory-files (expand-file-name "search" elmo-msgdb-directory)
@@ -277,7 +277,7 @@ Returns non-nil if fetching was succeed.")
     (nreverse locations)))
 
 (luna-define-method elmo-search-engine-create-message-entity
-  ((engine elmo-search-engine-local-file) handler folder number)
+  ((_engine elmo-search-engine-local-file) handler folder number)
   (let ((filename (elmo-message-file-name folder number))
 	entity uid)
     (when (and filename
@@ -298,7 +298,7 @@ Returns non-nil if fetching was succeed.")
       entity)))
 
 (luna-define-method elmo-search-engine-fetch-message
-  ((engine elmo-search-engine-local-file) location)
+  ((_engine elmo-search-engine-local-file) location)
   (let ((filename (elmo-search-location-to-filename location)))
     (when (and filename (file-exists-p filename))
       (prog1
@@ -343,7 +343,7 @@ If the value is a list, all elements are used as index paths for namazu."
 			       (repeat (directory :tag "Index Path")))))
   :group 'elmo)
 
-(defun elmo-search-namazu-index (engine pattern)
+(defun elmo-search-namazu-index (engine _pattern)
   (let* ((param (elmo-search-engine-param-internal engine))
 	 (index (cond
 		 ((cdr (assoc param elmo-search-namazu-index-alias-alist)))
@@ -357,7 +357,7 @@ If the value is a list, all elements are used as index paths for namazu."
 
 
 ;; grep
-(defun elmo-search-grep-target (engine pattern)
+(defun elmo-search-grep-target (engine _pattern)
   (let ((dirname (expand-file-name (elmo-search-engine-param-internal engine)))
 	files)
     (dolist (filename (directory-files dirname))
@@ -365,7 +365,7 @@ If the value is a list, all elements are used as index paths for namazu."
 	(setq files (cons (expand-file-name filename dirname) files))))
     (or files (list null-device))))
 
-(defun elmo-search-rgrep-target (engine pattern)
+(defun elmo-search-rgrep-target (engine _pattern)
   (expand-file-name (elmo-search-engine-param-internal engine)))
 
 (defun elmo-search-split-pattern-list (engine pattern)
@@ -373,7 +373,7 @@ If the value is a list, all elements are used as index paths for namazu."
   (split-string-and-unquote
    (elmo-search-replace-single-quotes engine pattern)))
 
-(defun elmo-search-replace-single-quotes (engine pattern)
+(defun elmo-search-replace-single-quotes (_engine pattern)
   "ENGINE is ignored.  Replace single quotes with double quotes in PATTERN."
   (replace-regexp-in-string "\'" "\"" pattern nil t))
 

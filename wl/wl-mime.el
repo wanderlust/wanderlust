@@ -1,4 +1,4 @@
-;;; wl-mime.el --- SEMI implementations of MIME processing on Wanderlust.
+;;; wl-mime.el --- SEMI implementations of MIME processing on Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -61,9 +61,6 @@ If region is active, yank region contents instead. \(this feature is available
 if and only if `transient-mark-mode' \(GNU Emacs\) or `zmacs-regions' \(XEmacs\)
 has Non-nil value\)"
   (let ((wl-draft-buffer (current-buffer))
-	(mime-view-following-method-alist
-	 (list (cons 'wl-original-message-mode
-		     (function wl-draft-yank-to-draft-buffer))))
 	(mime-preview-following-method-alist
 	 (list (cons 'wl-original-message-mode
 		     (function wl-draft-yank-to-draft-buffer))))
@@ -93,14 +90,12 @@ It calls following-method selected from variable
   (interactive)
   (let* ((mode (mime-preview-original-major-mode 'recursive))
 	 (new-name (format "%s-no-mime" (buffer-name)))
-	 new-buf min beg end
+	 new-buf beg end
 	 (entity (get-text-property (point-min) 'elmo-as-is-entity))
-	 (the-buf (current-buffer))
-	 fields)
+	 (the-buf (current-buffer)))
     (save-excursion
       (goto-char (point-min))
-      (setq min (point-min)
-	    beg (re-search-forward "^$" nil t)
+      (setq beg (re-search-forward "^$" nil t)
 	    end (point-max)))
     (with-current-buffer (setq new-buf (get-buffer-create new-name))
       (erase-buffer)
@@ -513,14 +508,11 @@ It calls following-method selected from variable
 ;;; Message
 
 (defun wl-message-decode-mode (outbuf inbuf)
-  (let ((mime-view-content-header-filter-hook 'wl-highlight-headers)
-	(mime-display-header-hook 'wl-highlight-headers))
+  (let ((mime-display-header-hook 'wl-highlight-headers))
     (mime-view-mode nil nil nil inbuf outbuf)))
 
 (defun wl-message-decode-with-all-header (outbuf inbuf)
-  (let ((mime-view-ignored-field-regexp "^:$")
-	(mime-view-content-header-filter-hook 'wl-highlight-headers)
-	(mime-display-header-hook 'wl-highlight-headers)
+  (let ((mime-display-header-hook 'wl-highlight-headers)
 	mime-view-ignored-field-list)
     (mime-view-mode nil nil nil inbuf outbuf)))
 
@@ -619,30 +611,12 @@ It calls following-method selected from variable
 	  (wl-summary-sync nil "update"))))))
 
 ;; PGP
-(eval-when-compile
-  (defmacro wl-define-dummy-functions (&rest symbols)
-    `(dolist (symbol (quote ,symbols))
-       (defalias symbol 'ignore))))
-
-(eval-when-compile
-  ;; split eval-when-compile form for avoid error on `make compile-strict'
-  (unless (require 'epa nil t)
-    (wl-define-dummy-functions epg-make-context
-			       epg-decrypt-string
-			       epg-verify-string
-			       epg-context-set-progress-callback
-			       epg-context-result-for
-			       epg-verify-result-to-string
-			       epa-display-info))
-  (unless (require 'pgg nil t)
-    (wl-define-dummy-functions pgg-decrypt-region
-			       pgg-verify-region
-			       pgg-display-output-buffer)))
-
-(defun wl-epg-progress-callback (context what char current total reporter)
+(defun wl-epg-progress-callback (_context _what _char current total reporter)
   (let ((label (elmo-progress-counter-label reporter)))
     (when label
       (elmo-progress-notify label :set current :total total))))
+
+(eval-when-compile (require 'epg))
 
 (defun wl-mime-pgp-decrypt-region-with-epg (beg end &optional no-decode)
   (require 'epg)
@@ -661,6 +635,7 @@ It calls following-method selected from variable
 		(delete-region beg end)))))
   last-coding-system-used)
 
+(eval-when-compile (require 'epa))
 (defun wl-mime-pgp-verify-region-with-epg (beg end &optional coding-system)
   (require 'epa)
   (let ((context (epg-make-context))
@@ -684,45 +659,10 @@ It calls following-method selected from variable
 		 (setq window (get-buffer-window epa-info-buffer)))
 	(select-window window)))))
 
-(defun wl-mime-pgp-decrypt-region-with-pgg (beg end &optional no-decode)
-  (require 'pgg)
-  (let ((buffer-file-coding-system wl-cs-autoconv)
-	status)
-    (setq status (pgg-decrypt-region beg end))
-    (if no-decode
-	(when status
-	  (delete-region beg end)
-	  (insert-buffer-substring pgg-output-buffer))
-      (pgg-display-output-buffer beg end status))
-    (unless status
-      (error "Decryption is failed"))
-    last-coding-system-used))
-
-(defun wl-mime-pgp-verify-region-with-pgg (beg end &optional coding-system)
-  (require 'pgg)
-  (let ((message-buffer (current-buffer))
-	success)
-    (with-temp-buffer
-      (insert-buffer-substring message-buffer beg end)
-      (when coding-system
-	(encode-coding-region (point-min) (point-max) coding-system))
-      (setq success (pgg-verify-region (point-min) (point-max) nil 'fetch)))
-    (mime-show-echo-buffer)
-    (set-buffer mime-echo-buffer-name)
-    (set-window-start
-     (get-buffer-window mime-echo-buffer-name)
-     (point-max))
-    (insert-buffer-substring
-     (if success
-	 pgg-output-buffer
-       pgg-errors-buffer))))
-
 (defsubst wl-mime-pgp-decrypt-region (beg end &optional no-decode)
   (cl-case wl-use-pgp-module
     (epg
      (wl-mime-pgp-decrypt-region-with-epg beg end no-decode))
-    (pgg
-     (wl-mime-pgp-decrypt-region-with-pgg beg end no-decode))
     (t
      (error "No support for PGP decryption"))))
 
@@ -730,8 +670,6 @@ It calls following-method selected from variable
   (cl-case wl-use-pgp-module
     (epg
      (wl-mime-pgp-verify-region-with-epg beg end coding-system))
-    (pgg
-     (wl-mime-pgp-verify-region-with-pgg beg end coding-system))
     (t
      (error "No support for PGP verification"))))
 
@@ -789,7 +727,7 @@ With ARG, ask coding system and encode the region with it before verifying."
     (when (bufferp buffer)
       (kill-buffer buffer))))
 
-(defun wl-mime-preview-application/pgp (parent-entity entity situation)
+(defun wl-mime-preview-application/pgp (parent-entity entity _situation)
   (goto-char (point-max))
   (let ((p (point))
 	representation-type child-entity buffer failed)
@@ -839,7 +777,7 @@ With ARG, ask coding system and encode the region with it before verifying."
 ;;; Summary
 (defun wl-summary-burst-subr (message-entity target number)
   ;; returns new number.
-  (let (content-type entity)
+  (let (content-type)
     (setq content-type (mime-entity-content-type message-entity))
     (cond ((eq (cdr (assq 'type content-type)) 'multipart)
 	   (dolist (entity (mime-entity-children message-entity))
@@ -850,8 +788,6 @@ With ARG, ask coding system and encode the region with it before verifying."
 	  ((and (eq (cdr (assq 'type content-type)) 'message)
 		(eq (cdr (assq 'subtype content-type)) 'rfc822))
 	   (message "Bursting...%s" (setq number (+ 1 number)))
-	   (setq entity
-		 (car (mime-entity-children message-entity)))
 	   (with-temp-buffer
 	     (set-buffer-multibyte nil)
 	     (insert (mime-entity-body message-entity))
@@ -896,7 +832,7 @@ With ARG, ask destination folder."
 ;; internal variable.
 (defvar wl-mime-save-directory nil "Last saved directory.")
 ;;; Yet another save method.
-(defun wl-mime-save-content (entity situation)
+(defun wl-mime-save-content (entity _situation)
   (let ((filename (expand-file-name
 		   (read-file-name "Save to file: "
 				   (or wl-mime-save-directory
@@ -963,11 +899,11 @@ With ARG, ask destination folder."
 	 (id (or (cdr (assoc "id" situation)) ""))
 	 (mother (current-buffer))
 	 (summary-buf wl-message-buffer-cur-summary-buffer)
-	 subject-id overviews
+	 subject-id
 	 (root-dir (expand-file-name
 		    (concat "m-prts-" (user-login-name))
 		    temporary-file-directory))
-	 full-file point)
+	 full-file)
     (setq root-dir (concat root-dir "/" (replace-as-filename id)))
     (setq full-file (concat root-dir "/FULL"))
     (if (or (file-exists-p full-file)
@@ -1085,9 +1021,6 @@ With ARG, ask destination folder."
      (major-mode . wl-original-message-mode)
      (method . wl-mime-save-content)))
   (set-alist 'mime-preview-following-method-alist
-	     'wl-original-message-mode
-	     (function wl-message-follow-current-entity))
-  (set-alist 'mime-view-following-method-alist
 	     'wl-original-message-mode
 	     (function wl-message-follow-current-entity))
   (set-alist 'mime-edit-message-inserter-alist

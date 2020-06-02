@@ -1,4 +1,4 @@
-;;; elmo-version.el --- Version information for ELMO.
+;;; elmo-version.el --- Version information for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2000-2001 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 2000-2001 TAKAHASHI Kaoru <kaoru@kaisei.org>

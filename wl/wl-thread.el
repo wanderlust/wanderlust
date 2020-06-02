@@ -1,4 +1,4 @@
-;;; wl-thread.el --- Thread display modules for Wanderlust.
+;;; wl-thread.el --- Thread display modules for Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000 Masahiro MURATA  <muse@ba2.so-net.ne.jp>
@@ -388,7 +388,7 @@ ENTITY is returned."
 	 (parent-msg (or parent-msg (wl-thread-entity-get-parent entity)))
 	 (buffer-read-only nil)
 	 (inhibit-read-only t)
-	 message-entity temp-mark summary-line invisible-top)
+	 message-entity temp-mark invisible-top)
     (if (wl-thread-delete-line-from-buffer msg)
 	(progn
 	  (cond
@@ -487,10 +487,10 @@ ENTITY is returned."
 (defun wl-thread-get-exist-children (msg &optional include-self)
   (let ((msgs (list msg))
 	msgs-stack children
-	entity ret-val)
+	ret-val)
     (while msgs
       (setq children (wl-thread-entity-get-children
-		      (setq entity (wl-thread-get-entity (car msgs)))))
+		      (wl-thread-get-entity (car msgs))))
       (when (elmo-message-entity wl-summary-buffer-elmo-folder (car msgs))
 	(wl-append ret-val (list (car msgs)))
 	(setq children nil))
@@ -867,11 +867,10 @@ Message is inserted to the summary buffer."
          len)
         (elmo-progress-notify 'wl-thread-insert-entity)))))
 
-(defsubst wl-thread-insert-entity-sub (indent entity parent-entity all)
+(defsubst wl-thread-insert-entity-sub (_indent entity parent-entity all)
   (let (msg-num
 	message-entity
-	temp-mark
-	summary-line)
+	temp-mark)
     (when (setq msg-num (wl-thread-entity-get-number entity))
       (unless all ; all...means no temp-mark.
 	(cond ((memq msg-num wl-summary-buffer-target-mark-list)
@@ -1077,7 +1076,7 @@ Message is inserted to the summary buffer."
   (let ((number (wl-summary-message-number))
 	(dst-parent (if (called-interactively-p 'interactive)
 			(read-from-minibuffer "Parent Message (No.): ")))
-	entity dst-parent-entity src-parent children
+	entity dst-parent-entity children
 	update-msgs
 	buffer-read-only)
     (if (string= dst-parent "")

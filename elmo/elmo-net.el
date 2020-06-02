@@ -1,4 +1,4 @@
-;;; elmo-net.el --- Network module for ELMO.
+;;; elmo-net.el --- Network module for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -106,7 +106,7 @@ If nil, just once. If t, until success."
   "Close SESSION.")
 
 (luna-define-method
-  elmo-network-initialize-session-buffer ((session
+  elmo-network-initialize-session-buffer ((_session
 					   elmo-network-session) buffer)
   (with-current-buffer buffer
     (set-buffer-multibyte nil)
@@ -408,13 +408,13 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 (luna-define-method elmo-folder-plugged-p ((folder elmo-net-folder))
   (apply 'elmo-plugged-p
 	 (append (elmo-net-port-info folder)
-		 (list nil (quote (elmo-net-port-label folder))))))
+		 (list nil `,(elmo-net-port-label folder)))))
 
 (luna-define-method elmo-folder-set-plugged ((folder elmo-net-folder)
 					     plugged &optional add)
   (apply 'elmo-set-plugged plugged
 	 (append (elmo-net-port-info folder)
-		 (list nil nil (quote (elmo-net-port-label folder)) add))))
+		 (list nil nil `,(elmo-net-port-label folder) add))))
 
 (luna-define-method elmo-folder-create ((folder elmo-net-folder))
   (if (elmo-folder-plugged-p folder)
@@ -464,7 +464,7 @@ Returned value is searched from `elmo-network-stream-type-alist'."
     (elmo-folder-send folder 'elmo-folder-list-messages-unplugged)))
 
 (luna-define-method elmo-folder-list-messages-plugged
-  ((folder elmo-net-folder))
+  ((_folder elmo-net-folder))
   nil)
 
 ;; Should consider offline append and removal.
@@ -491,8 +491,8 @@ Returned value is searched from `elmo-network-stream-type-alist'."
     ;; Should consider offline append and removal?
     t))
 
-(luna-define-method elmo-folder-list-flagged-plugged ((folder elmo-net-folder)
-						      flag)
+(luna-define-method elmo-folder-list-flagged-plugged ((_folder elmo-net-folder)
+						      _flag)
   t)
 
 (luna-define-method elmo-folder-delete-messages-internal ((folder
@@ -593,7 +593,7 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 				  (current-buffer) unseen)))
 
 (luna-define-method elmo-message-fetch-unplugged
-  ((folder elmo-net-folder) number strategy  &optional section outbuf unseen)
+  ((folder elmo-net-folder) number strategy  &optional section _outbuf unseen)
   (if (and elmo-enable-disconnected-operation
 	   (< number 0))
       (elmo-message-fetch-internal
@@ -615,10 +615,10 @@ Returned value is searched from `elmo-network-stream-type-alist'."
       (elmo-folder-send folder 'elmo-folder-diff-plugged)
     (luna-call-next-method)))
 
-(luna-define-method elmo-folder-local-p ((folder elmo-net-folder))
+(luna-define-method elmo-folder-local-p ((_folder elmo-net-folder))
   nil)
 
-(luna-define-method elmo-quit ((folder elmo-net-folder))
+(luna-define-method elmo-quit ((_folder elmo-net-folder))
   (elmo-network-clear-session-cache))
 
 (require 'product)

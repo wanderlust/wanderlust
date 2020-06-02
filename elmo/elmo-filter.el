@@ -1,4 +1,4 @@
-;;; elmo-filter.el --- Filtered Folder Interface for ELMO.
+;;; elmo-filter.el --- Filtered Folder Interface for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -66,15 +66,15 @@
 (defun elmo-filter-connect-signals (folder target)
   (elmo-connect-signal
    target 'flag-changing folder
-   (elmo-define-signal-handler (folder target number old-flags new-flags)
+   (elmo-define-signal-handler (folder _target number old-flags new-flags)
      (elmo-filter-add-flag-count folder old-flags -1)
      (elmo-filter-add-flag-count folder new-flags)
      (elmo-emit-signal 'flag-changing folder number old-flags new-flags))
-   (elmo-define-signal-filter (folder target number)
+   (elmo-define-signal-filter (folder _target number)
      (memq number (elmo-folder-list-messages folder nil t))))
   (elmo-connect-signal
    target 'flag-changed folder
-   (elmo-define-signal-handler (folder target numbers)
+   (elmo-define-signal-handler (folder _target numbers)
      (let ((filterd (elmo-list-filter
 		     (elmo-folder-list-messages folder nil t)
 		     numbers)))
@@ -82,7 +82,7 @@
 	 (elmo-emit-signal 'flag-changed folder filterd)))))
   (elmo-connect-signal
    target 'status-changed folder
-   (elmo-define-signal-handler (folder target numbers)
+   (elmo-define-signal-handler (folder _target numbers)
      (let ((filterd (elmo-list-filter
 		     (elmo-folder-list-messages folder nil t)
 		     numbers)))
@@ -90,9 +90,9 @@
 	 (elmo-emit-signal 'status-changed folder filterd)))))
   (elmo-connect-signal
    target 'update-overview folder
-   (elmo-define-signal-handler (folder target number)
+   (elmo-define-signal-handler (folder _target number)
      (elmo-emit-signal 'update-overview folder number))
-   (elmo-define-signal-filter (folder target number)
+   (elmo-define-signal-filter (folder _target number)
      (memq number (elmo-folder-list-messages folder nil t)))))
 
 (defun elmo-filter-number-list-load (dir)
@@ -287,7 +287,7 @@
 	list))))
 
 (luna-define-method elmo-folder-list-messages-internal
-  ((folder elmo-filter-folder) &optional nohide)
+  ((folder elmo-filter-folder) &optional _nohide)
   (let ((target (elmo-filter-folder-target-internal folder)))
     (if (or (elmo-folder-plugged-p target)
 	    (not (elmo-folder-persistent-p folder)))
@@ -483,8 +483,7 @@
 					     ignore-msgdb
 					     no-check
 					     mask)
-  (let ((killed-list (elmo-folder-killed-list-internal folder))
-	numbers)
+  (let (numbers)
     (unless no-check
       (when (elmo-filter-folder-require-msgdb-internal folder)
 	(elmo-folder-synchronize (elmo-filter-folder-target-internal folder)

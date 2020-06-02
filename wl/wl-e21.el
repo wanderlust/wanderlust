@@ -1,4 +1,4 @@
-;;; wl-e21.el --- Wanderlust modules for Emacs 21.
+;;; wl-e21.el --- Wanderlust modules for Emacs 21.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2000,2001 Katsumi Yamaoka <yamaoka@jpl.org>
 ;; Copyright (C) 2000,2001 Yuuichi Teranishi <teranisi@gohome.org>

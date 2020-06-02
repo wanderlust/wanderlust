@@ -1,4 +1,4 @@
-;;; elmo-mime.el --- MIME module for ELMO.
+;;; elmo-mime.el --- MIME module for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -118,11 +118,11 @@ value is used."
   :group 'elmo)
 
 (luna-define-method initialize-instance :after ((entity mime-elmo-buffer-entity)
-						&rest init-args)
+						&rest _init-args)
   entity)
 
-(luna-define-method initialize-instance :around ((entity mime-elmo-imap-entity)
-						 &rest init-args)
+(luna-define-method initialize-instance :around ((_entity mime-elmo-imap-entity)
+						 &rest _init-args)
   (luna-call-next-method))
 
 ;;; Insert sorted header.
@@ -227,16 +227,16 @@ value is used."
 					   sorted-fields))))
 
 (luna-define-method mime-insert-text-content :around
-  ((entity mime-elmo-buffer-entity))
+  ((_entity mime-elmo-buffer-entity))
   (luna-call-next-method)
   (run-hooks 'elmo-message-text-content-inserted-hook))
 
 (luna-define-method mime-insert-text-content :around
-  ((entity mime-elmo-imap-entity))
+  ((_entity mime-elmo-imap-entity))
   (luna-call-next-method)
   (run-hooks 'elmo-message-text-content-inserted-hook))
 
-(defun elmo-mime-insert-header (entity situation)
+(defun elmo-mime-insert-header (entity _situation)
   (elmo-mime-insert-sorted-header
    entity
    elmo-message-ignored-field-list
@@ -246,7 +246,7 @@ value is used."
 
 ;; mime-elmo-buffer-entity
 (luna-define-method elmo-mime-entity-display-p
-  ((entity mime-elmo-buffer-entity) mime-mode)
+  ((_entity mime-elmo-buffer-entity) _mime-mode)
   ;; always return t.
   t)
 
@@ -268,15 +268,15 @@ value is used."
 
 ;; mime-elmo-imap-entity
 (luna-define-method elmo-mime-entity-display-p
-  ((entity mime-elmo-imap-entity) mime-mode)
+  ((_entity mime-elmo-imap-entity) mime-mode)
   (not (eq mime-mode 'as-is)))
 
-(luna-define-method elmo-mime-entity-display-as-is ((entity
+(luna-define-method elmo-mime-entity-display-as-is ((_entity
 						     mime-elmo-imap-entity)
-						     preview-buffer
+						     _preview-buffer
 						     &optional
-						     original-major-mode
-						     keymap)
+						     _original-major-mode
+						     _keymap)
   (error "Does not support this method"))
 
 
@@ -373,8 +373,7 @@ If third optional argument ENTIRE is non-nil, fetch entire message at once."
 	(with-current-buffer rawbuf
 	  (let (buffer-read-only
 		(outer-header (car pieces))
-		(pieces (sort (cdr pieces) #'car-less-than-car))
-		contents entity)
+		(pieces (sort (cdr pieces) #'car-less-than-car)))
 	    (erase-buffer)
 	    (while pieces
 	      (insert (cdr (car pieces)))

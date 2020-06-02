@@ -1,4 +1,4 @@
-;;; elmo-passwd.el --- ELMO password manager.
+;;; elmo-passwd.el --- ELMO password manager.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2017 Kazuhiro Ito <kzhr@d1.dion.ne.jp>
 
@@ -90,7 +90,7 @@ It is used to remove executed timer function.")
 	     (y-or-n-p "Save password storage? "))
     (elmo-passwd-save passwd)))
 
-(luna-define-method elmo-passwd-modified-p ((passwd elmo-passwd))
+(luna-define-method elmo-passwd-modified-p ((_passwd elmo-passwd))
   nil)
 
 (luna-define-method elmo-passwd-remove-timer ((passwd elmo-passwd) key)
@@ -148,15 +148,13 @@ It is used to remove executed timer function.")
      passwd
      (when (file-readable-p filename)
        (with-temp-buffer
-	 (let (insert-file-contents-pre-hook ; To avoid autoconv-xmas...
-	       insert-file-contents-post-hook)
-	   (insert-file-contents filename)
-	   (goto-char (point-min))
-	   (ignore-errors
-	     (read (current-buffer)))))))))
+	 (insert-file-contents filename)
+	 (goto-char (point-min))
+	 (ignore-errors
+	   (read (current-buffer))))))))
 
 (luna-define-method initialize-instance :after ((passwd elmo-passwd-alist)
-						&rest init-args)
+						&rest _init-args)
   (elmo-passwd-alist-set-filename-internal
    passwd (expand-file-name elmo-passwd-alist-file-name elmo-msgdb-directory))
   (elmo-passwd-alist-set-ignore-smtp-port-internal
@@ -233,8 +231,7 @@ It is used to remove executed timer function.")
   (luna-define-internal-accessors 'elmo-passwd-auth-source))
 
 (luna-define-method initialize-instance
-  :after ((passwd elmo-passwd-auth-source) &rest init-args)
-  (require 'auth-source)
+  :after ((passwd elmo-passwd-auth-source) &rest _init-args)
   passwd)
 
 (luna-define-method elmo-passwd-clear :after ((passwd elmo-passwd-auth-source))
@@ -252,6 +249,8 @@ It is used to remove executed timer function.")
 
 (luna-define-method elmo-passwd-get ((passwd elmo-passwd-auth-source)
 				     key)
+  (require 'auth-source)
+  (defvar auth-source-creation-prompts)
   (let* ((auth-source-creation-prompts
 	  `((secret . ,(format "%s password for %%u@%%h:%%p? " (car key)))))
 	 source secret)

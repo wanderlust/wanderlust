@@ -1,4 +1,4 @@
-;;; elsp-spamoracle.el --- SpamOracle support for elmo-spam.
+;;; elsp-spamoracle.el --- SpamOracle support for elmo-spam.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2004 Daishi Kato <daishi@axlight.com>
 
@@ -100,13 +100,13 @@
 	(elmo-spam-register-good-buffer processor buffer)))
     result))
 
-(luna-define-method elmo-spam-register-spam-buffer ((processor elsp-spamoracle)
-						    buffer &optional restore)
+(luna-define-method elmo-spam-register-spam-buffer ((_processor elsp-spamoracle)
+						    buffer &optional _restore)
   (with-current-buffer buffer
     (elmo-spam-spamoracle-call 'add-spam)))
 
-(luna-define-method elmo-spam-register-good-buffer ((processor elsp-spamoracle)
-						    buffer &optional restore)
+(luna-define-method elmo-spam-register-good-buffer ((_processor elsp-spamoracle)
+						    buffer &optional _restore)
   (with-current-buffer buffer
     (elmo-spam-spamoracle-call 'add-good)))
 

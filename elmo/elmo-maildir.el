@@ -1,4 +1,4 @@
-;;; elmo-maildir.el --- Maildir interface for ELMO.
+;;; elmo-maildir.el --- Maildir interface for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -369,7 +369,7 @@ LOCATION."
     (append
      (list (elmo-folder-name-internal folder))
      (elmo-mapcar-list-of-list
-      (function (lambda (x) (concat prefix x)))
+      (lambda (x) (concat prefix x))
       (elmo-list-subdirectories
        (elmo-maildir-folder-directory-internal folder)
        ""
@@ -429,7 +429,7 @@ file name for maildir directories."
       (rename-file src dst)))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-maildir-folder)
-					       &optional flags number
+					       &optional flags _number
 					       return-number)
   (let ((basedir (elmo-maildir-folder-directory-internal folder))
 	(src-buf (current-buffer))
@@ -454,7 +454,7 @@ file name for maildir directories."
       ;; If an error occured, return nil.
       (error))))
 
-(luna-define-method elmo-folder-message-file-p ((folder elmo-maildir-folder))
+(luna-define-method elmo-folder-message-file-p ((_folder elmo-maildir-folder))
   t)
 
 (luna-define-method elmo-message-file-name ((folder elmo-maildir-folder)
@@ -464,7 +464,7 @@ file name for maildir directories."
    (elmo-map-message-location folder number)))
 
 (luna-define-method elmo-folder-message-make-temp-file-p
-  ((folder elmo-maildir-folder))
+  ((_folder elmo-maildir-folder))
   t)
 
 (luna-define-method elmo-folder-message-make-temp-files ((folder
@@ -486,7 +486,7 @@ file name for maildir directories."
 (defun elmo-folder-append-messages-*-maildir (folder
 					      src-folder
 					      numbers
-					      same-number)
+					      _same-number)
   (let ((src-msgdb-exists (not (zerop (elmo-folder-length src-folder))))
 	(dir (elmo-maildir-folder-directory-internal folder))
 	(table (elmo-folder-flag-table folder))
@@ -525,8 +525,8 @@ file name for maildir directories."
   t)
 
 (luna-define-method elmo-map-message-fetch ((folder elmo-maildir-folder)
-					    location strategy
-					    &optional section unseen)
+					    location _strategy
+					    &optional _section unseen)
   (let ((file (elmo-maildir-message-file-name folder location)))
     (unless (stringp file)
       (error "Unable to fetch message %s from maildir folder" location))
@@ -548,10 +548,10 @@ file name for maildir directories."
 	 (cur-len (length (car (elmo-maildir-list-location dir "cur")))))
     (cons new-len (+ new-len cur-len))))
 
-(luna-define-method elmo-folder-creatable-p ((folder elmo-maildir-folder))
+(luna-define-method elmo-folder-creatable-p ((_folder elmo-maildir-folder))
   t)
 
-(luna-define-method elmo-folder-writable-p ((folder elmo-maildir-folder))
+(luna-define-method elmo-folder-writable-p ((_folder elmo-maildir-folder))
   t)
 
 (luna-define-method elmo-folder-create ((folder elmo-maildir-folder))

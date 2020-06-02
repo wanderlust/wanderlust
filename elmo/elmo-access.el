@@ -1,4 +1,4 @@
-;;; elmo-access.el --- Auto Collect Multiple Folder Interface for ELMO.
+;;; elmo-access.el --- Auto Collect Multiple Folder Interface for ELMO.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2005 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -118,12 +118,12 @@
 
 (luna-define-method elmo-folder-synchronize :before
   ((folder elmo-access-folder)
-   &optional disable-killed ignore-msgdb no-check mask)
+   &optional _disable-killed ignore-msgdb no-check _mask)
   (when (or ignore-msgdb
 	    (not no-check))
     (elmo-access-folder-update-children folder 'open ignore-msgdb)))
 
-(luna-define-method elmo-folder-creatable-p ((folder elmo-access-folder))
+(luna-define-method elmo-folder-creatable-p ((_folder elmo-access-folder))
   nil)
 
 (require 'product)
