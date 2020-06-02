@@ -1,5 +1,13 @@
 2020-06-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
+	* elmo-date.el (elmo-time-make-imap-date-string): Argument is now
+	optional.
+
+	* elmo-imap4.el (elmo-folder-append-buffer): Call
+	elmo-time-make-imap-date-string without argument.
+
+2020-06-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
 	Use lexical binding in all *.el files.
 
 2020-05-30  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>

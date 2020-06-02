@@ -2822,7 +2822,7 @@ time."
   ((folder elmo-imap4-folder) &optional flags number return-number)
   (if (elmo-folder-plugged-p folder)
       (let ((session (elmo-imap4-get-session folder))
-            (internaldate (elmo-time-make-imap-date-string (current-time)))
+            (internaldate (elmo-time-make-imap-date-string))
             send-buffer result)
         (elmo-imap4-session-select-mailbox session
                                            (elmo-imap4-folder-mailbox-internal
