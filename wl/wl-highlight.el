@@ -30,6 +30,7 @@
 ;;; Code:
 ;;
 
+(require 'invisible)
 (require 'wl-vars)
 
 (provide 'wl-highlight)
