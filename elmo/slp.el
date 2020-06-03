@@ -92,7 +92,7 @@ TYPE is a symbol (one of `srvs', `attrs', `srvtypes', `as-is', `ignore')."
 (defun slp-parse-attrs ()
   (let (attrs)
     (push (slp-parse-attr) attrs)
-    (while (eq (char-after (point)) ?,)
+    (while (eq (following-char) ?,)
       (slp-forward)
       (push (slp-parse-attr) attrs))
     (list 'attrs (nreverse attrs))))

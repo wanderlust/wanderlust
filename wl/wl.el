@@ -486,7 +486,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	(let (variable switch name)
 	  (goto-char cur-point)
 	  (when (and (not (bobp))
-		     (not (eq (preceding-char) (string-to-char " "))))
+		     (/= (preceding-char) (string-to-char " ")))
 	    (if (re-search-backward " [^ ]+" nil t)
 		(forward-char)
 	      (re-search-backward "^[^ ]+" nil t)))

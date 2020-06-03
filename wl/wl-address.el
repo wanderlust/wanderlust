@@ -713,7 +713,7 @@ If already registerd, change it."
 	  (progn
 	    (goto-char (point-max))
 	    (if (and (> (buffer-size) 0)
-		     (not (eq (char-after (1- (point-max))) ?\n)))
+		     (/= (char-before (point-max)) ?\n))
 		(insert "\n")))
 	;; override
 	(while (re-search-forward (concat "^[ \t]*" address) nil t)

@@ -1477,7 +1477,7 @@ Return nil if no complete line has arrived."
   (if (eq (following-char) ?\()
       (let (address addresses)
         (elmo-imap4-forward)
-        (while (and (not (eq (following-char) ?\)))
+        (while (and (/= (following-char) ?\))
                     ;; next line for MS Exchange bug
                     (progn (and (eq (following-char) (string-to-char " "))
                                 (elmo-imap4-forward)) t)
@@ -1648,7 +1648,7 @@ Return nil if no complete line has arrived."
 (defsubst elmo-imap4-parse-header-list ()
   (when (eq (following-char) ?\()
     (let (strlist)
-      (while (not (eq (following-char) ?\)))
+      (while (/= (following-char) ?\))
         (elmo-imap4-forward)
         (push (elmo-imap4-parse-astring) strlist))
       (elmo-imap4-forward)
@@ -1670,7 +1670,7 @@ Return nil if no complete line has arrived."
 (defun elmo-imap4-parse-fetch (_response)
   (when (eq (following-char) ?\()
     (let (element list)
-      (while (not (eq (following-char) ?\)))
+      (while (/= (following-char) ?\))
         (elmo-imap4-forward)
         (let ((token (elmo-imap4-read-token)))
           (setq element
