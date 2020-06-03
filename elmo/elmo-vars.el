@@ -341,12 +341,11 @@ If function, return value of function.")
   "*A string used when no from field exists.")
 
 ;; database dynamic linking
-(defvar elmo-database-dl-module
-  (expand-file-name "database.so" exec-directory))
+(make-obsolete-variable 'elmo-database-dl-module "Obsoleted" "04 Jun 2020")
 
-(defvar elmo-database-dl-handle nil)
+(make-obsolete-variable 'elmo-database-dl-handle "Obsoleted" "04 Jun 2020")
 
-(defvar elmo-use-database nil)
+(make-obsolete-variable 'elmo-use-database "Obsoleted" "04 Jun 2020")
 
 (defvar elmo-date-match t
   "Date match is available or not.")

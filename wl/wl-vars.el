@@ -3021,10 +3021,7 @@ nil means real-time highlighting is disabled."
   :type 'function
   :group 'wl-draft)
 
-(defcustom wl-use-dnd nil
-  "If Non-nil, support dragdrop feature in XEmacs."
-  :type 'boolean
-  :group 'wl-pref)
+(make-obsolete-variable 'wl-use-dnd "Obsoleted" "03 Jun 2020")
 
 (defcustom wl-reset-plugged-alist t
   "*If non-nil, reset `elmo-plugged-alist' when startup."
