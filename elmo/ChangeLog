@@ -1,3 +1,9 @@
+2020-06-03  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-progress-notify): Define as inline function.
+
+	* elsp-bogofilter.el (elmo-spam-bogofilter-arguments): Likewise.
+
 2020-06-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-date.el (elmo-time-make-imap-date-string): Argument is now

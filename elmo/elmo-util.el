@@ -1048,7 +1048,7 @@ If optional DELETE-FUNCTION is speficied, it is used as delete procedure."
   (when (elmo-progress-counter-label counter)
     (elmo-progress-call-callback counter 'done)))
 
-(defun elmo-progress-notify (label &rest params)
+(defsubst elmo-progress-notify (label &rest params)
   (when (eq label (elmo-progress-counter-label elmo-progress-counter))
     (let ((counter elmo-progress-counter))
       (if (or (elmo-progress-counter-total counter)

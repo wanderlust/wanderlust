@@ -99,7 +99,7 @@ Must be return a string or list of string."
 	 (append elmo-spam-bogofilter-args
 		 (delq nil args))))
 
-(defun elmo-spam-bogofilter-arguments (type register spam restore)
+(defsubst elmo-spam-bogofilter-arguments (type register spam restore)
   (elmo-flatten
    (mapcar (lambda (sexp)
 	     (eval

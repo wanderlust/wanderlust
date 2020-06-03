@@ -280,7 +280,7 @@
 (defmacro wl-folder-get-entity-info (entity &optional hashtb)
   `(elmo-get-hash-val ,entity (or ,hashtb wl-folder-entity-hashtb)))
 
-(defun wl-folder-set-entity-info (entity value &optional hashtb)
+(defsubst wl-folder-set-entity-info (entity value &optional hashtb)
   (let* ((hashtb (or hashtb wl-folder-entity-hashtb))
 	 (info (wl-folder-get-entity-info entity hashtb)))
     (elmo-set-hash-val (substring-no-properties entity)
