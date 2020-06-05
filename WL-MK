@@ -43,55 +43,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(require 'cl)
 (defvar INFODIR nil)
-
-(condition-case () (require 'custom) (error nil))
-;; for wl-vars.el
-(unless (and (fboundp 'defgroup)
-	     (fboundp 'defcustom)
-	     ;; ignore broken module
-	     (not (featurep 'tinycustom)))
-  (when (and (boundp 'emacs-major-version)
-	     (= emacs-major-version 19)
-	     (>= emacs-minor-version 29))
-    (message "%s" "
-  Warning: You don't seem to have \"new custom\" package installed.
-           See README file of APEL package for more information.
-"))
-  (require 'backquote)
-  (defmacro defgroup (&rest args))
-  (defmacro defcustom (symbol value &optional doc &rest args)
-    (let ((doc (concat "*" (or doc ""))))
-      `(defvar ,symbol ,value ,doc))))
 
 (load "bytecomp" nil t)
 
-(unless (fboundp 'byte-compile-file-form-custom-declare-variable)
-  ;; Bind defcustom'ed variables.
-  (put 'custom-declare-variable 'byte-hunk-handler
-       'byte-compile-file-form-custom-declare-variable)
-  (defun byte-compile-file-form-custom-declare-variable (form)
-    (if (memq 'free-vars byte-compile-warnings)
-	(setq byte-compile-bound-variables
-	      (cons (nth 1 (nth 1 form)) byte-compile-bound-variables)))
-    form))
-
-(condition-case nil
-    (char-after)
-  (wrong-number-of-arguments
-   ;; Optimize byte code for `char-after'.
-   (put 'char-after 'byte-optimizer 'byte-optimize-char-after)
-   (defun byte-optimize-char-after (form)
-     (if (null (cdr form))
-	 '(char-after (point))
-       form))))
-
 (setq byte-compile-warnings '(free-vars unresolved callargs redefine))
-
-
-;; FIXME: it is currently needed to byte-compile with Emacs 21.
-(setq recursive-load-depth-limit nil)
 
 (condition-case () (require 'easymenu) (error nil))
 
