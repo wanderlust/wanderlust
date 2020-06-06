@@ -975,18 +975,9 @@ If optional DELETE-FUNCTION is speficied, it is used as delete procedure."
       (setq first nil))
     (princ err-mes stream)))
 
-(if (fboundp 'define-error)
-    ;; Emacs 24.4 and later
-    (defalias 'elmo-define-error 'define-error)
-  (defun elmo-define-error (error doc &optional parents)
-    (or parents
-	(setq parents 'error))
-    (let ((conds (get parents 'error-conditions)))
-      (or conds
-	  (error "Not an error symbol: %s" error))
-      (setplist error
-		(list 'error-message doc
-		      'error-conditions (cons error conds))))))
+(defalias 'elmo-define-error 'define-error)
+
+(make-obsolete 'elmo-define-error 'define-error "06 Jun 2020")
 
 (defvar elmo-progress-counter nil)
 

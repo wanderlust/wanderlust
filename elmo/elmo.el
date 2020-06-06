@@ -77,10 +77,10 @@ Otherwise, entire fetching of the message is aborted without confirmation."
 
 (defvar elmo-newsgroups-hashtb nil)
 
-(elmo-define-error 'elmo-error "Error" 'error)
-(elmo-define-error 'elmo-open-error "Cannot open" 'elmo-error)
-(elmo-define-error 'elmo-authenticate-error "Login failed" 'elmo-open-error)
-(elmo-define-error 'elmo-imap4-bye-error "IMAP4 session was terminated" 'elmo-open-error)
+(define-error 'elmo-error "Error" 'error)
+(define-error 'elmo-open-error "Cannot open" 'elmo-error)
+(define-error 'elmo-authenticate-error "Login failed" 'elmo-open-error)
+(define-error 'elmo-imap4-bye-error "IMAP4 session was terminated" 'elmo-open-error)
 
 ;; Event declarations
 (elmo-define-signal flag-changing (number old-flags new-flags)
