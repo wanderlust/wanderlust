@@ -476,7 +476,7 @@ Don't cache if nil.")
 	   (unless (eq (elmo-network-stream-type-symbol stream-type)
 		       elmo-nntp-default-stream-type)
 	     (elmo-network-stream-type-spec-string stream-type)))
-	  prefix (char-to-string (car (rassq 'nntp elmo-folder-type-alist))))
+	  prefix (list (car (rassq 'nntp elmo-folder-type-alist))))
     (when (string= group "") (setq group nil))
     (with-temp-buffer
       (set-buffer-multibyte nil)

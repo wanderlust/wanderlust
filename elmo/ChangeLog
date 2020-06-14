@@ -1,3 +1,14 @@
+2020-06-14  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Replace char-to-string by list for concat function's arguments.
+	That is slightly faster on my environment.
+
+	* elmo-maildir.el (elmo-maildir-set-mark): Likewise.
+
+	* elmo-nntp.el (elmo-nntp-folder-list-subfolders): Likewise.
+
+	* elmo-util.el (elmo-expand-newtext): Likewise.
+
 2020-06-06  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Assume Emacs 24.5 or later.

@@ -308,7 +308,7 @@ LOCATION."
     (rename-file filename
 		 (concat filename
 			 (elmo-maildir-adjust-separator ":2,")
-			 (char-to-string mark))))
+			 (list mark))))
   t)
 
 (defun elmo-maildir-delete-mark (filename mark)

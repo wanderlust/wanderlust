@@ -452,8 +452,7 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
 	(= len 0))
       ""
     (concat (wl-number-base36 (/ num 36) (1- len))
-	    (char-to-string (aref "zyxwvutsrqponmlkjihgfedcba9876543210"
-				  (% num 36))))))
+	    (list (aref "zyxwvutsrqponmlkjihgfedcba9876543210" (% num 36))))))
 
 (defvar wl-unique-id-char nil)
 

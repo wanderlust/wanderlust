@@ -1275,7 +1275,7 @@ The value is actually the first element of ALIST whose car equals KEY, which mus
 		     (and (>= c ?1)
 			  (<= c ?9))))
 	    ;; \ followed by some character we don't expand.
-	    (push (char-to-string c) expanded)
+	    (push (list c) expanded)
 	  ;; \& or \N
 	  (if (= c ?\&)
 	      (setq N 0)

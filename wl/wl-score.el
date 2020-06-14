@@ -1007,7 +1007,7 @@ Set `wl-score-cache' nil."
 		     (if increase
 			 (if (> increase 0) "Increase" "Lower")
 		       "Set")
-		     (mapconcat (lambda (s) (char-to-string (car s)))
+		     (mapconcat (lambda (s) (list (car s)))
 				wl-score-edit-header-char ""))
 	    (setq hchar (read-char))
 	    (when (or (= hchar ??) (= hchar ?\C-h))
@@ -1047,7 +1047,7 @@ Set `wl-score-cache' nil."
 	      (while (not tchar)
 		(message "Set header '%s' with match type (%s?): "
 			 header
-			 (mapconcat (lambda (s) (char-to-string (car s)))
+			 (mapconcat (lambda (s) (list (car s)))
 				    valid-types ""))
 		(setq tchar (read-char))
 		(when (or (= tchar ??) (= tchar ?\C-h))
@@ -1062,7 +1062,7 @@ Set `wl-score-cache' nil."
 	  (unless perm
 	    (while (not pchar)
 	      (message "Set permanence (%s?): "
-		       (mapconcat (lambda (s) (char-to-string (car s)))
+		       (mapconcat (lambda (s) (list (car s)))
 				  wl-score-edit-perm-char ""))
 	      (setq pchar (read-char))
 	      (when (or (= pchar ??) (= pchar ?\C-h))
@@ -1393,7 +1393,7 @@ Entering Score mode calls the value of `wl-score-mode-hook'."
 	(progn
 	  (while (not hchar)
 	    (message "Insert header (%s?): "
-		     (mapconcat (lambda (s) (char-to-string (car s)))
+		     (mapconcat (lambda (s) (list (car s)))
 				wl-score-edit-header-char ""))
 	    (setq hchar (read-char))
 	    (when (or (= hchar ??) (= hchar ?\C-h))
