@@ -39,17 +39,7 @@
 (defalias 'elmo-match-buffer 'match-string-no-properties)
 (make-obsolete 'elmo-match-buffer 'match-string-no-properties "24 May 2020")
 
-
-(eval-and-compile
-  (defun elmo-replace-in-string (str regexp newtext &optional literal)
-    "Replace all matches in STR for REGEXP with NEWTEXT string.
-And returns the new string.
-Optional LITERAL non-nil means do a literal replacement.
-Otherwise treat \\ in NEWTEXT string as special:
-  \\& means substitute original matched text,
-  \\N means substitute match for \(...\) number N,
-  \\\\ means insert one \\."
-    (replace-regexp-in-string regexp newtext str t literal)))
+(make-obsolete 'elmo-replace-in-string 'replace-regexp-in-string "17 Jun 2020")
 
 (defvar elmo-date-descriptions
   '((yesterday . [0 0 1])
@@ -87,7 +77,7 @@ Otherwise treat \\ in NEWTEXT string as special:
 	  (error "%s is not supported yet" suffix)))))
    ((string-match "[0-9]+-[A-Za-z]+-[0-9]+" description)
     (timezone-fix-time
-     (concat (elmo-replace-in-string description "-" " ") " 0:0")
+     (concat (replace-regexp-in-string "-" " " description t t) " 0:0")
      (current-time-zone) nil))
    ((string-match "\\([0-9]+\\)-\\([0-9]+\\)-\\([0-9]+\\)" description)
     (vector (string-to-number (match-string 1 description))

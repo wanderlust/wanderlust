@@ -87,7 +87,7 @@ If nil,  the old 'user' entry remains.")
   "Extracts username from ADDR"
   (if (string-match "@.*:" addr) ;; xxx what's this?
       (setq addr (substring addr (match-end 0) nil))
-    (setq addr (elmo-replace-in-string addr " " "_"))
+    (setq addr (replace-regexp-in-string " " "_" addr t t))
     (setq addr (substring addr 0 (string-match "%" addr)))
     (setq addr (substring addr 0 (string-match "@" addr)))
     ;; just for refile:  "To: recipients:;" -> recipients
@@ -339,7 +339,7 @@ If addresses is a string, expands it recursively."
   (if (or (string-equal "" var) (string-equal "*" var))
       nil
     (save-match-data
-      (elmo-replace-in-string var (char-to-string 0) " "))))
+      (replace-regexp-in-string (char-to-string 0) " " var t t))))
 
 (defun wl-addrbook-make-alist ()
   (let (alias colon addrs nick name alist)
@@ -413,7 +413,7 @@ it will add an alias."
 	(if (string-match "\\(.*\\)<.*>" address)
 	    (progn
 	      (setq name (match-string 1 address))
-	      (setq name (elmo-replace-in-string name "[ \t]$" ""))))
+	      (setq name (replace-regexp-in-string "[ \t]$" "" name t t))))
 	(wl-addrbook-prepare-template personalinfo shortname addrs nil name)))))
 
 (defun wl-addrbook-prepare-template (personalinfop shortname addrs &optional nickname name)

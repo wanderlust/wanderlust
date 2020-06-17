@@ -1,3 +1,10 @@
+2020-06-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Obsolete elmo-replace-in-string.  Use replace-regexp-in-string.
+
+	* wl-addrbook.el (wl-address-extract-user, wl-addrbook-strsafe):
+	Likewise.
+
 2020-06-02  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Use lexical binding.

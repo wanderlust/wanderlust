@@ -1144,9 +1144,9 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 		(save-excursion
 		  (while (re-search-forward "^\\(211 [0-9]+ [0-9]+ [0-9]+ [^ \n]+\\)\\(.*\\)$" nil t)
 		    (replace-match (concat (match-string 1)
-					   (elmo-replace-in-string
-					    postfix
-					    "\\\\" "\\\\\\\\\\\\\\\\")))))))
+					   (replace-regexp-in-string
+					    "\\\\" "\\\\\\\\"
+					    postfix t t)))))))
 	  (let (len min max group)
 	    (while (not (eobp))
 	      (condition-case ()

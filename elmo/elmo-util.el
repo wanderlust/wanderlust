@@ -475,12 +475,13 @@ Return value is a cons cell of (STRUCTURE . REST)"
 
 (defun elmo-concat-path (path filename)
   (if (not (string= path ""))
-      (elmo-replace-in-string
+      (replace-regexp-in-string
+       (concat (regexp-quote elmo-path-sep)(regexp-quote elmo-path-sep))
+       elmo-path-sep
        (if (string= elmo-path-sep (substring path (- (length path) 1)))
 	   (concat path filename)
 	 (concat path elmo-path-sep filename))
-       (concat (regexp-quote elmo-path-sep)(regexp-quote elmo-path-sep))
-       elmo-path-sep)
+       t t)
     filename))
 
 (eval-and-compile
@@ -874,7 +875,7 @@ the directory becomes empty after deletion."
 
 (defsubst elmo-replace-string-as-filename (msgid)
   "Replace string as filename."
-  (setq msgid (elmo-replace-in-string msgid " " "  "))
+  (setq msgid (replace-regexp-in-string " " "  " msgid t t))
   (if (null elmo-filename-replace-chars)
       (setq elmo-filename-replace-chars
 	    (regexp-quote (mapconcat

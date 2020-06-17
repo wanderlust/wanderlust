@@ -120,8 +120,8 @@
 	 attrs
 	 (elmo-msgdb-make-message-entity
 	  (elmo-msgdb-message-entity-handler msgdb)
-	  :message-id (concat "<" (elmo-replace-in-string
-				   file "/" ":")
+	  :message-id (concat "<" (replace-regexp-in-string
+				   "/" ":" file t t)
 			      "@" (system-name))
 	  :number number
 	  :size (nth 7 attrs)
@@ -214,7 +214,7 @@
 		  (elmo-file-make-date-string (file-attributes file))
 		  "\n")
 	  (insert "Message-ID: "
-		  (concat "<" (elmo-replace-in-string file "/" ":")
+		  (concat "<" (replace-regexp-in-string "/" ":" file t t)
 			  "@" (system-name) ">\n"))
 	  (insert "Content-Type: "
 		  guess

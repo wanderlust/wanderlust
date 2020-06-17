@@ -1,3 +1,25 @@
+2020-06-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Obsolete elmo-replace-in-string.  Use replace-regexp-in-string.
+
+	* elmo-date.el (elmo-replace-in-string, elmo-date-get-datevec):
+	Likewise.
+
+	* elmo-file.el (elmo-map-message-fetch)
+	(elmo-file-msgdb-create-entity): Likewise.
+
+	* elmo-localnews.el (elmo-localdir-folder-name)
+	(elmo-folder-initialize): Likewise.
+
+	* elmo-maildir.el (elmo-maildir-adjust-separator): Likewise.
+
+	* elmo-nntp.el (elmo-nntp-get-folders-info): Likewise.
+
+	* elmo-util.el (elmo-concat-path): Likewise.
+
+	* modb-entity.el (elmo-msgdb-create-message-entity-from-header):
+	Likewise.
+
 2020-06-14  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Replace char-to-string by list for concat function's arguments.

@@ -1,3 +1,11 @@
+2020-06-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-qs.el (wl-quicksearch-escape-query-string): Likewise.
+
+	Obsolete elmo-replace-in-string.  Use replace-regexp-in-string.
+
+	* wl-summary.el (wl-summary-default-subject-filter): Likewise.
+
 2020-06-14  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Replace char-to-string by list for concat function's arguments.

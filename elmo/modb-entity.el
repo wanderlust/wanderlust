@@ -458,14 +458,16 @@ If each field is t, function is set as default converter."
 	   (setq default-mime-charset charset))
       (setq references
 	    (elmo-msgdb-get-references-from-header)
-	    from (elmo-replace-in-string
+	    from (replace-regexp-in-string
+		  "\t" " "
 		  (elmo-mime-string (or (std11-fetch-field "from")
 					elmo-no-from))
-		  "\t" " ")
-	    subject (elmo-replace-in-string
+		  t t)
+	    subject (replace-regexp-in-string
+		     "\t" " "
 		     (elmo-mime-string (or (std11-fetch-field "subject")
 					   elmo-no-subject))
-		     "\t" " ")
+		     t t)
 	    date (or (elmo-decoded-fetch-field "date")
 		     (when buffer-file-name
 		       (timezone-make-date-arpa-standard
@@ -821,13 +823,15 @@ If each field is t, function is set as default converter."
 	     :message-id (modb-standard-get-message-id-for-entity values)
 	     :references (modb-standard-get-references-for-entity values)
 	     :from
-	     (elmo-replace-in-string (or (funcall decoder "from" values)
-					 elmo-no-from)
-				     "\t" " ")
+	     (replace-regexp-in-string "\t" " "
+				       (or (funcall decoder "from" values)
+					   elmo-no-from)
+				       t t)
 	     :subject
-	     (elmo-replace-in-string (or (funcall decoder "subject" values)
-					 elmo-no-subject)
-				     "\t" " ")
+	     (replace-regexp-in-string "\t" " "
+				       (or (funcall decoder "subject" values)
+					   elmo-no-subject)
+				       t t)
 	     :date
 	     (or (funcall decoder "date" values)
 		 (when buffer-file-name
