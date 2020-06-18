@@ -84,9 +84,7 @@ Folder is the same BASE-FOLDER but with a new search pattern."
 
 (defun wl-quicksearch-escape-query-string (str)
   "Replace single quotes (') in STR with double quotes (\"), then escape double-quotes."
-  (let* ((str1 (replace-regexp-in-string "'" "\"" str t t))
-         (str2 (replace-regexp-in-string "\"" "\\\"" str1 t t)))
-    str2))
+  (replace-regexp-in-string "\"\\|'" "\\\"" str t t))
 
 (luna-define-method wl-quicksearch-goto-search-folder ((base-folder elmo-folder))
   "Prompt for a search condition and jump to filter folder that searches BASE-FOLDER."

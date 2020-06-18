@@ -44,16 +44,15 @@
 (luna-define-method elmo-folder-initialize :before ((folder
 						     elmo-localnews-folder)
 						    name)
-  (elmo-localnews-folder-set-group-internal folder
-					    (replace-regexp-in-string
-					     "/" "." name t t)))
+  (elmo-localnews-folder-set-group-internal
+   folder (elmo-replace-char-in-string ?/ ?. name t)))
 
 (luna-define-method elmo-localdir-folder-path ((_folder elmo-localnews-folder))
   elmo-localnews-folder-path)
 
 (luna-define-method elmo-localdir-folder-name ((_folder elmo-localnews-folder)
 					       name)
-  (replace-regexp-in-string "\\." "/" name t t))
+  (elmo-replace-char-in-string ?. ?/ name t))
 
 (luna-define-method elmo-folder-expand-msgdb-path ((folder
 						    elmo-localnews-folder))

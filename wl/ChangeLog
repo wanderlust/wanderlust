@@ -1,3 +1,8 @@
+2020-06-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-qs.el (wl-quicksearch-escape-query-string): Unite two
+	calls for replace-regexp-in-string.
+
 2020-06-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-qs.el (wl-quicksearch-escape-query-string): Likewise.

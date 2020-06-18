@@ -29,13 +29,13 @@
 ;;; Code:
 ;;
 
+(require 'timezone)
 (require 'mcharset)
 (require 'pces)
 (require 'luna)
 (require 'std11)
 (require 'eword-decode)
 (require 'elmo-vars)
-(require 'elmo-date)
 (require 'cl-lib)
 (eval-when-compile
   (require 'static))
@@ -361,6 +361,15 @@ Return value is a cons cell of (STRUCTURE . REST)"
 	weight-r)))))
 
 ;;;
+(defsubst elmo-replace-char-in-string (char newchar string &optional no-modify)
+  "Replace CHAR in STRING with NEWCHAR and return modified STRING.
+When NO-NODIFY is non-nil, dont' modify STRING and return new string."
+  (when no-modify (setq string (copy-sequence string)))
+  (dotimes (c (length string))
+    (when (eq (aref string c) char)
+      (aset string c newchar)))
+  string)
+
 (defsubst elmo-buffer-replace (regexp &optional newtext)
   (goto-char (point-min))
   (while (re-search-forward regexp nil t)

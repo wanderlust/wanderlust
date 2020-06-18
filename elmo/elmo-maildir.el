@@ -59,8 +59,8 @@ but some file systems don't support colons in filenames."
 (defmacro elmo-maildir-adjust-separator (string)
   `(if (= elmo-maildir-separator ?:)
        ,string
-     (replace-regexp-in-string
-      ":" (char-to-string elmo-maildir-separator) ,string t t)))
+     (elmo-replace-char-in-string
+      ?: elmo-maildir-separator ,string)))
 
 ;;; ELMO Maildir folder
 (eval-and-compile

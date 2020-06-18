@@ -115,18 +115,18 @@
 (defun elmo-file-msgdb-create-entity (msgdb folder number)
   "Create msgdb entity for the message in the FOLDER with NUMBER."
   (let* ((file (elmo-message-file-name folder number))
+	 (subject (file-name-nondirectory file))
 	 (attrs (file-attributes file)))
     (and (not (file-directory-p file))
 	 attrs
 	 (elmo-msgdb-make-message-entity
 	  (elmo-msgdb-message-entity-handler msgdb)
-	  :message-id (concat "<" (replace-regexp-in-string
-				   "/" ":" file t t)
+	  :message-id (concat "<" (elmo-replace-char-in-string ?/ ?: file)
 			      "@" (system-name))
 	  :number number
 	  :size (nth 7 attrs)
 	  :date (elmo-file-make-date-string attrs)
-	  :subject (file-name-nondirectory file)
+	  :subject subject
 	  :from (concat (user-full-name (nth 2 attrs))
 			" <" (user-login-name (nth 2 attrs)) "@"
 			(system-name) ">")))))
@@ -206,17 +206,16 @@
 	      (setq charset (detect-mime-charset-region (point-min)
 							(point-max)))))
 	  (setq uid (nth 2 (file-attributes file)))
-	  (insert "From: " (concat (user-full-name uid)
-				   " <"(user-login-name uid) "@"
-				   (system-name) ">") "\n")
-	  (insert "Subject: " (file-name-nondirectory file) "\n")
-	  (insert "Date: "
+	  (insert "From: " (user-full-name uid) "<"
+		  (user-login-name uid) "@" (system-name) ">" "\n"
+		  "Subject: " (file-name-nondirectory file) "\n"
+		  "Date: "
 		  (elmo-file-make-date-string (file-attributes file))
-		  "\n")
-	  (insert "Message-ID: "
-		  (concat "<" (replace-regexp-in-string "/" ":" file t t)
-			  "@" (system-name) ">\n"))
-	  (insert "Content-Type: "
+		  "\n"
+		  "Message-ID: "
+		  "<" (elmo-replace-char-in-string ?/ ?: file)
+		  "@" (system-name) ">\n"
+		  "Content-Type: "
 		  guess
 		  (or (and is-text tweak-charset
 			   (concat

@@ -458,16 +458,12 @@ If each field is t, function is set as default converter."
 	   (setq default-mime-charset charset))
       (setq references
 	    (elmo-msgdb-get-references-from-header)
-	    from (replace-regexp-in-string
-		  "\t" " "
-		  (elmo-mime-string (or (std11-fetch-field "from")
-					elmo-no-from))
-		  t t)
-	    subject (replace-regexp-in-string
-		     "\t" " "
-		     (elmo-mime-string (or (std11-fetch-field "subject")
-					   elmo-no-subject))
-		     t t)
+	    from (elmo-replace-char-in-string
+		  ?\t ?  (elmo-mime-string (or (std11-fetch-field "from")
+					       elmo-no-from)))
+	    subject (elmo-replace-char-in-string
+		     ?\t ?  (elmo-mime-string (or (std11-fetch-field "subject")
+						  elmo-no-subject)))
 	    date (or (elmo-decoded-fetch-field "date")
 		     (when buffer-file-name
 		       (timezone-make-date-arpa-standard
@@ -800,13 +796,13 @@ If each field is t, function is set as default converter."
 (luna-define-method elmo-msgdb-create-message-entity-from-header
   ((handler modb-standard-entity-handler) number args)
   (let ((decoder
-	 #'(lambda (name values)
-	     (let ((body (cdr (assoc name values))))
-	       (when body
-		 (or (ignore-errors
-		       (elmo-with-enable-multibyte
-			 (mime-decode-field-body body name 'summary)))
-		     body)))))
+	 (lambda (name values)
+	   (let ((body (cdr (assoc name values))))
+	     (when body
+	       (or (ignore-errors
+		     (elmo-with-enable-multibyte
+		       (mime-decode-field-body body name 'summary)))
+		   body)))))
 	entity value values field file-attrib extractor)
     (unless (and modb-standard-field-name-cache
 		 (eq elmo-msgdb-extra-fields
@@ -823,15 +819,13 @@ If each field is t, function is set as default converter."
 	     :message-id (modb-standard-get-message-id-for-entity values)
 	     :references (modb-standard-get-references-for-entity values)
 	     :from
-	     (replace-regexp-in-string "\t" " "
-				       (or (funcall decoder "from" values)
-					   elmo-no-from)
-				       t t)
+	     (elmo-replace-char-in-string
+	      ?\t ?  (or (funcall decoder "from" values)
+					elmo-no-from) t)
 	     :subject
-	     (replace-regexp-in-string "\t" " "
-				       (or (funcall decoder "subject" values)
-					   elmo-no-subject)
-				       t t)
+	     (elmo-replace-char-in-string
+	      ?\t ?  (or (funcall decoder "subject" values)
+			 elmo-no-subject) t)
 	     :date
 	     (or (funcall decoder "date" values)
 		 (when buffer-file-name

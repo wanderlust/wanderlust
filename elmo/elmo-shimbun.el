@@ -29,6 +29,7 @@
 ;;; Code:
 ;;
 (require 'elmo)
+(require 'elmo-date)
 (require 'elmo-map)
 (require 'elmo-dop)
 (require 'shimbun)

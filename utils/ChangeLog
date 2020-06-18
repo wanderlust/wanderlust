@@ -1,3 +1,8 @@
+2020-06-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-addrbook.el (wl-address-extract-user, wl-addrbook-strsafe):
+	Use elmo-replace-char-in-string.
+
 2020-06-17  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	Obsolete elmo-replace-in-string.  Use replace-regexp-in-string.

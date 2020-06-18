@@ -375,7 +375,7 @@ If the value is a list, all elements are used as index paths for namazu."
 
 (defun elmo-search-replace-single-quotes (_engine pattern)
   "ENGINE is ignored.  Replace single quotes with double quotes in PATTERN."
-  (replace-regexp-in-string "\'" "\"" pattern nil t))
+  (elmo-replace-char-in-string ?' ?\" pattern t))
 
 ;;; Setup `elmo-search-engine-alist'
 (unless noninteractive

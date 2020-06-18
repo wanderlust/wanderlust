@@ -464,7 +464,8 @@ Return nil on failure.")
   "Returns t if the message in the FOLDER with NUMBER uses cache.")
 
 (luna-define-generic elmo-message-file-name (folder number)
-  "Return the file name of a message specified by FOLDER and NUMBER.")
+  "Return new string fo the file name of a message specified by
+  FOLDER and NUMBER.")
 
 ;;; For archive
 

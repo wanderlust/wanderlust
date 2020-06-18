@@ -33,6 +33,7 @@
 (require 'path-util)
 (require 'timezone)
 (require 'elmo-vars)
+(require 'elmo-util)
 
 (make-obsolete 'elmo-match-string 'match-string "26 Aug 2012")
 
@@ -77,7 +78,7 @@
 	  (error "%s is not supported yet" suffix)))))
    ((string-match "[0-9]+-[A-Za-z]+-[0-9]+" description)
     (timezone-fix-time
-     (concat (replace-regexp-in-string "-" " " description t t) " 0:0")
+     (concat (elmo-replace-char-in-string ?- ?  description t) " 0:0")
      (current-time-zone) nil))
    ((string-match "\\([0-9]+\\)-\\([0-9]+\\)-\\([0-9]+\\)" description)
     (vector (string-to-number (match-string 1 description))
