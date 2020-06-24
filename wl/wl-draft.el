@@ -1085,11 +1085,11 @@ from current buffer."
   (save-excursion
     (let ((case-fold-search t)
 	  (inhibit-read-only t)
+	  (regexp (concat "^" (regexp-quote field) "[\t ]*:"))
 	  addresses address
 	  mailbox-list beg seq has-group-list)
       (goto-char (point-min))
-      (while (re-search-forward (concat "^" (regexp-quote field) "[\t ]*:")
-				nil t)
+      (while (re-search-forward regexp nil t)
 	(setq beg (point))
 	(re-search-forward "^[^ \t]" nil 'move)
 	(beginning-of-line)

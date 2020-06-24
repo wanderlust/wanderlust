@@ -249,16 +249,17 @@ header separator."
       (std11-narrow-to-header boundary)
       (let* ((case-fold-search t)
 	     (s-rest field-names)
-	     field-name field-body)
+	     field-name field-body regexp)
 	(while (setq field-name (car s-rest))
+	  (setq regexp (concat "^" field-name ":[ \t]*"))
 	  (goto-char (point-min))
-	  (while (re-search-forward (concat "^" field-name ":[ \t]*") nil t)
+	  (while (re-search-forward regexp nil t)
 	    (setq field-body
-		  (nconc field-body
-			 (list (buffer-substring-no-properties
-				(match-end 0) (std11-field-end))))))
+		  (cons (buffer-substring-no-properties
+			 (match-end 0) (std11-field-end))
+			field-body)))
 	  (setq s-rest (cdr s-rest)))
-	field-body))))
+	(nreverse field-body)))))
 
 (defsubst elmo-msgdb-remove-field-string (string)
   (if (string-match (concat std11-field-head-regexp "[ \t]*") string)

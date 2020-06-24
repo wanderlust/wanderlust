@@ -110,7 +110,7 @@
     (elmo-object-save
      (expand-file-name elmo-access-folder-list-filename
 		       (elmo-folder-msgdb-path folder))
-     (mapcar (lambda (f) (elmo-folder-name-internal f))
+     (mapcar 'elmo-folder-name-internal
 	     (elmo-multi-folder-children-internal folder)))))
 
 (luna-define-method elmo-folder-check :before ((folder elmo-access-folder))

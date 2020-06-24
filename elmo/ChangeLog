@@ -1,3 +1,18 @@
+2020-06-24  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-access.el (elmo-folder-commit): Remove redundant lambda
+	expression.
+
+	* elmo-msgdb.el (elmo-multiple-fields-body-list): Build regexp out
+	of loop.
+
+	* elmo-util.el (elmo-multiple-field-body): Minor refactorings.
+	(elmo-filename-replace-chars): Renamed to
+	elmo-filename-replace-chars-regexp.
+	(elmo-replace-string-as-filename): User adjusted.
+
+	* pldap.el (ldap/field-body): Build regexp out of loop.
+
 2020-06-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-util.el: Require timezone.el.

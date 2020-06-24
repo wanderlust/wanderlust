@@ -738,10 +738,10 @@ entry according to the value of WITHDN."
     (goto-char (point-min))
     (let ((case-fold-search t)
 	  (field-body nil)
+	  (regexp (concat "^" name "\\(;[a-zA-Z0-9-]+\\)?:[ \t]*"))
 	  body)
       ;; search for the line which have name with options.
-      (while (re-search-forward (concat "^" name
-					"\\(;[a-zA-Z0-9-]+\\)?:[ \t]*") nil t)
+      (while (re-search-forward regexp  nil t)
 	;; Base64
 	(if (string-match "^:[ \t]*" (setq body
 					   (buffer-substring-no-properties

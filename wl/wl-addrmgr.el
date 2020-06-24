@@ -658,10 +658,11 @@ Return nil if no ADDRESS exists."
     (save-restriction
       (let ((case-fold-search t)
 	    (inhibit-read-only t) ;; added by teranisi.
+	    (regexp (concat "^" (regexp-quote field) ":"))
 	    beg)
 	(std11-narrow-to-header mail-header-separator)
 	(goto-char (point-min))
-	(while (re-search-forward (concat "^" (regexp-quote field) ":") nil t)
+	(while (re-search-forward regexp nil t)
 	  ;; delete field
 	  (progn
 	    (setq beg (point-at-bol))

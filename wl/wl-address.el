@@ -685,7 +685,7 @@ Group list contents is not included."
   "Add address entry to `wl-address-file', if not registerd.
 If already registerd, change it."
   (let ((entry (assoc address wl-address-list))
-	the-realname the-petname new-addr)
+	the-realname the-petname new-addr regexp)
     (setq the-realname
 	  (read-from-minibuffer "Real Name: " (or default-realname
 						  (nth 2 entry))))
@@ -716,7 +716,8 @@ If already registerd, change it."
 		     (/= (char-before (point-max)) ?\n))
 		(insert "\n")))
 	;; override
-	(while (re-search-forward (concat "^[ \t]*" address) nil t)
+	(setq regexp (concat "^[ \t]*" address))
+	(while (re-search-forward regexp  nil t)
 	  (delete-region (point-at-bol) (1+ (point-at-eol)))))
       (insert (format "%s\t%s\t%s\n"
 		      (or new-addr address)

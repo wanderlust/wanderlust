@@ -880,17 +880,17 @@ the directory becomes empty after deletion."
 	    rest (substring rest (match-end 0))))
     (concat converted rest)))
 
-(defvar elmo-filename-replace-chars nil)
+(defvar elmo-filename-replace-chars-regexp nil)
 
 (defsubst elmo-replace-string-as-filename (msgid)
   "Replace string as filename."
   (setq msgid (replace-regexp-in-string " " "  " msgid t t))
-  (if (null elmo-filename-replace-chars)
-      (setq elmo-filename-replace-chars
-	    (regexp-quote (mapconcat
-			   'car elmo-filename-replace-string-alist ""))))
-  (while (string-match (concat "[" elmo-filename-replace-chars "]")
-		       msgid)
+  (if (null elmo-filename-replace-chars-regexp)
+      (setq elmo-filename-replace-chars-regexp
+	    (concat "["
+		    (mapconcat 'car elmo-filename-replace-string-alist nil)
+		    "]")))
+  (while (string-match elmo-filename-replace-chars-regexp msgid)
     (setq msgid (concat
 		 (substring msgid 0 (match-beginning 0))
 		 (cdr (assoc
@@ -1181,11 +1181,8 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
 	(setq list (cdr list))))))
 
 (defsubst elmo-string-delete-match (string pos)
-  (concat (substring string
-		     0 (match-beginning pos))
-	  (substring string
-		     (match-end pos)
-		     (length string))))
+  (concat (substring string 0 (match-beginning pos))
+	  (substring string (match-end pos))))
 
 (defun elmo-assoc-ignore-case (key alist)
   "Return non-nil if KEY is `equal' to the car of an element of ALIST.
@@ -2099,13 +2096,14 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
       (std11-narrow-to-header boundary)
       (goto-char (point-min))
       (let ((case-fold-search t)
-	    (field-body nil))
-	(while (re-search-forward (concat "^" name ":[ \t]*") nil t)
+	    (regexp (concat "^" name ":[ \t]*"))
+	    field-body)
+	(while (re-search-forward regexp nil t)
 	  (setq field-body
-		(nconc field-body
-		       (list (buffer-substring-no-properties
-			      (match-end 0) (std11-field-end))))))
-	field-body))))
+		(cons (buffer-substring-no-properties
+		       (match-end 0) (std11-field-end))
+		      field-body)))
+	(nreverse field-body)))))
 
 (defun elmo-parse-addresses (string)
   (if (null string)
