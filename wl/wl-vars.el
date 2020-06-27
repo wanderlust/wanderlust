@@ -888,9 +888,11 @@ the first argument.")
 (defvar wl-auto-check-folder-hook nil
   "A hook called when auto check folders.")
 (defvar wl-folder-check-entity-pre-hook nil
-  "A hook called before check entity.")
+  "A hook called before check entity.
+Functions are called with one argument ENTITY.")
 (defvar wl-folder-check-entity-hook nil
-  "A hook called when check entity.")
+  "A hook called when check entity.
+Functions are called with one argument ENTITY.")
 (defvar wl-draft-config-exec-hook nil
   "A hook called when execute header-config on draft.")
 (defvar wl-summary-expire-pre-hook nil

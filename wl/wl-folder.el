@@ -808,7 +808,7 @@ Optional argument ARG is repeart count."
   "Check unsync message number."
   (let ((start-pos (point))
 	ret-val)
-    (run-hooks 'wl-folder-check-entity-pre-hook)
+    (run-hook-with-args 'wl-folder-check-entity-pre-hook entity)
     (if (and (consp entity)		;; group entity
 	     wl-folder-check-async)	;; very fast
 	(setq ret-val (wl-folder-check-entity-async entity auto))
