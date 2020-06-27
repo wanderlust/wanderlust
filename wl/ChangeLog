@@ -1,3 +1,8 @@
+2020-06-27  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* wl-folder.el (wl-folder-check-entity): Run
+	wl-folder-check-entity-hook with argument ENTITY.
+
 2020-06-24  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-address.el (wl-address-add-or-change): Build regexp out of

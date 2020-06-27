@@ -169,9 +169,7 @@
 
 ;; グループをcheckした後に未読があるフォルダのグループを自動的に開く
 ;(add-hook 'wl-folder-check-entity-hook
-;	  '(lambda ()
-;	     (wl-folder-open-unread-folder entity)
-;	     ))
+;	  'wl-folder-open-unread-folder)
 
 ;; `wl-summary-exit' によりフィルタされる前のフォルダに飛ぶ。フィルタフォルダを
 ;; `wl-summary-virtual' で生成される一時的なフォルダとして使う場合に有用。

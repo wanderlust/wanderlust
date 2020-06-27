@@ -170,9 +170,7 @@
 
 ;; open unread group folder after checking.
 ;(add-hook 'wl-folder-check-entity-hook
-;	  '(lambda ()
-;	     (wl-folder-open-unread-folder entity)
-;	     ))
+;	  'wl-folder-open-unread-folder)
 
 ;; Jump to unfiltered folder by `wl-summary-exit'. It is useful for people who
 ;; use filtered folder as a temporary folder created by `wl-summary-virtual'.

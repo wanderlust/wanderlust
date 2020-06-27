@@ -842,7 +842,7 @@ Optional argument ARG is repeart count."
     (if ret-val
 	(message "Checking \"%s\" is done"
 		 (if (consp entity) (car entity) entity)))
-    (run-hooks 'wl-folder-check-entity-hook)
+    (run-hook-with-args 'wl-folder-check-entity-hook entity)
     ret-val))
 
 (defun wl-folder-check-one-entity (entity &optional biff)
