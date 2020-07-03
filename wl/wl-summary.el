@@ -4355,7 +4355,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 	      (if next-entity
 		  (setq finfo (wl-folder-get-entity-info next-entity))))
 	    (wl-ask-folder
-	     '(lambda () (wl-summary-next-folder-or-exit next-entity))
+	     (lambda () (wl-summary-next-folder-or-exit next-entity))
 	     (format
 	      "No more messages. Type SPC to go to %s."
 	      (wl-summary-entity-info-msg next-entity finfo)))))))))
@@ -4390,7 +4390,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 		     (eq wl-auto-select-next 'skip-no-unread))
 		(wl-summary-next-folder-or-exit next-entity t)
 	      (wl-ask-folder
-	       '(lambda () (wl-summary-next-folder-or-exit next-entity t))
+		 (lambda () (wl-summary-next-folder-or-exit next-entity t))
 	       (format
 		"No more unread messages. Type SPC to go to %s."
 		(wl-summary-entity-info-msg next-entity finfo)))))))))
@@ -4445,7 +4445,7 @@ Use function list is `wl-summary-write-current-folder-functions'."
 		     (eq wl-auto-select-next 'skip-no-unread))
 		(wl-summary-next-folder-or-exit next-entity)
 	      (wl-ask-folder
-	       '(lambda () (wl-summary-next-folder-or-exit next-entity))
+		 (lambda () (wl-summary-next-folder-or-exit next-entity))
 	       (format
 		"No more unread messages. Type SPC to go to %s."
 		(wl-summary-entity-info-msg next-entity finfo)))))))))
