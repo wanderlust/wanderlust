@@ -867,12 +867,12 @@ EXPUNGE for deleted messages."
                              (if (eq tag 'all)
                                  (sort
                                   (elmo-number-set-to-number-list
-                                   (mapcar #'(lambda (x)
-                                               (let ((y (split-string x ":")))
-                                                 (if (null (cdr y))
-                                                     (string-to-number (car y))
-                                                   (cons (string-to-number (car y))
-                                                         (string-to-number (cadr y))))))
+                                   (mapcar (lambda (x)
+                                             (let ((y (split-string x ":")))
+                                               (if (null (cdr y))
+                                                   (string-to-number (car y))
+                                                 (cons (string-to-number (car y))
+                                                       (string-to-number (cadr y))))))
                                            (split-string (cadr answer) ","))) '<)
                                (string-to-number (cadr answer))))))
               (t nil))
@@ -983,34 +983,30 @@ SET-STRING is the message set specifier described in RFC2060.
 NUMBER is contained message number in SET-STRING.
 Every SET-STRING does not contain number of messages longer than CHOP-LENGTH.
 If CHOP-LENGTH is not specified, message set is not chopped."
-  (let (count cont-list set-list)
-    (setq msg-list (sort (copy-sequence msg-list) '<))
+  (setq msg-list (sort (copy-sequence msg-list) '<)
+	chop-length (or chop-length (length msg-list)))
+  (let (result number-list notfirst nchop)
     (while msg-list
-      (setq cont-list nil)
-      (setq count 0)
-      (unless chop-length
-        (setq chop-length (length msg-list)))
-      (while (and (not (null msg-list))
-                  (< count chop-length))
-        (setq cont-list
-              (elmo-number-set-append
-               cont-list (car msg-list)))
-        (cl-incf count)
-        (setq msg-list (cdr msg-list)))
-      (setq set-list
-            (cons
-             (cons
-              count
-              (mapconcat
-               (lambda (x)
-                 (cond ((consp x)
-                        (format "%s:%s" (car x) (cdr x)))
-                       ((integerp x)
-                        (number-to-string x))))
-               cont-list
-               ","))
-             set-list)))
-    (nreverse set-list)))
+      (unless notfirst
+	(when (zerop (setq nchop (% (length msg-list) chop-length)))
+	  (setq nchop chop-length)))
+      (setq number-list (last msg-list nchop)
+	    msg-list (nbutlast msg-list nchop)
+	    result (cons (cons
+			  nchop
+			  (mapconcat
+			   (lambda (x)
+			     (cond ((consp x)
+				    (format "%s:%s" (car x) (cdr x)))
+				   ((integerp x)
+				    (number-to-string x))))
+			   (elmo-number-list-to-number-set number-list)
+			   ","))
+			 result))
+      (unless notfirst
+	(setq notfirst t
+	      nchop chop-length)))
+    result))
 
 ;;
 ;; app-data:

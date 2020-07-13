@@ -369,6 +369,15 @@
    (equal '(1)
 	  (elmo-number-set-to-number-list '(1)))))
 
+(luna-define-method test-elmo-number-list-to-number-set-1 ((case test-elmo-util))
+  "Simple testcase."
+  (lunit-assert
+   (equal '((1 . 9))
+	  (elmo-number-list-to-number-set '(1 2 3 4 5 6 7 8 9))))
+  (lunit-assert
+   (equal '(1)
+	  (elmo-number-list-to-number-set '(1)))))
+
 (luna-define-method test-elmo-delete-cr-1 ((case test-elmo-util))
   (lunit-assert (string= "" (elmo-delete-cr "")))
   (lunit-assert (string= "\n" (elmo-delete-cr "\r\n")))

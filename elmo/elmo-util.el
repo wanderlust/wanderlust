@@ -1560,17 +1560,32 @@ NUMBER-SET is altered."
 
 (defun elmo-number-set-to-number-list (number-set)
   "Return a number list which corresponds to NUMBER-SET."
-  (let ((number-list (list 'dummy))
-	elem)
+  (let (result)
     (while number-set
-      (setq elem (car number-set))
-      (cond
-       ((consp elem)
-	(nconc number-list (elmo-make-number-list (car elem) (cdr elem))))
-       ((integerp elem)
-	(nconc number-list (list elem))))
+      (if (integerp (car number-set))
+	  (setq result (cons (car number-set) result))
+	(let ((from (caar number-set))
+	      (to (cdar number-set)))
+	  (while (<= from to)
+	    (setq result (cons from result)
+		  from (1+ from)))))
       (setq number-set (cdr number-set)))
-    (cdr number-list)))
+    (nreverse result)))
+
+(defun elmo-number-list-to-number-set (number-list)
+  "Return a number set which corresponds to NUMBER-LIST.
+NUMBER-LIST must be sorted in ascending order and uniquified."
+  (let (result start)
+    (while number-list
+      (setq start (car number-list))
+      (while (eq (1+ (car number-list)) (cadr number-list))
+	(setq number-list (cdr number-list)))
+      (setq result (cons (if (eq start (car number-list))
+			     start
+			   (cons start (car number-list)))
+			 result)
+	    number-list (cdr number-list)))
+    (nreverse result)))
 
 (defcustom elmo-list-subdirectories-ignore-regexp "^\\(\\.\\.?\\|[0-9]+\\)$"
   "*Regexp to filter subfolders."

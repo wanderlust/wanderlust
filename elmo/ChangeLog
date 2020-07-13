@@ -1,3 +1,11 @@
+2020-07-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* elmo-util.el (elmo-number-list-to-number-set): New function.
+	(elmo-number-set-to-number-list): Refactored.
+
+	* elmo-imap4.el (elmo-imap4-make-number-set-list): Use
+	elmo-number-list-to-number-set.
+
 2020-06-24  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* elmo-access.el (elmo-folder-commit): Remove redundant lambda

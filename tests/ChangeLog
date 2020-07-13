@@ -1,3 +1,8 @@
+2020-07-13  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* test-elmo-util.el (test-elmo-number-list-to-number-set-1): Add
+	new tests for elmo-number-list-to-number-set.
+
 2017-09-22  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* test-elmo-imap4.el (test-elmo-imap4-parse-greeting-ok)
