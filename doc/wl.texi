@@ -151,7 +151,7 @@ The main features of Wanderlust:
 @item MH-like FCC. (Fcc: %Backup and Fcc: $Backup is allowed).
 @item MIME compliant (by SEMI).
 @item Transmission of news and mail are unified by Message transmitting draft.
-@item Graphical list of folders (XEmacs and Emacs 21).
+@item Graphical list of folders.
 @item View a part of message without retrieving the whole message (IMAP4).
 @item Server-side message look up (IMAP4). Multi-byte characters are allowed.
 @item Virtual Folders.
@@ -167,12 +167,7 @@ The main features of Wanderlust:
 We confirm Wanderlust works on following Emacsen:
 
 @itemize @bullet
-@item Mule 2.3 based on Emacs 19.34
-@item Emacs 20.2 or later
-@item XEmacs 20.4 or later
-@item Meadow 1.00 or later
-@item NTEmacs 20.4 or later
-@item PMMule
+@item Emacs 24.5 or later
 @end itemize
 
 IMAP4 connectivity with following imapd are confirmed to work with
@@ -249,28 +244,16 @@ SEMI:   @uref{http://git.chise.org/elisp/dist/semi/}
 @end example
 
 You have to install APEL, FLIM and SEMI[-EPG] in this order.  Generally,
-@samp{make install} will do the job.  (In XEmacs 21, @samp{make
-install-package}.)
+@samp{make install} will do the job.
 
 Refer to the documents of each package for detailed installation
-procedure @footnote{If you want to use SEMI on Emacs 19.34. @*
-@uref{http://www.jpl.org/ftp/attic/INSTALL-SEMI-ja.html} (In Japanese)
-may help you.}.
+procedure.
 
 
 Recommended combination of APEL, FLIM and SEMI are following:
 
 @itemize @minus
 @item APEL 10.8, FLIM 1.14.9, SEMI-EPG 1.14.7
-@end itemize
-
-You can also use many other FLIM/SEMI variants. Combination of the
-latest versions should work.  For example, the following combination are
-confirmed to work.
-
-@itemize @minus
-@item APEL 10.6, SLIM 1.14.9, SEMI 1.14.5
-@item APEL 10.6, CLIME 1.14.5, EMIKO 1.14.1
 @end itemize
 
 You have to re-install Wanderlust if you upgraded APEL, FLIM or SEMI.
@@ -360,23 +343,10 @@ Then, please execute following commands.
 Destination directory is auto-probed if you leave @code{LISPDIR}
 in @file{Makefile} as is. (That is, leave it as @samp{NONE})
 
-If you are using an Emacs variant which does not merge specified directory
-to @code{load-path} (e.g. Mule 2.3 based on Emacs 19.28),
-then you will see the error message:
-
-@example
-Cannot open load file: mime-setup
-@end example
-
-@noindent
-In this case, either add destination directories of custom, APEL, FLIM
-and SEMI to environmental variable @env{EMACSLOADPATH}, or define
-@code{load-path} in @file{WL-CFG} in extracted directory.
-
-If you want to handle shimbun folders or to use BBDB, add directory
-where emacs-w3m or BBDB is installed to @code{load-path}. Then necessary
-modules will be byte-compiled and installed.
-@xref{Shimbun Folder}, @xref{BBDB}.
+If you want to handle shimbun folders, add directory where emacs-w3m is
+installed to @code{load-path}. Then necessary modules will be
+byte-compiled and installed.
+@xref{Shimbun Folder}.
 
 @subsection @file{WL-CFG}
 
@@ -412,31 +382,6 @@ such as "elmo" then add following to @file{WL-CFG}:
 (setq ELMO_PREFIX "elmo")
 @end lisp
 
-@subsection Install as a XEmacs package
-@cindex XEmacs package
-@cindex XEmacs package install
-@cindex Package, XEmacs
-@cindex Package install, XEmacs
-@c @cindex install-package
-
-It is possible to install Wanderlust as one of packages of XEmacs (21.0
-or later). Configuration for autoload and icon-path in local
-@file{~/.emacs} files are no longer necessary, if you install Wanderlust
-as a package.
-
-Follow the next example to install Wanderlust as an XEmacs package.
-
-@example
-@group
-% vi Makefile
-% make package
-% make install-package
-@end group
-@end example
-
-package directory is auto-probed, if SEMI is installed.
-(you can also specify it with @code{PACKAGEDIR} in @file{Makefile})
-
 @subsection Run in place
 
 If wl and elmo directories are defined in @code{load-path}, then
@@ -461,9 +406,6 @@ Manual is described in Info format. Please do following.
 % make install-info
 @end group
 @end example
-
-If you install Wanderlust as a XEmacs package, Info file is already
-installed too, so there are no need of these commands.
 
 Manual directory is automatically detected. Of course, it can be
 configured by @code{INFODIR} in @file{Makefile}.
@@ -500,7 +442,6 @@ The minimal requirement for settings is as the following.
 @lisp
 @group
 ;; @r{autoload configuration}
-;; @r{(Not required if you have installed Wanderlust as XEmacs package)}
 (autoload 'wl "wl" "Wanderlust" t)
 (autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
@@ -808,29 +749,11 @@ Example:
 @cindex UTF7
 @cindex UTF8
 @cindex Unicode
-@pindex Mule-UCS
-@pindex ucs-conv
 
-You can use international mailbox names in @var{mailbox} part, if you
-are using Emacs with UTF-7 support and
+You can use international mailbox names in @var{mailbox} part, if
 @code{elmo-imap4-use-modified-utf7} is set to non-nil value (default
-value is @code{t} on Emacs 23 or later and @code{nil} on other
-Emacsen).
+value is @code{t}).
 
-Emacs 23 or later doesn't need additional package.
-Other Emacsen needs Mule-UCS package to use UTF-7.
-Mule-UCS works on following Emacsen.
-
-@itemize @bullet
-@item Emacs 20.3 or later
-@item XEmacs 21.2.37 or later
-@end itemize
-
-You can obtain Mule-UCS package (snapshot of 2004) from following URL.
-
-@example
-@uref{http://www.jpl.org/ftp/pub/tmp/}
-@end example
 
 @node NNTP Folder, MH Folder, IMAP Folder, Folders
 @section NNTP Folder
@@ -1130,10 +1053,6 @@ For comfortable migration, usage of @code{wl-summary-archive}
 archive folders created by expiration, you must set non-nil value to
 @code{elmo-archive-treat-file}.
 
-On the OS/2, there is a great difference between Mule2.3(19.28) and Emacs20.2
-in processing speed. For comfortable use, Emacs20 is recommended.
-(If re-search's performance is the problem, 19.3x or later may be okay.)
-
 If many files are included in one archive,
 it takes long time to access the archive folder because
 archiver starting overhead is increased (especially LHA).
@@ -1275,12 +1194,6 @@ Example:
                         as user @samp{hoge}.
 @end group
 @end example
-
-To use apop as an @var{authenticate-type}, @file{md5.el} is needed
-(XEmacs doesn't need @file{md5.el}).  @file{md5.el} is included in
-@file{utils/sasl/lisp/} or Emacs/W3 package
-(@uref{http://www.cs.indiana.edu/elisp/w3/docs.html}) or LCD archive
-(GPL2).
 
 If the last character of the folder name is @samp{!}, Wanderlust
 connects to the POP server via SSL (Secure Socket Layer).  If a folder
@@ -2017,7 +1930,6 @@ You can select and edit folders in this mode.
 @subsubsection Check new, unread number
 
 Folder mode looks like this.
-(In XEmacs, it looks much nicer @t{;-)})
 
 @example
 @group
@@ -3673,7 +3585,7 @@ Pipe current message's content to the external process.
 @kindex # (Summary)
 @findex wl-summary-print-message
 Print out current message's content.
-It uses @code{ps-print} module in Emacs 20.x.
+It uses @code{ps-print} module.
 If you don't use color printer, you might want to set
 @code{wl-ps-print-buffer-function} to @code{ps-print-buffer}.
 
@@ -3712,9 +3624,7 @@ prefetch all messages which have marks included in the
 @item M-j
 @kindex M-j (Summary)
 @findex wl-summary-jump-to-msg-by-message-id
-Jump cursor to the message which have specified @samp{Message-Id:}.  If
-@code{elmo-use-database} is non-nil, other folder is also searched.
-(@code{wl-summary-jump-to-msg-by-message-id})
+Jump cursor to the message which have specified @samp{Message-Id:}.
 
 @item ^
 @kindex ^ (Summary)
@@ -5166,8 +5076,8 @@ Refer to the following URL about POP-before-SMTP.
 @findex wl-draft-yank-original
 Cites the content of the current message buffer (the part under cursor).
 If the region is active, cites the region (it affects only if
-@code{transient-mark-mode} (on GNU Emacs) or @code{zmacs-regions}
-(on XEmacs) is Non-nil). If the command is called with prefix argument,
+@code{transient-mark-mode} is Non-nil).
+If the command is called with prefix argument,
 the text inserted by yank command (the text content of clipboard) is cited.
 (@code{wl-draft-yank-original})
 
@@ -7150,9 +7060,8 @@ If variable @code{wl-use-ldap} is non-nil (initial setting is
 @code{nil}), address completion in draft mode uses LDAP information.
 
 If you use LDAP, you have to set @code{wl-ldap-server},
-@code{wl-ldap-port} and @code{wl-ldap-base} properly. If your emacs does
-not have LDAP feature as built-in feature (Currently only XEmacs can
-have built-in LDAP feature), you have to set command exec @env{PATH} to
+@code{wl-ldap-port} and @code{wl-ldap-base} properly.
+You also have to set command exec @env{PATH} to
 the program @command{ldapsearch}.
 
 
@@ -7951,41 +7860,9 @@ settings.
 @subsection bbdb.el
 @pindex BBDB
 
-To use The Insidious Big Brother Database (@uref{http://bbdb.sourceforge.net/})
-with Wanderlust, place @file{util/bbdb-wl.el} on the @code{load-path}
-and do the following settings.
-
-But, @file{util/bbdb-wl.el} is not compatible with BBDB 3.x
-(@uref{http://savannah.nongnu.org/projects/bbdb/}).
-For BBDB 3.x, BBDBV3-Wl (@uref{https://gna.org/projects/bbdbv3-wl/}) may be useful.
-
-If BBDB is on the @code{load-path} at the installation, @file{bbdb-wl.el} is
-byte-compiled and installed.
-@xref{Install}.
-
-@lisp
-@group
-(require 'bbdb-wl)
-
-(bbdb-wl-setup)
-;; @r{enable pop-ups}
-(setq bbdb-use-pop-up t)
-;; @r{auto collection}
-(setq bbdb/mail-auto-create-p t)
-;; @r{exceptional folders against auto collection}
-(setq bbdb-wl-ignore-folder-regexp "^@@")
-(setq signature-use-bbdb t)
-(setq bbdb-north-american-phone-numbers-p nil)
-;; @r{shows the name of bbdb in the summary} :-)
-(setq wl-summary-from-function 'bbdb-wl-from-func)
-;; @r{automatically add mailing list fields}
-(add-hook 'bbdb-notice-hook 'bbdb-auto-notes-hook)
-(setq bbdb-auto-notes-alist '(("X-ML-Name" (".*$" ML 0))))
-@end group
-@end lisp
-
-You can complete address with BBDB by @kbd{M-@key{TAB}}
-in draft buffer.
+The Insidious Big Brother Database (@uref{http://savannah.nongnu.org/projects/bbdb/}) supports Wanderlust since 3.2. 
+Please ask details of setings to mailing list of Wanderlust of BBDB.
+@xref{Mailing List}.
 
 
 @node LSDB, supercite, BBDB, Living with other packages
@@ -8059,7 +7936,6 @@ If you have installed one of the following, you can decode
 @samp{X-Face:} field in message buffer and you will see face image.
 
 @menu
-* x-face-xmas::                       XEmacs case
 * x-face-mule::                       Emacs case
 @end menu
 
@@ -8068,22 +7944,8 @@ value of the variable @code{wl-x-face-file}), it is inserted as a
 @samp{X-Face:} field in the draft buffer (if
 @code{wl-auto-insert-x-face} is non-nil).
 
-@node x-face-xmas, x-face-mule, X-Face, X-Face
-@subsubsection x-face-xmas (for XEmacs)
-@pindex x-face-xmas
-
-If you use @file{x-face-xmas.el} in x-face (@uref{ftp://jpl.org/pub/elisp/})
-1.3.6.13 or later, do the following:
-
-@lisp
-@group
-(autoload 'x-face-xmas-wl-display-x-face "x-face")
-(setq wl-highlight-x-face-function 'x-face-xmas-wl-display-x-face)
-@end group
-@end lisp
-
-@node x-face-mule,  , x-face-xmas, X-Face
-@subsubsection x-face-mule (for Emacs)
+@node x-face-mule,  , X-Face, X-Face
+@subsubsection x-face-mule
 @pindex x-face-mule
 @pindex bitmap-mule
 
@@ -8097,10 +7959,10 @@ If you use @file{x-face-mule.el} in bitmap-mule
 @end group
 @end lisp
 
-@subsubsection x-face-e21 (for Emacs 21.x)
+@subsubsection x-face-e21
 @pindex x-face-e21
 
-With Emacs 21.x, you can use @file{x-face-e21.el}
+You can use @file{x-face-e21.el}
 (@uref{ftp://jpl.org/pub/elisp/}) instead of @file{x-face-mule.el}
 to display X-Face. In this case, bitmap-mule is not required.
 Do as follows:
@@ -8471,7 +8333,6 @@ Check mail arrival in this period.
 The initial setting is 0 (in seconds).
 Check mail when the time spcified by @code{wl-biff-check-interval} has
 passed and idling time exceeds specified seconds by this variable.
-This is ignored on XEmacs.
 
 @item wl-biff-use-idle-timer
 @vindex wl-biff-use-idle-timer
@@ -8999,8 +8860,7 @@ this value as @code{iso-2022-jp}.)
 
 @item wl-highlight-folder-with-icon
 @vindex wl-highlight-folder-with-icon
-This is meaningful for XEmacs or Emacs 21.  The initial setting depends
-on Emacsen (@code{t} for XEmacs or Emacs 21 with icons).
+The default value is @code{t}.
 
 @item wl-strict-diff-folders
 @vindex wl-strict-diff-folders
@@ -9137,12 +8997,6 @@ The name of the file that contains encoded X-Face strings.
 If non-nil, bitmap image is shown on the opening demo.  If you set
 @code{xpm} or @code{xbm}, (if possible) display selected image type
 logo.
-
-@item elmo-use-database
-@vindex  elmo-use-database
-This is meaningful for XEmacs only.  The initial setting depends on
-XEmacs (@code{t} for XEmacs with dbm).
-If non-nil, Message-ID is controlled by dbm.
 
 @item elmo-nntp-list-folders-use-cache
 @vindex elmo-nntp-list-folders-use-cache
@@ -9363,21 +9217,18 @@ valuable advice and many pieces of code they contributed.
 
 @section Archive
 
-You can read messages posted to the mailing list on the web or in
-NetNews.
+You can read messages posted to the mailing list in NetNews.
 
 Read messages posted to @t{<wl@@ml.gentei.org>}
 
 @example
-@uref{http://dir.gmane.org/gmane.mail.wanderlust.general.japanese}
-@uref{news://news.gmane.org/gmane.mail.wanderlust.general.japanese}
+@uref{news://news.gmane.io/gmane.mail.wanderlust.general.japanese}
 @end example
 
 Read messages posted to @t{<wl-en@@ml.gentei.org>}
 
 @example
-@uref{http://dir.gmane.org/gmane.mail.wanderlust.general}
-@uref{news://news.gmane.org/gmane.mail.wanderlust.general}
+@uref{news://news.gmane.io/gmane.mail.wanderlust.general}
 @end example
 
 

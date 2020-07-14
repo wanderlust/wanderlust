@@ -177,7 +177,7 @@ Wanderlust $B$N<g$JFCD'(B/$BFCD9$O0J2<$NDL$j$G$9!#(B
 @item MH $BE*(B FCC$B!#(B(@samp{Fcc: %Backup} $B$d(B @samp{Fcc: $Backup} $B$b2D(B)$B!#(B
 @item MIME $BBP1~(B (by SEMI)$B!#(B
 @item $B%K%e!<%9(B/$B%a!<%k$NAw?.$rE}9g$7$?%a%C%;!<%8Aw?.%I%i%U%H!#(B
-@item $B%U%)%k%@0lMw$N%"%$%3%sI=<((B (XEmacs $B$H(B Emacs 21)$B!#(B
+@item $B%U%)%k%@0lMw$N%"%$%3%sI=<(!#(B
 @item $BBg$-$J%Q!<%H$r<h$j4s$;$:$KI=<((B(IMAP4)$B!#(B
 @item $B%a%C%;!<%8$N8!:w$r%5!<%PB&$G<B9T(B(IMAP4)$B!#F|K\8l8!:w$b2D!#(B
 @item $B2>A[%U%)%k%@!#(B
@@ -193,12 +193,7 @@ Wanderlust $B$N<g$JFCD'(B/$BFCD9$O0J2<$NDL$j$G$9!#(B
 Wanderlust $B$O0J2<$N(B Emacsen $B$GF0:n$9$k$3$H$,3NG'$5$l$F$$$^$9!#(B
 
 @itemize @bullet
-@item Mule 2.3 based on Emacs 19.34
-@item Emacs 20.2 $B0J9_(B
-@item XEmacs 20.4 $B0J9_(B
-@item Meadow 1.00 $B0J9_(B
-@item NTEmacs 20.4 $B0J9_(B
-@item PMMule
+@item Emacs 24.5 $B0J9_(B
 @end itemize
 
 Wanderlust $B$+$iMxMQ$G$-$k$H3NG'$5$l$F$$$k(B IMAP $B%5!<%P$O0J2<$NDL$j$G$9!#(B
@@ -272,29 +267,16 @@ SEMI:   @uref{http://git.chise.org/elisp/dist/semi/}
 @end example
 
 APEL, FLIM, SEMI[-EPG] $B$N=g$K%$%s%9%H!<%k$7$F$/$@$5$$!#(B
-$B4pK\E*$K$9$Y$F(B @samp{make install} $B$N<B9T$G:Q$`$O$:$G$9(B
-(XEmacs 21 $B$G$O(B @samp{make install-package})$B!#(B
+$B4pK\E*$K$9$Y$F(B @samp{make install} $B$N<B9T$G:Q$`$O$:$G$9!#(B
 
 $B%$%s%9%H!<%k$NJ}K!$N>\:Y$K$D$$$F$O!"3F%Q%C%1!<%8$KE:IU$5$l$F$$$k%I%-%e%a(B
-$B%s%H$r;2>H$7$F$/$@$5$$(B @footnote{Emacs 19.34 $B%Y!<%9$N(B Mule $B$r;H$C$F$$$k(B
-$B>l9g!"(B@* @uref{http://www.jpl.org/ftp/attic/INSTALL-SEMI-ja.html} $B$,;29M$K$J(B
-$B$k$+$b$7$l$^$;$s!#(B}$B!#(B
+$B%s%H$r;2>H$7$F$/$@$5$$!#(B
 
 
 $B?d>)$5$l$k(B APEL, FLIM, SEMI $B$N%P!<%8%g%s$NAH9g$;$O!"0J2<$NDL$j$G$9!#(B
 
 @itemize @minus
 @item APEL 10.8, FLIM 1.14.9, SEMI-EPG 1.14.7
-@end itemize
-
-$B$=$NB>!"(BFLIM, SEMI $B$K$O$$$m$$$m$JJQ7A%P!<%8%g%s$,B8:_$7$^$9$,!"(B
-$B$=$l$i$N$$$:$l$bMxMQ2DG=$G$9!#(B
-$B4pK\E*$K:G?7HG$NAH9g$;$J$iF0:n$9$k$O$:$G$9!#(B
-$BNc$($P!"0J2<$NAH9g$;$GF0:n$9$k$3$H$,3NG'$5$l$F$$$^$9!#(B
-
-@itemize @minus
-@item APEL 10.6, SLIM 1.14.9, SEMI 1.14.5
-@item APEL 10.6, CLIME 1.14.5, EMIKO 1.14.1
 @end itemize
 
 APEL, FLIM $B$b$7$/$O(B SEMI $B$N%P!<%8%g%s%"%C%W$r9T$C$?>l9g$O!"(BWanderlust $B$r(B
@@ -392,23 +374,9 @@ starttls $B%Q%C%1!<%8$O0J2<$N>l=j$+$iF~<j$G$-$^$9!#(B
 $BE,Ev$J%$%s%9%H!<%k@h$r<+F0E*$K8!=P$7$^$9!#(B
 $B<B:]$N%$%s%9%H!<%k@h$K$D$$$F$O8e=R$7$^$9!#(B
 
-Mule 2.3 $B$J$I!"(B@file{subdirs.el} $B$,L5$/!"(B@code{load-path} $B$K%5%V%G%#%l%/%H%j$,(B
-$B<+F0E*$K2C$o$i$J$$(B Emacs $B$G$O!"(B
-
-@example
-Cannot open load file: mime-setup
-@end example
-
-@noindent
-$B$H$$$&%(%i!<$,=P$k$3$H$,$"$j$^$9!#$3$N>l9g$O!"(Bcustom, APEL, FLIM, SEMI 
-$B$N%$%s%9%H!<%k@h$r4D6-JQ?t(B @env{EMACSLOADPATH} $B$K2C$($k$+!"E83+%G%#%l%/%H(B
-$B%j$N(B @file{WL-CFG} $B$H$$$&%U%!%$%kCf$G(B@code{load-path} $B$rDL$7$F$*$/$HNI$$(B
-$B$G$7$g$&!#(B
-
-$B$^$?!"?7J9%U%)%k%@$rMxMQ$9$k>l9g$d!"(BBBDB $B$rMxMQ$9$k>l9g$K$O!"$=$l$>$l(B
-emacs-w3m$B!"(BBBDB $B$,%$%s%9%H!<%k$5$l$F$$$k%G%#%l%/%H%j$K(B @code{load-path}
-$B$rDL$7$F$*$/$HI,MW$J%b%8%e!<%k$,%P%$%H%3%s%Q%$%k(B/$B%$%s%9%H!<%k$5$l$^$9!#(B
-@xref{Shimbun Folder}, @xref{BBDB}.
+$B?7J9%U%)%k%@$rMxMQ$9$k>l9g$K$O!"(Bemacs-w3m $B$,%$%s%9%H!<%k$5$l$F$$$k(B
+$B%G%#%l%/%H%j$K(B @code{load-path} $B$rDL$7$F$*$/$HI,MW$J%b%8%e!<%k$,(B
+$B%P%$%H%3%s%Q%$%k(B/$B%$%s%9%H!<%k$5$l$^$9!#(B@xref{Shimbun Folder}.
 
 @subsection @file{WL-CFG}
 
@@ -449,31 +417,6 @@ ELMO $B%b%8%e!<%k$O%U%!%$%k(B @file{elmo*.el} @file{elmo*.elc} $B$r4^$s$G$$$^
 @noindent
 $B$H$7$^$9!#(B
 
-@subsection XEmacs package $B$H$7$F%$%s%9%H!<%k(B
-@cindex XEmacs package
-@cindex XEmacs package install
-@cindex Package, XEmacs
-@cindex Package install, XEmacs
-@c @cindex install-package
-
-Wanderlust $B$O(B XEmacs (21.0 $B!A(B) $B$N(B package $B$N$R$H$D$H$7$F%$%s%9%H!<%k$9$k(B
-$B$3$H$b2DG=$G$9!#(Bpackage $B$H$7$F%$%s%9%H!<%k$9$k$H!"(Bautoload $B$N@_Dj!"(B
-$B%"%$%3%s$N%Q%9@_Dj$r8D?M$N(B @file{~/.emacs} $B$K5-=R$7$J$/$F$b(B Wanderlust
-$B$r@5>o$K5/F0$G$-$k$h$&$K$J$j$^$9!#(B
-
-XEmacs $B$N(B package $B$H$7$F%$%s%9%H!<%k$9$k$K$O0J2<$N$h$&$K$7$^$9!#(B
-
-@example
-@group
-% vi Makefile
-% make package
-% make install-package
-@end group
-@end example
-
-package $B$N%G%#%l%/%H%j$O!"(BSEMI $B$r%$%s%9%H!<%k$7$F$"$l$P<+F08!=P$5$l$^$9!#(B
-(@file{Makefile} $BCf$N(B @code{PACKAGEDIR} $B$G$b@_Dj2D(B)
-
 @subsection $B%$%s%9%H!<%k$7$J$$$GMxMQ(B
 
 Wanderlust $B$O%P%$%H%3%s%Q%$%k!"%$%s%9%H!<%k$r$7$J$/$F$b!"(B@file{wl},
@@ -499,9 +442,6 @@ Wanderlust $B$O%P%$%H%3%s%Q%$%k!"%$%s%9%H!<%k$r$7$J$/$F$b!"(B@file{wl},
 % make install-info
 @end group
 @end example
-
-XEmacs $B$N(B package $B$H$7$F%$%s%9%H!<%k$7$?>l9g$O<+F0E*$K(B Info $B%U%!%$%k$b(B
-$B%$%s%9%H!<%k$5$l$F$$$k$N$G!"$3$l$i$NA`:n$OI,MW$"$j$^$;$s!#(B
 
 $B$^$?!"2<5-$K$b%^%K%e%"%k$,$"$j$^$9!#(B
 
@@ -535,7 +475,6 @@ Wanderlust $B$NF0:n$r%+%9%?%^%$%:$G$-$^$9!#(B
 @lisp
 @group
 ;; @r{autoload $B$N@_Dj(B}
-;; @r{(XEmacs $B$N(B package $B$H$7$F%$%s%9%H!<%k$7$?>l9g$OI,MW$"$j$^$;$s(B)}
 (autoload 'wl "wl" "Wanderlust" t)
 (autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
 (autoload 'wl-draft "wl-draft" "Write draft with Wanderlust." t)
@@ -828,29 +767,10 @@ default $BCM(B:
 @cindex UTF7
 @cindex UTF8
 @cindex Unicode
-@pindex Mule-UCS
-@pindex ucs-conv
 
-Emacs $B$,(B UTF-7 $B$KBP1~$7$F$$$l$P!$JQ?t(B
-@code{elmo-imap4-use-modified-utf7} $B$K(B non-nil $B$NCM$r@_Dj$9$l$P(B ($B%G%U%)%k(B
-$B%H$O(B Emacs 23 $B0J9_$G$O(B @code{t}$B!"$=$l0J30$G$O(B @code{nil})$B!"F|K\8l(B ($B$d!"(B
-$B$=$NB>$N1Q8l0J30$N8@8l(B) $B$G%a!<%k%\%C%/%9L>$r;XDj$9$k$3$H$,$G$-$^$9!#(B
-
-Emacs 23 $B0J9_$G$ODI2C$N%Q%C%1!<%8$OITMW$G$9!#(B
-$B$=$l0J30$N(B Emacsen $B$G$O!"(BMule-UCS $B$rJL$K%$%s%9%H!<%k$9$kI,MW$,$"$j$^$9!#(B
-Mule-UCS $B$O0J2<$N(B Emacsen $B$GF0:n$7$^$9!#(B
-
-@itemize @bullet
-@item Emacs 20.3 $B0J9_(B
-@item XEmacs 21.2.37 $B0J9_(B
-@end itemize
-
-Mule-UCS $B$O0J2<$+$i(B2004$BG/$N%9%J%C%W%7%g%C%H$,F~<j2DG=$G$9!#(B
-
-@example
-@uref{http://www.jpl.org/ftp/pub/tmp/}
-@end example
-
+$BJQ?t(B @code{elmo-imap4-use-modified-utf7} $B$K(B non-nil $B$NCM$r@_Dj$9$l$P(B
+($B%G%U%)%k%H$O(B @code{t})$B!"F|K\8l(B ($B$d!"$=$NB>$N1Q8l0J30$N8@8l(B) $B$G(B
+$B%a!<%k%\%C%/%9L>$r;XDj$9$k$3$H$,$G$-$^$9!#(B
 
 @node NNTP Folder, MH Folder, IMAP Folder, Folders
 @section NNTP $B%U%)%k%@(B
@@ -1145,11 +1065,8 @@ GNU tar $B$O=q8K$+$i$N:o=|$KLdBj$,$"$k$b$N$,B?$$$N$G!"FC$KCm0U$7$F$/$@$5$$!#(B
 (@pxref{Archive}) $B$+!"(BExpire $B5!G=(B (@pxref{Expire}) $B$HAH$_9g$o$;$k$HNI$$(B
 $B$G$7$g$&!#$?$@$7!"(BExpire $B5!G=$G:n@.$7$?%"!<%+%$%V%U%)%k%@$r07$&>l9g$O!"(B
 $BJQ?t(B @code{elmo-archive-treat-file} $B$r(B non-nil $B$K@_Dj$9$kI,MW$,$"$j$^$9!#(B
-$B$J$*!"(BOS/2 $B>e$G$N%F%9%H$G$O!"(BMule2.3(19.28) $B$H(B Emacs20.2 $B$G$O=hM}B.EY$K(B
-$B05E]E*$J0c$$$,$"$j$^$9!#2wE,$K;H$&$K$O(B Emacs20 $B$r$*4+$a$7$^$9(B(re-search 
-$B$NB.EY$NLdBj$@$H$9$k$H(B 19.3x $B0J>e$+$I$&$+$,6-$K$J$k$G$7$g$&(B)$B!#(B
 
-$B$^$?!"0l$D$N=q8K%U%!%$%k$,B?$/$N%U%!%$%k$r4^$s$G$$$k$H%"!<%+%$%P5/F0;~(B
+$B0l$D$N=q8K%U%!%$%k$,B?$/$N%U%!%$%k$r4^$s$G$$$k$H%"!<%+%$%P5/F0;~(B
 $B$N%*!<%P!<%X%C%I$,2CB.EYE*$KA}2C$9$k(B($BFC$K(B LHA $B$N>l9g(B)$B$?$a!"(B150 $BDLDxEY!"(B
 $B:GBg$G$b(B 200 $BDL$^$G$K$7$F$*$/$H!"%9%H%l%9$J$/FI$_=q$-$G$-$k$G$7$g$&!#(B
 
@@ -1287,11 +1204,6 @@ default $BCM(B:
                         $B%f!<%6(B @samp{hoge} $B$G%"%/%;%9!#(B
 @end group
 @end example
-
-APOP $B$rMxMQ$9$k$K$O!"(B@file{md5.el} $B$,I,MW$G$9!#(B(XEmacs $B$G$OI,MW$"$j$^$;$s!#(B
-) @file{md5.el} $B$O(B $BK\%Q%C%1!<%8$N(B @file{utils/sasl/lisp/} $B$+(B Emacs/W3 $B%Q%C(B
-$B%1!<%8(B (@uref{http://www.cs.indiana.edu/elisp/w3/docs.html})$B!"$^$?$O(B LCD
-archive $B$+$iF~<j2DG=$G$9(B(GPL2)$B!#(B
 
 $B%U%)%k%@L>$N:G8e$K(B @samp{!} $B$,IU$$$F$$$k$H!"(BSSL $B$rMxMQ$7$F%3%M%/%7%g%s$rD%$j$^$9!#(B
 
@@ -2022,7 +1934,6 @@ access:'cache -> $BA4$F$N(B 'cache $B%U%)%k%@(B
 @subsubsection $B?75,?t!"L$FI?t$N%A%'%C%/(B
 
 $B%U%)%k%@%b!<%I$N8+$?$a$O$3$s$J46$8$K$J$k$O$:$G$9!#(B
-(XEmacs $B$G$O$b$&$A$g$C$H$+$C$3$h$/8+$($k$O$:$G$9(B @t{;-)})
 
 @example
 @group
@@ -3636,8 +3547,8 @@ prefix argument $B$D$-$G<B9T$9$k$H!"G$0U$NF~NO%"%I%l%9$rEPO?(B/$BJQ99(B/$B:
 @item #
 @kindex # (Summary)
 @findex wl-summary-print-message
-$B8=:_$N%a%C%;!<%8$NFbMF$r0u:~$7$^$9!#(BEmacs 20$B0J9_(B $B$G$O(B @code{ps-print} $B$r(B
-$B;H$$$^$9!#Gr9u%W%j%s%?$G$O!"(B@code{wl-ps-print-buffer-function} $B$r(B
+$B8=:_$N%a%C%;!<%8$NFbMF$r0u:~$7$^$9!#(B@code{ps-print} $B$r;H$$$^$9!#(B
+$BGr9u%W%j%s%?$G$O!"(B@code{wl-ps-print-buffer-function} $B$r(B
 @code{ps-print-buffer} $B$K@_Dj$7$?$[$&$,NI$$$+$b$7$l$^$;$s!#(B
 
 @lisp
@@ -3677,8 +3588,6 @@ prefix argument $B$D$-$G<B9T$9$k$H!"G$0U$NF~NO%"%I%l%9$rEPO?(B/$BJQ99(B/$B:
 @kindex M-j (Summary)
 @findex wl-summary-jump-to-msg-by-message-id
 $BF~NO$7$?(B @samp{Message-ID:} $B$r;}$D%a%C%;!<%8$N9T$K%8%c%s%W$7$^$9!#(B
-@code{elmo-use-database} $B$,(B non-nil$B$J$i!"8=:_$N%5%^%j0J30$+$i$b8uJd$r8!(B
-$B:w$7$^$9!#(B(@code{wl-summary-jump-to-msg-by-message-id})
 
 @item ^
 @kindex ^ (Summary)
@@ -5143,8 +5052,7 @@ POP-before-SMTP $BMQ$NJQ?t(B (@code{wl-pop-before-smtp-*})$B$r@_Dj$7$F$$$J$$>
 @findex wl-draft-yank-original
 $B8=:_I=<(Cf$N%a%C%;!<%8%P%C%U%!(B($B%+!<%=%k0LCV$N%Q!<%H(B)$B$NFbMF$r0zMQ$7$^$9!#(B
 $B%j!<%8%g%s$,M-8z$J>l9g$K$O!"%j!<%8%g%s$r0zMQ$7$^$9(B
-(@code{transient-mark-mode} (GNU Emacs $B$N>l9g(B) $B$+(B @code{zmacs-regions}
-(XEmacs $B$N>l9g(B) $B$,(B Non-nil $B$N;~$N$_(B)$B!#(B
+(@code{transient-mark-mode} $B$,(B Non-nil $B$N;~$N$_(B)$B!#(B
 $B$^$?!"(Bprefix argument $B$rIU$1$k$H!"(Byank $B$GA^F~$5$l$k%F%-%9%H(B
 $B$NFbMF(B($B%/%j%C%W%\!<%I$NFbMF(B)$B$,0zMQ$5$l$^$9!#(B
 (@code{wl-draft-yank-original})
@@ -5841,7 +5749,7 @@ Queuing:[ON] AutoFlushQueue:[--] DisconnectedOperation:[ON]
 $B$^$?!"(B2$B9TL\0J9_$G$O%5!<%P$H%]!<%H$N%*%s%i%$%s$H%*%U%i%$%s>uBV$rI=<($7!"(B
 @samp{[ON]} $B$O$=$N%5!<%P$d%]!<%H$,%*%s%i%$%s$G$"$k$3$H$r!"(B
 @samp{[--]} $B$O%*%U%i%$%s$G$"$k$3$H$r<($7$F$$$^$9(B
-(XEmacs $B$H(B Emacs 21 $B$G$O%"%$%3%s$GI=<($5$l$^$9(B)$B!#(B
+$B2DG=$J$i%"%$%3%s$GI=<($5$l$^$9!#(B
 $B$=$7$F$=$l$>$l$N9T$G(B @kbd{@key{SPC}} $B$d(B @kbd{@key{RET}} $B$r2!$9$3$H$G(B
 $B>uBV$r@Z$jBX$($k$3$H$,$G$-$^$9!#(B
 
@@ -7065,8 +6973,8 @@ bar@@foo.gohome.org             "Bar $B$5$s(B"      "Michael Bar"
 $B$9!#(B
 
 LDAP $B$rMxMQ$9$k>l9g$O!"(B@code{wl-ldap-server}$B!"(B@code{wl-ldap-port},
-@code{wl-ldap-base} $B$bE,@Z$K@_Dj$7$F2<$5$$!#$^$?!"(BLDAP $BBP1~$N(B XEmacs $B0J(B
-$B30$G$O!"30It%W%m%0%i%`$H$7$F(B @command{ldapsearch} $B$rMxMQ$7$^$9$N$G!"(B
+@code{wl-ldap-base} $B$bE,@Z$K@_Dj$7$F2<$5$$!#(B
+$B30It%W%m%0%i%`$H$7$F(B @command{ldapsearch} $B$rMxMQ$7$^$9$N$G!"(B
 @command{ldapsearch} $B$X$"$i$+$8$a%3%^%s%I<B9T%Q%9$r@_Dj$7$F$*$/I,MW$,$"(B
 $B$j$^$9!#(B
 
@@ -7867,43 +7775,11 @@ OK $B$G$9!#(B
 @subsection bbdb.el
 @pindex BBDB
 
-The Insidious Big Brother Database (@uref{http://bbdb.sourceforge.net/})
-$B$r(B Wanderlust $B$H6&$K;H$&$K$O!"(B @file{util/bbdb-wl.el} $B$r(B @code{load-path}
-$B$KCV$$$F0J2<$N$h$&$K@_Dj$9$l$P(B OK $B$G$9!#(B
-
-$B$?$@$7!"(B@file{util/bbdb-wl.el} $B$O(B @uref{http://savannah.nongnu.org/projects/bbdb/} $B$G(B
-$B3+H/$5$l$F$$$k!"(BBBDB 3.x $B$H$O8_49@-$,$"$j$^$;$s!#(B
-$B$3$N>l9g$O!"(BBBDBV3-Wl (@uref{https://gna.org/projects/bbdbv3-wl/}) $B$,!"(B
-$BM-MQ$+$b$7$l$^$;$s!#(B
-
-$B%$%s%9%H!<%k;~$K(B @code{load-path} $B>e$K(B BBDB $B$,$"$l$P!"(B
-@file{bbdb-wl.el} $B$O%P%$%H%3%s%Q%$%k(B/$B%$%s%9%H!<%k$5$l$^$9!#(B
-@xref{Install}.
-
-@lisp
-@group
-(require 'bbdb-wl)
-
-(bbdb-wl-setup)
-;; @r{$B%]%C%W%"%C%WI=<((B}
-(setq bbdb-use-pop-up t)
-;; @r{$B<+F0<}=8(B}
-(setq bbdb/mail-auto-create-p t)
-;; @r{$B<+F0<}=8$7$J$$%U%)%k%@$N;XDj(B}
-(setq bbdb-wl-ignore-folder-regexp "^@@")
-(setq signature-use-bbdb t)
-(setq bbdb-north-american-phone-numbers-p nil)
-;; @r{$B%5%^%j$K(B bbdb $B$NL>A0$rI=<((B} :-)$B!#(B
-(setq wl-summary-from-function 'bbdb-wl-from-func)
-;; @r{$B<+F0E*$K(B ML $B%U%#!<%k%I$r2C$($k(B}
-(add-hook 'bbdb-notice-hook 'bbdb-auto-notes-hook)
-(setq bbdb-auto-notes-alist '(("X-ML-Name" (".*$" ML 0))))
-@end group
-@end lisp
-
-$B%I%i%U%H%P%C%U%!$G(B @kbd{M-@key{TAB}} $B$K$h$j(B BBDB $B$rMQ$$$?(B
-$B%"%I%l%9$NJd40$,$G$-$^$9!#(B
-
+The Insidious Big Brother Database
+(@uref{http://savannah.nongnu.org/projects/bbdb/}) $B$O(B 3.2 $B0J9_$+$i(B
+Wanderlust $B$KBP1~$7$F$$$^$9!#(B
+$B@_Dj$N>\:Y$O(B Wanderlust $B$+(B BBDB $B$N%a!<%j%s%0%j%9%H$G$*$?$:$M$/$@$5$$!#(B
+@xref{Mailing List}.
 
 @node LSDB, supercite, BBDB, Living with other packages
 @subsection lsdb.el
@@ -7976,7 +7852,6 @@ mu-cite 8.1$B0J9_$N%P!<%8%g%s$r$*;H$$$J$i!"(B
 @samp{X-Face:} $B%U%#!<%k%I$r%G%3!<%I$7$F!"2hA|$rI=<($9$k$3$H$,$G$-$^$9!#(B
 
 @menu
-* x-face-xmas::                       XEmacs $B$N>l9g(B
 * x-face-mule::                       Emacs $B$N>l9g(B
 @end menu
 
@@ -7986,23 +7861,8 @@ mu-cite 8.1$B0J9_$N%P!<%8%g%s$r$*;H$$$J$i!"(B
 ($BJQ?t(B @code{wl-auto-insert-x-face} $B$,(B non-nil $B$N>l9g(B)
 
 
-@node x-face-xmas, x-face-mule, X-Face, X-Face
-@subsubsection x-face-xmas (XEmacs $B$N>l9g(B)
-@pindex x-face-xmas
-
-x-face (@uref{ftp://jpl.org/pub/elisp/}) 1.3.6.13 $B0J9_$KIUB0$N(B
-@file{x-face-xmas.el} $B$r;H$&>l9g$O0J2<$N$h$&$K@_Dj$7$F$/$@$5$$!#(B
-
-@lisp
-@group
-(autoload 'x-face-xmas-wl-display-x-face "x-face")
-(setq wl-highlight-x-face-function 'x-face-xmas-wl-display-x-face)
-@end group
-@end lisp
-
-
-@node x-face-mule,  , x-face-xmas, X-Face
-@subsubsection x-face-mule (Emacs $B$N>l9g(B)
+@node x-face-mule,  , X-Face, X-Face
+@subsubsection x-face-mule
 @pindex x-face-mule
 @pindex bitmap-mule
 
@@ -8016,10 +7876,10 @@ bitmap-mule (@uref{ftp://ftp.jpl.org/pub/elisp/bitmap/}) 8.0$B0J9_$K(B
 @end group
 @end lisp
 
-@subsubsection x-face-e21 (Emacs 21.x $B$N>l9g(B)
+@subsubsection x-face-e21
 @pindex x-face-e21
 
-Emacs 21.x $B$N>l9g$K$O!"(B@file{x-face-mule.el} $B$NBe$o$j$K(B @file{x-face-e21.el}
+@file{x-face-mule.el} $B$NBe$o$j$K(B @file{x-face-e21.el}
 (@uref{ftp://jpl.org/pub/elisp/}) $B$r;H$C$F(B X-Face $B$rI=<($9$k$3$H$b$G$-$^$9!#(B
 $B$=$N>l9g!"(Bbitmap-mule $B$OITMW$G$9!#0J2<$N$h$&$K@_Dj$7$F$/$@$5$$!#(B
 
@@ -8384,7 +8244,6 @@ face $B$N@_Dj$O(B @file{.emacs} $B$K=q$/$3$H$O$G$-$J$$$N$G(B @file{~/.wl} $
 $B=i4|@_Dj$O(B 0 ($BC10L(B:$BIC(B)$B!#(B
 @code{wl-biff-check-interval} $B$G;XDj$7$?;~4V$,7P2a$7!"$+$D!"(B
 $B$3$NJQ?t$G;XDj$5$l$?;~4V$@$1%"%$%I%k>uBV$,B3$$$?>l9g$K%A%'%C%/$r9T$$$^$9!#(B
-XEmacs $B$G$OL58z$G$9!#(B
 
 @item wl-biff-use-idle-timer
 @vindex wl-biff-use-idle-timer
@@ -8907,8 +8766,7 @@ MIME $B$G$O$J$$%a%C%;!<%8$N>l9g(B (@samp{Content-Type:} $B$,$J$$%a!<%k$J$I(B
 
 @item wl-highlight-folder-with-icon
 @vindex wl-highlight-folder-with-icon
-XEmacs $B$^$?$O(B Emacs 21 $B$GM-8z$G$9!#=i4|@_Dj$O$=$N(B Emacs $B$K0MB8$7$^$9(B
-($B%"%$%3%s$r;HMQ$G$-$k(B Emacsen $B$G$O(B @code{t} $B$K$J$j$^$9(B)$B!#(B
+$B=i4|@_Dj$O(B @code{t} $B$G$9!#(B
 
 @item wl-strict-diff-folders
 @vindex wl-strict-diff-folders
@@ -9042,12 +8900,6 @@ string             : $B;XDj$7$?%U%)%k%@$K0\F0$9$k!#(B
 Non-nil $B$J$i$P%*!<%W%K%s%0%G%b$G%S%C%H%^%C%W$N%$%a!<%8$rI=<($7$^$9!#(B
 @code{xpm}, @code{xbm} $B$r;XDj$9$k$H(B($B2DG=$J$i$P(B)$B!"$=$N2hA|%?%$%W$N%$%a!<(B
 $B%8$rI=<($7$^$9!#(B
-
-@item elmo-use-database
-@vindex  elmo-use-database
-XEmacs $B$N$_M-8z$G$9!#=i4|@_Dj$O!"(BXEmacs $B$K0MB8$7$^$9!#(B
-(dbm $B$N5!G=$r$b$D(B XEmacs $B$J$i$P(B @code{t} $B$H$J$j$^$9!#(B)
-Non-nil $B$J$i$P(B dbm $B$r;H$C$F(B Message-ID $B$N4IM}$r9T$J$$$^$9!#(B
 
 @item elmo-nntp-list-folders-use-cache
 @vindex elmo-nntp-list-folders-use-cache
@@ -9264,21 +9116,18 @@ Wanderlust List in English @t{<wl-en@@ml.gentei.org>}
 
 @section $B%"!<%+%$%V(B
 
-$B%a!<%j%s%0%j%9%H$KEj9F$5$l$?%a%C%;!<%8$O!"%&%'%V$d(B NetNews $B$G$bFI$`$3$H(B
-$B$,$G$-$^$9!#(B
+$B%a!<%j%s%0%j%9%H$KEj9F$5$l$?%a%C%;!<%8$O!"(BNetNews $B$G$bFI$`$3$H$,$G$-$^$9!#(B
 
 @t{<wl@@ml.gentei.org>} $B$KEj9F$5$l$?%a%C%;!<%8(B
 
 @example
-@uref{http://dir.gmane.org/gmane.mail.wanderlust.general.japanese}
-@uref{news://news.gmane.org/gmane.mail.wanderlust.general.japanese}
+@uref{news://news.gmane.io/gmane.mail.wanderlust.general.japanese}
 @end example
 
 @t{<wl-en@@ml.gentei.org>} $B$KEj9F$5$l$?%a%C%;!<%8(B
 
 @example
-@uref{http://dir.gmane.org/gmane.mail.wanderlust.general}
-@uref{news://news.gmane.org/gmane.mail.wanderlust.general}
+@uref{news://news.gmane.io/gmane.mail.wanderlust.general}
 @end example
 
 
