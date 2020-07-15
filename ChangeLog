@@ -1,3 +1,19 @@
+2020-07-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* doc/texinfo.tex: Replaced with the latest master branch's one in
+	texinfo repository.
+
+	* doc/txi-en.tex: Likewise.
+
+	* doc/txi-ja.tex: Likewise.  Furthermore, partially merged with
+	Shoichi Fukusaka's modified version.
+
+	* doc/wl-ja.texi: Encode in utf-8.  Assume LuaTeX.
+
+	* doc/wl-refcard-ja.tex: Encode in utf-8.  Assume LuaTeX.
+
+	* doc/wl-refcard.tex: Assume LuaTeX or pdfTeX.
+
 2020-07-14  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* doc/wl.texi: Updated to adapt recent changes.

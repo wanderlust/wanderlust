@@ -1,10 +1,28 @@
 % Reference Card for Wanderlust
 % The format of this file is adapted from the GNU Emacs reference card
 %
-% You can compile with:
-% tex wl-refcard.tex
-% dvips wl-refcard.dvi -t landscape -o wl-refcard.ps
-% pstops '2:0U(21cm,29.7cm),1' wl-refcard.ps wl-refcard-b.ps
+% You can compile with luatex or pdftex.
+
+\ifx\luatexversion\thisisundefined
+  \ifx\pdfoutput\undefined
+  \else
+    \ifx\pdfoutput\relax
+    \else
+      \pdfpageheight 210mm\relax
+      \pdfpagewidth 297mm\relax
+      \pdfhorigin = 1 true in
+      \pdfvorigin = 1 true in
+    \fi
+  \fi
+\else
+  \ifnum\luatexversion>84
+    % For LuaTeX >= 0.85
+    \pagewidth = 297mm
+    \pageheight = 210mm
+    \pdfvariable horigin 1 true in
+    \pdfvariable vorigin 1 true in
+  \fi
+\fi
 
 % Reference Card for GNU Emacs version 20 on Unix systems
 %**start of header

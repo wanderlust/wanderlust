@@ -1,10 +1,13 @@
 % Reference Card for Wanderlust
 % The format of this file is adapted from the GNU Emacs reference card
 %
-% You can compile with:
-% ptex wl-refcard-ja.tex
-% dvips wl-refcard-ja.dvi -t landscape -o wl-refcard-ja.ps
-% pstops '2:0U(21cm,29.7cm),1' wl-refcard-ja.ps wl-refcard-ja-b.ps
+% You can compile with luatex and luatexja.sty.
+
+\input luatexja.sty
+\pagewidth=297mm
+\pageheight=210mm
+\pdfvariable horigin 1 true in
+\pdfvariable vorigin 1 true in
 
 % Reference Card for GNU Emacs version 20 on Unix systems
 %**start of header
@@ -257,161 +260,161 @@ are preserved on all copies.
 
 \centerline{(for version \versionnumber)}
 
-\section{Wanderlust $B$N5/F0(B}
+\section{Wanderlust の起動}
 
-\key{Wanderlust $B$r5/F0$9$k(B}{M-x wl}
-\key{$B%a%C%;!<%8$r:n@.(B}{M-x wl-draft}
+\key{Wanderlust を起動する}{M-x wl}
+\key{メッセージを作成}{M-x wl-draft}
 
 \section{Folder Mode}
 
-\key{Wanderlust $B$r$d$a$k(B}{q}
-\key{$B<!(B}{n}
-\key{$BA0(B}{p}
-\key{$B<!$NL$FI(B}{N}
-\key{$BA0$NL$FI(B}{P}
-\key{$B;XDj$7$?%U%)%k%@$KF~$k(B}{g}
-\key{$B$3$N%U%)%k%@$KF~$k(B}{SPC}
-\key{$B%0%k!<%W$N3+JD(B}{SPC}
-\key{$B%"%/%;%9%0%k!<%W$N:F%9%-%c%s(B}{C-u SPC}
-\key{$B?75,%a%C%;!<%8$r%A%'%C%/(B}{s}
-\key{$BF14|(B}{S}
-\key{$B%W%j%U%'%C%A(B}{I}
-\key{$BA4$F4{FI$K(B}{c}
-\key{$B%(%/%9%Q%$%"(B}{e}
-\key{$B%a%C%;!<%8$N:n@.(B}{w}
-\key{$B%a%C%;!<%8$N:n@.(B($B08@h$r?dB,(B)}{W}
-\key{$B%"%I%l%9D"$N:FFI9~(B}{Z}
-\key{$B$4$_H"$r6u$K(B}{E}
+\key{Wanderlust をやめる}{q}
+\key{次}{n}
+\key{前}{p}
+\key{次の未読}{N}
+\key{前の未読}{P}
+\key{指定したフォルダに入る}{g}
+\key{このフォルダに入る}{SPC}
+\key{グループの開閉}{SPC}
+\key{アクセスグループの再スキャン}{C-u SPC}
+\key{新規メッセージをチェック}{s}
+\key{同期}{S}
+\key{プリフェッチ}{I}
+\key{全て既読に}{c}
+\key{エクスパイア}{e}
+\key{メッセージの作成}{w}
+\key{メッセージの作成(宛先を推測)}{W}
+\key{アドレス帳の再読込}{Z}
+\key{ごみ箱を空に}{E}
 
 \section{folder management}
 
-\key{$B%+%C%H(B}{C-k}
-\key{$BNN0h$r%+%C%H(B}{C-w}
-\key{$BE=$jIU$1(B}{C-y}
-\key{$B%U%)%k%@$r2C$($k(B}{m a}
-\key{$B%0%k!<%W$r2C$($k(B}{m g}
-\key{$B%"%/%;%9%0%k!<%W$r2C$($k(B}{m A}
+\key{カット}{C-k}
+\key{領域をカット}{C-w}
+\key{貼り付け}{C-y}
+\key{フォルダを加える}{m a}
+\key{グループを加える}{m g}
+\key{アクセスグループを加える}{m A}
 
 \section{access group}
 
-\key{$BHs9VFI%U%)%k%@$bI=<((B}{L}
-\key{$BHs9VFI%U%)%k%@$r1#$9(B}{l}
-\key{$B9VFI$r$d$a$k(B}{u}
-\key{$B9VFI$r$d$a$k(B($BNN0h(B)}{U}
+\key{非講読フォルダも表示}{L}
+\key{非講読フォルダを隠す}{l}
+\key{講読をやめる}{u}
+\key{講読をやめる(領域)}{U}
 
 \newcolumn
 \section{Summary Mode}
 
-\key{$B%U%)%k%@%P%C%U%!$KLa$k(B}{q}
-\key{$B;XDj$7$?%U%)%k%@$KF~$k(B}{g}
-\key{$B<!(B}{n}
-\key{$BA0(B}{p}
-\key{$B<!$NL$FI(B}{N}
-\key{$BA0$NL$FI(B}{P}
-\key{$B@hF,$N%a%C%;!<%8(B}{<}
-\key{$BKvHx$N%a%C%;!<%8(B}{>}
-\key{$BD>A0$K8+$?%a%C%;!<%8(B}{TAB}
-\key{$B%a%C%;!<%8$rFI$`(B}{SPC}
-\key{$B%a%C%;!<%8$N:FFI9~(B}{C-u .}
-\key{$B%a%C%;!<%8I=<($N%H%0%k(B}{v}
-\key{$B%a%C%;!<%8$r:n@.(B}{w}
-\key{$B%a%C%;!<%8$r:n@.(B($B08@h$r?dB,(B)}{W}
-\key{$BJV?.(B}{a}
-\key{$B0zMQ$7$FJV?.(B}{A}
-\key{$B%U%)%o!<%I(B}{f}
-\key{$B:FJT=8(B}{E}
-\key{$B0u:~(B}{\#}
-\key{$B%a%C%;!<%8%P%C%U%!$X(B}{j}
-\key{$B%"%I%l%9D"$N:FFI9~(B}{Z}
+\key{フォルダバッファに戻る}{q}
+\key{指定したフォルダに入る}{g}
+\key{次}{n}
+\key{前}{p}
+\key{次の未読}{N}
+\key{前の未読}{P}
+\key{先頭のメッセージ}{<}
+\key{末尾のメッセージ}{>}
+\key{直前に見たメッセージ}{TAB}
+\key{メッセージを読む}{SPC}
+\key{メッセージの再読込}{C-u .}
+\key{メッセージ表示のトグル}{v}
+\key{メッセージを作成}{w}
+\key{メッセージを作成(宛先を推測)}{W}
+\key{返信}{a}
+\key{引用して返信}{A}
+\key{フォワード}{f}
+\key{再編集}{E}
+\key{印刷}{\#}
+\key{メッセージバッファへ}{j}
+\key{アドレス帳の再読込}{Z}
 
 \section{mark command}
 
-\key{$B=hJ,%^!<%/$rIU$1$k(B}{d}
-\key{$B:o=|%^!<%/$rIU$1$k(B}{D}
-\key{$B%j%U%!%$%k%^!<%/$rIU$1$k(B}{o}
-\key{$B%3%T!<%^!<%/$rIU$1$k(B}{O}
-\key{$B%W%j%U%'%C%A%^!<%/$rIU$1$k(B}{i}
-\key{$B:FAw%^!<%/$rIU$1$k(B}{\~{}}
-\key{$B=EMW%^!<%/$rIU$1$k(B}{\$}
-\key{$BI8E*%^!<%/$rIU$1$k(B}{*}
-\key{$BA4$F$N%a%C%;!<%8$rI8E*$K$9$k(B}{m a}
-\key{$B%9%l%C%I$rI8E*$K$9$k(B}{m t}
-\key{$B%a%C%;!<%8$rA*$S=P$7$FI8E*$K(B}{?}
-\key{$BI8E*$NCf$+$i%a%C%;!<%8$rA*$S=P$9(B}{m *}
-\key{$BI8E*$r%j%U%!%$%k(B}{m o}
-\key{$BI8E*$r:o=|(B}{m d}
-\key{$BI8E*$r0u:~(B}{m \#}
-\key{$BI8E*$N3F!9$r%Q%$%W$KN.$9(B}{m |}
-\key{$B0l;~E*%^!<%/$N%"%/%7%g%s$r<B9T(B}{x}
+\key{処分マークを付ける}{d}
+\key{削除マークを付ける}{D}
+\key{リファイルマークを付ける}{o}
+\key{コピーマークを付ける}{O}
+\key{プリフェッチマークを付ける}{i}
+\key{再送マークを付ける}{\~{}}
+\key{重要マークを付ける}{\$}
+\key{標的マークを付ける}{*}
+\key{全てのメッセージを標的にする}{m a}
+\key{スレッドを標的にする}{m t}
+\key{メッセージを選び出して標的に}{?}
+\key{標的の中からメッセージを選び出す}{m *}
+\key{標的をリファイル}{m o}
+\key{標的を削除}{m d}
+\key{標的を印刷}{m \#}
+\key{標的の各々をパイプに流す}{m |}
+\key{一時的マークのアクションを実行}{x}
 
 \section{prefix arguments for marking}
 
-\key{$BI8E*$KBP$7$F(B}{m}
-\key{$B%+!<%=%k0J9_$N%9%l%C%I$KBP$7$F(B}{t}
-\key{$BNN0h$KBP$7$F(B}{r}
+\key{標的に対して}{m}
+\key{カーソル以降のスレッドに対して}{t}
+\key{領域に対して}{r}
 
 \newcolumn
 \section{sticky summary}
 
-\key{$B%5%^%j$r%9%F%#%C%-!<$K(B}{M-s}
-\key{$B;XDj$7$?%U%)%k%@$KF~$k(B}{G}
-\key{$B<!$N%5%^%j(B}{C-c C-n}
-\key{$BA0$N%5%^%j(B}{C-c C-p}
-\key{$B%5%^%j$rGK4~(B}{C-u q}
+\key{サマリをスティッキーに}{M-s}
+\key{指定したフォルダに入る}{G}
+\key{次のサマリ}{C-c C-n}
+\key{前のサマリ}{C-c C-p}
+\key{サマリを破棄}{C-u q}
 
 \section{Message Mode}
 
-\key{$B%5%^%j%P%C%U%!$KLa$k(B}{q}
-\key{$B%9%/%m!<%k$+<!$N%Q!<%H(B}{SPC}
-\key{$B%9%/%m!<%k$+A0$N%Q!<%H(B}{DEL}
-\key{$B<!$N%Q!<%H(B}{n}
-\key{$BA0$N%Q!<%H(B}{p}
-\key{$B%Q!<%H$r:F@8(B}{v}
-\key{$B%Q!<%H$r<h$j=P$9(B}{e}
-\key{$B%Q!<%H$rI=<((B}{C-c C-v C-c}
-\key{$B%Q!<%H$r1#$9(B}{C-c C-d C-c}
-\key{MIME-View $B$N%X%k%W(B}{?}
+\key{サマリバッファに戻る}{q}
+\key{スクロールか次のパート}{SPC}
+\key{スクロールか前のパート}{DEL}
+\key{次のパート}{n}
+\key{前のパート}{p}
+\key{パートを再生}{v}
+\key{パートを取り出す}{e}
+\key{パートを表示}{C-c C-v C-c}
+\key{パートを隠す}{C-c C-d C-c}
+\key{MIME-View のヘルプ}{?}
 
 \section{Draft Mode}
 
-\key{$B%a%C%;!<%8$r0zMQ(B}{C-c C-y}
-\key{$B%F%s%W%l!<%H$NA^F~(B}{C-c C-j}
-\key{$B=pL>$NA^F~(B}{C-c C-w}
-\key{$BNN0h$r>J$/(B}{C-c C-d}
-\key{$B%W%l%S%e!<(B}{C-c C-p}
-\key{$BAw?.(B}{C-c C-c}
-\key{$BAp9F$rJ]B8(B}{C-c C-z}
-\key{$BAp9F$rGK4~(B}{C-c C-k}
-\key{$BB>$N%I%i%U%H$X(B}{C-c C-o}
-\key{$B%U%!%$%k$rE:IU(B}{C-c C-x TAB}
+\key{メッセージを引用}{C-c C-y}
+\key{テンプレートの挿入}{C-c C-j}
+\key{署名の挿入}{C-c C-w}
+\key{領域を省く}{C-c C-d}
+\key{プレビュー}{C-c C-p}
+\key{送信}{C-c C-c}
+\key{草稿を保存}{C-c C-z}
+\key{草稿を破棄}{C-c C-k}
+\key{他のドラフトへ}{C-c C-o}
+\key{ファイルを添付}{C-c C-x TAB}
 %\key{Insert a reference to external body}{C-c C-x C-e}
-\key{MIME $B%?%0$NA^F~(B}{C-c C-x t}
+\key{MIME タグの挿入}{C-c C-x t}
 %\key{Insert a text message}{C-c C-x C-t}
-\key{$B%a%C%;!<%8$r0E9f2=(B}{C-c C-x e}
-\key{$B%a%C%;!<%8$K=pL>(B}{C-c C-x s}
-\key{MIME-Edit $B$N%X%k%W(B}{C-c C-x ?}
+\key{メッセージを暗号化}{C-c C-x e}
+\key{メッセージに署名}{C-c C-x s}
+\key{MIME-Edit のヘルプ}{C-c C-x ?}
 
 \shortcopyrightnotice
 
 \newcolumn
 \section{Plugged Status}
 
-\key{$B%W%i%0>uBV$N%H%0%k(B($BA4BN(B)}{M-t}
-\key{$B%W%i%0%I%b!<%I$X$NF~B`=P(B}{C-t}
-\key{$B%W%i%0>uBV$N%H%0%k(B($B8DJL(B)}{SPC}
+\key{プラグ状態のトグル(全体)}{M-t}
+\key{プラグドモードへの入退出}{C-t}
+\key{プラグ状態のトグル(個別)}{SPC}
 
 \section{Address Book Management}
 
-\key{$B%"%I%l%9%^%M!<%8%c$N5/F0(B}{C-c C-a}
-\key{$B%"%I%l%9%^%M!<%8%c$N=*N;(B}{q}
-\key{{\tt To:} $B$K;XDj(B}{t}
-\key{{\tt Cc:} $B$K;XDj(B}{c}
-\key{{\tt Bcc:} $B$K;XDj(B}{b}
-\key{$B08@h$N;XDj$r2r=|(B}{u}
-\key{$B;XDj$K1h$C$F%a%C%;!<%8$r:n@.(B}{x}
-\key{$B?75,EPO?(B}{a}
-\key{$BJT=8(B}{e}
-\key{$B:o=|(B}{d}
+\key{アドレスマネージャの起動}{C-c C-a}
+\key{アドレスマネージャの終了}{q}
+\key{{\tt To:} に指定}{t}
+\key{{\tt Cc:} に指定}{c}
+\key{{\tt Bcc:} に指定}{b}
+\key{宛先の指定を解除}{u}
+\key{指定に沿ってメッセージを作成}{x}
+\key{新規登録}{a}
+\key{編集}{e}
+\key{削除}{d}
 
 \copyrightnotice
 
