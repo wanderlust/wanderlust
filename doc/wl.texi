@@ -6984,12 +6984,14 @@ Keys that can be seen by folder of types:
 
 @example
 @group
-                        chars lines xref  extra
-localdir,localnews        Y     E     E     E
-nntp (supporting xover)   Y     E     E     N
-     (otherwise)          N     E     E     E
-imap4                     Y     E     E     E
-pop3                      N     E     E     E
+@multitable {nntp (supporting xover)} {chars} {lines} {xref} {extra}
+@headitem @tab chars @tab lines @tab xref  @tab extra
+@item localdir,localnews @tab Y @tab E @tab E @tab E
+@item nntp (supporting xover) @tab Y @tab E @tab E @tab N
+@item (otherwise) @tab N @tab E @tab E @tab E
+@item imap4 @tab Y @tab E @tab E @tab E
+@item pop3 @tab N @tab E @tab E @tab E
+@end multitable
 
                 Y: can be seen
                 N: cannot be seen (ignored)

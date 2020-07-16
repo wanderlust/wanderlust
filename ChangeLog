@@ -1,3 +1,10 @@
+2020-07-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* doc/wl-ja.texi (Score File Format): Use @multitable for table.
+	Do not use MULTIPLICATION SIGN directly.
+
+	* doc/wl.texi (Score File Format): Use @multitable for table.
+
 2020-07-15  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* doc/texinfo.tex: Replaced with the latest master branch's one in

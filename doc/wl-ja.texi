@@ -6902,15 +6902,17 @@ Non-nil ならば、サマリ同期時に未読/重要マークも同期しま�
 
 @example
 @group
-                        chars lines xref  extra
-localdir,localnews      ○    △    △    △
-nntp (xover対応)        ○    △    △    ×
-     (xover非対応)      ×    △    △    △
-imap4                   ○    △    △    △
-pop3                    ×    △    △    △
+@multitable {localdir,localnews} {chars} {lines} {xref} {extra}
+@headitem @tab chars @tab lines @tab xref  @tab extra
+@item localdir,localnews @tab ○ @tab △ @tab △ @tab △
+@item nntp (xover対応) @tab ○ @tab △ @tab △ @tab @U{00D7}
+@item (xover非対応) @tab @U{00D7} @tab △ @tab △ @tab △
+@item imap4 @tab ○ @tab △ @tab △ @tab △
+@item pop3 @tab @U{00D7} @tab △ @tab △ @tab △
+@end multitable
 
                 ○: 参照できる
-                ×: 参照できない(無視される)
+                @U{00D7}: 参照できない(無視される)
                 △: @code{elmo-msgdb-extra-fields} を設定すれば参照できる
 @end group
 @end example
