@@ -1,3 +1,8 @@
+2020-07-16  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	* ptexinfmt.el: Assume Emacs 24.5 or later.  Support @U.  Add
+	workaround for @headitem by defining alias to @item.
+
 2020-06-18  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-addrbook.el (wl-address-extract-user, wl-addrbook-strsafe):
