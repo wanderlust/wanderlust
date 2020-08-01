@@ -944,7 +944,7 @@ This command is executed when texinfmt sees @item inside @multitable."
 		    (current-column)))))) ;; end of existing line
 	(insert (make-string
 		 (if (> needed-whitespace 0) needed-whitespace 1)
-		 ? )))
+		 ?\s)))
       ;; now, put formatted cell into a rectangle
       (set (intern (concat texinfo-multitable-rectangle-name
 			   (int-to-string table-column)))
