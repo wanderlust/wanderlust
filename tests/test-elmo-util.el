@@ -44,8 +44,7 @@
      (equal list
 	    (elmo-object-load test-elmo-temoporary-file)))))
 
-(luna-define-method test-elmo-save-string-1 ((case test-elmo-util))
-  )
+(luna-define-method test-elmo-save-string-1 ((case test-elmo-util)))
 
 ;; list functions
 (luna-define-method test-elmo-uniq-list-1 ((case test-elmo-util))

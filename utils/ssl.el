@@ -81,8 +81,7 @@ This means a directory of pem encoded certificates with hash symlinks."
     "-host" host
     "-port" service
     "-verify" (int-to-string ssl-certificate-verification-policy)
-    "-CApath" ssl-certificate-directory
-    )
+    "-CApath" ssl-certificate-directory)
   "*Arguments that should be passed to the program `ssl-program-name'.
 This should be used if your SSL program needs command line switches to
 specify any behaviour (certificate file locations, etc).

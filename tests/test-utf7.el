@@ -12,8 +12,7 @@
      (string (make-char 'japanese-jisx0208 70 124)
 	     (make-char 'japanese-jisx0208 75 92)
 	     (make-char 'japanese-jisx0208 56 108)
-	     ?A
-	     )))))
+	     ?A)))))
 
 (luna-define-method test-utf7-encode-string-smiling-face ((case test-utf7))
   (lunit-assert

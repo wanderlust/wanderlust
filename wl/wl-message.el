@@ -965,8 +965,7 @@ Returns non-nil if bottom of message."
     [wl-message-play-content
      wl-message-play-content t "Play Content"]
     [wl-message-extract-content
-     wl-message-extract-content t "Extract Content"]
-    )
+     wl-message-extract-content t "Extract Content"])
   "The Message buffer toolbar.")
 
 (defun wl-e21-setup-message-toolbar ()

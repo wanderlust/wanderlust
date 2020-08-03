@@ -35,8 +35,7 @@
     ("Return-Receipt-To:" . wl-addrbook-complete-address)
     ("Newsgroups:" . wl-complete-newsgroups)
     ("Followup-To:" . wl-complete-newsgroups)
-    ("Fcc:"      . wl-complete-folder)
-    )
+    ("Fcc:"      . wl-complete-folder))
   "*Completion function alist concerned with the key.")
 
 (defvar wl-field-circular-completion-switch

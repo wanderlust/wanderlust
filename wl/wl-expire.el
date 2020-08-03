@@ -434,8 +434,7 @@ Refile to archive folder followed message date."
 			  wl-expire-archive-get-folder-function
 			  folder
 			  wl-expire-archive-date-folder-name-fmt
-			  dst-folder-expand
-			  ))
+			  dst-folder-expand))
 	 (dst-folder-base (car dst-folder-fmt))
 	 (dst-folder-fmt (cdr dst-folder-fmt))
 	 (refile-func (if no-delete

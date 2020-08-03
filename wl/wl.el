@@ -790,8 +790,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 	  (wl-message-id-domain
 	   "`wl-message-id-domain' seems to be a local hostname.")
 	  (t
-	   "Please set `wl-message-id-domain' to get valid Message-ID."))))
-      ))
+	   "Please set `wl-message-id-domain' to get valid Message-ID."))))))
 
   ;; folders
   (when (not no-check-folder)
@@ -976,8 +975,7 @@ If ARG (prefix argument) is specified, folder checkings are skipped."
      ("wl-draft" wl-draft-rename-saved-config)
      ("wl-qs" :interactive t
       wl-quicksearch-goto-search-folder-wrapper)
-     ("wl-spam" wl-spam-save-status)
-     )))
+     ("wl-spam" wl-spam-save-status))))
 
 ;; for backward compatibility
 (defalias 'wl-summary-from-func-petname 'wl-summary-default-from)

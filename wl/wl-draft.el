@@ -154,8 +154,7 @@ e.g.
     [wl-draft-kill
      wl-draft-kill t "Kill Current Draft"]
     [wl-draft-save-and-exit
-     wl-draft-save-and-exit t "Save Draft and Exit"]
-    )
+     wl-draft-save-and-exit t "Save Draft and Exit"])
   "The Draft buffer toolbar.")
 
 (eval-when-compile
@@ -1068,8 +1067,7 @@ Optional argument COLUMN is start-position of the field."
 	  (setq lal (cdr ret))
 	  (while (and (setq ret (std11-parse-ascii-token lal))
 		      (string-equal (cdr (assq 'specials (car ret))) ",")
-		      (setq ret (std11-parse-address (cdr ret)))
-		      )
+		      (setq ret (std11-parse-address (cdr ret))))
 	    (setq dest (cons (car ret) dest))
 	    (setq lal (cdr ret)))
 	  (while (eq 'spaces (car (car lal)))
@@ -1960,8 +1958,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	 ;;
 	 ((not field))
 	 (t
-	  (debug))
-	 )))
+	  (debug)))))
       (setq halist (cdr halist)))))
 
 (defun wl-draft-prepare-edit ()
@@ -2062,8 +2059,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	'wl-draft-insert-x-face-field-here) ;; allow nil
    mail-default-headers
    ;; check \n at th end of line for `mail-default-headers'
-   'wl-draft-check-new-line
-   ))
+   'wl-draft-check-new-line))
 
 (defun wl-draft-insert-mail-header-separator (&optional delimline)
   (save-excursion

@@ -211,8 +211,7 @@ If nil, default acap port is used."
 						(decode-coding-string
 						 (cadr x)
 						 wl-acap-coding-system)
-						"\""))
-					 ))))))))
+						"\""))))))))))
 			    (t 'wl-acap-ignored))))
 		       settings)))
 	;; Setup options.
