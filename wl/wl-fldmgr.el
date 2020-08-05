@@ -350,8 +350,7 @@ return value is diffs '(-new -unread -all)."
 	  (setcdr (cdr entity) (list flist unsubscribes))
 	  (when access
 	    (wl-fldmgr-add-modified-access-list group))
-	  t
-	  ))))))
+	  t))))))
 
 ;; usage:
 ;; (wl-add-entity '(("Desktop") ("ML") "ml/wl") '("+ml/new") wl-folder-entity 12)

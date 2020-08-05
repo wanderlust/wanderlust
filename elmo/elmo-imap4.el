@@ -2248,8 +2248,7 @@ Return nil if no complete line has arrived."
                  (elmo-imap4-mailbox
                   (elmo-imap4-folder-mailbox-internal folder)))))
         (elmo-imap4-session-set-current-mailbox-internal session nil)
-        (elmo-imap4-session-set-current-mailbox-size-internal session nil)
-        )
+        (elmo-imap4-session-set-current-mailbox-size-internal session nil))
       (elmo-msgdb-delete-path folder)
       t)))
 
@@ -2744,8 +2743,7 @@ time."
                 session mailbox)
              (and session
                   (elmo-imap4-session-set-current-mailbox-internal
-                   session nil))
-            ))
+                   session nil))))
           (error
            (if (elmo-imap4-response-ok-p response)
                (elmo-imap4-session-set-current-mailbox-internal

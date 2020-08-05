@@ -961,8 +961,7 @@ If optional argument IF-EXISTS is nil, load on demand.
    folder
    (if numbers (apply #'max numbers) 0)
 ;;;   (length num-db)
-   nil
-   ))
+   nil))
 
 (defun elmo-folder-get-info-max (folder)
   "Return max number of FODLER from folder info."

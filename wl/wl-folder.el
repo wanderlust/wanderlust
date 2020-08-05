@@ -124,8 +124,7 @@
     "----"
     ["Save Current Status"  wl-save t]
     ["Update Status"        wl-status-update t]
-    ["Exit"                 wl-exit t]
-    ))
+    ["Exit"                 wl-exit t]))
 
 (defun wl-folder-setup-mouse ()
   (define-key wl-folder-mode-map [mouse-2] 'wl-folder-click)
@@ -1625,8 +1624,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
     (let ((inhibit-read-only t)
 	  (buffer-read-only nil)
 	  (flist (nth 2 entity))
-	  (as-opened (cdr (assoc (car entity) wl-folder-group-alist)))
-	  )
+	  (as-opened (cdr (assoc (car entity) wl-folder-group-alist))))
       (if as-opened
 	  (let (update-flist flist-unsub new-flist)
 	    (when (and (eq (cadr entity) 'access)
@@ -1674,8 +1672,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	    (buffer-read-only nil)
 	    (flist (nth 2 entity))
 	    (as-opened (cdr (assoc (car entity) wl-folder-group-alist)))
-	    beg
-	    )
+	    beg)
 ;;;	(insert indent "[" (if as-opened "-" "+") "]" (car entity) "\n")
 ;;;	(save-excursion (forward-line -1)
 ;;;			(wl-highlight-folder-current-line))
@@ -2022,8 +2019,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	wl-folder-newsgroups-hashtb nil
 	wl-fldmgr-cut-entity-list nil
 	wl-fldmgr-modified nil
-	wl-fldmgr-modified-access-list nil
-	)
+	wl-fldmgr-modified-access-list nil)
   (when (boundp 'wl-score-cache)
     (setq wl-score-cache nil)))
 
@@ -3038,8 +3034,7 @@ Call `wl-summary-write-current-folder' with current folder name."
     [wl-folder-empty-trash
      wl-folder-empty-trash t "Empty Trash"]
     [wl-exit
-     wl-exit t "Quit Wanderlust"]
-    )
+     wl-exit t "Quit Wanderlust"])
   "The Folder buffer toolbar.")
 
 (defun wl-e21-setup-folder-toolbar ()

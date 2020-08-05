@@ -75,8 +75,7 @@ Buffer's multibyteness is ignored."
     "Encode the STRING as MIME CHARSET.
 Buffer's multibyteness is ignored."
     (elmo-with-enable-multibyte
-      (encode-mime-charset-string string charset lbt))))
- )
+      (encode-mime-charset-string string charset lbt)))))
 
 (defun elmo-base64-encode-string (_string &optional _no-line-break))
 (defun elmo-base64-decode-string (_string))
@@ -461,8 +460,7 @@ When NO-NODIFY is non-nil, dont' modify STRING and return new string."
 	(as-binary-output-file
 	 (insert string)
 	 (write-region (point-min) (point-max)
-		       filename nil 'no-msg))
-	)))
+		       filename nil 'no-msg)))))
 
 (defun elmo-max-of-list (nlist)
   (apply #'max 0 nlist))

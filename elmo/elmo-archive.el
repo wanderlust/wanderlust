@@ -443,8 +443,7 @@ TYPE specifies the archiver's symbol."
 	(prog1
 	    (elmo-archive-call-method method args)
 	  (if (file-exists-p dummy)
-	      (delete-file dummy)))
-	))))
+	      (delete-file dummy)))))))
 
 (luna-define-method elmo-folder-delete ((folder elmo-archive-folder))
   (let ((msgs (and (elmo-folder-exists-p folder)
@@ -830,8 +829,7 @@ TYPE specifies the archiver's symbol."
 	 msgs))
       (throw 'done
 	     (or (not rest)
-		 (elmo-archive-call-process prog (append args rest))))
-      )))
+		 (elmo-archive-call-process prog (append args rest)))))))
 
 (defsubst elmo-archive-article-exists-p (arc msg type)
   (if (not elmo-archive-check-existance-strict)
@@ -858,8 +856,7 @@ TYPE specifies the archiver's symbol."
 	 (exec (elmo-archive-get-method 'tgz exec-type))
 	 (suffix (elmo-archive-get-suffix 'tgz))
 	 (tar-suffix (elmo-archive-get-suffix 'tar))
-	 arc-tar ret-val
-	 )
+	 arc-tar ret-val)
     (when (null (and decompress compress exec))
       (ding)
       (error "WARNING: special method undefined: %s of %s"

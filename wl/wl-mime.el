@@ -839,8 +839,7 @@ With ARG, ask destination folder."
 				       wl-temporary-file-directory)
 				   nil nil
 				   (or (mime-entity-safe-filename entity)
-				       ".")
-				    ))))
+				       ".")))))
     (while (file-directory-p filename)
       (setq filename (read-file-name "Please set filename (not directory): "
 				     filename)))

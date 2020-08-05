@@ -75,8 +75,7 @@
     [wl-summary-forward
      wl-summary-forward t "Forward Current Message"]
     [wl-summary-exit
-     wl-summary-exit t "Exit Current Summary"]
-    )
+     wl-summary-exit t "Exit Current Summary"])
   "The Summary buffer toolbar.")
 
 (defun wl-e21-setup-summary-toolbar ()
@@ -324,8 +323,7 @@ See also variable `wl-use-petname'."
      ["Enter the message" wl-summary-jump-to-current-message t]
      ["Pipe message" wl-summary-pipe-message t]
      ["Print message" wl-summary-print-message t]
-     ["View raw message" wl-summary-display-raw t]
-     )
+     ["View raw message" wl-summary-display-raw t])
     ("Thread Operation"
      ["Open or Close" wl-thread-open-close (eq wl-summary-buffer-view 'thread)]
      ["Open all"     wl-thread-open-all (eq wl-summary-buffer-view 'thread)]

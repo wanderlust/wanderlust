@@ -40,8 +40,7 @@
    ;; [RFC5322] Appendix A.1.3.
    (equal '(-424 63838)
 	  (elmo-time-parse-date-string
-	   "Date: Thu, 13 Feb 1969 23:32:54 -0330")))
-)
+	   "Date: Thu, 13 Feb 1969 23:32:54 -0330"))))
 
 (luna-define-method test-elmo-time-parse-date-string-2 ((case test-elmo-date))
   "Obsolete Date: format"

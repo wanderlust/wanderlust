@@ -1072,8 +1072,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	    result (elmo-sort-uniq-number-list
 		    (nconc result
 			   (elmo-nntp-search-internal
-			    folder (nth 2 condition) from-msgs))
-		    ))))))
+			    folder (nth 2 condition) from-msgs))))))))
 
 (defun elmo-nntp-use-server-search-p (condition)
   (if (vectorp condition)
@@ -1342,8 +1341,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 (luna-define-method elmo-folder-close-internal ((folder elmo-nntp-folder))
 ;;    1.2. In elmo-folder-close, `temp-crosses' slot is cleared,
   (elmo-nntp-folder-set-temp-crosses-internal folder nil)
-  (elmo-nntp-folder-set-reads-internal folder nil)
-  )
+  (elmo-nntp-folder-set-reads-internal folder nil))
 
 (defun elmo-nntp-folder-update-crosspost-message-alist (folder numbers)
 ;;    1.3. In elmo-folder-flag-as-read, move crosspost entry

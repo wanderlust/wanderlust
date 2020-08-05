@@ -50,8 +50,7 @@
 (eval-and-compile
   (luna-define-class elmo-rss-folder (elmo-map-folder)
                      (url downloaded entries children))
-  (luna-define-internal-accessors 'elmo-rss-folder)
-  )
+  (luna-define-internal-accessors 'elmo-rss-folder))
 
 (defcustom elmo-rss-use-raw-utf8-in-headers nil
   "*Whether to use raw UTF-8 in headers of RSS messages.
