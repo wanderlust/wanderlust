@@ -1,3 +1,13 @@
+2020-08-20  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Change non-ASCII text files's coding-system to UTF-8
+
+	* ChangeLog: Likewise.
+
+	* wl-news.el.in: Likewise.
+
+	* wl-vars.el: Likewise.
+
 2020-07-04  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
 
 	* wl-summary.el (wl-summary-cursor-move-surface, wl-summary-up)
@@ -7984,7 +7994,7 @@
 	message is not displayed yet.
 	(wl-summary-prev-page): Ditto.
 
-2002-03-11  J,Ai(Br,At(Bme Marant <jerome.marant@free.fr>
+2002-03-11  Jérôme Marant <jerome.marant@free.fr>
 
 	* wl-folder.el (wl-folder-mode-menu-spec): Fixed typo.
 

@@ -1,14 +1,14 @@
 #
-# ~/.addresses $B%"%I%l%9D"%U%!%$%k%5%s%W%k(B
+# ~/.addresses アドレス帳ファイルサンプル
 #
-# '#' $B$G;O$^$k9T$O%3%a%s%H!#(B
-# $B6u9T$OL5;k!#(B
+# '#' で始まる行はコメント。
+# 空行は無視。
 #
-# $B=q<0(B:
-# $B%a!<%k%"%I%l%9(B  "$B$"$@L>(B" "$BK\L>(B"
+# 書式:
+# メールアドレス  "あだ名" "本名"
 #
-# $B$"$@L>$O%5%^%j$NI=<($K!"K\L>$O(B To: $B%U%#!<%k%I$K;H$o$l$^$9!#(B
+# あだ名はサマリの表示に、本名は To: フィールドに使われます。
 #
-teranisi@gohome.org		"$B$F$i$K$7(B"	"$B;{@>M50l(B"
-foo@example.com			"$B$U!<$5$s(B"	"John Foo"
-bar@example.org			"$B$P!<$5$s(B"	"Michael Bar"
+teranisi@gohome.org		"てらにし"	"寺西裕一"
+foo@example.com			"ふーさん"	"John Foo"
+bar@example.org			"ばーさん"	"Michael Bar"

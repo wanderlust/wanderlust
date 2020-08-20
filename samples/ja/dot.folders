@@ -1,58 +1,58 @@
 #
-#  ~/.folders $B%U%)%k%@Dj5A%U%!%$%k%5%s%W%k(B
+#  ~/.folders フォルダ定義ファイルサンプル
 #
-# $B8D!9$N%U%)%k%@$N=q<0$K$D$$$F$O(B Info $B$N(B Folders $B%;%/%7%g%s$r;2>H$N$3$H!#(B
+# 個々のフォルダの書式については Info の Folders セクションを参照のこと。
 #
-# '#' $B$G;O$^$k9T$O%3%a%s%H!#(B
-# $B6u9T$OL5;k$5$l$k!#(B
+# '#' で始まる行はコメント。
+# 空行は無視される。
 # 
 
-## IMAP $B%f!<%6$N%a!<%k%\%C%/%9(B
+## IMAP ユーザのメールボックス
 # %inbox
 
-## POP $B%f!<%6$N%a!<%k%\%C%/%9(B
+## POP ユーザのメールボックス
 # &USERNAME@POPSERVER.EXAMPLE.COM
 
-## [ POP $B%f!<%6$K$O%Q%$%W%U%)%k%@$,Lr$KN)$A$^$9(B ]
-## [ $B%Q%$%W%U%)%k%@$r;H$($P!"%a!<%k$r<h$j9~$`$3$H$,2DG=$G$9(B ]
+## [ POP ユーザにはパイプフォルダが役に立ちます ]
+## [ パイプフォルダを使えば、メールを取り込むことが可能です ]
 # |&USERNAME@POPSERVER.EXAMPLE.COM|+inbox
 
-## $B%4%_H"!&Ap9F!&Aw?.H"(B
+## ゴミ箱・草稿・送信箱
 +trash
 +draft
 +queue
 
-## $B=EMW%^!<%/(B `$' $B$N$D$$$?%a%C%;!<%8$r$^$H$a$k(B
+## 重要マーク `$' のついたメッセージをまとめる
 'flag/important
 
-## MH $B%U%)%k%@(B
+## MH フォルダ
 +inbox
 
-## IMAP $B%U%)%k%@(B
+## IMAP フォルダ
 # %inbox.emacs.wl
 # %inbox.emacs.apel-ja
 
-## IMAP $B%5!<%P1[$7$K(B MH folder $B$K%"%/%;%9(B
+## IMAP サーバ越しに MH folder にアクセス
 # %#mh/inbox
 
-## NNTP $B%U%)%k%@(B
+## NNTP フォルダ
 # -fj.os.bsd.freebsd
 # -fj.mail.reader.mew
 # -fj.news.reader.gnus
 
-## [ $BB>$N(B NNTP $B%5!<%P>e$N%K%e!<%:%0%k!<%W(B ]
+## [ 他の NNTP サーバ上のニューズグループ ]
 # -jlug.ml.users@NEWS.EXAMPLE.NET
 # -emacs.auc-tex@NEWS.EXAMPLE.ORG
 # -ring.openlab.skk@NEWS.EXAMPLE.COM
 
 
-## $B%0%k!<%W$NDj5A(B
-## [ $B%U%)%k%@$rGH3g8L$G$/$/$C$F%0%k!<%W$K$9$k(B ]
+## グループの定義
+## [ フォルダを波括弧でくくってグループにする ]
 # Emacsen{
 #	+to/wl
 #	+to/mew-dist
 #	+to/apel-ja
-## [ $B%0%k!<%W$NF~$l;R$b2DG=(B ]
+## [ グループの入れ子も可能 ]
 #	XEmacs{
 #		+to/xemacs-beta
 #		+to/xemacs-beta-ja
@@ -60,11 +60,11 @@
 #	}
 # }
 
-## $B%"%/%;%9%0%k!<%W(B
-## [ $B9TKv$K(B '/' $B$,$D$/$H!"$=$N%U%)%k%@$K4^$^$l$k%5%V%U%)%k%@A4$F$,(B ]
-## [ $B$R$H$D$N%0%k!<%W$H$J$k!#(B]
-## [ `C-u RET' $B$G%"%/%;%9%0%k!<%W$r3+$/$H99?7$G$-$k!#(B ]
+## アクセスグループ
+## [ 行末に '/' がつくと、そのフォルダに含まれるサブフォルダ全てが ]
+## [ ひとつのグループとなる。]
+## [ `C-u RET' でアクセスグループを開くと更新できる。 ]
 + /
 
-## IMAP $B%U%)%k%@$N%"%/%;%9%0%k!<%W$NNc(B
+## IMAP フォルダのアクセスグループの例
 # % /

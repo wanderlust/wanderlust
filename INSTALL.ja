@@ -1,181 +1,181 @@
 
-	Wanderlust $B$N%$%s%9%H!<%kJ}K!(B
+	Wanderlust のインストール方法
 
-					Kaoru Takahashi   $B9b660j(B,
-					Yuuichi Teranishi $B;{@>M50l(B,
-					Tsunehiko Baba    $BGO>l91I'(B
+					Kaoru Takahashi   高橋郁,
+					Yuuichi Teranishi 寺西裕一,
+					Tsunehiko Baba    馬場恒彦
 
-$BI,MW>r7o(B
+必要条件
 ========
 
-  Wanderlust $B$,%5%]!<%H$9$k(B Emacsen $B$r0J2<$K<($7$^$9!#(B
+  Wanderlust がサポートする Emacsen を以下に示します。
 
 	Mule 2.3 based on Emacs 19.34
-	Emacs 20.1 $B0J9_(B
-	XEmacs 20.4 $B0J9_(B
+	Emacs 20.1 以降
+	XEmacs 20.4 以降
 
-  Wanderlust $B$r;H$&$?$a$K$O!"0J2<$K<($9(BMIME$BMQ%b%8%e!<%k$r%$%s%9%H!<%k$7(B
-  $B$F$*$/I,MW$,$"$j$^$9!#(B
+  Wanderlust を使うためには、以下に示すMIME用モジュールをインストールし
+  ておく必要があります。
 
-	SEMI	(1.14.6 $B0J9_(B)
-	FLIM	(1.14.9 $B0J9_(B)
+	SEMI	(1.14.6 以降)
+	FLIM	(1.14.9 以降)
 
-  Wanderlust $B$*$h$S(B MIME$BMQ%b%8%e!<%k$r;H$&$?$a$K$O(B APEL $B$r%$%s%9%H!<%k$7(B
-  $B$F$*$/I,MW$,$"$j$^$9!#(BAPEL $B$O>o$K:G?7HG$r;H$&$3$H$r?d>)$7$^$9!#(B
+  Wanderlust および MIME用モジュールを使うためには APEL をインストールし
+  ておく必要があります。APEL は常に最新版を使うことを推奨します。
 
-	APEL	(10.6 $B0J9_(B)
+	APEL	(10.6 以降)
 
 
-MIME$BMQ%b%8%e!<%k$NA*Br(B
+MIME用モジュールの選択
 ======================
 
-  $B<g$J(B Emacsen $B$K$D$$$F?d>)$9$k(B APEL, FLIM, SEMI $B$NAH9g$;$r0J2<$K<($7$^$9!#(B
+  主な Emacsen について推奨する APEL, FLIM, SEMI の組合せを以下に示します。
 
-  (a) XEmacs 21.1 $B0J9_(B
-
-	APEL 10.8, FLIM 1.14.9, SEMI 1.14.6
-
-    $B2DG=$J$i$P(B XEmacs $B$N%Q%C%1!<%8$H$7$F%$%s%9%H!<%k$9$k$3$H$r$*4+$a$7$^$9!#(B
-
-  (b) Emacs 20.4 $B0J9_(B
+  (a) XEmacs 21.1 以降
 
 	APEL 10.8, FLIM 1.14.9, SEMI 1.14.6
 
-  (c) Emacs 20.1$B!A(B20.3
+    可能ならば XEmacs のパッケージとしてインストールすることをお勧めします。
+
+  (b) Emacs 20.4 以降
+
+	APEL 10.8, FLIM 1.14.9, SEMI 1.14.6
+
+  (c) Emacs 20.1〜20.3
 
 	APEL 10.8, CLIME 1.14.6, SEMI 1.14.6
 
-    FLIM $B$,F0$-$^$;$s$N$G!"Be$o$j$K(B CLIME $B$r%$%s%9%H!<%k$7$F$/$@$5$$!#(B
+    FLIM が動きませんので、代わりに CLIME をインストールしてください。
 
   (d) Emacs 19.34 (Mule 2.3)
 
 	APEL 10.8, CLIME 1.14.6, SEMI 1.14.6
 
-    Emacs 19.34 $B%Y!<%9$N(B Mule $B$G$O(B SEMI $B$rF0:n$5$;$k$3$H$,2DG=$G$9!#2<5-(B
-    $B$N%Z!<%8$,;29M$K$J$j$^$9!#(B
+    Emacs 19.34 ベースの Mule では SEMI を動作させることが可能です。下記
+    のページが参考になります。
 
 	http://www.jpl.org/elips/INSTALL-SEMI-ja.html
 
 
-MIME$BMQ%b%8%e!<%k$N%$%s%9%H!<%k(B
+MIME用モジュールのインストール
 ==============================
 
-  $B%Q%C%1!<%8$O$=$l$>$l0J2<$N(B URL $B$GF~<j2DG=$G$9!#(B
+  パッケージはそれぞれ以下の URL で入手可能です。
 
 	APEL:	ftp://ftp.m17n.org/pub/mule/apel/
 	FLIM:	ftp://ftp.m17n.org/pub/mule/flim/
 	CLIME:	ftp://ftp.jpl.org/pub/m17n/
 	SEMI:	ftp://ftp.m17n.org/pub/mule/semi/
 
-  APEL, FLIM(CLIME), SEMI $B$N=g$K%$%s%9%H!<%k$7$F$/$@$5$$!#4pK\E*$K$9$Y$F(B
-  make install $B$N<B9T$G:Q$`$O$:$G$9!#(B
+  APEL, FLIM(CLIME), SEMI の順にインストールしてください。基本的にすべて
+  make install の実行で済むはずです。
 
-  $B>\$7$$%$%s%9%H!<%k$NJ}K!$O3F%Q%C%1!<%8$KE:IU$5$l$F$$$k%I%-%e%a%s%H(B 
-  (README.ja, README.en) $B$r;2>H$7$F$/$@$5$$!#(B
+  詳しいインストールの方法は各パッケージに添付されているドキュメント 
+  (README.ja, README.en) を参照してください。
 
-  $B$=$NB>!"(BFLIM, SEMI $B$K$O$$$m$$$m$JJQ7A%P!<%8%g%s$,B8:_$7$^$9$,!"$=$l$i(B
-  $B$N$$$:$l$bMxMQ$9$k$3$H$,2DG=$G$9!#4pK\E*$K:G?7HG$NAH9g$;$J$iF0:n$9$k$O(B
-  $B$:$G$9!#(B
+  その他、FLIM, SEMI にはいろいろな変形バージョンが存在しますが、それら
+  のいずれも利用することが可能です。基本的に最新版の組合せなら動作するは
+  ずです。
 
-  $BNc$($P!"0J2<$NAH9g$;$NF0:n$,3NG'$5$l$F$$$^$9!#(B
+  例えば、以下の組合せの動作が確認されています。
 
 	APEL 10.6, SLIM 1.14.9, SEMI 1.14.5
 	APEL 10.6, CLIME 1.14.5, EMIKO 1.14.1
 
-  APEL, FLIM, SEMI $B$N%P!<%8%g%s%"%C%W$r9T$C$?>l9g$O!"(BWanderlust $B$r%$%s%9(B
-  $B%H!<%k$7D>$7$F$/$@$5$$!#(B
+  APEL, FLIM, SEMI のバージョンアップを行った場合は、Wanderlust をインス
+  トールし直してください。
 
 
-$B4D6-$N3NG'(B
+環境の確認
 ==========
 
-  Wanderlust $B$N%$%s%9%H!<%k$NA0$K4D6-$N3NG'$r$9$k$3$H$r?d>)$7$^$9!#(B
+  Wanderlust のインストールの前に環境の確認をすることを推奨します。
 
 	% make check
-  $B$^$?$O(B
+  または
 	% make EMACS=xemacs check
 
-  $B$G(B APEL, FLIM, SEMI $B$N%A%'%C%/$r4^$s$@4D6-%F%9%H$,9T$($^$9!#(B
+  で APEL, FLIM, SEMI のチェックを含んだ環境テストが行えます。
 
-  $B?7$7$$(B APEL, FLIM, SEMI $B$,%$%s%9%H!<%k$5$l$F$$$F$b!"(Bload-path $B>e$K8E$$(B
-  $B$b$N$,;D$C$F$$$k>l9g$K$O%H%i%V%k$N860x$H$J$j$^$9!#(Bload-path $B>e$G=EJ#$7(B
-  $B$?%U%!%$%k$rC5$9$K$O(B M-x list-load-path-shadows $B$,JXMx$G$9!#(B
+  新しい APEL, FLIM, SEMI がインストールされていても、load-path 上に古い
+  ものが残っている場合にはトラブルの原因となります。load-path 上で重複し
+  たファイルを探すには M-x list-load-path-shadows が便利です。
 
 
-$BDL>o$N%$%s%9%H!<%k(B
+通常のインストール
 ==================
 
-(a)Makefile, WL-CFG $B$NJT=8(B
+(a)Makefile, WL-CFG の編集
 
-  Makefile $B$O!"(BEMACS, LISPDIR $B$NItJ,$rJT=8$7$F$/$@$5$$!#(B
+  Makefile は、EMACS, LISPDIR の部分を編集してください。
 
-	EMACS     $B;HMQ$7$F$$$k(B Emacs $B$N%3%^%s%IL>$r;XDj(B
-	LISPDIR   $B%$%s%9%H!<%k@h$r;XDj(B
+	EMACS     使用している Emacs のコマンド名を指定
+	LISPDIR   インストール先を指定
 
-  LISPDIR $B$OFC$K;XDj$7$J$/$F$b(B (NONE $B$N$^$^$G$b(B) $B<+F0E*$K%$%s%9%H!<%k(B
-  $B@h$r8!=P$7$^$9!#(B
+  LISPDIR は特に指定しなくても (NONE のままでも) 自動的にインストール
+  先を検出します。
 
-  $BI,MW$J$i(B WL-CFG $B$rJT=8$7$F$/$@$5$$!#(B INFO $B$N8@8l$N;XDj$J$I$,$G$-$^$9!#(B
+  必要なら WL-CFG を編集してください。 INFO の言語の指定などができます。
 
-(b)$B%P%$%H%3%s%Q%$%k!&%$%s%9%H!<%k(B
+(b)バイトコンパイル・インストール
 
-  $B0J2<$r<B9T$7$F$/$@$5$$!#(B
+  以下を実行してください。
 
 	% make
 	% make install
 
-  $B$3$N$H$-!"(Bsubdirs.el $B$N$J$$(B Emacs $B$G$O!"(B
+  このとき、subdirs.el のない Emacs では、
 
 	Cannot open load file: mime-setup
 
-  $B$H$$$&%(%i!<$,=P$k$3$H$,$"$j$^$9!#(B
+  というエラーが出ることがあります。
 
-  $B$3$N>l9g$O!"(Bcustom, APEL, FLIM, SEMI $B$N%$%s%9%H!<%k@h$r4D6-JQ?t(B
-  EMACSLOADPATH $B$K2C$($k$+!"E83+%G%#%l%/%H%j$N(B WL-CFG $B$H$$$&%U%!%$%kCf(B
-  $B$G(B load-path $B$rDL$7$F$*$/$H$h$$$G$7$g$&!#(B
+  この場合は、custom, APEL, FLIM, SEMI のインストール先を環境変数
+  EMACSLOADPATH に加えるか、展開ディレクトリの WL-CFG というファイル中
+  で load-path を通しておくとよいでしょう。
 
 
-XEmacs $B$N%Q%C%1!<%8$H$7$F%$%s%9%H!<%k(B
+XEmacs のパッケージとしてインストール
 =====================================
 
-  Wanderlust $B$O(B XEmacs (21.0 $B0J9_(B) $B$N%Q%C%1!<%8$N$R$H$D$H$7$F%$%s%9%H!<(B
-  $B%k$9$k$3$H$b2DG=$G$9!#%Q%C%1!<%8$H$7$F%$%s%9%H!<%k$9$k$H!"(Bautoload 
-  $B$N@_Dj!"%"%$%3%s$N%Q%9@_Dj$r8D?M$N(B .emacs $B$K5-=R$7$J$/$F$b(B 
-  Wanderlust $B$r@5>o$K5/F0$G$-$k$h$&$K$J$j$^$9!#(B
+  Wanderlust は XEmacs (21.0 以降) のパッケージのひとつとしてインストー
+  ルすることも可能です。パッケージとしてインストールすると、autoload 
+  の設定、アイコンのパス設定を個人の .emacs に記述しなくても 
+  Wanderlust を正常に起動できるようになります。
 
-(a)Makefile, WL-CFG $B$NJT=8(B
+(a)Makefile, WL-CFG の編集
 
-  Makefile $B$O!"(BXEMACS, PACKAGEDIR $B$NItJ,$rJT=8$7$F$/$@$5$$!#(B
+  Makefile は、XEMACS, PACKAGEDIR の部分を編集してください。
 
-	XEMACS      $B;HMQ$7$F$$$k(B XEmacs $B$N%3%^%s%IL>$r;XDj(B
-	PACKAGEDIR  package $B$N%G%#%l%/%H%j$r;XDj(B
+	XEMACS      使用している XEmacs のコマンド名を指定
+	PACKAGEDIR  package のディレクトリを指定
 
-  PACKAGEDIR $B$OFC$K;XDj$7$J$/$F$b(B (NONE $B$N$^$^$G$b(B)$B!"(BSEMI $B$,%$%s%9%H!<(B
-  $B%k$5$l$F$$$l$P<+F0E*$K8!=P$5$l$^$9!#(B
+  PACKAGEDIR は特に指定しなくても (NONE のままでも)、SEMI がインストー
+  ルされていれば自動的に検出されます。
 
-  $BI,MW$J$i(B WL-CFG $B$rJT=8$7$F$/$@$5$$!#(B INFO $B$N8@8l$N;XDj$J$I$,$G$-$^$9!#(B
+  必要なら WL-CFG を編集してください。 INFO の言語の指定などができます。
 
-(b)$B%P%$%H%3%s%Q%$%k!&%$%s%9%H!<%k(B
+(b)バイトコンパイル・インストール
 
-  $B0J2<$r<B9T$7$F$/$@$5$$!#(B
+  以下を実行してください。
 
 	% make package
 	% make install-package
 
-  Info $B%U%!%$%k$bF1;~$K%$%s%9%H!<%k$5$l$^$9!#(B
+  Info ファイルも同時にインストールされます。
 
 
-load-path $B$N@_Dj(B
+load-path の設定
 ================
 
-  Emacs 20.3 $B0J9_$b$7$/$O(B XEmacs $B$r;H$C$FIaDL$K%$%s%9%H!<%k$7$?>l9g$O!"(B
-  load-path $B$r@_Dj$9$kI,MW$O$"$j$^$;$s!#(B
+  Emacs 20.3 以降もしくは XEmacs を使って普通にインストールした場合は、
+  load-path を設定する必要はありません。
 
-  Emacs 20.2 $B0JA0$r$*;H$$$J$i!"(BWanderlust $B$r(B install $B$7$?>l=j$r(B
-  load-path $B$K@_Dj$7$F$/$@$5$$!#(B
+  Emacs 20.2 以前をお使いなら、Wanderlust を install した場所を
+  load-path に設定してください。
 
-  $B$b$7(B Emacs 19.29 $B0J9_$^$?$O(B Emacs 20.1, Emacs 20.2 $B$r;H$C$F=i4|@_Dj(B
-  $B$G%$%s%9%H!<%k$7$?$N$J$i!"<!$N$h$&$K(B subdirs.el $B$r=q$/$3$H$,$G$-$^$9!#(B
+  もし Emacs 19.29 以降または Emacs 20.1, Emacs 20.2 を使って初期設定
+  でインストールしたのなら、次のように subdirs.el を書くことができます。
 
   --------------------------------------------------------------------
     (normal-top-level-add-to-load-path
@@ -183,38 +183,38 @@ load-path $B$N@_Dj(B
   --------------------------------------------------------------------
 
 
-$B%^%K%e%"%k$N%$%s%9%H!<%k(B
+マニュアルのインストール
 ========================
 
-  $B%^%K%e%"%k$O(B Info $B7A<0$G$9!#%$%s%9%H!<%k$9$k$K$O0J2<$N$3$H$r<B9T$7$F(B
-  $B$/$@$5$$!#(B
+  マニュアルは Info 形式です。インストールするには以下のことを実行して
+  ください。
 
 	% make info
 	% make install-info
 
-  XEmacs $B$N(B package $B$H$7$F%$%s%9%H!<%k$7$?>l9g$O<+F0E*$K(B Info $B%U%!%$%k(B
-  $B$b%$%s%9%H!<%k$5$l$k$N$G$3$l$i$NA`:n$OI,MW$"$j$^$;$s!#(B
+  XEmacs の package としてインストールした場合は自動的に Info ファイル
+  もインストールされるのでこれらの操作は必要ありません。
 
-  $B%^%K%e%"%k$N%$%s%9%H!<%k@h$O<+F08!=P$5$l$^$9!#(B(Makefile $BCf$N(B INFODIR 
-  $B$G$b@_Dj2DG=$G$9(B)
+  マニュアルのインストール先は自動検出されます。(Makefile 中の INFODIR 
+  でも設定可能です)
 
 
-$B%5%s%W%k@_Dj(B
+サンプル設定
 ============
 
-  Wanderlust $B$N@_Dj%U%!%$%k$K$O!"(B
+  Wanderlust の設定ファイルには、
 
-    ~/.wl         Wanderlust $B$N@_Dj(B ($B5/F0;~$KFI$_9~$^$l$k(B)
-    ~/.folders    $B%U%)%k%@@_Dj(B
-    ~/.addresses  $B%"%I%l%9D"(B ($BL5$/$F$b5/F0$G$-$k(B)
+    ~/.wl         Wanderlust の設定 (起動時に読み込まれる)
+    ~/.folders    フォルダ設定
+    ~/.addresses  アドレス帳 (無くても起動できる)
 
-  $B$N;0$D$,$"$j$^$9!#(B
+  の三つがあります。
 
-  $B$=$l$>$l!"(Bsamples/ja/ $B%G%#%l%/%H%j$N2<$K%5%s%W%k@_Dj(B
-  (dot.addresses, dot.folders, dot.wl) $B$,$"$j$^$9$N$G!"(B
-  $B3F<+$G%[!<%`%G%#%l%/%H%j$K%3%T!<$7$FJT=8$9$k$J$I$7$F$/$@$5$$!#(B
+  それぞれ、samples/ja/ ディレクトリの下にサンプル設定
+  (dot.addresses, dot.folders, dot.wl) がありますので、
+  各自でホームディレクトリにコピーして編集するなどしてください。
 
-  $B>\$7$$@_Dj$O(B Info $B$r8fMw$/$@$5$$!#(B
+  詳しい設定は Info を御覧ください。
 
 
 Local Variables: 

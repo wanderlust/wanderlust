@@ -1,290 +1,290 @@
-Wanderlust NEWS ($BF|K\8lHG(B) -- User-visible changes in Wanderlust.
+Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
-* 2.14.x $B$+$i(B 2.16.0 $B$X$NJQ99E@(B
+* 2.14.x から 2.16.0 への変更点
 
-** $B$3$N%j%j!<%9$O8x<0$N$b$N$G$O$"$j$^$;$s!#M-;V$K$h$j!"(Bgithub $B$N(B
-   $B%j%]%8%H%j$G3+H/$5$l$F$$$k$b$N$G$9!#(B
+** このリリースは公式のものではありません。有志により、github の
+   リポジトリで開発されているものです。
    ( https://github.com/wanderlust )
 
-** $B%a!<%j%s%0%j%9%H$N%"%I%l%9$,JQ99$5$l$^$7$?!#(B
+** メーリングリストのアドレスが変更されました。
 
-** $B?75,%U%)%k%@(B rss $B%U%)%k%@$,DI2C$5$l$^$7$?!#(B
+** 新規フォルダ rss フォルダが追加されました。
 
-** $B%*%U%i%$%s;~$K%a%C%;!<%8$N0\F0$r9T$C$?8e$K%*%s%i%$%s$K$J$C$?:]$K!"(B
-   $BA`:n$K$h$C$F$O0U?^$;$:$K%a%C%;!<%8$,<:$o$l$k;v$,$"$k$N$r=$@5$7$^$7(B
-   $B$?!#$3$N>r7o$KEv$F$O$^$C$?%a%C%;!<%8$O!"(Belmo-lost+found-folder ($B%G(B
-   $B%U%)%k%H$G$O(B"+lost+found") $B$K<}G<$5$l$^$9!#(B
+** オフライン時にメッセージの移動を行った後にオンラインになった際に、
+   操作によっては意図せずにメッセージが失われる事があるのを修正しまし
+   た。この条件に当てはまったメッセージは、elmo-lost+found-folder (デ
+   フォルトでは"+lost+found") に収納されます。
 
-** SSL/TLS $B@\B3$K!"AH$_9~$_(B GnuTLS $B$d(B tls.el $B$r;HMQ$9$k$h$&$K$J$j$^$7$?!#(B
+** SSL/TLS 接続に、組み込み GnuTLS や tls.el を使用するようになりました。
 
-** $B%I%i%U%H%P%C%U%!$N%O%$%i%$%H$K(B jit-lock-mode $B$r;HMQ$9$k$h$&$K$J$j$^$7$?!#(B
-   idle-timer $B$r;HMQ$7$?%O%$%i%$%H$b%5%]!<%H$5$l$F$$$^$9!#(B
+** ドラフトバッファのハイライトに jit-lock-mode を使用するようになりました。
+   idle-timer を使用したハイライトもサポートされています。
 
-** IMAP4$B$G!";HMQ$G$-$k>l9g$O(B utf-7-imap $B%3!<%G%#%s%0%7%9%F%`$r;HMQ$7$^$9!#(B
-   $B$3$N;~!"(Belmo-imap4-use-modified-utf7 $B$N%G%U%)%k%HCM$O(B t $B$K$J$j!"(B
-   utf7.el $B$O%$%s%9%H!<%k$5$l$^$;$s!#(B
+** IMAP4で、使用できる場合は utf-7-imap コーディングシステムを使用します。
+   この時、elmo-imap4-use-modified-utf7 のデフォルト値は t になり、
+   utf7.el はインストールされません。
 
-** wl-summary-pick $BEy$G(B `body' $B$KBP$7$F8!:w$r$+$1$k$H!"%F%-%9%H%Q!<%H(B
-   $B$KBP$7$F%G%3!<%I$r9T$C$F$+$i8!:w$9$k$h$&$K$J$j$^$7$?!#=>MhDL$j$N8!(B
-   $B:w$O(B `raw-body' $B$KBP$7$F8!:w$r9T$C$F$/$@$5$$!#(B
+** wl-summary-pick 等で `body' に対して検索をかけると、テキストパート
+   に対してデコードを行ってから検索するようになりました。従来通りの検
+   索は `raw-body' に対して検索を行ってください。
 
-** sendmail $B%Q%C%1!<%8$K$h$k%a!<%kAw?.$,%5%]!<%H$5$l$^$7$?!#(B
+** sendmail パッケージによるメール送信がサポートされました。
 
-** IMAP $B%U%)%k%@$N2~L>;~$K%a%C%;!<%8$,<:$o$l$k;v$,$"$k%P%0$r=$@5$7$^$7$?!#(B
+** IMAP フォルダの改名時にメッセージが失われる事があるバグを修正しました。
 
-** spam $B$H$7$FEPO?$7$?%a%C%;!<%8$K(B spam $B%^!<%/$rIU$1$^$9!#(B
+** spam として登録したメッセージに spam マークを付けます。
 
-** non-spam $B$H$7$FEPO?$7$?%a%C%;!<%8$+$i(B spam $B%^!<%/$r<h$j=|$-$^$9!#(B
+** non-spam として登録したメッセージから spam マークを取り除きます。
 
-** ESEARCH (RFC4731) $B$,%5%]!<%H$5$l$^$7$?!#(B
+** ESEARCH (RFC4731) がサポートされました。
 
-** $B?75,%*%W%7%g%s(B elmo-imap4-set-seen-flag-explicitly $B$,DI2C$5$l$^$7$?!#(B
+** 新規オプション elmo-imap4-set-seen-flag-explicitly が追加されました。
 
-** pipe $B$G$N%3%T!<$G?75,%a%C%;!<%8$,<h$j9~$a$J$/$J$k%P%0$,=$@5$5$l$^$7$?!#(B
+** pipe でのコピーで新規メッセージが取り込めなくなるバグが修正されました。
 
-** $B%5%^%j$N%=!<%H=g$KJ#?t$N>r7o$r;XDj=PMh$k$h$&$K$J$j$^$7$?!#(B
-   "," $B6h@Z$j$G>r7o$rJB$Y$F2<$5$$!#(B
+** サマリのソート順に複数の条件を指定出来るようになりました。
+   "," 区切りで条件を並べて下さい。
 
-** $B%M%C%H%o!<%/%U%)%k%@L>$N2r@O$r87L)$K9T$&$h$&$K$J$j$^$7$?!#(B
+** ネットワークフォルダ名の解析を厳密に行うようになりました。
 
-** $B%j%U%!%$%k=hM}$N:GE,2=(B
-   filter, pipe, multi $B%U%)%k%@$r2r<a$7!":GE,$JJ}K!$rA*Br$7$^$9!#(B
+** リファイル処理の最適化
+   filter, pipe, multi フォルダを解釈し、最適な方法を選択します。
 
-** bsfilter $B=hM}$N9bB.2=(B
+** bsfilter 処理の高速化
 
-** maildir $B%U%)%k%@$N=hM}$N9bB.2=(B
+** maildir フォルダの処理の高速化
 
-** IMAP4 $BHsF14|%j%F%i%k(B(RFC 2088)$B$KBP1~(B
+** IMAP4 非同期リテラル(RFC 2088)に対応
 
-** $B%5%^%j%P%C%U%!$G%a%C%;!<%8$K%^!<%/$r$D$1$?;~$K%9%l%C%I$r3+$-$^$9!#(B
+** サマリバッファでメッセージにマークをつけた時にスレッドを開きます。
 
-** wl-summary-display-raw $B$,DI2C$5$l$^$7$?!#(B
+** wl-summary-display-raw が追加されました。
 
-** EasyPG (http://www.easypg.org) $B$,MxMQ2DG=$G$"$l$P;H$$$^$9!#(B
+** EasyPG (http://www.easypg.org) が利用可能であれば使います。
 
-** namazu $B%U%)%k%@$O5!G=$r3HD%$7$?(B search $B%U%)%k%@$KCV$-49$($i$l$^$7$?!#(B
-   namazu $B0J30$N30It%W%m%0%i%`(B (grep, mu, notmuch) $B$r;H$C$?8!:w$,=PMh(B
-   $B$k$h$&$K$J$j$^$7$?!#(B
+** namazu フォルダは機能を拡張した search フォルダに置き換えられました。
+   namazu 以外の外部プログラム (grep, mu, notmuch) を使った検索が出来
+   るようになりました。
 
-** archive $B%U%)%k%@$N4{B8$N%a%C%;!<%8$r>e=q$-$7$F$7$^$&LdBj$,=$@5$5$l$^$7$?!#(B
-   $B%a%C%;!<%8$rDI2C$9$k=hM}$K%P%0$,B8:_$7$F$$$^$7$?!#(B
+** archive フォルダの既存のメッセージを上書きしてしまう問題が修正されました。
+   メッセージを追加する処理にバグが存在していました。
 
-* 2.14.0 $B$+$i(B 2.14.1 $B$X$NJQ99E@(B
-  2.14.1 $B$O!"(B2.14.0 $B$N%P%0=$@5HG$G$9!#(B
+* 2.14.0 から 2.14.1 への変更点
+  2.14.1 は、2.14.0 のバグ修正版です。
 
-** Maildir $B$GI=<(=g=x$,@5$7$/$J$$%P%0$,=$@5$5$l$^$7$?!#(B
+** Maildir で表示順序が正しくないバグが修正されました。
 
-** $B%"%/%;%9%U%)%k%@$N%"%$%3%s$,I=<($5$l$^$9!#(B
+** アクセスフォルダのアイコンが表示されます。
 
-* 2.12.2 $B$+$i(B 2.14.0 $B$X$NJQ99E@(B
+* 2.12.2 から 2.14.0 への変更点
 
-** $B?7$7$$%U%)%k%@7?(B access $B%U%)%k%@$,DI2C$5$l$^$7$?!#(B
-   $B;XDj$5$l$?%U%)%k%@$NG[2<$N%5%V%U%)%k%@$r2>A[E*$K0l$D$N%U%)%k%@$H$7$F07$((B
-   $B$k$h$&$K$9$k%U%)%k%@$G$9!#(B
+** 新しいフォルダ型 access フォルダが追加されました。
+   指定されたフォルダの配下のサブフォルダを仮想的に一つのフォルダとして扱え
+   るようにするフォルダです。
 
-** $B%U%)%k%@$N%"%C%W%G!<%H$,9bB.2=$5$l$^$7$?!#(B
-   $B%j%9%H$N:9J,$r7W;;$9$k4X?t$,=q$-D>$5$l!"FC$KB?$/$N%a%C%;!<%8$r4^$`%U%)(B
-   $B%k%@$G$NF0:n$,9bB.$K$J$j$^$7$?!#(B
+** フォルダのアップデートが高速化されました。
+   リストの差分を計算する関数が書き直され、特に多くのメッセージを含むフォ
+   ルダでの動作が高速になりました。
 
-** $B?7$7$$%$%Y%s%H%O%s%I%j%s%05!G=$,DI2C$5$l$^$7$?!#(B
+** 新しいイベントハンドリング機能が追加されました。
 
-** $B%I%i%U%H%U%)%k%@$K(B IMAP $B%U%)%k%@$r;XDj$7$F$$$k>l9g$NIT6q9g$,2~A1$5$l$^$7$?!#(B
-   $B%*%U%i%$%s>uBV$G%I%i%U%H$rJ]B8$9$k$H$-$N5sF0$K%P%0$,$"$j$^$7$?$,!"?7$7$$(B
-   $B%$%Y%s%H%O%s%I%j%s%05!G=$rMQ$$$F=$@5$5$l$^$7$?!#(B
+** ドラフトフォルダに IMAP フォルダを指定している場合の不具合が改善されました。
+   オフライン状態でドラフトを保存するときの挙動にバグがありましたが、新しい
+   イベントハンドリング機能を用いて修正されました。
 
-** `Shimbun' $B$N%5%^%j$,F0E*$K99?7$5$l$^$9!#(B
-   $B$$$/$D$+$N(B shimbun $B%U%)%k%@$O!"%5%^%j$N>pJs$,@5$7$/$"$j$^$;$s!#(B
-   $B$3$N%P!<%8%g%s$+$i!"%a%C%;!<%8$r<h$j$h$;$?$H$-$N>pJs$rMQ$$$F%5%^%j$,(B
-   $B<+F0E*$K=$@5$5$l$k$h$&$K$J$j$^$7$?!#$3$N<BAu$K$O!"?7$7$$%$%Y%s%H%O%s%I(B
-   $B%j%s%05!G=$,MQ$$$i$l$F$$$^$9!#(B
+** `Shimbun' のサマリが動的に更新されます。
+   いくつかの shimbun フォルダは、サマリの情報が正しくありません。
+   このバージョンから、メッセージを取りよせたときの情報を用いてサマリが
+   自動的に修正されるようになりました。この実装には、新しいイベントハンド
+   リング機能が用いられています。
 
-** $B$=$NB>B?$/$N%P%0=$@5!#(B
+** その他多くのバグ修正。
 
-* 2.12.0 $B$+$i(B 2.12.1 $B$X$NJQ99E@(B
-  2.12.1 $B$O!"(B2.12.0 $B$N%P%0=$@5HG$G$9!#(B
+* 2.12.0 から 2.12.1 への変更点
+  2.12.1 は、2.12.0 のバグ修正版です。
 
-** Windows $B$G(B Maildir $B$,;H$($k$h$&$K$J$j$^$7$?!#(B
-   $B$?$@$7!"5,3J$KB'$C$F$$$^$;$s$N$G!"(BUNIX $B>e$N(B Maildir $B$H8_49@-$,$"$j$^$;$s!#(B
+** Windows で Maildir が使えるようになりました。
+   ただし、規格に則っていませんので、UNIX 上の Maildir と互換性がありません。
 
-** $B%U%#%k%?%U%)%k%@Ey$G$N%-%c%C%7%e%^!<%/IT@09g$NIT6q9g$,2r>C$5$l$^$7$?!#(B
-   $B%-%c%C%7%e$5$l$F$b%-%c%C%7%e$5$l$F$$$J$$I=<($H$J$k>l9g$,$"$j$^$7$?$,(B
-   $B=$@5$5$l$^$7$?!#(B
+** フィルタフォルダ等でのキャッシュマーク不整合の不具合が解消されました。
+   キャッシュされてもキャッシュされていない表示となる場合がありましたが
+   修正されました。
 
-** $B%U%i%0$,?75,$N$^$^JQ99$5$l$J$/$J$k>l9g$,$"$k%P%0$N=$@5!#(B
+** フラグが新規のまま変更されなくなる場合があるバグの修正。
 
-** Maildir $B$GJ#?t%a%C%;!<%80\F0;~!"%U%i%0$,@5$7$/0z$-7Q$,$l$J$$%P%0$N=$@5!#(B
-   $B:G=i$N%a%C%;!<%8$7$+%U%i%0$,0z$-7Q$,$l$^$;$s$G$7$?$,!"=$@5$5$l$^$7$?!#(B
+** Maildir で複数メッセージ移動時、フラグが正しく引き継がれないバグの修正。
+   最初のメッセージしかフラグが引き継がれませんでしたが、修正されました。
 
-** $BF~$l;R$K$J$C$?%a%C%;!<%8$N(B IMAP $B$K$h$kI=<(;~$NIT6q9g$,2r>C$5$l$^$7$?!#(B
-   $BF~$l;R$K$J$C$?%a%C%;!<%8$r%Q!<%H%U%'%C%A$7$?>l9g!"%X%C%@$,I=<($5$l$J$$(B
-   $B>l9g$,$"$j$^$7$?$,!"@5$7$/I=<($5$l$k$h$&$K$J$j$^$7$?!#(B
+** 入れ子になったメッセージの IMAP による表示時の不具合が解消されました。
+   入れ子になったメッセージをパートフェッチした場合、ヘッダが表示されない
+   場合がありましたが、正しく表示されるようになりました。
 
-** %INBOX $B$N%5%V%U%)%k%@$K(B %INBOX $B<+BN$,4^$^$l$J$$>l9g$,$"$kLdBj$KBP=h$7$^$7$?!#(B
-   cyrus-imapd $B$G!"Ev3:$NLdBj$,=P$F$$$^$7$?$,=$@5$5$l$^$7$?!#(B
+** %INBOX のサブフォルダに %INBOX 自体が含まれない場合がある問題に対処しました。
+   cyrus-imapd で、当該の問題が出ていましたが修正されました。
 
-** $B%U%i%0$,!"8!:w;~Ey$NJd408uJd$H$7$F8=$l$k$h$&$K$J$j$^$7$?!#(B
+** フラグが、検索時等の補完候補として現れるようになりました。
 
-** Folder mode $B$G%"%/%;%9%0%k!<%W(B "@/" $B$NE83+$,@5$7$/F0:n$7$^$9!#(B
+** Folder mode でアクセスグループ "@/" の展開が正しく動作します。
 
-** $B%U%i%0L>$K$h$C$F$O4V0c$C$?%U%i%0%U%)%k%@$,:n@.$5$l$kLdBj$,=$@5$5$l$^$7$?!#(B
-   $B%U%i%0$K(B [a-z]$B0J30$NJ8;z$r;H$C$?$H$-$NLdBj$KBP=h$7$^$7$?!#(B
+** フラグ名によっては間違ったフラグフォルダが作成される問題が修正されました。
+   フラグに [a-z]以外の文字を使ったときの問題に対処しました。
 
-** $B%I%i%U%H$N<+F0J]B8;~$K%(%i!<$K$J$C$F$7$^$&LdBj$,=$@5$5$l$^$7$?!#(B
+** ドラフトの自動保存時にエラーになってしまう問題が修正されました。
 
-** $B%"%I%l%9%^%M!<%8%c$r5/F0$7$?:]$K%(%i!<$K$J$kLdBj$,=$@5$5$l$^$7$?!#(B
-   $BK\J8$K(B To: $BEy$NJ8;zNs$,$"$k$H%(%i!<$,H/@8$7$F$$$^$7$?$,!"=$@5$5$l$^$7$?!#(B
+** アドレスマネージャを起動した際にエラーになる問題が修正されました。
+   本文に To: 等の文字列があるとエラーが発生していましたが、修正されました。
 
-** $B%U%#%k%?%U%)%k%@$+$i$N%3%T!<Ey$G%U%i%0$,J]B8$5$l$J$$LdBj$,=$@5$5$l$^$7$?!#(B
+** フィルタフォルダからのコピー等でフラグが保存されない問題が修正されました。
 
-** $B?75,%*%W%7%g%s(B wl-summary-resend-use-cache $B$,DI2C$5$l$^$7$?!#(B
-   $B%*%U%i%$%s>uBV$G$b%-%c%C%7%e$rMQ$$$?:FAw(B(resend)$B$,$G$-$^$9!#(B
+** 新規オプション wl-summary-resend-use-cache が追加されました。
+   オフライン状態でもキャッシュを用いた再送(resend)ができます。
 
-** $B?75,%*%W%7%g%s(B elmo-network-session-idle-timeout $B$,DI2C$5$l$^$7$?!#(B
-   $B;XDj$7$?;~4V0J>e%"%$%I%k>uBV$H$J$C$?%;%C%7%g%s$r:FMxMQ$7$^$;$s!#(B
+** 新規オプション elmo-network-session-idle-timeout が追加されました。
+   指定した時間以上アイドル状態となったセッションを再利用しません。
 
-** 'H' $B$d(B 'M' $B$G$N%a%C%;!<%8:FI=<($,8zN(2=$5$l$^$7$?!#(B
-   $B:FI=<(;~$K(B MIME $B$N9=B$!"%P%C%U%!$r:FMxMQ$9$k$h$&$K$J$j$^$7$?!#(B
+** 'H' や 'M' でのメッセージ再表示が効率化されました。
+   再表示時に MIME の構造、バッファを再利用するようになりました。
 
-** $B%I%i%U%H$N%W%l%S%e!<;~$KI=<($5$l$kB0@-I=<($,(B netnews $B$KBP1~$7$^$7$?!#(B
+** ドラフトのプレビュー時に表示される属性表示が netnews に対応しました。
 
-* 2.10.1 $B$+$i(B 2.12.0 $B$X$NJQ99E@(B
+* 2.10.1 から 2.12.0 への変更点
 
-** $B%a%C%;!<%8%G!<%?%Y!<%9$N9=B$$,2~A1$5$l$^$7$?!#(B
-   $B0J2<$N@_Dj$r$9$l$P!"%U%)%k%@A*Br;~$K<+F0E*$K5lMh$N%?%$%W$N(B msgdb $B$r(B
-   $B?7$7$$%?%$%W$N$b$N$KJQ49$7$^$9!#(B
+** メッセージデータベースの構造が改善されました。
+   以下の設定をすれば、フォルダ選択時に自動的に旧来のタイプの msgdb を
+   新しいタイプのものに変換します。
    (setq elmo-msgdb-default-type 'standard
          elmo-msgdb-convert-type 'auto)
-   $B=i4|CM$O!">e5-$NDL$j$H$J$C$F$$$^$9!#(B
+   初期値は、上記の通りとなっています。
 
-** $B0l;~%^!<%/$H!"$=$l$KBP$9$k%"%/%7%g%s$r<+M3$KDj5A$G$-$k$h$&$K$J$j$^$7$?!#(B
+** 一時マークと、それに対するアクションを自由に定義できるようになりました。
 
-   $B%G%U%)%k%H$G$O0J2<$N%^!<%/$H%"%/%7%g%s$rDj5A$7$F$$$^$9!#(B
-   $B=>Mh$+$i0z$-7Q$,$l$?%^!<%/$H%"%/%7%g%s(B
-    "o" refile   ($B=>Mh$N%j%U%!%$%k$HF1$8(B)
-    "O" copy     ($B=>Mh$N%3%T!<$HF1$8(B)
-    "d" dispose  ($B5l(B delete, D $B%^!<%/!#(Bwl-trash-folder $B$K0\F0!#(B
-    		  wl-dispose-folder-alist $B$NCM$K$h$j5sF0$,7h$^$k!#(B)
-   $B?7$?$KDI2C$5$l$?%^!<%/$H%"%/%7%g%s(B
-    "D" delete   ($B$$$-$J$j>C5n(B)
-    "i" prefetch ($B%W%j%U%'%C%A(B)
-    "~" resend   ($B:FAw(B)
-   $B%5%^%j$G(B x $B%-!<$r2!$9$H%^!<%/$KBP1~$7$?%"%/%7%g%s$,$9$Y$F<B9T$5$l$^$9!#(B
-   $B%^!<%/$H%"%/%7%g%s$O!"?75,JQ?t(B wl-summary-mark-action-list $B$K$h$C$FDj5A(B
-   $B$G$-$^$9!#>\$7$/$OF1JQ?t$N(B docstring $B$r;2>H$7$F$/$@$5$$!#(B
+   デフォルトでは以下のマークとアクションを定義しています。
+   従来から引き継がれたマークとアクション
+    "o" refile   (従来のリファイルと同じ)
+    "O" copy     (従来のコピーと同じ)
+    "d" dispose  (旧 delete, D マーク。wl-trash-folder に移動。
+    		  wl-dispose-folder-alist の値により挙動が決まる。)
+   新たに追加されたマークとアクション
+    "D" delete   (いきなり消去)
+    "i" prefetch (プリフェッチ)
+    "~" resend   (再送)
+   サマリで x キーを押すとマークに対応したアクションがすべて実行されます。
+   マークとアクションは、新規変数 wl-summary-mark-action-list によって定義
+   できます。詳しくは同変数の docstring を参照してください。
 
-** $B%9%Q%`%U%#%k%?%b%8%e!<%k$,?7$?$KDI2C$5$l$^$7$?!#(B
-   $B0J2<$N%9%Q%`%U%#%k%?$KBP1~$7$F$$$^$9!#(B
+** スパムフィルタモジュールが新たに追加されました。
+   以下のスパムフィルタに対応しています。
    bogofilter
    spamfilter
    bsfilter
    SpamAssassin
    SpamOracle
-   $B@55,I=8=$K$h$k%X%C%@8!::(B
+   正規表現によるヘッダ検査
 
-** 'mark $B%U%)%k%@$O2~L>$5$l!"(B'flag $B%U%)%k%@$K$J$j$^$7$?!#(B
-   $B$3$l$K4XO"$7$F!"(B'flag $B%U%)%k%@$N%5%^%j$G85%a%C%;!<%8$,$I$3$K$"$k$+$r(B
-   help-echo $B$H$7$FI=<($9$k$h$&$K$J$j$^$7$?(B($B$3$l$N$U$k$^$$$O(B
-   wl-highlight-summary-line-help-echo-alist $B$G@)8f$G$-$^$9(B)$B!#(B
+** 'mark フォルダは改名され、'flag フォルダになりました。
+   これに関連して、'flag フォルダのサマリで元メッセージがどこにあるかを
+   help-echo として表示するようになりました(これのふるまいは
+   wl-highlight-summary-line-help-echo-alist で制御できます)。
 
-** $B%a%C%;!<%8$KBP$7$FG$0U$N%f!<%6Dj5A$N%U%i%0$rIU$1$i$l$k$h$&$K$J$j$^$7$?!#(B
-   $B%5%^%j$K$*$$$F(B "F" $B$G%U%i%0$N;XDj$,$G$-$^$9!#(B
+** メッセージに対して任意のユーザ定義のフラグを付けられるようになりました。
+   サマリにおいて "F" でフラグの指定ができます。
 
-** $BJV?.:Q$_%^!<%/(B A,a $B$,DI2C$5$l$^$7$?!#(B
-   $B%5%^%j$K$*$$$F!"JV?.$7$?%a%C%;!<%8$K(B A $B%^!<%/(B($B%-%c%C%7%e$J$7$N>l9g(B)
-   $B$b$7$/$O(B a $B%^!<%/(B($B%-%c%C%7%e$"$j$N>l9g(B) $B$,I=<($5$l$^$9!#(B
+** 返信済みマーク A,a が追加されました。
+   サマリにおいて、返信したメッセージに A マーク(キャッシュなしの場合)
+   もしくは a マーク(キャッシュありの場合) が表示されます。
 
-** $BE>Aw:Q$_%^!<%/(B F,f $B$,DI2C$5$l$^$7$?!#(B
-   $B%5%^%j$K$*$$$F!"E>Aw$7$?%a%C%;!<%8$K(B F $B%^!<%/(B($B%-%c%C%7%e$J$7$N>l9g(B)
-   $B$b$7$/$O(B f $B%^!<%/(B($B%-%c%C%7%e$"$j$N>l9g(B) $B$,I=<($5$l$^$9!#(B
+** 転送済みマーク F,f が追加されました。
+   サマリにおいて、転送したメッセージに F マーク(キャッシュなしの場合)
+   もしくは f マーク(キャッシュありの場合) が表示されます。
 
-** $B%U%)%k%@$N8!:w>r7o$K!"(B'$B%U%i%0(B' ($B%a%C%;!<%8$N>uBV(B) $B$,DI2C$5$l$^$7$?!#(B
-   $B%U%i%0$K$O!"(Bunread($BL$FI(B), important($B=EMW(B), answered($BJV?.:Q$_(B),
-   digest ($BL$FI$^$?$O=EMW(B), any ($BL$FI$^$?$O=EMW$^$?$OJV?.:Q$_(B)$B$,$"$j$^$9!#(B
-   $BNc$($P!"<!$N%U%#%k%?%U%)%k%@$O!"(B%inbox $B$N$&$A!"L$FI$^$?$O=EMW$J(B
-   $B%a%C%;!<%8$N$_$,=P8=$7$^$9!#(B
+** フォルダの検索条件に、'フラグ' (メッセージの状態) が追加されました。
+   フラグには、unread(未読), important(重要), answered(返信済み),
+   digest (未読または重要), any (未読または重要または返信済み)があります。
+   例えば、次のフィルタフォルダは、%inbox のうち、未読または重要な
+   メッセージのみが出現します。
    /flag:digest/%inbox
 
-** $B%I%i%U%H$NJ]B85!G=$,2~A1$5$l$^$7$?!#(B
-   IMAP $B%U%)%k%@$d!"(BMaildir $B%U%)%k%@$r(B wl-draft-folder $B$K;XDj$G$-$k$h$&$K(B
-   $B$J$j$^$7$?!#(B
+** ドラフトの保存機能が改善されました。
+   IMAP フォルダや、Maildir フォルダを wl-draft-folder に指定できるように
+   なりました。
 
-** idle-timer $B$rMxMQ$7$F%I%i%U%H%P%C%U%!$N<+F0J]B8$r<B9T$7$^$9!#(B
-   $BJQ?t(B `wl-auto-save-drafts-interval' $B$G5sF0$rJQ$($i$l$^$9!#(B
+** idle-timer を利用してドラフトバッファの自動保存を実行します。
+   変数 `wl-auto-save-drafts-interval' で挙動を変えられます。
 
-** 'H' $B%-!<(B($B%X%C%@A4I=<((B) $B$*$h$S(B 'M' $B%-!<(B(MIME$B$J$7I=<((B)$B$,%H%0%k$K$J$j$^$7$?!#(B
-   $B$^$?!"(B'M' $B$GI=<($7$?%a%C%;!<%8$r0zMQ$G$-$k$h$&$K$J$j$^$7$?!#(B
+** 'H' キー(ヘッダ全表示) および 'M' キー(MIMEなし表示)がトグルになりました。
+   また、'M' で表示したメッセージを引用できるようになりました。
 
-** non-MIME PGP $B%a%C%;!<%8$N8!>Z!"I|9f2=$N$?$a$N%3%^%s%I$,DI2C$5$l$^$7$?!#(B
-   $B%a%C%;!<%8%P%C%U%!$K$*$$$F(B C-c:v, C-c:d $B$G$=$l$>$l8!>Z!"I|9f2=$7$^$9!#(B
+** non-MIME PGP メッセージの検証、復号化のためのコマンドが追加されました。
+   メッセージバッファにおいて C-c:v, C-c:d でそれぞれ検証、復号化します。
 
-** $B%5%^%j$rJB$YBX$(>r7o$N5U=g$G%=!<%H$G$-$k$h$&$K$J$j$^$7$?!#(B
+** サマリを並べ替え条件の逆順でソートできるようになりました。
 
-** $B%a%C%;!<%8%P%C%U%!$GJ#?t9T$K$o$?$kD9$$%X%C%@$r>JN,I=<($7$^$9!#(B
+** メッセージバッファで複数行にわたる長いヘッダを省略表示します。
 
-** $B%5%^%j%P%C%U%!$N1JB3%^!<%/$NJ8;zNs$,JQ99$5$l$^$7$?!#(B
-   $B%G%U%)%k%H$N@_Dj$G$O%-%c%C%7%e$NM-L5$rBgJ8;z>.J8;z$G<($7$^$9!#(B
+** サマリバッファの永続マークの文字列が変更されました。
+   デフォルトの設定ではキャッシュの有無を大文字小文字で示します。
 
-** $BAw?.3NG'$N:]$K%I%i%U%H$N%W%l%S%e!<$rI=<($9$k$h$&$K$J$j$^$7$?!#(B
+** 送信確認の際にドラフトのプレビューを表示するようになりました。
 
-** $B%I%i%U%H$N%W%l%S%e!<$N:]$KAw?.%Q%i%a!<%?$rI=<($9$k$h$&$K$J$j$^$7$?!#(B
-   $B>\$7$/$OJQ?t(B wl-draft-preview-attributes $B$N@bL@$r8+$F2<$5$$!#(B
+** ドラフトのプレビューの際に送信パラメータを表示するようになりました。
+   詳しくは変数 wl-draft-preview-attributes の説明を見て下さい。
 
-** wl-biff-use-idle-timer $B$r@_Dj$9$k$H(B biff $B$,(B idle-timer $B$GAv$j$^$9!#(B
+** wl-biff-use-idle-timer を設定すると biff が idle-timer で走ります。
 
-** wl-draft-kill $B$O(B yes-or-no-p $B$G3NG'$r5a$a$k$h$&$K$J$j$^$7$?!#(B
+** wl-draft-kill は yes-or-no-p で確認を求めるようになりました。
 
-** $B%5%^%j$G0lDj0J>e?<$$%9%l%C%I$OJ,3d$5$l$^$9!#(B
-   $BJQ?t(B wl-summary-max-thread-depth $B$G8B3&$rJQ99$G$-$^$9!#(B
+** サマリで一定以上深いスレッドは分割されます。
+   変数 wl-summary-max-thread-depth で限界を変更できます。
 
-** Emacs multi-tty support $B$KBP1~$7$^$7$?!#(B
+** Emacs multi-tty support に対応しました。
    (http://lorentey.hu/project/emacs.html)
 
-** $B%5%^%j$NJB$YBX$(>r7o$K(B 'size' $B$,DI2C$5$l$^$7$?!#(B
-   $B%a%C%;!<%8%5%$%:$K$h$k%5%^%j$NJB$YBX$($,2DG=$K$J$j$^$7$?!#(B
+** サマリの並べ替え条件に 'size' が追加されました。
+   メッセージサイズによるサマリの並べ替えが可能になりました。
 
-** $BJQ?t(B wl-refile-policy-alist $B$OGQ;_$5$l$^$7$?!#(B
+** 変数 wl-refile-policy-alist は廃止されました。
 
-** $B%P%C%A=hM}MQ$N%b%8%e!<%k$,?7$?$KDI2C$5$l$^$7$?!#(B
+** バッチ処理用のモジュールが新たに追加されました。
 
-** $B%^%k%A%U%)%k%@$H%*%j%8%J%k%U%)%k%@$N>uBV$,F14|$5$l$k$h$&$K$J$j$^$7$?!#(B
-   $BNc$($P!"(B+inbox $B$NL$FI>pJs$,!"(B*+inbox,+outbox $B$K$bH?1G$5$l$^$9!#(B
+** マルチフォルダとオリジナルフォルダの状態が同期されるようになりました。
+   例えば、+inbox の未読情報が、*+inbox,+outbox にも反映されます。
 
-** $B4X?t(B wl-summary-resend-message $B$OGQ;_$5$l$^$7$?!#(B
-   $B$=$NBe$o$j$K(B wl-summary-resend $B$r;H$($P:FAw%^!<%/$rIU$1$k$3$H$,$G$-$^$9!#(B
+** 関数 wl-summary-resend-message は廃止されました。
+   その代わりに wl-summary-resend を使えば再送マークを付けることができます。
 
-** $BJQ?t(B wl-delete-folder-alist $B$O(B wl-dispose-folder-alist $B$K(B
-   $BL>A0$,JQ99$5$l$^$7$?!#(B
+** 変数 wl-delete-folder-alist は wl-dispose-folder-alist に
+   名前が変更されました。
 
-** POP3 $B%U%)%k%@$NB8:_%A%'%C%/$N%G%U%)%k%H5sF0$r4JN,2=(B
-   elmo-pop3-exists-exactly $B$N%G%U%)%k%HCM$r(B nil $B$K$7$^$7$?!#(B
+** POP3 フォルダの存在チェックのデフォルト挙動を簡略化
+   elmo-pop3-exists-exactly のデフォルト値を nil にしました。
 
-** RFC2449 $B$N(B POP3 $B3HD%$N%l%9%]%s%9%3!<%I$KBP1~$7$^$7$?!#(B
-   $BB>$N%;%C%7%g%s$,;HMQCf$G$"$k$?$a$KG'>Z$K<:GT$7$?$H$-$K$O!"%Q%9%o!<%I(B
-   $B$,%/%j%"$5$l$J$/$J$j$^$7$?!#(B
+** RFC2449 の POP3 拡張のレスポンスコードに対応しました。
+   他のセッションが使用中であるために認証に失敗したときには、パスワード
+   がクリアされなくなりました。
 
-** IMAP4 $B$K$*$$$F!"(BEXPUNGE, CHECK $B%3%^%s%I$rHsF14|$GAw?.$9$k$h$&$K$7$^$7$?!#(B
+** IMAP4 において、EXPUNGE, CHECK コマンドを非同期で送信するようにしました。
 
-** wl-folder-hierarchy-access-folders $B$N=i4|CM$,JQ99$5$l$^$7$?!#(B
+** wl-folder-hierarchy-access-folders の初期値が変更されました。
 
-** $B?7J9%U%)%k%@$N%"%/%;%9%0%k!<%W(B "@/" $B$,;H$($k$h$&$K$J$j$^$7$?!#(B
+** 新聞フォルダのアクセスグループ "@/" が使えるようになりました。
 
-** $BA0$K;H$C$F$$$?$b$N$h$j?7$7$$(B Wanderlust $B$r5/F0$9$k$H(B NEWS(.ja) $B$NFbMF$r(B
-   $BI=<($7$^$9!#(B
+** 前に使っていたものより新しい Wanderlust を起動すると NEWS(.ja) の内容を
+   表示します。
 
-** wl-draft-reply-*-list $B$N=i4|CM$,JQ99$5$l$^$7$?!#(B
-   $B0JA0$N@_Dj$O!"(Bsamples/ja/dot.wl $B$r;2>H$7$F2<$5$$!#(B
+** wl-draft-reply-*-list の初期値が変更されました。
+   以前の設定は、samples/ja/dot.wl を参照して下さい。
 
-** wl-draft-reply-myself-*-list $B$OGQ;_$5$l!"(Bwl-draft-reply-*-list $B$KE}9g(B
-   $B$5$l$^$7$?!#(B
+** wl-draft-reply-myself-*-list は廃止され、wl-draft-reply-*-list に統合
+   されました。
 
-** $BJV?.MQ%I%i%U%H$N%+!<%=%k$N=i4|0LCV$r;XDj$G$-$^$9!#(B
-   $BJQ?t(B wl-draft-reply-default-position $B$r@_Dj$7$F2<$5$$!#(B
+** 返信用ドラフトのカーソルの初期位置を指定できます。
+   変数 wl-draft-reply-default-position を設定して下さい。
 
-** $B%I%i%U%H%P%C%U%!%&%#%s%I%&$NG[CV$N;XDj$N;EJ}$,JQ99$5$l$^$7$?!#(B
-   wl-draft-buffer-style $B$H(B wl-draft-reply-buffer-style $B$K(B keep,full,split
-   $B$N$$$:$l$+$r;XDj$7$^$9!#(B
+** ドラフトバッファウィンドウの配置の指定の仕方が変更されました。
+   wl-draft-buffer-style と wl-draft-reply-buffer-style に keep,full,split
+   のいずれかを指定します。
 
-** $B?75,(B hook
+** 新規 hook
    wl-draft-reply-hook
    wl-summary-reply-hook
    wl-draft-forward-hook
@@ -292,10 +292,10 @@ Wanderlust NEWS ($BF|K\8lHG(B) -- User-visible changes in Wanderlust.
    wl-draft-kill-pre-hook
    wl-summary-resend-hook
 
-** $BGQ;_$5$l$?(B hook
+** 廃止された hook
    wl-reply-hook
 
-** $B?75,(B face
+** 新規 face
 
    wl-highlight-summary-disposed-face
    wl-highlight-summary-prefetch-face
@@ -303,539 +303,539 @@ Wanderlust NEWS ($BF|K\8lHG(B) -- User-visible changes in Wanderlust.
    wl-highlight-summary-answered-face
    wl-highlight-action-argument-face
 
-** $BGQ;_$5$l$?(B face
+** 廃止された face
 
    wl-highlight-refile-destination-face
-   (wl-highlight-action-argument-face $B$KJQL>(B)
+   (wl-highlight-action-argument-face に変名)
 
-* 2.10.0 $B$+$i(B 2.10.1 $B$X$NJQ99E@(B
-  2.10.1 $B$O(B 2.10.0 $B$N%P%0=$@5HG$G$9!#(B
+* 2.10.0 から 2.10.1 への変更点
+  2.10.1 は 2.10.0 のバグ修正版です。
 
-** print-length $B$d(B print-level $B$,(B Non-nil $B$N$H$-$K(B msgdb $B$,2u$l$kLdBj$,(B
-   $B=$@5$5$l$^$7$?!#(B
+** print-length や print-level が Non-nil のときに msgdb が壊れる問題が
+   修正されました。
 
-** $B%Q%$%W%U%)%k%@$K$*$$$F(B wl-summary-pack-number $B$,$&$^$/F0$+$J$+$C$?(B
-   $B$?$a8z$+$J$/$7$F$"$j$^$9!#I,MW$G$"$l$P<h$j9~$_@h%U%)%k%@$NJ}$G<B9T(B
-   $B$7$F2<$5$$!#(B
+** パイプフォルダにおいて wl-summary-pack-number がうまく動かなかった
+   ため効かなくしてあります。必要であれば取り込み先フォルダの方で実行
+   して下さい。
 
-** wl-folder-move-cur-folder $B$,8z$$$F$$$J$+$C$?LdBj$,=$@5$5$l$^$7$?!#(B
+** wl-folder-move-cur-folder が効いていなかった問題が修正されました。
 
-** Meadow $B>e$G(B wl-draft-reedit $B$,$&$^$/F0$+$J$$LdBj$,=$@5$5$l$^$7$?!#(B
+** Meadow 上で wl-draft-reedit がうまく動かない問題が修正されました。
 
-** wl-summary-pack-number $B$,(B Maildir $B$d(B shimbun $B%U%)%k%@$GF0$+$J$$(B
-   $BLdBj$,=$@5$5$l$^$7$?!#(B
+** wl-summary-pack-number が Maildir や shimbun フォルダで動かない
+   問題が修正されました。
 
-** $B=EMW%^!<%/$D$-%a%C%;!<%8$N%-%c%C%7%e$KBP$9$kJ]8n5!G=$,F/$+$J$$(B
-   $BIT6q9g$,=$@5$5$l$^$7$?!#(B
+** 重要マークつきメッセージのキャッシュに対する保護機能が働かない
+   不具合が修正されました。
 
-** wl-summary-line-format $B$N(B %# $B$GBg$-$J?tCM$r@5$7$/07$($J$$IT6q9g(B
-   $B$,=$@5$5$l$^$7$?!#(B
+** wl-summary-line-format の %# で大きな数値を正しく扱えない不具合
+   が修正されました。
 
-** SMTP AUTH $B$GG'>Z0J30$N%(%i!<$G$b%Q%9%o!<%I>C5n$5$l$kIT6q9g$,=$(B
-   $B@5$5$l$^$7$?!#(B
+** SMTP AUTH で認証以外のエラーでもパスワード消去される不具合が修
+   正されました。
 
 ** wl-message-buffer-prefetch-folder-type-list,
    wl-message-buffer-prefetch-idle-time,
-   wl-message-buffer-prefetch-depth $B$N%G%U%)%k%HCM$,JQ99$5$l$^$7$?!#(B
+   wl-message-buffer-prefetch-depth のデフォルト値が変更されました。
 
-** XEmacs without mule $B$G%3%s%Q%$%k$G$-$J$$LdBj$,=$@5$5$l$^$7$?!#(B
+** XEmacs without mule でコンパイルできない問題が修正されました。
 
-* 2.8.1 $B$+$i(B 2.10.0 $B$X$NJQ99E@(B
+* 2.8.1 から 2.10.0 への変更点
 
-** $B%5%^%j9T$NI=<(7A<0$rJQ99$G$-$k$h$&$K$J$j$^$7$?!#(B
-   wl-summary-line-format $B$G=q<0$r@_Dj$G$-$^$9!#%U%)%k%@Kh$K=q<0$rJQ$($?$$(B
-   $B>l9g$O(B wl-folder-summary-line-format-alist $B$rMQ$$$F2<$5$$!#(B
+** サマリ行の表示形式を変更できるようになりました。
+   wl-summary-line-format で書式を設定できます。フォルダ毎に書式を変えたい
+   場合は wl-folder-summary-line-format-alist を用いて下さい。
 
-** $B%I%i%U%H%U%)%k%@$X$NJ]B87A<0$,JQ99$5$l$^$7$?!#(Bwl-draft-save $B$N:]$K$O(B
-   $B%(%s%3!<%I$7$FJ]B8$5$l$^$9!#(B
+** ドラフトフォルダへの保存形式が変更されました。wl-draft-save の際には
+   エンコードして保存されます。
 
-** elmo-split $B$,?7@_$5$l$^$7$?!#M?$($?%k!<%k$K1h$C$F(B procmail $BIw$K%a%C%;(B
-   $B!<%8$r?6$jJ,$1$k$3$H$,$G$-$^$9!#(B
+** elmo-split が新設されました。与えたルールに沿って procmail 風にメッセ
+   ージを振り分けることができます。
 
-** $B%P%C%U%!%W%j%U%'%C%A$,<BAu$5$l$^$7$?!#(Bwl-message-buffer-prefetch-depth
-   $B$N?t$@$1!"%a%C%;!<%8$r%P%C%U%!$K@hFI$_$7$^$9!#(B
+** バッファプリフェッチが実装されました。wl-message-buffer-prefetch-depth
+   の数だけ、メッセージをバッファに先読みします。
 
-** elmo-dop-queue-flush $B$O7R$,$C$F$$$k%]!<%H$K4X$9$k%-%e!<$r(B flush $B$7$^$9!#(B
+** elmo-dop-queue-flush は繋がっているポートに関するキューを flush します。
 
-** $B?7$7$$%U%l!<%`$r3+$$$F(B Wanderlust $B$r5/F0$G$-$k$h$&$K$J$j$^$7$?!#(B
+** 新しいフレームを開いて Wanderlust を起動できるようになりました。
    (autoload 'wl-other-frame "wl" "Wanderlust on new frame." t)
-   $B$N$h$&$K@_Dj$7$F2<$5$$!#(B
+   のように設定して下さい。
 
-** $B%U%)%k%@%b!<%I$+$i!"M?$($i$l$?>r7o$rK~$?$9%a%C%;!<%8$+$i$J$k2>A[%U%)%k%@(B
-   $B$X0\F0$G$-$^$9(B (wl-folder-virtual)$B!#(B"V" $B$K%P%$%s%I$5$l$F$$$^$9!#(B
+** フォルダモードから、与えられた条件を満たすメッセージからなる仮想フォルダ
+   へ移動できます (wl-folder-virtual)。"V" にバインドされています。
 
-** $B%U%)%k%@%b!<%I$G!"M?$($i$l$?>r7o$rK~$?$9%a%C%;!<%8$r4^$`%U%)%k%@$rC5$;$k(B
-   $B$h$&$K$J$j$^$7$?(B (wl-folder-pick)$B!#(B"?" $B$K%P%$%s%I$5$l$F$$$^$9!#(B 
+** フォルダモードで、与えられた条件を満たすメッセージを含むフォルダを探せる
+   ようになりました (wl-folder-pick)。"?" にバインドされています。 
 
-** $B%"%/%;%9%0%k!<%W%U%)%k%@$N2~L>$,=PMh$k$h$&$K$J$j$^$7$?!#(B
+** アクセスグループフォルダの改名が出来るようになりました。
 
-** $B?75,%5%^%j$KBP$9$k%9%l%C%II=<($N(B ON/OFF $B$r;XDj$G$-$k$h$&$K$J$j$^$7$?!#(B
-   wl-summary-default-view, wl-summary-default-view-alist $B$r@_Dj$7$F2<$5$$!#(B
+** 新規サマリに対するスレッド表示の ON/OFF を指定できるようになりました。
+   wl-summary-default-view, wl-summary-default-view-alist を設定して下さい。
 
-** $B%9%F%#%C%-!<%5%^%j$r(B q $B$d(B g $B$GH4$1$k:]$K!"0l;~E*%^!<%/$rJ];}$9$k$h$&$K(B
-   $B$J$j$^$7$?!#(B
+** スティッキーサマリを q や g で抜ける際に、一時的マークを保持するように
+   なりました。
 
-** $B%9%F%#%C%-!<%5%^%j$K4X$9$k%-!<%P%$%s%I$,JQ99$K$J$j$^$7$?!#(B
-   $B%5%^%j$G(B C-u g $B$9$k$H(B C-u q $B$HF1MM$K%5%^%j$rGK4~$7$^$9!#%5%^%j$d%U%)%k%@(B
-   $B%b!<%I$+$i(B G $B$G%5%^%j$K0\F0$9$k$H!"?75,%5%^%j$,%9%F%#%C%-!<$K$J$j$^$9!#(B
+** スティッキーサマリに関するキーバインドが変更になりました。
+   サマリで C-u g すると C-u q と同様にサマリを破棄します。サマリやフォルダ
+   モードから G でサマリに移動すると、新規サマリがスティッキーになります。
 
-** C-cC-n $B$d(B C-cC-p $B$G%5%^%j%P%C%U%!4V$r=d2s$G$-$^$9!#(B
+** C-cC-n や C-cC-p でサマリバッファ間を巡回できます。
 
-** $B%j%9%H(B wl-folder-hierarchy-access-folders $B$N3FMWAG$O!"%"%/%;%9%0%k!<%W$K(B
-   $B$D$$$F$N@55,I=8=$K$J$j$^$7$?(B($B$3$l$^$G$O@53N$J%0%k!<%WL>$G$7$?(B)$B!#(B
+** リスト wl-folder-hierarchy-access-folders の各要素は、アクセスグループに
+   ついての正規表現になりました(これまでは正確なグループ名でした)。
 
-** $B%I%i%U%H$N%X%C%@ItJ,$G(B C-a $B$9$k$H!"9TF,$b$7$/$O%X%C%@$N@hF,$K%+!<%=%k$,(B
-   $B0\F0$7$^$9!#(B
+** ドラフトのヘッダ部分で C-a すると、行頭もしくはヘッダの先頭にカーソルが
+   移動します。
 
-** $B%+%W%;%k2=(B Blind Carbon Copy $B$rAw$l$k$h$&$K$J$j$^$7$?!#(B
-   $B%G%U%)%k%H$N%U%#!<%k%IL>$O(B "Ecc:" $B$G$9!#(B
+** カプセル化 Blind Carbon Copy を送れるようになりました。
+   デフォルトのフィールド名は "Ecc:" です。
 
-** $B%I%i%U%H$N(B C-c C-y $B$G%j!<%8%g%s$r0zMQ$G$-$k$h$&$K$J$j$^$7$?!#(B
-   transient-mark-mode (Emacs) $B$b$7$/$O(B zmacs-regions (XEmacs)
-   $B$,(B Non-nil $B$G!"%j!<%8%g%s$,M-8z$N$H$-$K:nMQ$7$^$9!#(B
+** ドラフトの C-c C-y でリージョンを引用できるようになりました。
+   transient-mark-mode (Emacs) もしくは zmacs-regions (XEmacs)
+   が Non-nil で、リージョンが有効のときに作用します。
 
-** $B%^%k%A%Q!<%H$N%a%C%;!<%8$+$i%Q!<%H$r:o=|$G$-$k$h$&$K$J$j$^$7$?!#(B
-   $B%a%C%;!<%8%P%C%U%!$G(B "D" $B$K%P%$%s%I$5$l$F$$$^$9!#(B
+** マルチパートのメッセージからパートを削除できるようになりました。
+   メッセージバッファで "D" にバインドされています。
 
-** $B%K%e!<%95-;v$rEj9F$9$k%5!<%P$r4JC1$K@_Dj$G$-$k$h$&$K$J$j$^$7$?!#(B
-   Info $B$NNc$K=,$C$F(B wl-nntp-posting-config-alist $B$r@_Dj$7$F2<$5$$!#(B
+** ニュース記事を投稿するサーバを簡単に設定できるようになりました。
+   Info の例に習って wl-nntp-posting-config-alist を設定して下さい。
 
-** $BJQ?t(B wl-draft-reply-with-argument-list $BEy$G!"4X?t$NJV$jCM$+$i08@h$r(B
-   $B7h$a$i$l$k$h$&$K$J$j$^$7$?!#(B
+** 変数 wl-draft-reply-with-argument-list 等で、関数の返り値から宛先を
+   決められるようになりました。
 
-** $B4X?t(B wl-draft $B$N%$%s%?!<%U%'!<%9$,JQ99$5$l$^$7$?!#(B
-   $B:G=i$KMQ0U$9$k%X%C%@$r4XO"%j%9%H$N7A$GEO$9$h$&$K$J$j$^$7$?!#(B
+** 関数 wl-draft のインターフェースが変更されました。
+   最初に用意するヘッダを関連リストの形で渡すようになりました。
 
-** wl-generate-mailer-string-function $B$N;HMQK!$,JQ99$K$J$j$^$7$?!#(B
-   User-Agent $B%U%#!<%k%I$KF~$kJ8;zNs$rJV$94X?t$r;XDj$7$F2<$5$$!#(B
+** wl-generate-mailer-string-function の使用法が変更になりました。
+   User-Agent フィールドに入る文字列を返す関数を指定して下さい。
 
-** Reference Card (doc/wl-refcard-ja.tex) $B$K<g$J%-!<A`:n$rNs5s$7$^$7$?!#(B
+** Reference Card (doc/wl-refcard-ja.tex) に主なキー操作を列挙しました。
 
-** $B$=$NB>$$$/$D$+$N=$@5!#(B
+** その他いくつかの修正。
 
-* 2.6.1 $B$+$i(B 2.8.0 $B$X$NJQ99E@(B
+* 2.6.1 から 2.8.0 への変更点
 
-** Nemacs, Mule 2.3 based on Emacs 19.28 $B$O%5%]!<%H$5$l$J$/$J$j$^$7$?!#(B
+** Nemacs, Mule 2.3 based on Emacs 19.28 はサポートされなくなりました。
 
-** FLIM 1.14.2 $B0JA0$N(B FLIM $B$G$O$&$^$/F0$+$J$$>l9g$,$"$j$^$9!#(B
-   FLIM 1.14.3 $B0J9_$*$h$SBP1~$7$?(B SEMI $B$r%$%s%9%H!<%k$7$F$/$@$5$$!#(B
+** FLIM 1.14.2 以前の FLIM ではうまく動かない場合があります。
+   FLIM 1.14.3 以降および対応した SEMI をインストールしてください。
 
-** make check $B$G4JC1$J4D6-%F%9%H$,$G$-$k$h$&$K$J$j$^$7$?!#(B
+** make check で簡単な環境テストができるようになりました。
 
-** $BL>A0JQ99Ey$G;H$o$l$J$/$J$C$?JQ?t$r(B .wl $BEy$G@_Dj$7$F$$$k$H!"7Y9p$,I=<($5$l(B
-   $B$^$9!#%a%C%;!<%8$r;29M$K$7$F!"@_Dj$rJQ99$7$F$/$@$5$$!#(B
-   $B$b$72?$i$+$NM}M3$G7Y9p$NI=<($rM^@)$7$?$$>l9g$K$O!"JQ?t(B
-   elmo-obsolete-variable-show-warnings $B$r(B nil $B$K$7$F$/$@$5$$!#(B
+** 名前変更等で使われなくなった変数を .wl 等で設定していると、警告が表示され
+   ます。メッセージを参考にして、設定を変更してください。
+   もし何らかの理由で警告の表示を抑制したい場合には、変数
+   elmo-obsolete-variable-show-warnings を nil にしてください。
 
-** $B?75,FbIt%U%)%k%@(B 'sendlog $B$,DI2C$5$l$^$7$?!#(B
+** 新規内部フォルダ 'sendlog が追加されました。
 
-** $B?75,%U%)%k%@(B shimbun $B%U%)%k%@$,DI2C$5$l$^$7$?!#(B
+** 新規フォルダ shimbun フォルダが追加されました。
 
-   $B=q<0(B: '@' '$B2>A[%5!<%PL>(B' '.' '$B%0%k!<%WL>(B'
+   書式: '@' '仮想サーバ名' '.' 'グループ名'
 
-** $B?75,%U%)%k%@(B namazu $B%U%)%k%@$,DI2C$5$l$^$7$?!#(B
+** 新規フォルダ namazu フォルダが追加されました。
 
-   $B=q<0(B:  '[' 'namazu $B8!:w<0(B' ']' [ 'namazu index $B$N%Q%9!J@dBP%Q%9!K(B' ]
+   書式:  '[' 'namazu 検索式' ']' [ 'namazu index のパス（絶対パス）' ]
 
-** $B%Q%$%W%U%)%k%@$G%5!<%P$K%a%C%;!<%8$r;D$9$3$H$,$G$-$k$h$&$K$J$j$^$7$?(B
-   $B<!$N%"%/%;%9;~$K$O!"?7$7$$%a%C%;!<%8$N$_%3%T!<$7$^$9!#(B
+** パイプフォルダでサーバにメッセージを残すことができるようになりました
+   次のアクセス時には、新しいメッセージのみコピーします。
 
-   $B=q<0(B:  '|' '$B<h$j9~$_85(B' '|:' '$B<h$j9~$_@h(B'
+   書式:  '|' '取り込み元' '|:' '取り込み先'
 
-** $B%"%I%l%9%^%M!<%8%c$,?7@_$5$l$^$7$?(B(C-c C-a $B$G5/F0(B)$B!#(B
-   $B%"%I%l%9D"$NJT=8$r$7$?$j!"$=$3$+$i%I%i%U%H$K08@h$rF~NO$9$k$3$H$,$G$-$^$9!#(B
+** アドレスマネージャが新設されました(C-c C-a で起動)。
+   アドレス帳の編集をしたり、そこからドラフトに宛先を入力することができます。
 
-** ACAP (RFC2244) $B$KBP1~$7$^$7$?(B($B<B83E*(B)$B!#(B
+** ACAP (RFC2244) に対応しました(実験的)。
 
-** IMAP4 $B$N%a%C%;!<%8$r%Q!<%HKh$K%-%c%C%7%e$H$7$FJ]B8$G$-$k$h$&$K$J$j$^$7$?!#(B
-   $B5pBg$J%Q!<%H$r%9%-%C%W$7$?>l9g$G$b!"%9%-%C%W$7$?%Q!<%H0J30$O(B
-   $B%*%U%i%$%s>uBV$GFI$_JV$9$3$H$,$G$-$k$h$&$K$J$j$^$7$?!#(B
+** IMAP4 のメッセージをパート毎にキャッシュとして保存できるようになりました。
+   巨大なパートをスキップした場合でも、スキップしたパート以外は
+   オフライン状態で読み返すことができるようになりました。
 
-** $B%a%C%;!<%8$N%W%j%U%'%C%A$G%a%C%;!<%8%S%e!<$^$G:n@.$9$k$h$&$K$J$j$^$7$?!#(B
-   $B%W%j%U%'%C%A$5$l$?%a%C%;!<%8$NI=<($,9bB.2=$5$l$^$7$?!#(B
+** メッセージのプリフェッチでメッセージビューまで作成するようになりました。
+   プリフェッチされたメッセージの表示が高速化されました。
 
-** $B%a%C%;!<%8%P%C%U%!!"%I%i%U%H%P%C%U%!$GD9$$9T$N@^$jJV$7$r@_Dj$G$-$k$h$&$K(B
-   $B$J$j$^$7$?!#JQ?t(B wl-message-truncate-lines, wl-draft-truncate-lines $B$,(B
-   non-nil $B$J$i!"$=$l$>$l$K$D$$$FD9$$9T$r(B window $BI}$G@Z$j=L$a$^$9!#(B
+** メッセージバッファ、ドラフトバッファで長い行の折り返しを設定できるように
+   なりました。変数 wl-message-truncate-lines, wl-draft-truncate-lines が
+   non-nil なら、それぞれについて長い行を window 幅で切り縮めます。
 
-** $B%*!<%W%K%s%0%G%b$K;H$o$l$k%S%C%H%^%C%W2hA|$O(B wl-demo.elc $B$+$i<h$j=|$+$l!"(B
-   wl-icon-directory $B$+$iFI$_9~$`$h$&$K$J$j$^$7$?!#(B
-   $B%/%j%9%^%9$N;~4|$K$OFCJL$J2hA|$,I=<($5$l$^$9(B :)
+** オープニングデモに使われるビットマップ画像は wl-demo.elc から取り除かれ、
+   wl-icon-directory から読み込むようになりました。
+   クリスマスの時期には特別な画像が表示されます :)
 
-** elmo $B%b%8%e!<%k$,A4BNE*$K=q$-D>$5$l$^$7$?!#(B
+** elmo モジュールが全体的に書き直されました。
 
-** elmo $B$N%P%C%/%(%s%I$K0MB8$7$?JQ?t$O(B "elmo-$B%P%C%/%(%s%IL>(B-*" 
-   $B$H$$$&L>A0$KJQ99$5$l$^$7$?!#(B
-   $BNc$($P!"(B elmo-default-imap4-server $B$,(B elmo-imap4-default-server $B$K(B
-   $BJQ99$5$l$F$$$^$9!#(B
+** elmo のバックエンドに依存した変数は "elmo-バックエンド名-*" 
+   という名前に変更されました。
+   例えば、 elmo-default-imap4-server が elmo-imap4-default-server に
+   変更されています。
 
-** xxx-func $B$H$$$&L>A0$NJQ?t$O(B xxx-function $B$H$$$&L>A0$KJQ99(B $B$5$l$^$7$?!#(B
+** xxx-func という名前の変数は xxx-function という名前に変更 されました。
 
-** X-Face utility 1.3.6.12 $B0JA0$O%5%]!<%H$5$l$J$/$J$j$^$7$?!#(B
-   $BI,MW$J$i(B X-Face utility 1.3.6.13 $B0J9_$r%$%s%9%H!<%k$7$F$/$@$5$$!#(B
+** X-Face utility 1.3.6.12 以前はサポートされなくなりました。
+   必要なら X-Face utility 1.3.6.13 以降をインストールしてください。
 
-** plugged $B%b!<%I$G!"(Bstream-type $B$,0c$&$b$N$OJL%(%s%H%j$H$7$F07$o$l$k$h$&$K(B
-   $B$J$j$^$7$?!#(B
+** plugged モードで、stream-type が違うものは別エントリとして扱われるように
+   なりました。
 
-** $B%"!<%+%$%V(B, $B%^%k%A%U%)%k%@MQ$N(B msgdb path $B$,JQ99$5$l$^$7$?!#(B
-   $B$=$N$^$^$G$bLdBj$"$j$^$;$s$,!"%G%#%9%/$KL5BL$J%G!<%?$r;D$7$?$/$J$$J}$O(B
-   .elmo/multi, .elmo/archive $B0J2<$r$"$i$+$8$a:o=|$7$F$*$$$F$/$@$5$$!#(B
+** アーカイブ, マルチフォルダ用の msgdb path が変更されました。
+   そのままでも問題ありませんが、ディスクに無駄なデータを残したくない方は
+   .elmo/multi, .elmo/archive 以下をあらかじめ削除しておいてください。
 
-** xxx-dir $B$H$$$&L>A0$NJQ?t$O(B xxx-directory $B$H$$$&L>A0$KJQ99$5$l$^$7$?!#(B
-   $BNc$($P!"(Bwl-icon-dir $B$O(B wl-icon-directory $B$KJQ99$5$l$F$$$^$9!#(B
-   Emacs21 $B$G(B logo $BI=<($J$I$N@_Dj$r$7$F$$$kJ}$OFC$KCm0U$7$F$/$@$5$$!#(B
+** xxx-dir という名前の変数は xxx-directory という名前に変更されました。
+   例えば、wl-icon-dir は wl-icon-directory に変更されています。
+   Emacs21 で logo 表示などの設定をしている方は特に注意してください。
 
-** elmo-cache-dirname $B$rGQ;_$7$F(B elmo-cache-directory $B$r?7@_$7$^$7$?!#(B
-   elmo-cache-directory $B$r@_Dj$9$k$3$H$K$h$C$F%-%c%C%7%e$@$1$rA4$/JL$N(B
-   $B%G%#%l%/%H%j$KCV$/$3$H$,$G$-$^$9!#(B
+** elmo-cache-dirname を廃止して elmo-cache-directory を新設しました。
+   elmo-cache-directory を設定することによってキャッシュだけを全く別の
+   ディレクトリに置くことができます。
 
-** elmo-enable-disconnected-operation $B$N%G%U%)%k%HCM$,(B t $B$K$J$j$^$7$?!#(B
-   $B%*%U%i%$%s>uBV$G$b%a%C%;!<%8$,%-%c%C%7%e$5$l$F$$$l$P!"$"$kDxEY$N(B
-   $B%a%C%;!<%8A`:n$,2DG=$G$9!#(B
+** elmo-enable-disconnected-operation のデフォルト値が t になりました。
+   オフライン状態でもメッセージがキャッシュされていれば、ある程度の
+   メッセージ操作が可能です。
 
-** "$" $B%^!<%/$NIU$$$?%a%C%;!<%8$O!"%a%C%;!<%8$N<BBN$,>C$($?>l9g$K$O%5%^%j$+$i(B
-   $B$b>C$($k$h$&$K$J$j$^$7$?!#(B
-   "$" $B%^!<%/$NIU$$$?%a%C%;!<%8$r8+D>$7$?$$>l9g$O(B 'mark $B%U%)%k%@$r;2>H$7$F(B
-   $B$/$@$5$$!#(B
+** "$" マークの付いたメッセージは、メッセージの実体が消えた場合にはサマリから
+   も消えるようになりました。
+   "$" マークの付いたメッセージを見直したい場合は 'mark フォルダを参照して
+   ください。
 
-* 2.6.0 $B$+$i(B 2.6.1 $B$X$NJQ99E@(B
-  2.6.1 $B$O(B 2.6.0 $B$N=$@5HG$G$9!#(B
+* 2.6.0 から 2.6.1 への変更点
+  2.6.1 は 2.6.0 の修正版です。
 
-** Emacs 21 $B$G(B Recursive load... $B$H=P$kIT6q9g$,=$@5$5$l$^$7$?!#(B
+** Emacs 21 で Recursive load... と出る不具合が修正されました。
 
-** XEmacs 21.1 $B$GJ8;z2=$1$9$kLdBj$,=$@5$5$l$^$7$?!#(B
+** XEmacs 21.1 で文字化けする問題が修正されました。
 
-** XEmacs $B$G(B IMAP4 $B$rMQ$$$k$H%W%m%0%l%9%P!<$,=P$C$Q$J$7$K$J$kLdBj$,(B
-   $B=$@5$5$l$^$7$?!#(B
+** XEmacs で IMAP4 を用いるとプログレスバーが出っぱなしになる問題が
+   修正されました。
 
-** X- $B$G;O$^$k%U%#!<%k%I$N8!:w$,$G$-$J$$LdBj$,=$@5$5$l$^$7$?!#(B
+** X- で始まるフィールドの検索ができない問題が修正されました。
 
-** $B$=$NB>$$$/$D$+$N=$@5!#(B
+** その他いくつかの修正。
 
-* 2.4.1 $B$+$i(B 2.6.0 $B$X$NJQ99E@(B
+* 2.4.1 から 2.6.0 への変更点
 
-** FLIM 1.13.x $B$O%5%]!<%H$5$l$J$/$J$j$^$7$?!#(B
-   FLIM 1.14.1 $B0J9_$r%$%s%9%H!<%k$7$F$/$@$5$$!#(B
+** FLIM 1.13.x はサポートされなくなりました。
+   FLIM 1.14.1 以降をインストールしてください。
 
-** $B%U%)%k%@!"%5%^%j$rJL%U%l!<%`$G5/F0$G$-$k$h$&$K$J$j$^$7$?!#(B
-   $B?75,JQ?t(B wl-folder-use-frame$B!"(Bwl-summary-use-frame $B$,(B non-nil $B$J$i(B
-   $B$=$l$>$l%U%)%k%@!"%5%^%j$rJL%U%l!<%`$K3+$-$^$9(B($B%G%U%)%k%H$O(B nil)$B!#(B
+** フォルダ、サマリを別フレームで起動できるようになりました。
+   新規変数 wl-folder-use-frame、wl-summary-use-frame が non-nil なら
+   それぞれフォルダ、サマリを別フレームに開きます(デフォルトは nil)。
 
-** $B%5%^%j$G$N(B 'N' $B$d(B 'P' $B$K$h$k%+!<%=%k0\F0$,9bB.2=$5$l$^$7$?!#(B
+** サマリでの 'N' や 'P' によるカーソル移動が高速化されました。
 
-** $B%m!<%+%k%U%)%k%@$rBP>]$H$7$?!"(Blast $B$*$h$S(B first $B>r7o$N%U%#%k%?%U%)%k%@(B
-   ($BNc$($P!"(B/last:100/+inbox $B$N$h$&$J%U%)%k%@(B) $B$N%A%'%C%/$,9bB.2=$5$l$^$7$?!#(B
+** ローカルフォルダを対象とした、last および first 条件のフィルタフォルダ
+   (例えば、/last:100/+inbox のようなフォルダ) のチェックが高速化されました。
 
-** POP, IMAP $B$GBg$-$J%a%C%;!<%8$r<h$j4s$;$k$H$-$K!"(B
-   $B?JD=$,I=<($5$l$k$h$&$K$J$j$^$7$?!#(B
+** POP, IMAP で大きなメッセージを取り寄せるときに、
+   進捗が表示されるようになりました。
 
-** $B%5%^%j$N?'$E$1$,%*%s%G%^%s%I$K$J$j$^$7$?(B(Emacs $B$N$_(B)$B!#(B
-   $B?75,JQ?t(B wl-summary-lazy-highlight $B$,(B non-nil $B$J$i%5%^%j$NI=<(ItJ,$N$_$r(B
-   $B<+F0E*$K?'IU$1$7$^$9(B (Emacs $B$N$_(B)$B!#(B
+** サマリの色づけがオンデマンドになりました(Emacs のみ)。
+   新規変数 wl-summary-lazy-highlight が non-nil ならサマリの表示部分のみを
+   自動的に色付けします (Emacs のみ)。
 
-** biff $B$NDLCNJ}K!$,%+%9%?%^%$%:2DG=$K$J$j$^$7$?!#(B
-   $B?75,%U%C%/(B wl-biff-notify-hook, wl-biff-unnotify-hook $B$G@_Dj$G$-$^$9!#(B
-   $BNc(B: (add-hook wl-biff-notify-hook 'ding)
+** biff の通知方法がカスタマイズ可能になりました。
+   新規フック wl-biff-notify-hook, wl-biff-unnotify-hook で設定できます。
+   例: (add-hook wl-biff-notify-hook 'ding)
 
-** $BB?$/$N%P%0%U%#%C%/%9(B
+** 多くのバグフィックス
 
-* 2.4.0 $B$+$i(B 2.4.1 $B$X$NJQ99E@(B
-  2.4.1 $B$O(B 2.4.0 $B$N=$@5HG$G$9!#(B
+* 2.4.0 から 2.4.1 への変更点
+  2.4.1 は 2.4.0 の修正版です。
 
-** FLIM 1.14.x $B>e$G$bF0:n$9$k$h$&$K$J$j$^$7$?!#(B
+** FLIM 1.14.x 上でも動作するようになりました。
 
-** POP before SMTP $B$G(B POP $B%3%M%/%7%g%s$,@Z$l$J$$IT6q9g$,=$@5$5$l$^$7$?!#(B
+** POP before SMTP で POP コネクションが切れない不具合が修正されました。
 
-** IMAP4 $B$G$N@8%Q%9%o!<%I$K$h$kG'>Z$N;XDjJ}K!$,JQ99$K$J$j$^$7$?!#(B
+** IMAP4 での生パスワードによる認証の指定方法が変更になりました。
 
-$B$3$l$^$G!"(BIMAP4 $B$G@8%Q%9%o!<%I$NG'>Z(B(LOGIN $B%3%^%s%I$K$h$k%m%0%$%s(B)$B$r$9$k$K$O!"(B
-$BJQ?t(B elmo-default-imap4-authenticate-type $B$K(B 'plain ($B$^$?$O(B nil) 
-$B$r@_Dj$9$k$3$H$K$J$C$F$$$^$7$?$,!"(B'clear ($B$^$?$O(B nil)$B$KJQ99$5$l$^$7$?!#(B
-$BNc$($P!"(B
+これまで、IMAP4 で生パスワードの認証(LOGIN コマンドによるログイン)をするには、
+変数 elmo-default-imap4-authenticate-type に 'plain (または nil) 
+を設定することになっていましたが、'clear (または nil)に変更されました。
+例えば、
 (setq elmo-default-imap4-authenticate-type 'plain)
-$B$H$$$&@_Dj$O(B
+という設定は
 (setq elmo-default-imap4-authenticate-type 'clear)
-$B$KJQ99$9$kI,MW$,$"$j$^$9!#(B
+に変更する必要があります。
 
-* 1.1.1 $B$+$i(B 2.4.0 $B$X$NJQ99E@(B
+* 1.1.1 から 2.4.0 への変更点
 
-** $B%P!<%8%g%sHV9f(B
-$B%P!<%8%g%sHV9f$NIU$1J}$,JQ$o$j$^$7$?!#(B
-$B$3$l$^$G!"(B1.x $B$,0BDjHG!"(B2.0.x$B!A(B2.2.x $B$,3+H/HG$H$J$C$F$$$^$7$?$,!"(B2.3.0 
-$B0J9_$O!"BhFsHV9f$,6v?t$J$i0BDjHG!"4q?t$J$i3+H/HG$H$J$j$^$7$?!#$3$N%P!<(B
-$B%8%g%sHV9f$NIU$1J}$O0lHLE*$J%*!<%W%s%=!<%93+H/$N47=,$K4p$E$/$b$N$G$9!#(B
+** バージョン番号
+バージョン番号の付け方が変わりました。
+これまで、1.x が安定版、2.0.x〜2.2.x が開発版となっていましたが、2.3.0 
+以降は、第二番号が偶数なら安定版、奇数なら開発版となりました。このバー
+ジョン番号の付け方は一般的なオープンソース開発の慣習に基づくものです。
 
-$B8x3+(B CVS $B%5!<%P(B cvs.m17n.org $B>e(B $B$G$O!"44$,(B beta ($B3+H/(B)$BHG!"(B
-$B;^$,(B stable ($B0BDj(B)$BHG(B ($B;^L>$O!"(B2.4.x $B$J$i(B wl-2_4) $B$H$J$j$^$9!#(B
+公開 CVS サーバ cvs.m17n.org 上 では、幹が beta (開発)版、
+枝が stable (安定)版 (枝名は、2.4.x なら wl-2_4) となります。
 
-** $B%$%s%9%H!<%k(B
+** インストール
 
-*** FLIM 1.12 $B$O%5%]!<%H$5$l$J$/$J$j$^$7$?!#(B
-$B$/$o$7$/$O(B INSTALL.ja $B$r8fMw2<$5$$!#(B
+*** FLIM 1.12 はサポートされなくなりました。
+くわしくは INSTALL.ja を御覧下さい。
 
-*** APEL 10.2 $B0J9_$,I,MW$K$J$j$^$7$?!#(B
-tm-8 $B$r;HMQ$9$kJ}$OFC$K$4Cm0U$/$@$5$$!#(B
+*** APEL 10.2 以降が必要になりました。
+tm-8 を使用する方は特にご注意ください。
 
-** $B?75!G=(B
+** 新機能
 
-*** LDAP $B%5%]!<%H(B
-LDAP $B%5!<%P!<$H@\B3$7!"%"%I%l%9$NJd40$r9T$($^$9!#(B
-$BJQ?t(B wl-use-ldap $B$,(B non-nil $B$K@_Dj$5$l$F$$$k$H(B LDAP $B$rMxMQ$7$^$9(B
-($B=i4|@_Dj$O(B nil)$B!#(B
+*** LDAP サポート
+LDAP サーバーと接続し、アドレスの補完を行えます。
+変数 wl-use-ldap が non-nil に設定されていると LDAP を利用します
+(初期設定は nil)。
 
-*** POP3 $B%U%)%k%@$G(B UIDL $B%5%]!<%H(B
-POP3 $B%U%)%k%@$G%5%^%j$N>uBV$rJ]B8$G$-$k$h$&$K$J$j!"%"%/%;%9$,9bB.2=$5$l$^$7$?!#(B
-$BJQ?t(B elmo-pop3-use-uidl $B$,(B non-nil $B$K@_Dj$5$l$F$$$k$H(B UIDL $B$r;HMQ$7$^$9(B
-($B=i4|@_Dj$O(B t)$B!#(B
+*** POP3 フォルダで UIDL サポート
+POP3 フォルダでサマリの状態を保存できるようになり、アクセスが高速化されました。
+変数 elmo-pop3-use-uidl が non-nil に設定されていると UIDL を使用します
+(初期設定は t)。
 
-*** Emacs 21 $B%5%]!<%H(B
-Standard Emacs 21 $B$N%5%]!<%H$r3+;O$7$^$7$?!#(BWanderlust $B$N$[$H$s(B
-$B$I$N%U%l!<%`$K!"(BXEmacs $B$HF1$8$h$&$K%D!<%k%P!<$d%"%$%3%s2hA|$rI=(B
-$B<($7$^$9!#(B
+*** Emacs 21 サポート
+Standard Emacs 21 のサポートを開始しました。Wanderlust のほとん
+どのフレームに、XEmacs と同じようにツールバーやアイコン画像を表
+示します。
 
-*** biff $B5!G=(B
-$B0lDj;~4V$*$-$K%5!<%P$K%a!<%k$,FO$$$F$$$k$+3NG'$7$^$9!#(B
-$BFO$$$F$$$l$P%b!<%I%i%$%s$KI=<($7!"%U%)%k%@0lMw%b!<%I$r99?7$7$^$9!#(B
+*** biff 機能
+一定時間おきにサーバにメールが届いているか確認します。
+届いていればモードラインに表示し、フォルダ一覧モードを更新します。
 
 *** expire-hide
-$B5-;v<+BN$O>C$9$3$H$J$/!"%5%^%j$K8+$($k5-;v?t$r0lDj$KJ]$D$3$H$,$G(B
-$B$-$k$h$&$K$J$j$^$7$?!#$R$H$D$N%U%)%k%@$KBgNL$K5-;v$rN/$a$F$$$k>l(B
-$B9g$G$b!"B.EYDc2<$rM^$($k$3$H$G$-$^$9!#(B
+記事自体は消すことなく、サマリに見える記事数を一定に保つことがで
+きるようになりました。ひとつのフォルダに大量に記事を溜めている場
+合でも、速度低下を抑えることできます。
 
-*** $B%9%l%C%I=$I|5!G=(B
-$B%5%V%8%'%/%H$+$i?dB,$7$?%9%l%C%I$N<+F0$N$D$J$.D>$7!"5Z$S(B
-$B<jF0$G$N$D$J$.D>$7(B($B%5%^%j$G(B M-w ($B%3%T!<(B)$B$H(B C-y ($B%Z!<%9%H(B)) $B$,2DG=$K$J$j$^$7$?!#(B
+*** スレッド修復機能
+サブジェクトから推測したスレッドの自動のつなぎ直し、及び
+手動でのつなぎ直し(サマリで M-w (コピー)と C-y (ペースト)) が可能になりました。
 
-*** $B%Q%9%o!<%I$N%?%$%^@_Dj(B
-$BJQ?t(B elmo-passwd-life-time $B$G@_Dj$G$-$^$9!#(B
-(nil $B$J$i%?%$%^$J$7!#=i4|@_Dj$O(B nil)$B!#(B
+*** パスワードのタイマ設定
+変数 elmo-passwd-life-time で設定できます。
+(nil ならタイマなし。初期設定は nil)。
 
 *** killed-list
-NNTP $B%U%)%k%@$G:o=|$7$?%a%C%;!<%8$O(B killed-list $B$KJ]B8$7$^$9!#(B
-killed-list $B$K$"$k%a%C%;!<%8$O%5!<%P>e$K$bB8:_$7$J$$$+$N$h$&$K07(B
-$B$$$^$9!#JQ?t(B elmo-use-killed-list $B$,(B non-nil $B$J$i(B killed-list $B$r(B
-$B;HMQ$7$^$9(B($B%G%U%)%k%H$O(B t)$B!#(B
-$B$3$l$K$h$C$F(B NNTP $B$rMxMQ$7$?%Q%$%W%U%)%k%@$b<B8=$G$-$k$h$&$K$J$j$^$7$?!#(B
+NNTP フォルダで削除したメッセージは killed-list に保存します。
+killed-list にあるメッセージはサーバ上にも存在しないかのように扱
+います。変数 elmo-use-killed-list が non-nil なら killed-list を
+使用します(デフォルトは t)。
+これによって NNTP を利用したパイプフォルダも実現できるようになりました。
 
-*** Maildir $B$G(B pack ($BHV9f5M$a(B) $B$,$G$-$k$h$&$K$J$j$^$7$?!#(B
-Maildir $B$N%5%^%j$G(B M-x wl-summary-pack-number $B$r<B9T$9$k$H%a%C%;!<%8HV9f$r(B
-1 $B$+$i=g$K?6$jD>$7$^$9!#(B
+*** Maildir で pack (番号詰め) ができるようになりました。
+Maildir のサマリで M-x wl-summary-pack-number を実行するとメッセージ番号を
+1 から順に振り直します。
 
-** $B8!:w(B
+** 検索
 
-*** $B%U%#%k%?%U%)%k%@$KJ#;($J>r7o;XDj$r;XDj$G$-$k$h$&$K$J$j$^$7$?!#(B
-AND $B>r7o!"(BOR $B>r7o!"H]Dj>r7o!"$*$h$S$=$l$i$NAH9g$;$r;XDj$G$-$^$9!#(B
-$B$3$l$K$H$b$J$$!">r7o;XDjItJ,$N%7%s%?%C%/%9$,JQ99$5$l$^$7$?!#(B
-$B$/$o$7$/$O(B Info $B$r8fMw2<$5$$!#(B
+*** フィルタフォルダに複雑な条件指定を指定できるようになりました。
+AND 条件、OR 条件、否定条件、およびそれらの組合せを指定できます。
+これにともない、条件指定部分のシンタックスが変更されました。
+くわしくは Info を御覧下さい。
 
-$BCm0U!'(B1.1.1 $B$+$i0\9T$5$l$kJ}$X(B
-$B>e5-JQ99$KH<$$!"%U%#%k%?%U%)%k%@$N(B msgdb $B$NCV$->l=j$,JQ$o$j$^$7$?!#(B
-$B$3$N$?$a!"=>Mh$N(B msgdb $B$OITMW$H$J$j$^$9!#$=$N$^$^$G$bLdBj$"$j$^$;$s$,!"(B
-$B%G%#%9%/$KL5BL$J%G!<%?$r;D$7$?$/$J$$J}$O(B .elmo/filter/ $B0J2<$r(B
-$B$"$i$+$8$a:o=|$7$F$*$$$F$/$@$5$$!#(B
+注意：1.1.1 から移行される方へ
+上記変更に伴い、フィルタフォルダの msgdb の置き場所が変わりました。
+このため、従来の msgdb は不要となります。そのままでも問題ありませんが、
+ディスクに無駄なデータを残したくない方は .elmo/filter/ 以下を
+あらかじめ削除しておいてください。
 
-*** NNTP $B$G$N8!:w5!G=$,6/2=$5$l$^$7$?!#(B
-NNTP $B$KBP$9$k%U%#%k%?%U%)%k%@$r:n$l$k$h$&$K$J$j$^$7$?!#(B
-(NNTP $B%5!<%P$,(B XHDR $B%3%^%s%I$KBP1~$7$F$$$k>l9g$N$_(B)
+*** NNTP での検索機能が強化されました。
+NNTP に対するフィルタフォルダを作れるようになりました。
+(NNTP サーバが XHDR コマンドに対応している場合のみ)
 
-*** $B%5%^%j$G$N(B Pick$B!"(BVirtual $B$GJ#9g>r7o$rF~NO$G$-$k$h$&$K$J$j$^$7$?!#(B
-AND $B>r7o$d(B OR $B>r7o$bF~NO$G$-$^$9!#(B
-$BF~NOJ}K!$O!"%U%#!<%k%IL>$N$+$o$j$K(B 'AND' $B$d(B 'OR' $B$rF~NO$9$k$@$1$G$9!#(B
+*** サマリでの Pick、Virtual で複合条件を入力できるようになりました。
+AND 条件や OR 条件も入力できます。
+入力方法は、フィールド名のかわりに 'AND' や 'OR' を入力するだけです。
 
-** $B@\B3!&G'>Z(B
+** 接続・認証
 
-*** elmo-default-*-authenticate-type $B$O%7%s%\%k$G@_Dj$9$k$h$&$K$J$j$^$7$?!#(B
-$BNc$($P!"(B
+*** elmo-default-*-authenticate-type はシンボルで設定するようになりました。
+例えば、
 (setq elmo-default-imap4-authenticate-type "cram-md5")
-$B$H$$$&@_Dj$O!"(B
+という設定は、
 (setq elmo-default-imap4-authenticate-type 'cram-md5)
-$B$KJQ99$9$kI,MW$,$"$j$^$9!#(B
+に変更する必要があります。
 
-*** stream-type $B$NDj5AJ}K!$rJQ99$7$^$7$?!#(B
-$BJQ?t(B elmo-network-{imap4-,pop3-,nntp-,}stream-type-alist $B$G@_Dj2DG=$G$9!#(B
-SSL $B4XO"$N$$$/$D$+$NJQ?t$,GQ;_$5$l$^$7$?(B($B2~L>(B)$B!#(B 
-$B$^$?!"?7$?$K(B "!socks" $B$G=*$o$k%M%C%H%o!<%/7O%U%)%k%@(B(IMAP4, NNTP, POP3)$B$O(B
-SOCKS $B7PM3$G%"%/%;%9$5$l$k$h$&$K$J$j$^$7$?!#(B
+*** stream-type の定義方法を変更しました。
+変数 elmo-network-{imap4-,pop3-,nntp-,}stream-type-alist で設定可能です。
+SSL 関連のいくつかの変数が廃止されました(改名)。 
+また、新たに "!socks" で終わるネットワーク系フォルダ(IMAP4, NNTP, POP3)は
+SOCKS 経由でアクセスされるようになりました。
 
-** $B%I%i%U%H(B
+** ドラフト
 
-*** group-list $B$KBP1~$7$^$7$?!#(B
-$B08@h$K(B Group: foo@gohome.org, bar@gohome.org; $B$N$h$&$K=q$1$k$h$&$K(B
-$B$J$j$^$7$?!#JQ?t(B wl-draft-remove-group-list-contents $B$,(B t $B$J$i(B
-group-list $B$NFbMF$r:o=|$7$FAw?.$7$^$9!#(B
+*** group-list に対応しました。
+宛先に Group: foo@gohome.org, bar@gohome.org; のように書けるように
+なりました。変数 wl-draft-remove-group-list-contents が t なら
+group-list の内容を削除して送信します。
 
-*** $B%I%i%U%H$N%W%l%S%e!<$G<u<h?M$N%"%I%l%9$,%_%K%P%C%U%!$KI=<($5$l$^$9!#(B
-group-list $B$K$bBP1~$7$F$$$^$9!#(B
+*** ドラフトのプレビューで受取人のアドレスがミニバッファに表示されます。
+group-list にも対応しています。
 
-*** $B=i4|@_Dj$G(B Reply-To: $B$r9MN8$9$k$h$&$K$J$j$^$7$?!#(B
-wl-draft-reply-without-argument-list $B$N=i4|@_Dj$G!"(BReply-To: 
-$B%U%#!<%k%I$O(B To: $B$XA^F~$9$k@_Dj$K$J$j$^$7$?!#(B
+*** 初期設定で Reply-To: を考慮するようになりました。
+wl-draft-reply-without-argument-list の初期設定で、Reply-To: 
+フィールドは To: へ挿入する設定になりました。
 
-*** $B<+J,$N%a!<%k$X$NJV?.%k!<%k(B
-$BJQ?t(B wl-draft-reply-myself-with-argument-list,
-wl-draft-reply-myself-without-argument-list $B$G<+J,$,=P$7$?%a!<%k(B
-$B$X$NJV?.$9$k$H$-$N%k!<%k$,@_Dj$G$-$^$9!#(B
+*** 自分のメールへの返信ルール
+変数 wl-draft-reply-myself-with-argument-list,
+wl-draft-reply-myself-without-argument-list で自分が出したメール
+への返信するときのルールが設定できます。
 
-*** $BJV?.%"%I%l%9$K%U%k%M!<%`(B
-$BJQ?t(B wl-draft-reply-use-address-with-full-name $B$,(B non-nil $B$J$iJV(B
-$B?.%"%I%l%9$K%U%k%M!<%`$,F~$j$^$9!#(B($B%G%U%)%k%H$O(B t)$B!#(B 
+*** 返信アドレスにフルネーム
+変数 wl-draft-reply-use-address-with-full-name が non-nil なら返
+信アドレスにフルネームが入ります。(デフォルトは t)。 
 
-*** In-Reply-To: $B%U%#!<%k%I$N7A<0$rJQ99$7$^$7$?!#(B
-draft-ietf-drums-msg-fmt-09.txt $B$K=>$&$h$&$K$J$j$^$7$?!#(B
+*** In-Reply-To: フィールドの形式を変更しました。
+draft-ietf-drums-msg-fmt-09.txt に従うようになりました。
 
-** $B$=$NB>$NJQ99E@(B
+** その他の変更点
 
-*** $B%9%l%C%I$N9bB.2=$HB?$/$N%P%0%U%#%C%/%9!#(B
+*** スレッドの高速化と多くのバグフィックス。
 
-*** $BJQ?tL>$NJQ99!#(B
+*** 変数名の変更。
 wl-refile-guess-func-list => wl-refile-guess-functions
 wl-summary-temp-above => wl-summary-target-above
 
-*** wl-fcc $B$K4X?t$r@_Dj$G$-$^$9!#(B
-$B7nKh$K%U%)%k%@$rJQ$($?$$>l9g$J$I$K;HMQ$G$-$^$9!#(B
+*** wl-fcc に関数を設定できます。
+月毎にフォルダを変えたい場合などに使用できます。
 
-*** elmo-search-mime-charset $B$OGQ;_$5$l$^$7$?!#(B
-charset $B$OF~NOJ8;zNs$+$iH=Dj$5$l$^$9!#(B
+*** elmo-search-mime-charset は廃止されました。
+charset は入力文字列から判定されます。
 
-*** $BE>Aw;~$KM>7W$J%X%C%@$r:o=|$7$^$9!#(B
-$BJQ?t(B wl-ignored-forwarded-headers $B$G!"E>Aw;~$K:o=|$9$k%X%C%@$r@_(B
-$BDj$G$-$^$9!#(B
+*** 転送時に余計なヘッダを削除します。
+変数 wl-ignored-forwarded-headers で、転送時に削除するヘッダを設
+定できます。
 
-*** wl-highlight-group-folder-by-numbers $B$OGQ;_$5$l$^$7$?!#(B
-wl-highlight-folder-by-numbers $B$K2~L>$5$l!"CM$K1~$8$F0J2<$N0UL#$r;}$D$h$&$K(B
-$B$J$j$^$7$?!#(B
-  `t'   $B!'9TA4BN$K%a%C%;!<%8?t$K1~$8$??'$rIU$1$^$9!#(B
-  `nil' $B!'%U%)%k%@$N>uBV$K1~$8$??'$rIU$1$^$9!#(B
-   $B?t;z(B ($BNc$($P(B `1') $B!'%a%C%;!<%8?t$H%U%)%k%@$N>uBV$NN>J}$K1~$8$??'$rIU$1$^$9!#(B
+*** wl-highlight-group-folder-by-numbers は廃止されました。
+wl-highlight-folder-by-numbers に改名され、値に応じて以下の意味を持つように
+なりました。
+  `t'   ：行全体にメッセージ数に応じた色を付けます。
+  `nil' ：フォルダの状態に応じた色を付けます。
+   数字 (例えば `1') ：メッセージ数とフォルダの状態の両方に応じた色を付けます。
 
-*** $B%a%C%;!<%8%P%C%U%!$G$N%X%C%@I=<($r@)8f$G$-$^$9!#(B
-$BJQ?t(B wl-message-ignored-field-list,
-wl-message-visible-field-list $B$G!"(BWanderlust $B%l%Y%k$G@_Dj$,2DG=(B
-$B$K$J$j$^$7$?!#(B($B:#$^$G$O(B SEMI $B$G@_Dj$9$kI,MW$,$"$j$^$7$?(B)
+*** メッセージバッファでのヘッダ表示を制御できます。
+変数 wl-message-ignored-field-list,
+wl-message-visible-field-list で、Wanderlust レベルで設定が可能
+になりました。(今までは SEMI で設定する必要がありました)
 
-*** DEMO $B$NI=<(J}K!$,JQ$o$j$^$7$?!#(B
-$B%+%i!<$N%T%C%/%9%^%C%W$GMxMQ$9$k?'?t$,:o8:$5$l$^$7$?!#(B
-$B$^$?!"J8;z$N$_$7$+I=<($G$-$J$$4D6-$G$b$=$l$J$j$N%G%b$,I=<($5$l$k$h$&$K(B
-$B$J$j$^$7$?!#(B
+*** DEMO の表示方法が変わりました。
+カラーのピックスマップで利用する色数が削減されました。
+また、文字のみしか表示できない環境でもそれなりのデモが表示されるように
+なりました。
 
 
-* 1.1.0 $B$+$i(B 1.1.1 $B$X$NJQ99E@(B
-  1.1.1 $B$O(B 1.1.0 $B$N%P%0=$@5HG$G$9!#$$$/$D$+$N:Y$+$$=$@5$,2C$o$C$F$$$^$9!#(B
+* 1.1.0 から 1.1.1 への変更点
+  1.1.1 は 1.1.0 のバグ修正版です。いくつかの細かい修正が加わっています。
 
-** CVS $B%5!<%P>e$G$N3+H/$,;O$a$i$l$^$7$?!#(B
+** CVS サーバ上での開発が始められました。
 
-** $B%G%#%l%/%H%j9=@.$,$+$o$j$^$7$?!#(B
+** ディレクトリ構成がかわりました。
 
-*** 00README, 00README.ja $B$O(B README, README.ja $B$KJQ99$5$l$^$7$?!#(B
+*** 00README, 00README.ja は README, README.ja に変更されました。
 
-*** wl-* $B$N%U%!%$%k$O(B 'wl' $B%G%#%l%/%H%j$K0\F0$7$^$7$?!#(B
+*** wl-* のファイルは 'wl' ディレクトリに移動しました。
 
-** wl-refile-rule-alist $B$N5-=RJ}K!$,3HD%$5$l$^$7$?(B($B0JA0$H8_49@-$,$"$j$^$9(B)$B!#(B
+** wl-refile-rule-alist の記述方法が拡張されました(以前と互換性があります)。
 
-** progress gauge $BI=<(5!G=$rMxMQ$9$k$h$&$K$J$j$^$7$?!#(B
-progress gauge $B$NI=<(5!G=$r$b$D(B Emacs $B$G$O!"=hM}$N?JD=$,(B progress gauge $B$K(B
-$BI=<($5$l$k$h$&$K$J$j$^$7$?!#(B
+** progress gauge 表示機能を利用するようになりました。
+progress gauge の表示機能をもつ Emacs では、処理の進捗が progress gauge に
+表示されるようになりました。
 
-* 1.0.3 $B$+$i(B 1.1.0 $B$X$NJQ99E@(B 
+* 1.0.3 から 1.1.0 への変更点 
 
-** $B%$%s%9%H!<%k(B
+** インストール
 
-*** tm7 $B$O%5%]!<%H$5$l$J$/$J$j$^$7$?!#(B
+*** tm7 はサポートされなくなりました。
 
-$B$/$o$7$/$O(B INSTALL.ja $B$r8fMw2<$5$$!#(B
+くわしくは INSTALL.ja を御覧下さい。
 
-*** WL_PREFIX $B$H(B ELMO_PREFIX $B$N=i4|@_Dj$,(B "wl" $B$K$J$j$^$7$?!#(B
+*** WL_PREFIX と ELMO_PREFIX の初期設定が "wl" になりました。
 (defvar WL_PREFIX "wl")
 (defvar ELMO_PREFIX "wl")
 
-$BNc$($P!"%$%s%9%H!<%k%G%#%l%/%H%j$O!"(B
+例えば、インストールディレクトリは、
   1.0.3  /usr/local/share/emacs/site-lisp/
   1.1.0  /usr/local/share/emacs/site-lisp/wl/
-$B$H$J$j$^$9!#(B
+となります。
 
-*** Makefile $B$NJQ?t$N%G%U%)%k%HCM$,JQ$o$j$^$7$?!#(B
+*** Makefile の変数のデフォルト値が変わりました。
 
 EMACS   = emacs
 XEMACS  = xemacs
-$(XEMACS) $B$O!"(B`package' $B$d(B `install-package' $B$N(B target $B$G;2>H$5$l$^$9!#(B
+$(XEMACS) は、`package' や `install-package' の target で参照されます。
 
-*** *.el $B%U%!%$%k$b%$%s%9%H!<%k$5$l$k$h$&$K$J$j$^$7$?!#(B
+*** *.el ファイルもインストールされるようになりました。
 
-*** $B1Q8lHG%I%-%e%a%s%H(B (wl.texi) $B$,IU$-$^$7$?!#(B
+*** 英語版ドキュメント (wl.texi) が付きました。
 
-** $B?75!G=(B
+** 新機能
 
-*** Modified UTF7 $B$,%5%]!<%H$5$l$^$7$?!#(B
-$B%f%K%3!<%I$,07$($k(B Emacs $B$G$O!"(BIMAP4 $B$GF|K\8l%a!<%k%\%C%/%9L>$r;XDj$G$-$^$9!#(B
+*** Modified UTF7 がサポートされました。
+ユニコードが扱える Emacs では、IMAP4 で日本語メールボックス名を指定できます。
 
-*** $B%9%3%"5!G=$,IU$-$^$7$?!#(B
+*** スコア機能が付きました。
 
-*** $B%W%i%04IM}5!G=$,IU$-$^$7$?!#(B
+*** プラグ管理機能が付きました。
 
-*** IMAP4 $B$,$h$jHFMQE*$K$J$j$^$7$?!#(B
-$BB?$/$N(B IMAP4 $B%5!<%P$GF0$/$h$&$K$J$j$^$7$?!#(B
+*** IMAP4 がより汎用的になりました。
+多くの IMAP4 サーバで動くようになりました。
 
-*** $B$$$/$D$+$NG'>ZJ}<0$,%5%]!<%H$5$l$^$7$?!#(B
+*** いくつかの認証方式がサポートされました。
   IMAP4: CRAM-MD5, DIGEST-MD5, STARTTLS
   POP3:  CRAM-MD5, DIGEST-MD5, SCRAM-MD5, STARTTLS
   NNTP:  STARTTLS
   SMTP:  STARTTLS
 
-*** $B?7$7$$%U%)%k%@7?$,2C$o$j$^$7$?!#(B
-  |      $B%Q%$%W%U%)%k%@(B     $B%a%C%;!<%8$r<h$j9~$`%U%)%k%@$G$9!#(B
-  .      Maildir $B%U%)%k%@(B   Maildir $B$,$R$H$D$N%U%)%k%@7?$K$J$j$^$7$?!#(B
-  'cache $B%-%c%C%7%e%U%)%k%@(B $BFbIt%-%c%C%7%e$r%U%)%k%@$H$7$F1\Mw$G$-$^$9!#(B
+*** 新しいフォルダ型が加わりました。
+  |      パイプフォルダ     メッセージを取り込むフォルダです。
+  .      Maildir フォルダ   Maildir がひとつのフォルダ型になりました。
+  'cache キャッシュフォルダ 内部キャッシュをフォルダとして閲覧できます。
 
-*** $B%a%C%;!<%8%P%C%U%!$N%W%j%U%'%C%A5!G=$,IU$-$^$7$?!#(B
-$BFI$s$G$$$k4V$K<!$N%a%C%;!<%8$rFI$_9~$_$^$9!#(B
+*** メッセージバッファのプリフェッチ機能が付きました。
+読んでいる間に次のメッセージを読み込みます。
 
-*** $B%9%F%#%C%-!<%5%^%j(B($B>C$($J$$%5%^%j(B)$B$,3HD%$5$l$^$7$?!#(B
-$B%a%C%;!<%8%P%C%U%!$b%5%^%j$KBP1~$7$FMQ0U$5$l$k$h$&$K$J$j$^$7$?!#(B
-$B>o$K%9%F%#%C%-!<$K$J$k%U%)%k%@$r@_Dj$G$-$k$h$&$K$J$j$^$7$?!#(B
+*** スティッキーサマリ(消えないサマリ)が拡張されました。
+メッセージバッファもサマリに対応して用意されるようになりました。
+常にスティッキーになるフォルダを設定できるようになりました。
 
-** $B$=$NB>(B
+** その他
 
-*** $BJQ?t(B wl-draft-prepared-config-alist $B$OGQ;_$5$l$^$7$?!#(B
-wl-draft-config-alist $B$KE}9g$5$l$^$7$?!#(B
+*** 変数 wl-draft-prepared-config-alist は廃止されました。
+wl-draft-config-alist に統合されました。
 
-*** POP-before-SMTP $B4XO"$NJQ?t$,@0M}$5$l$^$7$?!#(B
+*** POP-before-SMTP 関連の変数が整理されました。
 
-*** $BB8:_$7$J$$%U%)%k%@$r:n$k$+$I$&$+3NG'$9$k$h$&$K$J$j$^$7$?!#(B
- FCC: $B$K?7$7$$%U%)%k%@L>$r;XDj$7$?$H$-$d!"(Bauto-refile $B$G(B
- $B?7$7$$%U%)%k%@L>$r;XDj$7$?$H$-$K%U%)%k%@$r:n$k$+$I$&$+3NG'$7$^$9!#(B
+*** 存在しないフォルダを作るかどうか確認するようになりました。
+ FCC: に新しいフォルダ名を指定したときや、auto-refile で
+ 新しいフォルダ名を指定したときにフォルダを作るかどうか確認します。
 
-*** $B%W%j%U%'%C%A$N3NG'$K4X$9$k@_Dj$NJQ?t$,2C$o$j$^$7$?!#(B
+*** プリフェッチの確認に関する設定の変数が加わりました。
 wl-prefetch-confirm-threshold, wl-cache-fetch-threshold.
 
-*** $B%U%)%k%@L>$N$"$@L>$r%U%)%k%@L>F~NO$GJd40$G$-$k$h$&$K$J$j$^$7$?!#(B
+*** フォルダ名のあだ名をフォルダ名入力で補完できるようになりました。
 
-*** Message-ID $B$N@8@.J}K!$,JQ$o$j$^$7$?!#(B
+*** Message-ID の生成方法が変わりました。
 
-*** Mule $B$G$O%S%C%H%^%C%W$N%*!<%W%K%s%0%G%b2hLL$,=P$k$h$&$K$J$j$^$7$?!#(B
+*** Mule ではビットマップのオープニングデモ画面が出るようになりました。
 
-*** `smtp-server' $B$K4X?t$r;XDj$G$-$^$9!#(B
+*** `smtp-server' に関数を指定できます。
 
-*** $BAw?.%m%0$,J]B8$5$l$k$h$&$K$J$j$^$7$?!#(B
-`wl-draft-sendlog' $B$,(B non-nil $B$N>l9g!"(B'sendlog' $B%U%!%$%k$KJ]B8$5$l$^$9!#(B
+*** 送信ログが保存されるようになりました。
+`wl-draft-sendlog' が non-nil の場合、'sendlog' ファイルに保存されます。
 
-*** $B%*%U%i%$%s=hM}$G%W%j%U%'%C%A$rM=Ls$G$-$k$h$&$K$J$j$^$7$?!#(B
+*** オフライン処理でプリフェッチを予約できるようになりました。
 
 *** `wl-summary-incorporate-marks'
 
-*** `wl-draft-use-frame' $B$,(B non-nil $B$J$i%U%l!<%`$r@8@.$7$^$9!#(B
+*** `wl-draft-use-frame' が non-nil ならフレームを生成します。
 
-*** $B?75,JQ?t(B `wl-user-mail-address-list'$B!#(B
+*** 新規変数 `wl-user-mail-address-list'。
 
-*** $B?75,JQ?t(B `wl-local-domain'$B!#(B
+*** 新規変数 `wl-local-domain'。
 
-*** IMAP4 $B$G%5!<%PB&$NL$FI>uBV$r;2>H$9$k$h$&$K$J$j$^$7$?!#(B
+*** IMAP4 でサーバ側の未読状態を参照するようになりました。
 
-*** $B=i4|@_Dj$,JQ99$5$l$?JQ?t(B
+*** 初期設定が変更された変数
   wl-mime-charset         iso-2022-jp  =>  x-ctext
   wl-summary-move-order   'new  =>  'unread
   wl-tmp-dir              TMPDIR  =>  ~/tmp/
 
-*** $B?75,(B hook
+*** 新規 hook
   wl-draft-send-hook
   wl-draft-reedit-hook
   wl-mime-edit-preview-message-hook
@@ -846,7 +846,7 @@ wl-prefetch-confirm-threshold, wl-cache-fetch-threshold.
   mmelmo-header-inserted-hook
   mmelmo-entity-content-inserted-hook
 
-*** $B?75,%3%^%s%I(B
+*** 新規コマンド
   wl-save
   wl-summary-write
   wl-summary-supersedes-message
@@ -856,7 +856,7 @@ wl-prefetch-confirm-threshold, wl-cache-fetch-threshold.
   wl-summary-jump-to-msg-by-message-id-via-nntp
   wl-summary-temp-mark-pick
 
-* $BJQ99E@$N>\:Y$O(B ChangeLog $B$r8fMw2<$5$$!#(B
+* 変更点の詳細は ChangeLog を御覧下さい。
 
 Local variables:
 mode: outline

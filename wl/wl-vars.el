@@ -1,4 +1,4 @@
-;;; wl-vars.el --- Variable definitions for Wanderlust. -*-coding: iso-2022-jp-unix;  lexical-binding: t -*-
+;;; wl-vars.el --- Variable definitions for Wanderlust. -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000,2001 Yuuichi Teranishi <teranisi@gohome.org>
 ;; Copyright (C) 1998,1999,2000,2001 Masahiro MURATA <muse@ba2.so-net.ne.jp>
@@ -2285,7 +2285,7 @@ It has no effect on the case which `wl-biff-use-idle-timer' is non-nil."
   :type 'string
   :group 'wl-setting)
 
-(defcustom wl-biff-state-indicator-off "[$B!>(B]" ;; Japanese short hyphen
+(defcustom wl-biff-state-indicator-off "[‐]" ;; Japanese short hyphen
   "String used to show biff status OFF."
   :type 'string
   :group 'wl-setting)
@@ -3103,15 +3103,15 @@ a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
 ;; Advanced thread view.
 (defvar wl-thread-indent-level (if wl-on-mule 1 2)
   "*Indent level for thread.")
-(defvar wl-thread-have-younger-brother-str (if wl-on-mule "$B(2(B" "+")
+(defvar wl-thread-have-younger-brother-str (if wl-on-mule "┣" "+")
   "*A string for thread branch line.  It should contain one character.")
-(defvar wl-thread-youngest-child-str       (if wl-on-mule "$B(1(B" "+")
+(defvar wl-thread-youngest-child-str       (if wl-on-mule "┗" "+")
   "*A string for thread branch line.  It should contain one character.")
-(defvar wl-thread-vertical-str             (if wl-on-mule "$B(-(B" "|")
+(defvar wl-thread-vertical-str             (if wl-on-mule "┃" "|")
   "*A string for thread branch line.  It should contain one character.")
-(defvar wl-thread-horizontal-str           (if wl-on-mule "$B(,(B" "-")
+(defvar wl-thread-horizontal-str           (if wl-on-mule "━" "-")
   "*A string for thread branch line.  It should contain one character.")
-(defvar wl-thread-space-str                (if wl-on-mule "$B!!(B" " ")
+(defvar wl-thread-space-str                (if wl-on-mule "　" " ")
   "*A string for thread branch line.  It should contain one character.")
 
 ;; folder icons. filename relative to wl-icon-directory

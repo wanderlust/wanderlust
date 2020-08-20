@@ -1,4 +1,4 @@
-;;; wl-news.el --- Create notification from NEWS(.ja) for Wanderlust. -*-coding: iso-2022-jp;-*-
+;;; wl-news.el --- Create notification from NEWS(.ja) for Wanderlust.
 
 ;; Copyright (C) 2002 Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>
 ;; Copyright (C) 2002 Kenichi OKADA <okada@opaopa.org>

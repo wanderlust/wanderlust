@@ -1,3 +1,35 @@
+2020-08-20  Kazuhiro Ito  <kzhr@d1.dion.ne.jp>
+
+	Change non-ASCII text files's coding-system to UTF-8
+
+	* BUGS.ja: Likewise.
+
+	* INSTALL.ja: Likewise.
+
+	* NEWS.ja: Likewise.
+
+	* README.ja: Likewise.
+
+	* WL-MK: Likewise.
+
+	* doc/TODO.ja: Likewise.
+
+	* etc/ChangeLog.1.ja: Likewise.
+
+	* etc/ChangeLog.2: Likewise.
+
+	* etc/ChangeLog.2.ja: Likewise.
+
+	* etc/ChangeLog.3.ja: Likewise.
+
+	* etc/ja.Emacs: Likewise.
+
+	* samples/ja/dot.addresses: Likewise.
+
+	* samples/ja/dot.folders: Likewise.
+
+	* samples/ja/dot.wl: Likewise.
+
 2020-08-05  Naoya Yamashita  <conao3@gmail.com>
 
 	Fix closing parens position (cosmetic change only).

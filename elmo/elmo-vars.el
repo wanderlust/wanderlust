@@ -1,4 +1,4 @@
-;;; elmo-vars.el --- User variables for ELMO. -*- coding: iso-2022-jp-unix; lexical-binding: t -*-
+;;; elmo-vars.el --- User variables for ELMO. -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
 
@@ -415,7 +415,7 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
   "Hardlink is available on your file system, or not.")
 
 (defvar elmo-weekday-name-en '["Sun" "Mon" "Tue" "Wed" "Thu" "Fri" "Sat"])
-(defvar elmo-weekday-name-ja '["$BF|(B" "$B7n(B" "$B2P(B" "$B?e(B" "$BLZ(B" "$B6b(B" "$BEZ(B"])
+(defvar elmo-weekday-name-ja '["日" "月" "火" "水" "木" "金" "土"])
 (defvar elmo-weekday-name-fr '["Dim" "Lun" "Mar" "Mer" "Jeu" "Ven" "Sam"])
 (defvar elmo-weekday-name-de '["Son" "Mon" "Die" "Mit" "Don" "Fre" "Sam"])
 

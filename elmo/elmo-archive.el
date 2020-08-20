@@ -1,4 +1,4 @@
-;;; elmo-archive.el --- Archive folder of ELMO. -*- coding: euc-japan; lexical-binding: t -*-
+;;; elmo-archive.el --- Archive folder of ELMO. -*- lexical-binding: t -*-
 
 ;; Copyright (C) 1998,1999,2000 OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
 ;; Copyright (C) 1998,1999,2000 Yuuichi Teranishi <teranisi@gohome.org>
@@ -29,7 +29,7 @@
 ;;; Commentary:
 ;;
 ;; TODO:
-;; Info-Zip ÀìÍÑ¥¨¡¼¥¸¥§¥ó¥È¤òÍÑ¤¤¤¿ÆüËÜ¸ì¸¡º÷¡ÊOS/2 ÀìÍÑ¡Ë¡£
+;; Info-Zip å°‚ç”¨ã‚¨ãƒ¼ã‚¸ã‚§ãƒ³ãƒˆã‚’ç”¨ã„ãŸæ—¥æœ¬èªæ¤œç´¢ï¼ˆOS/2 å°‚ç”¨ï¼‰ã€‚
 
 ;;; Code:
 ;;

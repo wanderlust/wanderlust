@@ -1,4 +1,4 @@
-* qmail $BBP1~$N(B UW imapd $B$N%a%C%;!<%8$r07$($J$$!#(B
-* POP3 $B%U%)%k%@$N(B biff $B$,$&$^$/F0$+$J$$(B (c.f. [wl: 08937])$B!#(B
-* IMAP STATUS $B%3%^%s%I$r(Bselect$B$5$l$?(B mailbox $B$KBP$7$F;H$C$F$O$J$i$J$$(B(RFC3501)
+* qmail 対応の UW imapd のメッセージを扱えない。
+* POP3 フォルダの biff がうまく動かない (c.f. [wl: 08937])。
+* IMAP STATUS コマンドをselectされた mailbox に対して使ってはならない(RFC3501)
 
