@@ -9109,6 +9109,13 @@ Wanderlust List in English @t{<wl-en@@ml.gentei.org>}
 バグ報告やパッチの送付もこれらのメーリングリストへ送ってください。メーリ
 ングリストへの送信はメンバになる必要があります。
 
+もしくは、GutHubも利用できます。
+プルリクエストを送る場合は、Emacs の様に、コミットメッセージに従来の
+@file{ChangeLog} エントリに相当する内容をインデントせずに入力して下さい。
+Emacs の @file{CONTRIBUTE} ファイル
+@footnote{@uref{https://git.savannah.gnu.org/cgit/emacs.git/plain/CONTRIBUTE}}
+にある @cite{Commit messages} セクションを参照して下さい。
+
 また、バグ報告の場合はバックトレースを取って添付すると原因究明しやすくな
 ります。 @footnote{バックトレースの取り方は
 @uref{http://www.jpl.org/elips/BUGS-ja.html}が参考になります。}

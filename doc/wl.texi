@@ -9210,6 +9210,11 @@ the English one) with the body
 Please send bug reports or patches to one of those lists.  You have to
 subscribe the mailing list to post a message.
 
+Alternatively, You can also use GitHub.  If you send a pull request,
+please embed unindented @file{ChangeLog} entries in commit message like
+Emacs's.  See @cite{Commit messages} section of Emacs's CONTRIBUTE file
+@footnote{@uref{https://git.savannah.gnu.org/cgit/emacs.git/plain/CONTRIBUTE}}.
+
 If you send a bug report, please attach Backtrace with it.
 @footnote{@uref{http://www.jpl.org/elips/BUGS-ja.html} describes how to
 in Japanese.}
