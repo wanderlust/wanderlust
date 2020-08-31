@@ -121,14 +121,15 @@
 
 (defvar wl-cs-cache wl-cs-local)
 
-(defcustom wl-from (and user-mail-address
-			(concat (and (user-full-name)
-				     (concat (elmo-address-quote-specials
-					      (user-full-name))
-					     " "))
-				"<" user-mail-address ">"))
+(defcustom wl-from (when user-mail-address
+		     (let ((name (user-full-name)))
+		       (concat (unless (member name '("" "unknown"))
+				 (concat (elmo-address-quote-specials name)
+					 " "))
+			       "<" user-mail-address ">")))
   "*From string used in draft."
-  :type  'string
+  :type  '(choice string
+		  (const :tag "Don't choice this!!" nil))
   :group 'wl
   :group 'wl-setting)
 
