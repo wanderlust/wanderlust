@@ -104,22 +104,10 @@
 
 (defconst wl-on-nemacs nil) ; backward compatibility.
 
-(defvar wl-cs-noconv
-  (cond (wl-on-mule3 'binary)
-	(wl-on-mule  '*noconv*)
-	(t           nil)))
-
 (defvar wl-cs-autoconv
   (cond (wl-on-mule3 'undecided)
 	(wl-on-mule  '*autoconv*)
 	(t           nil)))
-
-(defvar wl-cs-local
-  (cond (wl-on-mule3  'junet)
-	(wl-on-mule   '*junet*)
-	(t           nil)))
-
-(defvar wl-cs-cache wl-cs-local)
 
 (defcustom wl-from (when user-mail-address
 		     (let ((name (user-full-name)))
