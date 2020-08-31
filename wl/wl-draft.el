@@ -1744,10 +1744,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		nil
 	      (if (re-search-forward ":" pos t) nil t)))))))
 
+(require 'wl)
 ;;;;;;;;;;;;;;;;
 ;;;###autoload
-(require 'wl)
-
 (defun wl-draft (&optional header-alist
 			   content-type content-transfer-encoding
 			   body edit-again
