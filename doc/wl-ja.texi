@@ -242,16 +242,13 @@ Wanderlust を起動するまでに必要な手順を順番に説明します。
 @pindex FLIM
 @pindex SEMI
 
-Wanderlust を使うためには、APEL, FLIM, SEMI と呼ばれる
-パッケージが必要です。
-
-Emacs 23 以降については、以下の場所にあるものを使用してください。
-SEMI は SEMI-EPG というパッケージ名になります。
+Wanderlust を使うためには、APEL, FLIM, SEMI のバリアントである、
+APEL-LB, FLIM-LB, SEMI-EPG と呼ばれるパッケージが必要です。
 
 @example
 @group
-APEL:     @uref{https://github.com/wanderlust/apel}
-FLIM:     @uref{https://github.com/wanderlust/flim}
+APEL-LB:  @uref{https://github.com/wanderlust/apel}
+FLIM-LB:  @uref{https://github.com/wanderlust/flim}
 SEMI-EPG: @uref{https://github.com/wanderlust/semi}
 @end group
 @end example
@@ -266,21 +263,14 @@ SEMI:   @uref{http://git.chise.org/elisp/dist/semi/}
 @end group
 @end example
 
-APEL, FLIM, SEMI[-EPG] の順にインストールしてください。
+APEL-LB, FLIM-LB, SEMI-EPG の順にインストールしてください。
 基本的にすべて @samp{make install} の実行で済むはずです。
 
 インストールの方法の詳細については、各パッケージに添付されているドキュメ
 ントを参照してください。
 
-
-推奨される APEL, FLIM, SEMI のバージョンの組合せは、以下の通りです。
-
-@itemize @minus
-@item APEL 10.8, FLIM 1.14.9, SEMI-EPG 1.14.7
-@end itemize
-
-APEL, FLIM もしくは SEMI のバージョンアップを行った場合は、Wanderlust を
-インストールし直してください。
+APEL-LB, FLIM-LB もしくは SEMI-EPG のバージョンアップを行った場合は、
+Wanderlust をインストールし直してください。
 
 
 @node Download, Install, MIME Modules, Start Me Up

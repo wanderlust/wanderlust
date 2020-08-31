@@ -10,51 +10,16 @@
 
   Wanderlust がサポートする Emacsen を以下に示します。
 
-	Mule 2.3 based on Emacs 19.34
-	Emacs 20.1 以降
-	XEmacs 20.4 以降
+	Emacs 24.5 以降
 
   Wanderlust を使うためには、以下に示すMIME用モジュールをインストールし
   ておく必要があります。
 
-	SEMI	(1.14.6 以降)
-	FLIM	(1.14.9 以降)
+	SEMI-EPG
+	FLIM-LB
 
-  Wanderlust および MIME用モジュールを使うためには APEL をインストールし
-  ておく必要があります。APEL は常に最新版を使うことを推奨します。
-
-	APEL	(10.6 以降)
-
-
-MIME用モジュールの選択
-======================
-
-  主な Emacsen について推奨する APEL, FLIM, SEMI の組合せを以下に示します。
-
-  (a) XEmacs 21.1 以降
-
-	APEL 10.8, FLIM 1.14.9, SEMI 1.14.6
-
-    可能ならば XEmacs のパッケージとしてインストールすることをお勧めします。
-
-  (b) Emacs 20.4 以降
-
-	APEL 10.8, FLIM 1.14.9, SEMI 1.14.6
-
-  (c) Emacs 20.1〜20.3
-
-	APEL 10.8, CLIME 1.14.6, SEMI 1.14.6
-
-    FLIM が動きませんので、代わりに CLIME をインストールしてください。
-
-  (d) Emacs 19.34 (Mule 2.3)
-
-	APEL 10.8, CLIME 1.14.6, SEMI 1.14.6
-
-    Emacs 19.34 ベースの Mule では SEMI を動作させることが可能です。下記
-    のページが参考になります。
-
-	http://www.jpl.org/elips/INSTALL-SEMI-ja.html
+  Wanderlust および MIME用モジュールを使うためには APEL-LB をインストールし
+  ておく必要があります。
 
 
 MIME用モジュールのインストール
@@ -62,28 +27,18 @@ MIME用モジュールのインストール
 
   パッケージはそれぞれ以下の URL で入手可能です。
 
-	APEL:	ftp://ftp.m17n.org/pub/mule/apel/
-	FLIM:	ftp://ftp.m17n.org/pub/mule/flim/
-	CLIME:	ftp://ftp.jpl.org/pub/m17n/
-	SEMI:	ftp://ftp.m17n.org/pub/mule/semi/
+	APEL-LB:	https://github.com/wanderlust/apel
+	FLIM-LB:	https://github.com/wanderlust/flim
+	SEMI-EPG:	https://github.com/wanderlust/semi
 
-  APEL, FLIM(CLIME), SEMI の順にインストールしてください。基本的にすべて
+  APEL-LB, FLIM-LB, SEMI-EPG の順にインストールしてください。基本的にすべて
   make install の実行で済むはずです。
 
   詳しいインストールの方法は各パッケージに添付されているドキュメント 
   (README.ja, README.en) を参照してください。
 
-  その他、FLIM, SEMI にはいろいろな変形バージョンが存在しますが、それら
-  のいずれも利用することが可能です。基本的に最新版の組合せなら動作するは
-  ずです。
-
-  例えば、以下の組合せの動作が確認されています。
-
-	APEL 10.6, SLIM 1.14.9, SEMI 1.14.5
-	APEL 10.6, CLIME 1.14.5, EMIKO 1.14.1
-
-  APEL, FLIM, SEMI のバージョンアップを行った場合は、Wanderlust をインス
-  トールし直してください。
+  APEL-LB, FLIM-LB, SEMI-EPG のバージョンアップを行った場合は、
+  Wanderlust をインストールし直してください。
 
 
 環境の確認

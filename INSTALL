@@ -10,53 +10,16 @@ System Requirements
 
   Wanderlust supports following Emacsen:
 
-	Mule 2.3 based on Emacs 19.34
-	Emacs 20.1 or later
-	XEmacs 20.4 or later
+	Emacs 24.5 or later
 
   Before installing Wanderlust, please install the following MIME
   modules.
 
-	SEMI	(1.14.6 or later)
-	FLIM	(1.14.9 or later)
+	SEMI-EPG
+	FLIM-LB
 
-  Wanderlust and MIME modules require APEL.  Before installing MIME
-  modules, please install the APEL.
-
-	APEL	(10.6 or later)
-
-
-Select MIME Module
-==================
-
-  For each Emacsen, recommended combination of MIME module package
-  follows.
-
-  (a) XEmacs 21.1 or later
-
-	APEL 10.8, FLIM 1.14.9, SEMI 1.14.6
-
-    Installation as a XEmacs package, if possible.
-
-  (b) Emacs 20.4 or later
-
-	APEL 10.8, FLIM 1.14.9, SEMI 1.14.6
-
-  (c) Emacs 20.1 to 20.3
-
-	APEL 10.8, CLIME 1.14.6, SEMI 1.14.6
-
-    Use CLIME instead of FLIM.  FLIM does not support Emacs 20.3 or
-    earlier.
-
-  (d) Emacs 19.34 (Mule 2.3)
-
-	APEL 10.8, CLIME 1.14.6, SEMI 1.14.6
-
-    Mule based on Emacs 19.34 can also run SEMI.  See the following web
-    page to get more information (in Japanese).
-
-	http://www.jpl.org/elips/INSTALL-SEMI-ja.html
+  Wanderlust and MIME modules require APEL-LB.  Before installing MIME
+  modules, please install APEL-LB.
 
 
 Install MIME Module
@@ -64,23 +27,16 @@ Install MIME Module
 
   You can download these packages from following URLs.
 
-	APEL:	ftp://ftp.m17n.org/pub/mule/apel/
-	FLIM:	ftp://ftp.m17n.org/pub/mule/flim/
-	CLIME:	ftp://ftp.jpl.org/pub/m17n/
-	SEMI:	ftp://ftp.m17n.org/pub/mule/semi/
+	APEL-LB:	https://github.com/wanderlust/apel
+	FLIM-LB:	https://github.com/wanderlust/flim
+	SEMI-EPG:	https://github.com/wanderlust/semi
 
-  Please install APEL, FLIM(CLIME), and SEMI, in that order.  Generally,
-  'make install' will do the job.  To get full information, please refer
-  to the README.en within each package.
+  Please install APEL-LB, FLIM-LB, and SEMI-EPG, in that order.
+  Generally, 'make install' will do the job.  To get full information,
+  please refer to the README.en within each package.
 
-  You can also use many other FLIM/SEMI variants.  Combination of the
-  latest versions should work.  For example, the following combinations
-  are confirmed to work:
-
-	APEL 10.6, SLIM 1.14.9, SEMI 1.14.5
-	APEL 10.6, CLIME 1.14.5, EMIKO 1.14.1
-
-  You have to re-install Wanderlust if you upgraded APEL, FLIM, or SEMI.
+  You have to re-install Wanderlust if you upgraded APEL-LB, FLIM-LB, or
+  SEMI-EPG.
 
 
 Check Environment

@@ -218,17 +218,13 @@ here.
 @pindex FLIM
 @pindex SEMI
 
-You must install packages named APEL, FLIM and SEMI beforehand to use
-Wanderlust.
-
-For Emacs 23 or later, downloading from below URLs is highly
-recommended.
-SEMI-EPG is corresponding package to SEMI.
+You must install packages named APEL-LB, FLIM-LB and SEMI-EPG, which are
+variants of APEL, FLIM and SEMI, beforehand to use Wanderlust.
 
 @example
 @group
-APEL:     @uref{https://github.com/wanderlust/apel}
-FLIM:     @uref{https://github.com/wanderlust/flim}
+APEL-LB:  @uref{https://github.com/wanderlust/apel}
+FLIM-LB:  @uref{https://github.com/wanderlust/flim}
 SEMI-EPG: @uref{https://github.com/wanderlust/semi}
 @end group
 @end example
@@ -243,20 +239,14 @@ SEMI:   @uref{http://git.chise.org/elisp/dist/semi/}
 @end group
 @end example
 
-You have to install APEL, FLIM and SEMI[-EPG] in this order.  Generally,
-@samp{make install} will do the job.
+You have to install APEL-LB, FLIM-LB and SEMI-EPG in this order.
+Generally, @samp{make install} will do the job.
 
 Refer to the documents of each package for detailed installation
 procedure.
 
-
-Recommended combination of APEL, FLIM and SEMI are following:
-
-@itemize @minus
-@item APEL 10.8, FLIM 1.14.9, SEMI-EPG 1.14.7
-@end itemize
-
-You have to re-install Wanderlust if you upgraded APEL, FLIM or SEMI.
+You have to re-install Wanderlust if you upgraded APEL-LB, FLIM-LB or
+SEMI-EPG.
 
 
 @node Download, Install, MIME Modules, Start Me Up
