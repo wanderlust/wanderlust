@@ -276,7 +276,7 @@ If addresses is a string, expands it recursively."
 
 (defun wl-addrbook-insert-file (file cregexp &optional unquote)
   (let* ((case-fold-search t)
-	 (coding-system-for-read wl-cs-autoconv)
+	 (coding-system-for-read 'undecided)
 	 (pars (elmo-parse file "\\([^, ]+\\)")) ;; parents
 	 (files pars) ;; included
 	 par chr path beg qchar)

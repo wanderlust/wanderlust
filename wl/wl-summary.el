@@ -4542,7 +4542,7 @@ If ARG is numeric number, decode message as following:
 	     (upcase (symbol-name mime-mode))
 	     (if (and (not (eq mime-mode 'mime))
 		      (not (eq elmo-mime-display-as-is-coding-system
-			       wl-cs-autoconv)))
+			       'undecided)))
 		 (concat " ("
 			 (symbol-name elmo-mime-display-as-is-coding-system)
 			 ")")

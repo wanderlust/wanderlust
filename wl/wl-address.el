@@ -546,7 +546,7 @@ Refresh `wl-address-list', `wl-address-completion-list', and
   (when (and path (file-readable-p path))
     (with-temp-buffer
       (let (ret
-	    (coding-system-for-read wl-cs-autoconv))
+	    (coding-system-for-read 'undecided))
 	(insert-file-contents path)
 	(goto-char (point-min))
 	(while (not (eobp))

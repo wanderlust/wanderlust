@@ -631,7 +631,7 @@ It calls following-method selected from variable
 		   (epg-decrypt-string
 		    context
 		    (buffer-substring beg end))
-		   (if no-decode 'raw-text wl-cs-autoconv))
+		   (if no-decode 'raw-text 'undecided))
 		(delete-region beg end)))))
   last-coding-system-used)
 

@@ -104,11 +104,6 @@
 
 (defconst wl-on-nemacs nil) ; backward compatibility.
 
-(defvar wl-cs-autoconv
-  (cond (wl-on-mule3 'undecided)
-	(wl-on-mule  '*autoconv*)
-	(t           nil)))
-
 (defcustom wl-from (when user-mail-address
 		     (let ((name (user-full-name)))
 		       (concat (unless (member name '("" "unknown"))

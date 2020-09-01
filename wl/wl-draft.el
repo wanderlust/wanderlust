@@ -2242,7 +2242,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   (wl-draft-config-sub-eval-insert content 'newline))
 
 (defsubst wl-draft-config-sub-file (content)
-  (let ((coding-system-for-read wl-cs-autoconv)
+  (let ((coding-system-for-read 'undecided)
 	(file (expand-file-name (eval content))))
     (if (file-exists-p file)
 	(insert-file-contents file)
