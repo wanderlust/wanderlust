@@ -192,6 +192,11 @@ If no match, `wl-summary-default-view' is used."
 			       (const :tag "Sequential" sequence))))
   :group 'wl-summary)
 
+(defcustom wl-summary-descending-order nil
+  "Messages are listed in descending order in summary buffer if non-nil."
+  :type 'boolean
+  :group 'wl-summary)
+
 (defvar wl-summary-mode-line-format-spec-alist
   '((?f (if (memq 'modeline wl-use-folder-petname)
 	    (wl-folder-get-petname (elmo-folder-name-internal

@@ -3668,7 +3668,7 @@ last:NUM         Move to the filter folder(partial filter).
 Sort summary order.
 You can sort by @samp{date}, @samp{from}, @samp{number}, @samp{subject},
 @samp{size} and @samp{list-info}.
-With prefix argument, sort summary lines into descending order.
+With prefix argument, sort summary lines into reverse order.
 (@code{wl-summary-sort})
 
 @item T

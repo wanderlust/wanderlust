@@ -217,7 +217,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    are now toggle key.
    Now you can cite messages displayed by 'M'.
 
-** Now you can sort summary lines into descending order.
+** Now you can sort summary lines into reverse order.
 
 ** Abbreviate too long header extended to lines in message buffer.
 

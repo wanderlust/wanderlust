@@ -860,6 +860,7 @@ Message is inserted to the summary buffer."
         "Inserting message"
       (wl-delete-all-overlays)
       (dolist (e wl-thread-entity-list)
+        (if wl-summary-descending-order (goto-char (point-min)))
         (wl-thread-insert-entity
          0
          (wl-thread-get-entity e)
