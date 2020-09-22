@@ -1048,7 +1048,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
 	  `(lambda (&optional reverse)
 	     ,(format "\
 Sort summary lines into the order by %s.
-If optional argument REVERSE is non-nil, sort into descending order.
+If optional argument REVERSE is non-nil, sort into reverse order.
 
 This function is defined by `wl-summary-define-sort-command'." sort-by)
 	     (interactive "P")
@@ -1152,7 +1152,7 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
     (wl-summary-set-message-modified)
     (wl-summary-count-unread)
     (wl-summary-update-modeline)
-    (goto-char (point-max))
+    (goto-char (if (eq wl-summary-order 'descending) (point-min) (point-max)))
     (forward-line -1)
     (set-buffer-modified-p nil)))
 
@@ -1918,7 +1918,7 @@ This function is defined for `window-scroll-functions'"
     (elmo-progress-notify 'wl-summary-insert-line)))
 
 (defun wl-summary-sort (reverse)
-  "Sort summary lines into the selected order; argument means descending order."
+  "Sort summary lines into the selected order; argument means reverse order."
   (interactive "P")
   (let ((default-value (symbol-name wl-summary-default-sort-spec)))
     (wl-summary-rescan
@@ -2094,9 +2094,11 @@ This function is defined for `window-scroll-functions'"
       (wl-summary-update-modeline)
       ;;
       (unless unset-cursor
-	(goto-char (point-min))
-	(if (not (wl-summary-cursor-down t))
-	    (progn
+	(goto-char (if (eq wl-summary-order 'descending) (point-max)
+                     (point-min)))
+	(if (not (if (eq wl-summary-order 'descending) (wl-summary-cursor-up t)
+                   (wl-summary-cursor-down t)))
+	    (if (eq wl-summary-order 'descending) (goto-char (point-min))
 	      (goto-char (point-max))
 	      (forward-line -1))
 	  (when (and wl-summary-highlight
@@ -2608,13 +2610,16 @@ If ARG, without confirm."
     (let ((inhibit-read-only t)
 	  (number (elmo-message-entity-number entity))
 	  buffer-read-only)
-      (goto-char (point-max))
+      (goto-char (if (eq wl-summary-order 'descending) (point-min) (point-max)))
       (wl-summary-insert-line
        (wl-summary-create-line entity nil nil
 			       (elmo-message-status folder number)))
       (setq wl-summary-buffer-number-list
-	    (wl-append wl-summary-buffer-number-list
-		       (list (elmo-message-entity-number entity))))
+	    (if (eq wl-summary-order 'descending)
+                (cons (elmo-message-entity-number entity)
+                      wl-summary-buffer-number-list)
+              (wl-append wl-summary-buffer-number-list
+		         (list (elmo-message-entity-number entity)))))
       nil)))
 
 (defun wl-summary-default-subject-filter (subject)
@@ -2803,7 +2808,7 @@ If ARG, without confirm."
     (cond
      ((or (not parent-id)
 	  (string= this-id parent-id))
-      (goto-char (point-max))
+      (goto-char (if (eq wl-summary-order 'descending) (point-min) (point-max)))
       (beginning-of-line)
       (setq insert-line t))
      ;; parent already exists in buffer.

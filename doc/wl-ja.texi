@@ -4225,6 +4225,12 @@ Non-nil なら、@samp{^L} で改ページしてメッセージを表示しま�
 新規に作成されたサマリの状態をスレッド表示なら @code{'thread}、
 番号順なら @code{'sequence} のいずれかで指定します。
 
+@item wl-summary-order
+@vindex wl-summary-order
+初期設定は @code{'ascending}。
+@code{'descending} ならサマリバッファのメッセージを降順に並べます。
+各スレッド中のメッセージの順序はこの値に関わらず常に昇順です。
+
 @item wl-summary-use-frame
 @vindex wl-summary-use-frame
 初期設定は @code{nil}。
