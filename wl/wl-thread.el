@@ -97,11 +97,16 @@
 (defsubst wl-thread-entity-insert-as-top (entity)
   (when (and entity
 	     (wl-thread-entity-get-number entity))
-    (wl-append wl-thread-entity-list (list (car entity)))
+    (if wl-summary-descending-order
+        (setq wl-thread-entity-list (cons (car entity) wl-thread-entity-list))
+      (wl-append wl-thread-entity-list (list (car entity))))
     (setq wl-thread-entities (cons entity wl-thread-entities))
     (setq wl-summary-buffer-number-list
-	  (nconc wl-summary-buffer-number-list
-		 (list (wl-thread-entity-get-number entity))))
+	  (if wl-summary-descending-order
+              (cons (wl-thread-entity-get-number entity)
+                    wl-summary-buffer-number-list)
+            (nconc wl-summary-buffer-number-list
+                   (list (wl-thread-entity-get-number entity)))))
     (wl-thread-set-entity entity)))
 
 (defsubst wl-thread-entity-insert-as-children (to entity)
@@ -860,7 +865,6 @@ Message is inserted to the summary buffer."
         "Inserting message"
       (wl-delete-all-overlays)
       (dolist (e wl-thread-entity-list)
-        (if wl-summary-descending-order (goto-char (point-min)))
         (wl-thread-insert-entity
          0
          (wl-thread-get-entity e)
@@ -1114,7 +1118,9 @@ Message is inserted to the summary buffer."
 	       (or (null parent)
 		   (/= parent-number (elmo-message-entity-number parent))))))
 	;; insert as top
-	(wl-append wl-thread-entity-list (list number))
+	(if wl-summary-descending-order
+            (setq wl-thread-entity-list (cons number wl-thread-entity-list))
+          (wl-append wl-thread-entity-list (list number)))
 	(wl-thread-entity-set-linked entity nil))
 
       ;; update my thread

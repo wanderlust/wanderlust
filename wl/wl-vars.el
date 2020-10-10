@@ -193,7 +193,9 @@ If no match, `wl-summary-default-view' is used."
   :group 'wl-summary)
 
 (defcustom wl-summary-descending-order nil
-  "Messages are listed in descending order in summary buffer if non-nil."
+  "Messages are listed in descending order in summary buffer if non-nil.
+Note that messages in a thread are always listed in ascending order
+even if this value is non-nil."
   :type 'boolean
   :group 'wl-summary)
 

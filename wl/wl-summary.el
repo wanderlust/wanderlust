@@ -2094,9 +2094,10 @@ This function is defined for `window-scroll-functions'"
       (wl-summary-update-modeline)
       ;;
       (unless unset-cursor
-	(goto-char (point-min))
-	(if (not wl-summary-descending-order)
-	    (progn
+	(goto-char (if wl-summary-descending-order (point-max) (point-min)))
+	(if (not (if wl-summary-descending-order (wl-summary-cursor-up t)
+                   (wl-summary-cursor-down t)))
+	    (if wl-summary-descending-order (goto-char (point-min))
 	      (goto-char (point-max))
 	      (forward-line -1))
 	  (when (and wl-summary-highlight
@@ -2613,8 +2614,11 @@ If ARG, without confirm."
        (wl-summary-create-line entity nil nil
 			       (elmo-message-status folder number)))
       (setq wl-summary-buffer-number-list
-	    (wl-append wl-summary-buffer-number-list
-		       (list (elmo-message-entity-number entity))))
+	    (if wl-summary-descending-order
+                (cons (elmo-message-entity-number entity)
+                      wl-summary-buffer-number-list)
+              (wl-append wl-summary-buffer-number-list
+		         (list (elmo-message-entity-number entity)))))
       nil)))
 
 (defun wl-summary-default-subject-filter (subject)
@@ -3620,8 +3624,7 @@ Return non-nil if the mark is updated"
       (funcall wl-summary-buffer-next-message-function num direction hereto)
     (let ((cur-spec (cdr (assq wl-summary-move-order
 			       wl-summary-move-spec-alist)))
-	  (nums (memq num (if (eq direction
-                                  (if wl-summary-descending-order 'down 'up))
+	  (nums (memq num (if (eq direction 'up)
 			      (reverse wl-summary-buffer-number-list)
 			    wl-summary-buffer-number-list)))
 	  flagged-list nums2)
