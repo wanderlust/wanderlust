@@ -7815,19 +7815,6 @@ The Lovely Sister Database (@uref{http://sourceforge.jp/projects/lsdb/})
 
 普通のメーラと同じ設定で OK です。以下は設定の一例です。
 
-mu-cite 8.0以前のバージョンをお使いなら、
-以下のように設定してください。
-
-@lisp
-@group
-(autoload 'mu-cite/cite-original "mu-cite" nil t)
-(setq mail-citation-hook 'mu-cite/cite-original)
-@end group
-@end lisp
-
-mu-cite 8.1以降のバージョンをお使いなら、
-以下のように設定してください。
-
 @lisp
 @group
 (autoload 'mu-cite-original "mu-cite" nil t)

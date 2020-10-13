@@ -7902,17 +7902,6 @@ example of settings:
 The same setting as usual mailers should be OK.  The following is an
 example of settings.
 
-If you use mu-cite version 8.0 or earlier:
-
-@lisp
-@group
-(autoload 'mu-cite/cite-original "mu-cite" nil t)
-(setq mail-citation-hook 'mu-cite/cite-original)
-@end group
-@end lisp
-
-If you use mu-cite version 8.1 or later:
-
 @lisp
 @group
 (autoload 'mu-cite-original "mu-cite" nil t)
