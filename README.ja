@@ -62,44 +62,6 @@ Web Page:
 
  と書いたメールを送って下さい。
 
-CVS:
-
-  Wanderlust の開発は CVS を使っています。最新の開発バージョンを CVS で
-  取得できます。
-
-(0) cvs login (一回目だけ)
-
-    % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root login
-
-    CVS password: [CR] # 空文字列
-
-(1) checkout
-
-    % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout wanderlust
-
-  安定版の枝から Wanderlust を取り出す場合は、以下の様にしてください。
-
-    % cvs -d :pserver:anonymous@cvs.m17n.org:/cvs/root checkout -r wl-2_14 wanderlust
-
-  CVS repository は以下からも参照できます。
-
-	http://cvs.m17n.org/viewcvs/root/wanderlust/
-
-  CVS の commit log をメールで受け取りたい方は、以下の所にある指示に従って下さい。
-
-	http://cvs.m17n.org/
-
-Development:
-
-  CVS に基づいた開発に参加したい方は、
-
-	cvs@cvs.m17n.org
-
-  にアカウント名と、ssh の公開鍵を送ってください。ssh 経由では、
-  cvsroot は :ext:cvs@cvs.m17n.org:/cvs/root となります。
-
-  開かれた開発に参加してくださることを期待します。
-
 References:
 
 [1] M. Crispin, "INTERNET MESSAGE ACCESS PROTOCOL - VERSION 4rev1", RFC 2060,
