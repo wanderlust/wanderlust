@@ -4261,12 +4261,12 @@ The initial setting is @code{'thread}.
 The default state for newly created summary. You can set either
 @code{'thread} for thread view or @code{'sequence} for sequential view.
 
-@item wl-summary-descending-order
-@vindex wl-summary-descending-order
-The initial setting is @code{nil}.
-If non-nil, messages are listed in descending order in summary buffer.
+@item wl-summary-order
+@vindex wl-summary-order
+The initial setting is @code{'ascending}.
+Specify order of messages in summary buffer.
 Note that messages in a thread are always listed in ascending order
-even if this value is non-nil.
+even if this value is @code{'descending}.
 
 @item wl-summary-use-frame
 @vindex wl-summary-use-frame

@@ -192,11 +192,12 @@ If no match, `wl-summary-default-view' is used."
 			       (const :tag "Sequential" sequence))))
   :group 'wl-summary)
 
-(defcustom wl-summary-descending-order nil
-  "Messages are listed in descending order in summary buffer if non-nil.
+(defcustom wl-summary-order 'ascending
+  "Specify order of messages in summary buffer.
 Note that messages in a thread are always listed in ascending order
-even if this value is non-nil."
-  :type 'boolean
+even if this value is descending."
+  :type '(choice (const :tag "Ascending order" ascending)
+		 (const :tag "Descending order" descending))
   :group 'wl-summary)
 
 (defvar wl-summary-mode-line-format-spec-alist

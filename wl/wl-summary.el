@@ -1152,7 +1152,7 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
     (wl-summary-set-message-modified)
     (wl-summary-count-unread)
     (wl-summary-update-modeline)
-    (goto-char (if wl-summary-descending-order (point-min) (point-max)))
+    (goto-char (if (eq wl-summary-order 'descending) (point-min) (point-max)))
     (forward-line -1)
     (set-buffer-modified-p nil)))
 
@@ -2094,10 +2094,11 @@ This function is defined for `window-scroll-functions'"
       (wl-summary-update-modeline)
       ;;
       (unless unset-cursor
-	(goto-char (if wl-summary-descending-order (point-max) (point-min)))
-	(if (not (if wl-summary-descending-order (wl-summary-cursor-up t)
+	(goto-char (if (eq wl-summary-order 'descending) (point-max)
+                     (point-min)))
+	(if (not (if (eq wl-summary-order 'descending) (wl-summary-cursor-up t)
                    (wl-summary-cursor-down t)))
-	    (if wl-summary-descending-order (goto-char (point-min))
+	    (if (eq wl-summary-order 'descending) (goto-char (point-min))
 	      (goto-char (point-max))
 	      (forward-line -1))
 	  (when (and wl-summary-highlight
@@ -2609,12 +2610,12 @@ If ARG, without confirm."
     (let ((inhibit-read-only t)
 	  (number (elmo-message-entity-number entity))
 	  buffer-read-only)
-      (goto-char (if wl-summary-descending-order (point-min) (point-max)))
+      (goto-char (if (eq wl-summary-order 'descending) (point-min) (point-max)))
       (wl-summary-insert-line
        (wl-summary-create-line entity nil nil
 			       (elmo-message-status folder number)))
       (setq wl-summary-buffer-number-list
-	    (if wl-summary-descending-order
+	    (if (eq wl-summary-order 'descending)
                 (cons (elmo-message-entity-number entity)
                       wl-summary-buffer-number-list)
               (wl-append wl-summary-buffer-number-list
@@ -2807,7 +2808,7 @@ If ARG, without confirm."
     (cond
      ((or (not parent-id)
 	  (string= this-id parent-id))
-      (goto-char (if wl-summary-descending-order (point-min) (point-max)))
+      (goto-char (if (eq wl-summary-order 'descending) (point-min) (point-max)))
       (beginning-of-line)
       (setq insert-line t))
      ;; parent already exists in buffer.
