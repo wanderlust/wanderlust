@@ -3668,7 +3668,7 @@ last:NUM         Move to the filter folder(partial filter).
 Sort summary order.
 You can sort by @samp{date}, @samp{from}, @samp{number}, @samp{subject},
 @samp{size} and @samp{list-info}.
-With prefix argument, sort summary lines into descending order.
+With prefix argument, sort summary lines into reverse order.
 (@code{wl-summary-sort})
 
 @item T
@@ -4260,6 +4260,13 @@ which is displayed when there's no @samp{Subject:} field in the message.
 The initial setting is @code{'thread}.
 The default state for newly created summary. You can set either
 @code{'thread} for thread view or @code{'sequence} for sequential view.
+
+@item wl-summary-order
+@vindex wl-summary-order
+The initial setting is @code{'ascending}.
+Specify order of messages in summary buffer.
+Note that messages in a thread are always listed in ascending order
+even if this value is @code{'descending}.
 
 @item wl-summary-use-frame
 @vindex wl-summary-use-frame

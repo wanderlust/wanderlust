@@ -176,6 +176,14 @@ If no match, `wl-summary-default-view' is used."
 			       (const :tag "Sequential" sequence))))
   :group 'wl-summary)
 
+(defcustom wl-summary-order 'ascending
+  "Specify order of messages in summary buffer.
+Note that messages in a thread are always listed in ascending order
+even if this value is descending."
+  :type '(choice (const :tag "Ascending order" ascending)
+		 (const :tag "Descending order" descending))
+  :group 'wl-summary)
+
 (defvar wl-summary-mode-line-format-spec-alist
   '((?f (if (memq 'modeline wl-use-folder-petname)
 	    (wl-folder-get-petname (elmo-folder-name-internal
