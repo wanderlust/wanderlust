@@ -152,20 +152,19 @@ If it is the symbol `all', update overview for all shimbun folders."
 	(setq shimbun-id (elmo-message-entity-field entity 'message-id))
       (setq message-id (elmo-message-entity-field entity 'message-id)
 	    shimbun-id nil))
-    (elmo-with-enable-multibyte
-      (shimbun-create-header
-       (elmo-message-entity-number entity)
-       (elmo-message-entity-field entity 'subject)
-       (elmo-message-entity-field entity 'from)
-       (elmo-time-make-date-string
-	(elmo-message-entity-field entity 'date))
-       message-id
-       (elmo-message-entity-field entity 'references)
-       (elmo-message-entity-field entity 'size)
-       0
-       (elmo-message-entity-field entity 'xref)
-       (and shimbun-id
-	    (list (cons "x-shimbun-id" shimbun-id)))))))
+    (shimbun-create-header
+     (elmo-message-entity-number entity)
+     (elmo-message-entity-field entity 'subject)
+     (elmo-message-entity-field entity 'from)
+     (elmo-time-make-date-string
+      (elmo-message-entity-field entity 'date))
+     message-id
+     (elmo-message-entity-field entity 'references)
+     (elmo-message-entity-field entity 'size)
+     0
+     (elmo-message-entity-field entity 'xref)
+     (and shimbun-id
+	  (list (cons "x-shimbun-id" shimbun-id))))))
 
 (defsubst elmo-shimbun-folder-header-hash-setup (folder headers)
   (let ((hash (or (elmo-shimbun-folder-header-hash-internal folder)

@@ -800,8 +800,7 @@ If each field is t, function is set as default converter."
 	   (let ((body (cdr (assoc name values))))
 	     (when body
 	       (or (ignore-errors
-		     (elmo-with-enable-multibyte
-		       (mime-decode-field-body body name 'summary)))
+		     (mime-decode-field-body body name 'summary))
 		   body)))))
 	entity value values field file-attrib extractor)
     (unless (and modb-standard-field-name-cache

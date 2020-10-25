@@ -669,14 +669,12 @@ Don't cache if nil.")
 				   (mapcar 'std11-msg-id-string
 					   (std11-parse-msg-ids-string
 					    (aref ov-entity 5))))
-		      :from       (elmo-with-enable-multibyte
-				    (eword-decode-string
-				     (elmo-delete-char  ?\"
-							(or (aref ov-entity 2)
-							    elmo-no-from))))
-		      :subject    (or (elmo-with-enable-multibyte
-					(eword-decode-string
-					 (aref ov-entity 1)))
+		      :from       (eword-decode-string
+				   (elmo-delete-char  ?\"
+						      (or (aref ov-entity 2)
+							  elmo-no-from)))
+		      :subject    (or (eword-decode-string
+				       (aref ov-entity 1))
 				      elmo-no-subject)
 		      :date       (aref ov-entity 3)
 		      :size       (string-to-number (aref ov-entity 6))))

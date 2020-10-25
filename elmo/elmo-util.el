@@ -46,14 +46,7 @@
 (defvar elmo-work-buf-name " *elmo work*")
 (defvar elmo-temp-buf-name " *elmo temp*")
 
-(defconst elmo-multibyte-buffer-name " *elmo-multibyte-buffer*")
-
-(defmacro elmo-with-enable-multibyte (&rest body)
-  "Evaluate BODY with multibyte buffer when needed."
-  `(progn ,@body))
-
-(put 'elmo-with-enable-multibyte 'lisp-indent-function 0)
-(def-edebug-spec elmo-with-enable-multibyte t)
+(make-obsolete 'elmo-with-enable-multibyte "obsoleted" "25 Oct 2020")
 
 (defalias 'elmo-mime-charset-decode-string 'mime-charset-decode-string)
 (defalias 'elmo-mime-charset-encode-string 'mime-charset-encode-string)
@@ -1095,8 +1088,7 @@ MESSAGE is a doing part of progress message."
   (let ((field-body (std11-fetch-field field-name)))
     (and field-body
 	 (or (ignore-errors
-	      (elmo-with-enable-multibyte
-		(mime-decode-field-body field-body field-name mode)))
+	       (mime-decode-field-body field-body field-name mode))
 	     field-body))))
 
 (make-obsolete

@@ -1447,17 +1447,16 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
       (if body (setq candidates (append candidates body)))
       (setq fields (cdr fields)))
     (setq candidates (elmo-uniq-list candidates))
-    (elmo-with-enable-multibyte
-      (mapcar
-       (lambda (x)
-	 (setq components (std11-extract-address-components x))
-	 (cons (nth 1 components)
-	       (and (car components)
-		    (eword-decode-string
-		     (elmo-mime-charset-decode-string
-		      (car components)
-		      mime-charset)))))
-       candidates))))
+    (mapcar
+     (lambda (x)
+       (setq components (std11-extract-address-components x))
+       (cons (nth 1 components)
+	     (and (car components)
+		  (eword-decode-string
+		   (elmo-mime-charset-decode-string
+		    (car components)
+		    mime-charset)))))
+     candidates)))
 
 (defun wl-summary-edit-addresses-subr (the-email name-in-addr)
   ;; returns nil if there's no change.
