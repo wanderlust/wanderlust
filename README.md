@@ -4,7 +4,7 @@ Wanderlust - Yet Another Message Interface on Emacsen
 Wanderlust is a mail/news management system with [IMAP4rev1][1] support for
 [Emacs][2]. It was originally developed by [Yuuichi Teranishi][3].
 
-For documentation, see also: [Wanderlust on EmacsWiki][4]
+For documentation, see also: [bundled document][16] and [Wanderlust on EmacsWiki][4]
 
 
 Features
@@ -30,7 +30,7 @@ Features
 
   * Draft editing of mail and news as a same interface.
 
-  * Icon based interface for the list of Folder (XEmacs and Emacs 21).
+  * Icon based interface for the list of Folder.
 
   * Skip fetching of a large message part of MIME(IMAP4).
 
@@ -50,7 +50,7 @@ Features
 Installation
 ============
 
-See: `Install'
+See: `INSTALL'
 
 
 Mailing List
@@ -58,9 +58,9 @@ Mailing List
 
 You can get information and help via the mailing list at:
 
-  * English: [wl-en@ml.gentei.org][9] ([archives][10])
+  * English: [wl-en@ml.gentei.org][9] (news://news.gmane.io/gmane.mail.wanderlust.general for archives)
 
-  * Japanese: [wl@ml.gentei.org][11] ([archives][12])
+  * Japanese: [wl@ml.gentei.org][11] (news://news.gmane.io/gmane.mail.wanderlust.general.japanese for archives)
 
 Emails to the English list are forwarded to the Japanese list.
 
@@ -77,6 +77,7 @@ The source code repository is available at [Github][15]. Patches that
 fix bugs and improve Wanderlust are welcome and can be sent to the
 Wanderlust mailing list.
 
+
 [1]: http://en.wikipedia.org/wiki/Internet_Message_Access_Protocol
 
 [2]: http://www.gnu.org/software/emacs/
@@ -91,18 +92,16 @@ Wanderlust mailing list.
 
 [7]: http://tools.ietf.org/html/rfc1939 "J. Myers, M. Rose, 'Post Office Protocol - Version 3', RFC 1939, 1996"
 
-[8]: http://www.mew.org/ "'Mew - Messaging in the Emacs World', (Copyright (C) 1994, 1995, 1996, 1997, 1998 Mew developing team)"
+[8]: http://www.mew.org/ "'Mew - Messaging in the Emacs World', (Copyright è¢Ì 1994-2018 Kazuhiko Yamamoto)"
 
 [9]: mailto:wl-en@ml.gentei.org
 
-[10]: http://news.gmane.org/gmane.mail.wanderlust.general
-
 [11]: wl@ml.gentei.org
-
-[12]: http://news.gmane.org/gmane.mail.wanderlust.general.japanese
 
 [13]: mailto:wl-ctl@ml.gentei.org
 
 [14]: mailto:wl-en-ctl@ml.gentei.org
 
 [15]: https://github.com/wanderlust/wanderlust
+
+[16]: http://wanderlust.github.io/wl-docs/
