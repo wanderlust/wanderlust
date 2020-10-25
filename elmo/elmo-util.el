@@ -50,32 +50,13 @@
 
 (defmacro elmo-with-enable-multibyte (&rest body)
   "Evaluate BODY with multibyte buffer when needed."
-  ;; Check whether FLIM's MIME-charset string encoder/decoders work on
-  ;; unibyte buffer.
-  (static-if (fboundp 'mime-charset-encode-string)
-      `(progn ,@body)
-    `(with-current-buffer (get-buffer-create elmo-multibyte-buffer-name)
-       ,@body)))
+  `(progn ,@body))
 
 (put 'elmo-with-enable-multibyte 'lisp-indent-function 0)
 (def-edebug-spec elmo-with-enable-multibyte t)
 
-(static-cond
- ((fboundp 'mime-charset-encode-string)
-  (defalias 'elmo-mime-charset-decode-string 'mime-charset-decode-string)
-  (defalias 'elmo-mime-charset-encode-string 'mime-charset-encode-string))
- (t
-  (defsubst elmo-mime-charset-decode-string (string charset &optional lbt)
-    "Decode the STRING as MIME CHARSET.
-Buffer's multibyteness is ignored."
-    (elmo-with-enable-multibyte
-      (decode-mime-charset-string string charset lbt)))
-
-  (defsubst elmo-mime-charset-encode-string (string charset &optional lbt)
-    "Encode the STRING as MIME CHARSET.
-Buffer's multibyteness is ignored."
-    (elmo-with-enable-multibyte
-      (encode-mime-charset-string string charset lbt)))))
+(defalias 'elmo-mime-charset-decode-string 'mime-charset-decode-string)
+(defalias 'elmo-mime-charset-encode-string 'mime-charset-encode-string)
 
 (defun elmo-base64-encode-string (_string &optional _no-line-break))
 (defun elmo-base64-decode-string (_string))
