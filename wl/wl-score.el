@@ -192,8 +192,7 @@ Remove Re, Was, Fwd etc."
 (static-if (fboundp 'string>)
     (defalias 'wl-string> 'string>)
   (defun wl-string> (s1 s2)
-    (not (or (string< s1 s2)
-	     (string= s1 s2)))))
+    (string< s2 s1)))
 
 (defsubst wl-score-ov-entity-get (entity index &optional extra)
   (elmo-message-entity-field entity (if extra (intern extra) index)
