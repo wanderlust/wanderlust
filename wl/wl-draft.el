@@ -53,7 +53,6 @@
 (defvar mail-from-style)
 
 (eval-when-compile
-  (require 'static)
   (defalias-maybe 'x-face-insert 'ignore)
   (defalias-maybe 'x-face-insert-version-header 'ignore)
   (defalias-maybe 'wl-init 'ignore)
@@ -1964,17 +1963,16 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
   (unless (eq major-mode 'wl-draft-mode)
     (error "`wl-draft-create-header' must be use in wl-draft-mode"))
   (wl-draft-editor-mode)
-  (static-when (boundp 'auto-save-file-name-transforms)
-    (make-local-variable 'auto-save-file-name-transforms)
-    (setq auto-save-file-name-transforms
-	  (cons (list (concat (regexp-quote wl-draft-folder)
-			      "/\\([0-9]+\\)")
-		      (concat (expand-file-name
-			       "auto-save-"
-			       (elmo-folder-msgdb-path
-				(wl-draft-get-folder)))
+  (make-local-variable 'auto-save-file-name-transforms)
+  (setq auto-save-file-name-transforms
+	(cons (list (concat (regexp-quote wl-draft-folder)
+			    "/\\([0-9]+\\)")
+		    (concat (expand-file-name
+			     "auto-save-"
+			     (elmo-folder-msgdb-path
+			      (wl-draft-get-folder)))
 			      "\\1"))
-		auto-save-file-name-transforms)))
+	      auto-save-file-name-transforms))
   (when wl-draft-write-file-function
     (make-local-variable 'write-file-functions)
     (add-hook 'write-file-functions wl-draft-write-file-function))
@@ -2165,17 +2163,16 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (goto-char (point-min))
     (wl-draft-overload-functions)
     (wl-draft-editor-mode)
-    (static-when (boundp 'auto-save-file-name-transforms)
-      (make-local-variable 'auto-save-file-name-transforms)
-      (setq auto-save-file-name-transforms
-	    (cons (list (concat (regexp-quote wl-draft-folder)
-				"/\\([0-9]+\\)")
-			(concat (expand-file-name
-				 "auto-save-"
-				 (elmo-folder-msgdb-path
-				  (wl-draft-get-folder)))
-				"\\1"))
-		  auto-save-file-name-transforms)))
+    (make-local-variable 'auto-save-file-name-transforms)
+    (setq auto-save-file-name-transforms
+	  (cons (list (concat (regexp-quote wl-draft-folder)
+			      "/\\([0-9]+\\)")
+		      (concat (expand-file-name
+			       "auto-save-"
+			       (elmo-folder-msgdb-path
+				(wl-draft-get-folder)))
+			      "\\1"))
+		auto-save-file-name-transforms))
     (setq buffer-file-name (buffer-name)
 	  wl-draft-buffer-message-number number)
     (unless wl-draft-parent-folder
