@@ -1453,7 +1453,7 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
        (cons (nth 1 components)
 	     (and (car components)
 		  (eword-decode-string
-		   (elmo-mime-charset-decode-string
+		   (mime-charset-decode-string
 		    (car components)
 		    mime-charset)))))
      candidates)))

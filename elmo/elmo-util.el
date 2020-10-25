@@ -48,8 +48,10 @@
 
 (make-obsolete 'elmo-with-enable-multibyte "obsoleted" "25 Oct 2020")
 
-(defalias 'elmo-mime-charset-decode-string 'mime-charset-decode-string)
-(defalias 'elmo-mime-charset-encode-string 'mime-charset-encode-string)
+(make-obsolete 'elmo-mime-charset-decode-string
+'mime-charset-decode-string "25 Oct 2020")
+(make-obsolete 'elmo-mime-charset-encode-string
+'mime-charset-encode-string "25 Oct 2020")
 
 (defun elmo-base64-encode-string (_string &optional _no-line-break))
 (defun elmo-base64-decode-string (_string))
@@ -791,7 +793,7 @@ the directory becomes empty after deletion."
 (defsubst elmo-mime-string (string)
   "Normalize MIME encoded STRING."
   (and string
-       (elmo-mime-charset-encode-string
+       (mime-charset-encode-string
 	(or (ignore-errors
 	      (eword-decode-and-unfold-unstructured-field-body string))
 	    string)

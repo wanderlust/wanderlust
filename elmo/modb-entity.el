@@ -265,16 +265,16 @@ If each field is t, function is set as default converter."
 	(or (elmo-get-hash-val string hashtb)
 	    (prog1
 		(setq decoded
-		      (elmo-mime-charset-decode-string
+		      (mime-charset-decode-string
 		       string elmo-mime-charset))
 	      (elmo-set-hash-val string decoded hashtb))))
-    (elmo-mime-charset-decode-string string elmo-mime-charset)))
+    (mime-charset-decode-string string elmo-mime-charset)))
 
 (defun modb-entity-string-decoder (_field value)
   (elmo-msgdb-get-decoded-cache value))
 
 (defun modb-entity-string-encoder (_field value)
-  (elmo-mime-charset-encode-string value elmo-mime-charset))
+  (mime-charset-encode-string value elmo-mime-charset))
 
 (defun modb-entity-parse-date-string (_field value)
   (if (stringp value)
@@ -330,7 +330,7 @@ If each field is t, function is set as default converter."
   (elmo-map-recursive
    (lambda (element)
      (if (stringp element)
-	 (elmo-mime-charset-encode-string element elmo-mime-charset)
+	 (mime-charset-encode-string element elmo-mime-charset)
        element))
    value))
 
@@ -966,7 +966,7 @@ If each field is t, function is set as default converter."
       result)
      ((eq (mime-content-type-primary-type content-type) 'text)
       (string-match regexp
-		    (elmo-mime-charset-decode-string
+		    (mime-charset-decode-string
 		     (mime-entity-content mime-entity)
 		     (or (mime-content-type-parameter content-type "charset")
 			 default-mime-charset)

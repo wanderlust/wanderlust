@@ -404,7 +404,7 @@ header separator."
   (elmo-message-entity-set-field entity 'references references))
 
 (defsubst elmo-msgdb-overview-entity-get-from-no-decode (entity)
-  (elmo-mime-charset-encode-string
+  (mime-charset-encode-string
    (elmo-message-entity-field entity 'from) elmo-mime-charset))
 
 (defsubst elmo-msgdb-overview-entity-get-from (entity)
@@ -417,7 +417,7 @@ header separator."
   (elmo-message-entity-field entity 'subject))
 
 (defsubst elmo-msgdb-overview-entity-get-subject-no-decode (entity)
-  (elmo-mime-charset-encode-string
+  (mime-charset-encode-string
    (elmo-message-entity-field entity 'subject) elmo-mime-charset))
 
 (defsubst elmo-msgdb-overview-entity-set-subject (entity subject)
