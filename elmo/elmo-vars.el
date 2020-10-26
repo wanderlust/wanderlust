@@ -350,8 +350,7 @@ If function, return value of function.")
 (defvar elmo-date-match t
   "Date match is available or not.")
 
-(defvar elmo-network-use-gnutls (and (fboundp 'gnutls-available-p)
-				     (gnutls-available-p))
+(defvar elmo-network-use-gnutls (gnutls-available-p)
   "Non-nil means built-in GnuTLS is used for SSL/STARTTLS connection.")
 
 (defvar elmo-network-stream-type-alist

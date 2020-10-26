@@ -85,8 +85,7 @@ If variable `wl-version-status' is non-nil, override default rule."
 Insert User-Agent field instead of X-Mailer field."
   (wl-generate-user-agent-string-1
    ;; for backward compatibility
-   (and (boundp 'mime-edit-insert-user-agent-field)
-	mime-edit-insert-user-agent-field)))
+   mime-edit-insert-user-agent-field))
 
 (defun wl-generate-user-agent-string-1 (&optional verbose)
   "Return User-Agent field value.
@@ -97,12 +96,9 @@ If VERBOSE return with SEMI, FLIM and APEL version."
     (concat (product-string-1 'wl-version t) " "
 	    (wl-extended-emacs-version3 "/" t)))
    ;; SEMI (verbose)
-   ((and (boundp 'mime-edit-user-agent-value) mime-edit-user-agent-value)
+   (mime-edit-user-agent-value
     (concat (product-string-verbose 'wl-version) " "
-	    mime-edit-user-agent-value))
-   ;; error case
-   (t
-    (product-string-1 'wl-version nil))))
+	    mime-edit-user-agent-value))))
 
 ;; from gnus
 (defun wl-extended-emacs-version (&optional _with-codename)
