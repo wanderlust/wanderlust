@@ -34,9 +34,6 @@
 (require 'elmo-dop)
 (require 'shimbun)
 
-(eval-when-compile
-  (defun-maybe shimbun-servers-list ()))
-
 (defcustom elmo-shimbun-check-interval 60
   "*Check interval for shimbun."
   :type 'integer

@@ -32,10 +32,6 @@
 (require 'wl-summary)
 (require 'cl-lib)
 
-(eval-when-compile
-  (defalias-maybe 'wl-summary-target-mark 'ignore)
-  (defalias-maybe 'wl-summary-target-mark-region 'ignore))
-
 (defsubst wl-summary-action-mark (action)
   (nth 0 action))
 (defsubst wl-summary-action-symbol (action)
@@ -929,6 +925,10 @@ If MARK is non-nil, remove only the specified MARK from the summary line."
 	(while (not (eobp))
 	  (funcall function nil data)
 	  (forward-line))))))
+
+(declare-function
+ ;; Defined by wl-summary-define-mark-action function.
+ wl-summary-target-mark-region "wl-action.el" (beg end))
 
 (defun wl-summary-target-mark-all ()
   (interactive)

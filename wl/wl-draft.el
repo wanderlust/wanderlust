@@ -52,12 +52,6 @@
 (defvar mail-reply-buffer)
 (defvar mail-from-style)
 
-(eval-when-compile
-  (defalias-maybe 'x-face-insert 'ignore)
-  (defalias-maybe 'x-face-insert-version-header 'ignore)
-  (defalias-maybe 'wl-init 'ignore)
-  (defalias-maybe 'wl-draft-mode 'ignore))
-
 (eval-and-compile
   (autoload 'wl-addrmgr "wl-addrmgr"))
 
@@ -2907,14 +2901,6 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 	  (run-with-idle-timer
 	   wl-draft-idle-highlight-idle-time nil
 	   'wl-draft-idle-highlight-timer (current-buffer)))))
-
-;; Prune functions provided temporarily to avoid compile warnings.
-(eval-when-compile
-  (dolist (fn '(x-face-insert x-face-insert-version-header))
-    (when (and (get fn 'defalias-maybe)
-	       (eq (symbol-function fn) 'ignore))
-      (put fn 'defalias-maybe nil)
-      (fmakunbound fn))))
 
 (require 'product)
 (product-provide (provide 'wl-draft) (require 'wl-version))

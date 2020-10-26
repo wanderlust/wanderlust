@@ -2826,6 +2826,10 @@ If ARG, without confirm."
 	  (wl-thread-make-indent-string thr-entity)
 	  (wl-thread-entity-get-linked thr-entity)))))))
 
+(declare-function
+ ;; Defined by wl-summary-define-mark-action function in wl-action.el
+ wl-summary-target-mark "wl-action.el" (&optional number data))
+
 (defun wl-summary-target-mark-msgs (msgs)
   "Return the number of marked messages."
   (let ((i 0))

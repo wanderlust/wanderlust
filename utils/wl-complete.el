@@ -227,9 +227,6 @@ the name exists."
 ;;; Hart function for completions
 ;;;
 
-(defun-maybe characterp (form)
-  (numberp form))
-
 (eval-and-compile
   (fset 'wl-complete-hit (symbol-function 'assoc)))
 

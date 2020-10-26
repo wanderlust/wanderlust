@@ -40,16 +40,6 @@
 
 (require 'pp nil t)
 
-(eval-when-compile
-  (require 'time-stamp)
-  (defalias-maybe 'next-command-event 'ignore)
-  (defalias-maybe 'event-to-character 'ignore)
-  (defalias-maybe 'key-press-event-p 'ignore)
-  (defalias-maybe 'button-press-event-p 'ignore)
-  (defalias-maybe 'set-process-kanji-code 'ignore)
-  (defalias-maybe 'set-process-coding-system 'ignore)
-  (defalias-maybe 'dispatch-event 'ignore))
-
 (provide 'wl-util)
  
 (defalias 'wl-set-work-buf 'elmo-set-work-buf)
@@ -1043,17 +1033,6 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
 
 (defun wl-read-buffer (prompt &optional def require-match)
   (read-buffer prompt def require-match))
-
-;; Prune functions provided temporarily to avoid compile warnings.
-(eval-when-compile
-  (dolist (fn '(next-command-event event-to-character
-		key-press-event-p button-press-event-p
-		set-process-kanji-code set-process-coding-system
-		dispatch-event))
-    (when (and (get fn 'defalias-maybe)
-	       (eq (symbol-function fn) 'ignore))
-      (put fn 'defalias-maybe nil)
-      (fmakunbound fn))))
 
 (require 'product)
 (product-provide (provide 'wl-util) (require 'wl-version))

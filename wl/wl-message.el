@@ -40,12 +40,6 @@
 (require 'wl-e21)
 (require 'wl-mime)
 
-(eval-when-compile
-  (defalias-maybe 'event-window 'ignore)
-  (defalias-maybe 'posn-window 'ignore)
-  (defalias-maybe 'event-start 'ignore)
-  (defalias-maybe 'mime-open-entity 'ignore))
-
 (provide 'wl-message)
 
 (defvar wl-message-buffer-prefetch-get-next-function
@@ -1023,15 +1017,6 @@ Returns non-nil if bottom of message."
 	    (wl-summary-prev t))))))
 
 ;; End of wl-e21.el
-
-;; Prune functions provided temporarily to avoid compile warnings.
-(eval-when-compile
-  (dolist (fn '(event-window posn-window event-start
-		mime-open-entity))
-    (when (and (get fn 'defalias-maybe)
-	       (eq (symbol-function fn) 'ignore))
-      (put fn 'defalias-maybe nil)
-      (fmakunbound fn))))
 
 (require 'product)
 (product-provide (provide 'wl-message) (require 'wl-version))

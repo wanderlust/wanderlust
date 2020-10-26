@@ -70,16 +70,6 @@ SECTION is a section string which is defined in RFC2060.")
      (reverse node-id)
      "."))))
 
-(eval-and-compile
-  (defun-maybe mime-decode-parameters (attrlist)
-    (let (ret-val)
-      (while attrlist
-	(setq ret-val (append ret-val
-			      (list (cons (downcase (car attrlist))
-					  (car (cdr attrlist))))))
-	(setq attrlist (cdr (cdr attrlist))))
-      ret-val)))
-
 (defun mmimap-make-mime-entity (bodystructure class location node-id number
 					      parent)
   "Analyze parsed IMAP4 BODYSTRUCTURE response and make MIME entity.

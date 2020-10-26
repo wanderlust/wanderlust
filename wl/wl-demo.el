@@ -62,31 +62,6 @@ $$$$\"\"       \"$$oo$    o          o$\"
 Yet Another Message Interface On Emacsen"
   "Ascii picture used to splash the startup screen.")
 
-(eval-and-compile
-  (defalias-maybe 'display-images-p 'display-graphic-p))
-
-;; Avoid byte compile warnings.
-(eval-when-compile
-  (autoload 'bitmap-insert-xbm-file "bitmap" nil t)
-  (autoload 'create-image "image")
-  (autoload 'device-on-window-system-p "device")
-  (autoload 'image-type-available-p "image")
-  (autoload 'insert-image "image")
-  (autoload 'make-glyph "glyphs")
-  (autoload 'set-glyph-face "glyphs")
-  (autoload 'set-specifier "specifier")
-  (defalias-maybe 'face-background-name 'ignore)
-  (defalias-maybe 'frame-char-height 'ignore)
-  (defalias-maybe 'frame-char-width 'ignore)
-  (defalias-maybe 'glyph-height 'ignore)
-  (defalias-maybe 'glyph-width 'ignore)
-  (defalias-maybe 'image-size 'ignore)
-  (defalias-maybe 'make-extent 'ignore)
-  (defalias-maybe 'propertize 'ignore)
-  (defalias-maybe 'set-extent-end-glyph 'ignore)
-  (defalias-maybe 'window-pixel-height 'ignore)
-  (defalias-maybe 'window-pixel-width 'ignore))
-
 (defvar wl-demo-bitmap-mule-available-p 'unknown
   "Internal variable to say whether the BITMAP-MULE package is available.")
 
@@ -132,6 +107,9 @@ TYPE is the filter function."
       (when filter
 	(funcall filter))
       (buffer-string))))
+
+(declare-function bitmap-insert-xbm-file "bitmap"
+		  (file &optional no-kill))
 
 (defun wl-demo-insert-image (itype)
   "Insert a logo image at the point and position it to be centered.
@@ -338,17 +316,6 @@ argument."
 		 (/ (float 5) (float 10))
 	       1))
     buffer))
-
-;; Prune functions provided temporarily to avoid compile warnings.
-(eval-when-compile
-  (dolist (fn '(face-background-name
-		frame-char-height frame-char-width glyph-height glyph-width
-		image-size make-extent propertize set-extent-end-glyph
-		window-pixel-height window-pixel-width))
-    (when (and (get fn 'defalias-maybe)
-	       (eq (symbol-function fn) 'ignore))
-      (put fn 'defalias-maybe nil)
-      (fmakunbound fn))))
 
 (require 'product)
 (product-provide (provide 'wl-demo) (require 'wl-version))

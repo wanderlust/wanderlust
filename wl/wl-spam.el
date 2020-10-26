@@ -169,6 +169,14 @@ See `wl-summary-mark-action-list' for the detail of element."
 	(dolist (partition partitions)
 	  (funcall function folder (cdr partition) (car partition)))))))
 
+(declare-function
+ ;; Defined by wl-summary-define-mark-action function in wl-action.el.
+ wl-summary-spam "wl-action.el" (&optional number data))
+
+(declare-function
+ ;; Defined by wl-summary-define-mark-action function in wl-action.el.
+ wl-summary-unmark-spam "wl-action.el" (&optional number))
+
 (defun wl-spam-register-spam-messages (folder numbers)
   "Register messages specified by FOLDER and NUMBERS as spam.
 Put spam mark unless FOLDER is a spam folder."
@@ -213,11 +221,6 @@ Remove spam mark."
     (define-key map "n" 'wl-summary-register-as-good)
     (define-key map "N" 'wl-summary-register-as-good-all)
     (setq wl-summary-spam-map map)))
-
-(eval-when-compile
-  ;; Avoid compile warnings
-  (defalias-maybe 'wl-summary-spam 'ignore)
-  (defalias-maybe 'wl-summary-unmark-spam 'ignore))
 
 (defun wl-summary-test-spam (&optional folder number)
   (interactive)
