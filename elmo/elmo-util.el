@@ -533,7 +533,7 @@ When NO-NODIFY is non-nil, dont' modify STRING and return new string."
   (let ((server-list (or servers elmo-plug-on-exclude-servers))
 	server other-servers)
     (while alist
-      (when (and (not (member (setq server (caaar alist)) server-list))
+      (when (and (not (member (setq server (cl-caaar alist)) server-list))
 		 (not (member server other-servers)))
 	(push server other-servers))
       (setq alist (cdr alist)))
@@ -567,7 +567,7 @@ When NO-NODIFY is non-nil, dont' modify STRING and return new string."
 	  ((not port) ;; server
 	   (catch 'plugged
 	     (while alist
-	       (when (string= server (caaar alist))
+	       (when (string= server (cl-caaar alist))
 		 (if (nth 2 (car alist))
 		     (throw 'plugged t)))
 	       (setq alist (cdr alist)))))
@@ -600,7 +600,7 @@ When NO-NODIFY is non-nil, dont' modify STRING and return new string."
 	  ((not port)
 	   ;; set plugged all port of server
 	   (while alist
-	     (when (string= server (caaar alist))
+	     (when (string= server (cl-caaar alist))
 	       (setcdr (cdar alist) (list plugged time)))
 	     (setq alist (cdr alist))))
 	  (t
@@ -630,7 +630,7 @@ When NO-NODIFY is non-nil, dont' modify STRING and return new string."
 	  ((not port)
 	   ;; delete plugged all port of server
 	   (while alist2
-	     (when (string= server (caaar alist2))
+	     (when (string= server (cl-caaar alist2))
 	       (setq alist (delete (car alist2) alist)))
 	     (setq alist2 (cdr alist2))))
 	  (t
