@@ -3022,16 +3022,13 @@ nil means real-time highlighting is disabled."
   :type 'boolean
   :group 'wl-pref)
 
-(defcustom wl-demo-display-logo (if (or (module-installed-p 'image)
-					(module-installed-p 'bitmap))
-				    t)
+(defcustom wl-demo-display-logo (module-installed-p 'image)
   "If it is T, show graphic logo in the startup screen.  You can set it to
-a symbol `bitmap', `xbm' or `xpm' in order to force the image format."
+a symbol `xbm' or `xpm' in order to force the image format."
   :type '(radio (const :tag "Off" nil)
 		(const :tag "On (any format)" t)
 		(const xpm)
-		(const xbm)
-		(const :tag "bitmap (using BITMAP-MULE)" bitmap))
+		(const xbm))
   :group 'wl-pref)
 
 (defcustom wl-invalid-character-message "(WL:Invalid characters.)"

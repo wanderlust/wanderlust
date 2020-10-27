@@ -62,9 +62,6 @@ $$$$\"\"       \"$$oo$    o          o$\"
 Yet Another Message Interface On Emacsen"
   "Ascii picture used to splash the startup screen.")
 
-(defvar wl-demo-bitmap-mule-available-p 'unknown
-  "Internal variable to say whether the BITMAP-MULE package is available.")
-
 (defun wl-demo-image-type-alist ()
   "Return an alist of available logo image types on the current frame."
   (if window-system
@@ -73,23 +70,10 @@ Yet Another Message Interface On Emacsen"
 			(image-type-available-p 'xpm))
 	       '("xpm" . xpm)))
 	    (xbm
-	     (when (or (and (display-images-p)
-			    (image-type-available-p 'xbm))
-		       (eq t wl-demo-bitmap-mule-available-p)
-		       (and (eq 'unknown wl-demo-bitmap-mule-available-p)
-			    (module-installed-p 'bitmap)
-			    (setq wl-demo-bitmap-mule-available-p t)))
-	       '("xbm" . xbm)))
-	    (bitmap
-	     (when (or (eq t wl-demo-bitmap-mule-available-p)
-		       (and (eq 'unknown wl-demo-bitmap-mule-available-p)
-			    (module-installed-p 'bitmap)
-			    (setq wl-demo-bitmap-mule-available-p t)))
-	       '("bitmap" . bitmap))))
-	(if (image-type-available-p 'xbm)
-	    ;; Prefer xbm rather than bitmap on Emacs 21.
-	    (delq nil (list xpm xbm bitmap '("ascii")))
-	  (delq nil (list xpm bitmap xbm '("ascii")))))
+	     (when (and (display-images-p)
+			(image-type-available-p 'xbm))
+	       '("xbm" . xbm))))
+	(delq nil (list xpm xbm '("ascii"))))
     '(("ascii"))))
 
 (defun wl-demo-image-filter (file type)
@@ -108,17 +92,12 @@ TYPE is the filter function."
 	(funcall filter))
       (buffer-string))))
 
-(declare-function bitmap-insert-xbm-file "bitmap"
-		  (file &optional no-kill))
-
 (defun wl-demo-insert-image (itype)
   "Insert a logo image at the point and position it to be centered.
 ITYPE specifies what a type of image should be displayed.
 Return a number of lines that an image occupies in the buffer."
   (let ((file (cond ((eq 'xpm itype)
 		     (concat (wl-demo-icon-name) ".xpm"))
-		    ((eq 'bitmap itype)
-		     (concat (wl-demo-icon-name) ".img"))
 		    ((eq 'xbm itype)
 		     (concat (wl-demo-icon-name) ".xbm"))))
 	image width height)
@@ -136,88 +115,27 @@ Return a number of lines that an image occupies in the buffer."
 		   nil)
 	       (message "File not found: %s" file)
 	       nil))
-	(progn
-	  (cond ((or (eq 'xpm itype)
-		     (and (eq 'xbm itype)
-			  (image-type-available-p 'xbm)))
-		 ;; Use the new redisplay engine on Emacs 21.
-		 (setq image (create-image (wl-demo-image-filter file
-								 itype)
-					   itype t)
-		       width (image-size image)
-		       height (cdr width)
-		       width (car width))
-		 (when (eq 'xbm itype)
-		   (let ((bg (face-background 'wl-highlight-demo-face))
-			 (fg (face-foreground 'wl-highlight-logo-face)))
-		     (when (stringp bg)
-		       (plist-put (cdr image) ':background bg))
-		     (when (stringp fg)
-		       (plist-put (cdr image) ':foreground fg))))
-		 (insert (propertize " " 'display
-				     (list 'space ':align-to
-					   (max 0 (round (- (window-width)
-							    width)
-							 2)))))
-		 (insert-image image)
-		 (insert "\n")
-		 (round height))
-		((eq 'bitmap itype)
-		 ;; Use ready-composed bitmap image.
-		 (require 'bitmap)
-		 (let ((coding-system-for-read 'iso-2022-7bit))
-		   (insert-file-contents file))
-		 (goto-char (point-max))
-		 (unless (bolp)
-		   (insert "\n"))
-
-		 ;; Emacs 21.x may fail on computing the end of the
-		 ;; column if there're bitmap characters.
-;;;		 (setq width 0)
-;;;		 (while (progn
-;;;			  (end-of-line 0)
-;;;			  (not (bobp)))
-;;;		   (setq width (max width (current-column))))
-		 (setq width 1024)
-		 (while (progn
-			  (end-of-line 0)
-			  (not (bobp)))
-		   (setq width (min width (current-column))))
-
-		 ;; Emacs 21.1 would fail to decode composite chars
-		 ;; if it has been built without fixing coding.c.
-		 (when (>= width 80)
-		   (erase-buffer)
-		   (let ((coding-system-for-read 'raw-text))
-		     (insert-file-contents file))
-		   (goto-char (point-max))
-		   (unless (bolp)
-		     (insert "\n"))
-		   (setq width 0)
-		   (while (progn
-			    (end-of-line 0)
-			    (not (bobp)))
-		     ;; Decode bitmap data line by line.
-		     (decode-coding-region (line-beginning-position)
-					   (point)
-					   'iso-2022-7bit)
-		     (setq width (max width (current-column)))))
-		 (indent-rigidly (point-min) (point-max)
-				 (max 0 (/ (1+ (- (window-width) width)) 2)))
-		 (put-text-property (point-min) (point-max) 'fixed-width t)
-		 (count-lines (point-min) (goto-char (point-max))))
-		((eq 'xbm itype)
-		 (message "Composing a bitmap image...")
-		 (require 'bitmap)
-		 (bitmap-insert-xbm-file file)
-		 (backward-char)
-		 (indent-rigidly (point-min) (point-max)
-				 (max 0 (/ (1+ (- (window-width)
-						  (current-column)))
-					   2)))
-		 (put-text-property (point-min) (point-max) 'fixed-width t)
-		 (message "Composing a bitmap image...done")
-		 (count-lines (point-min) (goto-char (point-max))))))
+	(when (memq itype '(xpm xbm))
+	  ;; Use the new redisplay engine on Emacs 21.
+	  (setq image (create-image (wl-demo-image-filter file itype)
+				    itype t)
+		width (image-size image)
+		height (cdr width)
+		width (car width))
+	  (when (eq 'xbm itype)
+	    (let ((bg (face-background 'wl-highlight-demo-face))
+		  (fg (face-foreground 'wl-highlight-logo-face)))
+	      (when (stringp bg)
+		(plist-put (cdr image) ':background bg))
+	      (when (stringp fg)
+		(plist-put (cdr image) ':foreground fg))))
+	  (insert (propertize " " 'display
+			      (list 'space ':align-to
+				    (max 0 (round (- (window-width) width)
+						  2)))))
+	  (insert-image image)
+	  (insert "\n")
+	  (round height))
       (insert wl-logo-ascii)
       (unless (bolp)
 	(insert "\n"))

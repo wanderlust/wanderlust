@@ -181,7 +181,7 @@
   (wl-scan-path path
 		(lambda (x)
 		  (let ((case-fold-search t))
-		    (directory-files x nil "\\.img$\\|\\.x[bp]m$")))))
+		    (directory-files x nil "\\.x[bp]m$")))))
 
 (defun wl-uninstall (objs path)
   ;(message (mapconcat 'identity objs " "))
@@ -219,7 +219,7 @@
   (if (not (file-directory-p PIXMAPDIR))
       (make-directory PIXMAPDIR t))
   (let* ((case-fold-search t)
-	 (icons (directory-files ICONDIR nil "\\.img$\\|\\.x[bp]m$")))
+	 (icons (directory-files ICONDIR nil "\\.x[bp]m$")))
     (install-files icons ICONDIR PIXMAPDIR nil 'overwrite)))
 
 (defun uninstall-wl-icons ()
