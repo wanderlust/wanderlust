@@ -34,8 +34,10 @@
 (require 'mime)
 (require 'mime-parse)
 (require 'eword-decode)
+(require 'eword-encode)
 (eval-when-compile (require 'smtp))
 (eval-when-compile (require 'mmbuffer))
+(require 'mime-setup)
 (require 'mime-view)
 (require 'mime-edit)
 (require 'mime-play)
@@ -420,8 +422,7 @@ It calls following-method selected from variable
 
 (defun wl-mime-quit-preview ()
   "Quitting method for mime-view."
-  (let* ((temp (and (boundp 'mime-edit-temp-message-buffer) ;; for SEMI <= 1.14.6
-		    mime-edit-temp-message-buffer))
+  (let* ((temp mime-edit-temp-message-buffer)
 	 (window (selected-window))
 	 buf)
     (mime-preview-kill-buffer)
@@ -448,8 +449,7 @@ It calls following-method selected from variable
 	  (append
 	   '((wl-draft-eword-encode-address-list
 	      .  (To Cc Bcc Resent-To Resent-Cc Resent-Bcc From)))
-	   (if (boundp 'mime-header-encode-method-alist)
-	       (symbol-value 'mime-header-encode-method-alist))))
+	   mime-header-encode-method-alist))
 	 mime-view-ignored-field-list	; all header.
 	 wl-draft-preview-pgp-processing
 	 (mime-edit-pgp-processing mime-edit-pgp-processing)
@@ -1042,9 +1042,7 @@ With ARG, ask destination folder."
 	     'wl-original-message-mode
 	     'wl-mime-display-header)
   ;; To avoid overriding wl-draft-mode-map.
-  (when (and (boundp 'mime-setup-signature-key-alist)
-	     (boundp 'mime-setup-use-signature)
-	     mime-setup-use-signature)
+  (when mime-setup-use-signature
     (unless (assq 'wl-draft-mode mime-setup-signature-key-alist)
       (setq mime-setup-signature-key-alist
 	    (cons '(wl-draft-mode . "\C-c\C-w")

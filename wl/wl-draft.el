@@ -33,6 +33,7 @@
 (require 'timezone nil t)
 (require 'std11)
 (require 'eword-encode)
+(require 'mime-setup)
 (require 'mime-edit)
 (require 'mime-view)
 (require 'elmo)
@@ -133,7 +134,7 @@ e.g.
 
 ;; for draft toolbar.
 (defalias 'wl-draft-insert-signature
-  (if (and (boundp 'mime-setup-use-signature) mime-setup-use-signature)
+  (if mime-setup-use-signature
       'insert-signature
     'mime-edit-insert-signature))
 
@@ -912,9 +913,6 @@ text was killed."
 (defun wl-draft-beginning-of-line (&optional n)
   "Move point to beginning of header value or to beginning of line."
   (interactive "p")
-  (let ((zrs 'zmacs-region-stays))
-    (when (and (called-interactively-p 'interactive) (boundp zrs))
-      (set zrs t)))
   (if (wl-draft-point-in-header-p)
       (let* ((here (point))
 	     (bol (progn (beginning-of-line n) (point)))
@@ -1459,8 +1457,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		   (append
 		    '((wl-draft-eword-encode-address-list
 		       .  (To Cc Bcc Resent-To Resent-Cc Resent-Bcc From)))
-		    (if (boundp 'mime-header-encode-method-alist)
-			(symbol-value 'mime-header-encode-method-alist)))))
+		    mime-header-encode-method-alist)))
 	      (run-hooks 'mail-send-hook) ; translate buffer
 	      )
 	    ;;
@@ -1560,8 +1557,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 		   (append
 		    '((eword-encode-unstructured-field-body
 		       .  (To Cc Bcc Resent-To Resent-Cc Resent-Bcc From)))
-		    (if (boundp 'mime-header-encode-method-alist)
-			(symbol-value 'mime-header-encode-method-alist)))))
+		    mime-header-encode-method-alist)))
 	      (mime-edit-translate-buffer))
 	    (wl-draft-get-header-delimiter t)
 	    (when current-number
