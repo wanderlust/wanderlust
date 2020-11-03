@@ -98,15 +98,17 @@ This function looks for the coding system magic cookie or examines the
 coding system specified by `file-coding-system-alist' being associated
 with FILENAME which defaults to `buffer-file-name'."
   (if filename
-      (or (funcall (symbol-value 'set-auto-coding-function)
+      (or (funcall set-auto-coding-function
 		   filename (- (point-max) (point-min)))
 	  (car (find-operation-coding-system 'insert-file-contents
 					     filename)))
     (let (auto-coding-alist)
-      (condition-case nil
-	  (funcall (symbol-value 'set-auto-coding-function)
-		   nil (- (point-max) (point-min)))
-	(error nil)))))
+      (condition-case error
+	  (funcall set-auto-coding-function
+		   "" (- (point-max) (point-min)))
+	(error (message "Error in %s, %s"
+			set-auto-coding-function (cdr error))
+	       nil)))))
 
 (defun elmo-object-load (filename &optional mime-charset no-err)
   "Load OBJECT from the file specified by FILENAME.
