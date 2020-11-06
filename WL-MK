@@ -321,7 +321,6 @@
 			     (expand-file-name (wl-texinfo-texi-file lang) DOCDIR)))))
 
 (defun wl-texinfo-format-file (lang)
-  (require 'wl-vars) ;; for 'wl-cs-local
   (or (wl-texinfo-check-newer lang)
       (let (obuf)
 	;; Support old texinfmt.el
@@ -330,9 +329,7 @@
 	(setq obuf (current-buffer))
 	;; We can't know file names if splitted.
 	(texinfo-format-buffer t)
-	;; Emacs20.2's default is 'raw-text-unix.
-	(and (fboundp 'set-buffer-file-coding-system)
-	     (set-buffer-file-coding-system wl-cs-local))
+	(set-buffer-file-coding-system 'utf-8)
 	(save-buffer)
 	(kill-buffer (current-buffer)) ;; info
 	(kill-buffer obuf)) ;; texi
