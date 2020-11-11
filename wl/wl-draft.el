@@ -227,6 +227,12 @@ Special commands:
 
 ;; End of wl-e21.el
 
+(eval-when-compile
+  (defvar smtp-server)
+  (defvar smtp-service)
+  (defvar smtp-local-domain))
+  
+
 (defsubst wl-smtp-password-key (user mechanism server service)
   (list "SMTP" user mechanism server (if (integerp service) service 25)))
 
