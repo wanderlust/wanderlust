@@ -4268,6 +4268,12 @@ Specify order of messages in summary buffer.
 Note that messages in a thread are always listed in ascending order
 even if this value is @code{'descending}.
 
+@item wl-summary-nobreak-char-display
+@vindex wl-summary-nobreak-char-display
+The initial setting is @code{nil}.
+@code{nobreak-char-display} is overridden by this value in Summary
+buffer.
+
 @item wl-summary-use-frame
 @vindex wl-summary-use-frame
 The initial setting is @code{nil}.

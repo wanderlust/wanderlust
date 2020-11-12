@@ -4231,6 +4231,12 @@ Non-nil なら、@samp{^L} で改ページしてメッセージを表示しま�
 @code{'descending} ならサマリバッファのメッセージを降順に並べます。
 各スレッド中のメッセージの順序はこの値に関わらず常に昇順です。
 
+@item wl-summary-nobreak-char-display
+@vindex wl-summary-nobreak-char-display
+初期設定は @code{nil}。
+サマリバッファ内での @code{nobreak-char-display} の値を
+この値で上書きします。
+
 @item wl-summary-use-frame
 @vindex wl-summary-use-frame
 初期設定は @code{nil}。

@@ -960,6 +960,8 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (setq buffer-read-only t)
   (setq truncate-lines t)
   (setq show-trailing-whitespace nil)
+  (make-local-variable 'nobreak-char-display)
+  (setq nobreak-char-display wl-summary-nobreak-char-display)
 ;;;  (make-local-variable 'tab-width)
 ;;;  (setq tab-width 1)
   (buffer-disable-undo (current-buffer))

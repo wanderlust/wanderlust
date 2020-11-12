@@ -326,6 +326,14 @@ It is highly recommended to set this value to t."
   :type 'function
   :group 'wl-summary)
 
+(defcustom wl-summary-nobreak-char-display nil
+  "Override `nobreak-char-display' in Summary buffer.
+See `nobreak-char-display' for details."
+  :type '(choice (const :tag "Use harcoded face" t)
+		 (const :tag "Use escape glyph" 'escape)
+		 (const :tag "No special handling" nil))
+  :group 'wl-summary)
+
 (defcustom wl-summary-search-parent-by-subject-regexp "^[ \t]*\\(\\[[^:]+[,: ][0-9]+\\]\\)?[ \t]*re[\\^[:> ]"
   "*If message does not have in-reply-to field nor references field and
 subject matches this regexp, search parent message by subject matching.
