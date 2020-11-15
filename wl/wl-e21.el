@@ -176,6 +176,9 @@
 	(concat (propertize " " 'display image 'invisible t) string)
       string)))
 
+(declare-function wl-toggle-plugged "wl"
+		  (&optional arg queue-flush-only))
+
 (defun wl-plugged-init-icons ()
   (let ((props (when (display-mouse-p)
 		 (list 'local-map (purecopy (make-mode-line-mouse-map
@@ -205,6 +208,8 @@
 		(apply 'propertize wl-plug-state-indicator-off props))
 	(setq wl-modeline-plug-state-on wl-plug-state-indicator-on
 	      wl-modeline-plug-state-off wl-plug-state-indicator-off)))))
+
+(declare-function wl-biff-check-folders "wl-util" ())
 
 (defun wl-biff-init-icons ()
   (let ((props (when (display-mouse-p)

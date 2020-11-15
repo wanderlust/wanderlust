@@ -36,6 +36,7 @@
 (require 'eword-encode)
 (require 'elmo-vars)
 (require 'elmo-util)
+(require 'elmo-date)
 
 (eval-and-compile
   (luna-define-class modb-entity-handler () (mime-charset))

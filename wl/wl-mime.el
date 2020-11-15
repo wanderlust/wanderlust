@@ -617,6 +617,13 @@ It calls following-method selected from variable
       (elmo-progress-notify label :set current :total total))))
 
 (eval-when-compile (require 'epg))
+(declare-function epg-context-set-progress-callback "epg"
+		  (context progress-callback))
+(declare-function epg-decrypt-string "epg" (context cipher))
+(declare-function epg-verify-string "epg"
+		  (context signature &optional signed-text))
+(declare-function epg-context-result-for "epg" (context name))
+(declare-function epg-verify-result-to-string "epg" (verify-result))
 
 (defun wl-mime-pgp-decrypt-region-with-epg (beg end &optional no-decode)
   (require 'epg)
@@ -636,6 +643,8 @@ It calls following-method selected from variable
   last-coding-system-used)
 
 (eval-when-compile (require 'epa))
+(declare-function epa-display-info "epa" (info))
+
 (defun wl-mime-pgp-verify-region-with-epg (beg end &optional coding-system)
   (require 'epa)
   (let ((context (epg-make-context))

@@ -193,6 +193,9 @@ Replace '@' in STR into list of mailbox and sub-domains."
 		   (apply (function wl-ldap-register-dn-string) hash value)))
 	(wl-ldap-register-dn-string hash dn str dn-list)))))
 
+(declare-function ldap-search-entries "pldap"
+		  (filter &optional host attributes attrsonly withdn))
+
 (defun wl-address-ldap-search (pattern cl)
   "Make address completion-list matched for PATTERN by LDAP search.
 Matched address lists are append to CL."

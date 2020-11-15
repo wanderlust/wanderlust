@@ -1136,6 +1136,9 @@ non-nil."
 	  (setq fields (cdr fields)))
 	recipients))))
 
+(eval-when-compile (require 'smtp))
+(declare-function smtp-send-buffer "smtp" (sender recipients buffer))
+
 ;;
 ;; from Semi-gnus
 ;;
