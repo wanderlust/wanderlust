@@ -121,7 +121,7 @@ ARG is ignored."			; ARG ignored this version (?)
   (with-current-buffer wl-template-buffer-name
     (let ((buffer-read-only nil)
 	  (wl-template-preview t)
-	  (mail-header-separator  "--header separater--"))
+	  (mail-header-separator  "--header separator--"))
       (erase-buffer)
       (goto-char (point-min))
       (wl-template-insert
