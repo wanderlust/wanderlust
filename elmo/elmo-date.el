@@ -103,19 +103,14 @@
 	       year
 	       (cadr timezone)) nil nil))))
 
-(defun elmo-date-get-week (year month mday)
-  (let ((wday (symbol-value (intern (format
-				     "elmo-weekday-name-%s"
-				     elmo-lang))))
-	y1 days p)
-    (setq y1 (- year 1))
-    (setq days (- (+ (* y1 365) (/ y1 400) (/ y1 4)) (/ y1 100)))
-    (setq p 1)
-    (while (< p month)
-      (setq days (+ days (timezone-last-day-of-month p year)))
-      (setq p (+ p 1)))
-    (setq days (+ days mday))
-    (aref wday (% days 7))))
+(defun elmo-date-get-week (year month day)
+  (let ((C (/ year 100))
+	(Y (% year 100)))
+    (aref (symbol-value (intern (concat "elmo-weekday-name-"
+					elmo-lang)))
+	  (% (+ day (/ (* 13 (1+ month)) 5) Y (/ Y 4)
+		(* 5 C) (/ C 4) 6)
+	     7))))
 
 (defun elmo-date-get-offset-datevec (datevec offset &optional time)
   (let ((year  (aref datevec 0))
