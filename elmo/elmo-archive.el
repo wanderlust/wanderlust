@@ -212,34 +212,36 @@
     (cat      . ("rar" "p" "-inul"))
     (ext      . ("rar" "x"))))
 
+(defvar elmo-archive-gtar-program (or (executable-find "gtar") "tar"))
+
 ;;; GNU tar (*.tar)
 (defvar elmo-archive-tar-method-alist
   (if elmo-archive-lha-dos-compatible
-      '((ls   . ("gtar" "-tf"))
-	(cat  . ("gtar" "--posix Oxf"))
-	(ext  . ("gtar" "-xf"))
-;;;	(rm   . ("gtar" "--posix" "--delete" "-f")) ; well not work
+      `((ls   . (,elmo-archive-gtar-program "-tf"))
+	(cat  . (,elmo-archive-gtar-program "--posix Oxf"))
+	(ext  . (,elmo-archive-gtar-program "-xf"))
+;;;	(rm   . (,elmo-archive-gtar-program "--posix" "--delete" "-f")) ; well not work
 	)
-    '((ls    . ("gtar" "-tf"))
-      (cat   . ("gtar" "-Oxf"))
-      (ext   . ("gtar" "-xf"))
-;;;      (rm    . ("gtar" "--delete" "-f")) ; well not work
+    `((ls    . (,elmo-archive-gtar-program "-tf"))
+      (cat   . (,elmo-archive-gtar-program "-Oxf"))
+      (ext   . (,elmo-archive-gtar-program "-xf"))
+;;;      (rm    . (,elmo-archive-gtar-program "--delete" "-f")) ; well not work
       )))
 
 ;;; GNU tar (*.tar.gz, *.tar.Z, *.tar.bz2)
 (defvar elmo-archive-tgz-method-alist
-  '((ls         . ("gtar" "-ztf"))
-    (cat        . ("gtar" "-Ozxf"))
-    (create     . ("gtar" "-zcf"))
+  `((ls         . (,elmo-archive-gtar-program "-ztf"))
+    (cat        . (,elmo-archive-gtar-program "-Ozxf"))
+    (create     . (,elmo-archive-gtar-program "-zcf"))
 ;;;    (rm         . elmo-archive-tgz-rm-func)
     (cp         . elmo-archive-tgz-cp-func)
     (mv         . elmo-archive-tgz-mv-func)
-    (ext        . ("gtar" "-zxf"))
+    (ext        . (,elmo-archive-gtar-program "-zxf"))
     ;; tgz special method
     (decompress . ("gzip" "-d"))
     (compress   . ("gzip"))
-    (append     . ("gtar" "-uf"))
-;;;    (delete     . ("gtar" "--delete" "-f")) ; well not work
+    (append     . (,elmo-archive-gtar-program "-uf"))
+;;;    (delete     . (,elmo-archive-gtar-program "--delete" "-f")) ; well not work
     ))
 
 (defvar elmo-archive-method-list
