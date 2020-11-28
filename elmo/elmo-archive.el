@@ -927,7 +927,7 @@ TYPE specifies the archiver's symbol."
 					      numbers flag-table)
   (when numbers
     (save-excursion ;; 981005
-      (elmo-with-progress-display (elmo-folder-create-msgdb (length numbers))
+      (elmo-with-progress-display (elmo-folder-msgdb-create (length numbers))
 	  "Creating msgdb"
 	(if (and elmo-archive-use-izip-agent
 		 (elmo-archive-get-method
