@@ -216,22 +216,16 @@
 
 ;;; GNU tar (*.tar)
 (defvar elmo-archive-tar-method-alist
-  (if elmo-archive-lha-dos-compatible
-      `((ls   . (,elmo-archive-gtar-program "-tf"))
-	(cat  . (,elmo-archive-gtar-program "--posix Oxf"))
-	(ext  . (,elmo-archive-gtar-program "-xf"))
-;;;	(rm   . (,elmo-archive-gtar-program "--posix" "--delete" "-f")) ; well not work
-	)
-    `((ls    . (,elmo-archive-gtar-program "-tf"))
-      (cat   . (,elmo-archive-gtar-program "-Oxf"))
-      (ext   . (,elmo-archive-gtar-program "-xf"))
+  `((ls    . (,elmo-archive-gtar-program "-tf"))
+    (cat   . (,elmo-archive-gtar-program "--to-stdout" "-xf"))
+    (ext   . (,elmo-archive-gtar-program "-xf"))
 ;;;      (rm    . (,elmo-archive-gtar-program "--delete" "-f")) ; well not work
-      )))
+    ))
 
 ;;; GNU tar (*.tar.gz, *.tar.Z, *.tar.bz2)
 (defvar elmo-archive-tgz-method-alist
   `((ls         . (,elmo-archive-gtar-program "-ztf"))
-    (cat        . (,elmo-archive-gtar-program "-Ozxf"))
+    (cat        . (,elmo-archive-gtar-program "--to-stdout" "-zxf"))
     (create     . (,elmo-archive-gtar-program "-zcf"))
 ;;;    (rm         . elmo-archive-tgz-rm-func)
     (cp         . elmo-archive-tgz-cp-func)
