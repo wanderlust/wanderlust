@@ -957,6 +957,11 @@
 	(setq eol (point))
 	(beginning-of-line)
 	(setq bol (point))
+	(goto-char eol)
+	(when (search-backward "\r" bol t)
+	  (put-text-property (point) eol 'invisible t)
+	  (setq eol (point)))
+	(goto-char bol)
 	(setq spec (wl-highlight-summary-line-face-spec
 		    (or status (wl-summary-message-status number))
 		    (wl-summary-temp-mark number)
