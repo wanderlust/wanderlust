@@ -86,11 +86,22 @@ If an element is symbol, use symbol-value instead."
   :group 'wl-spam)
 
 (defface wl-highlight-summary-spam-face
-  '((((type tty)
-      (background dark))
-     (:foreground "blue"))
-    (((class color))
-     (:foreground "LightSlateGray")))
+  '((((type graphic))
+     (:foreground "LightSlateGray"))
+    (((type tty)
+      (min-colors 16777216))
+     (:foreground "LightSlateGray"))
+    (((type tty)
+      (min-colors 256))
+     (:foreground "color-102"))
+    (((type tty)
+      (min-colors 88))
+     (:foreground "color-37"))
+    (((type tty)
+      (min-colors 16))
+     (:foreground "brightblack"))
+    (((type tty))
+     (:foreground "cyan")))
   "Face used for displaying messages mark as spam."
   :group 'wl-summary-faces
   :group 'wl-faces)
