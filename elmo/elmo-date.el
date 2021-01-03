@@ -104,6 +104,9 @@
 	       (cadr timezone)) nil nil))))
 
 (defun elmo-date-get-week (year month day)
+  (when (< month 3)
+    (setq month (+ month 12)
+	  year (1- year)))
   (let ((C (/ year 100))
 	(Y (% year 100)))
     (aref (symbol-value (intern (concat "elmo-weekday-name-"
