@@ -2013,14 +2013,9 @@
 	  (number (or number (wl-summary-message-number)))
 	  bol eol spec)
       (when number
-	(end-of-line)
-	(setq eol (point))
-	(beginning-of-line)
-	(setq bol (point))
-	(goto-char eol)
-	(when (search-backward "\r" bol t)
-	  (put-text-property (point) eol 'invisible t)
-	  (setq eol (point)))
+	(setq bol (line-beginning-position))
+	(setq eol (line-end-position))
+	(wl-summary-selective-display-1 eol bol)
 	(goto-char bol)
 	(setq spec (wl-highlight-summary-line-face-spec
 		    (or status (wl-summary-message-status number))
