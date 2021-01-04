@@ -2129,9 +2129,7 @@ This function is defined for `window-scroll-functions'"
     (with-current-buffer (window-buffer win)
       (when (eq major-mode 'wl-summary-mode)
 	(let ((start (window-start win))
-	      (end (condition-case nil
-		       (window-end win t) ;; old emacsen doesn't support 2nd arg.
-		     (error (window-end win)))))
+	      (end (window-end win t)))
 	  (wl-highlight-summary start
 				end
 				'lazy))
