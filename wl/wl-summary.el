@@ -2617,6 +2617,7 @@ If ARG, without confirm."
   (insert line "\n")
   (save-excursion
     (forward-line -1)
+    (wl-summary-selective-display-1 (line-end-position))
     (let* ((number (wl-summary-message-number))
 	   (mark-info (wl-summary-registered-temp-mark number)))
       (when (and mark-info (nth 2 mark-info))

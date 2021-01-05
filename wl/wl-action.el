@@ -98,8 +98,9 @@ Return number if put mark succeed"
 		     data)
 	    (when visible
 	      (wl-summary-put-temp-mark set-mark)
-	      (when wl-summary-highlight
-		(wl-highlight-summary-current-line))
+	      (if wl-summary-highlight
+		  (wl-highlight-summary-current-line)
+		(wl-summary-selective-display))
 	      (when data
 		(wl-summary-print-argument number data)))
 	    (when (and (eq wl-summary-buffer-view 'thread)
@@ -248,8 +249,9 @@ Return number if put mark succeed"
 	   (or (unless force (wl-summary-get-score-mark number))
 	       " "))
 	  (setq action (assoc mark wl-summary-mark-action-list))
-	  (when wl-summary-highlight
-	    (wl-highlight-summary-current-line))
+	  (if wl-summary-highlight
+	      (wl-highlight-summary-current-line)
+	    (wl-summary-selective-display))
 	  (when (wl-summary-action-argument-function action)
 	    (wl-summary-remove-argument)))
 	(set-buffer-modified-p nil))))

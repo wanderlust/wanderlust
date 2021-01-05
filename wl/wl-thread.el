@@ -1070,8 +1070,10 @@ Message is inserted to the summary buffer."
 	      (wl-summary-jump-to-msg msg)
 	      (wl-thread-close
 	       (wl-thread-get-entity (wl-summary-message-number)))))))
-      (when wl-summary-lazy-highlight
-	(wl-highlight-summary-window))
+      (if (and wl-summary-highlight
+	       wl-summary-lazy-highlight)
+	  (wl-highlight-summary-window)
+	(wl-summary-selective-display-window))
       (wl-summary-set-message-modified)
       (set-buffer-modified-p nil))))
 
