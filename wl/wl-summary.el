@@ -652,11 +652,13 @@ See also variable `wl-use-petname'."
   (when (search-backward "\r" (or bol (line-beginning-position)) t)
     (put-text-property (point) eol 'invisible t)))
 
-(defun wl-summary-selective-display ()
-  (save-excursion
-    (let ((inhibit-read-only t)
-	  (deactivate-mark nil))
-      (wl-summary-selective-display-1 (line-end-position)))))
+(defun wl-summary-maybe-highlight-current-line (&optional number status)
+  (if wl-summary-highlight
+      (wl-highlight-summary-current-line number status)
+    (save-excursion
+      (let ((inhibit-read-only t)
+	    (deactivate-mark nil))
+	(wl-summary-selective-display-1 (line-end-position))))))
 
 (defun wl-summary-selective-display-window (&optional win _beg)
   "Hide trailing message numbers in summary window.
@@ -2148,9 +2150,7 @@ This function is defined for `window-scroll-functions'"
 				   wl-summary-score-below-mark
 				   wl-summary-score-over-mark))
 	(wl-summary-put-temp-mark mark)
-	(if wl-summary-highlight
-	    (wl-highlight-summary-current-line)
-	  (wl-summary-selective-display))
+	(wl-summary-maybe-highlight-current-line)
 	(set-buffer-modified-p nil)))))
 
 (defun wl-summary-get-score-mark (msg-num)
@@ -3193,9 +3193,7 @@ Return non-nil if the mark is updated"
 		    t)
 		(wl-summary-validate-persistent-mark (point-at-bol)
 						     (point-at-eol))))))
-      (if wl-summary-highlight
-	  (wl-highlight-summary-current-line number status)
-	(wl-summary-selective-display))
+      (wl-summary-maybe-highlight-current-line)
       (set-buffer-modified-p nil))))
 
 (defsubst wl-summary-mark-as-read-internal (inverse
