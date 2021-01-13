@@ -2014,7 +2014,7 @@
       (when number
 	(setq bol (line-beginning-position))
 	(setq eol (line-end-position))
-	(wl-summary-selective-display-1 eol bol)
+	(wl-summary-selective-display eol bol)
 	(goto-char bol)
 	(setq spec (wl-highlight-summary-line-face-spec
 		    (or status (wl-summary-message-status number))
@@ -2119,7 +2119,7 @@ Faces used:
 	  (wl-highlight-summary-current-line)
 	(let ((inhibit-read-only t)
 	      (deactivate-mark nil))
-	  (wl-summary-selective-display-1 (line-end-position))))
+	  (wl-summary-selective-display (line-end-position))))
       (forward-line))
     (unless wl-summary-lazy-highlight
       (message "Highlighting...done"))))

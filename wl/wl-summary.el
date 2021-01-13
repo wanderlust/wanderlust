@@ -647,7 +647,7 @@ See also variable `wl-use-petname'."
 	    (forward-line)))))
     (set-buffer-modified-p nil)))
 
-(defsubst wl-summary-selective-display-1 (eol &optional bol)
+(defsubst wl-summary-selective-display (eol &optional bol)
   (goto-char eol)
   (when (search-backward "\r" (or bol (line-beginning-position)) t)
     (put-text-property (point) eol 'invisible t)))
@@ -658,7 +658,7 @@ See also variable `wl-use-petname'."
     (save-excursion
       (let ((inhibit-read-only t)
 	    (deactivate-mark nil))
-	(wl-summary-selective-display-1 (line-end-position))))))
+	(wl-summary-selective-display (line-end-position))))))
 
 (defun wl-summary-selective-display-window (&optional win _beg)
   "Hide trailing message numbers in summary window.
@@ -672,7 +672,7 @@ This function is defined for `window-scroll-functions'"
 	      (end (window-end win t)))
 	  (goto-char start)
 	  (while (< (point) end)
-	    (wl-summary-selective-display-1 (line-end-position))
+	    (wl-summary-selective-display (line-end-position))
 	    (forward-line))))
       (set-buffer-modified-p nil))))
 
@@ -2617,7 +2617,7 @@ If ARG, without confirm."
   (insert line "\n")
   (save-excursion
     (forward-line -1)
-    (wl-summary-selective-display-1 (line-end-position))
+    (wl-summary-selective-display (line-end-position))
     (let* ((number (wl-summary-message-number))
 	   (mark-info (wl-summary-registered-temp-mark number)))
       (when (and mark-info (nth 2 mark-info))
