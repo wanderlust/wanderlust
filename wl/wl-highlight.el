@@ -401,8 +401,7 @@
   :group 'wl-faces)
 
 (defface wl-highlight-summary-new-face
-  '((((type graphic)
-      (background dark))
+  '((((type graphic))
      (:foreground "tomato"))
     (((type tty)
       (min-colors 16777216))
