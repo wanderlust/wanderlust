@@ -288,7 +288,6 @@
       (background light))
      (:foreground "color-20" :bold t))
     (((type tty)
-      (min-colors 88)
       (background light))
      (:foreground "black" :bold t)))
   "Face used for displaying contents of unimportant headers."
@@ -1505,7 +1504,6 @@
       (background light))
      (:foreground "color-20" :background "color-62"))
     (((type tty)
-      (min-colors 88)
       (background light))
      (:foreground "black" :background "white")))
   "Face used for displaying demo."
