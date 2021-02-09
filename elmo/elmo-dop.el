@@ -367,15 +367,26 @@ FOLDER is the folder structure."
     (elmo-folder-delete-messages
      folder
      ;; messages are deleted only if message-id is not changed.
-     (mapcar 'car
-	     (elmo-delete-if
-	      (lambda (pair)
-		(not (string=
-		      (cdr pair)
-		      (elmo-message-fetch-field folder (car pair)
-						'message-id))))
-	      number-alist)))
-    t)) ; Always success (If failure, just remain)
+     (delq
+      nil
+      (mapcar
+       (lambda (pair)
+	 (let ((number (car pair)))
+	   (if (string=
+		(cdr pair)
+		(or (elmo-message-fetch-field folder number 'message-id)
+		    ;; For the case that message doesn't have
+		    ;; Message-ID header.
+		    (elmo-msgdb-message-field
+		     (elmo-folder-msgdb-create folder (list number) nil)
+		     number 'message-id)))
+	       number
+	     (message "Cancel to delete message %s/%d, which may change"
+		      (elmo-folder-name-internal folder) number)
+	     nil)))
+       number-alist))))
+  ;; Always success (If failure, just remain)
+  t)
 
 (defun elmo-folder-create-dop-delayed (folder)
   (unless (elmo-folder-exists-p folder)
