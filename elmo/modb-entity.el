@@ -774,7 +774,6 @@ If each field is t, function is set as default converter."
 	(regexp (concat "\\(" std11-field-head-regexp "\\)[ \t]*"))
 	value values field)
     (save-excursion
-      (set-buffer-multibyte t)
       (goto-char (point-min))
       (while (re-search-forward regexp nil t)
 	(setq field (downcase (buffer-substring-no-properties
