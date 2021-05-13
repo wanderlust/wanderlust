@@ -448,7 +448,8 @@ return value is diffs '(-new -unread -all)."
 (defun wl-fldmgr-get-path-from-buffer (&optional prev)
   (let ((indent-level 0)
 	(group-target t)
-	folder-path group-type previous-entity entity)
+	(previous-entity nil)
+	folder-path group-type entity)
     (save-excursion
       (beginning-of-line)
       (when prev
@@ -716,8 +717,8 @@ return value is diffs '(-new -unread -all)."
 	(message "Can't insert in the out of desktop group")
       (let ((inhibit-read-only t)
 	    (top (car wl-fldmgr-cut-entity-list))
-	    tmp indent path count new
-	    access new-list diffs)
+	    (access nil)
+	    tmp indent path count new new-list diffs)
 	(if (not top)
 	    (message "No cut buffer")
 	  (setq tmp (wl-fldmgr-get-path-from-buffer t))

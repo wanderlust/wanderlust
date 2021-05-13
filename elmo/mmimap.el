@@ -109,7 +109,14 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
 				(nth 1 bodystructure))))
       entity))
    (t ; singlepart
-    (let (content-type entity)
+    (let ((content-type
+           (make-mime-content-type (intern (downcase (car bodystructure)))
+				   (if (nth 1 bodystructure)
+				       (intern (downcase
+						(nth 1 bodystructure))))
+				   (mime-decode-parameters
+				    (nth 2 bodystructure))))
+	  entity)
       (setq entity
 	    (luna-make-entity
 	     class
@@ -119,14 +126,6 @@ CLASS, LOCATION, NODE-ID, PARENT are set to the returned entity."
 	     :location location
 	     :parent parent
 	     :node-id node-id))
-      (mime-entity-set-content-type-internal
-       entity
-       (make-mime-content-type (intern (downcase (car bodystructure)))
-			       (if (nth 1 bodystructure)
-				   (intern (downcase
-					    (nth 1 bodystructure))))
-			       (mime-decode-parameters
-				(nth 2 bodystructure))))
       (mime-entity-set-encoding-internal entity
 					 (and (nth 5 bodystructure)
 					      (downcase

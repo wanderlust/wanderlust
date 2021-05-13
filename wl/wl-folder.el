@@ -630,7 +630,7 @@ Optional argument ARG is repeart count."
   "Enter the current folder.  If optional ARG exists, update folder list."
   (interactive "P")
   (let ((fld-name (wl-folder-get-entity-from-buffer))
-	entity beg end indent opened err)
+	entity beg end indent opened)
     (unless fld-name
       (error "No folder"))
     (beginning-of-line)
@@ -652,29 +652,18 @@ Optional argument ARG is repeart count."
 		  (setcdr (assoc (car entity) wl-folder-group-alist) t)
 		  (if (eq 'access (cadr entity))
 		      (wl-folder-maybe-load-folder-list entity))
-		  ;(condition-case errobj
-		  (progn
-		    (if (or (wl-folder-force-fetch-p (car entity))
-			    (and
-			     (eq 'access (cadr entity))
-			     (null (cl-caddr entity))))
-			(wl-folder-update-newest indent entity)
-		      (wl-folder-insert-entity indent entity))
-		    (wl-highlight-folder-path wl-folder-buffer-cur-path))
-;;;		  (quit
-;;;		   (setq err t)
-;;;		   (setcdr (assoc fld-name wl-folder-group-alist) nil))
-;;;		  (error
-;;;		   (elmo-display-error errobj t)
-;;;		   (ding)
-;;;		   (setq err t)
-;;;		   (setcdr (assoc fld-name wl-folder-group-alist) nil)))
-		  (if (not err)
-		      (let ((buffer-read-only nil))
-			(delete-region (save-excursion (beginning-of-line)
-						       (point))
-				       (save-excursion (end-of-line)
-						       (+ 1 (point))))))))
+		  (if (or (wl-folder-force-fetch-p (car entity))
+			  (and
+			   (eq 'access (cadr entity))
+			   (null (cl-caddr entity))))
+		      (wl-folder-update-newest indent entity)
+		    (wl-folder-insert-entity indent entity))
+		  (wl-highlight-folder-path wl-folder-buffer-cur-path)
+		  (let ((buffer-read-only nil))
+		    (delete-region (save-excursion (beginning-of-line)
+						   (point))
+				   (save-excursion (end-of-line)
+						   (+ 1 (point)))))))
 	    (setq beg (point))
 	    (end-of-line)
 	    (save-match-data
