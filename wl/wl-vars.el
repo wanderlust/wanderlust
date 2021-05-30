@@ -577,7 +577,8 @@ The value is used as is when original message's From: field is not found."
 
 (defcustom wl-default-draft-cite-header-format-string "%s,\n%s wrote:\n"
   "*Format string to generate citation header.
-The value is passed to `format' function with two string, date and author respectively.  Should be terminated with LF."
+The value is passed to `format' function with two string, date
+and author respectively.  Should be terminated with LF."
   :type 'string
   :group 'wl-draft)
 
@@ -1110,8 +1111,8 @@ cdr of each cons cell is used for preparing headers of draft message."
 						      answered
 						      forwarded
 						      unread)
-  "List of preserved flag symbols to define the priority to map \
-to the persistent mark.
+  "List of preserved flag symbols to define the priority to map to
+the persistent mark.
 Special symbol `flag' means the user defined flag."
   :type '(repeat (symbol :tag "preserved flag"))
   :group 'wl-summary)
@@ -1725,12 +1726,15 @@ Allowed situations are:
 (defcustom wl-message-id-use-message-from
   (if (boundp 'wl-message-id-use-wl-from)
       wl-message-id-use-wl-from t)
-  "*When non-nil, use From: header's field value for domain part of Message-ID preferably."
+  "When non-nil, use From: header's field value for domain part of
+Message-ID preferably."
   :type 'boolean
   :group 'wl-pref)
 
 (defcustom wl-message-id-hash-function nil
-  "Indicate hash function for the local part when Message-ID is made from mail address.  Hash function receives a string and returns hashed string.  Nil means the local part is not hashed."
+  "Indicate hash function for the local part when Message-ID is made
+from mail address.  Hash function receives a string and returns
+hashed string.  Nil means the local part is not hashed."
   :type '(choice (const :tag "as is" nil)
 		 function)
   :group 'wl-pref)
@@ -2138,7 +2142,9 @@ Also variables which begin with `wl-' can be specified
   :group 'wl-draft)
 
 (defcustom wl-draft-preview-attributes-buffer-lines t
-  "*Buffer height for the draft attribute preview.  Non-integer means decide height from number of attributes automatically.  Negative-integer means add absolute value to automated height."
+  "Buffer height for the draft attribute preview.  Non-integer
+means decide height from number of attributes automatically.
+Negative-integer means add absolute value to automated height."
   :type '(choice integer
 		 (const :tag "Automated" t))
   :group 'wl-draft)
@@ -2198,7 +2204,8 @@ e.x.
   :group 'wl-pref)
 
 (defcustom wl-strict-diff-folders nil
-  "List of regexps matching folders of which Wanderlust seriously counts unsync messages."
+  "List of regexps matching folders of which Wanderlust seriously
+counts unsync messages."
   :type '(choice (const :tag "Off" nil)
 		 (repeat (regexp :tag "Folder Regexp")))
   :group 'wl-folder)
@@ -2268,7 +2275,9 @@ every intervals specified by `wl-biff-check-interval'."
   :group 'wl-setting)
 
 (defcustom wl-biff-check-delay 0
-  "After interval specified by `wl-biff-check-interval', automatically checking new mail will start when Emacs keeps idle longer than specified seconds by this varaible.
+  "After interval specified by `wl-biff-check-interval',
+automatically checking new mail will start when Emacs keeps idle
+longer than specified seconds by this varaible.
 It has no effect on the case which `wl-biff-use-idle-timer' is non-nil."
   :type 'number
   :group 'wl-setting)

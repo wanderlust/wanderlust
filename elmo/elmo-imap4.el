@@ -54,7 +54,8 @@
 (require 'cl-lib)
 
 (defvar elmo-imap4-disuse-server-flag-mailbox-regexp "^#mh" ; UW imapd
-  "Regexp to match IMAP4 mailbox names whose message flags on server should be ignored (For STATUS command).")
+  "Regexp to match IMAP4 mailbox names whose message flags on
+server should be ignored (For STATUS command).")
 
 (defvar elmo-imap4-overview-fetch-chop-length 200
   "*Number of overviews to fetch in one request.")
@@ -129,7 +130,8 @@ header values.")
 (defvar elmo-imap4-capability-search-keys-alist
   '((x-gm-ext-1 "x-gm-raw" "x-gm-msgid" "x-gm-thrid" "x-gm-lables"))
   "*Alist of capability and extra IMAP4 search attributes.
-When server has specified capability, server is assumed to accept extra search keys.")
+When server has specified capability, server is assumed to accept
+extra search keys.")
 
 ;;; internal variables
 ;;

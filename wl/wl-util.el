@@ -472,7 +472,9 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
      wl-unique-id-suffix)))
 
 (defcustom wl-draft-make-message-id-from-address-delimiter "-"
-  "A string between unique and addr-spec of Message-ID built from e-mail address.  It should be consist of atext (described in RFC 5322)."
+  "A string between unique and addr-spec of Message-ID built from
+e-mail address.  It should be consist of atext (described in RFC
+5322)."
   :type 'string
   :group 'wl-draft)
 

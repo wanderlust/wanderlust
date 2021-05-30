@@ -93,7 +93,8 @@ you have to add it to `elmo-digest-flags'.
   :group 'elmo-setting)
 
 (defcustom elmo-passwd-storage-type 'alist
-  "Specify ELMO password storage type.  If you want to use `auth-source', set its value to symbol auth-source."
+  "Specify ELMO password storage type.
+If you want to use `auth-source', set its value to symbol auth-source."
   :type '(choice (const alist :tag "alist")
 		 (const auth-source :tag "Use auth-source"))
   :group 'elmo
@@ -237,7 +238,8 @@ Any symbol value of `elmo-network-stream-type-alist' or
 This is taken precedence over `elmo-network-stream-type-alist'.")
 
 (defcustom elmo-msgid-to-cache-max-length nil
-  "When cache filename generated from message-id is longer than its value, hash algorith is used to keep filename not too long.
+"When cache filename generated from message-id is longer than its
+value, hash algorith is used to keep filename not too long.
 When value is nil, hash algorithm is never used."
   :type '(choice (const :tag "Never use hash" nil)
 		 integer)
