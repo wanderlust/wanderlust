@@ -998,7 +998,6 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (buffer-disable-undo (current-buffer))
   (set 'bidi-paragraph-direction 'left-to-right)
   (wl-mode-line-buffer-identification '(wl-summary-buffer-mode-line))
-  (easy-menu-add wl-summary-mode-menu)
   (setq wl-summary-buffer-window-scroll-functions
 	(wl-summary-window-scroll-functions))
   (when wl-summary-buffer-window-scroll-functions

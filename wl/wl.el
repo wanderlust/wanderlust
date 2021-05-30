@@ -191,7 +191,6 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
   (use-local-map wl-plugged-mode-map)
   (setq major-mode 'wl-plugged-mode)
   (setq mode-name "Plugged")
-  (easy-menu-add wl-plugged-mode-menu)
   (wl-mode-line-buffer-identification)
   (setq wl-plugged-switch wl-plugged)
   (setq wl-plugged-alist-modified nil)

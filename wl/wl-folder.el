@@ -1479,7 +1479,6 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 	wl-folder-buffer-cur-point nil)
   (set 'bidi-paragraph-direction 'left-to-right)
   (wl-mode-line-buffer-identification)
-  (easy-menu-add wl-folder-mode-menu)
   ;; This hook may contain the functions `wl-folder-init-icons' and
   ;; `wl-setup-folder' for reasons of system internal to accord
   ;; facilities for the Emacs variants.
