@@ -107,7 +107,7 @@ WITH-CODENAME is ignored."
   (cond
    ((string-match "^\\([0-9]+\\.[0-9]+\\)\\.[.0-9]+$" emacs-version)
     (concat "Emacs " (match-string 1 emacs-version)
-	    (concat "/Mule " mule-version)))
+	    (when (boundp 'mule-version) (concat "/Mule " mule-version))))
    ((string-match "\\([A-Z]*[Mm][Aa][Cc][Ss]\\)[^(]*\\(\\((beta.*)\\|'\\)\\)?"
 		  emacs-version)
     (concat (match-string 1 emacs-version)
@@ -121,7 +121,8 @@ WITH-CODENAME is ignored."
 Separate DELIMITER (default is \" \").
 WITH-CODENAME is ignored."
   (cond
-   ((string-match "\\([0-9]+\.[0-9]+\\)\\(.*$\\)" mule-version)
+   ((and (boundp 'mule-version)
+	 (string-match "\\([0-9]+\.[0-9]+\\)\\(.*$\\)" mule-version))
     (format "Mule%s%s@%d.%d"
 	    (or delimiter " ")
 	    (match-string 1 mule-version)
@@ -144,7 +145,8 @@ WITH-CODENAME is ignored."
 Separate DELIMITER (default is \" \").
 WITH-CODENAME is ignored."
   (cond
-   ((string-match "\\([0-9]+\.[0-9]+\\)\\(.*$\\)" mule-version)
+   ((and (boundp 'mule-version)
+	 (string-match "\\([0-9]+\.[0-9]+\\)\\(.*$\\)" mule-version))
     (format "Emacs%s%d.%d Mule%s%s"
 	    (or delimiter " ")
 	    emacs-major-version
