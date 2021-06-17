@@ -317,11 +317,8 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
 	time)))
 
 (defun wl-make-date-string (&optional time)
-  (let ((s (current-time-string time)))
-    (string-match "\\`\\([A-Z][a-z][a-z]\\) +[A-Z][a-z][a-z] +[0-9][0-9]? *[0-9][0-9]?:[0-9][0-9]:[0-9][0-9] *[0-9]?[0-9]?[0-9][0-9]"
-		  s)
-    (concat (match-string 1 s) ", "
-	    (timezone-make-date-arpa-standard s (current-time-zone)))))
+  (let ((system-time-locale "C"))
+    (format-time-string "%a, %d %b %Y %T %z" time)))
 
 (defun wl-date-iso8601 (date)
   "Convert the DATE to YYMMDDTHHMMSS."

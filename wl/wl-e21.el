@@ -241,10 +241,6 @@
 	(setq wl-modeline-biff-state-on wl-biff-state-indicator-on
 	      wl-modeline-biff-state-off wl-biff-state-indicator-off)))))
 
-(defun wl-make-date-string (&optional time)
-  (let ((system-time-locale "C"))
-    (format-time-string "%a, %d %b %Y %T %z" time)))
-
 (defalias 'wl-defface 'defface)
 (make-obsolete 'wl-defface 'defface "26 May 2020")
 
