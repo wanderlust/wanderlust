@@ -3603,9 +3603,11 @@ Return non-nil if the mark is updated"
 			       wl-status))
 	  (elmo-mime-charset wl-summary-buffer-mime-charset)
 	  (elmo-lang wl-summary-buffer-weekday-name-lang)
-	  (wl-datevec (or (elmo-time-to-datevec
-			   (elmo-message-entity-field wl-message-entity 'date)
-			   wl-summary-fix-timezone)
+	  (wl-datevec (or (ignore-errors
+			    (elmo-time-to-datevec
+			     (elmo-message-entity-field
+			      wl-message-entity 'date)
+			     wl-summary-fix-timezone))
 			  (make-vector 7 0)))
 	  line)
       (if (and wl-thr-indent-string

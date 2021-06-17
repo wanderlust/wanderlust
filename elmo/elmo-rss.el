@@ -92,15 +92,16 @@ Setting this to true will annoy the pedants."
              ;; Ugh.
              "\\`\\([0-9]+\\)-\\([0-9]+\\)-\\([0-9]+\\)t\\([0-9]+\\):\\([0-9]+\\):\\([0-9]+\\)\.?[0-9]*\\([z+-][0-9:]*\\)?\\'"
              string)
-            (timezone-make-arpa-date
-             (string-to-number (match-string 1 string))
-             (string-to-number (match-string 2 string))
-             (string-to-number (match-string 3 string))
-             (format "%s:%s:%s"
-                     (match-string 4 string)
-                     (match-string 5 string)
-                     (match-string 6 string))
-             (elmo-rss-parse-iso-timeoffset (match-string 7 string))))))
+            (ignore-errors
+	      (timezone-make-arpa-date
+               (string-to-number (match-string 1 string))
+               (string-to-number (match-string 2 string))
+               (string-to-number (match-string 3 string))
+               (format "%s:%s:%s"
+                       (match-string 4 string)
+                       (match-string 5 string)
+                       (match-string 6 string))
+               (elmo-rss-parse-iso-timeoffset (match-string 7 string)))))))
 
 (defun elmo-rss-utf-8 (string)
   "Decode string into UTF-8.  String may be nil."

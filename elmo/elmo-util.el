@@ -2020,10 +2020,11 @@ If ALIST is nil, `elmo-obsolete-variable-alist' is used."
   (or (elmo-get-message-id-from-header 'msgdb)
       ;; no message-id, so put dummy msgid.
       (concat "<"
-	      (if (elmo-unfold-fetch-field "date")
-		  (timezone-make-date-sortable
-		   (elmo-unfold-fetch-field "date"))
-		(md5 (string-as-unibyte (buffer-string))))
+	      (let ((string (elmo-unfold-fetch-field "date")))
+		(or (when string
+		      (ignore-errors
+			(timezone-make-date-sortable string)))
+		    (md5 (string-as-unibyte (buffer-string)))))
 	      (nth 1 (eword-extract-address-components
 		      (or (std11-fetch-field "from") "nobody"))) ">")))
 

@@ -749,10 +749,11 @@ If each field is t, function is set as default converter."
 	(or (elmo-get-message-id-from-field field)
 	    (concat "<" (std11-unfold-string field) ">"))
       (concat "<"
-	      (if (setq field (cdr (assoc "date" values)))
-		  (timezone-make-date-sortable
-		   (std11-unfold-string field))
-		(md5 (string-as-unibyte (buffer-string))))
+	      (or (when (setq field (cdr (assoc "date" values)))
+		    (ignore-errors
+		      (timezone-make-date-sortable
+		       (std11-unfold-string field))))
+		  (md5 (string-as-unibyte (buffer-string))))
 	      (nth 1 (eword-extract-address-components
 		      (or (cdr (assoc "from" values)) "nobody")))
 	      ">"))))

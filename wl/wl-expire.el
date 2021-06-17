@@ -72,12 +72,6 @@
 	(t
 	 (error "Invalid marks: %s" wl-summary-expire-reserve-marks))))
 
-(defsubst wl-expire-make-sortable-date (date)
-  (timezone-make-sortable-date
-   (aref date 0) (aref date 1) (aref date 2)
-   (timezone-make-time-string
-    (aref date 3) (aref date 4) (aref date 5))))
-
 ;; New functions to avoid accessing to the msgdb directly.
 (defsubst wl-expire-message-p (folder number)
   "Return non-nil when a message in the FOLDER with NUMBER can be expired."

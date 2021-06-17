@@ -1026,13 +1026,15 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 	      (mapcar
 	       (lambda (pair)
 		 (setq field-date
-		       (elmo-date-make-sortable-string
-			(timezone-fix-time
-			 (cdr pair)
-			 (current-time-zone) nil)))
-		 (if (if since
-			 (null (string< field-date specified-date))
-		       (string< field-date specified-date))
+		       (ignore-errors
+			 (elmo-date-make-sortable-string
+			  (timezone-fix-time
+			   (cdr pair)
+			   (current-time-zone) nil))))
+		 (if (and field-date
+			  (if since
+			      (null (string< field-date specified-date))
+			    (string< field-date specified-date)))
 		     (car pair)))
 	       (elmo-nntp-retrieve-field spec "date" numbers)))))
      (t
