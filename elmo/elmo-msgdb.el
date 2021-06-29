@@ -69,11 +69,6 @@
 ;; elmo-crosspost-alist-load
 ;; elmo-crosspost-alist-save
 
-;; elmo-folder-get-info
-;; elmo-folder-get-info-max
-;; elmo-folder-get-info-length
-;; elmo-folder-get-info-unread
-
 (defconst elmo-msgdb-load-priorities '(legacy standard)
   "Priority list of modb type for load.")
 
@@ -353,20 +348,6 @@ header separator."
 		     elmo-crosspost-alist-filename
 		     elmo-msgdb-directory)
 		    alist))
-
-(defsubst elmo-folder-get-info (folder &optional hashtb)
-  (elmo-get-hash-val folder
-		     (or hashtb elmo-folder-info-hashtb)))
-
-(defun elmo-folder-get-info-max (folder)
-  "Get folder info from cache."
-  (nth 3 (elmo-folder-get-info folder)))
-
-(defun elmo-folder-get-info-length (folder)
-  (nth 2 (elmo-folder-get-info folder)))
-
-(defun elmo-folder-get-info-unread (folder)
-  (nth 1 (elmo-folder-get-info folder)))
 
 (defsubst elmo-msgdb-location-load (dir)
   (let ((result (elmo-object-load
