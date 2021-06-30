@@ -8409,7 +8409,7 @@ mechanism.
 @item  If you have multiple accounts on the one host,
 you have to prepare password entry before use.
 In such case, you can't input password interactively.
-It may be limitaion of netrc backend.
+It is due to auth-sources's bug and fixed in Emacs 28.
 @end itemize
 
 @node Split messages, Batch Processing, Password Management, Advanced Issues
