@@ -525,10 +525,8 @@ until the login delay period has expired"))
     (let (locations)
       (if elmo-pop3-uidl-done
 	  (progn
-	    (mapatoms
-	     (lambda (atom)
-	       (setq locations (cons (symbol-name atom) locations)))
-	     elmo-pop3-uidl-number-hash)
+	    (elmo-map-hash-keys (lambda (k) (push k locations))
+				elmo-pop3-uidl-number-hash)
 	    (sort locations
 		  (lambda (loc1 loc2)
 		    (< (elmo-pop3-uidl-to-number loc1)
@@ -553,11 +551,10 @@ until the login delay period has expired"))
     (let (list)
       (if elmo-pop3-list-done
 	  (progn
-	    (mapatoms (lambda (atom)
-			(setq list (cons (string-to-number
-					  (substring (symbol-name atom) 1))
-					 list)))
-		      elmo-pop3-size-hash)
+	    (elmo-map-hash-keys (lambda (k)
+				  (push (string-to-number (substring k 1))
+					list))
+				elmo-pop3-size-hash)
 	    (sort list '<))
 	(error "POP3: Error in list")))))
 

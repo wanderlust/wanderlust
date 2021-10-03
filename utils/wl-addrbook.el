@@ -33,7 +33,7 @@ If nil,  the old 'user' entry remains.")
 
 ;;(defvar wl-anonymous-recipients ":;")
 
-(defvar wl-addrbook-hashtb nil)
+(defvar wl-addrbook-hashtb (elmo-make-hash))
 
 (defvar wl-addrbook-strip-domainpart t
   "*If *non-nil*, a shortname is created by stripping its domain part.")
@@ -175,7 +175,7 @@ If nil,  the old 'user' entry remains.")
 		       elmo-msgdb-directory)
 		      wl-alias-auto-alist)
     (setq wl-alias-auto-alist nil)
-    (setq wl-addrbook-hashtb nil)))
+    (setq wl-addrbook-hashtb (elmo-make-hash))))
 
 ;;
 

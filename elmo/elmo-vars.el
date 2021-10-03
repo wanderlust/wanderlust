@@ -385,7 +385,7 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
 (defvar elmo-network-starttls-stream-type-list
   '(starttls socks-starttls))
 
-(defvar elmo-folder-info-hashtb nil
+(defvar elmo-folder-info-hashtb (elmo-make-hash)
   "Array of folder database information '(max length new unread).")
 
 (defvar elmo-crosspost-message-alist nil

@@ -75,7 +75,7 @@ Otherwise, entire fetching of the message is aborted without confirmation."
 ;;; internal
 (defvar elmo-folder-type-alist nil)
 
-(defvar elmo-newsgroups-hashtb nil)
+(defvar elmo-newsgroups-hashtb (elmo-make-hash))
 
 (define-error 'elmo-error "Error" 'error)
 (define-error 'elmo-open-error "Cannot open" 'elmo-error)
@@ -982,7 +982,7 @@ If optional argument IF-EXISTS is nil, load on demand.
     (mapc
      (lambda (x)
        (let ((info (cadr x)))
-	 (and (intern-soft (car x) hashtb)
+	 (and (elmo-has-hash-val (car x) hashtb)
 	      (elmo-set-hash-val (car x)
 				 (list (nth 2 info)   ;; new
 				       (nth 3 info)   ;; unread
@@ -1790,7 +1790,7 @@ Return a hashtable for newsgroups."
 	(setq newsgroups
 	      (elmo-delete-if
 	       (lambda (x)
-		 (not (intern-soft x elmo-newsgroups-hashtb)))
+		 (not (elmo-has-hash-val x elmo-newsgroups-hashtb)))
 	       (nth 1 (car alist))))
 	(if newsgroups
 	    (setcar (cdar alist) newsgroups)

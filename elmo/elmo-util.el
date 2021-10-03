@@ -467,7 +467,7 @@ When NO-NODIFY is non-nil, dont' modify STRING and return new string."
   (autoload 'elmo-passwd-save "elmo-passwd")
   (autoload 'elmo-passwd-get "elmo-passwd")
   (autoload 'elmo-passwd-remove "elmo-passwd"))
-  
+
 (defun elmo-passwd-storage ()
   (require 'elmo-passwd)
   (if elmo-passwd-storage
@@ -758,32 +758,65 @@ the directory becomes empty after deletion."
       (setq list1 (cdr list1)))
     (list clist1 clist2)))
 
-(defmacro elmo-get-hash-val (string hashtable)
-  `(symbol-value (intern-soft ,string ,hashtable)))
+;; (defmacro elmo-get-hash-val (string hashtable)
+;;   `(symbol-value (intern-soft ,string ,hashtable)))
 
-(defmacro elmo-set-hash-val (string value hashtable)
-  `(set (intern ,string ,hashtable) ,value))
+;; (defmacro elmo-set-hash-val (string value hashtable)
+;;   `(set (intern ,string ,hashtable) ,value))
 
-(defmacro elmo-clear-hash-val (string hashtable)
-  (list 'unintern string hashtable))
+;; (defmacro elmo-clear-hash-val (string hashtable)
+;;   (list 'unintern string hashtable))
 
-(defun elmo-make-hash (&optional hashsize)
-  "Make a new hash table which have HASHSIZE size."
-  (make-vector
-   (if hashsize
-       (max
-	;; Prime numbers as lengths tend to result in good
-	;; hashing; lengths one less than a power of two are
-	;; also good.
-	(min
-	 (let ((i 1))
-	   (while (< (- i 1) hashsize)
-	     (setq i (* 2 i)))
-	   (- i 1))
-	 elmo-hash-maximum-size)
-	elmo-hash-minimum-size)
-     elmo-hash-minimum-size)
-   0))
+;; (defmacro elmo-has-hash-val (string hashtable)
+;;   (list 'intern-soft string hashtable))
+
+;; (defun elmo-make-hash (&optional hashsize)
+;;   "Make a new hash table which have HASHSIZE size."
+;;   (make-vector
+;;    (if hashsize
+;;        (max
+;; 	;; Prime numbers as lengths tend to result in good
+;; 	;; hashing; lengths one less than a power of two are
+;; 	;; also good.
+;; 	(min
+;; 	 (let ((i 1))
+;; 	   (while (< (- i 1) hashsize)
+;; 	     (setq i (* 2 i)))
+;; 	   (- i 1))
+;; 	 elmo-hash-maximum-size)
+;; 	elmo-hash-minimum-size)
+;;      elmo-hash-minimum-size)
+;;    0))
+
+(defun elmo-make-hash (&optional _hashsize)
+  (make-hash-table :test #'equal))
+
+(defsubst elmo-map-hash (f hashtable)
+  (maphash f hashtable))
+
+(defsubst elmo-map-hash-keys (f hashtable)
+  (maphash (lambda (k _v) (funcall f k))
+	   hashtable))
+
+(defsubst elmo-map-hash-values (f hashtable)
+  (maphash (lambda (_k v) (funcall f v))
+           hashtable))
+
+(defsubst elmo-copy-hash (hashtable)
+  (copy-hash-table hashtable))
+
+(defsubst elmo-get-hash-val (string hashtable)
+  (gethash string hashtable))
+
+(defsubst elmo-set-hash-val (string value hashtable)
+  (puthash string value hashtable))
+
+(defsubst elmo-clear-hash-val (string hashtable)
+  (remhash string hashtable))
+
+(defsubst elmo-has-hash-val (string hashtable)
+  (not (eq (gethash string hashtable 'elmo-has-hash-val-sym)
+	   'elmo-has-hash-val-sym)))
 
 (defsubst elmo-mime-string (string)
   "Normalize MIME encoded STRING."
