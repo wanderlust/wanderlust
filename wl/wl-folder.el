@@ -537,6 +537,8 @@ Default HASHTB is `wl-folder-elmo-folder-hashtb'."
 	      wl-thread-entity-list nil)
 	(if wl-summary-cache-use (wl-summary-save-view-cache))
 	(elmo-folder-commit wl-summary-buffer-elmo-folder))
+      (let (wl-summary-exit-next-move)
+	(wl-summary-exit))
       (if (get-buffer-window cur-buf)
 	  (select-window (get-buffer-window cur-buf)))
       (set-buffer cur-buf)
