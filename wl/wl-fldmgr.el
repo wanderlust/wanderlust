@@ -759,7 +759,7 @@ return value is diffs '(-new -unread -all)."
 	      ;; error
 	      (wl-push count wl-fldmgr-cut-entity-list)))))))
 
-(defvar wl-fldmgr-add-completion-hashtb (make-vector 7 0))
+(defvar wl-fldmgr-add-completion-hashtb (elmo-make-hash))
 
 (defun wl-fldmgr-add-completion-all-completions (string)
   (let ((table
