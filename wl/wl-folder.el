@@ -53,11 +53,11 @@
 (defvar wl-folder-entity nil)		; desktop entity.
 (defvar wl-folder-group-alist nil)	; opened or closed
 (defvar wl-folder-entity-id nil) ; id
-(defvar wl-folder-entity-hashtb nil)
-(defvar wl-folder-entity-id-name-hashtb nil)
-(defvar wl-folder-elmo-folder-hashtb nil)  ; name => elmo folder structure
+(defvar wl-folder-entity-hashtb (elmo-make-hash))
+(defvar wl-folder-entity-id-name-hashtb (elmo-make-hash))
+(defvar wl-folder-elmo-folder-hashtb (elmo-make-hash))  ; name => elmo folder structure
 
-(defvar wl-folder-newsgroups-hashtb nil)
+(defvar wl-folder-newsgroups-hashtb (elmo-make-hash))
 (defvar wl-folder-info-alist-modified nil)
 
 (defvar wl-folder-mode-map nil)
@@ -270,8 +270,9 @@
       (wl-folder-get-folder-name-by-id id))))
 
 (defmacro wl-folder-entity-exists-p (entity &optional hashtb)
-  `(let ((sym (intern-soft ,entity (or ,hashtb wl-folder-entity-hashtb))))
-     (and sym (boundp sym))))
+  `(elmo-has-hash-val ,entity (or ,hashtb wl-folder-entity-hashtb)))
+  ;; `(let ((sym (intern-soft ,entity (or ,hashtb wl-folder-entity-hashtb))))
+  ;;    (and sym (boundp sym))))
 
 (defmacro wl-folder-clear-entity-info (entity &optional hashtb)
   `(elmo-clear-hash-val ,entity (or ,hashtb wl-folder-entity-hashtb)))
@@ -2002,11 +2003,11 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 
 (defun wl-folder-cleanup-variables ()
   (setq wl-folder-entity nil
-	wl-folder-entity-hashtb nil
-	wl-folder-entity-id-name-hashtb nil
+	wl-folder-entity-hashtb (elmo-make-hash)
+	wl-folder-entity-id-name-hashtb (elmo-make-hash)
 	wl-folder-group-alist nil
 	wl-folder-petname-alist nil
-	wl-folder-newsgroups-hashtb nil
+	wl-folder-newsgroups-hashtb (elmo-make-hash)
 	wl-fldmgr-cut-entity-list nil
 	wl-fldmgr-modified nil
 	wl-fldmgr-modified-access-list nil)
@@ -2072,7 +2073,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 
 (defun wl-folder-get-entity-with-petname ()
   (let ((alist wl-folder-petname-alist)
-	(hashtb (copy-sequence wl-folder-entity-hashtb)))
+	(hashtb (elmo-copy-hash wl-folder-entity-hashtb)))
     (while alist
       (wl-folder-set-entity-info (cdar alist) nil hashtb)
       (setq alist (cdr alist)))

@@ -212,16 +212,16 @@ Matched address lists are append to CL."
 	cache len sym tmpl regexp entries ent values dn dnstr alias
 	result cn mails)
     ;; check cache
-    (mapatoms (lambda (atom)
-		(if (and (string-match
-			  (concat "^" (symbol-name atom) ".*") pat)
-			 (or (null cache)
-			     (< (car cache)
-				(setq len (length (symbol-name atom))))))
-		    (setq cache (cons
-				 (or len (length (symbol-name atom)))
-				 (symbol-value atom)))))
-	      wl-address-ldap-search-hash)
+    (elmo-map-hash (lambda (k v)
+		     (if (and (string-match
+			       (concat "^" k ".*") pat)
+			      (or (null cache)
+			          (< (car cache)
+				     (setq len (length k)))))
+		         (setq cache (cons
+				      (or len (length k))
+				      v))))
+	           wl-address-ldap-search-hash)
     ;; get matched entries
     (if cache
 	(setq entries (cdr cache))
@@ -760,4 +760,3 @@ If already registerd, change it."
 (product-provide (provide 'wl-address) (require 'wl-version))
 
 ;;; wl-address.el ends here
-

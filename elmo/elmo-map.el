@@ -42,11 +42,14 @@
 (defmacro elmo-location-map-set-alist (entity value)
   `(luna-set-slot-value ,entity 'location-alist ,value))
 
-(defmacro elmo-location-map-hash (entity)
-  `(luna-slot-value ,entity 'location-hash))
-
 (defmacro elmo-location-map-set-hash (entity value)
   `(luna-set-slot-value ,entity 'location-hash ,value))
+
+(defun elmo-location-map-hash (entity)
+  (or (luna-slot-value entity 'location-hash)
+      (let ((hash (make-hash-table))) ; lazily create a hash
+        (elmo-location-map-set-hash entity hash)
+        hash)))
 
 (defmacro elmo-location-map-max-number (entity)
   `(luna-slot-value ,entity 'max-number))

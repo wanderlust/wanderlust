@@ -759,15 +759,15 @@ return value is diffs '(-new -unread -all)."
 	      ;; error
 	      (wl-push count wl-fldmgr-cut-entity-list)))))))
 
-(defvar wl-fldmgr-add-completion-hashtb (make-vector 7 0))
+(defvar wl-fldmgr-add-completion-hashtb (elmo-make-hash))
 
 (defun wl-fldmgr-add-completion-all-completions (string)
   (let ((table
 	 (catch 'found
-	   (mapatoms
-	    (lambda (atom)
-	      (if (string-match (symbol-name atom) string)
-		  (throw 'found (symbol-value atom))))
+	   (elmo-map-hash
+	    (lambda (k v)
+	      (if (string-match k string)
+		  (throw 'found v)))
 	    wl-fldmgr-add-completion-hashtb)))
 	(pattern
 	 (if (string-match "\\.$"
@@ -789,8 +789,8 @@ return value is diffs '(-new -unread -all)."
 	      table (elmo-folder-list-subfolders
 		     (wl-folder-get-elmo-folder pattern))))
     (setq pattern (concat "^" (regexp-quote pattern)))
-    (unless (intern-soft pattern wl-fldmgr-add-completion-hashtb)
-      (set (intern pattern wl-fldmgr-add-completion-hashtb) table))
+    (unless (elmo-has-hash-val pattern wl-fldmgr-add-completion-hashtb)
+      (elmo-set-hash-val pattern wl-fldmgr-add-completion-hashtb table))
     table))
 
 (defun wl-fldmgr-add-completion-subr (string predicate flag)

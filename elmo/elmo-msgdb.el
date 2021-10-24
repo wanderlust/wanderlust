@@ -208,11 +208,9 @@
    (expand-file-name elmo-flag-table-filename dir)
    (if flag-table
        (let (list)
-	 (mapatoms (lambda (atom)
-		     (setq list (cons (cons (symbol-name atom)
-					    (symbol-value atom))
-				      list)))
-		   flag-table)
+	 (elmo-map-hash (lambda (k v)
+			  (push (cons k v) list))
+			flag-table)
 	 list))))
 ;;;
 ;; persistent mark handling
