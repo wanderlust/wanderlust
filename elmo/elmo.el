@@ -75,7 +75,7 @@ Otherwise, entire fetching of the message is aborted without confirmation."
 ;;; internal
 (defvar elmo-folder-type-alist nil)
 
-(defvar elmo-newsgroups-hashtb (elmo-make-hash))
+(defvar elmo-newsgroups-hashtb nil)
 
 (define-error 'elmo-error "Error" 'error)
 (define-error 'elmo-open-error "Cannot open" 'elmo-error)

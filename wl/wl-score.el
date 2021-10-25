@@ -101,7 +101,7 @@
 (defvar wl-prev-winconf nil)
 (defvar wl-score-help-winconf nil)
 (defvar wl-score-header-buffer-list nil)
-(defvar wl-score-alike-hashtb (elmo-make-hash))
+(defvar wl-score-alike-hashtb nil)
 
 (defvar wl-score-edit-exit-function nil
   "Function run on exit from the score buffer.")

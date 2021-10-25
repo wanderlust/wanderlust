@@ -254,7 +254,7 @@ If each field is t, function is set as default converter."
 	   value))))
 
 ;; mime decode cache
-(defvar elmo-msgdb-decoded-cache-hashtb (elmo-make-hash))
+(defvar elmo-msgdb-decoded-cache-hashtb nil)
 (make-variable-buffer-local 'elmo-msgdb-decoded-cache-hashtb)
 
 (defsubst elmo-msgdb-get-decoded-cache (string)

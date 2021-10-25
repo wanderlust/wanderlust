@@ -151,7 +151,7 @@
 (defvar wl-read-folder-history nil)
 (defvar wl-summary-scored nil)
 (defvar wl-crosspost-alist-modified nil)
-(defvar wl-summary-alike-hashtb (elmo-make-hash))
+(defvar wl-summary-alike-hashtb nil)
 (defvar wl-summary-search-buf-name " *wl-search-subject*")
 (defvar wl-summary-delayed-update nil)
 (defvar wl-summary-search-buf-folder-name nil)

@@ -793,10 +793,13 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 
   ;; folders
   (when (not no-check-folder)
-    (let ((draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
-	  (queue-folder (wl-folder-get-elmo-folder wl-queue-folder))
-	  (lost+found-folder (wl-folder-get-elmo-folder
-			      elmo-lost+found-folder)))
+    (let* ((elmo-folder-info-hashtb (elmo-make-hash))
+	   (wl-folder-elmo-folder-hashtb (elmo-make-hash))
+	   (wl-folder-entity-hashtb (elmo-make-hash))
+	   (draft-folder (wl-folder-get-elmo-folder wl-draft-folder))
+	   (queue-folder (wl-folder-get-elmo-folder wl-queue-folder))
+	   (lost+found-folder (wl-folder-get-elmo-folder
+			       elmo-lost+found-folder)))
       (unless (elmo-folder-exists-p draft-folder)
 	(if (y-or-n-p
 	     (format "Draft Folder %s does not exist, create it? "

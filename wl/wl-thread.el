@@ -41,7 +41,7 @@
 (defvar wl-thread-tops nil)		; top number list (number)
 (defvar wl-thread-entities nil)
 (defvar wl-thread-entity-list nil)	; entity list
-(defvar wl-thread-entity-hashtb (elmo-make-hash))	; obarray
+(defvar wl-thread-entity-hashtb nil)
 
 (make-variable-buffer-local 'wl-thread-entity-hashtb)
 (make-variable-buffer-local 'wl-thread-entities)     ; ".wl-thread-entity"
