@@ -758,36 +758,6 @@ the directory becomes empty after deletion."
       (setq list1 (cdr list1)))
     (list clist1 clist2)))
 
-;; (defmacro elmo-get-hash-val (string hashtable)
-;;   `(symbol-value (intern-soft ,string ,hashtable)))
-
-;; (defmacro elmo-set-hash-val (string value hashtable)
-;;   `(set (intern ,string ,hashtable) ,value))
-
-;; (defmacro elmo-clear-hash-val (string hashtable)
-;;   (list 'unintern string hashtable))
-
-;; (defmacro elmo-has-hash-val (string hashtable)
-;;   (list 'intern-soft string hashtable))
-
-;; (defun elmo-make-hash (&optional hashsize)
-;;   "Make a new hash table which have HASHSIZE size."
-;;   (make-vector
-;;    (if hashsize
-;;        (max
-;; 	;; Prime numbers as lengths tend to result in good
-;; 	;; hashing; lengths one less than a power of two are
-;; 	;; also good.
-;; 	(min
-;; 	 (let ((i 1))
-;; 	   (while (< (- i 1) hashsize)
-;; 	     (setq i (* 2 i)))
-;; 	   (- i 1))
-;; 	 elmo-hash-maximum-size)
-;; 	elmo-hash-minimum-size)
-;;      elmo-hash-minimum-size)
-;;    0))
-
 (defun elmo-make-hash (&optional _hashsize)
   (make-hash-table :test #'equal))
 

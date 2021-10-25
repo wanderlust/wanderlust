@@ -271,8 +271,6 @@
 
 (defmacro wl-folder-entity-exists-p (entity &optional hashtb)
   `(elmo-has-hash-val ,entity (or ,hashtb wl-folder-entity-hashtb)))
-  ;; `(let ((sym (intern-soft ,entity (or ,hashtb wl-folder-entity-hashtb))))
-  ;;    (and sym (boundp sym))))
 
 (defmacro wl-folder-clear-entity-info (entity &optional hashtb)
   `(elmo-clear-hash-val ,entity (or ,hashtb wl-folder-entity-hashtb)))
