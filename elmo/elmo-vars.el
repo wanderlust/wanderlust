@@ -162,6 +162,14 @@ Any symbol value of `elmo-network-stream-type-alist' or
   "*Stream bindings for IMAP4.
 This is taken precedence over `elmo-network-stream-type-alist'.")
 
+(defcustom elmo-imap4-default-msgdb-fields
+  '("Subject" "From" "To" "Cc" "Date" "Message-Id" "References"
+    "In-Reply-To" "Content-Type" "Newsgroups")
+  "Default field names to fetch for creating msgdb."
+  :type '(repeat string)
+  :group 'elmo
+  :group 'elmo-setting)
+
 ;;; NNTP
 
 (defcustom elmo-nntp-default-server "localhost"
