@@ -2566,10 +2566,8 @@ time."
     (let ((session (elmo-imap4-get-session folder))
           (headers
            (elmo-uniq-list
-            (append
-             '("Subject" "From" "To" "Cc" "Date"
-               "Message-Id" "References" "In-Reply-To")
-             (mapcar #'capitalize (elmo-msgdb-extra-fields 'non-virtual)))))
+            (append elmo-imap4-default-msgdb-fields
+		    (mapcar #'capitalize (elmo-msgdb-extra-fields t)))))
           print-length rfc2060 set-list)
       (setq rfc2060 (elmo-imap4-session-capable-p session 'imap4rev1))
       (elmo-with-progress-display (elmo-folder-msgdb-create (length numbers))
