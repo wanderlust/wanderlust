@@ -1146,7 +1146,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 					   (replace-regexp-in-string
 					    "\\\\" "\\\\\\\\"
 					    postfix t t)))))))
-	  (let (len min max group)
+	  (let (len min max)
 	    (while (not (eobp))
 	      (condition-case ()
 		  (when (= (following-char) ?2)
@@ -1154,9 +1154,9 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 		    (setq len (read cur)
 			  min (read cur)
 			  max (read cur))
-		    (set (setq group (let ((obarray hashtb)) (read cur)))
-			 (list len min max)))
-		(error (and group (symbolp group) (set group nil))))
+		    (elmo-set-hash-val
+		     (symbol-name (read cur)) (list len min max) hashtb))
+		(error nil))
 	      (forward-line))))
 	(setq sessions (cdr sessions))))
     (kill-buffer cur)))
@@ -1290,7 +1290,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
     (if (not subscribe-only)
 	nglist
       (dolist (ng nglist)
-	(if (intern-soft ng elmo-newsgroups-hashtb)
+	(if (elmo-has-hash-val ng elmo-newsgroups-hashtb)
 	    (setq ngs (cons ng ngs))))
       ngs)))
 
