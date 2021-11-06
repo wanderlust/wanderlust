@@ -758,8 +758,8 @@ the directory becomes empty after deletion."
       (setq list1 (cdr list1)))
     (list clist1 clist2)))
 
-(defun elmo-make-hash (&optional _hashsize)
-  (make-hash-table :test #'equal))
+(defun elmo-make-hash (&optional hashsize test)
+  (make-hash-table :size hashsize :test (or test #'equal)))
 
 (defalias 'elmo-map-hash 'maphash)
 
