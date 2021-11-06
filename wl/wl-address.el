@@ -212,16 +212,16 @@ Matched address lists are append to CL."
 	cache len sym tmpl regexp entries ent values dn dnstr alias
 	result cn mails)
     ;; check cache
-    (elmo-map-hash (lambda (k v)
-		     (if (and (string-match
-			       (concat "^" k ".*") pat)
-			      (or (null cache)
-			          (< (car cache)
-				     (setq len (length k)))))
-		         (setq cache (cons
-				      (or len (length k))
-				      v))))
-	           wl-address-ldap-search-hash)
+    (maphash (lambda (k v)
+	       (if (and (string-match
+			 (concat "^" k ".*") pat)
+			(or (null cache)
+			    (< (car cache)
+			       (setq len (length k)))))
+		   (setq cache (cons
+				(or len (length k))
+				v))))
+	     wl-address-ldap-search-hash)
     ;; get matched entries
     (if cache
 	(setq entries (cdr cache))
@@ -232,7 +232,7 @@ Matched address lists are append to CL."
 			pat wl-ldap-search-attribute-type-list)
 		       nil wl-ldap-search-attribute-type-list nil t))
 	(message "Searching in LDAP...done")
-	(elmo-set-hash-val pattern entries wl-address-ldap-search-hash)))
+	(puthash pattern entries wl-address-ldap-search-hash)))
     ;;
     (setq tmpl entries)
     (while tmpl
@@ -249,7 +249,7 @@ Matched address lists are append to CL."
 		      (wl-ldap-get-value-list "email" ent))
 	    cn (wl-ldap-get-value "cn" ent)
 	    dn (car (car entries))
-	    dnstr (elmo-get-hash-val (upcase dn) dnhash))
+	    dnstr (gethash (upcase dn) dnhash))
       ;; make alias list generated from LDAP data.
       (while (and mails values)
 	;; make alias like MATCHED/DN-STRING
@@ -497,9 +497,9 @@ Refresh `wl-address-list', `wl-address-completion-list', and
   (setq wl-address-petname-hash (elmo-make-hash))
   (let ((addresses wl-address-list))
     (while addresses
-      (elmo-set-hash-val (downcase (car (car addresses)))
-			 (cadr (car addresses))
-			 wl-address-petname-hash)
+      (puthash (downcase (car (car addresses)))
+	       (cadr (car addresses))
+	       wl-address-petname-hash)
       (setq addresses (cdr addresses))))
   (message "Updating addresses...done"))
 
@@ -588,7 +588,7 @@ e.g. \"Mr. bar <hoge@example.com>\"
 
 (defun wl-address-get-petname-1 (string)
   (let ((address (downcase (wl-address-header-extract-address string))))
-    (elmo-get-hash-val address wl-address-petname-hash)))
+    (gethash address wl-address-petname-hash)))
 
 (defsubst wl-address-get-petname (string)
   (or (wl-address-get-petname-1 string)
@@ -679,7 +679,7 @@ Group list contents is not included."
     ;; Delete entries.
     (dolist (entry (elmo-string-assoc-all the-email wl-address-list))
       (setq wl-address-list (delete entry wl-address-list)))
-    (elmo-set-hash-val the-email nil wl-address-petname-hash)
+    (puthash the-email nil wl-address-petname-hash)
     (message "Deleting Address...done")))
 
 (defun wl-address-add-or-change (address

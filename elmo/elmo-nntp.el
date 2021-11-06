@@ -586,7 +586,7 @@ Don't cache if nil.")
 	end-num entry)
     (if elmo-nntp-groups-async
 	(if (setq entry
-		  (elmo-get-hash-val
+		  (gethash
 		   (concat (elmo-nntp-folder-group-internal folder)
 			   (elmo-nntp-folder-postfix
 			    (elmo-net-folder-user-internal folder)
@@ -1154,7 +1154,7 @@ Returns a list of cons cells like (NUMBER . VALUE)"
 		    (setq len (read cur)
 			  min (read cur)
 			  max (read cur))
-		    (elmo-set-hash-val
+		    (puthash
 		     (symbol-name (read cur)) (list len min max) hashtb))
 		(error nil))
 	      (forward-line))))

@@ -940,8 +940,8 @@ If optional argument IF-EXISTS is nil, load on demand.
 ;; Folder info is a message number information cache (hashtable)
 (defsubst elmo-folder-get-info (folder &optional hashtb)
   "Return FOLDER info from HASHTB (default is `elmo-folder-info-hashtb')."
-  (elmo-get-hash-val (elmo-folder-name-internal folder)
-		     (or hashtb elmo-folder-info-hashtb)))
+  (gethash (elmo-folder-name-internal folder)
+	   (or hashtb elmo-folder-info-hashtb)))
 
 (defun elmo-folder-set-info-hashtb (folder max numbers &optional new unread)
   "Set FOLDER info (means MAX, NUMBERS, NEW and UNREAD)."
@@ -951,9 +951,9 @@ If optional argument IF-EXISTS is nil, load on demand.
       (or unread  (setq unread  (nth 1 info)))
       (or numbers (setq numbers (nth 2 info)))
       (or max     (setq max     (nth 3 info))))
-    (elmo-set-hash-val (elmo-folder-name-internal folder)
-		       (list new unread numbers max)
-		       elmo-folder-info-hashtb)))
+    (puthash (elmo-folder-name-internal folder)
+	     (list new unread numbers max)
+	     elmo-folder-info-hashtb)))
 
 (defun elmo-folder-set-info-max-by-numdb (folder numbers)
   "Set FOLDER info by MSGDB-NUMBER in msgdb."
@@ -983,12 +983,12 @@ If optional argument IF-EXISTS is nil, load on demand.
      (lambda (x)
        (let ((info (cadr x)))
 	 (and (elmo-has-hash-val (car x) hashtb)
-	      (elmo-set-hash-val (car x)
-				 (list (nth 2 info)   ;; new
-				       (nth 3 info)   ;; unread
-				       (nth 1 info)   ;; length
-				       (nth 0 info))  ;; max
-				 hashtb))))
+	      (puthash (car x)
+		       (list (nth 2 info)   ;; new
+			     (nth 3 info)   ;; unread
+			     (nth 1 info)   ;; length
+			     (nth 0 info))  ;; max
+		       hashtb))))
      info-alist)
     (setq elmo-folder-info-hashtb hashtb)))
 
@@ -1771,8 +1771,8 @@ Return a hashtable for newsgroups."
 		    (setq elmo-newsgroups-hashtb
 			  (elmo-make-hash (length groups))))))
     (dolist (group groups)
-      (or (elmo-get-hash-val group hashtb)
-	  (elmo-set-hash-val group nil hashtb)))
+      (or (gethash group hashtb)
+	  (puthash group nil hashtb)))
     (setq elmo-newsgroups-hashtb hashtb)))
 
 (defvar elmo-crosspost-message-alist-modified nil)

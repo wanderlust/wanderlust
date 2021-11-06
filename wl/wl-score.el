@@ -556,13 +556,13 @@ Set `wl-score-cache' nil."
     nil))
 
 (defmacro wl-score-put-alike (alike)
-  `(elmo-set-hash-val (format "#%d" (wl-count-lines))
-		      ,alike
-		      wl-score-alike-hashtb))
+  `(puthash (format "#%d" (wl-count-lines))
+	    ,alike
+	    wl-score-alike-hashtb))
 
 (defsubst wl-score-get-alike ()
-  (elmo-get-hash-val (format "#%d" (wl-count-lines))
-		     wl-score-alike-hashtb))
+  (gethash (format "#%d" (wl-count-lines))
+	   wl-score-alike-hashtb))
 
 (defun wl-score-insert-header (header messages &optional extra-header)
   (let ((mime-decode (nth 3 (assoc header wl-score-header-index)))

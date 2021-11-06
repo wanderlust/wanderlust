@@ -161,7 +161,7 @@
     (let* ((filename (buffer-substring (point) (save-excursion
 						 (end-of-line)
 						 (point))))
-	   (number (elmo-get-hash-val filename hash)))
+	   (number (gethash filename hash)))
       (when number
 	(setq results (cons number results)))
       (forward-line)))
@@ -179,7 +179,7 @@
 	   (targets (mapcar
 		     (lambda (number)
 		       (let ((filename (elmo-message-file-name folder number)))
-			 (elmo-set-hash-val filename number hash)
+			 (puthash filename number hash)
 			 filename))
 		     numbers))
 	   results)

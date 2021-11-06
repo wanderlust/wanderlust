@@ -108,15 +108,15 @@ If it is the symbol `all', update overview for all shimbun folders."
 	(when overviews
 	  (setq hash (elmo-make-hash (length overviews)))
 	  (dolist (entity overviews)
-	    (elmo-set-hash-val (elmo-message-entity-field entity 'message-id)
-			       entity hash)
+	    (puthash (elmo-message-entity-field entity 'message-id)
+		     entity hash)
 	    (when (setq id (elmo-message-entity-field entity 'x-original-id))
-	      (elmo-set-hash-val id entity hash)))
+	      (puthash id entity hash)))
 	  (elmo-shimbun-folder-set-entity-hash-internal folder hash)))))
 
 (defsubst elmo-shimbun-folder-shimbun-header (folder location)
   (let ((hash (elmo-shimbun-folder-header-hash-internal folder)))
-    (or (and hash (elmo-get-hash-val location hash))
+    (or (and hash (gethash location hash))
 	(let ((entity (elmo-message-entity folder location))
 	      (elmo-hash-minimum-size 63)
 	      header)
@@ -126,9 +126,8 @@ If it is the symbol `all', update overview for all shimbun folders."
 	      (elmo-shimbun-folder-set-header-hash-internal
 	       folder
 	       (setq hash (elmo-make-hash))))
-	    (elmo-set-hash-val (elmo-message-entity-field entity 'message-id)
-			       header
-			       hash)
+	    (puthash (elmo-message-entity-field entity 'message-id)
+		     header hash)
 	    header)))))
 
 (defsubst elmo-shimbun-lapse-seconds (time)
@@ -167,7 +166,7 @@ If it is the symbol `all', update overview for all shimbun folders."
   (let ((hash (or (elmo-shimbun-folder-header-hash-internal folder)
 		  (elmo-make-hash (length headers)))))
     (dolist (header headers)
-      (elmo-set-hash-val (shimbun-header-id header) header hash))
+      (puthash (shimbun-header-id header) header hash))
     (elmo-shimbun-folder-set-header-hash-internal folder hash)))
 
 (defun elmo-shimbun-get-headers (folder)
@@ -355,12 +354,10 @@ If it is the symbol `all', update overview for all shimbun folders."
 	    (unless (string= shimbun-id message-id)
 	      (elmo-shimbun-header-set-extra-field
 	       header "x-shimbun-id" shimbun-id)
-	      (elmo-set-hash-val message-id
-				 entity
-				 (elmo-shimbun-folder-entity-hash folder))
-	      (elmo-set-hash-val shimbun-id
-				 entity
-				 (elmo-shimbun-folder-entity-hash folder))
+	      (puthash message-id entity
+		       (elmo-shimbun-folder-entity-hash folder))
+	      (puthash shimbun-id entity
+		       (elmo-shimbun-folder-entity-hash folder))
 	      (list (cons 'x-original-id message-id)))
 	    (list
 	     (cons 'from    (shimbun-header-from header 'no-encode))
@@ -483,7 +480,7 @@ If it is the symbol `all', update overview for all shimbun folders."
       (setq references (list references)))
     (while references
       (setq references
-	    (if (setq parent (elmo-get-hash-val
+	    (if (setq parent (gethash
 			      (car references)
 			      (elmo-shimbun-folder-entity-hash folder)))
 		nil

@@ -1490,7 +1490,7 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
 
 (defun wl-summary-edit-addresses-subr (the-email name-in-addr)
   ;; returns nil if there's no change.
-  (if (elmo-get-hash-val (downcase the-email) wl-address-petname-hash)
+  (if (gethash (downcase the-email) wl-address-petname-hash)
       (let (char)
 	(message "'%s' already exists. (e)dit/(d)elete/(c)ancel?"
 		 the-email)
@@ -2661,12 +2661,12 @@ If ARG, without confirm."
 	   (funcall wl-summary-subject-filter-function subject2)))
 
 (defmacro wl-summary-put-alike (alike count)
-  `(elmo-set-hash-val (format "#%d" ,count)
-		      ,alike
-		      wl-summary-alike-hashtb))
+  `(puthash (format "#%d" ,count)
+	    ,alike
+	    wl-summary-alike-hashtb))
 
 (defsubst wl-summary-get-alike ()
-  (elmo-get-hash-val (format "#%d" (wl-count-lines))
+  (gethash (format "#%d" (wl-count-lines))
 		     wl-summary-alike-hashtb))
 
 (defun wl-summary-insert-headers (folder func &optional mime-decode)
@@ -2758,7 +2758,7 @@ If ARG, without confirm."
       (setq number (elmo-message-entity-number entity))
       (if (and wl-thread-saved-entity-hashtb-internal
 	       (setq thread-entity
-		     (elmo-get-hash-val
+		     (gethash
 		      (format "#%d" (elmo-message-entity-number entity))
 		      wl-thread-saved-entity-hashtb-internal)))
 	  (setq parent-entity

@@ -79,8 +79,8 @@ Return a location alist."
     (dolist (pair locations)
       (setq max-number (max max-number (car pair)))
       (when (cdr pair)
-	(elmo-set-hash-val (cdr pair) pair hash)
-	(elmo-set-hash-val (elmo-location-map-key (car pair)) pair hash)))
+	(puthash (cdr pair) pair hash)
+	(puthash (elmo-location-map-key (car pair)) pair hash)))
     (let ((inhibit-quit t))
       (elmo-location-map-set-max-number location-map max-number)
       (elmo-location-map-set-hash location-map hash)
@@ -100,12 +100,10 @@ Return new location alist."
     (setq new-alist
 	  (mapcar
 	   (lambda (location)
-	     (let ((entry (or (elmo-get-hash-val location old-hash)
+	     (let ((entry (or (gethash location old-hash)
 			      (cons (setq number (1+ number)) location))))
-	       (elmo-set-hash-val (elmo-location-map-key (car entry))
-				  entry
-				  new-hash)
-	       (elmo-set-hash-val location entry new-hash)
+	       (puthash (elmo-location-map-key (car entry)) entry new-hash)
+	       (puthash location entry new-hash)
 	       entry))
 	   locations))
     (let ((inhibit-quit t))
@@ -118,30 +116,30 @@ Return new location alist."
 	(hash (elmo-location-map-hash location-map)))
     (dolist (number numbers)
       (let* ((key (elmo-location-map-key number))
-	     (entry (elmo-get-hash-val key hash))
+	     (entry (gethash key hash))
 	     (inhibit-quit t))
 	(elmo-location-map-set-alist
 	 location-map
 	 (setq alist (delq entry alist)))
-	(elmo-clear-hash-val key hash)
-	(elmo-clear-hash-val (cdr entry) hash)))))
+	(remhash key hash)
+	(remhash (cdr entry) hash)))))
 
 (defun elmo-map-message-number (location-map location)
   "Return number of the message in the MAPPER with LOCATION."
-  (car (elmo-get-hash-val
+  (car (gethash
 	location
 	(elmo-location-map-hash location-map))))
 
 (defun elmo-map-message-location (location-map number)
   "Return location of the message in the MAPPER with NUMBER."
-  (cdr (elmo-get-hash-val
+  (cdr (gethash
 	(elmo-location-map-key number)
 	(elmo-location-map-hash location-map))))
 
 (defun elmo-map-numbers-to-locations (location-map numbers)
   (let (locations pair)
     (dolist (number numbers)
-      (if (setq pair (elmo-get-hash-val
+      (if (setq pair (gethash
 		      (elmo-location-map-key number)
 		      (elmo-location-map-hash location-map)))
 	  (setq locations (cons (cdr pair) locations))))
@@ -150,7 +148,7 @@ Return new location alist."
 (defun elmo-map-locations-to-numbers (location-map locations)
   (let (numbers pair)
     (dolist (location locations)
-      (if (setq pair (elmo-get-hash-val
+      (if (setq pair (gethash
 		      location
 		      (elmo-location-map-hash location-map)))
 	  (setq numbers (cons (car pair) numbers))))

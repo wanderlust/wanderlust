@@ -206,14 +206,13 @@
 
 (defsubst elmo-msgdb-get-mark (msgdb number)
   "Get mark string from MSGDB which corresponds to the message with NUMBER."
-  (cadr (elmo-get-hash-val (format "#%d" number)
-			   (elmo-msgdb-get-mark-hashtb msgdb))))
+  (cadr (gethash (format "#%d" number) (elmo-msgdb-get-mark-hashtb msgdb))))
 
 (defsubst elmo-msgdb-set-mark (msgdb number mark)
   "Set MARK of the message with NUMBER in the MSGDB.
 if MARK is nil, mark is removed."
-  (let ((elem (elmo-get-hash-val (format "#%d" number)
-				 (elmo-msgdb-get-mark-hashtb msgdb))))
+  (let ((elem (gethash (format "#%d" number)
+		       (elmo-msgdb-get-mark-hashtb msgdb))))
     (if elem
 	(if mark
 	    ;; Set mark of the elem
@@ -222,8 +221,8 @@ if MARK is nil, mark is removed."
 	  (elmo-msgdb-set-mark-alist
 	   msgdb
 	   (delq elem (elmo-msgdb-get-mark-alist msgdb)))
-	  (elmo-clear-hash-val (format "#%d" number)
-			       (elmo-msgdb-get-mark-hashtb msgdb)))
+	  (remhash (format "#%d" number)
+		   (elmo-msgdb-get-mark-hashtb msgdb)))
       (when mark
 	;; Append new element.
 	(elmo-msgdb-set-mark-alist
@@ -231,8 +230,8 @@ if MARK is nil, mark is removed."
 	 (nconc
 	  (elmo-msgdb-get-mark-alist msgdb)
 	  (list (setq elem (list number mark)))))
-	(elmo-set-hash-val (format "#%d" number) elem
-			   (elmo-msgdb-get-mark-hashtb msgdb))))
+	(puthash (format "#%d" number) elem
+		 (elmo-msgdb-get-mark-hashtb msgdb))))
     (modb-generic-set-flag-modified-internal msgdb t)
     ;; return value.
     t))
@@ -252,15 +251,15 @@ Return a list of message numbers which have duplicated message-ids."
 	   duplicates)
       (while overview
 	;; key is message-id
-	(if (elmo-get-hash-val (caar overview) ehash) ; duplicated.
+	(if (gethash (caar overview) ehash) ; duplicated.
 	    (setq duplicates (cons
 			      (elmo-msgdb-overview-entity-get-number-internal
 			       (car overview))
 			      duplicates)))
 	(if (caar overview)
-	    (elmo-set-hash-val (caar overview) (car overview) ehash))
+	    (puthash (caar overview) (car overview) ehash))
 	;; key is number
-	(elmo-set-hash-val
+	(puthash
 	 (format "#%d"
 		 (elmo-msgdb-overview-entity-get-number-internal
 		  (car overview)))
@@ -268,7 +267,7 @@ Return a list of message numbers which have duplicated message-ids."
 	(setq overview (cdr overview)))
       (while mark-alist
 	;; key is number
-	(elmo-set-hash-val
+	(puthash
 	 (format "#%d" (car (car mark-alist)))
 	 (car mark-alist) mhash)
 	(setq mark-alist (cdr mark-alist)))
@@ -283,13 +282,13 @@ Return a list of message numbers which have duplicated message-ids."
     (when (and entity ehash)
       (and (setq number (elmo-msgdb-overview-entity-get-number-internal
 			 entity))
-	   (elmo-clear-hash-val (format "#%d" number) ehash))
+	   (remhash (format "#%d" number) ehash))
       (and (car entity) ;; message-id
-	   (elmo-clear-hash-val (car entity) ehash)))
+	   (remhash (car entity) ehash)))
     (when (and entity mhash)
       (and (setq number (elmo-msgdb-overview-entity-get-number-internal
 			 entity))
-	   (elmo-clear-hash-val (format "#%d" number) mhash)))))
+	   (remhash (format "#%d" number) mhash)))))
 
 ;;; Implement
 ;;
@@ -578,7 +577,7 @@ Return a list of message numbers which have duplicated message-ids."
 
 (luna-define-method elmo-msgdb-message-entity ((msgdb modb-legacy) key)
   (when key
-    (elmo-get-hash-val
+    (gethash
      (cond ((stringp key) key)
 	   ((numberp key) (format "#%d" key)))
      (elmo-msgdb-get-entity-hashtb msgdb))))

@@ -263,12 +263,12 @@ If each field is t, function is set as default converter."
 			(setq elmo-msgdb-decoded-cache-hashtb
 			      (elmo-make-hash 2048))))
 	    decoded)
-	(or (elmo-get-hash-val string hashtb)
+	(or (gethash string hashtb)
 	    (prog1
 		(setq decoded
 		      (mime-charset-decode-string
 		       string elmo-mime-charset))
-	      (elmo-set-hash-val string decoded hashtb))))
+	      (puthash string decoded hashtb))))
     (mime-charset-decode-string string elmo-mime-charset)))
 
 (defun modb-entity-string-decoder (_field value)

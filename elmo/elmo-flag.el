@@ -103,13 +103,11 @@
 (defun elmo-flag-folder-set-minfo (folder minfo)
   (let ((hash (elmo-make-hash (length minfo))))
     (dolist (elem minfo)
-      (elmo-set-hash-val (nth 1 elem) elem hash)
-      (elmo-set-hash-val (concat "#" (number-to-string (nth 2 elem)))
-			 elem hash)
+      (puthash (nth 1 elem) elem hash)
+      (puthash (concat "#" (number-to-string (nth 2 elem))) elem hash)
       (dolist (pair (car elem))
-	(elmo-set-hash-val (concat (number-to-string (cdr pair))
-				   ":" (car pair))
-			   elem hash)))
+	(puthash (concat (number-to-string (cdr pair)) ":" (car pair))
+		 elem hash)))
     (elmo-flag-folder-set-minfo-internal folder minfo)
     (elmo-flag-folder-set-minfo-hash-internal folder hash)))
 
@@ -143,16 +141,13 @@
 
 (defun elmo-flag-folder-delete-message (folder number
 					       &optional keep-referrer)
-  (let* ((elem (elmo-get-hash-val (concat "#" (number-to-string number))
-				  (elmo-flag-folder-minfo-hash-internal
-				   folder)))
+  (let* ((elem (gethash (concat "#" (number-to-string number))
+			(elmo-flag-folder-minfo-hash-internal folder)))
 	 target-folder)
     (dolist (pair (car elem))
       (when (and (car pair) (cdr pair))
-	(elmo-clear-hash-val (concat (number-to-string (cdr pair)) ":"
-				     (car pair))
-			     (elmo-flag-folder-minfo-hash-internal
-			      folder))
+	(remhash (concat (number-to-string (cdr pair)) ":" (car pair))
+		 (elmo-flag-folder-minfo-hash-internal folder))
 	(unless keep-referrer
 	  (setq target-folder (elmo-get-folder (car pair)))
 	  (elmo-folder-open target-folder 'load-msgdb)
@@ -161,11 +156,9 @@
 	  (elmo-message-unset-flag target-folder (cdr pair)
 				   (elmo-flag-folder-flag-internal folder))
 	  (elmo-folder-close target-folder))))
-    (elmo-clear-hash-val (concat "#" (number-to-string number))
-			 (elmo-flag-folder-minfo-hash-internal
-			  folder))
-    (elmo-clear-hash-val (nth 1 elem) (elmo-flag-folder-minfo-hash-internal
-				       folder))
+    (remhash (concat "#" (number-to-string number))
+	     (elmo-flag-folder-minfo-hash-internal folder))
+    (remhash (nth 1 elem) (elmo-flag-folder-minfo-hash-internal folder))
     (elmo-flag-folder-set-minfo-internal
      folder
      (delq elem (elmo-flag-folder-minfo-internal folder))))
@@ -236,9 +229,8 @@ Each element is a cons cell like following:
 FNAME is the name of the folder which the message is contained.
 NUMBER is the number of the message."
   (when (eq (elmo-folder-type-internal folder) 'flag)
-    (car (elmo-get-hash-val (concat "#" (number-to-string number))
-			    (elmo-flag-folder-minfo-hash-internal
-			     folder)))))
+    (car (gethash (concat "#" (number-to-string number))
+		  (elmo-flag-folder-minfo-hash-internal folder)))))
 
 ;;; Global-Flag API
 (defun elmo-global-flag-p (flag)
@@ -253,7 +245,7 @@ NUMBER is the number of the message."
 	folder matches)
     (while flag-list
       (setq folder (elmo-flag-get-folder (car flag-list)))
-      (when (elmo-get-hash-val
+      (when (gethash
 	     (concat (number-to-string number) ":" fname)
 	     (elmo-flag-folder-minfo-hash-internal folder))
 	(setq matches (cons (elmo-flag-folder-flag-internal folder)
@@ -295,7 +287,7 @@ NUMBER is the message number."
   (when message-id
     (let ((flag-folder (elmo-flag-get-folder flag))
 	  filename cache new-file new-number elem)
-      (if (setq elem (elmo-get-hash-val
+      (if (setq elem (gethash
 		      message-id
 		      (elmo-flag-folder-minfo-hash-internal
 		       flag-folder)))
@@ -307,12 +299,10 @@ NUMBER is the message number."
 		    (cons (cons (elmo-folder-name-internal folder)
 				number) (car elem)))
 	    (setq new-number (nth 2 elem))
-	    (elmo-set-hash-val (concat (number-to-string number)
-				       ":" (elmo-folder-name-internal
-					    folder))
-			       elem
-			       (elmo-flag-folder-minfo-hash-internal
-				flag-folder)))
+	    (puthash (concat (number-to-string number)
+			     ":" (elmo-folder-name-internal folder))
+		     elem
+		     (elmo-flag-folder-minfo-hash-internal flag-folder)))
 	;; Append new element.
 	(elmo-flag-folder-set-max-number-internal
 	 flag-folder
@@ -349,18 +339,14 @@ NUMBER is the message number."
 		      new-number))
 	  (elmo-flag-folder-minfo-internal flag-folder)))
 	(when (and folder number)
-	  (elmo-set-hash-val (concat (number-to-string number)
-				     ":" (elmo-folder-name-internal
-					  folder))
-			     elem
-			     (elmo-flag-folder-minfo-hash-internal
-			      flag-folder)))
-	(elmo-set-hash-val message-id elem
-			   (elmo-flag-folder-minfo-hash-internal
-			    flag-folder))
-	(elmo-set-hash-val (concat "#" (number-to-string new-number)) elem
-			   (elmo-flag-folder-minfo-hash-internal
-			    flag-folder)))
+	  (puthash (concat (number-to-string number)
+			   ":" (elmo-folder-name-internal folder))
+		   elem
+		   (elmo-flag-folder-minfo-hash-internal flag-folder)))
+	(puthash message-id elem
+		 (elmo-flag-folder-minfo-hash-internal flag-folder))
+	(puthash (concat "#" (number-to-string new-number)) elem
+		 (elmo-flag-folder-minfo-hash-internal flag-folder)))
       (elmo-folder-commit flag-folder)
       new-number)))
 
@@ -388,14 +374,13 @@ delete message without flagged in other folder."
       (when flag-folder
 	(setq key (concat (number-to-string number) ":"
 			  (elmo-folder-name-internal folder))
-	      elem (elmo-get-hash-val
+	      elem (gethash
 		    key
 		    (elmo-flag-folder-minfo-hash-internal flag-folder)))
 	(when elem
 	  (setcar elem (delete (cons (elmo-folder-name-internal folder)
 				     number) (car elem)))
-	  (elmo-clear-hash-val key (elmo-flag-folder-minfo-hash-internal
-				    flag-folder))
+	  (remhash key (elmo-flag-folder-minfo-hash-internal flag-folder))
 	  ;; Does not have any referrer, remove.
 	  (when (and delete-if-none
 		     (or (eq delete-if-none 'always)

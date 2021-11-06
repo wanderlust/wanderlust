@@ -104,10 +104,10 @@ If nil,  the old 'user' entry remains.")
        (setq wl-addrbook-hashtb (elmo-make-hash 1021))))
 
 (defsubst wl-addrbook-get-record-by-addr (addr &optional _alist)
-  (elmo-get-hash-val (downcase addr) (wl-addrbook-hashtb)))
+  (gethash (downcase addr) (wl-addrbook-hashtb)))
 
 (defsubst wl-addrbook-get-record-by-alias (alias &optional _alist)
-  (elmo-get-hash-val (format "#%s" (downcase alias)) (wl-addrbook-hashtb)))
+  (gethash (format "#%s" (downcase alias)) (wl-addrbook-hashtb)))
 
 (defun wl-addrbook-make-hashtb ()
   (let ((ht (wl-addrbook-hashtb))
@@ -118,13 +118,13 @@ If nil,  the old 'user' entry remains.")
 	    alist (cdr alist))
       ;; key is alias
       (if (car list)
-	  (elmo-set-hash-val (format "#%s" (downcase (car list))) list ht))
+	  (puthash (format "#%s" (downcase (car list))) list ht))
       (when (listp (setq addrs (nth 1 list)))
 	(while addrs
 	  (setq addr (car addrs)
 		addrs (cdr addrs))
 	  ;; key is address
-	  (elmo-set-hash-val (downcase addr) list ht))))))
+	  (puthash (downcase addr) list ht))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;

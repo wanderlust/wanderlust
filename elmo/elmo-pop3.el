@@ -497,9 +497,8 @@ until the login delay period has expired"))
 			 list))))
     (setq elmo-pop3-uidl-done t)
     (dolist (elt list (nreverse (mapcar 'cdr list)))
-      (elmo-set-hash-val (cdr elt) (car elt) elmo-pop3-uidl-number-hash)
-      (elmo-set-hash-val (concat "#" (car elt)) (cdr elt)
-			 elmo-pop3-number-uidl-hash))))
+      (puthash (cdr elt) (car elt) elmo-pop3-uidl-number-hash)
+      (puthash (concat "#" (car elt)) (cdr elt) elmo-pop3-number-uidl-hash))))
 
 (defun elmo-pop3-parse-list-response (string)
   (let (count alist)
@@ -514,9 +513,7 @@ until the login delay period has expired"))
 	  elmo-pop3-size-hash (elmo-make-hash (* count 2))
 	  elmo-pop3-list-done t)
     (dolist (elt alist count)
-      (elmo-set-hash-val (concat "#" (car elt))
-			 (cdr elt)
-			 elmo-pop3-size-hash))))
+      (puthash (concat "#" (car elt)) (cdr elt) elmo-pop3-size-hash))))
 
 (defun elmo-pop3-list-location (folder)
   (with-current-buffer (process-buffer
@@ -653,16 +650,14 @@ until the login delay period has expired"))
        flag-table))))
 
 (defun elmo-pop3-uidl-to-number (uidl)
-  (string-to-number (elmo-get-hash-val uidl
-				       elmo-pop3-uidl-number-hash)))
+  (string-to-number (gethash uidl elmo-pop3-uidl-number-hash)))
 
 (defun elmo-pop3-number-to-uidl (number)
-  (elmo-get-hash-val (format "#%d" number)
-		     elmo-pop3-number-uidl-hash))
+  (gethash (format "#%d" number) elmo-pop3-number-uidl-hash))
 
 (defun elmo-pop3-number-to-size (number)
   (string-to-number
-   (elmo-get-hash-val (format "#%d" number) elmo-pop3-size-hash)))
+   (gethash (format "#%d" number) elmo-pop3-size-hash)))
 
 (defun elmo-pop3-msgdb-create-by-header (folder process numlist
 						flag-table)

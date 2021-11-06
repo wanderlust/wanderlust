@@ -173,27 +173,27 @@
 	value)
     (when (file-exists-p seen-file)
       (dolist (msgid (elmo-object-load seen-file))
-	(elmo-set-hash-val msgid '(read) table))
+	(puthash msgid '(read) table))
       (delete-file seen-file))
     (dolist (pair (elmo-object-load
 		   (expand-file-name elmo-flag-table-filename dir)))
       (setq value (cdr pair))
-      (elmo-set-hash-val (car pair)
-			 (cond ((consp value)
-				value)
-			       ;; Following cases for backward compatibility.
-			       (value
-				(list value))
-			       (t
-				'(unread)))
-			 table))
+      (puthash (car pair)
+	       (cond ((consp value)
+		      value)
+		     ;; Following cases for backward compatibility.
+		     (value
+		      (list value))
+		     (t
+		      '(unread)))
+	       table))
     table))
 
 (defun elmo-flag-table-set (flag-table msg-id flags)
-  (elmo-set-hash-val msg-id (or flags '(read)) flag-table))
+  (puthash msg-id (or flags '(read)) flag-table))
 
 (defun elmo-flag-table-get (flag-table msg-id)
-  (let ((flags (elmo-get-hash-val msg-id flag-table)))
+  (let ((flags (gethash msg-id flag-table)))
     (append
      (and (elmo-file-cache-exists-p msg-id)
 	  '(cached))
@@ -208,9 +208,9 @@
    (expand-file-name elmo-flag-table-filename dir)
    (if flag-table
        (let (list)
-	 (elmo-map-hash (lambda (k v)
-			  (push (cons k v) list))
-			flag-table)
+	 (maphash (lambda (k v)
+		    (push (cons k v) list))
+		  flag-table)
 	 list))))
 ;;;
 ;; persistent mark handling

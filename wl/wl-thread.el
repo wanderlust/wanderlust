@@ -67,12 +67,12 @@
   (list num (or opened wl-thread-insert-opened) nil parent linked))
 
 (defsubst wl-thread-set-entity (entity)
-  (elmo-set-hash-val (format "#%d" (wl-thread-entity-get-number entity))
-		     entity wl-thread-entity-hashtb))
+  (puthash (format "#%d" (wl-thread-entity-get-number entity))
+	   entity wl-thread-entity-hashtb))
 
 (defsubst wl-thread-get-entity (num)
   (and num
-       (elmo-get-hash-val (format "#%d" num) wl-thread-entity-hashtb)))
+       (gethash (format "#%d" num) wl-thread-entity-hashtb)))
 
 (defsubst wl-thread-entity-set-parent (entity parent)
   (setcar (cl-cdddr entity) parent)

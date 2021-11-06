@@ -764,7 +764,7 @@ return value is diffs '(-new -unread -all)."
 (defun wl-fldmgr-add-completion-all-completions (string)
   (let ((table
 	 (catch 'found
-	   (elmo-map-hash
+	   (maphash
 	    (lambda (k v)
 	      (if (string-match k string)
 		  (throw 'found v)))
@@ -790,7 +790,7 @@ return value is diffs '(-new -unread -all)."
 		     (wl-folder-get-elmo-folder pattern))))
     (setq pattern (concat "^" (regexp-quote pattern)))
     (unless (elmo-has-hash-val pattern wl-fldmgr-add-completion-hashtb)
-      (elmo-set-hash-val pattern wl-fldmgr-add-completion-hashtb table))
+      (puthash pattern wl-fldmgr-add-completion-hashtb table))
     table))
 
 (defun wl-fldmgr-add-completion-subr (string predicate flag)

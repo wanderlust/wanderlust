@@ -96,8 +96,7 @@
   (modb-generic-set-flag-modified-internal modb t))
 
 (defsubst modb-standard-message-flags (modb number)
-  (cdr (elmo-get-hash-val (modb-standard-key number)
-			  (modb-standard-flag-map modb))))
+  (cdr (gethash (modb-standard-key number) (modb-standard-flag-map modb))))
 
 (defsubst modb-standard-match-flags (check-flags flags)
   (catch 'done
@@ -124,8 +123,8 @@
 	 numbers info)
     (dolist (pair alist)
       (setq info (cons 'autoload pair))
-      (elmo-set-hash-val (modb-standard-key (car pair)) info table)
-      (elmo-set-hash-val (cdr pair) info table)
+      (puthash (modb-standard-key (car pair)) info table)
+      (puthash (cdr pair) info table)
       (setq numbers (cons (car pair) numbers)))
     (modb-standard-set-number-list-internal modb (nreverse numbers))))
 
@@ -133,7 +132,7 @@
   (let ((table (modb-standard-entity-map modb))
 	entity alist)
     (dolist (number (modb-standard-number-list-internal modb))
-      (setq entity (elmo-get-hash-val (modb-standard-key number) table))
+      (setq entity (gethash (modb-standard-key number) table))
       (setq alist (cons (cons number (modb-standard-entity-id entity))
 			alist)))
     (elmo-object-save
@@ -145,7 +144,7 @@
     (dolist (info (elmo-object-load
 		   (expand-file-name modb-standard-flag-filename path)))
       (modb-standard-countup-flags modb (cdr info))
-      (elmo-set-hash-val (modb-standard-key (car info)) info table))))
+      (puthash (modb-standard-key (car info)) info table))))
 
 (defun modb-standard-save-flag (modb path)
   (let (table flist info)
@@ -169,14 +168,14 @@
 
 (defsubst modb-standard-loaded-message-id (msgdb number)
   "Get message-id for autoloaded entity."
-  (let ((ret (elmo-get-hash-val
+  (let ((ret (gethash
 	      (modb-standard-key number)
 	      (modb-standard-entity-map msgdb))))
     (cond
      ((null ret)
       ;; Garbage entity.
-      (elmo-clear-hash-val (modb-standard-key number)
-			   (modb-standard-entity-map-internal msgdb))
+      (remhash (modb-standard-key number)
+	       (modb-standard-entity-map-internal msgdb))
       nil)				; return nil.
      ((eq (car-safe ret) 'autoload)
       (cdr (cdr ret)))			; message-id.
@@ -204,8 +203,8 @@
 	       (when msgid
 		 (elmo-msgdb-message-entity-set-field
 		  handler entity 'message-id msgid)
-		 (elmo-set-hash-val (modb-standard-key number) entity table)
-		 (elmo-set-hash-val msgid entity table)))))
+		 (puthash (modb-standard-key number) entity table)
+		 (puthash msgid entity table)))))
 	  (t
 	   ;; legacy format
 	   (dolist (entity objects)
@@ -215,8 +214,8 @@
 		   msgid (modb-standard-loaded-message-id modb number))
 	     (when msgid
 	       (setcar entity msgid)
-	       (elmo-set-hash-val (modb-standard-key number) entity table)
-	       (elmo-set-hash-val msgid entity table)))))))
+	       (puthash (modb-standard-key number) entity table)
+	       (puthash msgid entity table)))))))
 
 (defsubst modb-standard-save-entity-1 (modb path &optional section)
   (let ((filename (expand-file-name
@@ -313,17 +312,17 @@
 	    (dolist (number numbers)
 	      (setq entity (elmo-msgdb-message-entity msgdb-append number)
 		    msg-id (modb-standard-entity-id entity))
-	      (if (elmo-get-hash-val msg-id table)
+	      (if (gethash msg-id table)
 		  (setq duplicates (cons number duplicates))
-		(elmo-set-hash-val msg-id entity table))
-	      (elmo-set-hash-val (modb-standard-key number)
-				 entity
-				 table)))
+		(puthash msg-id entity table))
+	      (puthash (modb-standard-key number)
+		       entity
+		       table)))
 	  ;; flag-map
 	  (let ((table (modb-standard-flag-map msgdb)))
-	    (elmo-map-hash (lambda (k v)
-	                     (elmo-set-hash-val k v table))
-	                   (modb-standard-flag-map msgdb-append)))
+	    (maphash (lambda (k v)
+	               (puthash k v table))
+	             (modb-standard-flag-map msgdb-append)))
 	  ;; flag-count
 	  (dolist (pair (modb-standard-flag-count-internal msgdb-append))
 	    (modb-standard-countup-flags msgdb (list (car pair)) (cdr pair)))
@@ -364,9 +363,9 @@
 	 (setq diff (elmo-list-diff-nonsortable new-flags cur-flags))
 	 (modb-standard-countup-flags msgdb (car diff))
 	 (modb-standard-countup-flags msgdb (cadr diff) -1)
-	 (elmo-set-hash-val (modb-standard-key number)
-			    (cons number new-flags)
-			    (modb-standard-flag-map msgdb))
+	 (puthash (modb-standard-key number)
+		  (cons number new-flags)
+		  (modb-standard-flag-map msgdb))
 	 (modb-standard-set-flag-modified msgdb number))))))
 
 (luna-define-method elmo-msgdb-unset-flag ((msgdb modb-standard)
@@ -380,8 +379,7 @@
      (modb-standard-countup-flags msgdb
 				  (modb-standard-message-flags msgdb number)
 				  -1)
-     (elmo-clear-hash-val (modb-standard-key number)
-			  (modb-standard-flag-map msgdb)))
+     (remhash (modb-standard-key number) (modb-standard-flag-map msgdb)))
     (t
      (let ((cur-flags (modb-standard-message-flags msgdb number))
 	   (inhibit-quit t)
@@ -391,7 +389,7 @@
 	 (setq diff (elmo-list-diff-nonsortable new-flags cur-flags))
 	 (modb-standard-countup-flags msgdb (car diff))
 	 (modb-standard-countup-flags msgdb (cadr diff) -1)
-	 (elmo-set-hash-val (modb-standard-key number)
+	 (puthash (modb-standard-key number)
 			    (cons number new-flags)
 			    (modb-standard-flag-map msgdb))
 	 (modb-standard-set-flag-modified msgdb number))
@@ -495,14 +493,14 @@
 		(list number)))
 	;; entity-map
 	(let ((table (modb-standard-entity-map msgdb)))
-	  (setq duplicate (elmo-get-hash-val msg-id table))
-	  (elmo-set-hash-val (modb-standard-key number) entity table)
-	  (elmo-set-hash-val msg-id entity table))
+	  (setq duplicate (gethash msg-id table))
+	  (puthash (modb-standard-key number) entity table)
+	  (puthash msg-id entity table))
 	;; modification flags
 	(modb-standard-set-message-modified msgdb number)
 	;; flag-map
 	(when flags
-	  (elmo-set-hash-val
+	  (puthash
 	   (modb-standard-key number)
 	   (cons number flags)
 	   (modb-standard-flag-map msgdb))
@@ -527,20 +525,20 @@
 	key entity)
     (dolist (number numbers)
       (setq key (modb-standard-key number)
-	    entity (elmo-get-hash-val key entity-map))
+	    entity (gethash key entity-map))
       (when entity
 	;; number-list
 	(setq number-list (delq number number-list))
 	;; entity-map
-	(elmo-clear-hash-val key entity-map)
-	(elmo-clear-hash-val (modb-standard-entity-id entity) entity-map)
+	(remhash key entity-map)
+	(remhash (modb-standard-entity-id entity) entity-map)
 	;; flag-count (must be BEFORE flag-map)
 	(modb-standard-countup-flags
 	 msgdb
 	 (modb-standard-message-flags msgdb number)
 	 -1)
 	;; flag-map
-	(elmo-clear-hash-val key flag-map)
+	(remhash key flag-map)
 	(modb-standard-set-message-modified msgdb number)
 	(modb-standard-set-flag-modified msgdb number)))
     (modb-standard-set-number-list-internal msgdb number-list)
@@ -561,9 +559,7 @@
     msgdb))
 
 (defun modb-standard-message-entity (msgdb key load)
-  (let ((ret (elmo-get-hash-val
-	      key
-	      (modb-standard-entity-map msgdb)))
+  (let ((ret (gethash key (modb-standard-entity-map msgdb)))
 	(inhibit-quit t))
     (if (eq 'autoload (car-safe ret))
 	(when (and load modb-standard-divide-number)
@@ -576,9 +572,7 @@
 
 (luna-define-method elmo-msgdb-message-number ((msgdb modb-standard)
 					       message-id)
-  (let ((ret (elmo-get-hash-val
-	      message-id
-	      (modb-standard-entity-map msgdb))))
+  (let ((ret (gethash message-id (modb-standard-entity-map msgdb))))
     (if (eq 'autoload (car-safe ret))
 	;; Not loaded yet but can return number.
 	(nth 1 ret)
@@ -586,7 +580,7 @@
 
 (luna-define-method elmo-msgdb-message-field ((msgdb modb-standard)
 					      number field &optional type)
-  (let ((ret (elmo-get-hash-val
+  (let ((ret (gethash
 	      (modb-standard-key number)
 	      (modb-standard-entity-map msgdb))))
     (if (and (eq 'autoload (car-safe ret)) (eq field 'message-id))

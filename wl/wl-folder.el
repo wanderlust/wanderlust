@@ -251,13 +251,13 @@
 
 (defsubst wl-folder-get-folder-name-by-id (entity-id &optional hashtb)
   (and (numberp entity-id)
-       (elmo-get-hash-val (format "#%d" entity-id)
+       (gethash (format "#%d" entity-id)
 			  (or hashtb wl-folder-entity-id-name-hashtb))))
 
 (defsubst wl-folder-set-id-name (entity-id entity &optional hashtb)
   (and (numberp entity-id)
-       (elmo-set-hash-val (format "#%d" entity-id)
-			  entity (or hashtb wl-folder-entity-id-name-hashtb))))
+       (puthash (format "#%d" entity-id)
+		entity (or hashtb wl-folder-entity-id-name-hashtb))))
 
 (defmacro wl-folder-get-entity-id (entity)
   `(get-text-property 0 'wl-folder-entity-id ,entity))
@@ -276,16 +276,16 @@
   `(elmo-clear-hash-val ,entity (or ,hashtb wl-folder-entity-hashtb)))
 
 (defmacro wl-folder-get-entity-info (entity &optional hashtb)
-  `(elmo-get-hash-val ,entity (or ,hashtb wl-folder-entity-hashtb)))
+  `(gethash ,entity (or ,hashtb wl-folder-entity-hashtb)))
 
 (defsubst wl-folder-set-entity-info (entity value &optional hashtb)
   (let* ((hashtb (or hashtb wl-folder-entity-hashtb))
 	 (info (wl-folder-get-entity-info entity hashtb)))
-    (elmo-set-hash-val (substring-no-properties entity)
-		       (if (< (length value) 4)
-			   (append value (list (nth 3 info)))
-			 value)
-		       hashtb)))
+    (puthash (substring-no-properties entity)
+	     (if (< (length value) 4)
+		 (append value (list (nth 3 info)))
+	       value)
+	     hashtb)))
 
 (defun wl-folder-persistent-p (folder)
   (or (and (wl-folder-search-entity-by-name folder wl-folder-entity
@@ -308,14 +308,13 @@
 (defmacro wl-folder-elmo-folder-cache-get (name &optional hashtb)
   "Returns a elmo folder structure associated with NAME from HASHTB.
 Default HASHTB is `wl-folder-elmo-folder-hashtb'."
-  `(elmo-get-hash-val ,name
-		      (or ,hashtb wl-folder-elmo-folder-hashtb)))
+  `(gethash ,name (or ,hashtb wl-folder-elmo-folder-hashtb)))
 
 (defmacro wl-folder-elmo-folder-cache-put (name folder &optional hashtb)
   "Get folder elmo folder structure on HASHTB for folder with NAME.
 Default HASHTB is `wl-folder-elmo-folder-hashtb'."
-  `(elmo-set-hash-val ,name ,folder
-		      (or ,hashtb wl-folder-elmo-folder-hashtb)))
+  `(puthash ,name ,folder
+	    (or ,hashtb wl-folder-elmo-folder-hashtb)))
 
 (require 'wl-draft)
 (defun wl-draft-get-folder ()
@@ -2071,7 +2070,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
 
 (defun wl-folder-get-entity-with-petname ()
   (let ((alist wl-folder-petname-alist)
-	(hashtb (elmo-copy-hash wl-folder-entity-hashtb)))
+	(hashtb (copy-hash-table wl-folder-entity-hashtb)))
     (while alist
       (wl-folder-set-entity-info (cdar alist) nil hashtb)
       (setq alist (cdr alist)))
