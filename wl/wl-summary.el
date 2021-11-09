@@ -1142,7 +1142,7 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
 	(setq numbers (wl-summary-sort-messages numbers sort-by reverse))
 	(message "%s by %s...done" action sort-by)))
     (setq num (length numbers))
-    (setq wl-thread-entity-hashtb (elmo-make-hash (* num 2))
+    (setq wl-thread-entity-hashtb (elmo-make-hash (* num 2) #'eq)
 	  wl-thread-entity-list nil
 	  wl-thread-entities nil
 	  wl-summary-scored nil
@@ -1416,7 +1416,8 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
   (setq wl-thread-entity-hashtb (elmo-make-hash
 				 (* (elmo-folder-length
 				     wl-summary-buffer-elmo-folder)
-				    2)))
+				    2)
+				 #'eq))
   (setq wl-thread-entity-list nil)
   (setq wl-thread-entities nil)
   (setq wl-summary-buffer-number-list nil)
@@ -2661,13 +2662,10 @@ If ARG, without confirm."
 	   (funcall wl-summary-subject-filter-function subject2)))
 
 (defmacro wl-summary-put-alike (alike count)
-  `(puthash (format "#%d" ,count)
-	    ,alike
-	    wl-summary-alike-hashtb))
+  `(puthash ,count ,alike wl-summary-alike-hashtb))
 
 (defsubst wl-summary-get-alike ()
-  (gethash (format "#%d" (wl-count-lines))
-		     wl-summary-alike-hashtb))
+  (gethash (wl-count-lines) wl-summary-alike-hashtb))
 
 (defun wl-summary-insert-headers (folder func &optional mime-decode)
   (let ((numbers (elmo-folder-list-messages folder 'visible t))
@@ -2675,7 +2673,8 @@ If ARG, without confirm."
 	ov this last alike)
     (buffer-disable-undo (current-buffer))
     (make-local-variable 'wl-summary-alike-hashtb)
-    (setq wl-summary-alike-hashtb (elmo-make-hash (* (length numbers) 2)))
+    (setq wl-summary-alike-hashtb
+	  (elmo-make-hash (* (length numbers) 2) #'eq))
     (when mime-decode
       (set-buffer-multibyte t))
     (mapc (lambda (number)
@@ -2759,7 +2758,7 @@ If ARG, without confirm."
       (if (and wl-thread-saved-entity-hashtb-internal
 	       (setq thread-entity
 		     (gethash
-		      (format "#%d" (elmo-message-entity-number entity))
+		      (elmo-message-entity-number entity)
 		      wl-thread-saved-entity-hashtb-internal)))
 	  (setq parent-entity
 		(elmo-message-entity

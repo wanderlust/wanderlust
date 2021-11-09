@@ -67,12 +67,11 @@
   (list num (or opened wl-thread-insert-opened) nil parent linked))
 
 (defsubst wl-thread-set-entity (entity)
-  (puthash (format "#%d" (wl-thread-entity-get-number entity))
+  (puthash (wl-thread-entity-get-number entity)
 	   entity wl-thread-entity-hashtb))
 
 (defsubst wl-thread-get-entity (num)
-  (and num
-       (gethash (format "#%d" num) wl-thread-entity-hashtb)))
+  (gethash num wl-thread-entity-hashtb))
 
 (defsubst wl-thread-entity-set-parent (entity parent)
   (setcar (cl-cdddr entity) parent)
@@ -182,7 +181,8 @@
 			     (elmo-folder-msgdb-path fld))))
     (message "Resuming thread structure...")
     ;; set obarray value.
-    (setq wl-thread-entity-hashtb (elmo-make-hash (* (length entities) 2)))
+    (setq wl-thread-entity-hashtb
+	  (elmo-make-hash (* (length entities) 2) #'eq))
     ;; set buffer local variables.
     (setq wl-thread-entities entities)
     (setq wl-thread-entity-list top-list)
@@ -486,8 +486,7 @@ ENTITY is returned."
 	;; delete entity.
 	(setq wl-thread-entities (delq entity wl-thread-entities))
 	;; free symbol.
-	(elmo-clear-hash-val (format "#%d" msg)
-			     wl-thread-entity-hashtb)))))
+	(elmo-clear-hash-val msg wl-thread-entity-hashtb)))))
 
 (defun wl-thread-get-exist-children (msg &optional include-self)
   (let ((msgs (list msg))

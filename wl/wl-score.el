@@ -556,13 +556,10 @@ Set `wl-score-cache' nil."
     nil))
 
 (defmacro wl-score-put-alike (alike)
-  `(puthash (format "#%d" (wl-count-lines))
-	    ,alike
-	    wl-score-alike-hashtb))
+  `(puthash (wl-count-lines) ,alike wl-score-alike-hashtb))
 
 (defsubst wl-score-get-alike ()
-  (gethash (format "#%d" (wl-count-lines))
-	   wl-score-alike-hashtb))
+  (gethash (wl-count-lines) wl-score-alike-hashtb))
 
 (defun wl-score-insert-header (header messages &optional extra-header)
   (let ((mime-decode (nth 3 (assoc header wl-score-header-index)))
@@ -578,7 +575,8 @@ Set `wl-score-cache' nil."
       (wl-append wl-score-header-buffer-list (list buf))
       (buffer-disable-undo (current-buffer))
       (make-local-variable 'wl-score-alike-hashtb)
-      (setq wl-score-alike-hashtb (elmo-make-hash (* (length messages) 2)))
+      (setq wl-score-alike-hashtb
+	    (elmo-make-hash (* (length messages) 2) #'eq))
       (when mime-decode
 	(set-buffer-multibyte t))
       (let (art last this alike)
