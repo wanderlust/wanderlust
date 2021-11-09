@@ -251,13 +251,12 @@
 
 (defsubst wl-folder-get-folder-name-by-id (entity-id &optional hashtb)
   (and (numberp entity-id)
-       (gethash (format "#%d" entity-id)
-			  (or hashtb wl-folder-entity-id-name-hashtb))))
+       (gethash entity-id (or hashtb wl-folder-entity-id-name-hashtb))))
 
 (defsubst wl-folder-set-id-name (entity-id entity &optional hashtb)
   (and (numberp entity-id)
-       (puthash (format "#%d" entity-id)
-		entity (or hashtb wl-folder-entity-id-name-hashtb))))
+       (puthash entity-id entity
+		(or hashtb wl-folder-entity-id-name-hashtb))))
 
 (defmacro wl-folder-get-entity-id (entity)
   `(get-text-property 0 'wl-folder-entity-id ,entity))
@@ -1299,7 +1298,7 @@ If current line is group folder, all subfolders are marked."
 (defun wl-folder-entity-assign-id (entity &optional hashtb on-noid)
   (let ((hashtb (or hashtb
 		    (setq wl-folder-entity-id-name-hashtb
-			  (elmo-make-hash wl-folder-entity-id))))
+			  (elmo-make-hash wl-folder-entity-id #'eq))))
 	(entities (list entity))
 	entity-stack)
     (while entities

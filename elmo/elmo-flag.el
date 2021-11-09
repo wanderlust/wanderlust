@@ -101,10 +101,10 @@
 	folder)))
 
 (defun elmo-flag-folder-set-minfo (folder minfo)
-  (let ((hash (elmo-make-hash (length minfo))))
+  (let ((hash (elmo-make-hash (* (length minfo) 3))))
     (dolist (elem minfo)
       (puthash (nth 1 elem) elem hash)
-      (puthash (concat "#" (number-to-string (nth 2 elem))) elem hash)
+      (puthash (nth 2 elem) elem hash)
       (dolist (pair (car elem))
 	(puthash (concat (number-to-string (cdr pair)) ":" (car pair))
 		 elem hash)))
@@ -141,7 +141,7 @@
 
 (defun elmo-flag-folder-delete-message (folder number
 					       &optional keep-referrer)
-  (let* ((elem (gethash (concat "#" (number-to-string number))
+  (let* ((elem (gethash number
 			(elmo-flag-folder-minfo-hash-internal folder)))
 	 target-folder)
     (dolist (pair (car elem))
@@ -156,8 +156,7 @@
 	  (elmo-message-unset-flag target-folder (cdr pair)
 				   (elmo-flag-folder-flag-internal folder))
 	  (elmo-folder-close target-folder))))
-    (remhash (concat "#" (number-to-string number))
-	     (elmo-flag-folder-minfo-hash-internal folder))
+    (remhash number (elmo-flag-folder-minfo-hash-internal folder))
     (remhash (nth 1 elem) (elmo-flag-folder-minfo-hash-internal folder))
     (elmo-flag-folder-set-minfo-internal
      folder
@@ -229,8 +228,7 @@ Each element is a cons cell like following:
 FNAME is the name of the folder which the message is contained.
 NUMBER is the number of the message."
   (when (eq (elmo-folder-type-internal folder) 'flag)
-    (car (gethash (concat "#" (number-to-string number))
-		  (elmo-flag-folder-minfo-hash-internal folder)))))
+    (car (gethash number (elmo-flag-folder-minfo-hash-internal folder)))))
 
 ;;; Global-Flag API
 (defun elmo-global-flag-p (flag)
@@ -345,7 +343,7 @@ NUMBER is the message number."
 		   (elmo-flag-folder-minfo-hash-internal flag-folder)))
 	(puthash message-id elem
 		 (elmo-flag-folder-minfo-hash-internal flag-folder))
-	(puthash (concat "#" (number-to-string new-number)) elem
+	(puthash new-number elem
 		 (elmo-flag-folder-minfo-hash-internal flag-folder)))
       (elmo-folder-commit flag-folder)
       new-number)))

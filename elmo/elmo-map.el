@@ -59,7 +59,7 @@
 
 
 (defmacro elmo-location-map-key (number)
-  `(concat "#" (number-to-string ,number)))
+  `(identity ,number))
 
 (defun elmo-location-map-load (location-map directory)
   (elmo-location-map-setup
@@ -73,7 +73,7 @@
 (defun elmo-location-map-setup (location-map &optional locations)
   "Setup internal data of LOCATION-MAP by LOCATIONS.
 Return a location alist."
-  (let ((hash (elmo-make-hash (length locations)))
+  (let ((hash (elmo-make-hash (* (length locations) 2)))
 	(max-number 0))
     ;; Set number-max and hashtables.
     (dolist (pair locations)
@@ -94,7 +94,7 @@ Return a location alist."
   "Update location alist in LOCATION-MAP by LOCATIONS.
 Return new location alist."
   (let ((old-hash (elmo-location-map-hash location-map))
-	(new-hash (elmo-make-hash (length locations)))
+	(new-hash (elmo-make-hash (* (length locations) 2)))
 	(number (elmo-location-map-max-number location-map))
 	new-alist)
     (setq new-alist
