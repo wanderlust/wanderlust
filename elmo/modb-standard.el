@@ -62,7 +62,7 @@
 
 ;; for internal use only
 (defsubst modb-standard-key (number)
-  (concat "#" (number-to-string number)))
+  number)
 
 (defsubst modb-standard-entity-id (entity)
   (if (eq 'autoload (car-safe entity))
@@ -81,7 +81,7 @@
   (or (modb-standard-flag-map-internal modb)
       (modb-standard-set-flag-map-internal
        modb
-       (elmo-make-hash (elmo-msgdb-length modb)))))
+       (elmo-make-hash (elmo-msgdb-length modb) #'eq))))
 
 (defsubst modb-standard-set-message-modified (modb number)
   (if modb-standard-divide-number
