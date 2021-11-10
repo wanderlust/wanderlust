@@ -789,7 +789,7 @@ return value is diffs '(-new -unread -all)."
 	      table (elmo-folder-list-subfolders
 		     (wl-folder-get-elmo-folder pattern))))
     (setq pattern (concat "^" (regexp-quote pattern)))
-    (unless (elmo-has-hash-val pattern wl-fldmgr-add-completion-hashtb)
+    (unless (gethash pattern wl-fldmgr-add-completion-hashtb)
       (puthash pattern wl-fldmgr-add-completion-hashtb table))
     table))
 
