@@ -58,9 +58,6 @@
   `(luna-set-slot-value ,entity 'max-number ,value))
 
 
-(defmacro elmo-location-map-key (number)
-  `(identity ,number))
-
 (defun elmo-location-map-load (location-map directory)
   (elmo-location-map-setup
    location-map
@@ -80,7 +77,7 @@ Return a location alist."
       (setq max-number (max max-number (car pair)))
       (when (cdr pair)
 	(puthash (cdr pair) pair hash)
-	(puthash (elmo-location-map-key (car pair)) pair hash)))
+	(puthash (car pair) pair hash)))
     (let ((inhibit-quit t))
       (elmo-location-map-set-max-number location-map max-number)
       (elmo-location-map-set-hash location-map hash)
@@ -102,7 +99,7 @@ Return new location alist."
 	   (lambda (location)
 	     (let ((entry (or (gethash location old-hash)
 			      (cons (setq number (1+ number)) location))))
-	       (puthash (elmo-location-map-key (car entry)) entry new-hash)
+	       (puthash (car entry) entry new-hash)
 	       (puthash location entry new-hash)
 	       entry))
 	   locations))
@@ -115,13 +112,12 @@ Return new location alist."
   (let ((alist (elmo-location-map-alist location-map))
 	(hash (elmo-location-map-hash location-map)))
     (dolist (number numbers)
-      (let* ((key (elmo-location-map-key number))
-	     (entry (gethash key hash))
-	     (inhibit-quit t))
+      (let ((entry (gethash number hash))
+	    (inhibit-quit t))
 	(elmo-location-map-set-alist
 	 location-map
 	 (setq alist (delq entry alist)))
-	(remhash key hash)
+	(remhash number hash)
 	(remhash (cdr entry) hash)))))
 
 (defun elmo-map-message-number (location-map location)
@@ -132,16 +128,12 @@ Return new location alist."
 
 (defun elmo-map-message-location (location-map number)
   "Return location of the message in the MAPPER with NUMBER."
-  (cdr (gethash
-	(elmo-location-map-key number)
-	(elmo-location-map-hash location-map))))
+  (cdr (gethash number (elmo-location-map-hash location-map))))
 
 (defun elmo-map-numbers-to-locations (location-map numbers)
   (let (locations pair)
     (dolist (number numbers)
-      (if (setq pair (gethash
-		      (elmo-location-map-key number)
-		      (elmo-location-map-hash location-map)))
+      (if (setq pair (gethash number (elmo-location-map-hash location-map)))
 	  (setq locations (cons (cdr pair) locations))))
     (nreverse locations)))
 
