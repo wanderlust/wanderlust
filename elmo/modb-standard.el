@@ -145,8 +145,8 @@
 (defun modb-standard-save-flag (modb path)
   (let (table flist info)
     (when (setq table (modb-standard-flag-map-internal modb))
-      (elmo-map-hash-values
-       (lambda (v)
+      (maphash
+       (lambda (_k v)
 	 (setq info v)
 	 (when (cdr info)
 	   (setq flist (cons info flist))))
@@ -404,8 +404,8 @@
 	 (unless (memq 'cached (modb-standard-message-flags msgdb number))
 	   (setq matched (cons number matched)))))
       (any
-       (elmo-map-hash-values
-	(lambda (v)
+       (maphash
+	(lambda (_k v)
 	  (setq entry v)
 	  (unless (and (eq (length (cdr entry)) 1)
 		       (eq (car (cdr entry)) 'cached))
@@ -416,15 +416,15 @@
       (digest
        (let ((flags (append elmo-digest-flags
 			    (elmo-get-global-flags t t))))
-	 (elmo-map-hash-values
-	  (lambda (v)
+	 (maphash
+	  (lambda (_k v)
 	    (setq entry v)
 	    (when (modb-standard-match-flags flags (cdr entry))
 	      (setq matched (cons (car entry) matched))))
 	  (modb-standard-flag-map msgdb))))
       (t
-       (elmo-map-hash-values
-	(lambda (v)
+       (maphash
+	(lambda (_k v)
 	  (setq entry v)
 	  (when (memq flag (cdr entry))
 	    (setq matched (cons (car entry) matched))))
