@@ -761,18 +761,6 @@ the directory becomes empty after deletion."
 (defun elmo-make-hash (&optional hashsize test)
   (make-hash-table :size hashsize :test (or test #'equal)))
 
-(defalias 'elmo-map-hash 'maphash)
-
-(defsubst elmo-map-hash-keys (f hashtable)
-  (maphash (lambda (k _v) (funcall f k))
-	   hashtable))
-
-(defsubst elmo-map-hash-values (f hashtable)
-  (maphash (lambda (_k v) (funcall f v))
-           hashtable))
-
-(defalias 'elmo-copy-hash 'copy-hash-table)
-
 (defalias 'elmo-get-hash-val 'gethash)
 
 (defalias 'elmo-set-hash-val 'puthash)
