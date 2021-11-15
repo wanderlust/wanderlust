@@ -62,22 +62,19 @@ If ALL is t, then if there is more than one occurrence of a string in the LIST,
 If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
  and only the address part is compared (so that \"Name <foo>\" and \"foo\"
  would be considered to be equivalent.)"
-  (let ((hashtable (make-vector 29 0))
-	(new-list nil)
-	sym-string sym)
+ (let ((table (make-hash-table :test #'equal))
+	key key-list)
     (while list
-      (setq sym-string
-	    (if hack-addresses
-		(wl-address-header-extract-address (car list))
-	      (car list))
-	    sym-string (or sym-string "-unparseable-garbage-")
-	    sym (intern sym-string hashtable))
-      (if (boundp sym)
-	  (and all (setcar (symbol-value sym) nil))
-	(setq new-list (cons (car list) new-list))
-	(set sym new-list))
-      (setq list (cdr list)))
-    (delq nil (nreverse new-list))))
+      (when (setq key (if hack-addresses
+			  (wl-address-header-extract-address (car list))
+			(car list)))
+	(if (elmo-has-hash-val key table)
+	    (when all (puthash key nil table))
+	  (setq key-list (cons key key-list))
+	  (puthash key (car list) table))
+	(setq list (cdr list))))
+    (delq nil (mapcar (lambda (elt) (gethash elt table))
+		      (nreverse key-list)))))
 
 ;; string utils.
 (defalias 'wl-string-member 'elmo-string-member)
