@@ -1,6 +1,9 @@
 (require 'lunit)
+(require 'elmo-util)
 (require 'elmo-localdir)
 (require 'wl-folder)
+
+(setq wl-folder-elmo-folder-hashtb (elmo-make-hash))
 
 (luna-define-class test-elmo-localdir (lunit-test-case))
 
