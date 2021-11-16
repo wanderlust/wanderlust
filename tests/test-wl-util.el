@@ -30,3 +30,42 @@
    (equal
     '((cc c) (aa a))
     (wl-inverse-alist '(a c) '((a . aa) (a . bb) (c . cc))))))
+
+(luna-define-method test-wl-delete-duplicates-1 ((case test-wl-util))
+  (lunit-assert
+   (equal '("foo@example.com" "bar@example.com" "foo <foo@example.com>")
+	  (let ((list '("foo@example.com"
+			"bar@example.com"
+			"foo <foo@example.com>"
+			"foo@example.com"
+			"bar@example.com")))
+	    (wl-delete-duplicates list nil nil)))))
+
+(luna-define-method test-wl-delete-duplicates-2 ((case test-wl-util))
+  (lunit-assert
+   (equal '("foo@example.com" "bar@example.com")
+	  (let ((list '("foo@example.com"
+			"bar@example.com"
+			"foo <foo@example.com>"
+			"foo@example.com"
+			"bar@example.com")))
+	    (wl-delete-duplicates list nil t)))))
+
+(luna-define-method test-wl-delete-duplicates-3 ((case test-wl-util))
+  (lunit-assert
+   (equal '("foo <foo@example.com>")
+	  (let ((list '("foo@example.com"
+			"bar@example.com"
+			"foo <foo@example.com>"
+			"foo@example.com"
+			"bar@example.com")))
+	    (wl-delete-duplicates list t nil)))))
+
+(luna-define-method test-wl-delete-duplicates-4 ((case test-wl-util))
+  (lunit-assert
+   (equal '("bar@example.com")
+	  (let ((list '("foo@example.com"
+			"bar@example.com"
+			"foo <foo@example.com>"
+			"foo@example.com")))
+	    (wl-delete-duplicates list t t)))))
