@@ -133,51 +133,6 @@
       (re-search-forward "^\\\\def\\\\versionnumber{\\([0-9\.]+\\)}$")
       (match-string 1)))))
 
-;; wl/ChangeLog
-(luna-define-method test-version-wl-changelog ((case test-dist))
-  (require 'wl-version)
-  (lunit-assert
-   (string=
-    (product-version-string (product-find 'wl-version))
-    (with-temp-buffer
-      (insert-file-contents (expand-file-name "ChangeLog" WLDIR))
-      (re-search-forward
-       "^\t\\* Version number is increased to \\([0-9\\.]+[0-9]\\).$")
-      (match-string 1)))))
-
-;; elmo/ChangeLog
-(luna-define-method test-version-elmo-changelog ((case test-dist))
-  (require 'elmo-version)
-  (lunit-assert
-   (string=
-    (product-version-string (product-find 'elmo-version))
-    (with-temp-buffer
-      (insert-file-contents (expand-file-name "ChangeLog" ELMODIR))
-      (re-search-forward
-       "^\t\\* elmo-version.el (elmo-version): Up to \\([0-9\\.]+[0-9]\\).$")
-      (match-string 1)))))
-
-;; ChangeLog (toplevel)
-(luna-define-method test-version-toplevel-changelog ((case test-dist))
-  (require 'wl-version)
-  (when (and (string= (wl-version-status) "stable")
-	     ;; pre release version don't check.
-	     (not (string-match
-		   "pre"
-		   (product-code-name (product-find 'wl-version)))))
-    (with-temp-buffer
-      (insert-file-contents (expand-file-name "ChangeLog" "./"))
-      (re-search-forward
-       "^\t\\* \\([0-9\\.]+\\) - \"\\([^\"]+\\)\"$")
-      (lunit-assert
-       (string=
-	(product-version-string (product-find 'wl-version))
-	(match-string 1)))
-      (lunit-assert
-       (string=
-	(product-code-name (product-find 'wl-version))
-	(match-string 2))))))
-
 ;; README, README.ja (toplevel)
 (luna-define-method test-version-readme ((case test-dist))
   (require 'wl-version)
