@@ -5,15 +5,15 @@
 (luna-define-class test-elmo-util (lunit-test-case))
 
 ;; setup & teardown
-(defvar test-elmo-temoporary-file)
+(defvar test-elmo-temporary-file)
 
 (luna-define-method lunit-test-case-setup ((case test-elmo-util))
-  (setq test-elmo-temoporary-file
+  (setq test-elmo-temporary-file
 	(make-temp-file temporary-file-directory)))
 
 (luna-define-method lunit-test-case-teardown ((case test-elmo-util))
-  (when (file-exists-p test-elmo-temoporary-file)
-    (delete-file test-elmo-temoporary-file)))
+  (when (file-exists-p test-elmo-temporary-file)
+    (delete-file test-elmo-temporary-file)))
 
 
 (luna-define-method test-elmo-replace-string-as-filename-1 ((case test-elmo-util))
@@ -30,19 +30,19 @@
   "Check `print-length' let bindings."
   (let ((list '(1 2 3 4 5 6 7 8 9 10 11 12))
 	(print-length 1))
-    (elmo-object-save test-elmo-temoporary-file list)
+    (elmo-object-save test-elmo-temporary-file list)
     (lunit-assert
      (equal list
-	    (elmo-object-load test-elmo-temoporary-file)))))
+	    (elmo-object-load test-elmo-temporary-file)))))
 
 (luna-define-method test-elmo-object-save-2 ((case test-elmo-util))
   "Check `print-level' let bindings."
   (let ((list '(1 (2 :foo (nil . :bar))))
 	(print-level 1))
-    (elmo-object-save test-elmo-temoporary-file list)
+    (elmo-object-save test-elmo-temporary-file list)
     (lunit-assert
      (equal list
-	    (elmo-object-load test-elmo-temoporary-file)))))
+	    (elmo-object-load test-elmo-temporary-file)))))
 
 (luna-define-method test-elmo-save-string-1 ((case test-elmo-util)))
 
