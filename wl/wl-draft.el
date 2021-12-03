@@ -1751,6 +1751,10 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
     (wl-load-profile)
     (wl-folder-init)
     (elmo-init)
+    (setq wl-folder-entity-hashtb
+	  (wl-folder-create-entity-hashtb wl-folder-entity))
+    (setq wl-folder-elmo-folder-hashtb (elmo-make-hash wl-folder-entity-id))
+    (wl-folder-init-info-hashtb)
     (wl-plugged-init t))
   (let (wl-demo)
     (wl-init)) ; returns immediately if already initialized.
