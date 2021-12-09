@@ -4571,11 +4571,11 @@ Toggles display of Summary buffer.
 (@code{wl-message-toggle-disp-summary})
 
 @item Button-2
-@findex wl-message-refer-article-or-url
+@findex wl-message-button-refer-article
 @kindex Button-2 (Message)
 Assumes @samp{Message-ID:} at the mouse pointer, and shows the
 corresponding message if found.
-(@code{wl-message-refer-article-or-url})
+(@code{wl-message-button-refer-article})
 
 @item Button-4 (upward movement of a wheel)
 @kindex Button-4 (Message)
