@@ -8554,7 +8554,9 @@ keep it as it is.
 @item
 function
 
-If some function is specified, execute it.
+If some function is specified, execute it.  It is called with two
+arugment, folder and message number.  If it returns non-nil value,
+@samp{delete} action will be performed additionally.
 @end enumerate
 
 If the message passes all rules, it will be dealed along @samp{ACTION}

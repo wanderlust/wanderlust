@@ -94,7 +94,9 @@ If CONDITION is satisfied, the message is splitted according to this value.
 If ACTION is a string, it will be considered as the name of destination folder.
 Symbol `delete' means that the substance of the message will be removed. On the
 other hand, symbol `noop' is used to do nothing and keep the substance of the
-message as it is. Or, if some function is specified, it will be called.
+message as it is. Or, if some function is specified, it will be called with
+arguments, folder and message number.  When the function returns
+non-nil, the substance of the message will be removed.
 
 When the 3rd element `continue' is specified as symbol, evaluating rules is
 not stopped even when the condition is satisfied.
@@ -385,7 +387,8 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 			  ;; do nothing
 			  )
 			 ((functionp action)
-			  (funcall action))
+			  (setq record-log t
+				delete-substance (funcall action folder msg)))
 			 (t
 			  (error "Wrong action specified in elmo-split-rule")))
 			(when delete-substance
@@ -423,6 +426,9 @@ If prefix argument ARG is specified, do a reharsal (no harm)."
 				     (concat "  Folder: " action "\n"))
 				    ((eq action 'delete)
 				     "  Deleted\n")
+				    ((functionp action)
+				     (concat "  Function:"
+					     (prin1-to-string action) "\n"))
 				    (log-string
 				     log-string)
 				    (t
