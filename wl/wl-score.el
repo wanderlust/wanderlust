@@ -584,8 +584,10 @@ Set `wl-score-cache' nil."
 	  (setq this (wl-score-ov-entity-get (car art)
 					     wl-score-index
 					     extra-header))
-	  (when (stringp this)
-	    (setq this (std11-unfold-string this)))
+	  (cond ((stringp this)
+	         (setq this (std11-unfold-string this)))
+		((listp this)
+                 (setq this (mapconcat #'std11-unfold-string this " "))))
 	  (if (equal last this)
 	      ;; O(N*H) cons-cells used here, where H is the number of
 	      ;; headers.
