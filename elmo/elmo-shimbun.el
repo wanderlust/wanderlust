@@ -29,6 +29,7 @@
 ;;; Code:
 ;;
 (require 'elmo)
+(require 'elmo-util)
 (require 'elmo-date)
 (require 'elmo-map)
 (require 'elmo-dop)
@@ -131,9 +132,7 @@ If it is the symbol `all', update overview for all shimbun folders."
 	    header)))))
 
 (defsubst elmo-shimbun-lapse-seconds (time)
-  (let ((now (current-time)))
-    (+ (* (- (car now) (car time)) 65536)
-       (- (nth 1 now) (nth 1 time)))))
+  (elmo-time-integer (time-subtract (current-time) time)))
 
 (defsubst elmo-shimbun-headers-check-p (folder)
   (or (null (elmo-shimbun-folder-last-check-internal folder))

@@ -448,7 +448,7 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
 	   ;; (current-time) returns 16-bit ints,
 	   ;; and 2^16*25 just fits into 4 digits i base 36.
 	   (* 25 25)))
-  (let ((tm (current-time)))
+  (let ((integer (elmo-time-integer)))
     (concat
      (if (memq system-type '(ms-dos emx vax-vms))
 	 (let ((user (downcase (user-login-name))))
@@ -456,9 +456,9 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
 	     (aset user (match-beginning 0) ?_))
 	   user)
        (wl-number-base36 (user-uid) -1))
-     (wl-number-base36 (+ (car   tm)
+     (wl-number-base36 (+ (/ integer 65536)
 			  (lsh (% wl-unique-id-char 25) 16)) 4)
-     (wl-number-base36 (+ (nth 1 tm)
+     (wl-number-base36 (+ (% integer 65536)
 			  (lsh (/ wl-unique-id-char 25) 16)) 4)
      ;; Append the name of the message interface, because while the
      ;; generated ID is unique to this newsreader, other newsreaders
@@ -953,15 +953,8 @@ e-mail address.  It should be consist of atext (described in RFC
 (defvar wl-progress-next-update-time nil)
 
 (defun wl-progress-set-next-update-time ()
-  (let ((time (current-time))
-	(l (floor wl-progress-update-interval))
-	usec)
-    (setq usec (+ (nth 2 time)
-		  (floor (* (- wl-progress-update-interval l) 1000000)))
-	  l (+ (/ usec 1000000) (nth 1 time) l)
-	  wl-progress-next-update-time (list (+ (/ l 65536) (car time))
-					     (logand l 65535)
-					     (% usec 1000000)))))
+  (setq wl-progress-next-update-time
+	(time-add (current-time) wl-progress-update-interval)))
 
 (defun wl-progress-callback-function (label action current total)
   (cl-case current

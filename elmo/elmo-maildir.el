@@ -259,11 +259,10 @@ LOCATION."
 	last-accessed)
     (mapcar
      (lambda (file)
-       (setq last-accessed (nth 4 (file-attributes file)))
-       (when (or (> (- (car cur-time)(car last-accessed)) 1)
-		 (and (eq (- (car cur-time)(car last-accessed)) 1)
-		      (> (- (cadr cur-time)(cadr last-accessed))
-			 64064)))	; 36 hours.
+       (setq last-accessed (elmo-time-integer
+			    (nth 4 (file-attributes file))))
+       (when (time-less-p 64064 ;; 36 hours in seconds
+			  (time-subtract cur-time last-accessed))
 	 (message "Maildir: %d tmp file(s) are cleared."
 		  (setq count (1+ count)))
 	 (delete-file file)))
@@ -388,13 +387,11 @@ Not that FILE is the name without directory."
 (defun elmo-maildir-make-unique-string ()
   "This function generates a string that can be used as a unique
 file name for maildir directories."
-  (let ((cur-time (current-time)))
-    (format "%.0f.%d_%d.%s"
-	    (+ (* (car cur-time)
-		  (float 65536)) (cadr cur-time))
-	    (emacs-pid)
-	    (cl-incf elmo-maildir-sequence-number-internal)
-	    (system-name))))
+  (format "%d.%d_%d.%s"
+	  (elmo-time-integer)
+	  (emacs-pid)
+	  (cl-incf elmo-maildir-sequence-number-internal)
+	  (system-name)))
 
 (defun elmo-maildir-temporal-filename (basedir)
   (let ((filename (expand-file-name

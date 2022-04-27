@@ -659,8 +659,7 @@ When NO-NODIFY is non-nil, dont' modify STRING and return new string."
 							 path dir))
 						   path)))))
     (if last-accessed
-	(setq last-accessed (+ (* (nth 0 last-accessed)
-				  (float 65536)) (nth 1 last-accessed)))
+	(elmo-time-integer last-accessed)
       0)))
 
 (defun elmo-get-last-modification-time (path &optional dir)
@@ -669,8 +668,7 @@ When NO-NODIFY is non-nil, dont' modify STRING and return new string."
 							(expand-file-name
 							 path dir))
 						   path)))))
-    (setq last-modified (+ (* (nth 0 last-modified)
-			      (float 65536)) (nth 1 last-modified)))))
+    (elmo-time-integer last-modified)))
 
 (defun elmo-make-directory (path &optional mode)
   "Create directory recursively."
@@ -1057,6 +1055,12 @@ MESSAGE is a doing part of progress message."
  (t
   (defun elmo-time-expire (before-time diff-time)
     (< diff-time (float-time (time-subtract (current-time) before-time))))))
+
+(defun elmo-time-integer (&optional time)
+  (static-if (fboundp 'time-convert)
+      ;; Emacs 27.1 and later.
+      (time-convert time 'integer)
+    (floor (float-time time))))
 
 (defalias 'elmo-field-body 'std11-fetch-field) ;;no narrow-to-region
 
@@ -1885,9 +1889,7 @@ Optional argument DAYS specifies the days to expire caches."
 	       t "^[^\\.]"))
 	(count 0)
 	curtime)
-    (setq curtime (current-time))
-    (setq curtime (+ (* (nth 0 curtime)
-			(float 65536)) (nth 1 curtime)))
+    (setq curtime (elmo-time-integer))
     (while dirs
       (let ((files (directory-files (car dirs) t "^[^\\.]"))
 	    (limit-age (* age 86400)))

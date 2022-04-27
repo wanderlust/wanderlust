@@ -741,12 +741,9 @@ Returns non-nil if bottom of message."
 		  (elmo-message-set-cached folder number t))
 		(when wl-message-buffer-prefetch-debug
 		  (setq time2 (current-time))
-		  (setq sec  (- (nth 1 time2)(nth 1 time1)))
-		  (setq micro (- (nth 2 time2)(nth 2 time1)))
-		  (setq micro (+ micro (* 1000000 sec)))
 		  (message "Prefetching %d...done(%f msec)."
 			   number
-			   (/ micro 1000.0))
+			   (float-time (time-subtract time2 time1)))
 		  (sit-for 0))
 		;; set next prefetch
 		(wl-message-buffer-prefetch-set-timer
