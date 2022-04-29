@@ -719,7 +719,7 @@ Returns non-nil if bottom of message."
 		   (display-type (wl-message-make-display-type
 				  wl-summary-buffer-display-mime-mode
 				  wl-summary-buffer-display-header-mode))
-		   time1 time2 sec micro)
+		   time1 time2)
 	      (when wl-message-buffer-prefetch-debug
 		(message "%d: count %d, hit %s" number count (buffer-name hit)))
 	      (if (and hit (buffer-live-p hit))
