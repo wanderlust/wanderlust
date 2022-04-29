@@ -82,14 +82,6 @@ clean-elc:
 		wl/wl-news.el elmo/*.elc utils/*.elc \
 		wl/*.elx elmo/*.elx utils/*.elx
 
-package:
-	$(XEMACS) $(FLAGS) -l WL-MK -f compile-wl-package-xmas \
-		$(PACKAGEDIR) $(PIXMAPDIR)
-
-install-package:
-	$(XEMACS) $(FLAGS) -l WL-MK -f install-wl-package-xmas \
-		$(PACKAGEDIR) $(PIXMAPDIR)
-
 info:
 	$(EMACS) $(FLAGS) -l WL-MK -f wl-texinfo-format $(INFODIR)
 

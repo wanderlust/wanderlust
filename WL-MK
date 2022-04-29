@@ -256,52 +256,6 @@
   (if PIXMAPDIR
       (uninstall-wl-icons)))
 
-(defun config-wl-package-xmas ()
-  (error "This directive is only for XEmacs"))
-
-;; from SEMI-MK
-(defun compile-wl-package-xmas ()
-  ;; to avoid to read situation-examples-file at compile time.
-  (setq mime-situation-examples-file nil)
-  (config-wl-package-xmas)
-  (make-wl-news)
-  (setq autoload-package-name "wl")
-  (add-to-list 'command-line-args-left WLDIR)
-  (batch-update-directory)
-  (add-to-list 'command-line-args-left WLDIR)
-  (Custom-make-dependencies)
-  ;; WL-AUTOLOAD-MODULES
-  (compile-elisp-modules WL-AUTOLOAD-MODULES WLDIR)
-  (mapc
-   (lambda (x)
-     (compile-elisp-modules (cdr x) (car x)))
-   modules-alist))
-
-(defun install-wl-package-xmas ()
-  (compile-wl-package-xmas)
-  (let ((LISPDIR (expand-file-name "wl"
-				    (expand-file-name "lisp"
-						      PACKAGEDIR)))
-	(DATADIR  (expand-file-name "wl"
-				    (expand-file-name "etc"
-						      PACKAGEDIR)))
-	(INFODIR  (expand-file-name "info" PACKAGEDIR)))
-    (or (file-exists-p DATADIR)
-	(make-directory DATADIR t))
-    (or (file-exists-p INFODIR)
-	(make-directory INFODIR t))
-    ;; copy xpm files
-    (install-wl-icons)
-
-    (mapc (lambda (x)
-	    (install-elisp-modules (cdr x) (car x) LISPDIR))
-	  modules-alist)
-    ;; WL-AUTOLOAD-MODULES
-    (install-elisp-modules WL-AUTOLOAD-MODULES WLDIR LISPDIR)
-    ;;
-    (wl-texinfo-format)
-    (wl-texinfo-install)))
-
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Texinfo stuff
