@@ -83,11 +83,13 @@ Folder is the same BASE-FOLDER but with a new search pattern."
                      engine-type)))))
 
 (defun wl-quicksearch-escape-query-string (str)
-  "Replace single quotes (') in STR with double quotes (\"), then escape double-quotes."
+  "Replace single quotes (') in STR with double quotes (\"),
+then escape double-quotes."
   (replace-regexp-in-string "\"\\|'" "\\\"" str t t))
 
 (luna-define-method wl-quicksearch-goto-search-folder ((base-folder elmo-folder))
-  "Prompt for a search condition and jump to filter folder that searches BASE-FOLDER."
+  "Prompt for a search condition and jump to filter folder
+that searches BASE-FOLDER."
   (wl-quicksearch-goto-search-folder-subr
    (concat "/"
            (wl-read-search-condition
@@ -114,7 +116,8 @@ Otherwise call parent method."
 
 ;;;###autoload
 (defun wl-quicksearch-goto-search-folder-wrapper ()
-  "Call `wl-quicksearch-goto-search-folder' on a folder built from `wl-quicksearch-folder'."
+  "Call `wl-quicksearch-goto-search-folder' on a folder
+built from `wl-quicksearch-folder'."
   (interactive)
   (if (null wl-quicksearch-folder)
       (error "The variable `wl-quicksearch-folder' is not set.  Please customize"))

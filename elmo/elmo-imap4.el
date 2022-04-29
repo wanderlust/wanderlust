@@ -606,7 +606,7 @@ If response is not `OK' response, causes error with IMAP response text."
     (not (string-match elmo-imap4-non-text-char-regex string))))
 
 (defun elmo-imap4-nil (string)
-  "Return a list represents the special atom \"NIL\" defined in rfc2060, \
+  "Return a list represents the special atom \"NIL\" defined in rfc2060,
 if STRING is nil.
 Otherwise return nil."
   (if (eq string nil)
@@ -620,14 +620,16 @@ Return nil if STRING is not an atom.  See `elmo-imap4-atom-p'."
 
 (defun elmo-imap4-quoted (string)
   "Return a list represents STRING as a quoted defined in rfc2060.
-Return nil if STRING can not be formatted as a quoted.  See `elmo-imap4-quotable-p'."
+Return nil if STRING can not be formatted as a quoted.
+See `elmo-imap4-quotable-p'."
   (if (elmo-imap4-quotable-p string)
       (list 'quoted string)))
 
 (defun elmo-imap4-literal-1 (string-or-buffer length)
   "Internal function for `elmo-imap4-literal' and `elmo-imap4-buffer-literal'.
 Return a list represents STRING-OR-BUFFER as a literal defined in rfc2060.
-STRING-OR-BUFFER must be an encoded string or a single-byte string or a single-byte buffer.
+STRING-OR-BUFFER must be an encoded string or a single-byte string or
+a single-byte buffer.
 LENGTH must be the number of octets for STRING-OR-BUFFER."
   (list 'literal string-or-buffer length))
 

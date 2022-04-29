@@ -64,7 +64,8 @@
   "Save passwords into storage.")
 
 (luna-define-generic elmo-passwd-get (elmo-passwd key)
-  "Get password for KEY.  KEY is a list of protocol-name, username, authentication mechanism, host name and port number.")
+  "Get password for KEY.  KEY is a list of protocol-name, username,
+authentication mechanism, host name and port number.")
 
 (luna-define-generic elmo-passwd-remove (elmo-passwd key)
   "Remove password for KEY from cache.")

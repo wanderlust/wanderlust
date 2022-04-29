@@ -3154,7 +3154,8 @@ The mark is decided according to the FOLDER and STATUS."
   (wl-summary-pick wl-summary-buffer-target-mark-list 'delete))
 
 (defun wl-summary-target-mark-threads ()
-  "Put target mark on all the messages of the threads which contain already target marked message."
+  "Put target mark on all the messages of the threads
+which contain already target marked message."
   (interactive)
   (if wl-summary-buffer-target-mark-list
       (let ((length (length wl-summary-buffer-target-mark-list))

@@ -369,7 +369,8 @@ FOLDER is the ELMO folder structure.
 CONDITION is a condition structure for searching.
 If optional argument NUMBERS is specified and is a list of message numbers,
 messages are searched from the list.
-If NUMBERS is t, indicates that messages are selected for interactive folder search.")
+If NUMBERS is t, indicates that messages are selected for
+interactive folder search.")
 
 (luna-define-generic elmo-message-match-condition (folder number
 							  condition

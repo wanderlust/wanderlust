@@ -369,7 +369,8 @@ If the value is a list, all elements are used as index paths for namazu."
   (expand-file-name (elmo-search-engine-param-internal engine)))
 
 (defun elmo-search-split-pattern-list (engine pattern)
-  "ENGINE is ignored.  Splits query PATTERN into list of strings, with ' and \" quoting phrases."
+  "ENGINE is ignored.
+Splits query PATTERN into list of strings, with ' and \" quoting phrases."
   (split-string-and-unquote
    (elmo-search-replace-single-quotes engine pattern)))
 

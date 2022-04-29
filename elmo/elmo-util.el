@@ -1144,7 +1144,8 @@ But if optional argument AUTO is non-nil, DEFAULT is returned."
 
 (defun elmo-assoc-ignore-case (key alist)
   "Return non-nil if KEY is `equal' to the car of an element of ALIST.
-The value is actually the first element of ALIST whose car equals KEY, which must be string and be compared case insensitively."
+The value is actually the first element of ALIST whose car equals KEY,
+which must be string and be compared case insensitively."
   (setq key (downcase key))
   (let (result)
     (while alist
