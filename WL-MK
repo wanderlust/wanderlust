@@ -100,6 +100,18 @@
       (defvar LISPDIR elispdir)))
   (princ (format "LISPDIR is %s\n" LISPDIR))
   (setq command-line-args-left (cdr command-line-args-left))
+  (and (setq package-lisp-dir (car command-line-args-left))
+       (or (string-equal "NONE" package-lisp-dir)
+	   (progn
+	     (defvar PACKAGE_LISPDIR
+	       (if (boundp (intern package-lisp-dir))
+		   (symbol-value (intern package-lisp-dir))
+		 package-lisp-dir))
+	     (princ (format "PACKAGE_LISPDIR=%s\n"
+			    PACKAGE_LISPDIR))
+	     (let ((default-directory PACKAGE_LISPDIR))
+	       (normal-top-level-add-subdirs-to-load-path)))))
+  (setq command-line-args-left (cdr command-line-args-left))
   ;; PIXMAPDIR check.
   (config-wl-pixmap-dir)
   (princ "\n"))

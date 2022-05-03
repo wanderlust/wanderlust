@@ -11,6 +11,7 @@ XEMACS  = xemacs
 # (Automatically detected if this line is unchanged.)
 #
 LISPDIR = NONE
+PACKAGE_LISPDIR = package-user-dir
 #LISPDIR = /usr/local/lib/mule/site-lisp
 
 INFODIR = NONE
@@ -28,19 +29,19 @@ FLAGS     = $(BATCHFLAG) -q -no-site-file $(EMACS_FLAGS)
 
 elc:
 	$(EMACS) $(FLAGS) -l WL-MK -f compile-wl-package \
-		$(LISPDIR) $(PIXMAPDIR)
+		$(LISPDIR) $(PACKAGE_LISPDIR) $(PIXMAPDIR)
 
 check:
 	$(EMACS) $(BATCHFLAG) -l WL-MK -f check-wl \
-		$(LISPDIR) $(PIXMAPDIR)
+		$(LISPDIR) $(PACKAGE_LISPDIR) $(PIXMAPDIR)
 
 test:
 	$(EMACS) $(FLAGS) -l WL-MK -f test-wl \
-		$(LISPDIR) $(PIXMAPDIR)
+		$(LISPDIR) $(PACKAGE_LISPDIR) $(PIXMAPDIR)
 
 update-version:
 	$(EMACS) $(FLAGS) -l WL-MK -f update-version \
-		$(LISPDIR) $(PIXMAPDIR)
+		$(LISPDIR) $(PACKAGE_LISPDIR) $(PIXMAPDIR)
 
 compile-strict: clean-elc
 	@args="$(FLAGS)";\
@@ -71,11 +72,11 @@ compile-strict: clean-elc
 
 install-elc:
 	$(EMACS) $(FLAGS) -l WL-MK -f install-wl-package \
-		$(LISPDIR) $(PIXMAPDIR)
+		$(LISPDIR) $(PACKAGE_LISPDIR) $(PIXMAPDIR)
 
 uninstall-elc:
 	$(EMACS) $(FLAGS) -l WL-MK -f uninstall-wl-package \
-		$(LISPDIR) $(PIXMAPDIR)
+		$(LISPDIR) $(PACKAGE_LISPDIR) $(PIXMAPDIR)
 
 clean-elc:
 	rm -f wl/*.elc wl/*~ wl/auto-autoloads.el wl/custom-load.el \
