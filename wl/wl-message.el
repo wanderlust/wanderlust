@@ -743,7 +743,7 @@ Returns non-nil if bottom of message."
 		  (setq time2 (current-time))
 		  (message "Prefetching %d...done(%f msec)."
 			   number
-			   (float-time (time-subtract time2 time1)))
+			   (* (float-time (time-subtract time2 time1)) 1000))
 		  (sit-for 0))
 		;; set next prefetch
 		(wl-message-buffer-prefetch-set-timer
