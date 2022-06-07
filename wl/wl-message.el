@@ -587,7 +587,11 @@ Returns non-nil if bottom of message."
 		       (not (wl-message-mime-analysis-p display-type)))))
 	      (unless entity
 		(error "Cannot display message %s/%s" fname number))
-	      (wl-message-display-internal entity display-type)
+	      (save-window-excursion
+		;; some package, e.g. shr, needs the window displaying
+		;; the message buffer in rendering.
+		(wl-message-select-buffer hit)
+		(wl-message-display-internal entity display-type))
 	      (setq done t))
 	  (unless done
 	    (wl-message-buffer-cache-delete)))))
