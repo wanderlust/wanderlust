@@ -164,11 +164,8 @@ The main features of Wanderlust:
 
 @section Environment
 
-We confirm Wanderlust works on following Emacsen:
-
-@itemize @bullet
-@item Emacs 24.5 or later
-@end itemize
+It expected that Wanderlust works on Emacs 24.5 and later.
+Furthermore, Wide int feature is required on 32-bit machines.
 
 IMAP4 connectivity with following imapd are confirmed to work with
 Wanderlust:

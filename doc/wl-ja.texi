@@ -190,11 +190,8 @@ Wanderlust の主な特徴/特長は以下の通りです。
 
 @section 動作環境
 
-Wanderlust は以下の Emacsen で動作することが確認されています。
-
-@itemize @bullet
-@item Emacs 24.5 以降
-@end itemize
+Wanderlust は Emacs 24.5 以降で動作することが期待されています。
+加えて、32ビット環境においてはwide intが有効になっている必要があります。
 
 Wanderlust から利用できると確認されている IMAP サーバは以下の通りです。
 
