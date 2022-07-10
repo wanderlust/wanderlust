@@ -1172,11 +1172,6 @@ non-nil."
 	    (setq recipients (wl-draft-deduce-address-list
 			      (current-buffer) (point-min) delimline))
 	    (unless recipients (error "No recipients"))
-	    ;; Insert an extra newline if we need it to work around
-	    ;; Sun's bug that swallows newlines.
-	    (goto-char (1+ delimline))
-	    (if (eval mail-mailer-swallows-blank-line)
-		(newline))
 	    (run-hooks 'wl-mail-send-pre-hook) ;; X-PGP-Sig, Cancel-Lock
 	    (if mail-interactive
 		(with-current-buffer errbuf
