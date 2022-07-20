@@ -224,7 +224,7 @@
 (defun elmo-flag-folder-referrer (folder number)
   "Return a list of referrer message information.
 Each element is a cons cell like following:
-\(FNAME . NUMBER\)
+(FNAME . NUMBER)
 FNAME is the name of the folder which the message is contained.
 NUMBER is the number of the message."
   (when (eq (elmo-folder-type-internal folder) 'flag)
@@ -419,7 +419,7 @@ the message is not flagged in any folder."
 Return value is a subset of optional argument FLAGS.
 If FLAGS is `t', all global flags becomes candidates.
 If optional IGNORE-PRESERVED is non-nil, preserved flags
-\(answered, cached, new, unread\) are not included."
+(answered, cached, new, unread) are not included."
   (let ((result (copy-sequence (if (eq flags t)
 				   (setq flags elmo-global-flags)
 				 flags))))
@@ -454,7 +454,7 @@ If optional IGNORE-PRESERVED is non-nil, preserved flags
   "Obsolete variable. (Just for migration)")
 
 (defun elmo-global-mark-migrate ()
-  "Migrate from 'mark to 'flag. For automatic migration."
+  "Migrate from \\='mark to \\='flag. For automatic migration."
   (when (and (file-exists-p (expand-file-name elmo-global-mark-filename
 					      elmo-msgdb-directory))
 	     (elmo-global-flag-p 'important)

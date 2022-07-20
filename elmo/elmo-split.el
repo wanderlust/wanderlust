@@ -44,7 +44,7 @@
 (defcustom elmo-split-rule nil
   "Split rule for the command `elmo-split'.
 The format of this variable is a list of RULEs which has form like:
-\(CONDITION ACTION [continue]\)
+(CONDITION ACTION [continue])
 
 The 1st element CONDITION is a sexp which consists of following.
 
@@ -103,9 +103,9 @@ not stopped even when the condition is satisfied.
 
 Example:
 
-\(setq elmo-split-rule
+(setq elmo-split-rule
       ;; Messages from spammers are stored in `+junk'
-      '(((or (address-equal from \"i.am@spammer\")
+      \\='(((or (address-equal from \"i.am@spammer\")
 	     (address-equal from \"dull-work@dull-boy\")
 	     (address-equal from \"death-march@software\")
 	     (address-equal from \"ares@aon.at\")

@@ -248,7 +248,7 @@ even when invalid character is contained."
   (apply #'concat (make-list times str)))
 
 (defun wl-append-assoc-list (item value alist)
-  "make assoc list '((item1 value1-1 value1-2 ...)) (item2 value2-1 ...)))"
+  "make assoc list \\='((item1 value1-1 value1-2 ...)) (item2 value2-1 ...)))"
   (let ((entry (assoc item alist)))
     (if entry
 	(progn

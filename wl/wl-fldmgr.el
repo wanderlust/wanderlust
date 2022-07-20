@@ -154,7 +154,7 @@
 
 (defun wl-fldmgr-add-entity-hashtb (entities)
   "Update `wl-folder-entity-hashtb', `wl-folder-newsgroups-hashtb'.
-Return value is diffs '(new unread all)."
+Return value is diffs \\='(new unread all)."
   (let* ((new-diff 0)
 	 (unread-diff 0)
 	 (all-diff 0)
@@ -183,7 +183,7 @@ Return value is diffs '(new unread all)."
 
 (defun wl-fldmgr-delete-entity-hashtb (entities &optional clear)
   "Update `wl-folder-entity-hashtb'.
-return value is diffs '(-new -unread -all)."
+return value is diffs \\='(-new -unread -all)."
   (let* ((new-diff 0)
 	 (unread-diff 0)
 	 (all-diff 0)

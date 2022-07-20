@@ -50,7 +50,7 @@
 
 (defvar elmo-nntp-max-number-precedes-list-active nil
   "Non-nil means max number of msgdb is set as the max number of `list active'.
-\(Needed for inn 2.3 or later?\).")
+(Needed for inn 2.3 or later?).")
 
 (defvar elmo-nntp-group-coding-system nil
   "A coding system for newsgroup string.")

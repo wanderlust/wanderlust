@@ -195,7 +195,7 @@ encode and decode a multibyte string."
 ;; Note that this function is for internal use only.
 (luna-define-generic elmo-folder-msgdb (folder)
   "Return the msgdb of FOLDER (on-demand loading).
-\(For internal use only.\)")
+(For internal use only.)")
 
 (luna-define-method elmo-folder-msgdb ((folder elmo-folder))
   (or (elmo-folder-msgdb-internal folder)
@@ -205,7 +205,7 @@ encode and decode a multibyte string."
 (luna-define-generic elmo-folder-open (folder &optional load-msgdb)
   "Open and setup (load saved status) FOLDER.
 If optional LOAD-MSGDB is non-nil, msgdb is loaded.
-\(otherwise, msgdb is loaded on-demand)")
+(otherwise, msgdb is loaded on-demand)")
 
 (luna-define-generic elmo-folder-open-internal (folder)
   "Open FOLDER (without loading saved folder status).")
@@ -285,7 +285,7 @@ FLAG is a symbol which is one of the following:
   `unread'     (unread messages (new messages are included))
   `answered'   (answered or forwarded)
   `important'  (marked as important)
-'sugar' flags:
+\\='sugar\\=' flags:
   `read'       (not unread)
   `digest'     (unread + important + other flags)
   `any'        (digest + answered + other flags)
@@ -320,7 +320,7 @@ REMOTE is the list of messages from remote folder.")
 (luna-define-generic elmo-folder-list-subfolders (folder &optional one-level)
   "Returns a list of subfolders contained in FOLDER.
 If optional argument ONE-LEVEL is non-nil, only children of FOLDER is returned.
-\(a folder which have children is returned as a list\)
+(a folder which have children is returned as a list)
 Otherwise, all descendent folders are returned.")
 
 (luna-define-generic elmo-folder-have-subfolder-p (folder)
@@ -355,7 +355,7 @@ Otherwise, all descendent folders are returned.")
 FOLDER is the ELMO folder structure.
 NUMBERS is a list of message numbers to be deleted.
 It is not recommended to use this function other than internal use.
-Use `elmo-folder-move-messages' with dst-folder 'null instead.")
+Use `elmo-folder-move-messages' with dst-folder \\='null instead.")
 
 (luna-define-generic elmo-folder-delete-messages-internal (folder numbers)
   "Delete messages, but no delete msgdb entity.
@@ -396,7 +396,7 @@ FLAG is a symbol which is one of the following:
   `unread'    (set the message as unread)
   `answered'  (set the message as answered)
   `important' (set the message as important)
-'sugar' flag:
+\\='sugar\\=' flag:
   `read'      (remove new and unread flags)
 If optional IS-LOCAL is non-nil, update only local (not server) status.")
 
@@ -410,7 +410,7 @@ FLAG is a symbol which is one of the following:
   `unread'    (remove unread and new flag)
   `answered'  (remove answered flag)
   `important' (remove important flag)
-'sugar' flag:
+\\='sugar\\=' flag:
   `read'      (set unread flag)
   `all'       (remove all flags)
 If optional IS-LOCAL is non-nil, update only local (not server) status.")
@@ -430,7 +430,7 @@ FLAGS is the flag list for the appended message (list of symbols).
 If FLAGS contain `read', the message is appended as `not-unread'.
 If it is nil, the appended message will be treated as `new'.
 If optional argument NUMBER is specified, the new message number is set
-\(if possible\).
+(if possible).
 If optional argument RETURN-NUMBER is non-nil, return the number
 of the appended message if possible. If the number could not be
 obtained return t.
@@ -547,9 +547,9 @@ If return value is nil, message should not be nil.")
 				    save-cache
 				    cache-path)
   "Make elmo-message-fetching strategy.
-ENTIRENESS is 'entire or 'section.
-'entire means fetch message entirely at once.
-'section means fetch message section by section.
+ENTIRENESS is \\='entire or \\='section.
+\\='entire means fetch message entirely at once.
+\\='section means fetch message section by section.
 If optional USE-CACHE is non-nil, existing cache is used and otherwise,
 existing cache is thrown away.
 If SAVE-CACHE is non-nil, fetched message is saved.
@@ -908,7 +908,7 @@ Return a cons cell of (NUMBER-CROSSPOSTS . NEW-FLAG-ALIST).")
 (luna-define-generic elmo-folder-flag-table (folder &optional if-exists)
   "Return the flag-table of FOLDER.
 If optional argument IF-EXISTS is nil, load on demand.
-\(For internal use only.\)")
+(For internal use only.)")
 
 (luna-define-generic elmo-folder-close-flag-table (folder)
   "Close flag-table of FOLDER.")
@@ -1111,11 +1111,11 @@ If optional argument IF-EXISTS is nil, load on demand.
   "Append messages from folder.
 DST-FOLDER is the ELMO folder structure.
 Caller should make sure DST-FOLDER is `writable'.
-\(Can be checked with `elmo-folder-writable-p'\).
+(Can be checked with `elmo-folder-writable-p').
 SRC-FOLDER is the source ELMO folder structure.
 NUMBERS is the message numbers to be appended in the SRC-FOLDER.
 If second optional argument SAME-NUMBER is specified,
-message number is preserved \(if possible\).
+message number is preserved (if possible).
 Returns a list of message numbers successfully appended."
   (let ((rest (if caller
 		  (cdr (memq (rassq caller elmo-append-messages-dispatch-table)
@@ -1314,9 +1314,9 @@ ENTITY is the message-entity to get the parent.")
 
 (defmacro elmo-folder-do-each-message-entity (spec &rest form)
   "Iterator for message entity in the folder.
-\(elmo-folder-do-each-message-entity \(entity folder\)
+(elmo-folder-do-each-message-entity (entity folder)
  ... do the process using entity...
-\)"
+)"
   `(dolist (,(car spec) (elmo-folder-list-message-entities ,(car (cdr spec))))
      ,@form))
 
@@ -1324,9 +1324,9 @@ ENTITY is the message-entity to get the parent.")
   "Count flagged message number in the msgdb of the FOLDER.
 Return alist of flag and numbers.
 Example:
-\(\(new . 10\)
-  \(unread . 20\)
-  \(answered . 3\)\)")
+((new . 10)
+  (unread . 20)
+  (answered . 3))")
 
 (luna-define-method elmo-folder-count-flags ((folder elmo-folder))
   (elmo-msgdb-flag-count (elmo-folder-msgdb folder)))
@@ -1340,7 +1340,7 @@ FLAG is a symbol which is one of the following:
   `unread'    (set the message as unread)
   `answered'  (set the message as answered)
   `important' (set the message as important)
-'sugar' flag:
+\\='sugar\\=' flag:
   `read'      (remove new and unread flags)
 If optional IS-LOCAL is non-nil, update only local (not server) status."
   ;; XXX Transitional implementation.
@@ -1355,7 +1355,7 @@ FLAG is a symbol which is one of the following:
   `unread'    (remove unread and new flag)
   `answered'  (remove answered flag)
   `important' (remove important flag)
-'sugar' flag:
+\\='sugar\\=' flag:
   `read'      (set unread flag)
 If optional IS-LOCAL is non-nil, update only local (not server) status."
   ;; XXX Transitional implementation.

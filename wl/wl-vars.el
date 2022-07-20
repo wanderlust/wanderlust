@@ -196,7 +196,7 @@ even if this value is descending."
     (?a (length wl-summary-buffer-number-list)))
   "An alist of format specifications that can appear in summary mode-lines.
 Each element is a list of following:
-\(SPEC STRING-EXP)
+(SPEC STRING-EXP)
 SPEC is a character for format specification.
 STRING-EXP is an expression to get string to insert.")
 
@@ -244,7 +244,7 @@ which are replaced by the given information:
     (?@ (wl-summary-line-attached)))
   "An alist of format specifications that can appear in summary lines.
 Each element is a list of following:
-\(SPEC STRING-EXP)
+(SPEC STRING-EXP)
 SPEC is a character for format specification.
 STRING-EXP is an expression to get string to insert.")
 
@@ -293,7 +293,7 @@ See also variable `wl-summary-width'."
   "An alist of folder name and a summary line format.
 If no match, `wl-summary-line-format' is used.
 e.x.
-      '((\"^%\" . \"%n%T%P%M/%D(%W)%h:%m %t%[%14(%c %f%) %](%S) %s\")
+      \\='((\"^%\" . \"%n%T%P%M/%D(%W)%h:%m %t%[%14(%c %f%) %](%S) %s\")
 	(\"^@2ch\" . \"%n%T%P%M%/%D/%h:%m %t[%9(%c %f%) ]%s\")))"
   :type '(repeat (cons (regexp :tag "Folder Regexp")
 		       (string :tag "line format")))
@@ -395,7 +395,7 @@ If nil, never search search parent by subject."
      "Resend messages."))
   "A variable to define Mark & Action.
 Each element of the list should be a list of
-\(MARK
+(MARK
   SYMBOL
   ARGUMENT-FUNCTION
   SET-MARK-FUNCTION
@@ -486,7 +486,7 @@ If file exists and `wl-auto-insert-x-face' is non-nil."
 
 (defcustom wl-subscribed-mailing-list nil
   "*Subscribed mailing list.
-You had better set this variable if you set 'wl-insert-mail-followup-to' as t."
+You had better set this variable if you set `wl-insert-mail-followup-to' as t."
   :type '(repeat string)
   :group 'wl-pref
   :group 'wl-setting)
@@ -648,7 +648,7 @@ If you don't need to specify realm, set as nil."
   "*POP3 user name to send mail using POP-before-SMTP.
 If nil, `elmo-pop3-default-user' is used.
 To use POP-before-SMTP,
-\(setq wl-draft-send-mail-function 'wl-draft-send-mail-with-pop-before-smtp)"
+(setq wl-draft-send-mail-function \\='wl-draft-send-mail-with-pop-before-smtp)"
   :type '(choice (const :tag "none" nil)
 		 string)
   :group 'wl
@@ -716,14 +716,14 @@ If nil, `elmo-nntp-default-stream-type' is used."
   :group 'wl)
 (defcustom wl-nntp-posting-function 'elmo-nntp-post
   "A function to post news.
-Prepared candidate is 'elmo-nntp-post."
+Prepared candidate is \\='elmo-nntp-post."
   :type '(radio (function-item elmo-nntp-post)
 		(function :tag "Other"))
   :group 'wl-draft)
 (defcustom wl-nntp-posting-config-alist nil
   "*Alist of configuration on nntp posting.
 ex.
-'((\",?local.test\" . \"news.media.kyoto-u.ac.jp\")
+\\='((\",?local.test\" . \"news.media.kyoto-u.ac.jp\")
   (\",?ku\\.\" .
    ((server . \"news.media.kyoto-u.ac.jp\")
     (user . \"newsmaster\")
@@ -943,9 +943,9 @@ reasons of system internal to accord facilities for the Emacs variants.")
 
 (defcustom wl-draft-send-mail-function 'wl-draft-send-mail-with-smtp
   "A function to send mail.
-Prepared candidates are 'wl-draft-send-mail-with-smtp,
-'wl-draft-send-mail-with-sendmail, 'wl-draft-send-mail-with-qmail
-and 'wl-draft-send-mail-with-pop-before-smtp."
+Prepared candidates are \\='wl-draft-send-mail-with-smtp,
+\\='wl-draft-send-mail-with-sendmail, \\='wl-draft-send-mail-with-qmail
+and \\='wl-draft-send-mail-with-pop-before-smtp."
   :type '(radio (function-item wl-draft-send-mail-with-smtp)
 		(function-item wl-draft-send-mail-with-sendmail)
 		(function-item wl-draft-send-mail-with-qmail)
@@ -968,14 +968,14 @@ and 'wl-draft-send-mail-with-pop-before-smtp."
 	       ("Mail-Followup-To" "To" "Cc")
 	       ("Followup-To" "Newsgroups"))))
   "Alist of cons cell of
-\('condition' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
-'condition' is a header name string (non-nil if the header exists in original
+(\\='condition\\=' .  (\\='fields for To\\=' \\='fields for Cc\\=' \\='fields for Newsgroups\\='))
+\\='condition\\=' is a header name string (non-nil if the header exists in original
 message), a function (evaluated in original message buffer) or a list of those
-\(means 'AND' condition).
-'fields for ***' is a list of strings.
+(means \\='AND\\=' condition).
+\\='fields for ***\\=' is a list of strings.
 If car of each cons cell returns non-nil value,
 cdr of each cons cell is used for preparing headers of draft message.
-Default is for 'reply-to-all'."
+Default is for \\='reply-to-all\\='."
   :type '(repeat (cons (choice (string :tag "Field Name")
 			       (symbol :tag "Function")
 			       (const :tag "Replying to self" wl-draft-self-reply-p)
@@ -997,11 +997,11 @@ Default is for 'reply-to-all'."
     (wl-draft-self-reply-p . (("To") ("Cc") nil))
     ("From" . (("From") ("To" "Cc") nil)))
   "Alist of cons cell of
-\('condition' .  ('fields for To' 'fields for Cc' 'fields for Newsgroups'))
-'condition' is a header name string (non-nil if the header exists in original
+(\\='condition\\=' .  (\\='fields for To\\=' \\='fields for Cc\\=' \\='fields for Newsgroups\\='))
+\\='condition\\=' is a header name string (non-nil if the header exists in original
 message), a function (evaluated in original message buffer) or a list of those
-\(means 'AND' condition).
-'fields for ***' is a list of strings.
+(means \\='AND\\=' condition).
+\\='fields for ***\\=' is a list of strings.
 If car of each cons cell returns non-nil value,
 cdr of each cons cell is used for preparing headers of draft message."
   :type '(repeat (cons (choice (string :tag "Field Name")
@@ -1121,12 +1121,12 @@ Special symbol `flag' means the user defined flag."
   '((important "orange"))
   "An alist to define the global flags for the summary mode.
 Each element is a form like:
-\(SYMBOL-OF-FLAG COLOR [MARK]\)
+(SYMBOL-OF-FLAG COLOR [MARK])
 Example:
-\((important \"orange\"\)
- \(todo \"red\" \"T\"\)
- \(business \"green\" \"B\"\)
- \(private \"blue\"\)\)"
+((important \"orange\")
+ (todo \"red\" \"T\")
+ (business \"green\" \"B\")
+ (private \"blue\"))"
   :type '(repeat (list (symbol :tag "flag")
 		       (string :tag "color")
 		       (choice (string :tag "mark")
@@ -1207,7 +1207,7 @@ Candidates are following:
 (defcustom wl-summary-fix-timezone nil
   "*Time zone of the date string in summary mode.
 If nil, it is adjust to the default time zone information
-\(system's default time zone or environment variable TZ)."
+(system's default time zone or environment variable TZ)."
   :type '(choice (const :tag "Default time zone" nil)
 		 string)
   :group 'wl-summary)
@@ -1273,7 +1273,7 @@ In sync-all or rescan."
 
 (defcustom wl-score-files-directory (concat elmo-msgdb-directory elmo-path-sep)
   "*Name of the directory where score files will be stored.
-\(default \"~/.elmo\")."
+(default \"~/.elmo\")."
   :type 'directory
   :group 'wl)
 
@@ -1406,7 +1406,7 @@ The configuration is applied when `wl-draft-config-exec' is called, or
 applied automatically before sending message.
 
 ex.
-'((\"^To: .*wl@ml.gentei.org\"
+\\='((\"^To: .*wl@ml.gentei.org\"
    (\"From\" . my-from-address-for-wl-list)
    (\"Organization\" . my-organization-for-wl-list))
   (reply
@@ -1504,13 +1504,13 @@ of `wl-draft-config-alist'."
 (defcustom wl-draft-reply-buffer-style 'split
   "Style of draft buffer for `wl-summary-reply' and `wl-summary-forward'.
 
-'keep will use the existing message buffer window for the reply,
-'full will use a full frame window,
-'split will split the message window vertically (top-to-bottom), and
-'split-horiz will split the message window horizontally (side-by-side).
+\\='keep will use the existing message buffer window for the reply,
+\\='full will use a full frame window,
+\\='split will split the message window vertically (top-to-bottom), and
+\\='split-horiz will split the message window horizontally (side-by-side).
 If a function is given, it is called with the draft buffer as an
 argument.
-For 'split and 'split-horiz if the current window is the folder
+For \\='split and \\='split-horiz if the current window is the folder
 window, and the summary window is visible, then the summary
 window is visited (with `wl-folder-jump-to-previous-summary')
 before any action is taken."
@@ -1525,17 +1525,17 @@ before any action is taken."
   "Style of draft buffer for writing new messages (i.e. except
 for `wl-summary-reply' and `wl-summary-forward').
 
-'keep will use the current window for the new message,
-'full will use a full frame window,
-'split will split the current window vertically (top-to-bottom),
-'msg-split will split the message buffer window vertically (top-to-bottom),
-'spilt-horiz will split the current window horizontally (side-by-side), and
-'msg-spilt-horiz will split the message window horizontally (side-by-side).
+\\='keep will use the current window for the new message,
+\\='full will use a full frame window,
+\\='split will split the current window vertically (top-to-bottom),
+\\='msg-split will split the message buffer window vertically (top-to-bottom),
+\\='spilt-horiz will split the current window horizontally (side-by-side), and
+\\='msg-spilt-horiz will split the message window horizontally (side-by-side).
 If a function is given, it is called with the draft buffer as an
 argument.
 If the message window is not visible then the current window is
 used.
-For 'split, 'msg-split, 'split-horiz, and 'msg-split-horiz if the
+For \\='split, \\='msg-split, \\='split-horiz, and \\='msg-split-horiz if the
 current window is the folder window, and the summary window is
 visible, then the summary window is visited (with
 `wl-folder-jump-to-previous-summary') before any action is
@@ -1551,9 +1551,9 @@ taken."
 
 (defcustom wl-draft-reply-default-position 'body
   "Begining position of reply buffer.
-'body means the top of body.
-'bottom means the bottom of body.
-'top means the top of header.
+\\='body means the top of body.
+\\='bottom means the bottom of body.
+\\='top means the top of header.
 \"To\", \"Newsgroups\", \"Subject\" means the position of the header field.
 You can also set it to a list of setting.
 "
@@ -1605,9 +1605,9 @@ You can also set it to a list of setting.
 
 (defcustom wl-summary-number-column-alist '(("\\*.*" . 6))
   "Alist of folder and its number column.
-If no matches, 'wl-summary-default-number-column' is used.
+If no matches, `wl-summary-default-number-column' is used.
 ex.
-'((\"^%inbox@qmail-maildir\" . 9)
+\\='((\"^%inbox@qmail-maildir\" . 9)
   (\"^-.*@news-server\" . 6))"
   :type '(repeat (cons (regexp :tag "Folder Regexp") integer))
   :group 'wl-summary)
@@ -1800,7 +1800,7 @@ which appear just before @ (domain based) or % (mail address based)."
     (?n wl-message-buffer-cur-number))
   "An alist of format specifications for message buffer's mode-lines.
 Each element is a list of following:
-\(SPEC STRING-EXP)
+(SPEC STRING-EXP)
 SPEC is a character for format specification.
 STRING-EXP is an expression to get string to insert.")
 
@@ -2056,7 +2056,7 @@ with wl-highlight-folder-many-face."
   :group 'wl-draft)
 
 (defcustom wl-highlight-background-mode 'dark
-  "*Background mode of highlight (for Old Emacsen).  'dark or 'light."
+  "*Background mode of highlight (for Old Emacsen).  \\='dark or \\='light."
   :type '(radio (const dark)
 		(const light))
   :group 'wl-highlight)
@@ -2077,7 +2077,7 @@ This should be a list of strings, one string for each argument.
 
 For e.g., if you wish to set the envelope sender address so that bounces
 go to the right place or to deal with listserv's usage of that address, you
-might set this variable to '(\"-f\" \"you@some.where\")."
+might set this variable to \\='(\"-f\" \"you@some.where\")."
   :type '(repeat (string :tag "Argument"))
   :group 'wl-draft)
 
@@ -2134,7 +2134,7 @@ Candidates are following:
 `nntp-posting-server'
 `nntp-posting-port'
 Also variables which begin with `wl-' can be specified
-\(`wl-' have to be removed\)"
+(`wl-' have to be removed)"
   :type '(choice (repeat (cons (choice (const :tag "Mail" mail)
 				       (const :tag "News" news))
 			       (repeat symbol)))
@@ -2192,7 +2192,7 @@ the message is skipped at cursor move."
 (defcustom wl-refile-rule-alist nil
   "Refile rule alist.
 e.x.
-'((\"From\"
+\\='((\"From\"
    (\"teranisi@isl.ntt.co.jp\" . \"+teranisi\"))
   (\"x-ml-name\"
    (\"^Wanderlust\"    . \"+wl\")
@@ -2217,7 +2217,7 @@ Only IMAP4 folders have an effect."
   :group 'wl-folder)
 
 (defcustom wl-force-fetch-folders nil
-  "Non-nil forces to fetch subfolders when user opened an 'access' folder."
+  "Non-nil forces to fetch subfolders when user opened an \\='access\\=' folder."
   :type '(choice (const :tag "off" nil)
 		 (const :menu-tag "on" t)
 		 (repeat (regexp :tag "Folder Regexp")))
@@ -2303,14 +2303,14 @@ It has no effect on the case which `wl-biff-use-idle-timer' is non-nil."
   "Displaying order of items to be shown in modeline.  The first item will
 be placed in the leftmost.  The significant items are `biff' and `plug';
 otherwise, e.g. `title', corresponds to the things except for the biff
-staus nor the plugged status.  The default order is '(biff plug title)
+staus nor the plugged status.  The default order is \\='(biff plug title)
 even if the value of this option is set to nil.  Here are some samples:
 
 ;; Plugged status first:
-\(setq wl-mode-line-display-priority-list '(plug))
+(setq wl-mode-line-display-priority-list \\='(plug))
 
 ;; Biff status, Title of Wanderlust, Plugged status:
-\(setq wl-mode-line-display-priority-list '(biff title plug))
+(setq wl-mode-line-display-priority-list \\='(biff title plug))
 
 "
   :type '(repeat (radio (const :format "%v " biff)
@@ -2407,7 +2407,7 @@ and reserved buffer cache."
   "*All folders that match this list prefetch next message,
 and reserved buffer cache.
 e.x.
-'(\"^[-%]\")"
+\\='(\"^[-%]\")"
   :type '(repeat (regexp :tag "Folder Regexp"))
   :group 'wl-pref)
 
@@ -2474,7 +2474,7 @@ Each elements are regexp of folder name."
   "Weekday name lang alist.
 If no match, `wl-summary-weekday-name-lang' is used.
 e.x.
-'((\"xemacs-beta$\" . \"en\")
+\\='((\"xemacs-beta$\" . \"en\")
   (\"^-fj\" . \"ja\"))"
   :type '(repeat (cons (regexp :tag "Folder Regexp")
 		       (choice (const "ja")
@@ -2491,14 +2491,14 @@ e.x.
     ("^-han\\." . (2 "+" "+" "|" "-" " ")))
   "Thread indent set alist.
 If no match, following indent set is used.
-\(wl-thread-indent-level
+(wl-thread-indent-level
  wl-thread-have-younger-brother-str
  wl-thread-youngest-child-str
  wl-thread-vertical-str
  wl-thread-horizontal-str
  wl-thread-space-str)
 e.x.
-'((\"xemacs-beta$\" . (2 \"+\" \"+\" \"|\" \"-\" \" \")))"
+\\='((\"xemacs-beta$\" . (2 \"+\" \"+\" \"|\" \"-\" \" \")))"
   :type '(repeat (cons (regexp :tag "Folder Regexp")
 		       (group (integer :tag "Indent")
 			      (string :tag "Yonger Brother")
@@ -2560,7 +2560,7 @@ If TYPE is nil, do nothing for duplicated messages."
 
 (defcustom wl-folder-notify-deleted nil
   "*Non-nil, display negative number on folder-mode when message is deleted
-in folder. If the value is 'sync, msgdb would be synchronized."
+in folder. If the value is \\='sync, msgdb would be synchronized."
   :type '(choice (const :tag "off" nil)
 		 (const :tag "on" t)
 		 (const sync))
@@ -2573,14 +2573,14 @@ in folder. If the value is 'sync, msgdb would be synchronized."
 
 (defcustom wl-summary-next-no-unread-command
   '(wl-summary-read wl-summary-down wl-summary-up)
-  "*Command list available when the value of `wl-auto-select-next' is 'unread
-or 'skip-no-unread."
+  "*Command list available when the value of `wl-auto-select-next' is \\='unread
+or \\='skip-no-unread."
   :type '(repeat function)
   :group 'wl-summary)
 
 (defcustom wl-summary-search-via-nntp 'confirm
   "*Non-nil, search message via nntp after `wl-summary-jump-to-msg-by-message-id'.
-If the value is 'confirm, confirm before search, 'force to search via nntp
+If the value is \\='confirm, confirm before search, \\='force to search via nntp
 regardless of current folder type."
   :type '(choice (const :tag "confirm" confirm)
 		 (const :tag "always" force)
@@ -2630,13 +2630,13 @@ Note that strict message identity is not guaranteed when cache is used."
 Each element is (folder-regexp . policy).
 
 The policy is one of the followings:
-'remove or
-'null     : remove message.
+\\='remove or
+\\='null     : remove message.
 string    : refile to the specified folder.
-'trash or
+\\='trash or
 otherwise : refile to the `wl-trash-folder'.
 ex.
-'((\"^%\" . \"%#mh/trash\")
+\\='((\"^%\" . \"%#mh/trash\")
   (\"^-\" . remove)
   (\"^\\\\+\" . trash))"
   :type '(repeat (cons (regexp :tag "Folder Regexp")
@@ -2675,7 +2675,7 @@ If subscribe is non-nil, subscribe when match folder-regexp.
 If subscribe is nil, unsubscribe when match folder-regexp.
 
 ex.
-'((\"^-fj$\"   . (t   \"^-fj\\\\.\\\\(editor\\\\|mail\\\\|net\\\\|news\\\\)\"))
+\\='((\"^-fj$\"   . (t   \"^-fj\\\\.\\\\(editor\\\\|mail\\\\|net\\\\|news\\\\)\"))
   (\"^-comp$\" . (t   \"^-comp\\\\.unix\" \"^-comp\\\\.sys\"))
   (\"^-$\"     . (nil \"^-alt\" \"^-rec\")))"
   :type '(repeat (cons (regexp :tag "Folder Regexp")
@@ -2743,13 +2743,13 @@ ex.
 Each element is (folder-regexp (number or date) policy).
 
 The policy is one of the followings:
-'remove  : remove messsage.
-'trash   : refile `wl-trash-folder'.
+\\='remove  : remove messsage.
+\\='trash   : refile `wl-trash-folder'.
 string   : refile string folder.
 function : call function.
 
 ex.
-'((\"^\\\\+ml/wl$\"		(number 500 510) wl-expire-archive-number1 t)
+\\='((\"^\\\\+ml/wl$\"		(number 500 510) wl-expire-archive-number1 t)
   (\"^\\\\+ml/\"		(number 300 305) wl-expire-archive-number2)
   (\"^\\\\+outbox$\"		(number 300) \"$outbox;lha\")
   (\"^\\\\(\\\\+tmp\\\\|\\\\+trash\\\\)$\"	(date 7) remove)
@@ -2781,7 +2781,7 @@ ex.
 Each element is (folder-regexp policy(function)).
 
 ex.
-'((\"\\\\+work$\" wl-archive-date)
+\\='((\"\\\\+work$\" wl-archive-date)
   (\"\\\\+ml/\"   wl-archive-number1)
   (\".*\"       wl-archive-number2))"
   :type '(repeat (list (regexp :tag "Folder Regexp")
@@ -2800,8 +2800,8 @@ ex.
 Don't reserve temporary mark message.
 
 ex.
-'all  : reserved all permanent marks.
-'none : not reserve permanent marks.
+\\='all  : reserved all permanent marks.
+\\='none : not reserve permanent marks.
 list  : reserved specified permanent marks."
   :type '(repeat (string :tag "Mark"))
   :group 'wl-expire)

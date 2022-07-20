@@ -1654,11 +1654,11 @@ NUMBER-LIST must be sorted in ascending order and uniquified."
 ;;; File cache.
 (defmacro elmo-make-file-cache (path status)
   "PATH is the cache file name.
-STATUS is one of 'section, 'entire or nil.
+STATUS is one of \\='section, \\='entire or nil.
  nil means no cache exists.
-'section means partial section cache exists.
-'entire means entire cache exists.
-If the cache is partial file-cache, TYPE is 'partial."
+\\='section means partial section cache exists.
+\\='entire means entire cache exists.
+If the cache is partial file-cache, TYPE is \\='partial."
   `(cons ,path ,status))
 
 (defmacro elmo-file-cache-path (file-cache)
@@ -1707,7 +1707,7 @@ SECTION is the section string."
     t))
 
 (defun elmo-file-cache-exists-p (msgid)
-  "Returns 'section or 'entire if a cache which corresponds to MSGID exists."
+  "Returns \\='section or \\='entire if a cache which corresponds to MSGID exists."
   (elmo-file-cache-status (elmo-file-cache-get msgid)))
 
 (defun elmo-file-cache-save (cache-path section)
@@ -1968,7 +1968,7 @@ If `elmo-obsolete-variable-show-warnings' is non-nil, show warning message."
 (defun elmo-resque-obsolete-variables (&optional _alist)
   "Resque obsolete variables in ALIST.
 ALIST is a list of cons cell of
-\(OBSOLETE-VARIABLE-SYMBOL . NEW-VARIABLE-SYMBOL\).
+(OBSOLETE-VARIABLE-SYMBOL . NEW-VARIABLE-SYMBOL).
 If ALIST is nil, `elmo-obsolete-variable-alist' is used."
   (dolist (pair elmo-obsolete-variable-alist)
     (elmo-resque-obsolete-variable (cdr pair)

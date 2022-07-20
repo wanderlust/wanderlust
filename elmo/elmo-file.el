@@ -52,7 +52,7 @@
 (defcustom elmo-file-command-argument
   '("-i")
   "*Argument list for the `file' command.
-\(It should return the MIME content type\)"
+(It should return the MIME content type)"
   :type '(repeat string)
   :group 'elmo)
 

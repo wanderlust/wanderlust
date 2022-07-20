@@ -59,9 +59,9 @@
   "Yank currently displayed message entity.
 By setting following-method as yank-content.
 
-If region is active, yank region contents instead. \(this feature is available
-if and only if `transient-mark-mode' \(GNU Emacs\) or `zmacs-regions' \(XEmacs\)
-has Non-nil value\)"
+If region is active, yank region contents instead. (this feature is available
+if and only if `transient-mark-mode' (GNU Emacs) or `zmacs-regions' (XEmacs)
+has Non-nil value)"
   (let ((wl-draft-buffer (current-buffer))
 	(mime-preview-following-method-alist
 	 (list (cons 'wl-original-message-mode

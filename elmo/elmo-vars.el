@@ -285,7 +285,7 @@ On other platforms, the value indicates hash function."
 (defvar elmo-msgdb-flist-filename "flist"
   "Folder list cache (for access folder).")
 (defvar elmo-msgdb-finfo-filename "finfo"
-  "Folder information cache...list of '(filename . '(new unread all)).")
+  "Folder information cache...list of \\='(filename . \\='(new unread all)).")
 (defvar elmo-msgdb-lock-list-filename "lock"
   "Locked messages...list of message-id.
 For disconnected operations.")
@@ -394,7 +394,7 @@ Arguments for this function are NAME, BUFFER, HOST and SERVICE.")
   '(starttls socks-starttls))
 
 (defvar elmo-folder-info-hashtb nil
-  "Array of folder database information '(max length new unread).")
+  "Array of folder database information \\='(max length new unread).")
 
 (defvar elmo-crosspost-message-alist nil
   "List of crosspost message.")

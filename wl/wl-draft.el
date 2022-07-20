@@ -84,8 +84,8 @@ This variable is local in each draft buffer.
 You can refer its value in `wl-draft-config-alist'.
 
 e.g.
-\(setq wl-draft-config-alist
-      '(((string-match \".*@domain1$\" wl-draft-parent-folder)
+(setq wl-draft-config-alist
+      \\='(((string-match \".*@domain1$\" wl-draft-parent-folder)
          (\"From\" . \"user@domain1\"))
         ((string-match \".*@domain2$\" wl-draft-parent-folder)
          (\"From\" . \"user@domain2\"))))")
@@ -1910,7 +1910,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 
 (defun wl-draft-create-contents (header-alist)
   "header-alist' sample
-'(function  ;; funcall
+\\='(function  ;; funcall
   string    ;; insert string
   (symbol . string)    ;;  insert symbol-value: string
   (symbol . function)  ;;  (funcall) and if it returns string,

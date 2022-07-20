@@ -71,7 +71,7 @@
 	 (list "-d" elmo-spam-bogofilter-database-directory))))
   "*An alist of options that are used with call bogofilter process.
 Each element is a list of following:
-\(TYPE [SEXP...])
+(TYPE [SEXP...])
 TYPE is a symbol from `classify' or `register'.
 SEXP is an expression to get options.
 Must be return a string or list of string."

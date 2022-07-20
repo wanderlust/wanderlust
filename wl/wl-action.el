@@ -816,7 +816,7 @@ Return number if put mark succeed"
   "*List of functions which is used for guessing refile destination folder.")
 
 (defun wl-summary-auto-refile (&optional open-all)
-  "Set refile mark automatically according to 'wl-refile-guess-by-rule'."
+  "Set refile mark automatically according to `wl-refile-guess-by-rule'."
   (interactive "P")
   (message "Marking...")
   (save-excursion

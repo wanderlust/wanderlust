@@ -80,11 +80,11 @@ server should be ignored (For STATUS command).")
   "*Number of messages to specify as a number-set argument for one request.")
 
 (defvar elmo-imap4-force-login nil
-  "*Non-nil forces to try 'login' if there is no 'auth' capability in imapd.")
+  "*Non-nil forces to try \\='login\\=' if there is no \\='auth\\=' capability in imapd.")
 
 (defvar elmo-imap4-use-select-to-update-status nil
   "*Some imapd have to send select command to update status.
-\(ex. UW imapd 4.5-BETA?\).  For these imapd, you must set this variable t.")
+(ex. UW imapd 4.5-BETA?).  For these imapd, you must set this variable t.")
 
 (defvar elmo-imap4-use-modified-utf7 t
   "*Use modified UTF-7 (rfc2060) encoding for IMAP4 folder name.")
@@ -284,15 +284,15 @@ Debug information is inserted in the buffer \"*IMAP4 DEBUG*\"")
   `(assq 'continue-req ,response))
 
 (defmacro elmo-imap4-response-ok-p (response)
-  "Returns non-nil if RESPONSE is an 'OK' response."
+  "Returns non-nil if RESPONSE is an `OK' response."
   `(assq 'ok ,response))
 
 (defmacro elmo-imap4-response-bye-p (response)
-  "Returns non-nil if RESPONSE is an 'BYE' response."
+  "Returns non-nil if RESPONSE is an `BYE' response."
   `(assq 'bye ,response))
 
 (defmacro elmo-imap4-response-garbage-p (response)
-  "Returns non-nil if RESPONSE is an 'garbage' response."
+  "Returns non-nil if RESPONSE is an `garbage' response."
   `(assq 'garbage ,response))
 
 (defmacro elmo-imap4-response-value (response symbol)
@@ -788,9 +788,9 @@ BUFFER must be a single-byte buffer."
   "Select MAILBOX in SESSION.
 If optional argument FORCE is non-nil, select mailbox even if current mailbox
 is same as MAILBOX.
-If second optional argument NO-ERROR is non-nil, don't cause an error when
+If second optional argument NO-ERROR is non-nil, don\\='t cause an error when
 selecting folder was failed.
-If NO-ERROR is 'notify-bye, only BYE response is reported as error.
+If NO-ERROR is \\='notify-bye, only BYE response is reported as error.
 Returns response value if selecting folder succeed. "
   (when (or force
             (not (elmo-imap4-mailbox-selected-p mailbox session)))
@@ -965,7 +965,7 @@ EXPUNGE for deleted messages."
   "List flagged message numbers in the FOLDER.
 FLAG is one of the `unread', `read', `important', `answered',
 `any'.
-When optional argument TYPE is symbol 'unmatch, negate search
+When optional argument TYPE is symbol \\='unmatch, negate search
 condition."
   (let ((session (elmo-imap4-get-session folder))
         (criteria (concat (if (eq type 'unmatch) "not " "")
@@ -975,10 +975,10 @@ condition."
       ;; List flagged messages in the msgdb.
       (elmo-msgdb-list-flagged (elmo-folder-msgdb folder) flag))))
 
-(defvar elmo-imap4-rfc822-size "RFC822\.SIZE")
-(defvar elmo-imap4-rfc822-text "RFC822\.TEXT")
-(defvar elmo-imap4-rfc822-header "RFC822\.HEADER")
-(defvar elmo-imap4-header-fields "HEADER\.FIELDS")
+(defvar elmo-imap4-rfc822-size "RFC822.SIZE")
+(defvar elmo-imap4-rfc822-text "RFC822.TEXT")
+(defvar elmo-imap4-rfc822-header "RFC822.HEADER")
+(defvar elmo-imap4-header-fields "HEADER.FIELDS")
 
 (defun elmo-imap4-make-number-set-list (msg-list &optional chop-length)
   "Make RFC2060's message set specifier from MSG-LIST.

@@ -202,15 +202,15 @@ If IF-EXISTS is `any-exists', get BIFF session or normal session if exists."
     (process-send-string process (concat command "\r\n"))))
 
 (defun elmo-pop3-read-response (process &optional not-command)
-  "Read response and return a cons cell of \(CODE . BODY\).
+  "Read response and return a cons cell of (CODE . BODY).
 PROCESS is the process to read response from.
 If optional NOT-COMMAND is non-nil, read only the first line.
 CODE is one of the following:
-'ok          ... response is OK.
-'err         ... response is ERROR.
-'login-delay ... user is not allowed to login until the login delay
+\\='ok          ... response is OK.
+\\='err         ... response is ERROR.
+\\='login-delay ... user is not allowed to login until the login delay
                  period has expired.
-'in-use      ... authentication was successful but the mailbox is in use."
+\\='in-use      ... authentication was successful but the mailbox is in use."
   ;; buffer is in case for process is dead.
   (with-current-buffer (process-buffer process)
     (let ((response-continue t)

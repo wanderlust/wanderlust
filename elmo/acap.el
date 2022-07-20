@@ -309,27 +309,27 @@ Valid states are `closed', `initial', `auth'.")
 (defun acap-search (process target &optional modifier criteria)
   "Execute SEARCH command on PROCESS.
 TARGET is a string which specifies what is to be searched
-\(dataset or context name\).
+(dataset or context name).
 MODIFIER is an alist of modifiers. Each element should be a list like
-\(MODIFIER-NAME DATA1 DATA2...\).
+(MODIFIER-NAME DATA1 DATA2...).
 CRITERIA is a search criteria string.
 If CRITERIA is not specified, \"ALL\" is assumed,
 Modifiers and search criteria are described in section 6.4.1 of RFC2244.
 
 Examples:
-\(acap-search process
+(acap-search process
 	     \"/addressbook/\"
-	     '\((DEPTH 3\)
-               \(RETURN \(\"addressbook.Alias\"
+	     \\='((DEPTH 3)
+               (RETURN (\"addressbook.Alias\"
                         \"addressbook.Email\"
-                        \"addressbook.List\"\)\)\)
+                        \"addressbook.List\")))
 	     \"OR NOT EQUAL \\\"addressbook.Email\\\" \\\"i\;octed\\\" NIL\\
-                 NOT EQUAL \\\"addressbook.Email\\\" \\\"i\;octed\\\" NIL\"\)
+                 NOT EQUAL \\\"addressbook.Email\\\" \\\"i\;octed\\\" NIL\")
 
-\(acap-search process
+(acap-search process
 	     \"/addressbook/user/fred/\"
-	     '\(\(RETURN \(\"*\"\)\)
-	     \"EQUAL \\\"entry\\\" \\\"i\;octed\\\" \\\"A0345\\\"\"\)"
+	     \\='((RETURN (\"*\"))
+	     \"EQUAL \\\"entry\\\" \\\"i\;octed\\\" \\\"A0345\\\"\")"
   (acap-send-command-wait process
 			  (concat "SEARCH " (prin1-to-string target)
 				  (if modifier " ")

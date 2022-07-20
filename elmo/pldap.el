@@ -91,7 +91,7 @@
 It is recommended to use the `-T' switch with Nescape's
 implementation to avoid line wrapping.
 `-L' is needed to get LDIF outout.
-\(`-LL' is needed to get rid of comments from OpenLDAP's ldapsearch.\)
+(`-LL' is needed to get rid of comments from OpenLDAP's ldapsearch.)
 `-x' is needed to use simple authentication.
 The `-B' switch should be used to enable the retrieval of
 binary values."
@@ -124,7 +124,7 @@ Acme organization in the United States."
 (defcustom ldap-host-parameters-alist nil
   "*Alist of host-specific options for LDAP transactions.
 The format of each list element is:
-\(HOST PROP1 VAL1 PROP2 VAL2 ...)
+(HOST PROP1 VAL1 PROP2 VAL2 ...)
 HOST is the hostname of an LDAP server (with an optional TCP port number
 appended to it  using a colon as a separator).
 PROPn and VALn are property/value pairs describing parameters for the server.
@@ -967,10 +967,10 @@ PASSWD is the corresponding password"
 (defun ldap-modify-entries (entry-mods &optional host binddn passwd)
   "Modify entries of an LDAP directory.
 ENTRY-MODS is a list of entry modifications of the form
-  \(DN MOD-SPEC1 MOD-SPEC2 ...\) where DN is the distinguished name of
+  (DN MOD-SPEC1 MOD-SPEC2 ...) where DN is the distinguished name of
 the entry to modify, the following are modification specifications.
 A modification specification is itself a list of the form
-\(MOD-OP ATTR VALUE1 VALUE2 ...\) MOD-OP and ATTR are mandatory,
+(MOD-OP ATTR VALUE1 VALUE2 ...) MOD-OP and ATTR are mandatory,
 VALUEs are optional depending on MOD-OP.
 MOD-OP is the type of modification, one of the symbols `add', `delete'
 or `replace'.  ATTR is the LDAP attribute type to modify.
