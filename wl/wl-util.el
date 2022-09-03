@@ -556,7 +556,6 @@ e-mail address.  It should be consist of atext (described in RFC
 
 (defun wl-start-save-drafts ()
   (when (numberp wl-auto-save-drafts-interval)
-    (require 'timer)
     (let ((timer (get 'wl-save-drafts 'timer)))
       (if timer
 	  (progn
@@ -595,7 +594,6 @@ e-mail address.  It should be consist of atext (described in RFC
   (put 'wl-biff 'timers nil))
 
 (defun wl-biff-start ()
-  (require 'timer)
   (if wl-biff-check-folder-list
       ;; If biff timer already started, do nothing.
       (unless (get 'wl-biff 'timers)

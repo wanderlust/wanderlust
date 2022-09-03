@@ -2892,7 +2892,6 @@ been implemented yet.  Partial support for SWITCH-FUNCTION now supported."
 
 (defun wl-draft-idle-highlight-set-timer (_beg _end _len)
   (when (eq wl-draft-real-time-highlight 'idle)
-    (require 'timer)
     (when (timerp wl-draft-idle-highlight-timer)
       (cancel-timer wl-draft-idle-highlight-timer))
     (setq wl-draft-idle-highlight-timer

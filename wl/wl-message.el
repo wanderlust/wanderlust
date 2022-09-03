@@ -30,7 +30,6 @@
 ;;
 (require 'cl-lib)
 
-(require 'timer)
 (require 'mime-view)
 (require 'elmo)
 (require 'elmo-mime)
