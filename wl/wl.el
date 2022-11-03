@@ -318,7 +318,7 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 		  (nreverse shrinked) ","))
 	       ")"))
      operations
-     (concat "\n" (wl-set-string-width column "")))))
+     (concat "\n" (make-string column ?\s)))))
 
 (defun wl-plugged-drawing (plugged-alist)
   (let ((buffer-read-only nil)
