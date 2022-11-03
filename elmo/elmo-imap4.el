@@ -1479,7 +1479,7 @@ Return nil if no complete line has arrived."
         (elmo-imap4-forward)
         (while (and (/= (following-char) ?\))
                     ;; next line for MS Exchange bug
-                    (progn (and (eq (following-char) (string-to-char " "))
+                    (progn (and (eq (following-char) ?\s)
                                 (elmo-imap4-forward)) t)
                     (setq address (elmo-imap4-parse-address)))
           (setq addresses (cons address addresses)))
@@ -1660,7 +1660,7 @@ Return nil if no complete line has arrived."
                            (1-
                             (progn (re-search-forward "[] ]" nil t)
                                    (point))))))
-    (if (eq (preceding-char) (string-to-char " "))
+    (if (eq (preceding-char) ?\s)
         (prog1
             (mapconcat 'identity
                        (cons section (elmo-imap4-parse-header-list)) " ")
@@ -1802,7 +1802,7 @@ Return nil if no complete line has arrived."
 (defun elmo-imap4-parse-acl ()
   (let ((mailbox (elmo-imap4-parse-mailbox))
         identifier rights acl)
-    (while (eq (following-char) (string-to-char " "))
+    (while (eq (following-char) ?\s)
       (elmo-imap4-forward)
       (setq identifier (elmo-imap4-parse-astring))
       (elmo-imap4-forward)
@@ -1857,7 +1857,7 @@ Return nil if no complete line has arrived."
       (let (b-e)
         (elmo-imap4-forward)
         (push (elmo-imap4-parse-body-extension) b-e)
-        (while (eq (following-char) (string-to-char " "))
+        (while (eq (following-char) ?\s)
           (elmo-imap4-forward)
           (push (elmo-imap4-parse-body-extension) b-e))
         (cl-assert (eq (following-char) ?\)))
@@ -1868,7 +1868,7 @@ Return nil if no complete line has arrived."
 
 (defsubst elmo-imap4-parse-body-ext ()
   (let (ext)
-    (when (eq (following-char) (string-to-char " ")) ; body-fld-dsp
+    (when (eq (following-char) ?\s) ; body-fld-dsp
       (elmo-imap4-forward)
       (let (dsp)
         (if (eq (following-char) ?\()
@@ -1880,12 +1880,12 @@ Return nil if no complete line has arrived."
               (elmo-imap4-forward))
           (cl-assert (elmo-imap4-parse-nil)))
         (push (nreverse dsp) ext))
-      (when (eq (following-char) (string-to-char " ")) ; body-fld-lang
+      (when (eq (following-char) ?\s) ; body-fld-lang
         (elmo-imap4-forward)
         (if (eq (following-char) ?\()
             (push (elmo-imap4-parse-string-list) ext)
           (push (elmo-imap4-parse-nstring) ext))
-        (while (eq (following-char) (string-to-char " "));; body-extension
+        (while (eq (following-char) ?\s);; body-extension
           (elmo-imap4-forward)
           (setq ext (append (elmo-imap4-parse-body-extension) ext)))))
     ext))
@@ -1901,7 +1901,7 @@ Return nil if no complete line has arrived."
               (push subbody body))
             (elmo-imap4-forward)
             (push (elmo-imap4-parse-string) body);; media-subtype
-            (when (eq (following-char) (string-to-char " ")) ; body-ext-mpart:
+            (when (eq (following-char) ?\s) ; body-ext-mpart:
               (elmo-imap4-forward)
               (if (eq (following-char) ?\();; body-fld-param
                   (push (elmo-imap4-parse-string-list) body)
@@ -1917,7 +1917,7 @@ Return nil if no complete line has arrived."
         (push (elmo-imap4-parse-string) body);; media-subtype
         (elmo-imap4-forward)
         ;; next line for Sun SIMS bug
-        (and (eq (following-char) (string-to-char " "))
+        (and (eq (following-char) ?\s)
              (elmo-imap4-forward))
         (if (eq (following-char) ?\();; body-fld-param
             (push (elmo-imap4-parse-string-list) body)
@@ -1941,7 +1941,7 @@ Return nil if no complete line has arrived."
         ;; the problem is that the two first are in turn optionally followed
         ;; by the third.  So we parse the first two here (if there are any)...
 
-        (when (eq (following-char) (string-to-char " "))
+        (when (eq (following-char) ?\s)
           (elmo-imap4-forward)
           (let (lines)
             (cond ((eq (following-char) ?\();; body-type-msg:
@@ -1957,7 +1957,7 @@ Return nil if no complete line has arrived."
 
         ;; ...and then parse the third one here...
 
-        (when (eq (following-char) (string-to-char " ")) ; body-ext-1part:
+        (when (eq (following-char) ?\s) ; body-ext-1part:
           (elmo-imap4-forward)
           (push (elmo-imap4-parse-nstring) body);; body-fld-md5
           (setq body

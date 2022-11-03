@@ -569,7 +569,7 @@ Return nil if no ADDRESS exists."
 		  (cc "Cc: ")
 		  (bcc "Bcc:")
 		  (t "    ")))
-	(insert (make-string (- 4 (current-column)) (string-to-char " ")))
+	(insert (make-string (- 4 (current-column)) ?\s))
 	(setq beg (point-at-bol))
 	(setq end (point-at-eol))
 	(put-text-property beg end 'face nil)

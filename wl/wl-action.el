@@ -748,7 +748,7 @@ Return number if put mark succeed"
 		  (put-text-property rs re 'invisible t))
 	      (when (and width
 			 (> (setq padding (- width len c)) 0))
-		(setq data (concat (make-string padding (string-to-char " "))
+		(setq data (concat (make-string padding ?\s)
 				   data)))
 	      (setq rs (1- re))))
 	  (put-text-property rs re 'wl-summary-action-argument t)

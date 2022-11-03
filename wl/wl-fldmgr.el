@@ -110,7 +110,7 @@
   (delete-region (point-at-bol) (1+ (point-at-eol))))
 
 (defun wl-fldmgr-make-indent (level)
-  (concat " " (make-string (* 2 level) (string-to-char " "))))
+  (concat " " (make-string (* 2 level) ?\s)))
 
 (defmacro wl-fldmgr-get-entity-id (&optional entity)
   `(get-text-property (if ,entity

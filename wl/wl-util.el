@@ -121,7 +121,7 @@ If HACK-ADDRESSES is t, then the strings are considered to be mail addresses,
 	     (cmd (string-to-char (format "%s" (this-command-keys)))))
     (message "%s" mes-string)
     (setq key (car (setq keve (wl-read-event-char))))
-    (if (or (equal key (string-to-char " "))
+    (if (or (equal key ?\s)
 	    (and cmd
 		 (equal key cmd)))
 	(progn
@@ -163,7 +163,7 @@ even when invalid character is contained."
 				      (abs width))))
     (let ((paddings (make-string
 		     (max 0 (- (abs width) (string-width string)))
-		     (or padding (string-to-char " ")))))
+		     (or padding ?\s))))
       (if (< width 0)
 	  (concat paddings string)
 	(concat string paddings)))))
@@ -911,7 +911,7 @@ e-mail address.  It should be consist of atext (described in RFC
 	  (cond
 	   ((memq key '(?y ?Y))
 	    (throw 'done t))
-	   ((eq key (string-to-char " "))
+	   ((eq key ?\s)
 	    (if scroll-by-SPC
 		(ignore-errors (scroll-up))
 	      (throw 'done t)))

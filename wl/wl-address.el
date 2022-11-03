@@ -459,7 +459,7 @@ Matched address lists are append to CL."
 	    ((and epand-char
 		  (> len 0)
 		  (or (char-equal (aref pattern (1- len)) epand-char)
-		      (char-equal (aref pattern (1- len)) (string-to-char " ")))
+		      (char-equal (aref pattern (1- len)) ?\s))
 		  (assoc (substring pattern 0 (1- len)) cl))
 	     (wl-complete-insert
 	      start end
