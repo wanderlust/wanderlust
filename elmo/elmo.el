@@ -1855,9 +1855,7 @@ A value in this structure is cached at first access."
   (run-hooks 'elmo-init-hook))
 
 (defun elmo-quit ()
-  "Quit and cleanup ELMO."
-  (elmo-crosspost-message-alist-save)
-  (elmo-dop-queue-save)
+  "Quit ELMO."
   ;; Not implemented yet.
   (let ((types elmo-folder-type-alist)
 	class)
@@ -1869,6 +1867,24 @@ A value in this structure is cached at first access."
       ;; Call all folder's `elmo-quit' method.
       (if class
 	  (dolist (func (luna-class-find-functions class 'elmo-quit))
+	    (funcall func nil)))
+      (setq types (cdr types)))))
+
+(defun elmo-exit ()
+  "Finalize ELMO module."
+  (elmo-crosspost-message-alist-save)
+  (elmo-dop-queue-save)
+  (elmo-quit)
+  (let ((types elmo-folder-type-alist)
+	class)
+    (while types
+      (setq class
+	    (luna-find-class
+	     (intern (format "elmo-%s-folder"
+			     (symbol-name (cdr (car types)))))))
+      ;; Call all folder's `elmo-exit' method.
+      (if class
+	  (dolist (func (luna-class-find-functions class 'elmo-exit))
 	    (funcall func nil)))
       (setq types (cdr types)))))
 

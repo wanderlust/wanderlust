@@ -42,7 +42,15 @@
   :type 'directory
   :group 'elmo)
 
+(defcustom elmo-localdir-warnings t
+  "When non-nil, show warnings when filename with leading zero
+in MH folder were found."
+  :type 'booleanp
+  :group 'elmo)
+
 (defvar elmo-localdir-lockfile-list nil)
+
+(defvar elmo-localdir-warned-directories nil)
 
 ;;; ELMO Local directory folder
 (eval-and-compile
@@ -176,11 +184,20 @@
     (or (elmo-localdir-folder-dir-name-internal folder) "")
     one-level)))
 
+(defun elmo-localdir-warning-ignored-files (folder)
+  (let* ((dir (elmo-localdir-folder-directory-internal folder))
+	 (files (directory-files dir nil "^0[0-9]*$" t)))
+    (when (and files (null (member dir elmo-localdir-warned-directories)))
+      (elmo-warning
+       "Files whose name with leading zero such as %s are ignored."
+       (expand-file-name (car files) dir))
+      (add-to-list 'elmo-localdir-warned-directories dir))))
+
 (defsubst elmo-localdir-list-subr (folder &optional nonsort)
   (let ((flist (mapcar 'string-to-number
 		       (directory-files
 			(elmo-localdir-folder-directory-internal folder)
-			nil "^[0-9]+$" t)))
+			nil "^[1-9][0-9]*$" t)))
 	(killed (elmo-msgdb-killed-list-load (elmo-folder-msgdb-path folder))))
     (if nonsort
 	(cons (elmo-max-of-list flist)
@@ -188,6 +205,8 @@
 		  (- (length flist)
 		     (elmo-msgdb-killed-list-length killed))
 		(length flist)))
+      (when elmo-localdir-warnings
+	(elmo-localdir-warning-ignored-files folder))
       (sort flist '<))))
 
 (luna-define-method elmo-folder-append-buffer ((folder elmo-localdir-folder)
@@ -251,7 +270,7 @@
 (defun elmo-localdir-delete-message (folder number)
   "Delete message in the FOLDER with NUMBER."
   (let ((filename (elmo-message-file-name folder number)))
-    (when (and (string-match "[0-9]+" filename) ; for safety.
+    (when (and (string-match "[1-9][0-9]*$" filename) ; for safety.
 	       (file-exists-p filename)
 	       (file-writable-p filename)
 	       (not (file-directory-p filename)))
@@ -298,7 +317,7 @@
       (let ((dir (elmo-localdir-folder-directory-internal folder)))
 	(if (not (file-directory-p dir))
 	    (error "No such directory: %s" dir)
-	  (elmo-delete-match-files dir "[0-9]+" t)))
+	  (elmo-delete-match-files dir "[1-9][0-9]*$" t)))
       (elmo-msgdb-delete-path folder)
       t)))
 
@@ -356,6 +375,9 @@
 	    (if (file-exists-p (car lock))
 		(throw 'found t))
 	    (setq lock (cdr lock)))))))
+
+(luna-define-method elmo-exit ((_folder elmo-localdir-folder))
+  (setq elmo-localdir-warned-directories nil))
 
 (autoload 'elmo-global-flags-set "elmo-flag")
 
