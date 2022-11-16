@@ -840,6 +840,24 @@ MH 形式(1ファイル1メール)で保存されたメールを読むための�
 @end example
 
 
+@node Localdir Vars,  , MH Folder, MH Folder
+@subsection MH フォルダに関する変数
+@cindex Localdir variables
+
+@table @code
+@item elmo-localdir-folder-path
+@vindex elmo-localdir-folder-path
+MH フォルダの基準となるディレクトリを指定します。
+初期値は @file{~/Mail} です。
+
+@item elmo-localdir-warnings
+@vindex elmo-localdir-warnings
+non-nilの場合、対象のディレクトに @file{001} のような 0 で始まる
+ファイルがあると警告を出します。
+対象のファイルはこの変数の値にかかわらず無視されます。
+@end table
+
+
 @node Maildir Folder, News Spool Folder, MH Folder, Folders
 @section Maildir フォルダ
 @cindex @samp{.}

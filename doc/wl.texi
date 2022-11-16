@@ -828,6 +828,23 @@ Example:
 @end example
 
 
+@node Localdir Vars,  , MH Folder, MH Folder
+@subsection Variables About MH Folder
+@cindex Localdir variables
+
+@table @code
+@item elmo-localdir-folder-path
+@vindex elmo-localdir-folder-path
+Specify root directory of MH folder.
+Default is @file{~/Mail}.
+
+@item elmo-localdir-warnings
+@vindex elmo-localdir-warnings
+When non-nil, show warning about filenames with leading 0 such as @file{001}.
+They are ignored whatever value the variable is.
+@end table
+
+
 @node Maildir Folder, News Spool Folder, MH Folder, Folders
 @section Maildir Folder
 @cindex @samp{.}
