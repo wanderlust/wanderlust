@@ -2251,7 +2251,6 @@ interpreted as cited text.)"
     (unless too-big
       (save-excursion
 	(save-restriction
-	  (widen)
 	  ;; take off signature
 	  (when hack-sig
 	    (setq end (funcall wl-highlight-signature-search-function
