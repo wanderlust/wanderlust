@@ -2146,9 +2146,6 @@ This function is defined for `window-scroll-functions'"
 	(funcall wl-highlight-x-face-function)))
     (run-hooks 'wl-highlight-headers-hook)))
 
-(defun wl-highlight-body-all ()
-  (wl-highlight-message (point-min) (point-max) t t))
-
 (defun wl-highlight-body ()
   (let ((beg (or (save-excursion (goto-char (point-min))
 				 (re-search-forward "^$" nil t))
