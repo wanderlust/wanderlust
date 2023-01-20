@@ -149,9 +149,10 @@ Replace '@' in STR into list of mailbox and sub-domains."
 (defun wl-ldap-register-dn-string (hash dn &optional str dn-list)
   ""
   (let (sym dnsym value level)
-    (setq dnsym (intern (upcase dn) hash))
-    (if (and (null str) (boundp dnsym))
-	()					; already processed
+    (setq dnsym (upcase dn))
+    (if (and (null str) (gethash dnsym hash))
+	;; already processed
+	()
       ;; make dn-list in fisrt time
       (if (null dn-list)
 	  (let ((case-fold-search t))
@@ -181,15 +182,15 @@ Replace '@' in STR into list of mailbox and sub-domains."
 	    (setq str (concat str wl-ldap-alias-sep (car dn-list))))
 	  (setq level (1- level)
 		dn-list (cdr dn-list))))
-      (setq sym (intern (upcase str) hash))
-      (if (not (boundp sym))
+      (setq sym (upcase str))
+      (if (null (gethash sym hash))
 	  ;; good
-	  (progn (set sym (list dn str dn-list))
-		 (set dnsym str))
+	  (progn (puthash sym (list dn str dn-list) hash)
+		 (puthash dnsym str hash))
 	;; conflict
-	(if (not (eq (setq value (symbol-value sym)) t))
+	(if (null (eq (setq value (gethash sym hash)) t))
 	    ;; move away deeper
-	    (progn (set sym t)
+	    (progn (puthash sym t hash)
 		   (apply (function wl-ldap-register-dn-string) hash value)))
 	(wl-ldap-register-dn-string hash dn str dn-list)))))
 
@@ -258,9 +259,9 @@ Matched address lists are append to CL."
 	  ;; use DN-STRING if DN-STRING begin with MATCHED
 	  (setq alias dnstr))
 	;; check uniqness then add to list
-	(setq sym (intern (downcase alias) dnhash))
-	(when (not (boundp sym))
-	  (set sym alias)
+	(setq sym (downcase alias))
+	(when (null (gethash sym dnhash))
+	  (puthash sym alias dnhash)
 	  (setq result (cons (cons alias
 				   (concat cn " <" (car mails) ">"))
 			     result)))
