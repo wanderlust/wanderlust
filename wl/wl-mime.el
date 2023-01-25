@@ -729,60 +729,6 @@ With ARG, ask coding system and encode the region with it before verifying."
 			     coding-system)))
       (wl-mime-pgp-verify-region (car region) (cdr region) coding-system))))
 
-(defvar wl-mime-pgp-decrypted-buffers nil)
-
-(defun wl-mime-pgp-kill-decrypted-buffers ()
-  (dolist (buffer wl-mime-pgp-decrypted-buffers)
-    (when (bufferp buffer)
-      (kill-buffer buffer))))
-
-(defun wl-mime-preview-application/pgp (parent-entity entity _situation)
-  (goto-char (point-max))
-  (let ((p (point))
-	representation-type child-entity buffer failed)
-    (goto-char p)
-    (save-restriction
-      (narrow-to-region p p)
-      (setq buffer (generate-new-buffer
-		    (concat wl-original-message-buffer-name "PGP*")))
-      (with-current-buffer buffer
-	(mime-insert-entity entity)
-	(when (progn
-		(goto-char (point-min))
-		(re-search-forward "^-+BEGIN PGP MESSAGE-+$" nil t))
-	  (condition-case error
-	      (wl-mime-pgp-decrypt-region (point-min) (point-max) 'no-decode)
-	    (error (setq failed error)))
-	  (setq representation-type 'elmo-buffer))
-	(unless failed
-	  (setq child-entity (mime-parse-message
-			      (mm-expand-class-name representation-type)
-			      nil
-			      parent-entity
-			      (mime-entity-node-id-internal parent-entity))
-		buffer-read-only t)))
-      (if failed
-	  (progn
-	    (insert (format "%s" (cdr failed)))
-	    (kill-buffer buffer))
-	(add-hook 'kill-buffer-hook 'wl-mime-pgp-kill-decrypted-buffers nil t)
-	(make-local-variable 'wl-mime-pgp-decrypted-buffers)
-	(add-to-list 'wl-mime-pgp-decrypted-buffers buffer)
-	(mime-display-entity
-	 child-entity nil `((header . visible)
-			    (body . visible)
-			    (entity-button . invisible)))))))
-
-(defun wl-mime-preview-application/pgp-encrypted (entity situation)
-  (let* ((entity-node-id (mime-entity-node-id entity))
-	 (mother (mime-entity-parent entity))
-	 (knum (car entity-node-id))
-	 (onum (if (> knum 0)
-		   (1- knum)
-		 (1+ knum)))
-	 (orig-entity (nth onum (mime-entity-children mother))))
-    (wl-mime-preview-application/pgp entity orig-entity situation)))
-
 ;;; Summary
 (defun wl-summary-burst-subr (message-entity target number)
   ;; returns new number.
@@ -970,15 +916,6 @@ With ARG, ask destination folder."
     (wl-highlight-headers)))
 
 
-(autoload 'mime-decrypt-application/pgp-encrypted "mime-pgp")
-(defun wl-mime-decrypt-application/pgp-encrypted (entity situation)
-  (let ((summary-buffer wl-message-buffer-cur-summary-buffer)
-	(original-buffer wl-message-buffer-original-buffer))
-    (mime-decrypt-application/pgp-encrypted entity situation)
-    (setq wl-message-buffer-cur-summary-buffer summary-buffer)
-    (setq wl-message-buffer-original-buffer original-buffer)))
-
-
 ;;; Setup methods.
 (defun wl-mime-setup ()
   (set-alist 'mime-preview-quitting-method-alist
@@ -1003,24 +940,10 @@ With ARG, ask destination folder."
      (major-mode . wl-original-message-mode)))
 
   (ctree-set-calist-strictly
-   'mime-preview-condition
-   '((type . application)(subtype . pgp-encrypted)
-     (encoding . t)
-     (body . invisible)
-     (body-presentation-method . wl-mime-preview-application/pgp-encrypted)
-     (major-mode . wl-original-message-mode)))
-
-  (ctree-set-calist-strictly
    'mime-acting-condition
    '((type . message) (subtype . partial)
      (method .  wl-mime-combine-message/partial-pieces)
      (request-partial-message-method . wl-message-request-partial)
-     (major-mode . wl-original-message-mode)))
-
-  (ctree-set-calist-strictly
-   'mime-acting-condition
-   '((type . application) (subtype . pgp-encrypted)
-     (method . wl-mime-decrypt-application/pgp-encrypted)
      (major-mode . wl-original-message-mode)))
 
   (ctree-set-calist-strictly
