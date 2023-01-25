@@ -3053,12 +3053,6 @@ a symbol `xbm' or `xpm' in order to force the image format."
   :type 'string
   :group 'wl-pref)
 
-(defcustom wl-use-pgp-module 'epg
-  "*Whether use EasyPG."
-  :type '(choice (const :tag "EasyPG Library" epg)
-		 (const :tag "Don't use PGP" nil))
-  :group 'wl-pref)
-
 (defcustom wl-display-progress-threshold
   '((wl-folder-insert-entity . 100)
     (elmo-retrieve-message . 3000)

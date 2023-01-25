@@ -46,7 +46,6 @@
 (require 'elmo-mime)
 (require 'wl-vars)
 (require 'wl-util)
-(require 'cl-lib)
 
 ;;; Draft
 
@@ -625,7 +624,7 @@ It calls following-method selected from variable
 (declare-function epg-context-result-for "epg" (context name))
 (declare-function epg-verify-result-to-string "epg" (verify-result))
 
-(defun wl-mime-pgp-decrypt-region-with-epg (beg end &optional no-decode)
+(defun wl-mime-pgp-decrypt-region (beg end &optional no-decode)
   (require 'epg)
   (let ((context (epg-make-context)))
     (elmo-with-progress-display (epg-decript nil reporter)
@@ -645,7 +644,7 @@ It calls following-method selected from variable
 (eval-when-compile (require 'epa))
 (declare-function epa-display-info "epa" (info))
 
-(defun wl-mime-pgp-verify-region-with-epg (beg end &optional coding-system)
+(defun wl-mime-pgp-verify-region (beg end &optional coding-system)
   (require 'epa)
   (let ((context (epg-make-context))
 	window)
@@ -667,20 +666,6 @@ It calls following-method selected from variable
       (when (and epa-popup-info-window
 		 (setq window (get-buffer-window epa-info-buffer)))
 	(select-window window)))))
-
-(defsubst wl-mime-pgp-decrypt-region (beg end &optional no-decode)
-  (cl-case wl-use-pgp-module
-    (epg
-     (wl-mime-pgp-decrypt-region-with-epg beg end no-decode))
-    (t
-     (error "No support for PGP decryption"))))
-
-(defsubst wl-mime-pgp-verify-region (beg end &optional coding-system)
-  (cl-case wl-use-pgp-module
-    (epg
-     (wl-mime-pgp-verify-region-with-epg beg end coding-system))
-    (t
-     (error "No support for PGP verification"))))
 
 (defun wl-message-decrypt-pgp-nonmime ()
   "Decrypt PGP encrypted region"
