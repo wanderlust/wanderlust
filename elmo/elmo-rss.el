@@ -164,8 +164,22 @@ Setting this to true will annoy the pedants."
    (member (xml-get-attribute-or-nil node 'rel)
            '(nil "alternate" "enclosure"))))
 
+(defun elmo-rss-parse-atom-author (author)
+  (let ((author-name
+         (and author
+              (car (xml-node-children
+                    (assoc 'name (xml-node-children author))))))
+        (author-email
+         (and author
+              (car (xml-node-children
+                    (assoc 'email (xml-node-children author)))))))
+    (cond
+      ((and author-name author-email)
+       (concat (elmo-rss-utf-8 author-name) " <" author-email ">"))
+      (author-email (concat "<" author-email ">"))
+      (t author-name))))
 
-(defun elmo-rss-parse-atom-entry (body &optional _url)
+(defun elmo-rss-parse-atom-entry (body &optional feed-author)
   "Parse one Atom entry."
   (let (id published updated author title in-reply-to links content summary
         urls)
@@ -194,16 +208,10 @@ Setting this to true will annoy the pedants."
                  (push (xml-get-attribute child 'href) urls))))
             ((eq name 'content) (setq content node))
             ((eq name 'summary) (setq summary node))))))
+    (when (null author)
+      (setq author feed-author))
     (let* ((date (or (elmo-rss-parse-iso-date updated)
                      (elmo-rss-parse-iso-date published)))
-           (author-name
-            (and author
-                 (car (xml-node-children
-                       (assoc 'name (xml-node-children author))))))
-           (author-email
-            (and author
-                 (car (xml-node-children
-                       (assoc 'email (xml-node-children author))))))
            (content* (or content summary))
            (content-type (and content*
                               (xml-get-attribute-or-nil content* 'type)))
@@ -224,11 +232,7 @@ Setting this to true will annoy the pedants."
         ;; id is compulsory in Atom, but I'm paranoid.
         (or id (sha1 (concat date "-" title "-" (car links))))
         date
-        (cond
-          ((and author-name author-email)
-           (concat (elmo-rss-utf-8 author-name) " <" author-email ">"))
-          (author-name (elmo-rss-utf-8 author-name))
-          (author-email author-email))
+        (and author (elmo-rss-parse-atom-author author))
         (elmo-rss-utf-8 title)
         (nreverse in-reply-to)
         (nreverse links)
@@ -236,12 +240,13 @@ Setting this to true will annoy the pedants."
        content-body)
        urls))))
 
-(defun elmo-rss-parse-atom (feed &optional url)
+(defun elmo-rss-parse-atom (feed)
   "Parse an Atom feed, return a list of entries."
-  (let ((children (xml-node-children feed))
-        (entries nil)
-        (urls nil)
-        (extra-urls nil))
+  (let* ((children (xml-node-children feed))
+         (feed-author (assoc 'author children))
+         (entries nil)
+         (urls nil)
+         (extra-urls nil))
     (dolist (node children)
       (when (listp node)
         (cond
@@ -250,7 +255,7 @@ Setting this to true will annoy the pedants."
              (push (xml-get-attribute node 'href) urls)))
           ((eql 'entry (xml-node-name node))
            (let ((parse (elmo-rss-parse-atom-entry
-                         (xml-node-children node) url)))
+                         (xml-node-children node) feed-author)))
              (when (car parse)
                (push (car parse) entries))
              (dolist (u (cadr parse))
@@ -258,7 +263,7 @@ Setting this to true will annoy the pedants."
     ;; feeds are in reverse chronological order, we've reversed them already
     (list entries (nconc (nreverse urls) extra-urls))))
 
-(defun elmo-rss-parse-rss-entry (body &optional _url)
+(defun elmo-rss-parse-rss-entry (body)
   "Parse one RSS entry."
   (let (guid pubdate dc-date author dc-creator title links
            content-encoded description urls)
@@ -298,7 +303,7 @@ Setting this to true will annoy the pedants."
         (or content-encoded description))
        urls))))
 
-(defun elmo-rss-parse-rss (channel &optional container url)
+(defun elmo-rss-parse-rss (channel &optional container)
   "Parse an RSS feed, return a list of entries."
   (let ((children (append (xml-node-children channel)
                           (and container (xml-node-children container))))
@@ -312,8 +317,7 @@ Setting this to true will annoy the pedants."
            (when (elmo-rss-atom-link-interesting node)
              (push (xml-get-attribute node 'href) urls)))
           ((eql 'item (xml-node-name node))
-           (let ((parse (elmo-rss-parse-rss-entry
-                         (xml-node-children node) url)))
+           (let ((parse (elmo-rss-parse-rss-entry (xml-node-children node))))
              (when (car parse)
                (push (car parse) entries))
              (dolist (u (cadr parse))
@@ -345,10 +349,10 @@ Setting this to true will annoy the pedants."
          (opml-body (and opml (assoc 'body (xml-node-children opml)))))
     (cond
       ;; Atom feed
-      (feed (elmo-rss-parse-atom feed url))
+      (feed (elmo-rss-parse-atom feed))
       ;; RSS feed
-      ((and rss channel) (elmo-rss-parse-rss channel nil url))
-      ((and rdf channel) (elmo-rss-parse-rss channel rdf url))
+      ((and rss channel) (elmo-rss-parse-rss channel))
+      ((and rdf channel) (elmo-rss-parse-rss channel rdf))
       ;; Single Atom entry
       (entry (elmo-rss-parse-atom (cons 'feed (cons nil (list entry)))))
       ;; OPML outline
