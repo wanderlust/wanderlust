@@ -279,7 +279,7 @@ Setting this to true will annoy the pedants."
             ((eq name 'dc:creator) (setq dc-creator child))
             ((eq name 'title) (setq title child))
             ((eq name 'link) (push child links))
-            ((eq name 'enclosure)
+            ((memq name '(enclosure media:content))
              (when (not (equal (xml-get-attribute node 'url) ""))
                (push (xml-get-attribute node 'url) links)))
             ((eq name 'source)
