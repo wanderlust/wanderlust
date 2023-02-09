@@ -1,10 +1,10 @@
 ;;; elmo-rss --- RSS, Atom and OPML support for Wanderlust  -*- lexical-binding: t -*-
 
-;;; Copyright (c) 2014, 2015 Juliusz Chroboczek <jch@pps.univ-paris-diderot.fr>
+;;; Copyright (c) 2014, 2015, 2023 Juliusz Chroboczek <jch@irif.fr>
 
 ;; Author: Juliusz Chroboczek <jch@pps.univ-paris-diderot.fr>
 ;; Keywords: Wanderlust
-;; Version: 0.1
+;; Version: 0.2
 
 ;;; This program is free software; you can redistribute it and/or
 ;;; modify it under the terms of the GNU General Public License
