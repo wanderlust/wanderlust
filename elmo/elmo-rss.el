@@ -142,7 +142,7 @@ Setting this to true will annoy the pedants."
       (error
        (message "Unable to format XML parse tree")
        (insert (format "%s" xml))))
-    (buffer-substring (point-min) (point-max))))
+    (encode-coding-region (point-min) (point-max) 'utf-8 t)))
 
 (defun elmo-rss-atom-link-interesting (node &optional kind)
   (and
