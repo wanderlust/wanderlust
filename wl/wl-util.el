@@ -444,7 +444,7 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
   ;; Don't use microseconds from (current-time), they may be unsupported.
   ;; Instead we use this randomly inited counter.
   (setq wl-unique-id-char
-	(% (1+ (or wl-unique-id-char (logand (random t) (1- (lsh 1 20)))))
+	(% (1+ (or wl-unique-id-char (logand (random t) (1- (ash 1 20)))))
 	   ;; (current-time) returns 16-bit ints,
 	   ;; and 2^16*25 just fits into 4 digits i base 36.
 	   (* 25 25)))
@@ -457,9 +457,9 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
 	   user)
        (wl-number-base36 (user-uid) -1))
      (wl-number-base36 (+ (/ integer 65536)
-			  (lsh (% wl-unique-id-char 25) 16)) 4)
+			  (ash (% wl-unique-id-char 25) 16)) 4)
      (wl-number-base36 (+ (% integer 65536)
-			  (lsh (/ wl-unique-id-char 25) 16)) 4)
+			  (ash (/ wl-unique-id-char 25) 16)) 4)
      ;; Append the name of the message interface, because while the
      ;; generated ID is unique to this newsreader, other newsreaders
      ;; might otherwise generate the same ID via another algorithm.
