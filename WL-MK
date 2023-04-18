@@ -53,9 +53,8 @@
 
 (defvar config-wl-package-done nil)
 
-(defun config-wl-package-subr ()
+(defun config-wl-package-subr-1 ()
   (unless config-wl-package-done
-    (setq config-wl-package-done t)
     (setq load-path (cons (expand-file-name ".") load-path))
     (setq load-path (cons (expand-file-name WLDIR)
 			  (cons (expand-file-name ELMODIR) load-path)))
@@ -63,7 +62,11 @@
     (load "./WL-CFG" t nil nil)
     ;; load-path
     (if wl-install-utils
-	(setq load-path (cons (expand-file-name UTILSDIR) load-path)))
+	(setq load-path (cons (expand-file-name UTILSDIR) load-path)))))
+
+(defun config-wl-package-subr-2 ()
+  (unless config-wl-package-done
+    (setq config-wl-package-done t)
     (require 'path-util)
     (load "./WL-ELS" nil nil t)
     ;; product.el version check
@@ -77,6 +80,10 @@
     (condition-case ()
 	(require 'mime-setup)
       (error (error "Cannot load `mime-setup'.  Please install SEMI")))))
+
+(defun config-wl-package-subr ()
+  (config-wl-package-subr-1)
+  (config-wl-package-subr-2))
 
 (defun config-wl-pixmap-dir (&optional packagedir)
   "Examine pixmap directory where icon files should go."
@@ -92,27 +99,28 @@
   (setq command-line-args-left (cdr command-line-args-left)))
 
 (defun config-wl-package ()
-  (require 'install)
+  (config-wl-package-subr-1)
   ;; LISPDIR check.
   (let ((elispdir (car command-line-args-left)))
+    (setq command-line-args-left (cdr command-line-args-left))
+    (when (setq package-lisp-dir (car command-line-args-left))
+      (or (string-equal "NONE" package-lisp-dir)
+	  (progn
+	    (defvar PACKAGE_LISPDIR
+	      (if (boundp (intern package-lisp-dir))
+		  (symbol-value (intern package-lisp-dir))
+		package-lisp-dir))
+	    (princ (format "PACKAGE_LISPDIR=%s\n"
+			   PACKAGE_LISPDIR))
+	    (let ((default-directory PACKAGE_LISPDIR))
+	      (normal-top-level-add-subdirs-to-load-path)))))
+    (require 'install)
     (if (string= elispdir "NONE")
 	(defvar LISPDIR (install-detect-elisp-directory))
       (defvar LISPDIR elispdir)))
   (princ (format "LISPDIR is %s\n" LISPDIR))
   (setq command-line-args-left (cdr command-line-args-left))
-  (and (setq package-lisp-dir (car command-line-args-left))
-       (or (string-equal "NONE" package-lisp-dir)
-	   (progn
-	     (defvar PACKAGE_LISPDIR
-	       (if (boundp (intern package-lisp-dir))
-		   (symbol-value (intern package-lisp-dir))
-		 package-lisp-dir))
-	     (princ (format "PACKAGE_LISPDIR=%s\n"
-			    PACKAGE_LISPDIR))
-	     (let ((default-directory PACKAGE_LISPDIR))
-	       (normal-top-level-add-subdirs-to-load-path)))))
-  (setq command-line-args-left (cdr command-line-args-left))
-  (config-wl-package-subr)
+  (config-wl-package-subr-2)
   ;; PIXMAPDIR check.
   (config-wl-pixmap-dir)
   (princ "\n"))
