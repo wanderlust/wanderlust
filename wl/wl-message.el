@@ -321,11 +321,12 @@ Returns non-nil if bottom of message."
 
 (require 'wl-draft)
 
-(defun wl-message-follow-current-entity (_buffer)
+(defun wl-message-follow-current-entity (buffer)
   "Follow to current message."
   (wl-draft-reply (wl-message-get-original-buffer)
 		  nil wl-message-buffer-cur-summary-buffer) ; reply to all
-  (wl-draft-yank-from-mail-reply-buffer nil))
+  (let ((wl-mail-reply-buffer buffer))
+    (wl-draft-yank-from-mail-reply-buffer nil)))
 
 ;;
 

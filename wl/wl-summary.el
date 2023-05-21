@@ -88,7 +88,6 @@
 
 (defvar dragdrop-drop-functions)
 (defvar scrollbar-height)
-(defvar mail-reply-buffer)
 (defvar elmo-global-flags)
 
 (defvar wl-summary-buffer-name "Summary")

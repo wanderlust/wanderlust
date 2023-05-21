@@ -50,7 +50,7 @@
 (provide 'wl-draft)
 
 (defvar x-face-add-x-face-version-header)
-(defvar mail-reply-buffer)
+(defvar wl-mail-reply-buffer nil)
 (defvar mail-from-style)
 
 (eval-and-compile
@@ -590,7 +590,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
   (wl-draft-add-in-reply-to "References"))
 
 (defun wl-draft-add-in-reply-to (&optional alt-field)
-  (let* ((mes-id (with-current-buffer mail-reply-buffer
+  (let* ((mes-id (with-current-buffer wl-mail-reply-buffer
 		   (elmo-get-message-id-from-buffer)))
 	 (field (or alt-field "In-Reply-To"))
 	 (ref (std11-field-body field))
@@ -620,7 +620,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
     (narrow-to-region (point)(point))
     (insert
      (string-as-multibyte
-      (with-current-buffer mail-reply-buffer
+      (with-current-buffer wl-mail-reply-buffer
 	(when decode-it
 	  (decode-mime-charset-region (point-min) (point-max)
 				      wl-mime-charset))
@@ -732,7 +732,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 (defun wl-draft-insert-current-message (_dummy)
   (interactive)
   (let (original-buffer
-	mail-reply-buffer
+	wl-mail-reply-buffer
 	mail-citation-hook
 	wl-draft-add-references wl-draft-add-in-reply-to
 	wl-draft-cite-function)
@@ -744,7 +744,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 		      (not (zerop (with-current-buffer original-buffer
 				    (buffer-size))))))))
 	(progn
-	  (setq mail-reply-buffer original-buffer)
+	  (setq wl-mail-reply-buffer original-buffer)
 	  (wl-draft-yank-from-mail-reply-buffer
 	   nil
 	   wl-ignored-forwarded-headers))
@@ -764,18 +764,18 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 		 (lambda (num)
 		   (interactive "nNumber: ")
 		   num)))
-	(mail-reply-buffer (get-buffer-create "*wl-draft-insert-get-message*"))
+	(wl-mail-reply-buffer (get-buffer-create "*wl-draft-insert-get-message*"))
 	mail-citation-hook wl-draft-cite-function)
     (unwind-protect
 	(progn
-	  (with-current-buffer mail-reply-buffer
+	  (with-current-buffer wl-mail-reply-buffer
 	    (erase-buffer)
 	    (elmo-message-fetch (wl-folder-get-elmo-folder fld)
 				number
 				;; No cache.
 				(elmo-make-fetch-strategy 'entire)))
 	  (wl-draft-yank-from-mail-reply-buffer nil))
-      (kill-buffer mail-reply-buffer))))
+      (kill-buffer wl-mail-reply-buffer))))
 
 ;;
 ;; default body citation func
@@ -816,7 +816,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 (defun wl-draft-yank-to-draft-buffer (buffer)
   "Yank BUFFER content to `wl-draft-buffer'."
   (set-buffer wl-draft-buffer)
-  (let ((mail-reply-buffer buffer))
+  (let ((wl-mail-reply-buffer buffer))
     (wl-draft-yank-from-mail-reply-buffer nil)
     (kill-buffer buffer)))
 
@@ -825,11 +825,11 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
   (interactive "P")
   (if arg
       (let ((draft-buffer (current-buffer))
-	    mail-reply-buffer)
+	    wl-mail-reply-buffer)
 	(with-temp-buffer
 	  (insert "\n")
 	  (yank)
-	  (setq mail-reply-buffer (current-buffer))
+	  (setq wl-mail-reply-buffer (current-buffer))
 	  (with-current-buffer draft-buffer
 	    (wl-draft-yank-from-mail-reply-buffer nil))))
     (wl-draft-yank-current-message-entity)))
