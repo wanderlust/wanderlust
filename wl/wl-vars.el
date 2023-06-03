@@ -632,6 +632,8 @@ If nil, don't authenticate."
 		 (const :tag "CRAM-MD5" "cram-md5")
 		 (const :tag "DIGEST-MD5" "digest-md5")
 		 (const :tag "LOGIN" "login")
+		 (const :tag "XOAUTH2" "xoauth2")
+		 (const :tag "OAUTHBEARER" "oauthbearer")
 		 (string :tag "Other"))
   :group 'wl
   :group 'wl-setting)

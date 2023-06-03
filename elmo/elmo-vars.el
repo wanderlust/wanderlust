@@ -134,6 +134,8 @@ If you want to use `auth-source', set its value to symbol auth-source."
 		(const :tag "DIGEST-MD5 authentication (digest-md5)" digest-md5)
 		(const :tag "plain password transmission (clear)" clear)
 		(const :tag "NTLM authentication (ntlm)" ntlm)
+		(const :tag "OAuth over SASL (xoauth2)" xoauth2)
+		(const :tag "OAuth over SASL (oauthbearer)" oauthbearer)
 		(function :tag "Other"))
   :group 'elmo)
 
@@ -225,6 +227,8 @@ This is taken precedence over `elmo-network-stream-type-alist'.")
 		(const :tag "CRAM-MD5 authentication (cram-md5)" cram-md5)
 		(const :tag "DIGEST-MD5 authentication (digest-md5)" digest-md5)
 		(const :tag "NTLM authentication (ntlm)" ntlm)
+		(const :tag "OAuth over SASL (xoauth2)" xoauth2)
+		(const :tag "OAuth over SASL (oauthbearer)" oauthbearer)
 		(function :tag "Other"))
   :group 'elmo)
 
