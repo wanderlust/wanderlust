@@ -323,6 +323,7 @@
     (install-file infofile DOCDIR INFODIR nil 'overwrite)))
 
 (defun wl-texinfo-install ()
+  (require 'install)
   (cond ((null wl-info-lang))
 	((listp wl-info-lang)
 	 (mapc 'wl-texinfo-install-file wl-info-lang))
