@@ -673,6 +673,12 @@ Entering Plugged mode calls the value of `wl-plugged-mode-hook'."
 ;;;	     (> (length (visible-frame-list)) 1))
 ;;;	(delete-frame))
     (setq wl-init nil)
+    ;; clear icon images
+    (setq wl-plugged-image nil
+	  wl-unplugged-image nil)
+    (when (wl-e21-display-image-p)
+      (mapc (lambda (icon) (put (car icon) 'image nil))
+	    wl-folder-internal-icon-list))
     (remove-hook 'kill-emacs-hook 'elmo-exit)
     (remove-hook 'kill-emacs-hook 'wl-save-status)
     (elmo-passwd-alist-clear)
