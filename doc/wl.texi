@@ -7856,6 +7856,7 @@ Examples with other packages.
 * MHC::                         MHC
 * Addrbook::                    Addrbook
 * mime-w3m::                    mime-w3m.el
+* oauth2::                      oauth2.el
 @end menu
 
 
@@ -8056,7 +8057,7 @@ Place @file{util/wl-addrbook.el} and @file{util/wl-complete.el} on the
 @end group
 @end lisp
 
-@node mime-w3m,  , Addrbook, Living with other packages
+@node mime-w3m, oauth2, Addrbook, Living with other packages
 @subsection mime-w3m.el
 @pindex mime-w3m
 
@@ -8064,6 +8065,51 @@ You can display html part by using @file{mime-w3m.el}
 distributed with emacs-w3m (@uref{http://emacs-w3m.namazu.org/}).
 You can find the usage in comment region at the head of @file{mime-w3m.el}.
 If you use SEMI-EPG, no additional setting is needed.
+
+
+@node oauth2,  , mime-w3m, Living with other packages
+@subsection oauth2.el
+@pindex oauth2
+@vindex sasl-xoauth2-host-url-table
+@vindex sasl-xoauth2-host-user-id-table
+
+You need @file{oauth2.el}
+(@url{https://elpa.gnu.org/packages/oauth2.html}) if you want to use
+oauth2 for IMAP, SMTP authentication.  When you install Wanderlust from
+MELPA (@url{https://melpa.org/}), the file is installed automatically.
+
+You have to obtain client ID and client secret from your providers such
+as Google or Microsoft.  `client' means applications and it is supposed
+that the developer get ID and secret.  But it is impossible to keep
+client secret secret on OSS, so we ask users to get it.  How to get
+client ID and secret is not described here, ask your providers or others
+as needed.
+
+Set @code{sasl-xoauth2-host-url-table} and
+@code{sasl-xoauth2-host-user-id-table} variables according to your
+obteined information.
+Below is author's settings for Gmail.
+
+@example
+@lisp
+(setq sasl-xoauth2-host-user-id-table
+      '(("\\.gmail\\.com$"
+         "."
+         "Your client ID"
+         "Your client secret")))
+@end lisp
+
+@lisp
+(setq sasl-xoauth2-host-url-table
+  '(;; Gmail
+    ("gmail\\.com$"
+     "https://accounts.google.com/o/oauth2/v2/auth"
+     "https://www.googleapis.com/oauth2/v4/token"
+     "https://mail.google.com/"
+     ;; Set your own redirect URI
+     "http://localhost/result")))
+@end lisp
+@end example
 
 
 @node Highlights, Biff, Living with other packages, Advanced Issues

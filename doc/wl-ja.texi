@@ -7771,6 +7771,7 @@ overview 情報に含まれないフィールドを検査の対象とする場�
 * MHC::                         MHC
 * Addrbook::                    Addrbook
 * mime-w3m::                    mime-w3m.el
+* oauth2::                      oauth2.el
 @end menu
 
 
@@ -7973,7 +7974,7 @@ Mew の Addrbook を Wanderlust で使用できるようにするには、
 @end lisp
 
 
-@node mime-w3m,  , Addrbook, Living with other packages
+@node mime-w3m, oauth2, Addrbook, Living with other packages
 @subsection mime-w3m.el
 @pindex mime-w3m
 
@@ -7982,6 +7983,51 @@ emacs-w3m (@uref{http://emacs-w3m.namazu.org/}) に付属の
 表示させることが出来ます。設定方法は @file{mime-w3m.el} の
 先頭のコメントを参照してください。
 SEMI が SEMI-EPG である場合は、特別な設定は不要です。
+
+
+@node oauth2,  , mime-w3m, Living with other packages
+@subsection oauth2.el
+@pindex oauth2
+@vindex sasl-xoauth2-host-url-table
+@vindex sasl-xoauth2-host-user-id-table
+
+IMAP や SMTP の認証に oauth2 を用いるには FLIM のインストール時に
+@file{oauth2.el} (@url{https://elpa.gnu.org/packages/oauth2.html})
+が必要です。
+MELPA (@url{https://melpa.org/})からインストールを行った場合は、
+自動的にインストールされます。
+利用するには Google やマイクロフト等のプロバイダから client ID,
+client secret を取得する必要があります。
+ここでいう client は、本来はアプリケーションのことであり、その開発者が
+ID や secret を取得する事が想定されていますが、OSS では client secret を
+secret に保てないので、ユーザーが各々で取得してもらうようにしています。
+取得方法についてはこのドキュメントでは触れません。
+必要に応じてプロバイダー等に問い合わせてください。
+
+取得した内容に基づいて @code{sasl-xoauth2-host-url-table} と
+@code{sasl-xoauth2-host-user-id-table} をセットします。
+以下は筆者が使用している Gmail 向けの設定例です。
+
+@example
+@lisp
+(setq sasl-xoauth2-host-user-id-table
+      '(("\\.gmail\\.com$"
+         "."
+         "Your client ID"
+         "Your client secret")))
+@end lisp
+
+@lisp
+(setq sasl-xoauth2-host-url-table
+  '(;; Gmail
+    ("gmail\\.com$"
+     "https://accounts.google.com/o/oauth2/v2/auth"
+     "https://www.googleapis.com/oauth2/v4/token"
+     "https://mail.google.com/"
+     ;; Set your own redirect URI
+     "http://localhost/result")))
+@end lisp
+@end example
 
 
 @node Highlights, Biff, Living with other packages, Advanced Issues
