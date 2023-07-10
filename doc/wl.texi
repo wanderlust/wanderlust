@@ -8020,25 +8020,24 @@ Message Harmonized Calendaring system
 
 By using MHC, you can make a calendar from the messages.
 
-For mhc-0.25:
-
 @lisp
 @group
-(setq mhc-mailer-package 'wl)
-(autoload 'mhc-mode "mhc" nil t)
-(add-hook 'wl-summary-mode-hook 'mhc-mode)
-(add-hook 'wl-folder-mode-hook 'mhc-mode)
+(defun wl-summary-mhc-import ()
+  (interactive)
+  (when (buffer-live-p wl-message-buffer)
+    (with-current-buffer wl-message-buffer
+      (mhc-import))))
+
+(eval-after-load "wl-summary"
+  '(progn
+     (define-key wl-summary-mode-map "\C-c.|" 'wl-summary-mhc-import)
+     (define-key wl-summary-mode-map "\C-c.." 'mhc)))
+
+(eval-after-load "wl-folder"
+  '(define-key wl-folder-mode-map "\C-c.." 'mhc))
 @end group
 @end lisp
 
-For mhc-current:
-
-@lisp
-@group
-(autoload 'mhc-wl-setup "mhc-wl")
-(add-hook 'wl-init-hook 'mhc-wl-setup)
-@end group
-@end lisp
 
 @node Addrbook, mime-w3m, MHC, Living with other packages
 @subsection wl-addrbook.el

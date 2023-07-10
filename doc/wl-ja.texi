@@ -7934,23 +7934,21 @@ Message Harmonized Calendaring system
 
 MHC を用いると、メッセージを元に予定表を作れます。
 
-mhc-0.25 の場合：
-
 @lisp
 @group
-(setq mhc-mailer-package 'wl)
-(autoload 'mhc-mode "mhc" nil t)
-(add-hook 'wl-summary-mode-hook 'mhc-mode)
-(add-hook 'wl-folder-mode-hook 'mhc-mode)
-@end group
-@end lisp
+(defun wl-summary-mhc-import ()
+  (interactive)
+  (when (buffer-live-p wl-message-buffer)
+    (with-current-buffer wl-message-buffer
+      (mhc-import))))
 
-mhc-current の場合：
+(eval-after-load "wl-summary"
+  '(progn
+     (define-key wl-summary-mode-map "\C-c.|" 'wl-summary-mhc-import)
+     (define-key wl-summary-mode-map "\C-c.." 'mhc)))
 
-@lisp
-@group
-(autoload 'mhc-wl-setup "mhc-wl")
-(add-hook 'wl-init-hook 'mhc-wl-setup)
+(eval-after-load "wl-folder"
+  '(define-key wl-folder-mode-map "\C-c.." 'mhc))
 @end group
 @end lisp
 
