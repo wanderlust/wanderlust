@@ -8505,21 +8505,21 @@ example, please.
 (setq elmo-split-rule
       ;; @r{Store messages from spammers into @samp{+junk}}
       '(((or (address-equal from "i.am@@spammer")
-	     (address-equal from "dull-work@@dull-boy")
-	     (address-equal from "death-march@@software")
-	     (address-equal from "ares@@aon.at")
-	     (address-equal from "get-money@@richman"))
-	 "+junk")
-	;; @r{Store messages from mule mailing list into @samp{%mule}}
-	((equal x-ml-name "mule") "%mule")
-	;; @r{Store messages from wanderlust mailing list into @samp{%wanderlust}}
-	;; @r{and continue evaluating following rules}
-	((equal x-ml-name "wanderlust") "%wanderlust" continue)
-	;; @r{Store messages from Yahoo user into @samp{+yahoo-@{username@}}}
-	((match from "\\(.*\\)@@yahoo\\.com")
-	 "+yahoo-\\1")
-	;; @r{Store unmatched mails into @samp{+inbox}}
-	(t "+inbox")))
+             (address-equal from "dull-work@@dull-boy")
+             (address-equal from "death-march@@software")
+             (address-equal from "ares@@aon.at")
+             (address-equal from "get-money@@richman"))
+         "+junk")
+        ;; @r{Store messages from mule mailing list into @samp{%mule}}
+        ((equal x-ml-name "mule") "%mule")
+        ;; @r{Store messages from wanderlust mailing list into @samp{%wanderlust}}
+        ;; @r{and continue evaluating following rules}
+        ((equal x-ml-name "wanderlust") "%wanderlust" continue)
+        ;; @r{Store messages from Yahoo user into @samp{+yahoo-@{username@}}}
+        ((match from "\\(.*\\)@@yahoo\\.com")
+         "+yahoo-\\1")
+        ;; @r{Store unmatched mails into @samp{+inbox}}
+        (t "+inbox")))
 @end group
 @end lisp
 
@@ -8738,21 +8738,21 @@ set as follows:
 (defun wl-mailing-list-addresses ()
   (let (list-addrs)
     (dolist (to (mapcar
-		 (lambda (addr)
-		   (nth 1 (std11-extract-address-components addr)))
-		 (wl-parse-addresses
-		  (wl-concat-list
-		   (elmo-multiple-fields-body-list (list "To" "Cc"))
-		   ","))))
+                 (lambda (addr)
+                   (nth 1 (std11-extract-address-components addr)))
+                 (wl-parse-addresses
+                  (wl-concat-list
+                   (elmo-multiple-fields-body-list (list "To" "Cc"))
+                   ","))))
       (when (elmo-string-matched-member to wl-subscribed-mailing-list t)
-	(setq list-addrs (cons to list-addrs))))
+        (setq list-addrs (cons to list-addrs))))
     (nreverse list-addrs)))
 
 (setq wl-draft-reply-with-argument-list
       '((wl-mailing-list-addresses . (wl-mailing-list-addresses nil nil))
-	("Reply-To" . (("Reply-To") nil nil))
-	("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
-	("From" . (("From") nil nil))))
+        ("Reply-To" . (("Reply-To") nil nil))
+        ("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
+        ("From" . (("From") nil nil))))
 @end group
 @end lisp
 

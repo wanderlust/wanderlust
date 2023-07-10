@@ -8411,21 +8411,21 @@ Emacs 28 以降では解消されます。
 (setq elmo-split-rule
       ;; @r{SPAM は @samp{+junk} へ}
       '(((or (address-equal from "i.am@@spammer")
-	     (address-equal from "dull-work@@dull-boy")
-	     (address-equal from "death-march@@software")
-	     (address-equal from "ares@@aon.at")
-	     (address-equal from "get-money@@richman"))
-	 "+junk")
-	;; @r{mule メーリングリストからのメールを @samp{%mule} へ}
-	((equal x-ml-name "mule") "%mule")
-	;; @r{wanderlust メーリングリストからのメールを @samp{%wanderlust} へ}
-	;; @r{そして続けてそれ以下の規則も評価する。}
-	((equal x-ml-name "wanderlust") "%wanderlust" continue)
-	;; @r{Yahoo 利用者からのメッセージを @samp{+yahoo-@{username@}} へ}
-	((match from "\\(.*\\)@@yahoo\\.com")
-	 "+yahoo-\\1")
-	;; @r{マッチしなかった残りを @samp{+inbox} へ}
-	(t "+inbox")))
+             (address-equal from "dull-work@@dull-boy")
+             (address-equal from "death-march@@software")
+             (address-equal from "ares@@aon.at")
+             (address-equal from "get-money@@richman"))
+         "+junk")
+        ;; @r{mule メーリングリストからのメールを @samp{%mule} へ}
+        ((equal x-ml-name "mule") "%mule")
+        ;; @r{wanderlust メーリングリストからのメールを @samp{%wanderlust} へ}
+        ;; @r{そして続けてそれ以下の規則も評価する。}
+        ((equal x-ml-name "wanderlust") "%wanderlust" continue)
+        ;; @r{Yahoo 利用者からのメッセージを @samp{+yahoo-@{username@}} へ}
+        ((match from "\\(.*\\)@@yahoo\\.com")
+         "+yahoo-\\1")
+        ;; @r{マッチしなかった残りを @samp{+inbox} へ}
+        (t "+inbox")))
 @end group
 @end lisp
 
@@ -8645,21 +8645,21 @@ Emacs 28 以降では解消されます。
 (defun wl-mailing-list-addresses ()
   (let (list-addrs)
     (dolist (to (mapcar
-		 (lambda (addr)
-		   (nth 1 (std11-extract-address-components addr)))
-		 (wl-parse-addresses
-		  (wl-concat-list
-		   (elmo-multiple-fields-body-list (list "To" "Cc"))
-		   ","))))
+                 (lambda (addr)
+                   (nth 1 (std11-extract-address-components addr)))
+                 (wl-parse-addresses
+                  (wl-concat-list
+                   (elmo-multiple-fields-body-list (list "To" "Cc"))
+                   ","))))
       (when (elmo-string-matched-member to wl-subscribed-mailing-list t)
-	(setq list-addrs (cons to list-addrs))))
+        (setq list-addrs (cons to list-addrs))))
     (nreverse list-addrs)))
 
 (setq wl-draft-reply-with-argument-list
       '((wl-mailing-list-addresses . (wl-mailing-list-addresses nil nil))
-	("Reply-To" . (("Reply-To") nil nil))
-	("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
-	("From" . (("From") nil nil))))
+        ("Reply-To" . (("Reply-To") nil nil))
+        ("Mail-Reply-To" . (("Mail-Reply-To") nil nil))
+        ("From" . (("From") nil nil))))
 @end group
 @end lisp
 
