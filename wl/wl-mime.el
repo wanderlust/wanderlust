@@ -483,14 +483,20 @@ It calls following-method selected from variable
 		 (error
 		  (kill-buffer (current-buffer))
 		  (signal (car err) (cdr err))))))
-	   mime-edit-translate-buffer-hook)))
+	   mime-edit-translate-buffer-hook))
+	 (mime-preview-condition
+	  (copy-sequence mime-preview-condition)))
+    (ctree-set-calist-strictly
+     'mime-preview-condition
+     '((type . text) (subtype . plain)
+       (body . visible)
+       (major-mode . mime-temp-message-mode)
+       (body-presentation-method . wl-mime-display-text/plain)))
     (mime-edit-preview-message)
     (make-local-variable 'mime-preview-quitting-method-alist)
     (setq mime-preview-quitting-method-alist
 	  '((mime-temp-message-mode . wl-mime-quit-preview)))
     (let ((buffer-read-only nil))
-      (when wl-highlight-body-too
-	(wl-highlight-body))
       (run-hooks 'wl-draft-preview-message-hook))
     (add-hook 'kill-buffer-hook #'wl-draft-hide-attributes-buffer nil t)
     (if wl-draft-preview-attributes
@@ -889,7 +895,7 @@ With ARG, ask destination folder."
 (defun wl-mime-display-text/plain (entity situation)
   (let ((beg (point)))
     (mime-display-text/plain entity situation)
-    (wl-highlight-message beg (point-max) t t)))
+    (when wl-highlight-body-too (wl-highlight-message beg (point-max) t t))))
 
 (defun wl-mime-display-text/diff (entity situation)
   (if wl-highlight-text/diff
