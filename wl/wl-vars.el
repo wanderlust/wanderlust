@@ -2900,6 +2900,13 @@ list  : reserved specified permanent marks."
   :type 'boolean
   :group 'wl-highlight)
 
+(defcustom wl-highlight-text/diff t
+  "When non-nil, highlight x-patch and x-diff entities.
+If `wl-highlight-body-too' is also non-nil, highlight inline unified diff \
+part in text/plain entities."
+  :type 'boolean
+  :group 'wl-highlight)
+
 (defcustom wl-highlight-message-header-alist
   '(("Subject[ \t]*:" . wl-highlight-message-important-header-contents)
     ("From[ \t]*:\\|To[ \t]*:" . wl-highlight-message-important-header-contents2)

@@ -46,6 +46,7 @@
 (require 'elmo-mime)
 (require 'wl-vars)
 (require 'wl-util)
+(require 'diff-mode)
 
 ;;; Draft
 
@@ -890,6 +891,25 @@ With ARG, ask destination folder."
     (mime-display-text/plain entity situation)
     (wl-highlight-message beg (point-max) t t)))
 
+(defun wl-mime-display-text/diff (entity situation)
+  (if wl-highlight-text/diff
+      (progn
+	(mime-display-text/plain entity situation)
+	(let ((font-lock-defaults diff-font-lock-defaults))
+	  (font-lock-ensure)))
+    (wl-mime-display-text/plain entity situation)))
+
+(defun wl-mime-display-application/octet-stream (entity situation)
+  (cond
+   ((or (string= "patch" (cdr (assoc "type" situation)))
+	(string-match "\\.\\(diff\\|patch\\)$"
+		      (or (cdr (assq 'filename situation))
+			  (cdr (assoc "name" situation))
+			  "")))
+    (wl-mime-display-text/diff entity situation))
+   (t
+    (wl-mime-display-text/plain entity situation))))
+
 (defun wl-mime-display-header (entity situation)
   (let ((elmo-message-ignored-field-list
 	 (if wl-message-buffer-require-all-header
@@ -921,8 +941,42 @@ With ARG, ask destination folder."
    'mime-preview-condition
    '((type . text) (subtype . plain)
      (body . visible)
-     (body-presentation-method . wl-mime-display-text/plain)
-     (major-mode . wl-original-message-mode)))
+     (major-mode . wl-original-message-mode)
+     (body-presentation-method . wl-mime-display-text/plain)))
+
+  (ctree-set-calist-strictly
+   'mime-preview-condition
+   '((subtype . x-diff)
+     (body . visible)
+     (major-mode . wl-original-message-mode)
+     (body-presentation-method . wl-mime-display-text/diff)))
+
+  (ctree-set-calist-strictly
+   'mime-preview-condition
+   '((subtype . x-patch)
+     (body . visible)
+     (major-mode . wl-original-message-mode)
+     (body-presentation-method . wl-mime-display-text/diff)))
+
+  (ctree-set-calist-strictly
+   'mime-preview-condition
+   '((type . application) (subtype . octet-stream)
+     (major-mode . wl-original-message-mode)
+     (body-presentation-method . wl-mime-display-application/octet-stream)))
+
+  (ctree-set-calist-strictly
+   'mime-preview-condition
+   '((type . application) (subtype . octet-stream)
+     (encoding . "base64")
+     (major-mode . wl-original-message-mode)
+     (body-presentation-method . wl-mime-display-application/octet-stream)))
+
+  (ctree-set-calist-strictly
+   'mime-preview-condition
+   '((type . application) (subtype . octet-stream)
+     (encoding . "quoted-printable")
+     (major-mode . wl-original-message-mode)
+     (body-presentation-method . wl-mime-display-application/octet-stream)))
 
   (ctree-set-calist-strictly
    'mime-acting-condition

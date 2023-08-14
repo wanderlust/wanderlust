@@ -32,6 +32,7 @@
 
 (require 'invisible)
 (require 'wl-vars)
+(require 'diff-mode)
 
 (provide 'wl-highlight)
 
@@ -2305,6 +2306,17 @@ interpreted as cited text.)"
 			     (goto-char (next-visible-point (point))))
 			   (eobp)))
 	      (cond
+	       ((and
+		 wl-highlight-text/diff
+		 (null (eq major-mode 'wl-draft-mode))
+		 (looking-at
+		  "^--- .*\n\\+\\+\\+ .*\n\\([-+ ].*\n\\|@@ .* @@.*\n\\)+"))
+		(save-restriction
+		  (narrow-to-region (match-beginning 0) (match-end 0))
+		  (let ((font-lock-defaults diff-font-lock-defaults))
+		    (font-lock-ensure))
+		  (goto-char (point-max)))
+		(setq current nil))
 	       ((and wl-highlight-force-citation-header-regexp
 		     (looking-at wl-highlight-force-citation-header-regexp))
 		(setq current 'wl-highlight-message-citation-header)
