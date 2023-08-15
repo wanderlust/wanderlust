@@ -893,12 +893,26 @@ With ARG, ask destination folder."
 	(message "Not all partials found.")))))
 
 (defun wl-mime-display-text/plain (entity situation)
-  (let ((beg (point)))
+  (let* ((beg (point))
+	 (wl-highlight-body-too
+	  (and (or (eq wl-highlight-body-too t)
+		   (memq (cdr (assq 'major-mode situation))
+			 wl-highlight-body-too)
+		   (memq major-mode wl-highlight-body-too))
+	       t))
+	 (wl-highlight-text/diff
+	  (and (or (eq wl-highlight-text/diff t)
+		   (memq (cdr (assq 'major-mode situation))
+			 wl-highlight-text/diff)
+		   (memq major-mode wl-highlight-text/diff))
+	       t)))
     (mime-display-text/plain entity situation)
     (when wl-highlight-body-too (wl-highlight-message beg (point-max) t t))))
 
 (defun wl-mime-display-text/diff (entity situation)
-  (if wl-highlight-text/diff
+  (if (or (eq wl-highlight-text/diff t)
+	  (memq (cdr (assq 'major-mode situation)) wl-highlight-text/diff)
+	  (memq major-mode wl-highlight-text/diff))
       (progn
 	(mime-display-text/plain entity situation)
 	(let ((font-lock-defaults diff-font-lock-defaults))

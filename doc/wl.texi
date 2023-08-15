@@ -8147,6 +8147,16 @@ the last same number of lines as the value of
 @vindex  wl-highlight-body-too
 The initial setting is @code{t}.
 If non-nil, bodies of drafts and messages are also highlighted.
+When a list of major mode names, enabled only when buffer's major mode
+or major mode of message's original buffer is specified in the list.
+
+@item wl-highlight-text/diff
+@vindex  wl-highlight-text/diff
+The initial value is @code{((wl-original-message-mode))}.
+When @code{t}, highlight MIME part which contains diff format and
+unified diff format in text/plain part.
+@code{wl-highlight-body-too} must be enabled to highlight text/plain part.
+At present, you can't enable highlight diff format MIME part in draft previewing.
 
 @item  wl-highlight-message-header-alist
 @vindex wl-highlight-message-header-alist

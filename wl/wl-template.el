@@ -177,7 +177,8 @@ Set header-separator is MAIL-HEADER."
 			(save-excursion
 			  (wl-draft-config-exec-sub template)))))
 	  ;; rehighlight
-	  (if wl-highlight-body-too
+	  (if (or (eq wl-highlight-body-too t)
+		  (memq major-mode wl-highlight-body-too))
 	      (let ((beg (point-min))
 		    (end (point-max)))
 		(put-text-property beg end 'face nil)

@@ -642,7 +642,8 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 		(wl-draft-add-in-reply-to)))
       (unless (eq wl-draft-real-time-highlight 'jit)
         (wl-highlight-headers 'for-draft))) ; highlight when added References:
-    (when (and wl-highlight-body-too
+    (when (and (or (eq wl-highlight-body-too t)
+		   (memq major-mode wl-highlight-body-too))
 	       (not (eq wl-draft-real-time-highlight 'jit)))
       (wl-highlight-body-region beg (point-max)))))
 
@@ -2599,7 +2600,8 @@ instead."
 	(wl-draft-reedit msg)))))
 
 (defun wl-draft-highlight ()
-  (when wl-highlight-body-too
+  (when (or (eq wl-highlight-body-too t)
+	    (memq major-mode wl-highlight-body-too))
     (let ((modified (buffer-modified-p))
 	  wl-draft-real-time-highlight)
       (unwind-protect

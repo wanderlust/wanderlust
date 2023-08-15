@@ -8063,7 +8063,19 @@ Non-nil ならサマリのハイライトを行います。
 @item wl-highlight-body-too
 @vindex  wl-highlight-body-too
 初期設定は @code{t}。
-Non-nil ならドラフトおよびメッセージの本文もハイライトの対象とします。
+@code{t} ならドラフトおよびメッセージの本文もハイライトの対象とします。
+メジャーモード名のリストを指定すると、バッファ・もしくはメッセージの
+元バッファが指定されたメジャーモードであった場合のみ有効となります。
+
+@item wl-highlight-text/diff
+@vindex  wl-highlight-text/diff
+初期設定は @code{((wl-original-message-mode))}。
+@code{t} ならメッセージ中の diff フォーマットの MIME パートや
+text/plain パート中の unified diff フォーマットのハイライトを行います。
+text/plain パートのハイライトについては @code{wl-highlight-body-too}
+の指定も有効になっている必要があります。
+現在のところ、この設定のみでドラフトのプレビュー中に diff
+フォーマットの MIME パートをハイライトするようにはできません。
 
 @item  wl-highlight-message-header-alist
 @vindex wl-highlight-message-header-alist

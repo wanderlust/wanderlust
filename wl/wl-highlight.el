@@ -2307,8 +2307,8 @@ interpreted as cited text.)"
 			   (eobp)))
 	      (cond
 	       ((and
-		 wl-highlight-text/diff
-		 (null (eq major-mode 'wl-draft-mode))
+		 (or (eq wl-highlight-text/diff t)
+		     (memq major-mode wl-highlight-text/diff))
 		 (looking-at
 		  "^--- .*\n\\+\\+\\+ .*\n\\([-+ ].*\n\\|@@ .* @@.*\n\\)+"))
 		(save-restriction

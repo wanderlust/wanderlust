@@ -2896,15 +2896,41 @@ list  : reserved specified permanent marks."
 
 ;; highilght about draft and message
 (defcustom wl-highlight-body-too t
-  "*In addition to header, highlight the body too.  if non nil."
-  :type 'boolean
+  "When its value is t, highlight message body in addition to
+headers.
+If the value is a list of major mode names, enable highlight in
+specified major modes or MMIME entity situation's major mode.
+When nil, never highlight message body."
+  :type '(choice
+	  (const :tag "Always" t)
+	  (const :tag "Never" nil)
+	  (repeat :tag "List of major modes"
+		  (choice (const :tag "Message mode"
+				 wl-original-message-mode)
+			  (const :tag "Draft preview mode"
+				 mime-temp-message-mode)
+			  (const :tag "Draft mode" wl-draft-mode)
+			  (const :tag "Template mode" wl-template-mode)
+			  (const :tag "Addrmgr mode" wl-addrmgr-mode)
+			  (symbol :tag "Other mode"))))
   :group 'wl-highlight)
 
-(defcustom wl-highlight-text/diff t
+(defcustom wl-highlight-text/diff '(wl-original-message-mode)
   "When non-nil, highlight x-patch and x-diff entities.
-If `wl-highlight-body-too' is also non-nil, highlight inline unified diff \
-part in text/plain entities."
-  :type 'boolean
+See `wl-highlight-body-too' for details.
+`wl-highlight-body-too' also has to be enabled to highlight
+unified diff in text/plain entities."
+  :type '(choice
+	  (const :tag "Always" t)
+	  (const :tag "Never" nil)
+	  (repeat :tag "enabled major mode names"
+		  (choice (const :tag "Message mode"
+				 wl-original-message-mode)
+			  (const :tag "Draft preview mode"
+				 mime-temp-message-mode)
+			  (const :tag "Draft mode" wl-draft-mode)
+			  (const :tag "Template mode" wl-template-mode)
+			  (symbol :tag "Other mode"))))
   :group 'wl-highlight)
 
 (defcustom wl-highlight-message-header-alist

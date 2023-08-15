@@ -678,7 +678,8 @@ Return nil if no ADDRESS exists."
     (wl-addrmgr-replace-field (car pair) (cdr pair)))
   ;; from wl-template.el
   ;; rehighlight
-  (if wl-highlight-body-too
+  (if (or (eq wl-highlight-body-too t)
+	  (memq major-mode wl-highlight-body-too))
       (let ((beg (point-min))
 	    (end (point-max)))
 	(put-text-property beg end 'face nil)
