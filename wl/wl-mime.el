@@ -486,12 +486,7 @@ It calls following-method selected from variable
 	   mime-edit-translate-buffer-hook))
 	 (mime-preview-condition
 	  (copy-sequence mime-preview-condition)))
-    (ctree-set-calist-strictly
-     'mime-preview-condition
-     '((type . text) (subtype . plain)
-       (body . visible)
-       (major-mode . mime-temp-message-mode)
-       (body-presentation-method . wl-mime-display-text/plain)))
+    (wl-mime-setup-preview-conditions 'mime-temp-message-mode)
     (mime-edit-preview-message)
     (make-local-variable 'mime-preview-quitting-method-alist)
     (setq mime-preview-quitting-method-alist
@@ -942,6 +937,34 @@ With ARG, ask destination folder."
 
 
 ;;; Setup methods.
+(defun wl-mime-setup-preview-conditions (mode)
+  (ctree-set-calist-strictly
+   'mime-preview-condition
+   `((type . text) (subtype . plain)
+     (body . visible)
+     (major-mode . ,mode)
+     (body-presentation-method . wl-mime-display-text/plain)))
+
+  (mapc (lambda (subtype)
+	  (ctree-set-calist-strictly
+	   'mime-preview-condition
+	   `((subtype . ,subtype)
+	     (body . visible)
+	     (major-mode . ,mode)
+	     (body-presentation-method . wl-mime-display-text/diff))))
+	'(x-diff x-patch))
+
+  (mapc (lambda (encoding)
+	  (ctree-set-calist-strictly
+	   'mime-preview-condition
+	   (delq nil
+		 `((type . application) (subtype . octet-stream)
+		   ,(when encoding (cons 'encoding encoding))
+		   (major-mode . ,mode)
+		   (body-presentation-method
+		    . wl-mime-display-application/octet-stream)))))
+	'(nil "base64" "quoted-printable")))
+
 (defun wl-mime-setup ()
   (set-alist 'mime-preview-quitting-method-alist
 	     'wl-original-message-mode 'wl-message-exit)
@@ -957,46 +980,7 @@ With ARG, ask destination folder."
   (add-hook 'wl-summary-redisplay-hook 'wl-message-delete-popup-windows)
   (add-hook 'wl-message-exit-hook 'wl-message-delete-popup-windows)
 
-  (ctree-set-calist-strictly
-   'mime-preview-condition
-   '((type . text) (subtype . plain)
-     (body . visible)
-     (major-mode . wl-original-message-mode)
-     (body-presentation-method . wl-mime-display-text/plain)))
-
-  (ctree-set-calist-strictly
-   'mime-preview-condition
-   '((subtype . x-diff)
-     (body . visible)
-     (major-mode . wl-original-message-mode)
-     (body-presentation-method . wl-mime-display-text/diff)))
-
-  (ctree-set-calist-strictly
-   'mime-preview-condition
-   '((subtype . x-patch)
-     (body . visible)
-     (major-mode . wl-original-message-mode)
-     (body-presentation-method . wl-mime-display-text/diff)))
-
-  (ctree-set-calist-strictly
-   'mime-preview-condition
-   '((type . application) (subtype . octet-stream)
-     (major-mode . wl-original-message-mode)
-     (body-presentation-method . wl-mime-display-application/octet-stream)))
-
-  (ctree-set-calist-strictly
-   'mime-preview-condition
-   '((type . application) (subtype . octet-stream)
-     (encoding . "base64")
-     (major-mode . wl-original-message-mode)
-     (body-presentation-method . wl-mime-display-application/octet-stream)))
-
-  (ctree-set-calist-strictly
-   'mime-preview-condition
-   '((type . application) (subtype . octet-stream)
-     (encoding . "quoted-printable")
-     (major-mode . wl-original-message-mode)
-     (body-presentation-method . wl-mime-display-application/octet-stream)))
+  (wl-mime-setup-preview-conditions 'wl-original-message-mode)
 
   (ctree-set-calist-strictly
    'mime-acting-condition

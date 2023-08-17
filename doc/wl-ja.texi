@@ -8074,8 +8074,6 @@ Non-nil ならサマリのハイライトを行います。
 text/plain パート中の unified diff フォーマットのハイライトを行います。
 text/plain パートのハイライトについては @code{wl-highlight-body-too}
 の指定も有効になっている必要があります。
-現在のところ、この設定のみでドラフトのプレビュー中に diff
-フォーマットの MIME パートをハイライトするようにはできません。
 
 @item  wl-highlight-message-header-alist
 @vindex wl-highlight-message-header-alist
