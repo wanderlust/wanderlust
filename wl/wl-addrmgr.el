@@ -678,12 +678,11 @@ Return nil if no ADDRESS exists."
     (wl-addrmgr-replace-field (car pair) (cdr pair)))
   ;; from wl-template.el
   ;; rehighlight
-  (if (or (eq wl-highlight-body-too t)
-	  (memq major-mode wl-highlight-body-too))
-      (let ((beg (point-min))
-	    (end (point-max)))
-	(put-text-property beg end 'face nil)
-	(wl-highlight-message beg end t))))
+  (when (wl-mime-enabled-major-mode-p wl-highlight-body-too)
+    (let ((beg (point-min))
+	  (end (point-max)))
+      (put-text-property beg end 'face nil)
+      (wl-highlight-message beg end t))))
 
 (require 'product)
 (product-provide (provide 'wl-addrmgr) (require 'wl-version))

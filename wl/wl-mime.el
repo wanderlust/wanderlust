@@ -830,6 +830,12 @@ With ARG, ask destination folder."
 	(wl-summary-extract-attachments-1 entity directory 0)
 	(message "Extracting...done")))))
 
+(defun wl-mime-enabled-major-mode-p (value &optional situation)
+  (if (listp value)
+      (or (memq (cdr (assq 'major-mode situation)) value)
+	  (memq major-mode value))
+    value))
+
 ;;; Yet another combine method.
 (defun wl-mime-combine-message/partial-pieces (entity situation)
   "Internal method for wl to combine message/partial messages automatically."
@@ -890,24 +896,17 @@ With ARG, ask destination folder."
 (defun wl-mime-display-text/plain (entity situation)
   (let* ((beg (point))
 	 (wl-highlight-body-too
-	  (and (or (eq wl-highlight-body-too t)
-		   (memq (cdr (assq 'major-mode situation))
-			 wl-highlight-body-too)
-		   (memq major-mode wl-highlight-body-too))
+	  (and (wl-mime-enabled-major-mode-p wl-highlight-body-too situation)
 	       t))
 	 (wl-highlight-text/diff
-	  (and (or (eq wl-highlight-text/diff t)
-		   (memq (cdr (assq 'major-mode situation))
-			 wl-highlight-text/diff)
-		   (memq major-mode wl-highlight-text/diff))
+	  (and wl-highlight-body-too
+	       (wl-mime-enabled-major-mode-p wl-highlight-text/diff situation)
 	       t)))
     (mime-display-text/plain entity situation)
     (when wl-highlight-body-too (wl-highlight-message beg (point-max) t t))))
 
 (defun wl-mime-display-text/diff (entity situation)
-  (if (or (eq wl-highlight-text/diff t)
-	  (memq (cdr (assq 'major-mode situation)) wl-highlight-text/diff)
-	  (memq major-mode wl-highlight-text/diff))
+  (if (wl-mime-enabled-major-mode-p wl-highlight-text/diff situation)
       (progn
 	(mime-display-text/plain entity situation)
 	(let ((font-lock-defaults diff-font-lock-defaults))

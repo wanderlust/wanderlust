@@ -2299,7 +2299,9 @@ interpreted as cited text.)"
 	    (put-text-property (match-beginning 0) (match-end 0)
 			       'face 'wl-highlight-header-separator-face)
 	    (forward-line))
-	  (let (prefix end)
+	  (let ((wl-highlight-text/diff
+		 (wl-mime-enabled-major-mode-p wl-highlight-text/diff))
+		prefix end)
 	    (while (null (progn
 			     ;; Skip invisible region.
 			   (when (invisible-p (point))
@@ -2307,8 +2309,7 @@ interpreted as cited text.)"
 			   (eobp)))
 	      (cond
 	       ((and
-		 (or (eq wl-highlight-text/diff t)
-		     (memq major-mode wl-highlight-text/diff))
+		 wl-highlight-text/diff
 		 (looking-at
 		  "^--- .*\n\\+\\+\\+ .*\n\\([-+ ].*\n\\|@@ .* @@.*\n\\)+"))
 		(save-restriction
