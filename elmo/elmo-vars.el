@@ -95,8 +95,8 @@ you have to add it to `elmo-digest-flags'.
 (defcustom elmo-passwd-storage-type 'alist
   "Specify ELMO password storage type.
 If you want to use `auth-source', set its value to symbol auth-source."
-  :type '(choice (const alist :tag "alist")
-		 (const auth-source :tag "Use auth-source"))
+  :type '(choice (const :tag "alist" alist)
+		 (const :tag "Use auth-source" auth-source))
   :group 'elmo
   :group 'elmo-setting)
 

@@ -2645,7 +2645,6 @@ ex.
 		       (choice :tag "Policy"
 			       (const remove)
 			       (const :tag "remove(null)" null)
-			       (const trash)
 			       (const :tag "trash(other)" trash)
 			       (string :tag "Folder"))))
   :group 'wl-folder)

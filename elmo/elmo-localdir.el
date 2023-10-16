@@ -45,7 +45,7 @@
 (defcustom elmo-localdir-warnings t
   "When non-nil, show warnings when filename with leading zero
 in MH folder were found."
-  :type 'booleanp
+  :type 'boolean
   :group 'elmo)
 
 (defvar elmo-localdir-lockfile-list nil)

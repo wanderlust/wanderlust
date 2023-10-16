@@ -49,12 +49,12 @@
 
 (defcustom wl-addrmgr-default-sort-key 'realname
   "Default key for sorting."
-  :type '(choice '(address realname petname none))
+  :type '(choice (address realname petname none))
   :group 'wl-addrmgr)
 
 (defcustom wl-addrmgr-default-sort-order 'ascending
   "Default sorting order."
-  :type '(choice '(ascending descending))
+  :type '(choice (ascending descending))
   :group 'wl-addrmgr)
 
 (defcustom wl-addrmgr-realname-width 17
