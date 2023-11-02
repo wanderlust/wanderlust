@@ -147,7 +147,7 @@
      (zoo . "^.*[ \t]%s\\([0-9]+\\)$")
      (tar . "^%s\\([0-9]+\\)$")		; ok
      (tgz . "^%s\\([0-9]+\\)$")		; ok
-     (rar . "^[ \t]%s\\([0-9]+\\)$"))))
+     (rar . "^%s\\([0-9]+\\)$"))))
 
 (defvar elmo-archive-suffix-alist
   '((lha . ".lzh")			; default
@@ -208,7 +208,7 @@
   '((cp       . ("rar" "u" "-m5"))
     (mv       . ("rar" "m" "-m5"))
     (rm       . ("rar" "d"))
-    (ls       . ("rar" "v"))
+    (ls       . ("rar" "lb"))
     (cat      . ("rar" "p" "-inul"))
     (ext      . ("rar" "x"))))
 
