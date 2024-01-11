@@ -257,7 +257,7 @@ It is used to remove executed timer function.")
 	 source secret)
     (setq source
 	  (car (auth-source-search :host (nth 3 key)
-				   :port (nth 4 key)
+				   :port (number-to-string (nth 4 key))
 				   :user (nth 1 key)
 				   :require '(:secret)
 				   :create t)))
@@ -275,7 +275,8 @@ It is used to remove executed timer function.")
 
 (luna-define-method elmo-passwd-remove ((passwd elmo-passwd-auth-source)
 					key)
-  (auth-source-forget+ :host (nth 3 key) :port (nth 4 key) :user (nth 1 key))
+  (auth-source-forget+
+   :host (nth 3 key) :port (number-to-string (nth 4 key)) :user (nth 1 key))
   (let ((savers (elmo-passwd-auth-source-savers-internal passwd)))
     (elmo-passwd-auth-source-set-savers-internal
      passwd (delq (assoc key savers) savers))))
