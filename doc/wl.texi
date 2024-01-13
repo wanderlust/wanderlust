@@ -513,7 +513,9 @@ Format for @file{~/.folders} is very simple. Here is an example:
 %inbox  "Inbox"
 +trash  "Trash"
 +draft  "Drafts"
-%#mh/Backup@@my.imap.example.com "Sent"
+%#mh/Backup@@my.imap.example.com
+# @r{Nickname can be defined in another line}
+= %#mh/Backup@@my.imap.example.com "Sent"
 # Folder Group
 Emacsen@{
     %#mh/spool/wl            "Wanderlust ML"
@@ -530,6 +532,8 @@ Emacsen@{
 %#mh/expire@@localhost /
 # @r{All MH folders are included in one folder group.}
 + /
+# @r{Define nickname for access group}
+= + "Mails"
 @end group
 @end example
 
@@ -550,7 +554,9 @@ example which the user chooses his favorite folders as a group.
 The other one is @dfn{access group} like @samp{+ /} from above example.
 It collects all sub-folders in the folder to make a group.  (Its
 behavior differs by the type of the folder. For example, @samp{+}
-followed by @samp{/} makes entire MH sub-directories to one group)
+followed by @samp{/} makes entire MH sub-directories to one group) If
+you want nickname access group, you need define it in another line.  You
+can't define in a line as normal folder.
 
 This behavior is better understood if you try it and confirmed the
 function first. You can write and try a small folder definition, so you
