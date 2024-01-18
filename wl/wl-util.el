@@ -666,9 +666,10 @@ e-mail address.  It should be consist of atext (described in RFC
     (let ((new-mails 0)
 	  (flist (or wl-biff-check-folder-list (list wl-default-folder)))
 	  folder)
-      (if (eq (length flist) 1)
-	  (wl-biff-check-folder-async (wl-folder-get-elmo-folder
-				       (car flist) 'biff) (called-interactively-p 'interactive))
+      (if (and (eq (length flist) 1)
+	       (eq (elmo-folder-type-internal
+		    (setq folder (wl-folder-get-elmo-folder (car flist) 'biff))) 'imap4))
+	  (wl-biff-check-folder-async folder (called-interactively-p 'interactive))
 	(unwind-protect
 	    (while flist
 	      (setq folder (wl-folder-get-elmo-folder (car flist))
