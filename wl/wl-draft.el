@@ -1134,7 +1134,7 @@ non-nil."
 			(car fields)
 			wl-draft-remove-group-list-contents)))
 	  (setq fields (cdr fields)))
-	recipients))))
+	(elmo-uniq-list recipients)))))
 
 (eval-when-compile (require 'smtp))
 (declare-function smtp-send-buffer "smtp" (sender recipients buffer))
