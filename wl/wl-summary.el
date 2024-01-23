@@ -2342,9 +2342,7 @@ If ARG, without confirm."
     (wl-summary-count-unread)
     (wl-summary-update-modeline)
     (if msg
-	(if (eq wl-summary-buffer-view 'thread)
-	    (wl-thread-jump-to-msg msg)
-	  (wl-summary-jump-to-msg msg))
+	(wl-thread-jump-to-msg msg)
       (goto-char (point-max))
       (beginning-of-line))))
 

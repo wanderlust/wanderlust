@@ -305,7 +305,8 @@ ENTITY is returned."
   (interactive)
   (unless number
     (setq number (elmo-read-number "Jump to Message(No.): " 0)))
-  (wl-thread-entity-force-open (wl-thread-get-entity number))
+  (when (eq wl-summary-buffer-view 'thread)
+    (wl-thread-entity-force-open (wl-thread-get-entity number)))
   (wl-summary-jump-to-msg number))
 
 (defun wl-thread-close-all ()
