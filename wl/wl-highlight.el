@@ -2018,8 +2018,9 @@
 	(setq spec (wl-highlight-summary-line-face-spec
 		    (or status (wl-summary-message-status number))
 		    (wl-summary-temp-mark number)
-		    (wl-thread-entity-get-parent-entity
-		     (wl-thread-get-entity number))))
+		    (when (eq wl-summary-buffer-view 'thread)
+		      (wl-thread-entity-get-parent-entity
+		       (wl-thread-get-entity number)))))
 	(when (car spec)
 	  (put-text-property bol eol 'face (car spec)))
 	(when (cdr spec)
