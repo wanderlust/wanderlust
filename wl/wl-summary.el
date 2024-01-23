@@ -1141,7 +1141,8 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
 	(setq numbers (wl-summary-sort-messages numbers sort-by reverse))
 	(message "%s by %s...done" action sort-by)))
     (setq num (length numbers))
-    (setq wl-thread-entity-hashtb (elmo-make-hash (* num 2) #'eq)
+    (setq wl-thread-entity-hashtb (when (eq wl-summary-buffer-view 'thread)
+				    (elmo-make-hash (* num 2) #'eq))
 	  wl-thread-entity-list nil
 	  wl-thread-entities nil
 	  wl-summary-scored nil
@@ -1412,11 +1413,10 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
   (wl-summary-cleanup-temp-marks)
   (erase-buffer)
   (wl-summary-set-message-modified)
-  (setq wl-thread-entity-hashtb (elmo-make-hash
-				 (* (elmo-folder-length
-				     wl-summary-buffer-elmo-folder)
-				    2)
-				 #'eq))
+  (setq wl-thread-entity-hashtb
+	(when (eq wl-summary-buffer-view 'thread)
+	  (elmo-make-hash
+	   (* (elmo-folder-length wl-summary-buffer-elmo-folder)  2) #'eq)))
   (setq wl-thread-entity-list nil)
   (setq wl-thread-entities nil)
   (setq wl-summary-buffer-number-list nil)
