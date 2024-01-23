@@ -225,7 +225,7 @@
 (defvar wl-persistent-mark)
 
 (defun wl-summary-sticky-buffer-name (name)
-  (concat wl-summary-buffer-name ":" name))
+  (concat wl-summary-buffer-name ":" (wl-folder-get-petname name)))
 
 (defun wl-summary-default-subject (subject-string)
   (if (string-match "^[ \t]*\\[[^:]+[,: ][0-9]+\\][ \t]*" subject-string)
