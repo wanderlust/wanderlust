@@ -2464,7 +2464,8 @@ If ARG, without confirm."
 			       wl-summary-default-view-alist
 			       (elmo-folder-name-internal folder))
 			      wl-summary-default-view)))
-		  (wl-thread-resume-entity folder)
+		  (when (eq wl-summary-buffer-view 'thread)
+		    (wl-thread-resume-entity folder))
 		  (wl-summary-open-folder folder)
 		  (wl-summary-detect-mark-position))
 	      (setq wl-summary-buffer-view
