@@ -2084,9 +2084,9 @@ This function is defined for `window-scroll-functions'"
 		(setq mes
 		      (if (and (null delete-list)
 			       (zerop num))
-			  (format
-			   "No updates for \"%s\"" (elmo-folder-name-internal
-						    folder))
+			  (format "No updates for \"%s\""
+				  (wl-folder-get-petname
+				   (elmo-folder-name-internal folder)))
 			(format "Updated (-%d/+%d) message(s)"
 				(length delete-list) num))))
 	    (setq mes "Quit updating")))
