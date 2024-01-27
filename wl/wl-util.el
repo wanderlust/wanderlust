@@ -666,9 +666,10 @@ e-mail address.  It should be consist of atext (described in RFC
     (let ((new-mails 0)
 	  (flist (or wl-biff-check-folder-list (list wl-default-folder)))
 	  folder)
-      (if (eq (length flist) 1)
-	  (wl-biff-check-folder-async (wl-folder-get-elmo-folder
-				       (car flist) 'biff) (called-interactively-p 'interactive))
+      (unless (and (eq (length flist) 1)
+		   (wl-biff-check-folder-async
+		    (wl-folder-get-elmo-folder (car flist) 'biff)
+		    (called-interactively-p 'interactive)))
 	(unwind-protect
 	    (while flist
 	      (setq folder (wl-folder-get-elmo-folder (car flist))
@@ -709,26 +710,20 @@ e-mail address.  It should be consist of atext (described in RFC
   (wl-biff-notify (car diff) (nth 2 data)))
 
 (defun wl-biff-check-folder-async (folder notify-minibuf)
-  (if (and (elmo-folder-plugged-p folder)
-	   (wl-folder-entity-exists-p (elmo-folder-name-internal folder)))
-      (progn
-	(elmo-folder-set-biff-internal folder t)
-	(if (and (eq (elmo-folder-type-internal folder) 'imap4)
-		 (elmo-folder-use-flag-p folder))
-	    ;; Check asynchronously only when IMAP4 and use server diff.
-	    (progn
-	      (setq elmo-folder-diff-async-callback
-		    'wl-biff-check-folder-async-callback)
-	      (setq elmo-folder-diff-async-callback-data
-		    (list (elmo-folder-name-internal folder)
-			  (get-buffer wl-folder-buffer-name)
-			  notify-minibuf))
-	      (elmo-folder-diff-async folder))
-	  (unwind-protect
-	      (wl-biff-notify (car (wl-biff-check-folder folder))
-			      notify-minibuf)
-	    (setq wl-biff-check-folders-running nil))))
-    (setq wl-biff-check-folders-running nil)))
+  (when (and (elmo-folder-plugged-p folder)
+	     (wl-folder-entity-exists-p (elmo-folder-name-internal folder))
+	     (eq (elmo-folder-type-internal folder) 'imap4)
+	     (elmo-folder-use-flag-p folder))
+    ;; Check asynchronously only when IMAP4 and use server diff.
+    (elmo-folder-set-biff-internal folder t)
+    (setq elmo-folder-diff-async-callback
+	  'wl-biff-check-folder-async-callback)
+    (setq elmo-folder-diff-async-callback-data
+	  (list (elmo-folder-name-internal folder)
+		(get-buffer wl-folder-buffer-name)
+		notify-minibuf))
+    (elmo-folder-diff-async folder)
+    t))
 
 (make-obsolete 'wl-expand-newtext 'elmo-expand-newtext "22 Sep 2016")
 
