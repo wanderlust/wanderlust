@@ -1626,10 +1626,11 @@ before: @var{日付}より以前のメッセージのみを取り出します。
 
 @example
 @group
-yesterday ->  昨日
-lastweek  ->  先週の今日
-lastmonth ->  先月の今日
-lastyear  ->  去年の今日
+yesterday   ->  昨日
+lastweek    ->  先週の今日
+lastmonth   ->  先月の今日
+lastquarter ->  先四半期の今日
+lastyear    ->  去年の今日
 @var{数字}daysago -> @var{数字} 日前 (e.x. 3daysago)
 @var{日}-@var{月の略名}-@var{年} ->  日付そのものの指定 (ex. 1-Nov-1998)
 @end group

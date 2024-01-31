@@ -43,10 +43,11 @@
 (make-obsolete 'elmo-replace-in-string 'replace-regexp-in-string "17 Jun 2020")
 
 (defvar elmo-date-descriptions
-  '((yesterday . [0 0 1])
-    (lastweek  . [0 0 7])
-    (lastmonth . [0 1 0])
-    (lastyear  . [1 0 0])))
+  '((yesterday   . [0 0 1])
+    (lastweek    . [0 0 7])
+    (lastmonth   . [0 1 0])
+    (lastquarter . [0 3 0])
+    (lastyear    . [1 0 0])))
 
 (defun elmo-date-get-description (datevec)
   (format "%d-%s-%d"
