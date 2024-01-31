@@ -1622,10 +1622,11 @@ You can specify following as @var{date}.
 
 @example
 @group
-yesterday ->  a day before today.
-lastweek  ->  same day of last week.
-lastmonth ->  same day of last month.
-lastyear  ->  same day of last year.
+yesterday   ->  a day before today.
+lastweek    ->  same day of last week.
+lastmonth   ->  same day of last month.
+lastquarter ->  same day of last quarter.
+lastyear    ->  same day of last year.
 @var{number}daysago -> @var{number} days ago. (e.x. '3daysago')
 @var{day}-@var{month}-@var{year} -> specify date directly (ex. 1-Nov-1998)
 @end group

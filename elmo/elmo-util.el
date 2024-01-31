@@ -232,7 +232,8 @@ Return value is a cons cell of (STRUCTURE . REST)"
 
 ;; search-value ::= quoted / time / number / atom
 ;; quoted       ::= <elisp string expression>
-;; time         ::= "yesterday" / "lastweek" / "lastmonth" / "lastyear" /
+;; time         ::= "yesterday" / "lastweek" / "lastmonth" /
+;;                  "lastquarter" / "lastyear" /
 ;;                   number SPACE* "daysago" /
 ;;                   number "-" month "-" number  ; ex. 10-May-2000
 ;;                   number "-" number "-" number  ; ex. 2000-05-10
@@ -250,7 +251,8 @@ Return value is a cons cell of (STRUCTURE . REST)"
     (read (current-buffer)))
    ((or (looking-at elmo-condition-atom-regexp)
 	(looking-at "yesterday") (looking-at "lastweek")
-	(looking-at "lastmonth") (looking-at "lastyear")
+	(looking-at "lastmonth") (looking-at "lastquarter")
+        (looking-at "lastyear")
 	(looking-at "[0-9]+ *daysago")
 	(looking-at "[0-9]+-[A-Za-z]+-[0-9]+")
 	(looking-at "[0-9]+-[0-9]+-[0-9]+")
