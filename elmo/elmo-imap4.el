@@ -476,11 +476,12 @@ TAG is the tag of the command"
                                 elmo-imap4-current-response
                                 'garbage))
                       t)))
-      (when (memq (process-status
-                   (elmo-network-session-process-internal session))
-                  '(open run))
-        (accept-process-output (elmo-network-session-process-internal session)
-                               1)))
+      (if (memq (process-status
+                 (elmo-network-session-process-internal session))
+                '(open run))
+          (accept-process-output
+	   (elmo-network-session-process-internal session) 1)
+	(error "IMAP4 connection is closed")))
     (elmo-imap4-debug "[%s] => %s" (format-time-string "%T") (prin1-to-string elmo-imap4-current-response))
     (setq elmo-imap4-parsing nil)
     (elmo-imap4-mailbox-size-update-maybe session elmo-imap4-current-response)
