@@ -1553,7 +1553,11 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 			mail-header-separator "\n")))
 	    (let ((mime-header-encode-method-alist
 		   (append
-		    '((eword-encode-unstructured-field-body
+		    '(((lambda (string &optional column)
+			 (condition-case error
+			     (wl-draft-eword-encode-address-list string column)
+			   (error (eword-encode-unstructured-field-body
+				   string column))))
 		       .  (To Cc Bcc Resent-To Resent-Cc Resent-Bcc From)))
 		    mime-header-encode-method-alist)))
 	      (mime-edit-translate-buffer))
