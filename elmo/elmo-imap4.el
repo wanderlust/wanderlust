@@ -476,9 +476,7 @@ TAG is the tag of the command"
                                 elmo-imap4-current-response
                                 'garbage))
                       t)))
-      (if (memq (process-status
-                 (elmo-network-session-process-internal session))
-                '(open run))
+      (if (process-live-p (elmo-network-session-process-internal session))
           (accept-process-output
 	   (elmo-network-session-process-internal session) 1)
 	(error "IMAP4 connection is closed")))
@@ -1112,7 +1110,7 @@ If CHOP-LENGTH is not specified, message set is not chopped."
   (let ((process (elmo-network-session-process-internal session)))
     (with-current-buffer (process-buffer process)
       ;; Skip garbage output from process before greeting.
-      (while (and (memq (process-status process) '(open run))
+      (while (and (process-live-p process)
                   (goto-char (point-max))
                   (or (/= (forward-line -1) 0)
                       (not (elmo-imap4-parse-greeting))))

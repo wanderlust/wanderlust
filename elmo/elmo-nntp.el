@@ -278,7 +278,7 @@ Don't cache if nil.")
     (with-current-buffer (elmo-network-session-buffer session)
       (setq elmo-nntp-read-point (point-min))
       ;; Skip garbage output from process before greeting.
-      (while (and (memq (process-status process) '(open run))
+      (while (and (process-live-p process)
 		  (goto-char (point-max))
 		  (forward-line -1)
 		  (not (looking-at "^[2-5][0-9][0-9]")))

@@ -155,9 +155,7 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 
 (luna-define-method elmo-network-close-session ((session elmo-pop3-session))
   (when (elmo-network-session-process-internal session)
-    (when (memq (process-status
-		 (elmo-network-session-process-internal session))
-		'(open run))
+    (when (process-live-p (elmo-network-session-process-internal session))
       (elmo-pop3-send-command (elmo-network-session-process-internal session)
 			      "quit")
       ;; process is dead.
@@ -320,7 +318,7 @@ CODE is one of the following:
       (set-process-filter process 'elmo-pop3-process-filter)
       (setq elmo-pop3-read-point (point-min))
       ;; Skip garbage output from process before greeting.
-      (while (and (memq (process-status process) '(open run))
+      (while (and (process-live-p process)
 		  (goto-char (point-max))
 		  (forward-line -1)
 		  (not (looking-at "+OK")))

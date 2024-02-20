@@ -195,10 +195,8 @@ if making session failed, returns nil."
     (setq pair (assoc (setq key (elmo-network-session-cache-key name folder))
 		      elmo-network-session-cache))
     (when (and pair
-	       (or (not (memq (process-status
-			       (elmo-network-session-process-internal
-				(cdr pair)))
-			      '(open run)))
+	       (or (not (process-live-p
+			 (elmo-network-session-process-internal (cdr pair))))
 		   (and elmo-network-session-idle-timeout
 			(elmo-network-session-last-accessed-internal
 			 (cdr pair))
@@ -241,7 +239,7 @@ if making session failed, returns nil."
 
 (defun elmo-network-session-starttls-negotiate (session)
   (let ((process (elmo-network-session-process-internal session)))
-    (if (memq (process-status process) '(run stop exit signal))
+    (if (eq (process-type process) 'real)
 	(starttls-negotiate process)
       (gnutls-negotiate
        :process process
@@ -329,8 +327,7 @@ Returns a process object.  if making session failed, returns nil."
 		     (funcall (elmo-network-stream-type-function stream-type)
 			      name buffer server service)
 		   (open-network-stream name buffer server service)))
-	   (unless (and (processp process)
-			(memq (process-status process) '(open run)))
+	   (unless (process-live-p process)
 	     (error "Open network connection to %s:%d failed"
 		    server service))))
       (error

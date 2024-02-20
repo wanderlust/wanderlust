@@ -190,7 +190,7 @@
 	    (when last
 	      (setcdr last nil))
 	    (let ((process (elsp-bsfilter-start-list-spam targets)))
-	      (while (memq (process-status process) '(open run))
+	      (while (process-live-p process)
 		(accept-process-output process 1))
 	      (setq results (elsp-bsfilter-read-list-spam results hash)))
 	    (erase-buffer)
