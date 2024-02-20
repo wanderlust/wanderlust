@@ -5425,8 +5425,8 @@ Non-nil なら自動的に送信します (一応 @code{y-or-n-p} で確認し�
 
 @item wl-draft-always-delete-myself
 @vindex wl-draft-always-delete-myself
-Non-nil なら、自分宛てのメールに返信する場合、常に @samp{To:},
-@samp{Cc:} から自分のメールアドレスを削除します。
+Non-nil なら、自分宛てのメールに返信する場合、常に @samp{Cc:} から
+自分のメールアドレスを削除します。
 
 @item wl-draft-delete-myself-from-bcc-fcc
 @vindex wl-draft-delete-myself-from-bcc-fcc

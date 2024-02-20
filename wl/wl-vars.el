@@ -1019,7 +1019,8 @@ cdr of each cons cell is used for preparing headers of draft message."
   :group 'wl-draft)
 
 (defcustom wl-draft-always-delete-myself nil
-  "*Always delete myself from recipient if non-nil."
+  "When non-nil, removes your own address from Cc: field when you are
+replying to the mail addressed to you."
   :type 'boolean
   :group 'wl-draft)
 

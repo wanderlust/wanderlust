@@ -5472,8 +5472,8 @@ All headers that match this regexp will be deleted when resending a message.
 
 @item wl-draft-always-delete-myself
 @vindex wl-draft-always-delete-myself
-If non-nil, always removes your own address from @samp{To:} and
-@samp{Cc:} when you are replying to the mail addressed to you.
+If non-nil, always removes your own address from @samp{Cc:} when you are
+replying to the mail addressed to you.
 
 @item wl-draft-delete-myself-from-bcc-fcc
 @vindex wl-draft-delete-myself-from-bcc-fcc
