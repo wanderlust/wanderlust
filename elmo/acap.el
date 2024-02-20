@@ -230,51 +230,49 @@ Valid states are `closed', `initial', `auth'.")
       (while (and (process-live-p process)
 		  (not (eq acap-state 'auth)))
 	(setq acap-auth
-	      (unwind-protect
-		  (let* ((mechanism
-			  (sasl-find-mechanism
-			   (if auth
-			       (list auth)
-			     (cdr (or (assq 'Sasl acap-capability)
-				      (assq 'SASL acap-capability))))))
-			 (sclient
-			  (sasl-make-client mechanism user "acap" server))
-			 (sasl-read-passphrase 'acap-read-passphrase)
-			 (acap-rp-user user)
-			 (acap-rp-server server)
-			 (acap-rp-auth (sasl-mechanism-name mechanism))
-			 acap-passphrase step response)
-		    (unless (string= (sasl-mechanism-name mechanism)
-				     "ANONYMOUS")
-		      (setq acap-passphrase (acap-read-passphrase nil)))
-		    (setq tag (acap-send-command
-			       process
-			       (concat
-				(format "AUTHENTICATE \"%s\""
-					(sasl-mechanism-name mechanism))
-				(if (and (setq step
-					       (sasl-next-step sclient nil))
-					 (sasl-step-data step))
-				    (concat " " (prin1-to-string
-						 (sasl-step-data step)))))))
-		    (when (setq response (acap-wait-for-response process tag))
-		      (while (acap-response-cont-p response)
-			(sasl-step-set-data
-			 step (acap-response-cont-string response))
-			(acap-response-clear process)
-			(if (setq step (sasl-next-step sclient step))
-			    (with-temp-buffer
-			      (insert (or (sasl-step-data step) ""))
-			      (setq response (acap-send-data-wait
-					      process (current-buffer) tag)))
-			  (setq response nil)))
-		      (if (acap-response-ok-p response)
-			  (progn
-			    (setq acap-state 'auth)
-			    mechanism)
-			(message "Authentication failed.")
-			(sit-for 1))))
-		nil)))
+	      (let* ((mechanism
+		      (sasl-find-mechanism
+		       (if auth
+			   (list auth)
+			 (cdr (or (assq 'Sasl acap-capability)
+				  (assq 'SASL acap-capability))))))
+		     (sclient
+		      (sasl-make-client mechanism user "acap" server))
+		     (sasl-read-passphrase 'acap-read-passphrase)
+		     (acap-rp-user user)
+		     (acap-rp-server server)
+		     (acap-rp-auth (sasl-mechanism-name mechanism))
+		     acap-passphrase step response)
+		(unless (string= (sasl-mechanism-name mechanism)
+				 "ANONYMOUS")
+		  (setq acap-passphrase (acap-read-passphrase nil)))
+		(setq tag (acap-send-command
+			   process
+			   (concat
+			    (format "AUTHENTICATE \"%s\""
+				    (sasl-mechanism-name mechanism))
+			    (if (and (setq step
+					   (sasl-next-step sclient nil))
+				     (sasl-step-data step))
+				(concat " " (prin1-to-string
+					     (sasl-step-data step)))))))
+		(when (setq response (acap-wait-for-response process tag))
+		  (while (acap-response-cont-p response)
+		    (sasl-step-set-data
+		     step (acap-response-cont-string response))
+		    (acap-response-clear process)
+		    (if (setq step (sasl-next-step sclient step))
+			(with-temp-buffer
+			  (insert (or (sasl-step-data step) ""))
+			  (setq response (acap-send-data-wait
+					  process (current-buffer) tag)))
+		      (setq response nil)))
+		  (if (acap-response-ok-p response)
+		      (progn
+			(setq acap-state 'auth)
+			mechanism)
+		    (message "Authentication failed.")
+		    (sit-for 1))))))
       (unless acap-auth
 	(message "acap: Connecting to %s...failed" server))
       (setq acap-server server
@@ -524,17 +522,15 @@ ENTRIES is a store-entry list."
 	      ((bufferp cmd)
 	       (with-current-buffer cmd
 		 (setq cmdstr (concat cmdstr (format "{%d}" (buffer-size)))))
-	       (unwind-protect
-		   (progn
-		     (acap-send-command-1 process cmdstr)
-		     (setq cmdstr nil
-			   response (acap-wait-for-response process tag))
-		     (if (not (acap-response-cont-p response))
-			 (setq command nil) ;; abort command if no cont-req
-		       (with-current-buffer cmd
-			 (process-send-region process (point-min)
-					      (point-max))
-			 (process-send-string process acap-client-eol))))))
+	       (acap-send-command-1 process cmdstr)
+	       (setq cmdstr nil
+		     response (acap-wait-for-response process tag))
+	       (if (not (acap-response-cont-p response))
+		   (setq command nil) ;; abort command if no cont-req
+		 (with-current-buffer cmd
+		   (process-send-region process (point-min)
+					(point-max))
+		   (process-send-string process acap-client-eol))))
 	      (t (error "Unknown command type"))))
       (when cmdstr
 	(acap-send-command-1 process cmdstr))
