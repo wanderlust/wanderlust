@@ -206,8 +206,8 @@ It may include any of the following format specifications
 which are replaced by the given information:
 
 %f The folder name.
-%t The thread status of the summary ('T' for thread, 'S' for sequential).
-%m The mime analysis status of the summary ('MIME' for MIME ON)
+%t The thread status of the summary (\\='T\\=' for thread, \\='S\\=' for sequential).
+%m The mime analysis status of the summary (\\='MIME\\=' for MIME ON)
 %n The number of new messages.
 %u The number of unread messages (includes new messages).
 %a The number of all messages."
@@ -266,20 +266,20 @@ which are replaced by the given information:
 %l The number in the mailing list.
 %m The minute of the date field of the message (zero padded).
 %[ An open bracket.  If the message thread is linked,
-   it is replaced with '<'.
+   it is replaced with \\='<\\='.
 %] A close bracket.  If the message thread is linked,
-   it is replaced with '>'.
+   it is replaced with \\='>\\='.
 %c The children number of the closed message thread.
-   Children number is printed like '+??:'.
+   Children number is printed like \\='+??:\\='.
 %C The children number of the closed message thread.
    Children number is printed like '[+??] '.
-   If the message is opened, '>' or '>>' (linked) is displayed.
+   If the message is opened, \\='>\\=' or \\='>>\\=' (linked) is displayed.
 %f The from: field string of the message.
 %s The subject: field string of the message.
 %S The size of the message (if available).
 %t The branch of the thread.
 %@ `@' only if the first MIME part is multipart/mixed.
-%~ If the previous spec is not zero-length, replaced with ' '.
+%~ If the previous spec is not zero-length, replaced with \\=' \\='.
 %#  mailing list information (`(' ML-name [ ` ' ML-number ] `)')
 
 If the format string contains the specifiers %( and %), the text between
