@@ -242,8 +242,7 @@ It is used to remove executed timer function.")
   (dolist (elt (nreverse
 		(elmo-passwd-auth-source-savers-internal passwd)))
     (when (functionp (cdr elt))
-      (condition-case nil
-	  (funcall (cdr elt)))))
+      (ignore-errors (funcall (cdr elt)))))
   (elmo-passwd-auth-source-set-savers-internal passwd nil))
 
 (autoload 'auth-source-search "auth-source")
