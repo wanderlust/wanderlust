@@ -1402,8 +1402,9 @@ If nil, a string `This is a blind carbon copy.' is used."
 First element of each list is some condition for the draft buffer (regular
 expression for header or elisp expression) and remaining elements indicate
 actions.
-If the first element is `reply' keyword, the next element be the condition
-for the message being replied, and remaining elements are actions.
+If the first element is `reply' or `forward' keyword, the next element
+ be the condition for the message being replied or forwarded, and
+remaining elements are actions.
 
 The configuration is applied when `wl-draft-config-exec' is called, or
 applied automatically before sending message.

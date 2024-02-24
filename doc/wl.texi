@@ -4927,9 +4927,11 @@ See the next example as well:
 
 As in the (1) above, if a header regexp is prepended with @code{reply},
 it is applied when the draft is prepared by @code{wl-summary-reply} for
-example, and when it matches the header being replied.  It is ignored
-when there is no buffer being replied, like after @code{wl-draft} was
-invoked.
+example, and when it matches the header being replied.  If you use
+@code{forward} instead of @code{reply} and you invoked
+@code{wl-summary-forward}, matching is performed in forwarded message's
+buffer.  It is ignored when there is no buffer being replied, like after
+@code{wl-draft} was invoked.
 
 If you want to use name of parent folder, you can refer the buffer local
 variable @code{wl-draft-parent-folder}. In the following example, Wanderlust

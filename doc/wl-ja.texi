@@ -4902,10 +4902,13 @@ Field の値が @code{nil} ならばその Field を削除します。
 @end group
 @end lisp
 
-この例 (1)のように、ヘッダの正規表現の前に @code{reply} をつけると
-@code{wl-summary-reply} などでドラフトを作成した場合、返信元のヘッダにマッ
-チすれば適用されるようになります。ただし、@code{wl-draft} を実行したとき
-など返信元のバッファがない場合は無視されます。
+この例 (1) のように、ヘッダの正規表現の前に @code{reply} をつけると
+@code{wl-summary-reply} などでドラフトを作成した際の返信元のヘッダに
+マッチすれば適用されるようになります。また、@code{reply} の代わりに
+@code{forward} を使うと、@code{wl-summary-forward} などでドラフトを
+作成した場合の引用元のヘッダとマッチを試みます。
+ただし、@code{wl-draft} を実行したときなど返信元のバッファがない場合は
+無視されます。
 
 親フォルダの名前を利用したい場合には、バッファローカル変数
 @code{wl-draft-parent-folder} を利用できます。次の例では、ドラフトを開く時に

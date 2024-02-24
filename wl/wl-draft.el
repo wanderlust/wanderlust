@@ -74,6 +74,7 @@
 (defvar wl-sent-message-queued nil)
 (defvar wl-draft-fcc-list nil)
 (defvar wl-draft-reedit nil)
+(defvar wl-draft-forward-buffer nil)
 (defvar wl-draft-reply-buffer nil)
 (defvar wl-draft-forward nil)
 (defvar wl-draft-doing-mime-bcc nil)
@@ -121,6 +122,7 @@ e.g.
 (make-variable-buffer-local 'wl-sent-message-via)
 (make-variable-buffer-local 'wl-sent-message-queued)
 (make-variable-buffer-local 'wl-draft-fcc-list)
+(make-variable-buffer-local 'wl-draft-forward-buffer)
 (make-variable-buffer-local 'wl-draft-reply-buffer)
 (make-variable-buffer-local 'wl-draft-parent-folder)
 (make-variable-buffer-local 'wl-draft-parent-number)
@@ -396,6 +398,12 @@ Special commands:
   (goto-char (point-max))
   (wl-draft-insert-message)
   (mail-position-on-field "To")
+  (setq wl-draft-forward-buffer
+	(and wl-draft-buffer-cur-summary-buffer
+	     (with-current-buffer wl-draft-buffer-cur-summary-buffer
+	       (and wl-message-buffer
+		    (with-current-buffer wl-message-buffer
+		      (wl-message-get-original-buffer))))))
   (setq wl-draft-config-variables
 	(append wl-draft-parent-variables
 		wl-draft-config-variables))
@@ -2321,8 +2329,6 @@ Automatically applied in draft sending time."
   (interactive)
   (let ((case-fold-search t)
 	(alist (or config-alist wl-draft-config-alist))
-	(reply-buf (or reply-buf (and (buffer-live-p wl-draft-reply-buffer)
-				      wl-draft-reply-buffer)))
 	(local-variables wl-draft-config-variables)
 	wl-draft-real-time-highlight
 	key clist found)
@@ -2335,16 +2341,22 @@ Automatically applied in draft sending time."
 	    (setq key (caar alist)
 		  clist (cdar alist))
 	    (cond
-	     ((eq key 'reply)
-	      (when (and
-		     reply-buf
-		     (with-current-buffer reply-buf
-		       (save-restriction
-			 (std11-narrow-to-header)
-			 (goto-char (point-min))
-			 (re-search-forward (car clist) nil t))))
-		(wl-draft-config-exec-sub (cdr clist))
-		(setq found t)))
+	     ((memq key '(reply forward))
+	      (let ((reply-buf
+		     (or reply-buf
+			 (eval
+			  (cdr (assq
+				key
+				'((reply . wl-draft-reply-buffer)
+				  (forward . wl-draft-forward-buffer))))))))
+		(when (and (buffer-live-p reply-buf)
+			   (with-current-buffer reply-buf
+			     (save-restriction
+			       (std11-narrow-to-header)
+			       (goto-char (point-min))
+			       (re-search-forward (car clist) nil t))))
+		  (wl-draft-config-exec-sub (cdr clist))
+		  (setq found t))))
 	     ((stringp key)
 	      (when (save-restriction
 		      (std11-narrow-to-header mail-header-separator)
