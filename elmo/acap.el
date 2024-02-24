@@ -91,47 +91,36 @@
   "The EOL string sent from the server.")
 
 ;; Internal variables.
-(defvar acap-state 'closed
+(defvar-local acap-state 'closed
   "ACAP state.
 Valid states are `closed', `initial', `auth'.")
 
-(defvar acap-capability nil
+(defvar-local acap-capability nil
   "Capability for server.")
 
-(defvar acap-reached-tag 0
+(defvar-local acap-reached-tag 0
   "Lower limit on command tags that have been parsed.")
 
-(defvar acap-tag 0
+(defvar-local acap-tag 0
   "Command tag number.")
 
-(defvar acap-auth nil
+(defvar-local acap-auth nil
   "Authenticated mechanism name.")
 
 (defvar acap-process nil
   "Process for the buffer.")
 
-(defvar acap-server nil
+(defvar-local acap-server nil
   "Server name.")
 
-(defvar acap-port nil
+(defvar-local acap-port nil
   "Port number.")
 
-(defvar acap-response nil
+(defvar-local acap-response nil
   "ACAP Response.")
 
-(defvar acap-logging-out nil
+(defvar-local acap-logging-out nil
   "Non-nil when ACAP is logging out.")
-
-(make-variable-buffer-local 'acap-state)
-(make-variable-buffer-local 'acap-auth)
-(make-variable-buffer-local 'acap-capability)
-(make-variable-buffer-local 'acap-reached-tag)
-(make-variable-buffer-local 'acap-failed-tag)
-(make-variable-buffer-local 'acap-tag)
-(make-variable-buffer-local 'acap-server)
-(make-variable-buffer-local 'acap-port)
-(make-variable-buffer-local 'acap-response)
-(make-variable-buffer-local 'acap-logging-out)
 
 (defvar acap-network-stream-alist
   '((default . open-network-stream-as-binary)))

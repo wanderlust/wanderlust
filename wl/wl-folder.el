@@ -63,17 +63,11 @@
 (defvar wl-folder-mode-map nil)
 (defvar wl-folder-mode-menu nil)
 
-(defvar wl-folder-buffer-disp-summary nil)
-(defvar wl-folder-buffer-cur-entity-id nil)
-(defvar wl-folder-buffer-last-visited-entity-id nil)
-(defvar wl-folder-buffer-cur-path nil)
-(defvar wl-folder-buffer-cur-point nil)
-
-(make-variable-buffer-local 'wl-folder-buffer-disp-summary)
-(make-variable-buffer-local 'wl-folder-buffer-cur-entity-id)
-(make-variable-buffer-local 'wl-folder-buffer-last-visited-entity-id)
-(make-variable-buffer-local 'wl-folder-buffer-cur-path)
-(make-variable-buffer-local 'wl-folder-buffer-cur-point)
+(defvar-local wl-folder-buffer-disp-summary nil)
+(defvar-local wl-folder-buffer-cur-entity-id nil)
+(defvar-local wl-folder-buffer-last-visited-entity-id nil)
+(defvar-local wl-folder-buffer-cur-path nil)
+(defvar-local wl-folder-buffer-cur-point nil)
 
 (defconst wl-folder-entity-regexp "^\\([ ]*\\)\\(\\[[\\+-]\\]\\)?\\([^\\[].+\\):[-*0-9]+/[-*0-9]+/[-*0-9]+")
 (defconst wl-folder-group-regexp  "^\\([ ]*\\)\\[\\([\\+-]\\)\\]\\(.+\\):[0-9-]+/[0-9-]+/[0-9-]+\n")

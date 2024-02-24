@@ -2342,7 +2342,7 @@ If this variable is `new', precede \"N\", \"n\" mark."
   :group 'wl-summary
   :group 'wl-setting)
 
-(defvar wl-summary-move-direction-downward t)
+(defvar-local wl-summary-move-direction-downward t)
 
 (defcustom wl-summary-move-direction-toggle t
   "*If non-nil, search direction for the next message will be determined

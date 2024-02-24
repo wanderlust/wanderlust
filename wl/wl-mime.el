@@ -432,9 +432,7 @@ It calls following-method selected from variable
     (select-window window)
     (switch-to-buffer buf)))
 
-(defvar wl-draft-preview-pgp-processing nil)
-
-(make-variable-buffer-local 'wl-draft-preview-pgp-processing)
+(defvar-local wl-draft-preview-pgp-processing nil)
 
 (defun wl-draft-preview-message ()
   "Preview editing message."

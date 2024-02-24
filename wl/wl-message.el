@@ -48,25 +48,15 @@
 
 (defvar wl-message-buffer nil) ; message buffer.
 
-(defvar wl-message-buffer-cur-folder nil)
-(defvar wl-message-buffer-cur-number nil)
-(defvar wl-message-buffer-cur-display-type nil)
-(defvar wl-message-buffer-cur-summary-buffer nil)
-(defvar wl-message-buffer-require-all-header nil)
-(defvar wl-message-buffer-original-buffer nil) ; original buffer.
-(defvar wl-message-buffer-mode-line-formatter nil)
-(defvar wl-message-buffer-flag-indicator nil)
-(defvar wl-message-buffer-mime-entity nil)
-
-(make-variable-buffer-local 'wl-message-buffer-cur-folder)
-(make-variable-buffer-local 'wl-message-buffer-cur-number)
-(make-variable-buffer-local 'wl-message-buffer-cur-display-type)
-(make-variable-buffer-local 'wl-message-buffer-cur-summary-buffer)
-(make-variable-buffer-local 'wl-message-buffer-require-all-header)
-(make-variable-buffer-local 'wl-message-buffer-original-buffer)
-(make-variable-buffer-local 'wl-message-buffer-mode-line-formatter)
-(make-variable-buffer-local 'wl-message-buffer-flag-indicator)
-(make-variable-buffer-local 'wl-message-buffer-mime-entity)
+(defvar-local wl-message-buffer-cur-folder nil)
+(defvar-local wl-message-buffer-cur-number nil)
+(defvar-local wl-message-buffer-cur-display-type nil)
+(defvar-local wl-message-buffer-cur-summary-buffer nil)
+(defvar-local wl-message-buffer-require-all-header nil)
+(defvar-local wl-message-buffer-original-buffer nil) ; original buffer.
+(defvar-local wl-message-buffer-mode-line-formatter nil)
+(defvar-local wl-message-buffer-flag-indicator nil)
+(defvar-local wl-message-buffer-mime-entity nil)
 
 (defvar wl-fixed-window-configuration nil)
 

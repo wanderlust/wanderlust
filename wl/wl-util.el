@@ -404,8 +404,7 @@ The objects mapped (cdrs of elements of the ALIST) are shared."
     (nreverse result)))
 
 (defvar wl-inhibit-save-drafts nil)
-(defvar wl-disable-auto-save nil)
-(make-variable-buffer-local 'wl-disable-auto-save)
+(defvar-local wl-disable-auto-save nil)
 
 (defun wl-save-drafts ()
   "Save all drafts. Return nil if there is no draft buffer."

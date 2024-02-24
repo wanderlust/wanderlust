@@ -56,30 +56,30 @@
 (eval-and-compile
   (autoload 'wl-addrmgr "wl-addrmgr"))
 
-(defvar wl-draft-buffer-message-number nil)
+(defvar-local wl-draft-buffer-message-number nil)
 (defvar wl-draft-field-completion-list nil)
 (defvar wl-draft-verbose-send t)
 (defvar wl-draft-verbose-msg nil)
 (defvar wl-draft-queue-flushing nil)
-(defvar wl-draft-config-variables nil)
-(defvar wl-draft-config-exec-flag t)
-(defvar wl-draft-buffer-cur-summary-buffer nil)
+(defvar-local wl-draft-config-variables nil)
+(defvar-local wl-draft-config-exec-flag t)
+(defvar-local wl-draft-buffer-cur-summary-buffer nil)
 (defvar wl-draft-clone-local-variable-regexp "^\\(wl\\|mime\\)")
 (defvar wl-draft-sendlog-filename "sendlog")
 (defvar wl-draft-queue-save-filename "qinfo")
 (defvar wl-draft-config-save-filename "config")
 (defvar wl-draft-queue-flush-send-function 'wl-draft-dispatch-message)
-(defvar wl-sent-message-via nil)
+(defvar-local wl-sent-message-via nil)
 (defvar wl-sent-message-modified nil)
-(defvar wl-sent-message-queued nil)
-(defvar wl-draft-fcc-list nil)
+(defvar-local wl-sent-message-queued nil)
+(defvar-local wl-draft-fcc-list nil)
 (defvar wl-draft-reedit nil)
-(defvar wl-draft-forward-buffer nil)
-(defvar wl-draft-reply-buffer nil)
+(defvar-local wl-draft-forward-buffer nil)
+(defvar-local wl-draft-reply-buffer nil)
 (defvar wl-draft-forward nil)
 (defvar wl-draft-doing-mime-bcc nil)
 
-(defvar wl-draft-parent-folder nil
+(defvar-local wl-draft-parent-folder nil
   "Folder name of the summary in which current draft is invoked.
 This variable is local in each draft buffer.
 You can refer its value in `wl-draft-config-alist'.
@@ -91,8 +91,8 @@ e.g.
         ((string-match \".*@domain2$\" wl-draft-parent-folder)
          (\"From\" . \"user@domain2\"))))")
 
-(defvar wl-draft-parent-number nil)
-(defvar wl-draft-parent-flag nil)
+(defvar-local wl-draft-parent-number nil)
+(defvar-local wl-draft-parent-flag nil)
 
 (defconst wl-draft-parent-variables
   '(wl-draft-parent-folder
@@ -114,19 +114,6 @@ e.g.
     (header-file	. wl-draft-config-sub-header-file)
     (template		. wl-draft-config-sub-template)
     (x-face		. wl-draft-config-sub-x-face)))
-
-(make-variable-buffer-local 'wl-draft-buffer-message-number)
-(make-variable-buffer-local 'wl-draft-buffer-cur-summary-buffer)
-(make-variable-buffer-local 'wl-draft-config-variables)
-(make-variable-buffer-local 'wl-draft-config-exec-flag)
-(make-variable-buffer-local 'wl-sent-message-via)
-(make-variable-buffer-local 'wl-sent-message-queued)
-(make-variable-buffer-local 'wl-draft-fcc-list)
-(make-variable-buffer-local 'wl-draft-forward-buffer)
-(make-variable-buffer-local 'wl-draft-reply-buffer)
-(make-variable-buffer-local 'wl-draft-parent-folder)
-(make-variable-buffer-local 'wl-draft-parent-number)
-(make-variable-buffer-local 'wl-draft-parent-flag)
 
 (defvar wl-draft-folder-internal nil
   "Internal variable for caching `opened' draft folder.")

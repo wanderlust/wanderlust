@@ -136,13 +136,13 @@ extra search keys.")
 ;;; internal variables
 ;;
 (defvar elmo-imap4-seq-prefix "elmo-imap4")
-(defvar elmo-imap4-seqno 0)
+(defvar-local elmo-imap4-seqno 0)
 (defvar elmo-imap4-use-uid t
   "Use UID as message number.")
 
-(defvar elmo-imap4-current-response nil)
-(defvar elmo-imap4-status nil)
-(defvar elmo-imap4-reached-tag "elmo-imap40")
+(defvar-local elmo-imap4-current-response nil)
+(defvar-local elmo-imap4-status nil)
+(defvar-local elmo-imap4-reached-tag "elmo-imap40")
 
 ;;; buffer local variables
 (defvar elmo-imap4-default-hierarchy-delimiter "/")
@@ -150,40 +150,24 @@ extra search keys.")
 (defvar elmo-imap4-server-capability nil)
 (defvar elmo-imap4-server-namespace nil)
 
-(defvar elmo-imap4-parsing nil) ; indicates parsing.
+(defvar-local elmo-imap4-parsing nil) ; indicates parsing.
 
-(defvar elmo-imap4-fetch-callback nil)
-(defvar elmo-imap4-fetch-callback-data nil)
-(defvar elmo-imap4-status-callback nil)
-(defvar elmo-imap4-status-callback-data nil)
+(defvar-local elmo-imap4-fetch-callback nil)
+(defvar-local elmo-imap4-fetch-callback-data nil)
+(defvar-local elmo-imap4-status-callback nil)
+(defvar-local elmo-imap4-status-callback-data nil)
 
 (defvar elmo-imap4-server-diff-async-callback nil)
 (defvar elmo-imap4-server-diff-async-callback-data nil)
 
 ;;; progress...(no use?)
-(defvar elmo-imap4-count-progress nil)
-(defvar elmo-imap4-count-progress-message nil)
-(defvar elmo-imap4-progress-count nil)
+(defvar-local elmo-imap4-count-progress nil)
+(defvar-local elmo-imap4-count-progress-message nil)
+(defvar-local elmo-imap4-progress-count nil)
 
 ;;; XXX Temporal implementation
-(defvar elmo-imap4-current-msgdb nil)
-(defvar elmo-imap4-seen-messages nil)
-
-(defvar elmo-imap4-local-variables
-  '(elmo-imap4-status
-    elmo-imap4-current-response
-    elmo-imap4-seqno
-    elmo-imap4-parsing
-    elmo-imap4-reached-tag
-    elmo-imap4-count-progress
-    elmo-imap4-count-progress-message
-    elmo-imap4-progress-count
-    elmo-imap4-fetch-callback
-    elmo-imap4-fetch-callback-data
-    elmo-imap4-status-callback
-    elmo-imap4-status-callback-data
-    elmo-imap4-current-msgdb
-    elmo-imap4-seen-messages))
+(defvar-local elmo-imap4-current-msgdb nil)
+(defvar-local elmo-imap4-seen-messages nil)
 
 ;;;;
 
@@ -1101,7 +1085,6 @@ If CHOP-LENGTH is not specified, message set is not chopped."
   elmo-network-initialize-session-buffer :after ((_session
                                                   elmo-imap4-session) buffer)
   (with-current-buffer buffer
-    (mapc 'make-variable-buffer-local elmo-imap4-local-variables)
     (setq elmo-imap4-seqno 0)
     (setq elmo-imap4-status 'initial)))
 

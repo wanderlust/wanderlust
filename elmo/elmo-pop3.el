@@ -137,21 +137,13 @@ Debug information is inserted in the buffer \"*POP3 DEBUG*\"")
 (luna-define-class elmo-pop3-session (elmo-network-session) ())
 
 ;; buffer-local
-(defvar elmo-pop3-read-point nil)
-(defvar elmo-pop3-number-uidl-hash nil) ; number (integer) -> uidl
-(defvar elmo-pop3-uidl-number-hash nil) ; uidl -> number (integer)
-(defvar elmo-pop3-size-hash nil) ; number (integer)-> size (string)
-(defvar elmo-pop3-uidl-done nil)
-(defvar elmo-pop3-list-done nil)
-(defvar elmo-pop3-lock nil)
-
-(defvar elmo-pop3-local-variables '(elmo-pop3-read-point
-				    elmo-pop3-uidl-number-hash
-				    elmo-pop3-number-uidl-hash
-				    elmo-pop3-uidl-done
-				    elmo-pop3-size-hash
-				    elmo-pop3-list-done
-				    elmo-pop3-lock))
+(defvar-local elmo-pop3-read-point nil)
+(defvar-local elmo-pop3-number-uidl-hash nil) ; number (integer) -> uidl
+(defvar-local elmo-pop3-uidl-number-hash nil) ; uidl -> number (integer)
+(defvar-local elmo-pop3-size-hash nil) ; number (integer)-> size (string)
+(defvar-local elmo-pop3-uidl-done nil)
+(defvar-local elmo-pop3-list-done nil)
+(defvar-local elmo-pop3-lock nil)
 
 (luna-define-method elmo-network-close-session ((session elmo-pop3-session))
   (when (elmo-network-session-process-internal session)
@@ -305,11 +297,6 @@ CODE is one of the following:
       (t
        (signal 'elmo-authenticate-error '(elmo-pop-auth-apop))))
     (car response)))
-
-(luna-define-method elmo-network-initialize-session-buffer :after
-  ((_session elmo-pop3-session) buffer)
-  (with-current-buffer buffer
-    (mapcar 'make-variable-buffer-local elmo-pop3-local-variables)))
 
 (luna-define-method elmo-network-initialize-session ((session
 						      elmo-pop3-session))

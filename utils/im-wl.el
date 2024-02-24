@@ -61,12 +61,9 @@ This is most commonly `imput(impost)' or `inews-nifty4u'.")
     (defvar shell-command-switch "-c"))
 
 ;; Buffer local variables (For async).
-(defvar im-wl-buffer-editing-buffer nil)
-(defvar im-wl-buffer-sending-buffer nil)
-(defvar im-wl-buffer-kill-when-done nil)
-(make-variable-buffer-local 'im-wl-buffer-editing-buffer)
-(make-variable-buffer-local 'im-wl-buffer-sending-buffer)
-(make-variable-buffer-local 'im-wl-buffer-kill-when-done)
+(defvar-local im-wl-buffer-editing-buffer nil)
+(defvar-local im-wl-buffer-sending-buffer nil)
+(defvar-local im-wl-buffer-kill-when-done nil)
 
 
 ;;;###autoload

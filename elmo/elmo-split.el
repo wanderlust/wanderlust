@@ -153,9 +153,8 @@ It can be some ACTION as in `elmo-split-rule'."
 (defvar elmo-split-match-string-internal nil
   "Internal variable for string matching.  Don't touch this variable by hand.")
 
-(defvar elmo-split-message-entity nil
+(defvar-local elmo-split-message-entity nil
   "Buffer local variable to store mime-entity.")
-(make-variable-buffer-local 'elmo-split-message-entity)
 
 ;;;
 (defun elmo-split-or (buffer &rest args)

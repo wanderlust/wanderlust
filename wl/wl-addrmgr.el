@@ -97,21 +97,13 @@
 (defvar wl-addrmgr-method-list '(local))
 
 ;; buffer local variable.
-(defvar wl-addrmgr-draft-buffer nil)
-(defvar wl-addrmgr-unknown-list nil)
-(defvar wl-addrmgr-sort-key nil)
-(defvar wl-addrmgr-sort-order nil)
-(defvar wl-addrmgr-method nil)
-(defvar wl-addrmgr-list nil)
-(defvar wl-addrmgr-method-name nil)
-
-(make-variable-buffer-local 'wl-addrmgr-draft-buffer)
-(make-variable-buffer-local 'wl-addrmgr-unknown-list)
-(make-variable-buffer-local 'wl-addrmgr-sort-key)
-(make-variable-buffer-local 'wl-addrmgr-sort-order)
-(make-variable-buffer-local 'wl-addrmgr-method)
-(make-variable-buffer-local 'wl-addrmgr-list)
-(make-variable-buffer-local 'wl-addrmgr-method-name)
+(defvar-local wl-addrmgr-draft-buffer nil)
+(defvar-local wl-addrmgr-unknown-list nil)
+(defvar-local wl-addrmgr-sort-key nil)
+(defvar-local wl-addrmgr-sort-order nil)
+(defvar-local wl-addrmgr-method nil)
+(defvar-local wl-addrmgr-list nil)
+(defvar-local wl-addrmgr-method-name nil)
 
 ;;; Code
 

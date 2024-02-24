@@ -90,11 +90,11 @@
 (defvar wl-score-debug nil)
 (defvar wl-score-trace nil)
 
-(defvar wl-score-alist nil)
+(defvar-local wl-score-alist nil)
 (defvar wl-score-index nil)
 (defvar wl-score-cache nil)
 (defvar wl-scores-messages nil)
-(defvar wl-current-score-file nil)
+(defvar-local wl-current-score-file nil)
 (defvar wl-score-make-followup nil)
 (defvar wl-score-stop-add-entry nil)
 
@@ -105,9 +105,6 @@
 
 (defvar wl-score-edit-exit-function nil
   "Function run on exit from the score buffer.")
-
-(make-variable-buffer-local 'wl-current-score-file)
-(make-variable-buffer-local 'wl-score-alist)
 
 (defvar wl-score-edit-summary-buffer nil)
 

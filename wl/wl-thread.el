@@ -38,14 +38,12 @@
 
 ;; buffer local variables.
 ;;(defvar wl-thread-top-entity '(nil t nil nil)) ; top entity
-(defvar wl-thread-tops nil)		; top number list (number)
-(defvar wl-thread-entities nil)
-(defvar wl-thread-entity-list nil)	; entity list
-(defvar wl-thread-entity-hashtb nil)
 
-(make-variable-buffer-local 'wl-thread-entity-hashtb)
-(make-variable-buffer-local 'wl-thread-entities)     ; ".wl-thread-entity"
-(make-variable-buffer-local 'wl-thread-entity-list)  ; ".wl-thread-entity-list"
+;; ".wl-thread-entity"
+(defvar-local wl-thread-entities nil)
+;; ".wl-thread-entity-list"
+(defvar-local wl-thread-entity-list nil)
+(defvar-local wl-thread-entity-hashtb nil)
 
 ;;; global flag
 (defvar wl-thread-insert-force-opened nil)
