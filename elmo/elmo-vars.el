@@ -271,7 +271,7 @@ On other platforms, the value indicates hash function."
   :type 'string
   :group 'elmo-setting)
 
-(defvar elmo-mime-charset 'iso-2022-jp)
+(defvar elmo-mime-charset 'x-ctext)
 
 (defvar elmo-msgdb-mark-filename "mark"
   "Mark database.")
