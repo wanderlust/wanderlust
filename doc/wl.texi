@@ -3578,7 +3578,7 @@ argument, it asks the destination folder.
 Append/change/delete the message's sender information to the address
 book @file{~/.addresses} interactively.  If this command is called with
 prefix argument, arbitrary address can be edited.
-(@code{wl-summary-edit-petname})
+(@code{wl-summary-edit-addresses})
 
 @item Z
 @kindex Z (Summary)

@@ -3538,11 +3538,11 @@ MIME でカプセル化された複数のメッセージ含む場合、
 
 @item @@
 @kindex @@ (Summary)
-@findex wl-summary-edit-petname
+@findex wl-summary-edit-addresses
 サマリ行のメールの @samp{From:} (発信者)を @file{~/.addresses} にインタ
 ラクティブに追加します。既に登録されている場合は変更/削除もできます。
 prefix argument つきで実行すると、任意の入力アドレスを登録/変更/削除でき
-ます。(@code{wl-summary-edit-petname})
+ます。(@code{wl-summary-edit-addresses})
 
 @item Z
 @kindex Z (Summary)
