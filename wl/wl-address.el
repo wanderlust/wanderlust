@@ -588,8 +588,11 @@ e.g. \"Mr. bar <hoge@example.com>\"
 
 
 (defun wl-address-get-petname-1 (string)
-  (let ((address (downcase (wl-address-header-extract-address string))))
-    (gethash address wl-address-petname-hash)))
+  (let ((address (downcase (wl-address-header-extract-address string)))
+	petname)
+    (when (and (setq petname (gethash address wl-address-petname-hash))
+	       (> (length petname) 0))
+      petname)))
 
 (defsubst wl-address-get-petname (string)
   (or (wl-address-get-petname-1 string)
