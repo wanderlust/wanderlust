@@ -120,12 +120,28 @@
     ["Update Status"        wl-status-update t]
     ["Exit"                 wl-exit t]))
 
+(declare-function wl-mouse-buttons-for-wheel "wl-util" (event))
+
 (defun wl-folder-setup-mouse ()
   (define-key wl-folder-mode-map [mouse-2] 'wl-folder-click)
-  (define-key wl-folder-mode-map [mouse-4] 'wl-folder-prev-entity)
-  (define-key wl-folder-mode-map [mouse-5] 'wl-folder-next-entity)
-  (define-key wl-folder-mode-map [S-mouse-4] 'wl-folder-prev-unread)
-  (define-key wl-folder-mode-map [S-mouse-5] 'wl-folder-next-unread))
+  (let ((up (wl-mouse-buttons-for-wheel 'wheel-up))
+	(down (wl-mouse-buttons-for-wheel 'wheel-down)))
+    (if (memq 'mouse wl-scroll-function-events)
+	(progn
+	  (define-key wl-folder-mode-map `[,(car up)] 'wl-folder-prev-entity)
+	  (define-key wl-folder-mode-map `[,(car down)] 'wl-folder-next-entity)
+	  (define-key wl-folder-mode-map `[,(cdr up)] 'wl-folder-prev-unread)
+	  (define-key wl-folder-mode-map `[,(cdr down)] 'wl-folder-next-unread))
+      (dolist (key (list (car up) (cdr up) (car down) (cdr down)))
+	(define-key wl-folder-mode-map `[,key] nil t))))
+  (if (memq 'wheel wl-scroll-function-events)
+      (progn
+	(define-key wl-folder-mode-map [wheel-up] 'wl-folder-prev-entity)
+	(define-key wl-folder-mode-map [wheel-down] 'wl-folder-next-entity)
+	(define-key wl-folder-mode-map [S-wheel-up] 'wl-folder-prev-unread)
+	(define-key wl-folder-mode-map [S-wheel-down] 'wl-folder-next-unread))
+    (dolist (key '([wheel-up] [wheel-down] [S-wheel-up] [S-wheel-down]))
+      (define-key wl-folder-mode-map key nil t))))
 
 (if wl-folder-mode-map
     nil
@@ -202,7 +218,6 @@
   ;; quicksearch
   (define-key wl-folder-mode-map "'" 'wl-quicksearch-goto-search-folder-wrapper)
 
-  (wl-folder-setup-mouse)
   (easy-menu-define
    wl-folder-mode-menu
    wl-folder-mode-map
@@ -1463,6 +1478,7 @@ Entering Folder mode calls the value of `wl-folder-mode-hook'."
   (interactive)
   (setq major-mode 'wl-folder-mode)
   (setq mode-name "Folder")
+  (wl-folder-setup-mouse)
   (use-local-map wl-folder-mode-map)
   (setq buffer-read-only t)
   (setq inhibit-read-only nil)

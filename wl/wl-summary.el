@@ -344,11 +344,25 @@ See also variable `wl-use-petname'."
     ["Exit Current Folder" wl-summary-exit t]))
 
 (defun wl-summary-setup-mouse ()
-  (define-key wl-summary-mode-map [mouse-4] 'wl-summary-prev)
-  (define-key wl-summary-mode-map [mouse-5] 'wl-summary-next)
-  (define-key wl-summary-mode-map [S-mouse-4] 'wl-summary-up)
-  (define-key wl-summary-mode-map [S-mouse-5] 'wl-summary-down)
-  (define-key wl-summary-mode-map [mouse-2] 'wl-summary-click))
+  (define-key wl-summary-mode-map [mouse-2] 'wl-summary-click)
+  (let ((up (wl-mouse-buttons-for-wheel 'wheel-up))
+	(down (wl-mouse-buttons-for-wheel 'wheel-down)))
+    (if (memq 'mouse wl-scroll-function-events)
+	(progn
+	  (define-key wl-summary-mode-map `[,(car up)] 'wl-summary-prev)
+	  (define-key wl-summary-mode-map `[,(car down)] 'wl-summary-next)
+	  (define-key wl-summary-mode-map `[,(cdr up)] 'wl-summary-up)
+	  (define-key wl-summary-mode-map `[,(cdr down)] 'wl-summary-down))
+      (dolist (key (list (car up) (cdr up) (car down) (cdr down)))
+	(define-key wl-summary-mode-map `[,key] nil t))))
+  (if (memq 'wheel wl-scroll-function-events)
+      (progn
+	(define-key wl-summary-mode-map [wheel-up] 'wl-summary-prev)
+	(define-key wl-summary-mode-map [wheel-down] 'wl-summary-next)
+	(define-key wl-summary-mode-map [S-wheel-up] 'wl-summary-up)
+	(define-key wl-summary-mode-map [S-wheel-down] 'wl-summary-down))
+    (dolist (key '([wheel-up] [wheel-down] [S-wheel-up] [S-wheel-down]))
+      (define-key wl-summary-mode-map key nil t))))
 
 (if wl-summary-mode-map
     ()
@@ -540,7 +554,6 @@ See also variable `wl-use-petname'."
   (define-key wl-summary-mode-map "\C-t" 'wl-plugged-change)
   ;;
   (define-key wl-summary-mode-map "\C-x\C-s" 'wl-summary-save-status)
-  (wl-summary-setup-mouse)
   (easy-menu-define
    wl-summary-mode-menu
    wl-summary-mode-map
@@ -941,6 +954,7 @@ Entering Folder mode calls the value of `wl-summary-mode-hook'."
   (unless (called-interactively-p 'interactive) (kill-all-local-variables))
   (setq major-mode 'wl-summary-mode)
   (setq mode-name "Summary")
+  (wl-summary-setup-mouse)
   (use-local-map wl-summary-mode-map)
 ;;;  (setq default-directory (or wl-tmp-dir (expand-file-name "~/")))
   (setq buffer-read-only t)

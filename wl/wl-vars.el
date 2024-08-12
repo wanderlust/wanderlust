@@ -3116,6 +3116,19 @@ a symbol `xbm' or `xpm' in order to force the image format."
   :type 'number
   :group 'wl-pref)
 
+(defcustom wl-scroll-function-events '(mouse)
+  "Specify events that are allocated to Wanderlust's own scroll functions.
+`mouse' means mouse buttons are used.  `mouse-wheel-buttons' or
+`mouse-wheel-down-event' variables indicate which buttons to be used.
+`wheel' means wheel-up/down are used.  nil means no events are
+allocated."
+  :type '(choice
+	  (repeat (choice
+		   (const :tag "Mouse buttons" mouse)
+		   (const :tag "Wheel up/down" wheel)))
+	  (const :tag "Don't use Wanderlust's function" nil))
+  :group 'wl-pref)
+
 ;;; Internal variables
 (defvar wl-init nil)
 

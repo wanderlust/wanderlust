@@ -966,16 +966,26 @@ Returns non-nil if bottom of message."
     (define-key keymap "\C-c:d" 'wl-message-decrypt-pgp-nonmime)
     (define-key keymap "\C-c:v" 'wl-message-verify-pgp-nonmime)
     (define-key keymap "w" 'wl-draft)
-    (define-key keymap [mouse-4] 'wl-message-wheel-down)
-    (define-key keymap [mouse-5] 'wl-message-wheel-up)
-    (define-key keymap [S-mouse-4] 'wl-message-wheel-down)
-    (define-key keymap [S-mouse-5] 'wl-message-wheel-up)
+    (when (memq 'mouse wl-scroll-function-events)
+      (let ((up (wl-mouse-buttons-for-wheel 'wheel-up))
+	    (down (wl-mouse-buttons-for-wheel 'wheel-down)))
+	(define-key keymap `[,(car up)] 'wl-message-wheel-down)
+	(define-key keymap `[,(car down)] 'wl-message-wheel-up)
+	(define-key keymap `[,(cdr up)] 'wl-message-wheel-down)
+	(define-key keymap `[,(cdr down)] 'wl-message-wheel-up)))
+    (when (memq 'wheel wl-scroll-function-events)
+      (define-key keymap [wheel-up] 'wl-message-wheel-down)
+      (define-key keymap [wheel-down] 'wl-message-wheel-up)
+      (define-key keymap [S-wheel-up] 'wl-message-wheel-down)
+      (define-key keymap [S-wheel-down] 'wl-message-wheel-up))
     (set-keymap-parent wl-message-button-map keymap)
     (define-key wl-message-button-map
       [mouse-2] 'wl-message-button-dispatcher)
     keymap))
 
 (defun wl-message-wheel-up (event)
+  ;; Instance For `wheel-down' event, which would move to the same
+  ;; direction with `scroll-up`.
   (interactive "e")
   (if (string-match (regexp-quote wl-message-buffer-name)
 		    (regexp-quote (buffer-name)))
@@ -992,6 +1002,8 @@ Returns non-nil if bottom of message."
 	    (wl-summary-next t))))))
 
 (defun wl-message-wheel-down (event)
+  ;; Instance For `wheel-up' event, which would move to the same
+  ;; direction with `scroll-down`.
   (interactive "e")
   (if (string-match (regexp-quote wl-message-buffer-name)
 		    (regexp-quote (buffer-name)))

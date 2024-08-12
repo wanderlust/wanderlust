@@ -1016,6 +1016,18 @@ e-mail address.  It should be consist of atext (described in RFC
 (defun wl-read-buffer (prompt &optional def require-match)
   (read-buffer prompt def require-match))
 
+(defun wl-mouse-buttons-for-wheel (event)
+  ;; event is `wheel-down` or `wheel-up`.
+  (let ((button (and (boundp 'mouse-wheel-buttons)
+		     (car (rassq event mouse-wheel-buttons)))))
+    (setq button
+	  (if button
+	      (intern (concat "mouse-" (number-to-string button)))
+	    (cdr (assq event `((wheel-up . ,mouse-wheel-down-event)
+			       (wheel-down . ,mouse-wheel-up-event))))))
+    (when button
+      (cons button (intern (concat "S-" (symbol-name button)))))))
+
 (require 'product)
 (product-provide (provide 'wl-util) (require 'wl-version))
 
