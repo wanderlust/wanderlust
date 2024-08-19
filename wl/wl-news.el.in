@@ -1,4 +1,4 @@
-;;; wl-news.el --- Create notification from NEWS(.ja) for Wanderlust.
+;;; wl-news.el --- Create notification from NEWS(.ja) for Wanderlust.  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2002 Yoichi NAKAYAMA <yoichi@eken.phys.nagoya-u.ac.jp>
 ;; Copyright (C) 2002 Kenichi OKADA <okada@opaopa.org>
