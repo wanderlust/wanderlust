@@ -4591,25 +4591,27 @@ mode buffer.
 Toggles display of Summary buffer.
 (@code{wl-message-toggle-disp-summary})
 
-@item Button-2
+@item mouse-2
 @findex wl-message-button-refer-article
-@kindex Button-2 (Message)
+@kindex mouse-2 (Message)
 Assumes @samp{Message-ID:} at the mouse pointer, and shows the
 corresponding message if found.
 (@code{wl-message-button-refer-article})
 
-@item Button-4 (upward movement of a wheel)
-@kindex Button-4 (Message)
+@item mouse-4 or wheel-up
+@kindex mouse-4 or wheel-up (Message)
 @findex wl-message-wheel-down
 Scrolls the message backwards.  When the top of the message is hit,
 moves to the previous message.
+Actual bindings are customizable via @code{wl-scroll-function-events}.
 (@code{wl-message-wheel-down})
 
-@item Button-5 (downward movement of a wheel)
-@kindex Button-5 (Message)
+@item mouse-5 or wheel-down
+@kindex mouse-5 or sheel-down (Message)
 @findex wl-message-wheel-up
 Scrolls the message forward.  When the bottom of the message is hit,
 moves to the next message.
+Actual bindings are customizable via @code{wl-scroll-function-events}.
 (@code{wl-message-wheel-up})
 
 @item D
@@ -9070,6 +9072,19 @@ The name of the file that contains encoded X-Face strings.
 If non-nil, bitmap image is shown on the opening demo.  If you set
 @code{xpm} or @code{xbm}, (if possible) display selected image type
 logo.
+
+@item wl-scroll-function-events
+@vindex wl-scroll-function-events
+The initial setting is @code{(mouse)}.
+Specify event type that are allocated to Wanderlust's own scroll
+functions.
+If the list has @code{mouse} element, mouse buttons are used.
+@code{mouse-wheel-buttons} or @code{mouse-wheel-down-event} and
+@code{mouse-wheel-dup-event} variables indicate which buttons to be
+used.  @key{mouse-4} and @key{mouse-5} is normally used.
+If @code{wheel} is in the list, @key{wheel-up} and @key{wheel-down}
+are used.
+When the value is set to @code{nil}, no events are allocated.
 
 @item elmo-nntp-list-folders-use-cache
 @vindex elmo-nntp-list-folders-use-cache

@@ -4546,8 +4546,8 @@ Non-nil なら @code{wl-summary-jump-to-msg-by-message-id} で、メッセージ
 サマリバッファを表示するかどうかをトグルします。
 (@code{wl-message-toggle-disp-summary})
 
-@item Button-2
-@kindex Button-2 (Message)
+@item mouse-2
+@kindex mouse-2 (Message)
 @findex wl-message-button-refer-article
 @findex wl-message-header-narrowing
 マウスポインタの位置に @samp{Message-ID:} があったときに対応するメッセー
@@ -4556,18 +4556,20 @@ Non-nil なら @code{wl-summary-jump-to-msg-by-message-id} で、メッセージ
 マウスポインタの位置のヘッダが省略表示されていた場合には、全ての内容を表
 示します。もう一度押すと再度省略表示します。
 
-@item Button-4 (ホイールつきマウスのホイールを上へ)
-@kindex Button-4 (Message)
+@item mouse-4 or wheel-up
+@kindex mouse-4 or wheel-up (Message)
 @findex wl-message-wheel-down
 メッセージを上にスクロールします。メッセージの末尾まで到達すると、
 次のメッセージに移動します。
+実際の割り当ては @code{wl-scroll-function-events} の値に依存します。
 (@code{wl-message-wheel-down})
 
-@item Button-5 (ホイールつきマウスのホイールを下へ)
-@kindex Button-5 (Message)
+@item mouse-5 or wheel-down
+@kindex mouse-5 or wheel-down (Message)
 @findex wl-message-wheel-up
 メッセージを上にスクロールします。メッセージの先頭まで到達すると、
 前のメッセージに移動します。
+実際の割り当ては @code{wl-scroll-function-events} の値に依存します。
 (@code{wl-message-wheel-up})
 
 @item D
@@ -8974,6 +8976,19 @@ string             : 指定したフォルダに移動する。
 Non-nil ならばオープニングデモでビットマップのイメージを表示します。
 @code{xpm}, @code{xbm} を指定すると(可能ならば)、その画像タイプのイメー
 ジを表示します。
+
+@item wl-scroll-function-events
+@vindex wl-scroll-function-events
+初期設定は @code{(mouse)}。
+Wanderlust独自のスクロール用の関数を割り当てる操作のタイプを指定します。
+リストの要素に @code{mouse} が含まれると、マウスボタンイベントが
+割り当てられます。
+@code{mouse-wheel-buttons} もしくは @code{mouse-wheel-down-event} と
+@code{mouse-wheel-up-event} 変数が割り当てるボタンを示します。
+通常は @key{mouse-4} と @key{mouse-5} になります。
+@code{wheel} が含まれると @key{wheel-up} と @key{wheel-down} が
+使われます。
+@code{nil} が指定された場合、割り当ては行われません。
 
 @item elmo-nntp-list-folders-use-cache
 @vindex elmo-nntp-list-folders-use-cache
