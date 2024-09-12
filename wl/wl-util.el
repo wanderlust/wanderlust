@@ -1023,8 +1023,13 @@ e-mail address.  It should be consist of atext (described in RFC
     (setq button
 	  (if button
 	      (intern (concat "mouse-" (number-to-string button)))
-	    (cdr (assq event `((wheel-up . ,mouse-wheel-down-event)
-			       (wheel-down . ,mouse-wheel-up-event))))))
+	    (cdr (assq event
+		       `((wheel-up . ,(if (boundp 'mouse-wheel-down-event)
+					  mouse-wheel-down-event
+					'mouse-4))
+			 (wheel-down . ,(if (boundp 'mouse-wheel-up-event)
+					    mouse-wheel-up-event
+					  'mouse-5)))))))
     (when button
       (cons button (intern (concat "S-" (symbol-name button)))))))
 
