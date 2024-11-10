@@ -133,15 +133,21 @@
 	  (define-key wl-folder-mode-map `[,(cdr up)] 'wl-folder-prev-unread)
 	  (define-key wl-folder-mode-map `[,(cdr down)] 'wl-folder-next-unread))
       (dolist (key (list (car up) (cdr up) (car down) (cdr down)))
-	(define-key wl-folder-mode-map `[,key] nil t))))
+	;; REMOVE argument of define-key or keymap-unset function is
+	;; available since Emacs 29.
+	(setq wl-folder-mode-map
+	      (delq (assq key wl-folder-mode-map) wl-folder-mode-map)))))
   (if (memq 'wheel wl-scroll-function-events)
       (progn
 	(define-key wl-folder-mode-map [wheel-up] 'wl-folder-prev-entity)
 	(define-key wl-folder-mode-map [wheel-down] 'wl-folder-next-entity)
 	(define-key wl-folder-mode-map [S-wheel-up] 'wl-folder-prev-unread)
 	(define-key wl-folder-mode-map [S-wheel-down] 'wl-folder-next-unread))
-    (dolist (key '([wheel-up] [wheel-down] [S-wheel-up] [S-wheel-down]))
-      (define-key wl-folder-mode-map key nil t))))
+    (dolist (key '(wheel-up wheel-down S-wheel-up S-wheel-down))
+      ;; REMOVE argument of define-key or keymap-unset function is
+      ;; available since Emacs 29.
+      (setq wl-folder-mode-map
+	    (delq (assq key wl-folder-mode-map) wl-folder-mode-map)))))
 
 (if wl-folder-mode-map
     nil

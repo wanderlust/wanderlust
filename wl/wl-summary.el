@@ -354,15 +354,21 @@ See also variable `wl-use-petname'."
 	  (define-key wl-summary-mode-map `[,(cdr up)] 'wl-summary-up)
 	  (define-key wl-summary-mode-map `[,(cdr down)] 'wl-summary-down))
       (dolist (key (list (car up) (cdr up) (car down) (cdr down)))
-	(define-key wl-summary-mode-map `[,key] nil t))))
+	;; REMOVE argument of define-key or keymap-unset function is
+	;; available since Emacs 29.
+	(setq wl-summary-mode-map
+	      (delq (assq key wl-summary-mode-map) wl-summary-mode-map)))))
   (if (memq 'wheel wl-scroll-function-events)
       (progn
 	(define-key wl-summary-mode-map [wheel-up] 'wl-summary-prev)
 	(define-key wl-summary-mode-map [wheel-down] 'wl-summary-next)
 	(define-key wl-summary-mode-map [S-wheel-up] 'wl-summary-up)
 	(define-key wl-summary-mode-map [S-wheel-down] 'wl-summary-down))
-    (dolist (key '([wheel-up] [wheel-down] [S-wheel-up] [S-wheel-down]))
-      (define-key wl-summary-mode-map key nil t))))
+    (dolist (key '(wheel-up wheel-down S-wheel-up S-wheel-down))
+      ;; REMOVE argument of define-key or keymap-unset function is
+      ;; available since Emacs 29.
+      (setq wl-summary-mode-map
+	    (delq (assq key wl-summary-mode-map) wl-summary-mode-map)))))
 
 (if wl-summary-mode-map
     ()
