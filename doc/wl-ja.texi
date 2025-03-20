@@ -5211,8 +5211,14 @@ Wanderlust のオフラインモード/オンラインモードをトグルし�
 
 @item wl-insert-mail-followup-to
 @vindex wl-insert-mail-followup-to
-初期設定は @code{nil}。Non-nil なら、@samp{Mail-Followup-To:} フィールド
-をドラフトバッファに自動的に挿入します。
+初期設定は @code{nil}。 @code{reply} なら、@samp{Mail-Followup-To:}
+フィールドをドラフトバッファ作成時に自動的に挿入します。
+他の non-nil 値の際には送信時にフィールドを挿入します。
+この時は @code{wl-draft-send-hook} 実行時の最後に挿入されますが、
+順序を制御したい場合は手動で @code{wl-draft-insert-mail-followup-to} を
+@code{wl-draft-send-hook} に追加してください。
+尚、そうした場合は @code{wl-insert-mail-followup-to} の値によらず
+フィールドが挿入されます。
 
 @item wl-insert-mail-reply-to
 @vindex wl-insert-mail-reply-to

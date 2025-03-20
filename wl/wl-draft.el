@@ -312,12 +312,62 @@ Special commands:
 		   (list (concat wl-draft-mime-bcc-field-name  ":")))))))
 
 (defun wl-draft-make-mail-followup-to (recipients)
-  (let ((rlist (wl-address-delete-user-mail-addresses recipients)))
-    (if (elmo-list-member rlist (mapcar 'downcase
-					wl-subscribed-mailing-list))
-	rlist
-      (append rlist (list (wl-address-header-extract-address
-			   wl-from))))))
+  (if (elmo-list-member recipients (mapcar 'downcase
+					   wl-subscribed-mailing-list))
+      (wl-address-delete-user-mail-addresses recipients)
+    (let ((r recipients)
+	  self)
+      (while (car r)
+	(if (wl-address-user-mail-address-p (car r))
+	    (if self (setcar r (cdr r))
+	      (setq self t)
+	      (setq r (cdr r)))
+	  (setq r (cdr r))))
+      (setq recipients (delq nil recipients))
+      (if self
+	  recipients
+	(append recipients
+		(list (if wl-draft-reply-use-address-with-full-name
+			  wl-from
+			(nth 1 (std11-extract-address-components
+				wl-from)))))))))
+
+(defun wl-draft-insert-mail-followup-to (&optional force)
+  "Insert Mail-Followup-To: field.
+When FORCE is non-nil, overwrite existing one."
+  (interactive "P")
+  (save-restriction
+    (std11-narrow-to-header mail-header-separator)
+    (if (and (null force) (std11-fetch-field "Mail-Followup-To"))
+	(when (called-interactively-p 'interactive)
+	  (error "Mail-Followup-To: header already exists"))
+      (let* ((r-alist
+	      (apply
+	       #'append
+	       (mapcar
+		(lambda (field)
+		  (let ((addresses (elmo-parse-addresses
+				    (std11-fetch-field field))))
+		    (mapcar
+		     (lambda (addr)
+		       (cons (nth 1 (std11-extract-address-components addr))
+			     (and wl-draft-reply-use-address-with-full-name
+				  addr)))
+		     addresses)))
+		'("From" "To" "Cc"))))
+	     (recipients (wl-draft-make-mail-followup-to
+			  (delq nil (mapcar #'car r-alist)))))
+	(when recipients
+	  (goto-char (point-min))
+	  (let ((case-fold-search t))
+	    (when (re-search-forward "^Mail-Followup-To:[ \t]*" nil 'move)
+	      (delete-region (match-beginning 0) (std11-field-end))))
+	  (or (bolp) (insert ?\n))
+	  (insert "Mail-Followup-To: "
+		  (mapconcat (lambda (r) (or (cdr (assoc r r-alist)) r))
+			     recipients ",\n\t"))
+	  (unless (eq (following-char) ?\n)
+	    (insert ?\n)))))))
 
 (defun wl-draft-delete-myself-from-cc (to cc)
   (cond (wl-draft-always-delete-myself ; always-delete option
@@ -499,7 +549,7 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
     ;; and myself is contained in cc,
     ;; delete myself from cc.
     (setq cc (wl-draft-delete-myself-from-cc to cc))
-    (when wl-insert-mail-followup-to
+    (when (eq wl-insert-mail-followup-to 'reply)
       (setq mail-followup-to
 	    (wl-draft-make-mail-followup-to (append to cc)))
       (setq mail-followup-to (wl-delete-duplicates mail-followup-to nil t)))
@@ -1392,6 +1442,14 @@ If FORCE-MSGID, insert message-id regardless of `wl-insert-message-id'."
       (setq locals (cdr locals)))
     result))
 
+(defun wl-draft-send-hook-setup ()
+  (if (and wl-insert-mail-followup-to
+	   (null (eq wl-insert-mail-followup-to 'reply)))
+      (let ((wl-draft-send-hook (copy-sequence wl-draft-send-hook)))
+	(add-hook 'wl-draft-send-hook #'wl-draft-insert-mail-followup-to)
+	wl-draft-send-hook)
+    wl-draft-send-hook))
+
 (defcustom wl-draft-send-confirm-with-preview t
   "*Non-nil to invoke preview through confirmation of sending.
 This variable is valid when `wl-interactive-send' has non-nil value."
@@ -1427,7 +1485,8 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 ;;; Don't call this explicitly.
 ;;; Added to 'wl-draft-send-hook (by teranisi)
 ;;;  (wl-draft-config-exec)
-  (run-hooks 'wl-draft-send-hook)
+  (let ((wl-draft-send-hook (wl-draft-send-hook-setup)))
+    (run-hooks 'wl-draft-send-hook))
   (when (or (not wl-interactive-send)
 	    (wl-draft-send-confirm))
     (let ((send-mail-function 'wl-draft-raw-send)

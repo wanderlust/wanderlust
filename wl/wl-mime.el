@@ -464,7 +464,8 @@ It calls following-method selected from variable
 		  (append wl-draft-config-variables
 			  (wl-draft-clone-local-variables))))
 	       (goto-char current-point)
-	       (run-hooks 'wl-draft-send-hook)
+	       (let ((wl-draft-send-hook (wl-draft-send-hook-setup)))
+		 (run-hooks 'wl-draft-send-hook))
 	       (unless wl-draft-preview-process-pgp
 		 (setq wl-draft-preview-pgp-processing mime-edit-pgp-processing
 		       mime-edit-pgp-processing nil))

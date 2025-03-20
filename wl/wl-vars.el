@@ -454,8 +454,13 @@ FACE is a face for highlighting."
   :group 'wl)
 
 (defcustom wl-insert-mail-followup-to nil
-  "*Insert Mail-Followup-To: field if non-nil."
-  :type 'boolean
+  "*Insert Mail-Followup-To: field if non-nil.
+When the value is `reply', insert header in preparing draft buffer.
+Other non-nil value, header is created at sending time."
+  :type '(choice
+	  (const :tag "Insert at sending" t)
+	  (const :tag "Insert at replying" reply)
+	  (const :tag "Don't insert" nil))
   :group 'wl-draft)
 
 (defcustom wl-insert-mail-reply-to nil

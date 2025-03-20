@@ -5237,8 +5237,14 @@ Example:
 
 @item wl-insert-mail-followup-to
 @vindex wl-insert-mail-followup-to
-The initial setting is @code{nil}.  If non-nil, @samp{Mail-Followup-To:}
-field is automatically inserted in the draft buffer.
+The initial setting is @code{nil}.  If @code{reply},
+@samp{Mail-Followup-To:} field is automatically prepared in creating the
+draft buffer.  When other non-nil value, it is inserted at sending time.
+In this case, inserting function is called as the last function of
+@code{wl-draft-send-hook}.  If you want to adjust the order of hook
+functions, add @code{wl-draft-insert-mail-followup-to} into
+@code{wl-draft-send-hook} manually.  In the case that you do so, the
+field is always inserted in spite of this variable's value.
 
 @item wl-insert-mail-reply-to
 @vindex wl-insert-mail-reply-to
