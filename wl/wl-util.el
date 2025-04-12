@@ -41,7 +41,7 @@
 (require 'pp nil t)
 
 (provide 'wl-util)
- 
+
 (defalias 'wl-set-work-buf 'elmo-set-work-buf)
 (make-obsolete 'wl-set-work-buf 'elmo-set-work-buf "03 Apr 2000 at latest")
 
@@ -822,7 +822,7 @@ e-mail address.  It should be consist of atext (described in RFC
 (defsubst wl-window-deletable-p ()
   "Return t if selected window can be safely deleted from its frame."
       (eq (window-deletable-p) t))
-      
+
 ;;; Search Condition
 (defun wl-search-condition-fields ()
   (let ((denial-fields

@@ -365,7 +365,7 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
    へ移動できます (wl-folder-virtual)。"V" にバインドされています。
 
 ** フォルダモードで、与えられた条件を満たすメッセージを含むフォルダを探せる
-   ようになりました (wl-folder-pick)。"?" にバインドされています。 
+   ようになりました (wl-folder-pick)。"?" にバインドされています。
 
 ** アクセスグループフォルダの改名が出来るようになりました。
 
@@ -464,7 +464,7 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 ** elmo モジュールが全体的に書き直されました。
 
-** elmo のバックエンドに依存した変数は "elmo-バックエンド名-*" 
+** elmo のバックエンドに依存した変数は "elmo-バックエンド名-*"
    という名前に変更されました。
    例えば、 elmo-default-imap4-server が elmo-imap4-default-server に
    変更されています。
@@ -549,7 +549,7 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 ** IMAP4 での生パスワードによる認証の指定方法が変更になりました。
 
 これまで、IMAP4 で生パスワードの認証(LOGIN コマンドによるログイン)をするには、
-変数 elmo-default-imap4-authenticate-type に 'plain (または nil) 
+変数 elmo-default-imap4-authenticate-type に 'plain (または nil)
 を設定することになっていましたが、'clear (または nil)に変更されました。
 例えば、
 (setq elmo-default-imap4-authenticate-type 'plain)
@@ -561,7 +561,7 @@ Wanderlust NEWS (日本語版) -- User-visible changes in Wanderlust.
 
 ** バージョン番号
 バージョン番号の付け方が変わりました。
-これまで、1.x が安定版、2.0.x〜2.2.x が開発版となっていましたが、2.3.0 
+これまで、1.x が安定版、2.0.x〜2.2.x が開発版となっていましたが、2.3.0
 以降は、第二番号が偶数なら安定版、奇数なら開発版となりました。このバー
 ジョン番号の付け方は一般的なオープンソース開発の慣習に基づくものです。
 
@@ -653,7 +653,7 @@ AND 条件や OR 条件も入力できます。
 
 *** stream-type の定義方法を変更しました。
 変数 elmo-network-{imap4-,pop3-,nntp-,}stream-type-alist で設定可能です。
-SSL 関連のいくつかの変数が廃止されました(改名)。 
+SSL 関連のいくつかの変数が廃止されました(改名)。
 また、新たに "!socks" で終わるネットワーク系フォルダ(IMAP4, NNTP, POP3)は
 SOCKS 経由でアクセスされるようになりました。
 
@@ -668,7 +668,7 @@ group-list の内容を削除して送信します。
 group-list にも対応しています。
 
 *** 初期設定で Reply-To: を考慮するようになりました。
-wl-draft-reply-without-argument-list の初期設定で、Reply-To: 
+wl-draft-reply-without-argument-list の初期設定で、Reply-To:
 フィールドは To: へ挿入する設定になりました。
 
 *** 自分のメールへの返信ルール
@@ -678,7 +678,7 @@ wl-draft-reply-myself-without-argument-list で自分が出したメール
 
 *** 返信アドレスにフルネーム
 変数 wl-draft-reply-use-address-with-full-name が non-nil なら返
-信アドレスにフルネームが入ります。(デフォルトは t)。 
+信アドレスにフルネームが入ります。(デフォルトは t)。
 
 *** In-Reply-To: フィールドの形式を変更しました。
 draft-ietf-drums-msg-fmt-09.txt に従うようになりました。
@@ -736,7 +736,7 @@ wl-message-visible-field-list で、Wanderlust レベルで設定が可能
 progress gauge の表示機能をもつ Emacs では、処理の進捗が progress gauge に
 表示されるようになりました。
 
-* 1.0.3 から 1.1.0 への変更点 
+* 1.0.3 から 1.1.0 への変更点
 
 ** インストール
 

@@ -171,7 +171,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
     "i" prefetch (prefetch message)
     "~" resend   (resend message)
    Press 'x' to execute actions which corresponds to the mark.
-   mark-and-actions can be define by the new variable, 
+   mark-and-actions can be define by the new variable,
    'wl-summary-mark-action-list'. See its docstring for more in detail.
 
 ** SPAM filter module is added.
@@ -260,7 +260,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
    The default value for elmo-pop3-exists-exactly is changed to nil.
 
 ** POP3 response code extension defined in the RFC2449 is supported.
-   If a login failure occurred because of user's another POP3 session, 
+   If a login failure occurred because of user's another POP3 session,
    entered password is not cleared and used in the future login.
 
 ** IMAP4 commands EXPUNGE and CHECK are now send asynchronously.
@@ -272,7 +272,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** Show contents of NEWS(.ja) when you start Wanderlust newer than the
    one you used previously.
 
-** Default values of wl-draft-reply-*-list are changed. 
+** Default values of wl-draft-reply-*-list are changed.
    See samples/en/dot.wl for old values.
 
 ** wl-draft-reply-myself-*-list are abolished and integrated into
@@ -374,7 +374,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** You can specify ON/OFF of thread view for newly created summary.
    Set wl-summary-default-view, wl-summary-default-view-alist.
 
-** Temporary marks are kept when you exit from sticky summary by q or g. 
+** Temporary marks are kept when you exit from sticky summary by q or g.
 
 ** Key bindings concerning the sticky summary have been changed.
    By C-u g, the sticky summary is destroyed as well as C-u q. In summary or
@@ -530,7 +530,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 ** Retrieval progress of each message is displayed in POP and IMAP folder.
 
 ** Coloring of summary buffer is processed on demand (only on Emacs).
-   If `wl-summary-lazy-highlight' is non-nil, 
+   If `wl-summary-lazy-highlight' is non-nil,
    only visible portion of the buffer is colored.
 
 ** Customizable biff notify.
@@ -543,7 +543,7 @@ Wanderlust NEWS -- User-visible changes in Wanderlust.
 * Changes in 2.4.1 from 2.4.0
   Version 2.4.1 is basically a bug fix version of 2.4.0.
 
-** Wanderlust 2.4.1 now works on FLIM 1.14.x. 
+** Wanderlust 2.4.1 now works on FLIM 1.14.x.
 
 ** Fixed a problem that POP connection remains after POP before SMTP.
 
@@ -562,7 +562,7 @@ should be changed to
 * Changes in 2.4.0 from 1.1.1
 
 ** Version Number
-The version numbering convention for Wanderlust is changed. 
+The version numbering convention for Wanderlust is changed.
 
 In earlier versions, 1.x were stable version and from 2.0.x to 2.2.x
 were beta version. But since version 2.3.0, the second (minor) version
@@ -605,7 +605,7 @@ Server mailbox is checked periodically.
 If new mail is arrived, Wanderlust changes the biff (icon) on the modeline
 and updates folder mode content.
 
-*** expire-hide 
+*** expire-hide
 Now expire mechanism has new feature `hide', it does not remove
 messages actually from folder but hides messages from summary. It
 improves processing speed for large folders.
@@ -668,14 +668,14 @@ if you specify the folder name end with "!socks".
 
 *** group-list is now available
 You can specify address like 'Group: foo@gohome.org, bar@gohome.org;'.
-If wl-draft-remove-group-list-contents is non-nil, the contents of 
+If wl-draft-remove-group-list-contents is non-nil, the contents of
 group-list is removed before sending.
 
-*** The draft preview displays recipient addresses on minibuffer 
+*** The draft preview displays recipient addresses on minibuffer
 You can confirm the group-list recipients by this.
 
 *** Initial setting considers Reply-To:.
-Default setting of wl-draft-reply-without-argument-list considers Reply-To: 
+Default setting of wl-draft-reply-without-argument-list considers Reply-To:
 field (Set to To: field).
 
 *** Replying rules for the messages sent from yourself.
@@ -689,7 +689,7 @@ name is inserted in with e-mail addresses on the replied message
 (Initial setting is t).
 
 *** In-Reply-To: format is changed.
-In-Reply-To: format is changed to simple one. It is based on 
+In-Reply-To: format is changed to simple one. It is based on
 draft-ietf-drums-msg-fmt-09.txt.
 
 ** misc
@@ -718,7 +718,7 @@ It is renamed to wl-highlight-folder-by-numbers and has following meaning.
 
 *** Header visibility control is changed.
 Header visibility is controlled by Wanderlust (was controlled by SEMI).
-You can change header visibility by wl-message-ignored-field-list and 
+You can change header visibility by wl-message-ignored-field-list and
 wl-message-visible-field-list.
 
 *** DEMO is changed.
