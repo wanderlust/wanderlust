@@ -46,5 +46,5 @@
     '(("To" . "infobot@example.com")
       ("Body" . "send current-issue\nsend index"))
     (rfc2368-parse-mailto-url
-     (concat "mailto:infobot@example.com?body=send%20current-\n"
+     (concat "mailto:infobot@example.com?body=send%20current-"
 	     "issue%0D%0Asend%20index")))))
