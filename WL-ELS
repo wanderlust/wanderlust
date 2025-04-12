@@ -58,7 +58,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Utils
-(defvar UTILS-MODULES '(im-wl wl-mailto wl-addrbook wl-complete))
+(defvar UTILS-MODULES '(im-wl rfc2368 wl-mailto wl-addrbook wl-complete))
 
 ;; OpenSSL/SSLeay package is also needed.
 (if (module-installed-p 'base64)
