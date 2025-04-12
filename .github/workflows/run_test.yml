@@ -30,6 +30,6 @@ jobs:
         run: sudo apt-get install emacs-nox make
       - name: Setup for test
         run: |
-          echo "(setq load-path (append (list \"$PWD/apel\" \"$PWD/flim\" \"$PWD/semi\") load-path))" > WL-CFG.el
+          echo "(setq load-path (append (list \"$PWD/utils\" \"$PWD/apel\" \"$PWD/flim\" \"$PWD/semi\") load-path))" > WL-CFG.el
       - name: Run test
         run: make PACKAGE_LISPDIR=NONE test
