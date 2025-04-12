@@ -1,4 +1,4 @@
-;;; rfc2368.el --- support for rfc2368
+;;; rfc2368.el --- support for rfc2368  -*- lexical-binding: t -*-
 
 ;; Author: Sen Nagata <sen@eccosys.com>
 ;; Keywords: mail
