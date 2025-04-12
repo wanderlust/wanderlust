@@ -1,0 +1,35 @@
+name: Run test
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '**.el'
+      - '**.el.in'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: wanderlust/apel
+          path: apel
+      - uses: actions/checkout@v4
+        with:
+          repository: wanderlust/flim
+          path: flim
+      - uses: actions/checkout@v4
+        with:
+          repository: wanderlust/semi
+          path: semi
+      - name: Install required packages
+        run: sudo apt-get install emacs-nox make
+      - name: Setup for test
+        run: |
+          echo "(setq load-path (append (list \"$PWD/apel\" \"$PWD/flim\" \"$PWD/semi\") load-path))" > WL-CFG.el
+      - name: Run test
+        run: make PACKAGE_LISPDIR=NONE test

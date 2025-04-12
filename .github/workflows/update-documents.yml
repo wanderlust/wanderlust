@@ -1,0 +1,41 @@
+name: Update documents repository
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - '**.texi'
+  workflow_dispatch:
+
+jobs:
+  update_documents:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}
+      cancel-in-progress: true
+    env:
+      # for debug
+      OWNER: ${{ github.repository_owner }}
+      REPOSITORY: ${{ github.repository }}
+      WLDOCS_REPO: ${{ vars.WLDOCS_REPO }}
+      TARGET_WORKFLOW: ${{ vars.TARGET_WORKFLOW }}
+    steps:
+      - name: Get app-token
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.WLDOCS_APP_ID }}
+          private-key: ${{ secrets.WLDOCS_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ vars.WLDOCS_REPO }}
+      - name: Dispatch workflow to update document repository
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: '${{ github.repository_owner }}',
+              repo: '${{ vars.WLDOCS_REPO }}',
+              workflow_id: '${{ vars.TARGET_WORKFLOW }}',
+              ref: 'gh-pages'})
