@@ -58,19 +58,11 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Utils
-(defvar UTILS-MODULES '(im-wl rfc2368 wl-mailto wl-addrbook wl-complete))
-
-;; OpenSSL/SSLeay package is also needed.
-(if (module-installed-p 'base64)
-    (add-to-list 'UTILS-MODULES 'ssl))
+(defvar UTILS-MODULES '(im-wl rfc2368 ssl wl-mailto wl-addrbook wl-complete))
 
 (defvar modules-alist
   (list
    (cons ELMODIR ELMO-MODULES)
    (cons WLDIR WL-MODULES)
-   (if (and (module-installed-p 'bbdb-whois)
-	    (null (module-installed-p 'bbdb-mua)))
-       ;; Excluded for BBDB3.
-       (cons UTILSDIR (list 'bbdb-wl)))
    (if wl-install-utils
        (cons UTILSDIR UTILS-MODULES))))
