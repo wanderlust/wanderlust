@@ -433,7 +433,7 @@ Wanderlust はバイトコンパイル、インストールをしなくても、
 また、下記にもマニュアルがあります。
 
 @example
-@uref{http://wanderlust.github.io/wl-docs/wl-ja.html}
+@uref{https://wanderlust.github.io/wl-docs/wl-ja.html}
 @end example
 
 
@@ -890,7 +890,7 @@ Maildir は、@file{cur}, @file{new}, @file{tmp} のディレクトリを含ん�
 また、@file{tmp} ディレクトリにあり、かつ 36 時間以上アクセスが無いメッ
 セージファイルは削除されます。
 
-この動作は @uref{http://cr.yp.to/proto/maildir.html} に従っています。@*
+この動作は @uref{https://cr.yp.to/proto/maildir.html} に従っています。@*
 (日本語訳は @uref{http://man.qmail.jp/jman5/maildir.html})
 
 例:
@@ -1491,7 +1491,7 @@ grep の @samp{-r} オプションをを使って、検索対象で指定され�
 @subsection mu
 @pindex mu
 
-mu (@uref{http://www.djcbsoftware.nl/code/mu/}) を使って、文書を検索します。
+mu (@uref{https://www.djcbsoftware.nl/code/mu/}) を使って、文書を検索します。
 
 例:（Mu cheatsheet より）
 
@@ -1524,7 +1524,7 @@ mu (@uref{http://www.djcbsoftware.nl/code/mu/}) を使って、文書を検索�
 @subsection notmuch
 @pindex notmuch
 
-notmuch (@uref{http://notmuchmail.org/}) を使って、文書を検索します。
+notmuch (@uref{https://notmuchmail.org/}) を使って、文書を検索します。
 
 例（notmuch マニュアルより）
 
@@ -5065,7 +5065,7 @@ POP-before-SMTP 用の変数 (@code{wl-pop-before-smtp-*})を設定していな�
 
 @example
 @group
-@uref{http://www.iecc.com/pop-before-smtp.html}
+@uref{https://www.iecc.com/pop-before-smtp.html}
 @end group
 @end example
 
@@ -7474,7 +7474,7 @@ spam 判定に対して無効なフォルダを、フォルダ名の正規表現
 @subsection bogofilter
 @cindex bogofilter
 
-bogofilter (@uref{http://bogofilter.sourceforge.net/}) は、C言語で実装さ
+bogofilter (@uref{https://bogofilter.sourceforge.net/}) は、C言語で実装さ
 れた spam フィルタです。
 
 bogofilter による spam フィルタを使用するには、@file{~/.wl} などに以下の
@@ -7552,7 +7552,8 @@ Emacs Lisp で実装された spam フィルタリングライブラリです。
 @subsection bsfilter
 @cindex bsfilter
 
-bsfilter (@uref{http://bsfilter.org/}) は、Ruby で実装された spam フィルタです。
+bsfilter (@uref{https://nbkenichi.github.io/bsfilter/}) は、Ruby で実装された spam フィル
+タです。
 
 bsfilter による spam フィルタを使用するには、@file{~/.wl} などに以下の
 設定を記述します。
@@ -7611,7 +7612,7 @@ bsfilter を起動するシェルに与える引数を指定します。
 @subsection SpamAssassin
 @cindex SpamAssassin
 
-SpamAssassin (@uref{http://spamassassin.org/}) は、Perl 言語
+SpamAssassin (@uref{https://spamassassin.apache.org/}) は、Perl 言語
 で実装された、テキスト解析技術やブラックリストに基づくメールフィルタで、
 最もよく使われている spam フィルタの一つです。SpamAssassin は Bayesian フィ
 ルタを使用しており、spam と正当なメールについて学習させることで判定の正確
@@ -7668,7 +7669,7 @@ SpamAssassin の学習用プログラム @command{sa-learn} 実行時に与え�
 @subsection SpamOracle
 @cindex SpamOracle
 
-SpamOracle (@uref{http://pauillac.inria.fr/~xleroy/software.html#spamoracle})
+SpamOracle (@uref{https://xavierleroy.org/software.html#spamoracle})
 は、Objective Caml で実装された spam フィルタです.
 
 @file{SpamOracle} を使用するには、@file{~/.wl}などに以下の設定を記述します。
@@ -7814,7 +7815,7 @@ OK です。
 @pindex BBDB
 
 The Insidious Big Brother Database
-(@uref{http://savannah.nongnu.org/projects/bbdb/}) は 3.2 以降から
+(@uref{https://savannah.nongnu.org/projects/bbdb/}) は 3.2 以降から
 Wanderlust に対応しています。
 設定の詳細は Wanderlust か BBDB のメーリングリストでおたずねください。
 @xref{Mailing List}.
@@ -7891,7 +7892,7 @@ The Lovely Sister Database (@uref{http://sourceforge.jp/projects/lsdb/})
 @pindex x-face-mule
 @pindex bitmap-mule
 
-bitmap-mule (@uref{ftp://ftp.jpl.org/pub/elisp/bitmap/}) 8.0以降に
+bitmap-mule (@uref{https://github.com/cvs-m17n-org/BITMAP-MULE}) 8.0以降に
 付属の @file{x-face-mule.el} を使う場合は以下のように設定してください。
 
 @lisp
@@ -7905,7 +7906,7 @@ bitmap-mule (@uref{ftp://ftp.jpl.org/pub/elisp/bitmap/}) 8.0以降に
 @pindex x-face-e21
 
 @file{x-face-mule.el} の代わりに @file{x-face-e21.el}
-(@uref{ftp://jpl.org/pub/elisp/}) を使って X-Face を表示することもできます。
+(@uref{http://www.jpl.org/ftp/pub/elisp/x-face-e21.el.gz}) を使って X-Face を表示することもできます。
 その場合、bitmap-mule は不要です。以下のように設定してください。
 
 @lisp
@@ -7948,7 +7949,7 @@ Emacs で編集中の草稿バッファへ dired からドラッグ&ドロップ
 @pindex MHC
 
 Message Harmonized Calendaring system
-(@uref{http://www.quickhack.net/mhc/})
+(@uref{https://www.quickhack.net/mhc/})
 
 MHC を用いると、メッセージを元に予定表を作れます。
 
@@ -7976,7 +7977,7 @@ MHC を用いると、メッセージを元に予定表を作れます。
 @pindex Addrbook
 
 Addrbook of Mew
-(@uref{http://www.mew.org/})
+(@uref{https://www.mew.org/})
 
 Mew の Addrbook を Wanderlust で使用できるようにするには、
 @file{util/wl-addrbook.el} と @file{util/wl-complete.el} を 

@@ -877,7 +877,7 @@ in the @file{new} directory are moved to @file{cur} directory when you
 access the folder. All message files contained in the @file{tmp}
 directory and not accessed for 36 hours are deleted.
 
-This behavior conforms to the @uref{http://cr.yp.to/proto/maildir.html}.
+This behavior conforms to the @uref{https://cr.yp.to/proto/maildir.html}.
 
 Example:
 
@@ -1486,7 +1486,7 @@ Example:
 @subsection mu
 @pindex mu
 
-Search mail using mu (@uref{http://www.djcbsoftware.nl/code/mu/}).
+Search mail using mu (@uref{https://www.djcbsoftware.nl/code/mu/}).
 
 Examples (from the mu cheatsheet)
 
@@ -1519,7 +1519,7 @@ Examples (from the mu cheatsheet)
 @subsection notmuch
 @pindex notmuch
 
-Search mail using notmuch (@uref{http://notmuchmail.org/}).
+Search mail using notmuch (@uref{https://notmuchmail.org/}).
 
 Examples (from the notmuch manual)
 
@@ -5087,7 +5087,7 @@ Refer to the following URL about POP-before-SMTP.
 
 @example
 @group
-@uref{http://www.iecc.com/pop-before-smtp.html}
+@uref{https://www.iecc.com/pop-before-smtp.html}
 @end group
 @end example
 
@@ -7554,7 +7554,7 @@ Supported spam filtering libraries are following ones.
 @subsection bogofilter
 @cindex bogofilter
 
-bogofilter (@uref{http://bogofilter.sourceforge.net/}) is a spam filter
+bogofilter (@uref{https://bogofilter.sourceforge.net/}) is a spam filter
 implemented by C language.
 
 To use spam filter with bogofilter, write following setting in
@@ -7635,7 +7635,7 @@ It specifies the name of corpus file.
 @subsection bsfilter
 @cindex bsfilter
 
-bsfilter (@uref{http://bsfilter.org/index-e.html}) is a spam filter
+bsfilter (@uref{https://nbkenichi.github.io/bsfilter/}) is a spam filter
 implemented by Ruby language.
 
 To use spam filter with bsfilter, write following setting in
@@ -7696,7 +7696,7 @@ Specify options to give to @command{bsfilter} for learning messages.
 @subsection SpamAssassin
 @cindex SpamAssassin
 
-SpamAssassin (@uref{http://spamassassin.org/}) is one of the most
+SpamAssassin (@uref{https://spamassassin.apache.org/}) is one of the most
 popular spam filtering program implemented on Perl. SpamAssassin
 attempts to identify spam using text analysis and several internet-based
 realtime blacklists.  SpamAssassin also uses a Bayesian learning filter
@@ -7754,7 +7754,7 @@ stored in the buffer named @code{"*Debug ELMO SpamAssassin*"}.
 @subsection SpamOracle
 @cindex SpamOracle
 
-SpamOracle (@uref{http://pauillac.inria.fr/~xleroy/software.html#spamoracle})
+SpamOracle (@uref{https://xavierleroy.org/software.html#spamoracle})
 is a spam filter implemented by Objective Caml language.
 
 To use spam filter with @file{spamoracle}, write following setting in
@@ -7897,7 +7897,7 @@ settings.
 @subsection bbdb.el
 @pindex BBDB
 
-The Insidious Big Brother Database (@uref{http://savannah.nongnu.org/projects/bbdb/}) supports Wanderlust since 3.2. 
+The Insidious Big Brother Database (@uref{https://savannah.nongnu.org/projects/bbdb/}) supports Wanderlust since 3.2.
 Please ask details of setings to mailing list of Wanderlust of BBDB.
 @xref{Mailing List}.
 
@@ -7976,7 +7976,7 @@ value of the variable @code{wl-x-face-file}), it is inserted as a
 @pindex bitmap-mule
 
 If you use @file{x-face-mule.el} in bitmap-mule
-(@uref{ftp://ftp.jpl.org/pub/elisp/bitmap/}) 8.0 or later, do the following:
+(@uref{https://github.com/cvs-m17n-org/BITMAP-MULE}) 8.0 or later, do the following:
 
 @lisp
 @group
@@ -7989,7 +7989,7 @@ If you use @file{x-face-mule.el} in bitmap-mule
 @pindex x-face-e21
 
 You can use @file{x-face-e21.el}
-(@uref{ftp://jpl.org/pub/elisp/}) instead of @file{x-face-mule.el}
+(@uref{http://www.jpl.org/ftp/pub/elisp/x-face-e21.el.gz/}) instead of @file{x-face-mule.el}
 to display X-Face. In this case, bitmap-mule is not required.
 Do as follows:
 
@@ -8033,7 +8033,7 @@ specific, but general-purpose for SEMI).
 @pindex MHC
 
 Message Harmonized Calendaring system
-(@uref{http://www.quickhack.net/mhc/})
+(@uref{https://www.quickhack.net/mhc/})
 
 By using MHC, you can make a calendar from the messages.
 
@@ -8061,7 +8061,7 @@ By using MHC, you can make a calendar from the messages.
 @pindex Addrbook
 
 Addrbook of Mew
-(@uref{http://www.mew.org/})
+(@uref{https://www.mew.org/})
 
 Place @file{util/wl-addrbook.el} and @file{util/wl-complete.el} on the
 @code{load-path} and do the following settings.
