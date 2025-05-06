@@ -1,0 +1,43 @@
+name: Update packages repository
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  update_packages:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}
+      cancel-in-progress: true
+    env:
+      # for debug
+      OWNER: ${{ github.repository_owner }}
+      REPOSITORY: ${{ github.repository }}
+      PACKAGES_REPO: ${{ vars.PACKAGES_REPO }}
+      PACKAGES_WORKFLOW: ${{ vars.PACKAGES_WORKFLOW }}
+      PACKAGES_TARGET: ${{ vars.PACKAGES_TARGET }}
+    steps:
+      - name: Get app-token
+        uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: ${{ secrets.WLDOCS_APP_ID }}
+          private-key: ${{ secrets.WLDOCS_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ vars.PACKAGES_REPO }}
+      - name: Dispatch workflow to update document repository
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: '${{ github.repository_owner }}',
+              repo: '${{ vars.PACKAGES_REPO }}',
+              workflow_id: '${{ vars.PACKAGES_WORKFLOW }}',
+              inputs: {
+                targets: '${{ vars.PACKAGES_TARGET }}'
+                },
+              ref: 'wanderlust'})
