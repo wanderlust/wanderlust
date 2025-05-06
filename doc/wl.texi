@@ -369,6 +369,35 @@ such as "elmo" then add following to @file{WL-CFG}:
 (setq ELMO_PREFIX "elmo")
 @end lisp
 
+@subsection Installation via package archive
+Package archive is made public in MELPA (@url{https://melpa.org/}) and
+GitHub repository.  You can install via @kbd{M-x list-packages <RET>} by
+adding following URLs into @code{package-archives}.
+@vindex package-archives
+
+@table @samp
+@item GitHub
+@url{https://wanderlust.github.io/packages/}
+@item MELPA
+@url{https://melpa.org/packages/}
+@end table
+
+If you specify the both archives, MELPA's packages are normally prefered
+to GitHub's.  When you want to use GitHub's packges preferentially,
+adjust @code{package-archive-priorities}'s value.
+@vindex package-archive-priorities
+
+@lisp
+@group
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("wl" . "https://wanderlust.github.io/packages/") t)
+(setq package-archive-priorities
+      '(("wl" . 100)))
+@end group
+@end lisp
+
 @subsection Run in place
 
 If wl and elmo directories are defined in @code{load-path}, then
@@ -8092,7 +8121,7 @@ If you use SEMI-EPG, no additional setting is needed.
 You need @file{oauth2.el}
 (@url{https://elpa.gnu.org/packages/oauth2.html}) if you want to use
 oauth2 for IMAP, SMTP authentication.  When you install Wanderlust from
-MELPA (@url{https://melpa.org/}), the file is installed automatically.
+pacakge archive such as MELPA, the file is installed automatically.
 
 You have to obtain client ID and client secret from your providers such
 as Google or Microsoft.  `client' means applications and it is supposed

@@ -404,6 +404,35 @@ ELMO モジュールはファイル @file{elmo*.el} @file{elmo*.elc} を含ん�
 @noindent
 とします。
 
+@subsection package archive を利用したインストール
+MELPA (@url{https://melpa.org/}) や GitHub で package archive が
+公開されていますので、@code{package-archives} に以下の URL を追加すると
+@kbd{M-x list-packages <RET>} 等からインストールできます。
+@vindex package-archives
+
+@table @samp
+@item GitHub
+@url{https://wanderlust.github.io/packages/}
+@item MELPA
+@url{https://melpa.org/packages/}
+@end table
+
+両方の archive を指定すると通常は MELPA のパッケージが優先して
+使用されますので、 GitHub のパッケージを優先したい場合は
+@code{package-archive-priorities} の値を調整して下さい。
+@vindex package-archive-priorities
+
+@lisp
+@group
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("wl" . "https://wanderlust.github.io/packages/") t)
+(setq package-archive-priorities
+      '(("wl" . 100)))
+@end group
+@end lisp
+
 @subsection インストールしないで利用
 
 Wanderlust はバイトコンパイル、インストールをしなくても、@file{wl},
@@ -8011,7 +8040,7 @@ SEMI が SEMI-EPG である場合は、特別な設定は不要です。
 IMAP や SMTP の認証に oauth2 を用いるには FLIM のインストール時に
 @file{oauth2.el} (@url{https://elpa.gnu.org/packages/oauth2.html})
 が必要です。
-MELPA (@url{https://melpa.org/})からインストールを行った場合は、
+MELPA 等の package archive からインストールを行った場合は、
 自動的にインストールされます。
 利用するには Google やマイクロフト等のプロバイダから client ID,
 client secret を取得する必要があります。
