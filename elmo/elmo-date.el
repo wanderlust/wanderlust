@@ -34,6 +34,8 @@
 (require 'timezone)
 (require 'elmo-vars)
 (require 'elmo-util)
+(eval-when-compile
+  (require 'static))
 
 (make-obsolete 'elmo-match-string 'match-string "26 Aug 2012")
 
@@ -187,47 +189,57 @@
     (timezone-absolute-from-gregorian
      (nth 4 date) (nth 3 date) (nth 5 date))))
 
-;; from timezone-fix-time in `timezone.el'
-(defun elmo-time-to-datevec (time &optional timezone)
-  (when time
-    (let* ((date   (decode-time time))
-	   (year   (nth 5 date))
-	   (month  (nth 4 date))
-	   (day    (nth 3 date))
-	   (hour   (nth 2 date))
-	   (minute (nth 1 date))
-	   (second (nth 0 date))
-	   (local  (nth 8 date))
-	   (timezone
-	    (or timezone
-		(timezone-time-zone-from-absolute
-		 (timezone-absolute-from-gregorian month day year)
-		 (+ second (* 60 (+ minute (* 60 hour)))))))
-	   (diff   (- (timezone-zone-to-minute timezone) (/ local 60)))
-	   (minute (+ minute diff))
-	   (hour-fix (floor minute 60)))
-      (setq hour (+ hour hour-fix))
-      (setq minute (- minute (* 60 hour-fix)))
-      ;; HOUR may be larger than 24 or smaller than 0.
-      (cond ((<= 24 hour)			;24 -> 00
-	     (setq hour (- hour 24))
-	     (setq day  (1+ day))
-	     (when (< (timezone-last-day-of-month month year) day)
-	       (setq month (1+ month))
-	       (setq day 1)
-	       (when (< 12 month)
-		 (setq month 1)
-		 (setq year (1+ year)))))
-	    ((> 0 hour)
-	     (setq hour (+ hour 24))
-	     (setq day  (1- day))
-	     (when (> 1 day)
-	       (setq month (1- month))
-	       (when (> 1 month)
-		 (setq month 12)
-		 (setq year (1- year)))
-	       (setq day (timezone-last-day-of-month month year)))))
-      (vector year month day hour minute second timezone))))
+(static-cond
+ ((>= (cdr (subr-arity (symbol-function 'decode-time))) 2)
+  ;; Emacs 25 and later
+  (defun elmo-time-to-datevec (time &optional timezone)
+    (when time
+      (let ((result (decode-time time timezone)))
+	(vector (nth 5 result) (nth 4 result) (nth 3 result)
+		(nth 2 result) (nth 1 result) (nth 0 result)
+		(or timezone (current-time-zone)))))))
+ (t
+  ;; from timezone-fix-time in `timezone.el'
+  (defun elmo-time-to-datevec (time &optional timezone)
+    (when time
+      (let* ((date   (decode-time time))
+	     (year   (nth 5 date))
+	     (month  (nth 4 date))
+	     (day    (nth 3 date))
+	     (hour   (nth 2 date))
+	     (minute (nth 1 date))
+	     (second (nth 0 date))
+	     (local  (nth 8 date))
+	     (timezone
+	      (or timezone
+		  (timezone-time-zone-from-absolute
+		   (timezone-absolute-from-gregorian month day year)
+		   (+ second (* 60 (+ minute (* 60 hour)))))))
+	     (diff   (- (timezone-zone-to-minute timezone) (/ local 60)))
+	     (minute (+ minute diff))
+	     (hour-fix (floor minute 60)))
+	(setq hour (+ hour hour-fix))
+	(setq minute (- minute (* 60 hour-fix)))
+	;; HOUR may be larger than 24 or smaller than 0.
+	(cond ((<= 24 hour)			;24 -> 00
+	       (setq hour (- hour 24))
+	       (setq day  (1+ day))
+	       (when (< (timezone-last-day-of-month month year) day)
+		 (setq month (1+ month))
+		 (setq day 1)
+		 (when (< 12 month)
+		   (setq month 1)
+		   (setq year (1+ year)))))
+	      ((> 0 hour)
+	       (setq hour (+ hour 24))
+	       (setq day  (1- day))
+	       (when (> 1 day)
+		 (setq month (1- month))
+		 (when (> 1 month)
+		   (setq month 12)
+		   (setq year (1- year)))
+		 (setq day (timezone-last-day-of-month month year)))))
+	(vector year month day hour minute second timezone))))))
 
 (require 'product)
 (product-provide (provide 'elmo-date) (require 'elmo-version))
