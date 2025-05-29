@@ -1217,7 +1217,12 @@ Candidates are following:
 If nil, it is adjust to the default time zone information
 (system's default time zone or environment variable TZ)."
   :type '(choice (const :tag "Default time zone" nil)
-		 string)
+		 (string :tag "name")
+		 (integer :tag "UTC offset")
+		 (list :tag "offset and name"
+		       (integer :tag "UTC offest")
+		       (string :tag "name"))
+		 (const :tag "UTC" t))
   :group 'wl-summary)
 
 (defcustom wl-summary-message-ring-max 16
