@@ -3720,10 +3720,7 @@ Return non-nil if the mark is updated"
 		  (wl-summary-delete-all-temp-marks 'no-msg 'force)
 		  (encode-coding-region
 		   (point-min) (point-max)
-		   (or (and wl-on-mule
-			    ;; one in mcs-ltn1(apel<10.4) cannot take 2 arg.
-			    (mime-charset-to-coding-system charset 'LF))
-		       ;; Mule 2 doesn't have `*ctext*unix'.
+		   (or (mime-charset-to-coding-system charset 'LF)
 		       (mime-charset-to-coding-system charset)))
 		  (write-region-as-binary (point-min)(point-max)
 					  cache nil 'no-msg)))
