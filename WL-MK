@@ -1,4 +1,4 @@
-;;; -*- Emacs-Lisp -*-
+;;; -*- mode: emacs-lisp; lexical-binding: nil -*-
 ;;; WL-MK for byte-compile, install, uninstall
 ;;;
 ;;; Original by OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>

@@ -1,4 +1,4 @@
-;;; im-wl.el -- IM/Nifty4U+ interface for Wanderlust.  (not completed.)
+;;; im-wl.el -- IM/Nifty4U+ interface for Wanderlust.  (not completed.) -*- lexical-binding: nil -*-
 
 ;; Copyright (C) 1998,1999 OKUNISHI Fujikazu <fuji0924@mbox.kyoto-inet.or.jp>
 ;; Copyright (C) 1998,1999 Yuuichi Teranishi <teranisi@gohome.org>

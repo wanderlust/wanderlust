@@ -1,4 +1,4 @@
-;;;							-*- emacs-lisp -*-
+;;;				-*- mode: emacs-lisp; lexical-binding: nil -*-
 ;;; Configuration file for installation.
 
 ;; load-path setting example for Mule with SEMI.
