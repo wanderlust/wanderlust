@@ -476,8 +476,7 @@ Returned value is searched from `elmo-network-stream-type-alist'."
 	  ;; current number-list.
 	  (elmo-folder-list-messages folder nil 'in-msgdb))
 	 ;; append appending messages
-	 (mapcar (lambda (x) (* -1 x))
-		 (elmo-dop-spool-folder-list-messages folder))))
+	 (mapcar #'- (elmo-dop-spool-folder-list-messages folder))))
     t))
 
 (luna-define-method elmo-folder-list-flagged-internal ((folder elmo-net-folder)
