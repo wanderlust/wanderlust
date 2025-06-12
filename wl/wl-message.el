@@ -764,7 +764,10 @@ Returns non-nil if bottom of message."
 			"-"))
 		    wl-message-buffer-cache " "))) )))
 
-(defvar wl-message-button-map (make-sparse-keymap))
+(defvar wl-message-button-map
+  (let ((keymap (make-sparse-keymap)))
+    (define-key keymap [mouse-2] 'wl-message-button-dispatcher)
+    keymap))
 
 (defun wl-message-add-button (from to function &optional data)
   "Create a button between FROM and TO with callback FUNCTION and DATA."
@@ -959,13 +962,18 @@ Returns non-nil if bottom of message."
 
 (defalias 'wl-setup-message 'wl-e21-setup-message-toolbar)
 
-(defun wl-message-define-keymap ()
+(defvar wl-mime-view-mode-map
   (let ((keymap (make-sparse-keymap)))
     (define-key keymap "D" 'wl-message-delete-current-part)
     (define-key keymap "l" 'wl-message-toggle-disp-summary)
     (define-key keymap "\C-c:d" 'wl-message-decrypt-pgp-nonmime)
     (define-key keymap "\C-c:v" 'wl-message-verify-pgp-nonmime)
     (define-key keymap "w" 'wl-draft)
+    keymap))
+
+(defun wl-message-define-keymap ()
+  (let ((keymap (make-sparse-keymap)))
+    (set-keymap-parent keymap wl-mime-view-mode-map)
     (when (memq 'mouse wl-scroll-function-events)
       (let ((up (wl-mouse-buttons-for-wheel 'wheel-up))
 	    (down (wl-mouse-buttons-for-wheel 'wheel-down)))
@@ -979,8 +987,6 @@ Returns non-nil if bottom of message."
       (define-key keymap [S-wheel-up] 'wl-message-wheel-down)
       (define-key keymap [S-wheel-down] 'wl-message-wheel-up))
     (set-keymap-parent wl-message-button-map keymap)
-    (define-key wl-message-button-map
-      [mouse-2] 'wl-message-button-dispatcher)
     keymap))
 
 (defun wl-message-wheel-up (event)
