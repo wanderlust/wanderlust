@@ -455,7 +455,7 @@ If third optional argument ENTIRE is non-nil, fetch entire message at once."
 (defun elmo-mime-display-as-is-internal (message
 					 &optional preview-buffer
 					 mother default-keymap-or-function
-					 original-major-mode keymap)
+					 original-major-mode)
   (mime-maybe-hide-echo-buffer)
   (let ((win-conf (current-window-configuration)))
     (or preview-buffer
@@ -494,11 +494,7 @@ If third optional argument ENTIRE is non-nil, fetch entire message at once."
 			 `((major-mode . ,original-major-mode)))
       (put-text-property (point-min) (point-max)
 			 'elmo-as-is-entity message)
-      (use-local-map
-       (or keymap
-	   (if default-keymap-or-function
-	       (mime-view-define-keymap default-keymap-or-function)
-	     mime-view-mode-default-map)))
+      (use-local-map (mime-view-define-keymap default-keymap-or-function))
       (goto-char (point-min))
       (search-forward "\n\n" nil t)
       (run-hooks 'mime-view-mode-hook)
