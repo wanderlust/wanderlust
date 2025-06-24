@@ -606,7 +606,7 @@ Return number if put mark succeed"
 	  (buffer-read-only nil)
 	  (buf (current-buffer))
 	  sol eol rs re)
-      (setq sol (point-at-bol))
+      (setq sol (line-beginning-position))
       (beginning-of-line)
       (search-forward "\r")
       (backward-char)

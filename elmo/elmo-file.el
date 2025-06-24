@@ -104,7 +104,7 @@
 		      (goto-char (point-min))
 		      (when (re-search-forward ": *" nil t)
 			(setq type (buffer-substring (match-end 0)
-						     (point-at-eol))))
+						     (line-end-position))))
 		      (if (string-match "/" type)
 			  type
 			  "application/octet-stream"))

@@ -986,7 +986,7 @@ Message is inserted to the summary buffer."
   (let (depth beg)
     (wl-thread-entity-set-opened entity nil)
     (setq depth (wl-thread-get-depth-of-current-line))
-    (setq beg (point-at-bol))
+    (setq beg (line-beginning-position))
     (wl-thread-goto-bottom-of-sub-thread)
     (wl-thread-remove-argument-region beg
 				      (point))
@@ -1012,9 +1012,9 @@ Message is inserted to the summary buffer."
 
 (defun wl-thread-open (entity)
   (let (depth beg)
-    (setq beg (point-at-bol))
+    (setq beg (line-beginning-position))
     (setq depth (wl-thread-get-depth-of-current-line))
-    (delete-region (point-at-bol) (point-at-eol))
+    (delete-region (line-beginning-position) (line-end-position))
     (wl-thread-entity-set-opened entity t)
     (wl-thread-insert-entity depth ;(- depth 1)
 			     entity

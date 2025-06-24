@@ -794,8 +794,10 @@ or `wl-draft-reply-with-argument-list' if WITH-ARG argument is non-nil."
 	   nil
 	   wl-ignored-forwarded-headers))
       (when (string= (mime-make-tag "message" "rfc822")
-		     (buffer-substring-no-properties (point-at-bol 0)(point-at-eol 0)))
-	(delete-region (point-at-bol 0) (1+ (point-at-eol 0))))
+		     (buffer-substring-no-properties
+		      (line-beginning-position 0) (line-end-position 0)))
+	(delete-region
+	 (line-beginning-position 0) (1+ (line-end-position 0))))
       (error "No current message"))))
 
 (defun wl-draft-insert-get-message (_dummy)
@@ -2060,7 +2062,7 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 	(insert "Content-Transfer-Encoding: " content-transfer-encoding "\n"))
       (wl-draft-decode-message-in-buffer)
       (goto-char (point-min))
-      (unless (re-search-forward "^$" (point-at-eol) t)
+      (unless (re-search-forward "^$" (line-end-position) t)
 	(insert "\n"))
       (widen)
       delimline)))
@@ -2180,8 +2182,9 @@ If KILL-WHEN-DONE is non-nil, current draft buffer is killed"
 (defun wl-draft-remove-text-plain-tag ()
   "Remove text/plain tag of mime-edit."
   (when (string= (mime-make-text-tag "plain")
-		 (buffer-substring-no-properties (point-at-bol)(point-at-eol)))
-    (delete-region (point-at-bol)(1+ (point-at-eol)))))
+		 (buffer-substring-no-properties
+		  (line-beginning-position) (line-end-position)))
+    (delete-region (line-beginning-position) (1+ (line-end-position)))))
 
 (defun wl-draft-reedit (number)
   (let ((draft-folder (wl-draft-get-folder))

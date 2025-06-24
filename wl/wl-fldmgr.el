@@ -107,7 +107,7 @@
 ;;
 
 (defun wl-fldmgr-delete-line ()
-  (delete-region (point-at-bol) (1+ (point-at-eol))))
+  (delete-region (line-beginning-position) (1+ (line-end-position))))
 
 (defun wl-fldmgr-make-indent (level)
   (concat " " (make-string (* 2 level) ?\s)))

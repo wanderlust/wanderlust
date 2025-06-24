@@ -67,9 +67,10 @@
 	(goto-char (point-min))
 	(catch 'done
 	  (while t
-	    (re-search-forward "id=\\([^@]+@[^@]+\\)$" (point-at-eol) t)
+	    (re-search-forward "id=\\([^@]+@[^@]+\\)$"
+			       (line-end-position) t)
 	    (setq result (append result (list (match-string 1))))
-	    (if (eq (1+ (point-at-eol)) (point-max))
+	    (if (eq (1+ (line-end-position)) (point-max))
 		(throw 'done nil)
 	      (beginning-of-line 2))))))
     result))

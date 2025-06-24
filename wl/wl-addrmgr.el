@@ -432,7 +432,7 @@ Return nil if no ADDRESS exists."
   (let ((entry (wl-addrmgr-address-entry))
 	buffer-read-only)
     (save-excursion
-      (delete-region (point-at-bol) (point-at-eol))
+      (delete-region (line-beginning-position) (line-end-position))
       (wl-addrmgr-insert-line entry))
     (set-buffer-modified-p nil)
     (wl-addrmgr-next)))
@@ -545,14 +545,14 @@ Return nil if no ADDRESS exists."
 
 (defun wl-addrmgr-address-entry ()
   (get-text-property (previous-single-property-change
-		      (point-at-eol) 'wl-addrmgr-entry nil
-		      (point-at-bol))
+		      (line-end-position) 'wl-addrmgr-entry nil
+		      (line-beginning-position))
 		     'wl-addrmgr-entry))
 
 (defun wl-addrmgr-mark-write (&optional mark)
   "Set MARK to the current address entry."
   (save-excursion
-    (unless (< (count-lines (point-min) (point-at-eol)) 3)
+    (unless (< (count-lines (point-min) (line-end-position)) 3)
       (let ((buffer-read-only nil) beg end)
 	(beginning-of-line)
 	(delete-char 4)
@@ -562,8 +562,8 @@ Return nil if no ADDRESS exists."
 		  (bcc "Bcc:")
 		  (t "    ")))
 	(insert (make-string (- 4 (current-column)) ?\s))
-	(setq beg (point-at-bol))
-	(setq end (point-at-eol))
+	(setq beg (line-beginning-position))
+	(setq end (line-end-position))
 	(put-text-property beg end 'face nil)
 	(wl-highlight-message beg end nil))
       (set-buffer-modified-p nil))))
@@ -656,9 +656,9 @@ Return nil if no ADDRESS exists."
 	(while (re-search-forward regexp nil t)
 	  ;; delete field
 	  (progn
-	    (setq beg (point-at-bol))
+	    (setq beg (line-beginning-position))
 	    (re-search-forward "^[^ \t]" nil 'move)
-	    (delete-region beg (point-at-bol))
+	    (delete-region beg (line-beginning-position))
 	    (beginning-of-line)))
 	(when content
 	  ;; add field to top.

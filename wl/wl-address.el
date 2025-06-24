@@ -725,7 +725,8 @@ If already registerd, change it."
 	;; override
 	(setq regexp (concat "^[ \t]*" address))
 	(while (re-search-forward regexp  nil t)
-	  (delete-region (point-at-bol) (1+ (point-at-eol)))))
+	  (delete-region
+	   (line-beginning-position) (1+ (line-end-position)))))
       (insert (format "%s\t%s\t%s\n"
 		      (or new-addr address)
 		      (prin1-to-string the-petname)

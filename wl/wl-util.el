@@ -519,12 +519,12 @@ e-mail address.  It should be consist of atext (described in RFC
 ;;;
 
 (defsubst wl-count-lines ()
-  (count-lines 1 (point-at-bol)))
+  (count-lines 1 (line-beginning-position)))
 
 (defun wl-horizontal-recenter ()
   "Recenter the current buffer horizontally."
   (beginning-of-line)
-  (re-search-forward "[[<]" (point-at-eol) t)
+  (re-search-forward "[[<]" (line-end-position) t)
   (if (< (current-column) (/ (window-width) 2))
       (set-window-hscroll (get-buffer-window (current-buffer) t) 0)
     (let* ((orig (point))

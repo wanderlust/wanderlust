@@ -810,7 +810,7 @@ Returns non-nil if bottom of message."
 		  (setq filename (buffer-substring (match-beginning 1)(match-end 1)))
 		(throw 'done nil)))
 	  (re-search-forward "^M.*$" nil t)) ; uuencoded string
-	(setq sp (point-at-bol))
+	(setq sp (line-beginning-position))
 	(goto-char (point-max))
 	(if last
 	    (re-search-backward "^end" sp t)

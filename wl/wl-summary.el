@@ -1198,11 +1198,12 @@ This function is defined by `wl-summary-define-sort-command'." sort-by)
 		  (when update-top-list
 		    (wl-thread-update-indent-string-thread
 		     (elmo-uniq-list update-top-list))))))
-	    (delete-region (point-at-bol) (1+ (point-at-eol)))
-	    (wl-summary-insert-line
-	     (wl-summary-create-line entity nil
-				     (wl-summary-temp-mark number)
-				     (elmo-message-status folder number)))))
+	  (delete-region
+	   (line-beginning-position) (1+ (line-end-position)))
+	  (wl-summary-insert-line
+	   (wl-summary-create-line entity nil
+				   (wl-summary-temp-mark number)
+				   (elmo-message-status folder number)))))
       (when (and wl-summary-buffer-disp-msg
 		 wl-summary-buffer-current-msg)
 	(save-excursion
@@ -1650,12 +1651,12 @@ If ARG is non-nil, checking is omitted."
   (narrow-to-region
    (save-excursion
      (goto-char beg)
-     (point-at-bol))
+     (line-beginning-position))
    (save-excursion
      (goto-char end)
      (if (= (current-column) 0)
-	 (point-at-bol)
-       (point-at-eol)))))
+	 (line-beginning-position)
+       (line-end-position)))))
 
 (defun wl-summary-prefetch-region-no-mark (beg end &optional prefetch-marks)
   (interactive "r")
@@ -2163,8 +2164,8 @@ This function is defined for `window-scroll-functions'"
 (defun wl-summary-message-number ()
   (save-excursion
     (beginning-of-line)
-    (if (or (re-search-forward "\r\\(-?[0-9]+\\)" (point-at-eol) t)
-	    (re-search-forward "^ *\\(-?[0-9]+\\)" (point-at-eol) t))
+    (if (or (re-search-forward "\r\\(-?[0-9]+\\)" (line-end-position) t)
+	    (re-search-forward "^ *\\(-?[0-9]+\\)" (line-end-position) t))
 	(string-to-number (match-string-no-properties 1))
       nil)))
 
@@ -2585,9 +2586,8 @@ If ARG, without confirm."
   "Insert LINE in the Summary."
   (if wl-use-highlight-mouse-line
       ;; remove 'mouse-face of current line.
-      (put-text-property
-       (point-at-bol) (point-at-eol)
-       'mouse-face nil))
+      (put-text-property (line-beginning-position) (line-end-position)
+			 'mouse-face nil))
   (insert line "\n")
   (save-excursion
     (forward-line -1)
@@ -2599,7 +2599,7 @@ If ARG, without confirm."
   (if wl-use-highlight-mouse-line
       ;; remove 'mouse-face of current line.
       (put-text-property
-       (point-at-bol) (point-at-eol)
+       (line-beginning-position) (line-end-position)
        'mouse-face nil))
   (condition-case error
       (run-hooks 'wl-summary-line-inserted-hook)
@@ -2699,7 +2699,7 @@ If ARG, without confirm."
 		    (not (= (point) (point-min)))
 		    (search-backward match nil t))
 	  ;; check exactly match
-	  (when (and (bolp) (= (point-at-eol)(match-end 0)))
+	  (when (and (bolp) (= (line-end-position) (match-end 0)))
 	    (setq founds (wl-summary-get-alike))
 	    (with-current-buffer summary-buf
 	      (while founds
@@ -3164,8 +3164,8 @@ Return non-nil if the mark is updated"
 		    (insert new-mark)
 		    (wl-summary-set-message-modified)
 		    t)
-		(wl-summary-validate-persistent-mark (point-at-bol)
-						     (point-at-eol))))))
+		(wl-summary-validate-persistent-mark
+		 (line-beginning-position) (line-end-position))))))
       (wl-summary-maybe-highlight-current-line)
       (set-buffer-modified-p nil))))
 
@@ -3445,7 +3445,7 @@ Return non-nil if the mark is updated"
   (when wl-summary-buffer-number-list
     (save-excursion
       (goto-char (point-min))
-      (not (re-search-forward "\r-?[0-9]+" (point-at-eol) t)))))
+      (not (re-search-forward "\r-?[0-9]+" (line-end-position) t)))))
 
 (defun wl-summary-line-format-changed-p ()
   "Return non-nil when summary line format is changed."
