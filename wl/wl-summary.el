@@ -1648,15 +1648,14 @@ If ARG is non-nil, checking is omitted."
 	  nil)))))
 
 (defsubst wl-summary-narrow-to-region (beg end)
-  (narrow-to-region
-   (save-excursion
-     (goto-char beg)
-     (line-beginning-position))
-   (save-excursion
-     (goto-char end)
-     (if (= (current-column) 0)
-	 (line-beginning-position)
-       (line-end-position)))))
+  (save-excursion
+    (narrow-to-region
+     (progn (goto-char beg)
+	    (line-beginning-position))
+     (progn (goto-char end)
+	    (if (bolp)
+		end
+	      (line-end-position))))))
 
 (defun wl-summary-prefetch-region-no-mark (beg end &optional prefetch-marks)
   (interactive "r")
