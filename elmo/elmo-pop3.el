@@ -37,7 +37,8 @@
 (require 'cl-lib)
 
 (eval-when-compile
-  (require 'elmo-util))
+  (require 'elmo-util)
+  (require 'sasl))
 
 (eval-and-compile
   (autoload 'md5 "md5"))
@@ -67,8 +68,6 @@ set as non-nil.")
 					 (?/ [auth ".+"])
 					 (?: [uidl "^[A-Za-z]+$"])
 					 ,@elmo-net-folder-name-syntax))
-
-(defvar sasl-mechanism-alist)
 
 (defvar elmo-pop3-retrieve-progress-reporter nil)
 
@@ -303,7 +302,6 @@ CODE is one of the following:
   (let ((process (elmo-network-session-process-internal session)))
     (with-current-buffer (process-buffer process)
       (set-process-filter process 'elmo-pop3-process-filter)
-      (setq elmo-pop3-read-point (point-min))
       ;; Skip garbage output from process before greeting.
       (while (and (process-live-p process)
 		  (goto-char (point-max))
@@ -328,6 +326,7 @@ CODE is one of the following:
 							elmo-pop3-session))
   (with-current-buffer (process-buffer
 			(elmo-network-session-process-internal session))
+    (require 'sasl)
     (let* ((process (elmo-network-session-process-internal session))
 	   (auth (elmo-network-session-auth-internal session))
 	   (auth (mapcar (lambda (mechanism) (upcase (symbol-name mechanism)))
@@ -336,14 +335,8 @@ CODE is one of the following:
 	       (elmo-pop3-auth-user session))
 	  (and (string= "APOP" (car auth))
 	       (elmo-pop3-auth-apop session))
-	  (require 'sasl)
-	  (defvar sasl-mechanisms)
-	  (defvar sasl-mechanism-alist)
-	  (defvar sasl-read-passphrase)
-	  (let (sasl-mechanisms
-		client name step response mechanism
+	  (let (client name step response mechanism
 		sasl-read-passphrase)
-	    (setq sasl-mechanisms (mapcar 'car sasl-mechanism-alist))
 	    (setq mechanism (sasl-find-mechanism auth))
 	    (unless mechanism
 	      (signal 'elmo-authenticate-error '(elmo-pop3-auth-no-mechanisms)))
