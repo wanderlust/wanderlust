@@ -766,15 +766,14 @@ Example:
 @end group
 @end example
 
-@subsection International mailbox names (Modified UTF7)
-@cindex Modified UTF7
+@cindex Modified UTF-7
 @cindex UTF7
 @cindex UTF8
 @cindex Unicode
 
-You can use international mailbox names in @var{mailbox} part, if
-@code{elmo-imap4-use-modified-utf7} is set to non-nil value (default
-value is @code{t}).
+You can use international mailbox names in @var{mailbox} part.
+If you want to disble the feature, set
+@code{elmo-imap4-use-modified-utf7} to @code{nil}.
 
 
 @node NNTP Folder, MH Folder, IMAP Folder, Folders

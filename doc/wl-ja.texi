@@ -784,15 +784,14 @@ default 値:
 @end group
 @end example
 
-@subsection 日本語メールボックス名の扱い(Modified UTF7)
-@cindex Modified UTF7
+@cindex Modified UTF-7
 @cindex UTF7
 @cindex UTF8
 @cindex Unicode
 
-変数 @code{elmo-imap4-use-modified-utf7} に non-nil の値を設定すれば
-(デフォルトは @code{t})、日本語 (や、その他の英語以外の言語) で
-メールボックス名を指定することができます。
+日本語 (や、その他の英語以外の言語) でメールボックス名
+(Modified UTF-7) のサポートを無効にしたい場合は、変数
+@code{elmo-imap4-use-modified-utf7} の値を @code{nil} にします。
 
 @node NNTP Folder, MH Folder, IMAP Folder, Folders
 @section NNTP フォルダ
