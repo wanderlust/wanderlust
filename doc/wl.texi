@@ -8155,6 +8155,8 @@ Below is author's settings for Gmail.
 @end lisp
 @end example
 
+You can use @code{xoauth2} and @code{oauthbearer} as
+@var{authenticate-type} in @file{~/.folders}.
 
 @node Highlights, Biff, Living with other packages, Advanced Issues
 @section Highlights

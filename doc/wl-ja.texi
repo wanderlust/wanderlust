@@ -8074,6 +8074,8 @@ secret に保てないので、ユーザーが各々で取得してもらうよ�
 @end lisp
 @end example
 
+@file{~/.folders} で指定できる@var{認証法}は @code{xoauth2}
+および @code{oauthbearer} になります。
 
 @node Highlights, Biff, Living with other packages, Advanced Issues
 @section ハイライトの設定
