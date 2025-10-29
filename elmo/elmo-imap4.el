@@ -1887,9 +1887,7 @@ Return nil if no complete line has arrived."
             (push (elmo-imap4-parse-string) body);; media-subtype
             (when (eq (following-char) ?\s) ; body-ext-mpart:
               (elmo-imap4-forward)
-              (if (eq (following-char) ?\();; body-fld-param
-                  (push (elmo-imap4-parse-string-list) body)
-                (push (and (elmo-imap4-parse-nil) nil) body))
+              (push (elmo-imap4-parse-string-list) body);; body-fld-param
               (setq body
                     (append (elmo-imap4-parse-body-ext) body)));; body-ext-...
             (cl-assert (eq (following-char) ?\)))
@@ -1903,9 +1901,7 @@ Return nil if no complete line has arrived."
         ;; next line for Sun SIMS bug
         (and (eq (following-char) ?\s)
              (elmo-imap4-forward))
-        (if (eq (following-char) ?\();; body-fld-param
-            (push (elmo-imap4-parse-string-list) body)
-          (push (and (elmo-imap4-parse-nil) nil) body))
+        (push (elmo-imap4-parse-string-list) body);; body-fld-param
         (elmo-imap4-forward)
         (push (elmo-imap4-parse-nstring) body);; body-fld-id
         (elmo-imap4-forward)
