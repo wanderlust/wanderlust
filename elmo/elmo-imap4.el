@@ -144,6 +144,8 @@ extra search keys.")
 (defvar-local elmo-imap4-status nil)
 (defvar-local elmo-imap4-reached-tag "elmo-imap40")
 
+(defvar elmo-imap4-parse-body-default-cte "7BIT")
+
 ;;; buffer local variables
 (defvar elmo-imap4-default-hierarchy-delimiter "/")
 
@@ -1909,7 +1911,10 @@ Return nil if no complete line has arrived."
         (elmo-imap4-forward)
         (push (elmo-imap4-parse-nstring) body);; body-fld-desc
         (elmo-imap4-forward)
-        (push (elmo-imap4-parse-string) body);; body-fld-enc
+        (push (or (elmo-imap4-parse-string)
+		  (and (elmo-imap4-parse-nil)
+		       elmo-imap4-parse-body-default-cte))
+	      body);; body-fld-enc
         (elmo-imap4-forward)
         (push (elmo-imap4-parse-number) body);; body-fld-octets
 
